@@ -95,11 +95,12 @@ class PolScorer:
 
     @staticmethod
     def split_reward(block_reward: float, contributor_scores: dict[str, float]) -> dict[str, float]:
-        """Collective split — TOKENOMICS §6.2."""
-        total = sum(contributor_scores.values())
-        if total <= 0:
-            return {k: 0.0 for k in contributor_scores}
-        return {
-            address: round(block_reward * (score / total), 8)
-            for address, score in contributor_scores.items()
-        }
+        """Collective split — TOKENOMICS §6.2, conserved to the satoshi."""
+        from src.artcb.economics.satoshi import (
+            allocate_satoshi,
+            artcb_to_satoshi,
+            satoshi_to_artcb,
+        )
+
+        allocated = allocate_satoshi(contributor_scores, artcb_to_satoshi(block_reward))
+        return {address: satoshi_to_artcb(satoshi) for address, satoshi in allocated.items()}

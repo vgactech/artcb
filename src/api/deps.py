@@ -11,6 +11,8 @@ from src.artcb.chain.manager import ChainManager
 from src.artcb.config import ArtcbSettings, load_settings
 from src.artcb.connectors.manager import ConnectorManager
 from src.artcb.devnet.faucet import DevnetFaucet
+from src.artcb.economics.human_binding import MachineRegistry
+from src.artcb.economics.job_provider import JobProvider
 from src.artcb.governance.manager import GovernanceManager
 from src.artcb.groups.join_requests import JoinRequestManager
 from src.artcb.groups.manager import GroupManager
@@ -71,6 +73,8 @@ class AppState:
     optimization: OptimizationProfile | None = None
     device_identity: DeviceIdentity | None = None
     wallet_device_binding: WalletDeviceBindingStore | None = None
+    machine_registry: MachineRegistry | None = None
+    job_provider: JobProvider | None = None
     pol_state: dict[str, Any] = field(default_factory=lambda: {
         "pol_score": 0.6,
         "delta_compression": 0.68,
@@ -133,6 +137,8 @@ def build_app_state() -> AppState:
     )
     gossip = GossipRegistry(settings.data_dir)
     faucet = DevnetFaucet(settings.data_dir)
+    machine_registry = MachineRegistry(settings.data_dir / "economics" / "machines.json")
+    job_provider = JobProvider(settings.data_dir / "economics" / "jobs.json")
     encoder = IREncoder(symbol_registry=symbol_registry.registry)
     explorer = ExplorerAgent(encoder=encoder, symbol_registry=symbol_registry)
     dual = DualAgentLoop(explorer=explorer)
@@ -175,6 +181,8 @@ def build_app_state() -> AppState:
         optimization=optimization,
         device_identity=device_identity,
         wallet_device_binding=wallet_device_binding,
+        machine_registry=machine_registry,
+        job_provider=job_provider,
     )
 
     def _run_pool_reasoning(text: str) -> dict[str, Any]:

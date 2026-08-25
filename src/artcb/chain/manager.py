@@ -21,7 +21,8 @@ from src.artcb.crypto.pqc import (
     pqc_enabled,
     unpack_keypair,
 )
-from src.artcb.pol.scorer import PolScorer
+from src.artcb.economics.emission import issued_reward_satoshi
+from src.artcb.economics.settlement import MachineContribution, settle_block
 from src.artcb.security.anti_sybil import AntiSybilValidator
 from src.artcb.security.slashing import SlashingManager
 from src.artcb.wallet.encryption import (
@@ -53,6 +54,7 @@ class ChainBlock:
     contributors: list[dict] = field(default_factory=list)
     public_symbols: dict[str, str] = field(default_factory=dict)
     hash_sha3: str | None = None
+    economics: dict | None = None
 
     def to_json_line(self) -> str:
         payload = {
@@ -70,6 +72,8 @@ class ChainBlock:
             "block_reward": self.block_reward,
             "contributors": self.contributors,
         }
+        if self.economics:
+            payload["economics"] = self.economics
         if self.public_symbols:
             payload["public_symbols"] = self.public_symbols
         if self.hash_sha3:
@@ -224,6 +228,7 @@ class ChainManager:
         block_reward: int | None = None,
         public_symbols: dict[str, str] | None = None,
         source: str = "unknown",  # "ai_memo" | "ai_think" | "mining" — pour bypass AI
+        verified_humans: float | None = None,
     ) -> ChainBlock:
         all_blocks = self._read_all_blocks()
         index = len(all_blocks)
@@ -257,22 +262,68 @@ class ChainManager:
                         raise ValueError(f"Contributor blocked: {reason}")
 
         if block_reward is None:
-            block_reward = self._calculate_block_reward(index)
+            block_reward = self._calculate_block_reward(
+                index,
+                verified_humans=verified_humans if verified_humans is not None else 0.0,
+            )
 
         final_contributors = []
+        economics_payload: dict | None = None
         if contributors:
-            contributor_scores = {c["address"]: c["pol_score"] for c in contributors}
-            rewards = PolScorer.split_reward(block_reward / 1e8, contributor_scores)
+            machine_contribs = _machine_contributions(contributors)
+            if machine_contribs is not None:
+                humans = verified_humans if verified_humans is not None else 0.0
+                settlement = settle_block(
+                    r_block_satoshi=block_reward,
+                    verified_humans=humans,
+                    machines=machine_contribs,
+                )
+                pol_by_address = {
+                    c["address"]: c.get("pol_score", 0.0) for c in contributors
+                }
+                sig_by_address = {
+                    c["address"]: c.get("signature", "") for c in contributors
+                }
+                merged: dict[str, dict] = {}
+                for line in settlement.lines:
+                    entry = merged.setdefault(
+                        line.address,
+                        {
+                            "address": line.address,
+                            "pol_score": pol_by_address.get(line.address, 0.0),
+                            "reward_satoshi": 0,
+                            "signature": sig_by_address.get(line.address, ""),
+                            "role": line.role,
+                            "legs": [],
+                        },
+                    )
+                    entry["reward_satoshi"] += line.reward_satoshi
+                    entry["legs"].append({
+                        "role": line.role,
+                        "machine_id": line.machine_id,
+                        "reward_satoshi": line.reward_satoshi,
+                    })
+                final_contributors = list(merged.values())
+                economics_payload = {
+                    "verified_humans": humans,
+                    "hbp_rate": settlement.hbp_rate,
+                    "work_pool_satoshi": settlement.work_pool_satoshi,
+                    "hbp_pool_satoshi": settlement.hbp_pool_satoshi,
+                }
+            else:
+                from src.artcb.economics.satoshi import allocate_satoshi
 
-            for contributor in contributors:
-                address = contributor["address"]
-                final_contributors.append({
-                    "address": address,
-                    "pol_score": contributor["pol_score"],
-                    "reward_satoshi": int(rewards[address] * 1e8),
-                    "signature": contributor.get("signature", ""),
-                    "role": contributor.get("role", "contributor"),
-                })
+                contributor_scores = {c["address"]: float(c["pol_score"]) for c in contributors}
+                allocated = allocate_satoshi(contributor_scores, block_reward)
+                for contributor in contributors:
+                    address = contributor["address"]
+                    final_contributors.append({
+                        "address": address,
+                        "pol_score": contributor["pol_score"],
+                        "reward_satoshi": allocated.get(address, 0),
+                        "signature": contributor.get("signature", ""),
+                        "role": contributor.get("role", "contributor"),
+                    })
 
         block_hash = ffi.build_block_hash(
             index, timestamp, prev_hash, graph_root, merkle, pol_score
@@ -296,6 +347,7 @@ class ChainManager:
             block_reward=block_reward,
             contributors=final_contributors,
             public_symbols=dict(public_symbols) if public_symbols else {},
+            economics=economics_payload,
         )
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(block.to_json_line() + "\n")
@@ -309,38 +361,28 @@ class ChainManager:
         )
         return block
 
-    def _calculate_block_reward(self, block_index: int) -> int:
+    def _issued_so_far_satoshi(self) -> int:
+        return sum(int(b.get("block_reward", 0) or 0) for b in self._read_all_blocks())
+
+    def _calculate_block_reward(
+        self,
+        block_index: int,
+        *,
+        verified_humans: float = 0.0,
+    ) -> int:
+        """Reward issued = min(schedule 50/210k, R(H), remaining 21M cap).
+
+        epoch_dyn (velocity) remains a safety valve on top of the fixed schedule.
         """
-        Calcule le reward du bloc avec halving fixe (tous les 105 000 blocs)
-        ET halving dynamique basé sur la vitesse de minage observée sur 24h.
+        from src.artcb.tokenomics import VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS
 
-        Formule :
-            epoch_fixe  = block_index // HALVING_INTERVAL
-            epoch_dyn   = floor(log2(max(1, velocity_24h / VELOCITY_REFERENCE)))
-            epoch_total = epoch_fixe + epoch_dyn
-            reward      = INITIAL_REWARD >> min(epoch_total, MAX_HALVINGS - 1)
-
-        La vitesse est mesurée depuis les blocs existants (fenêtre glissante 24h).
-        À faible adoption (devnet) : epoch_dyn = 0, comportement identique au halving fixe.
-        À forte adoption (1M+ users/j) : epoch_dyn augmente → reward divisé automatiquement.
-        """
-        import math
-        from src.artcb.tokenomics import (
-            HALVING_INTERVAL, INITIAL_BLOCK_REWARD_SATOSHI, MAX_HALVINGS,
-            VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS,
-        )
-
-        # ── Halving fixe ────────────────────────────────────────────────────
-        epoch_fixe = block_index // HALVING_INTERVAL
-
-        # ── Halving dynamique : mesure de la vitesse sur 24h ───────────────
         epoch_dyn = self._compute_dynamic_epoch(VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS)
-
-        # ── Epoch total et reward ───────────────────────────────────────────
-        epoch_total = epoch_fixe + epoch_dyn
-        if epoch_total >= MAX_HALVINGS:
-            return 0
-        return INITIAL_BLOCK_REWARD_SATOSHI >> epoch_total
+        return issued_reward_satoshi(
+            block_index,
+            verified_humans=verified_humans,
+            extra_epochs=epoch_dyn,
+            issued_so_far_satoshi=self._issued_so_far_satoshi(),
+        )
 
     def _compute_dynamic_epoch(self, velocity_ref: int, window_sec: int) -> int:
         """
@@ -418,3 +460,29 @@ class ChainManager:
         if block.get("hash") != expected:
             return False
         return self.verify_block_signature(str(block["hash"]), str(block.get("signature", "")))
+
+
+def _machine_contributions(contributors: list[dict]) -> list[MachineContribution] | None:
+    """Return machine contributions when every contributor carries machine fields.
+
+    Mixed/legacy contributor lists keep the historic PoL split (100% of R_block).
+    """
+    if not contributors:
+        return None
+    if not all("machine_index" in c and "owner_address" in c for c in contributors):
+        return None
+    result: list[MachineContribution] = []
+    for contributor in contributors:
+        result.append(
+            MachineContribution(
+                machine_id=str(
+                    contributor.get("machine_id")
+                    or f"{contributor['owner_address']}:{contributor['machine_index']}"
+                ),
+                owner_address=str(contributor["owner_address"]),
+                machine_index=int(contributor["machine_index"]),
+                bound_human_address=contributor.get("bound_human_address"),
+                work_weight=float(contributor.get("pol_score", contributor.get("work_weight", 0.0))),
+            )
+        )
+    return result

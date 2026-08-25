@@ -72,21 +72,25 @@ C'est une **blockchain de traçabilité cognitive** avec une **unité de compte 
 
 ### 4.1 Block reward initial
 
-| Paramètre | Valeur proposée |
+| Paramètre | Valeur (D-014 / D-016 / D-023 — 2026-08-25) |
 |-----------|-----------------|
-| Block reward initial | **1 ARTCB** par bloc PoL accepté |
-| Intervalle cible | ~10 minutes (ajustable sur devnet) |
+| Block reward initial | **50 ARTCB** par bloc PoL accepté (`R_0`, ancre `R(H=1M)=50`) |
+| Intervalle cible | ~10 minutes (600 s → 52 596 blocs/an) |
 | Halving | Tous les **210 000 blocs** PoL acceptés |
-| Séquence halving | 1 → 0,5 → 0,25 → … → ~0 |
+| Séquence halving | 50 → 25 → 12,5 → … → ~0 |
+| Identité du plafond | `50 × 210 000 × 2 = 21 000 000` |
+
+**Correction rapport 124 :** le code `1 ARTCB / 105 000 blocs` (rapports 045/080) convergeait vers **210 000 ARTCB**, pas 21 M. Ce n'est plus le protocole.
 
 ### 4.2 Durée d'émission estimée
 
 Avec halving tous les 210 000 blocs et intervalle ~10 min :
 
 - ~4 ans par epoch de halving ;
-- émission complète des 21M sur ~130 ans (même ordre de grandeur que Bitcoin).
+- ~2,63 M ARTCB la 1re année, ~11,82 M à 5 ans, ~17,07 M à 10 ans, ~20,35 M à 20 ans ;
+- émission complète des 21 M sur plusieurs décennies (même ordre de grandeur que Bitcoin).
 
-**Note :** ces paramètres sont **calibrables** sur `artcb-devnet` avant mainnet fédéré.
+**Note :** `R(H)` et le halving dynamique (vitesse) ne peuvent que **réduire** l'émission par rapport à ce calendrier ; jamais la faire dépasser 21 M.
 
 ---
 
@@ -278,3 +282,68 @@ Si fraude détectée (compression gonflée, retrieval falsifié) :
 ---
 
 **Fin TOKENOMICS_ARTCB v1.0**
+
+---
+
+## 14. Addendum v1.1 — 2026-08-25 (D-023, rapport 124)
+
+Couche économique **implémentée** dans `src/artcb/economics/` et branchée sur `ChainManager`.
+
+### 14.1 `R(H)` — reward population
+
+```
+R(H) = 50 × (max(H, 1_000_000) / 1_000_000)^(-α)
+α    = ln(50) / ln(64)  ≈ 0,94064
+```
+
+| H vérifiés | R(H) |
+|-----------:|-----:|
+| ≤ 1 M | **50** |
+| 10 M | ≈ 5,7323 |
+| 64 M | ≈ **1** |
+| 100 M | ≈ 0,6572 |
+| 1 Md | ≈ 0,07534 |
+
+Pas de plancher artificiel à 1 ARTCB. `issued = min(schedule, R(H), remaining_21M)`.
+
+### 14.2 HBP(H) — 10 % → 60 % → 20 %
+
+```
+H = 0        → 10 %
+H = 4,15e9   → 60 %
+H = 8,30e9   → 20 %
+```
+
+Linéaire sur chaque segment. Indépendant de `P_owner(n)`.
+
+### 14.3 `P_owner(n)` — décroissance continue (pas de paliers 50/40/30/20/10)
+
+```
+P_owner(1)     = 100 %
+P_owner(2)     =  50 %
+P_owner(n≥2)   = 10 % + 40 % / (1 + ((n-2)/τ)^β)
+lim n→∞        = 10 %
+```
+
+Ancres : n=1 000 → ≈ 38 % ; n=100 000 → ≈ 11,85 %.
+`n_A` (index machine de A) n'est **jamais** confondu avec `H` (humains vérifiés réseau).
+
+Machine n≥2 : humain distinct obligatoire, différent du propriétaire et des humains déjà liés aux autres machines du même propriétaire. `C1` (première machine de C) reste 100 % C même si C est l'humain lié de `A3`.
+
+### 14.4 Pré-blocs et Job Provider
+
+```
+∑ Reward(PB_i) = R_block
+```
+
+Les pré-blocs partitionnent le travail ; ils ne multiplient pas la monnaie.
+Job Provider : `submit → measure_capacity → partition → settle`.
+
+### 14.5 Conservation
+
+```
+Reward_owner,n  = W_n × R(H) × (1 − HBP(H)) × P_owner(n)
+Reward_human,n  = W_n × R(H) × (1 − HBP(H)) × (1 − P_owner(n))
+Reward_HBP      = R(H) × HBP(H)
+∑               = R_block
+```

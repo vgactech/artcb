@@ -130,3 +130,8 @@
 **Leçon :** `LimitReachedError` est une sous-classe de `PdfReadError` mais doit être attrapée explicitement. Aussi attraper `Exception` générique à tous les niveaux (reader init + page extract).  
 **Action :** `except (PdfReadError, LimitReachedError, Exception)` aux 3 endroits + test assoupli.
 
+### L-029 — Tokenomics 1/105k ≠ 21 M (25 août 2026)
+**Contexte :** Audit simulation vs `main` : `INITIAL_BLOCK_REWARD=1`, `HALVING_INTERVAL=105_000` ⇒ plafond asymptotique 210 000 ARTCB, alors que D-014 annonce 21 M. D-016 disait déjà 210 000 blocs.
+**Leçon :** Un hard cap documenté n'est réel que si `R_0 × intervalle × 2` l'atteint. Toute réduction du reward initial doit recalculer l'intervalle (ou l'inverse).
+**Action :** Rapport 124 — R_0=50, intervalle=210k, couche R(H)/HBP/P_owner continue. Ne plus mélanger le calendrier 1/105k avec le modèle validé.
+

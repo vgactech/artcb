@@ -66,7 +66,7 @@ def _mock_api_get(url: str):
     elif "/ai/status" in url:
         return {"chain": {"height": 525, "pol_avg": 0.7389, "last_block": {"index": 524}}, "memory": {}}
     elif "/dashboard/mining/status" in url:
-        return {"pol_score": 0.6, "current_reward_artcb": 1.0, "block_count": 525, "blocks_until_halving": 104475}
+        return {"pol_score": 0.6, "current_reward_artcb": 50.0, "block_count": 525, "blocks_until_halving": 209475}
     elif "/p2p/status" in url:
         return {"node_id": "node_test123", "api_port": 8000}
     elif "/chain" in url:

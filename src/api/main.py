@@ -25,6 +25,7 @@ from src.api.security_routes import router_security
 from src.api.pol_phase11_routes import router as pol_phase11_router
 from src.api.connectors_routes import router as connectors_router
 from src.api.dashboard_routes import router as dashboard_router
+from src.api.economics_routes import router as economics_router
 from src.api.bridges_routes import router as bridges_router
 from src.api.deps import build_app_state
 from src.api.devnet_routes import router as devnet_router
@@ -190,6 +191,7 @@ def create_app() -> FastAPI:
     app.include_router(pool_router)
     app.include_router(notifications_router)
     app.include_router(dashboard_router)
+    app.include_router(economics_router)
     app.include_router(ws_router)
     app.include_router(router_ai)
     app.include_router(router_chain_ext)

@@ -1104,3 +1104,19 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 
 ### Tests : 497/497 PASS | Build TypeScript 0 erreur
 ### Avancement global : 99.5 %
+
+## [2026-08-25T18:40:00Z] Rapport 124 — Tokenomics 21M cohérente + couche R(H)/HBP/OwnerDecay
+
+- **Divergence corrigée :** `1 ARTCB × 105_000 × 2 = 210_000` n'atteignait pas le plafond 21 M.
+- **Protocole restauré (D-014 + D-016 + D-023) :** `R_0=50`, `HALVING_INTERVAL=210_000`, `50×210_000×2=21_000_000`.
+- **Nouvelle couche** `src/artcb/economics/` :
+  - `R(H)=50×(H/1e6)^(-ln(50)/ln(64))` — pas de plancher à 1 ARTCB
+  - `HBP(H)` 10 % → 60 % @ 4,15e9 → 20 % @ 8,3e9
+  - `P_owner(n)` continu : 100 % (n=1), 50 %→10 % (n≥2), ancres 38 % @ 1k et 11,85 % @ 100k
+  - Human binding obligatoire pour machine n≥2 (humain distinct)
+  - Pré-blocs : `∑ Reward(PB_i)=R_block` (aucune monnaie extra)
+  - Job Provider + settlement owner/humain/HBP
+- **Branché** sur `ChainManager.append_block` (legacy PoL split conservé si pas de champs machine)
+- **API** `/api/v1/economics/*`
+- Tests : `tests/test_economics_protocol.py` + `test_wallet_rewards.py` alignés 50/210k
+- Source unique : `src/artcb/tokenomics.py` — jamais depuis .env

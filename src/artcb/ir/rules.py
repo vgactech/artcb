@@ -6,7 +6,7 @@ si la règle est déclenchée et quelle action exécuter.
 
 Exemples d'usage :
   - "SI pol_score(wallet) > 0.9 ALORS reward_bonus = 0.5 ARTCB"
-  - "SI bloc_count > 105000 ALORS halving actif"
+  - "SI bloc_count > 210000 ALORS halving actif"
   - "SI balance(alice) >= 100 ALORS transfer_autorisé"
   - "SI nft.owner == wallet ALORS accès_niveau_2 accordé"
 

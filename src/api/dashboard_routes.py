@@ -8,7 +8,8 @@ from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 
-from src.artcb.tokenomics import HALVING_INTERVAL, INITIAL_BLOCK_REWARD_SATOSHI, MAX_HALVINGS
+from src.artcb.economics.emission import issued_reward_satoshi
+from src.artcb.tokenomics import HALVING_INTERVAL
 
 logger = logging.getLogger("artcb.api.dashboard")
 router = APIRouter(prefix="/api/v1/dashboard", tags=["dashboard"])
@@ -88,9 +89,14 @@ def mining_status(request: Request) -> dict:
     epoch_fixe = block_count // HALVING_INTERVAL if block_count else 0
     epoch_dyn  = state.chain._compute_dynamic_epoch(144, 86_400)
     epoch_total = epoch_fixe + epoch_dyn
-    current_reward_satoshi = 0 if epoch_total >= MAX_HALVINGS else INITIAL_BLOCK_REWARD_SATOSHI >> epoch_total
+    issued_so_far = sum(int(b.get("block_reward", 0) or 0) for b in blocks)
+    current_reward_satoshi = issued_reward_satoshi(
+        block_count,
+        extra_epochs=epoch_dyn,
+        issued_so_far_satoshi=issued_so_far,
+    )
     blocks_until_halving = HALVING_INTERVAL - (block_count % HALVING_INTERVAL) if block_count else HALVING_INTERVAL
-    total_rewards = sum(b.get("block_reward", 0) for b in blocks)
+    total_rewards = issued_so_far
     return {
         "block_count": block_count,
         "current_reward_artcb": current_reward_satoshi / 1e8,

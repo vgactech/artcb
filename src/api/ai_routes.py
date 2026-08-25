@@ -721,28 +721,29 @@ def chain_block_sizes(
     - **graph_root / merkle_root** : hash SHA-256 du graphe IR encodé (taille fixe 64 chars)
 
     ### La taille affecte-t-elle la quantité de coins disponibles ?
-    **NON** — le reward est calculé depuis l'**index** (halving fixe) ET la **vitesse actuelle** (halving dynamique) :
+    **NON** — le reward est calculé depuis l'**index** (halving fixe 210 000), **R(H)**
+    (humains vérifiés) ET la **vitesse actuelle** (halving dynamique, soupape) :
     ```
-    epoch_fixe  = block_index // 105_000          # halving tous les 105 000 blocs
-    epoch_dyn   = floor(log2(max(1, velocity_24h / 144)))  # vitesse vs référence Bitcoin
-    epoch_total = epoch_fixe + epoch_dyn
-    reward      = 1 ARTCB >> epoch_total
+    epoch_fixe  = block_index // 210_000          # halving tous les 210 000 blocs
+    epoch_dyn   = floor(log2(max(1, velocity_24h / 144)))
+    schedule    = 50 ARTCB >> (epoch_fixe + epoch_dyn)
+    issued      = min(schedule, R(H), remaining_21M)
     ```
-    Un bloc de 1 octet et un bloc de 1 Mo reçoivent le même reward à index et vitesse égaux.
+    Un bloc de 1 octet et un bloc de 1 Mo reçoivent le même reward à index, H et vitesse égaux.
 
     ### Ce qui affecte RÉELLEMENT les coins disponibles :
-    1. **Index du bloc** → détermine l'epoch fixe (halving)
-    2. **Vitesse de minage (24h)** → détermine l'epoch dynamique (halving adaptatif)
-    3. **Nombre de contributors** → split du reward entre participants
-    4. **PoL score** → poids dans la distribution du reward (split proportionnel)
+    1. **Index du bloc** → détermine l'epoch fixe (halving 210k)
+    2. **R(H)** → reward population (50 à 1M humains, ~0.075 à 1 milliard)
+    3. **Vitesse de minage (24h)** → epoch dynamique (soupape)
+    4. **HBP(H)** + **P_owner(n)** → répartition, pas le volume émis
+    5. **PoL score** → poids W de chaque machine dans le pool travail
 
-    ### Réponse rapide (sans accélération dynamique) :
-    - Bloc #0 à #104 999 → 1 ARTCB/bloc (epoch 0)
-    - Bloc #105 000 à #209 999 → 0.5 ARTCB/bloc (epoch 1)
-    - Bloc #210 000 à #314 999 → 0.25 ARTCB/bloc (epoch 2)
-    - … jusqu'au halving #64 (reward = 0)
-    - Supply max = 21 000 000 ARTCB (hard cap immuable — D-014)
-    - À forte adoption (1M blocs/j) : epoch_dyn ≈ 13 → reward divisé par 8 192 automatiquement
+    ### Réponse rapide (H ≤ 1M, sans accélération dynamique) :
+    - Bloc #0 à #209 999 → 50 ARTCB/bloc (epoch 0)
+    - Bloc #210 000 à #419 999 → 25 ARTCB/bloc (epoch 1)
+    - Bloc #420 000 à #629 999 → 12.5 ARTCB/bloc (epoch 2)
+    - … jusqu'au halving où le reward satoshi atteint 0
+    - Supply max = 21 000 000 ARTCB (50 × 210_000 × 2 — D-014 / D-016 / D-023)
     """
     import math
 

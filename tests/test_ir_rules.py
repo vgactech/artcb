@@ -205,7 +205,7 @@ class TestParseRuleFromText:
         assert rule is None
 
     def test_parse_structured_condition_action(self):
-        text = "RULE [rule_x] Halving check | CONDITION: block_count > 105000 | ACTION: set(halving, 1)"
+        text = "RULE [rule_x] Halving check | CONDITION: block_count > 210000 | ACTION: set(halving, 1)"
         rule = parse_rule_from_text(text, rule_id="rule_halving")
         assert rule is not None
         assert rule.conditions[0].variable == "block_count"

@@ -138,34 +138,33 @@ class TestBlockRewards:
     """Test block reward calculation and distribution."""
 
     def test_calculate_block_reward_genesis(self, tmp_path):
-        """Genesis block reward = 1 ARTCB."""
+        """Genesis block reward = 50 ARTCB (D-023, 50 × 210k × 2 = 21M)."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
         reward = chain._calculate_block_reward(0)
 
-        assert reward == 1 * 100_000_000  # 1 ARTCB in satoshi
+        assert reward == 50 * 100_000_000  # 50 ARTCB in satoshi
 
     def test_calculate_block_reward_halving(self, tmp_path):
-        """Reward halves every 105,000 blocks (halving interval réduit — décision D-014 rev.)."""
+        """Reward halves every 210,000 blocks (D-016 restored)."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
         # epoch_dyn = 0 sur chaîne vide (< 2 blocs), seul halving fixe compte
-        # Before first halving (105 000 blocs)
-        assert chain._calculate_block_reward(0) == 1 * 100_000_000
-        assert chain._calculate_block_reward(104_999) == 1 * 100_000_000
+        assert chain._calculate_block_reward(0) == 50 * 100_000_000
+        assert chain._calculate_block_reward(209_999) == 50 * 100_000_000
 
         # After first halving
-        assert chain._calculate_block_reward(105_000) == 50_000_000  # 0.5 ARTCB
-        assert chain._calculate_block_reward(209_999) == 50_000_000
+        assert chain._calculate_block_reward(210_000) == 25 * 100_000_000
+        assert chain._calculate_block_reward(419_999) == 25 * 100_000_000
 
         # After second halving
-        assert chain._calculate_block_reward(210_000) == 25_000_000  # 0.25 ARTCB
+        assert chain._calculate_block_reward(420_000) == 12.5 * 100_000_000
 
     def test_calculate_block_reward_max_halvings(self, tmp_path):
-        """After 64 halvings (×105 000 blocs), reward is 0."""
+        """After 64 halvings (×210 000 blocs), reward is 0."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
-        reward = chain._calculate_block_reward(64 * 105_000)
+        reward = chain._calculate_block_reward(64 * 210_000)
 
         assert reward == 0
 
@@ -227,7 +226,7 @@ class TestBlockWithRewards:
             contributors=contributors,
         )
 
-        assert block.block_reward == 1 * 100_000_000  # Genesis reward
+        assert block.block_reward == 50 * 100_000_000  # Genesis reward
         assert len(block.contributors) == 2
 
         # Check rewards distributed
@@ -247,7 +246,7 @@ class TestBlockWithRewards:
             pol_score=0.75,
         )
 
-        assert block.block_reward == 1 * 100_000_000
+        assert block.block_reward == 50 * 100_000_000
         assert len(block.contributors) == 0
 
     def test_block_json_includes_rewards(self, tmp_path):
@@ -267,7 +266,7 @@ class TestBlockWithRewards:
 
         assert "block_reward" in data
         assert "contributors" in data
-        assert data["block_reward"] == 1 * 100_000_000
+        assert data["block_reward"] == 50 * 100_000_000
         assert len(data["contributors"]) == 1
 
 
@@ -302,8 +301,8 @@ class TestWalletBalance:
 
         balance = wallet_mgr.get_balance(wallet.address, chain.blocks_path)
 
-        assert balance["balance_satoshi"] == 1 * 100_000_000
-        assert balance["balance_artcb"] == 1.0
+        assert balance["balance_satoshi"] == 50 * 100_000_000
+        assert balance["balance_artcb"] == 50.0
         assert balance["block_count"] == 1
 
     def test_get_balance_multiple_blocks(self, tmp_path):
@@ -337,8 +336,8 @@ class TestWalletBalance:
 
         balance = wallet_mgr.get_balance(wallet.address, chain.blocks_path)
 
-        # 1 ARTCB (block 1) + 0.5 ARTCB (block 2, 50% share) = 1.5 ARTCB
-        assert balance["balance_artcb"] == 1.5
+        # 50 ARTCB (block 1) + 25 ARTCB (block 2, 50% share) = 75 ARTCB
+        assert balance["balance_artcb"] == 75.0
         assert balance["block_count"] == 2
 
     def test_get_balance_rewards_history(self, tmp_path):
@@ -360,6 +359,6 @@ class TestWalletBalance:
         assert len(balance["rewards"]) == 1
         reward = balance["rewards"][0]
         assert reward["block_index"] == 0
-        assert reward["reward_satoshi"] == 1 * 100_000_000
+        assert reward["reward_satoshi"] == 50 * 100_000_000
         assert reward["pol_score"] == 0.80
 

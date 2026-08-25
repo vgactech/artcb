@@ -31,6 +31,7 @@
 | D-020 | Mineurs **humain + agent IA** (C), signatures Ed25519 distinctes | ✅ Q-016 |
 | D-021 | Clés API **Bob + Gradium** (Q-009 = D) | ✅ `.env` local |
 | D-022 | **Pas d'OpenRouter hackathon** — LLM via clé **Bob CLI** (`BOB_API_KEY` ou alias `OPENROUTER_API_KEY`) | ✅ |
+| D-023 | Tokenomics 21 M cohérente : **R_0=50**, **H=210 000**, **R(H)**, **HBP 10→60→20 %**, **P_owner continu 100 % / 50 %→10 %**, binding humain, pré-blocs conservatifs, Job Provider | ✅ 2026-08-25 |
 
 ---
 

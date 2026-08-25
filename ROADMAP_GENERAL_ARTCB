@@ -65,7 +65,7 @@
 | 3.4 | `/chain/verify` | Détection tampering | ✅ |
 | 3.5 | Rapport `rapports/007_phase2_phase3_backend_chain.md` | Intégrité prouvée | ✅ |
 | 3.6 | `artcb-devnet` + faucet tARTCB | Spec RESEAU_DEVNET | ⏳ |
-| 3.7 | Block reward + split PoL collectif | Spec TOKENOMICS §6-7 | ⏳ |
+| 3.7 | Block reward + split PoL collectif | Spec TOKENOMICS §6-7 + D-023 (50/210k/21M, R(H), HBP, OwnerDecay) | ✅ rapport 124 |
 
 ---
 

@@ -13,7 +13,7 @@
 | ID | Commande | Attendu | Statut | Dernière exec |
 |----|----------|---------|--------|---------------|
 | T-B01 | `python3 -m pytest tests/ -q` | 478/478 passed | [x] | 2026-08-05 478/478 ✅ (8 skipped bridges live intentionnels) |
-| T-B02 | `python3 -m pytest tests/test_wallet_rewards.py -q` | all pass, reward 1 ARTCB | [x] | 2026-07-07 |
+| T-B02 | `python3 -m pytest tests/test_wallet_rewards.py -q` | all pass, reward 50 ARTCB / 210k | [x] | 2026-08-25 |
 | T-B03 | `python3 -m pytest tests/test_pol.py -q` | split 1.0 ARTCB | [x] | 2026-07-07 |
 | T-B04 | `python3 -m pytest tests/test_api.py -q` | API OK | [x] | 2026-07-07 |
 | T-B05 | `python3 -m pytest tests/test_chain.py -q` | C verify OK | [x] | 2026-07-07 |
@@ -217,4 +217,14 @@
 | Date UTC | Session | Tests passés | Notes |
 |----------|---------|--------------|-------|
 | 2026-08-05T16:00Z | Audit sécurité "unsigned" + endpoints | 478/478 pytest + 25/25 P2P Replit | Rapport 116 |
+
+---
+
+## 12. Tests protocole économique D-023 (2026-08-25)
+
+| ID | Commande / scénario | Attendu | Statut | Dernière exec |
+|----|---------------------|---------|--------|---------------|
+| T-E01 | `pytest tests/test_economics_protocol.py` | 21M identity, R(H), HBP, P_owner, settlement, API | [x] | 2026-08-25  ✅ |
+| T-E02 | `pytest tests/test_wallet_rewards.py` | genesis 50 ARTCB, halving 210k | [x] | 2026-08-25 ✅ |
+| T-E03 | `python3 -m pytest tests/ -q` | suite complète 0 fail | [x] | 2026-08-25 535 passed, 20 skipped, 0 fail |
 
