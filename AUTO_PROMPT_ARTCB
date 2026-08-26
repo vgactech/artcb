@@ -1120,3 +1120,17 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **API** `/api/v1/economics/*`
 - Tests : `tests/test_economics_protocol.py` + `test_wallet_rewards.py` alignés 50/210k
 - Source unique : `src/artcb/tokenomics.py` — jamais depuis .env
+
+## [2026-08-26T18:20:00Z] Rapport 160 — audit croisé dumps 124→159 vs code branche
+
+- **Branche :** `cursor/tokenomics-21m-hbp-owner-decay-3fcb` (HEAD conversation `73efd0d`, code economics `25b832f`)
+- **Ordre de vérité conversationnel ≠ numéros de fichiers.** Recoller : 125 (hors ARTCB) → 127 TPM → 126 fondation → 128–133 tokenomics → 134–145 Finder/Q=100/DDPBA → 146–155 spec pré-code → **124 code** → 156 audit post-code → 157 sim pré-pivot → **158–159 reset (spec finale conversation)**
+- **Doublons md5 :** 140≡141, 154≡155. Ne pas écraser.
+- **Code 124 = spec 153–155** (50/210k + R(H) + HBP 4.15e9/8.3e9 + P_owner **par index machine**). **535 tests verts = ce modèle-là.**
+- **Spec 158–159 ABROGE :** calendrier 210k, velocity `extra_epochs`, 8.3 Md comme Hmax, pic HBP 4.15 Md, settlement par index, cap 100k machines. **Le code n’a PAS suivi.** 21 M reste hard cap.
+- **159 demande :** `R_block = min(R(H_adult 18+), remaining)` ; HBP vs `H/H_adult,max` (chiffre WPP **non gelé**, 5.82 Md = estimation) ; settlement `P(N_A)` **commun** à tous les humains de A.
+- **Contradiction 159 non tranchée :** M1 toujours 100 % vs P(N_A) appliqué aussi à M1 dès N≥2.
+- **0 % code :** Finder Q=100, HumanID, WorkID/PartitionMap, EconomicRoot dans `build_block_hash`, Provider % dans settle, mining fields machine.
+- **Interdit :** implémenter 158–159 sans GO explicite + réponses rapport 160 §8. Ne pas présenter 535 tests comme protocole complet (156 §19).
+- **D-016 / D-023 :** en conflit documentaire avec 158–159 — ne pas « corriger » les décisions sans l’utilisateur.
+- Rapport : `rapports/160_audit_croise_simulations_124_a_159_2026-08-26.md`

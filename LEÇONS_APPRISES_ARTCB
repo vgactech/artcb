@@ -135,3 +135,13 @@
 **Leçon :** Un hard cap documenté n'est réel que si `R_0 × intervalle × 2` l'atteint. Toute réduction du reward initial doit recalculer l'intervalle (ou l'inverse).
 **Action :** Rapport 124 — R_0=50, intervalle=210k, couche R(H)/HBP/P_owner continue. Ne plus mélanger le calendrier 1/105k avec le modèle validé.
 
+### L-030 — Dumps de conversation hors ordre + spec qui bouge après le code (26 août 2026)
+**Contexte :** Fichiers `rapports/125`…`159` sont des copier-coller ChatGPT ; 140≡141, 154≡155 ; 159 contient 3 sessions. Le code `25b832f` implémente 153–155. Les rapports 158–159 abrogent ensuite 210k, la vélocité et le settlement par index.
+**Leçon :** (1) Lire les dumps dans l’**ordre de discussion**, pas l’ordre des numéros. (2) Un « je verrouille » ChatGPT ≠ D-xxx tant que DECISIONS n’est pas amendé. (3) 535 pytest verts figent le modèle 124, pas le dernier mot conversationnel. (4) Ne pas patcher 159 tant que M1-après-M2 et H_adult,max ne sont pas tranchés par l’utilisateur.
+**Action :** Rapport 160 — inventaire questions / code / manques. Pas d’implémentation 158–159 dans cette passe.
+
+### L-031 — EconomicRoot hors du hash de bloc
+**Contexte :** `ffi.build_block_hash` canonise index/timestamp/prev/graph/merkle/pol **avant** d’écrire `economics` et `contributors` réécrits par `settle_block` (rapport 156 §14, confirmé lecture `chain/manager.py`).
+**Leçon :** Un settlement JSON non haché n’est pas du consensus. Changer le canonique C est un fork.
+**Action :** Noté 160 §6.12 ; attendre GO + spec des champs.
+

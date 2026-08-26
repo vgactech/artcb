@@ -116,3 +116,26 @@ Formulaire : https://forms.gle/djEGNfieyDtFuBBy6
 | Q-010 | Formulaire crédits Cursor | Toi |
 
 **Gate MVP : 🟢 DÉBLOQUÉ** — Phase 2+ peut continuer.
+
+---
+
+## [2026-08-26] Questions tokenomics post-simulations 124–159 (rapport 160)
+
+Ces questions **ne remplacent pas** le tableau MVP ci-dessus. Elles bloquent tout patch « spec 159 » sans GO.
+
+| ID | Question | État |
+|----|----------|------|
+| Q-E01 | Abroger D-016 (halving 210 000 blocs) comme le demandent 158–159 ? | ⏳ Utilisateur — code + D-016 encore actifs |
+| Q-E02 | M1 reste 100 % après M2+, ou P(N_A) s’applique aussi à M1 (159 §27) ? | ⏳ Contradiction interne 159 |
+| Q-E03 | H_adult,max = extraction ONU WPP 18+ datée ; gel genesis ou MAJ ? | ⏳ 5,82 Md = estimation seulement |
+| Q-E04 | HBP à H=0 (5 ARTCB) : burn / trésor / bloc interdit ? | ⏳ |
+| Q-E05 | HBP : équiparti (code) vs pondéré Finder W_i (134–156) ? | ⏳ |
+| Q-E06 | Part Job Provider / Worker dans le pool travail ? | ⏳ (30/70 = test, pas règle) |
+| Q-E07 | Velocity `extra_epochs` : supprimer ou flag expérimental ? | ⏳ 158–159 = supprimer ; code = actif |
+| Q-E08 | Courbe OwnerDecay : τ,β Cursor (38 %@1k) ou 0.10+0.40/(1+(n-2)/1000) ? | ⏳ |
+| Q-E09 | Un humain bindé chez A peut-il lier d’autres owners ? N_A peut-il baisser ? | ⏳ |
+| Q-E10 | Finder Q=100 / DDPBA WorkID / HumanID 18+ : GO implémentation ? | ⏳ 0 % code |
+| Q-E11 | Reliquat ~0,023 ARTCB du calendrier satoshi : cap strict vs dernier bloc | ⏳ |
+| Q-E12 | 1 wallet/device (rapport 114) vs N machines / 1 owner | ⏳ |
+
+Détail et catalogue complet : `rapports/160_audit_croise_simulations_124_a_159_2026-08-26.md` §3 et §8.

@@ -31,7 +31,7 @@
 | D-020 | Mineurs **humain + agent IA** (C), signatures Ed25519 distinctes | ✅ Q-016 |
 | D-021 | Clés API **Bob + Gradium** (Q-009 = D) | ✅ `.env` local |
 | D-022 | **Pas d'OpenRouter hackathon** — LLM via clé **Bob CLI** (`BOB_API_KEY` ou alias `OPENROUTER_API_KEY`) | ✅ |
-| D-023 | Tokenomics 21 M cohérente : **R_0=50**, **H=210 000**, **R(H)**, **HBP 10→60→20 %**, **P_owner continu 100 % / 50 %→10 %**, binding humain, pré-blocs conservatifs, Job Provider | ✅ 2026-08-25 |
+| D-023 | Tokenomics 21 M cohérente : **R_0=50**, **H=210 000**, **R(H)**, **HBP 10→60→20 %**, **P_owner continu 100 % / 50 %→10 %**, binding humain, pré-blocs conservatifs, Job Provider | ✅ 2026-08-25 — **CONFLIT** avec dumps 158–159 (rapport 160) : calendrier 210k et HBP 8,3 Md abrogés en conversation, **pas encore** en code ni par décision écrite nouvelle |
 
 ---
 
@@ -119,3 +119,13 @@ Humains **et** agents IA autonomes (Explorateur / Critique) peuvent miner — **
 ## Tokenomics PoL collectif (D-014 → D-018)
 
 Voir `TOKENOMICS_ARTCB` §6 — split `reward_i = block_reward × (PoL_i / Σ PoL_j)`.
+
+## [2026-08-26] Note — D-016 / D-023 vs conversations 158–159
+
+**Pas de nouvelle décision actée ici.** Rapport 160 constate :
+
+- D-014 (21 M) reste l’invariant.
+- D-016 (halving 210 000 blocs) et la partie « 210k + HBP 4,15e9/8,3e9 + P_owner(index) » de D-023 sont **le modèle du code `25b832f`**.
+- Les dumps 158–159 demandent `R = min(R(H_adult), remaining)` sans calendrier ni vélocité, HBP calé sur adultes 18+, settlement au taux courant `N_A`.
+
+Toute modification de D-016/D-023 exige un **GO utilisateur explicite** (AUTO_PROMPT : ne pas développer sans ordre). Questions Q-E01…Q-E12 dans `QUESTIONS_OUVERTES_ARTCB`.

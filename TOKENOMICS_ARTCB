@@ -82,6 +82,8 @@ C'est une **blockchain de traçabilité cognitive** avec une **unité de compte 
 
 **Correction rapport 124 :** le code `1 ARTCB / 105 000 blocs` (rapports 045/080) convergeait vers **210 000 ARTCB**, pas 21 M. Ce n'est plus le protocole.
 
+**Note rapport 160 (2026-08-26) :** les dumps 158–159 abrogent le **calendrier 210 000 blocs** et le dynamic halving comme règles d’émission (`R_block = min(R(H_adult), remaining)`). Le **code de cette branche suit encore §4.1**. Pas de changement ici tant que D-016 n’est pas amendé. Voir `rapports/160_audit_croise_simulations_124_a_159_2026-08-26.md`.
+
 ### 4.2 Durée d'émission estimée
 
 Avec halving tous les 210 000 blocs et intervalle ~10 min :
