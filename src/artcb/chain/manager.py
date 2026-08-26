@@ -370,45 +370,37 @@ class ChainManager:
         *,
         verified_humans: float = 0.0,
     ) -> int:
-        """Reward issued = min(schedule 50/210k, R(H), remaining 21M cap).
+        """Reward issued = min(R(H), remaining 21M cap). Index does not cut R.
 
-        epoch_dyn (velocity) remains a safety valve on top of the fixed schedule.
+        The 210_000-block schedule and velocity extra_epochs were removed (D-024).
         """
-        from src.artcb.tokenomics import VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS
-
-        epoch_dyn = self._compute_dynamic_epoch(VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS)
         return issued_reward_satoshi(
             block_index,
             verified_humans=verified_humans,
-            extra_epochs=epoch_dyn,
             issued_so_far_satoshi=self._issued_so_far_satoshi(),
         )
 
     def _compute_dynamic_epoch(self, velocity_ref: int, window_sec: int) -> int:
-        """
-        Mesure la vitesse de minage sur la fenêtre window_sec et retourne
-        l'epoch dynamique supplémentaire (entier ≥ 0).
+        """REMOVED from emission (D-024). Kept as a velocity *metric* only.
 
-        velocity_24h = nombre de blocs créés dans les dernières window_sec secondes
-        epoch_dyn    = floor(log2(max(1, velocity_24h / velocity_ref)))
-
-        Exemples (velocity_ref = 144 blocs/jour) :
-          velocity = 22   blocs/j → epoch_dyn = floor(log2(0.15)) = 0 (pas d'effet)
-          velocity = 144  blocs/j → epoch_dyn = floor(log2(1))    = 0 (référence)
-          velocity = 288  blocs/j → epoch_dyn = floor(log2(2))    = 1
-          velocity = 1440 blocs/j → epoch_dyn = floor(log2(10))   = 3
-          velocity = 14400 blocs/j → epoch_dyn = floor(log2(100)) = 6
-          velocity = 1M   blocs/j → epoch_dyn = floor(log2(6944)) = 12
-          velocity = 1B   blocs/j → epoch_dyn = floor(log2(6.9M)) = 22
+        Always returns 0 so leftover dashboard callers cannot re-halve R_block.
+        Use ``_observe_velocity_per_day`` if a UI needs blocs/jour.
         """
-        import math
+        logger.debug(
+            "dynamic epoch unused for reward velocity_ref=%s window_sec=%s",
+            velocity_ref,
+            window_sec,
+        )
+        return 0
+
+    def _observe_velocity_per_day(self, window_sec: int = 86_400) -> float:
+        """Blocs/jour observés sur la fenêtre — métrique, pas un halving."""
         from datetime import UTC, datetime, timedelta
 
         try:
             all_blocks = self._read_all_blocks()
             if len(all_blocks) < 2:
-                return 0
-
+                return 0.0
             cutoff = datetime.now(UTC) - timedelta(seconds=window_sec)
             count_recent = 0
             for b in all_blocks:
@@ -419,14 +411,9 @@ class ChainManager:
                         count_recent += 1
                 except (ValueError, AttributeError):
                     pass
-
-            # Normaliser en blocs/jour
-            velocity_day = count_recent * (86_400 / window_sec)
-            ratio = max(1.0, velocity_day / velocity_ref)
-            return int(math.log2(ratio))
+            return count_recent * (86_400 / window_sec)
         except Exception:
-            # Si erreur de lecture, comportement conservateur : pas d'epoch dynamique
-            return 0
+            return 0.0
 
     def verify(self) -> dict:
         try:

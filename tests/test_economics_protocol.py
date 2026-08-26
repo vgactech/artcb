@@ -1,6 +1,6 @@
-"""Economic protocol — 21M / 50 / 210k + R(H) + HBP + owner decay + settlement.
+"""Economic protocol — 21M hard cap + R(H) geopopulation (D-024).
 
-Reproduces the audited simulation (2026-08-25) with real arithmetic, no mocks.
+210k block-index halving and velocity extra_epochs are removed from the live path.
 """
 
 from __future__ import annotations
@@ -14,8 +14,6 @@ from src.api.main import create_app
 from src.artcb.chain.manager import ChainManager
 from src.artcb.economics.emission import (
     H_REF,
-    asymptotic_schedule_supply_satoshi,
-    cumulative_schedule_artcb,
     issued_reward_satoshi,
     population_reward_artcb,
 )
@@ -26,9 +24,8 @@ from src.artcb.economics.owner_decay import human_share, owner_share
 from src.artcb.economics.preblocks import partition_block_reward
 from src.artcb.economics.settlement import MachineContribution, settle_block
 from src.artcb.tokenomics import (
-    HALVING_INTERVAL,
+    EMISSION_MODEL,
     INITIAL_BLOCK_REWARD_ARTCB,
-    INITIAL_BLOCK_REWARD_SATOSHI,
     MAX_SUPPLY_ARTCB,
     MAX_SUPPLY_SATOSHI,
     SATOSHI_PER_ARTCB,
@@ -36,39 +33,27 @@ from src.artcb.tokenomics import (
 
 
 class TestEmissionIdentity:
-    def test_constants_restore_21m_identity(self):
+    def test_constants_restore_21m_hard_cap_not_schedule(self):
         assert INITIAL_BLOCK_REWARD_ARTCB == 50.0
-        assert HALVING_INTERVAL == 210_000
         assert MAX_SUPPLY_ARTCB == 21_000_000.0
-        assert INITIAL_BLOCK_REWARD_ARTCB * HALVING_INTERVAL * 2 == 21_000_000.0
+        assert EMISSION_MODEL == "R(H)"
 
-    def test_asymptotic_schedule_hits_hard_cap(self):
-        # Identité réelle : 50 × 210_000 × 2 = 21_000_000 exactement.
-        # En satoshi entier le décalage de bits (>> k) laisse une poussière
-        # non émise (~0.023 ARTCB) — toujours strictement sous le hard cap.
-        supply = asymptotic_schedule_supply_satoshi()
-        assert supply <= MAX_SUPPLY_SATOSHI
-        missing_artcb = (MAX_SUPPLY_SATOSHI - supply) / SATOSHI_PER_ARTCB
-        assert 0 <= missing_artcb < 0.03
-        assert supply / SATOSHI_PER_ARTCB == pytest.approx(21_000_000.0, abs=0.03)
-
-    def test_cumulative_table_600s_block(self):
-        # 52_596 blocs/an at 600 s/bloc
-        assert cumulative_schedule_artcb(52_596) == pytest.approx(2_629_800.0)
-        assert cumulative_schedule_artcb(5 * 52_596) == pytest.approx(11_824_500.0, rel=1e-6)
-        assert cumulative_schedule_artcb(10 * 52_596) == pytest.approx(17_074_500.0, rel=1e-6)
-        assert cumulative_schedule_artcb(20 * 52_596) == pytest.approx(20_346_750.0, rel=1e-6)
-
-    def test_epoch_table(self):
+    def test_index_does_not_halve_reward(self):
         assert issued_reward_satoshi(0) == 50 * SATOSHI_PER_ARTCB
         assert issued_reward_satoshi(209_999) == 50 * SATOSHI_PER_ARTCB
-        assert issued_reward_satoshi(210_000) == 25 * SATOSHI_PER_ARTCB
-        assert issued_reward_satoshi(420_000) == int(12.5 * SATOSHI_PER_ARTCB)
+        assert issued_reward_satoshi(210_000) == 50 * SATOSHI_PER_ARTCB
+        assert issued_reward_satoshi(420_000) == 50 * SATOSHI_PER_ARTCB
+        assert issued_reward_satoshi(64 * 210_000) == 50 * SATOSHI_PER_ARTCB
 
     def test_hard_cap_clips_last_block(self):
         almost = MAX_SUPPLY_SATOSHI - 1_000
         issued = issued_reward_satoshi(0, issued_so_far_satoshi=almost)
         assert issued == 1_000
+
+    def test_velocity_extra_epochs_ignored(self):
+        with_extra = issued_reward_satoshi(0, extra_epochs=12)
+        without = issued_reward_satoshi(0, extra_epochs=0)
+        assert with_extra == without == 50 * SATOSHI_PER_ARTCB
 
 
 class TestPopulationReward:
@@ -84,13 +69,15 @@ class TestPopulationReward:
         assert population_reward_artcb(1_000_000_000) < 1.0
         assert population_reward_artcb(2_000_000_000) < population_reward_artcb(1_000_000_000)
 
-    def test_issued_uses_min_of_schedule_and_r_h(self):
+    def test_issued_is_r_h_clipped_by_cap(self):
         genesis_at_1b = issued_reward_satoshi(0, verified_humans=1_000_000_000)
         assert genesis_at_1b < SATOSHI_PER_ARTCB
         assert genesis_at_1b == pytest.approx(
             population_reward_artcb(1_000_000_000) * SATOSHI_PER_ARTCB,
             rel=1e-6,
         )
+        late_index_same = issued_reward_satoshi(210_000, verified_humans=1_000_000_000)
+        assert late_index_same == genesis_at_1b
 
 
 class TestHBP:
@@ -326,7 +313,9 @@ class TestEconomicsAPI:
         params = client.get("/api/v1/economics/params")
         assert params.status_code == 200
         assert params.json()["initial_block_reward_artcb"] == 50.0
-        assert params.json()["halving_interval"] == 210_000
+        assert params.json()["halving_removed"] is True
+        assert params.json()["halving_interval"] is None
+        assert params.json()["emission_model"] == "R(H)"
         body = {
             "verified_humans": 100_000_000,
             "r_block_satoshi": 50 * SATOSHI_PER_ARTCB,

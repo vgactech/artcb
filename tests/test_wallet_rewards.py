@@ -138,35 +138,30 @@ class TestBlockRewards:
     """Test block reward calculation and distribution."""
 
     def test_calculate_block_reward_genesis(self, tmp_path):
-        """Genesis block reward = 50 ARTCB (D-023, 50 × 210k × 2 = 21M)."""
+        """Genesis block reward = 50 ARTCB (D-024, R(H≤1M)=50, cap 21M)."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
         reward = chain._calculate_block_reward(0)
 
         assert reward == 50 * 100_000_000  # 50 ARTCB in satoshi
 
-    def test_calculate_block_reward_halving(self, tmp_path):
-        """Reward halves every 210,000 blocks (D-016 restored)."""
+    def test_calculate_block_reward_no_index_halving(self, tmp_path):
+        """Index 210_000 no longer halves the reward (D-024 geopopulation)."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
-        # epoch_dyn = 0 sur chaîne vide (< 2 blocs), seul halving fixe compte
         assert chain._calculate_block_reward(0) == 50 * 100_000_000
         assert chain._calculate_block_reward(209_999) == 50 * 100_000_000
+        assert chain._calculate_block_reward(210_000) == 50 * 100_000_000
+        assert chain._calculate_block_reward(419_999) == 50 * 100_000_000
+        assert chain._calculate_block_reward(420_000) == 50 * 100_000_000
 
-        # After first halving
-        assert chain._calculate_block_reward(210_000) == 25 * 100_000_000
-        assert chain._calculate_block_reward(419_999) == 25 * 100_000_000
-
-        # After second halving
-        assert chain._calculate_block_reward(420_000) == 12.5 * 100_000_000
-
-    def test_calculate_block_reward_max_halvings(self, tmp_path):
-        """After 64 halvings (×210 000 blocs), reward is 0."""
+    def test_calculate_block_reward_far_index_still_r_h(self, tmp_path):
+        """A late index still pays R(H=0)=50 until the 21M cap is reached."""
         chain = ChainManager(blocks_path=tmp_path / "blocks.jsonl")
 
         reward = chain._calculate_block_reward(64 * 210_000)
 
-        assert reward == 0
+        assert reward == 50 * 100_000_000
 
     def test_split_reward_collective(self):
         """Split reward proportionally (TOKENOMICS §6.2)."""

@@ -1,26 +1,37 @@
-"""Emission schedule — 21M hard cap, 50 ARTCB genesis, 210_000-block epochs.
+"""Emission — 21M hard cap, R(H) only. No block-index schedule.
 
-Mathematical identity (integer satoshi, no velocity, H <= 1M)::
+Locked 2026-08-26 (user + rapports 158–159, D-024)::
 
-    R_0 * HALVING_INTERVAL * 2  =  50 * 210_000 * 2  =  21_000_000
+    R_block = min(R(H), remaining_21M)
 
-R(H) scales the *issued* reward down as verified-human population grows,
-never above the schedule and never above the remaining hard-cap budget.
+R(H) scales the issued reward as verified-human population grows::
 
     R(H) = R_0 * (max(H, H_REF) / H_REF)^(-α)
     α    = ln(50) / ln(64)
 
 so R(1M)=50 and R(64M)≈1, with no artificial floor at 1 ARTCB.
+
+REMOVED from the live path (rapport 161)::
+
+    - HALVING_INTERVAL = 210_000  (Bitcoin-style epoch)
+    - schedule = R0 >> (block_index // 210_000)
+    - extra_epochs / epoch_dyn = floor(log2(velocity_24h / 144))
+    - identity 50 × 210_000 × 2 as an *emission* schedule
+      (21M remains the hard cap only — D-014)
+
+Deprecated helpers below exist only to document the removed arithmetic.
+They must not be called from ChainManager.append_block.
 """
 
 from __future__ import annotations
 
 import logging
 import math
+import warnings
 
 from src.artcb.economics.satoshi import artcb_to_satoshi
 from src.artcb.tokenomics import (
-    HALVING_INTERVAL,
+    DEPRECATED_HALVING_INTERVAL,
     INITIAL_BLOCK_REWARD_ARTCB,
     INITIAL_BLOCK_REWARD_SATOSHI,
     MAX_HALVINGS,
@@ -55,42 +66,39 @@ def population_reward_artcb(verified_humans: float) -> float:
     return reward
 
 
-def schedule_reward_satoshi(block_index: int, extra_epochs: int = 0) -> int:
-    """Bitcoin-style schedule: R_0 >> (index // 210_000 + extra_epochs)."""
-    if block_index < 0:
-        raise ValueError(f"block_index must be >= 0, got {block_index}")
-    if extra_epochs < 0:
-        raise ValueError(f"extra_epochs must be >= 0, got {extra_epochs}")
-    epoch = block_index // HALVING_INTERVAL + extra_epochs
-    if epoch >= MAX_HALVINGS:
-        return 0
-    return INITIAL_BLOCK_REWARD_SATOSHI >> epoch
-
-
 def issued_reward_satoshi(
-    block_index: int,
+    block_index: int = 0,
     *,
     verified_humans: float = 0,
-    extra_epochs: int = 0,
     issued_so_far_satoshi: int = 0,
+    extra_epochs: int = 0,
 ) -> int:
-    """Reward actually issued for this block.
+    """Reward actually issued for this block: min(R(H), remaining_hard_cap).
 
-    ``min(schedule, R(H), remaining_hard_cap)``.
+    ``block_index`` is kept for call-site compatibility and logging only.
+    It does **not** reduce the reward.
+
+    ``extra_epochs`` is accepted then ignored (removed velocity/halving path).
+    Passing a non-zero value logs a warning so leftover callers are visible.
     """
+    if block_index < 0:
+        raise ValueError(f"block_index must be >= 0, got {block_index}")
     if issued_so_far_satoshi < 0:
         raise ValueError("issued_so_far_satoshi must be >= 0")
+    if extra_epochs:
+        logger.warning(
+            "extra_epochs=%s ignored — velocity/halving removed from emission (D-024)",
+            extra_epochs,
+        )
     remaining = MAX_SUPPLY_SATOSHI - issued_so_far_satoshi
     if remaining <= 0:
         logger.debug("hard cap reached issued_so_far=%s", issued_so_far_satoshi)
         return 0
-    scheduled = schedule_reward_satoshi(block_index, extra_epochs=extra_epochs)
     population = artcb_to_satoshi(population_reward_artcb(verified_humans))
-    issued = min(scheduled, population, remaining)
+    issued = min(population, remaining)
     logger.debug(
-        "issued_reward index=%s schedule=%s R(H)=%s remaining=%s -> %s",
+        "issued_reward index=%s (unused for schedule) R(H)=%s remaining=%s -> %s",
         block_index,
-        scheduled,
         population,
         remaining,
         issued,
@@ -98,25 +106,52 @@ def issued_reward_satoshi(
     return issued
 
 
-def asymptotic_schedule_supply_satoshi() -> int:
-    """Sum of the pure 50/210k schedule until reward hits 0 satoshi.
+def schedule_reward_satoshi(block_index: int, extra_epochs: int = 0) -> int:
+    """REMOVED live path — Bitcoin-style 210k schedule, kept as historical record.
 
-    Equals 21_000_000 ARTCB in integer satoshi when R_0 * H * 2 fits the
-    satoshi grid (50 * 1e8 is a power-of-two-friendly integer).
+    Do not use for new blocks. See issued_reward_satoshi.
     """
+    warnings.warn(
+        "schedule_reward_satoshi is removed from emission (D-024 geopopulation). "
+        "Live reward is min(R(H), remaining_21M).",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    if block_index < 0:
+        raise ValueError(f"block_index must be >= 0, got {block_index}")
+    if extra_epochs < 0:
+        raise ValueError(f"extra_epochs must be >= 0, got {extra_epochs}")
+    epoch = block_index // DEPRECATED_HALVING_INTERVAL + extra_epochs
+    if epoch >= MAX_HALVINGS:
+        return 0
+    return INITIAL_BLOCK_REWARD_SATOSHI >> epoch
+
+
+def asymptotic_schedule_supply_satoshi() -> int:
+    """Historical sum of the removed 50/210k schedule (not the live emission)."""
+    warnings.warn(
+        "asymptotic_schedule_supply_satoshi documents the removed 210k calendar.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     total = 0
     for epoch in range(MAX_HALVINGS):
         reward = INITIAL_BLOCK_REWARD_SATOSHI >> epoch
         if reward == 0:
             break
-        total += reward * HALVING_INTERVAL
+        total += reward * DEPRECATED_HALVING_INTERVAL
         if total >= MAX_SUPPLY_SATOSHI:
             return MAX_SUPPLY_SATOSHI
     return min(total, MAX_SUPPLY_SATOSHI)
 
 
 def cumulative_schedule_artcb(block_count: int) -> float:
-    """Cumulative ARTCB issued after ``block_count`` blocks (H<=1M, no velocity)."""
+    """Historical cumulative ARTCB of the removed 210k calendar (H<=1M)."""
+    warnings.warn(
+        "cumulative_schedule_artcb documents the removed 210k calendar.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if block_count < 0:
         raise ValueError("block_count must be >= 0")
     total = 0
@@ -126,7 +161,7 @@ def cumulative_schedule_artcb(block_count: int) -> float:
         reward = INITIAL_BLOCK_REWARD_SATOSHI >> epoch
         if reward == 0:
             break
-        take = min(remaining, HALVING_INTERVAL)
+        take = min(remaining, DEPRECATED_HALVING_INTERVAL)
         total += reward * take
         remaining -= take
         epoch += 1

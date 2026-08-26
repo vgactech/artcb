@@ -68,31 +68,32 @@ C'est une **blockchain de traçabilité cognitive** avec une **unité de compte 
 
 ---
 
-## 4. Émission (style Bitcoin adapté au PoL)
+## 4. Émission (géopopulation — D-024)
 
-### 4.1 Block reward initial
+### 4.1 Block reward
 
-| Paramètre | Valeur (D-014 / D-016 / D-023 — 2026-08-25) |
+| Paramètre | Valeur (D-014 / D-024 — 2026-08-26) |
 |-----------|-----------------|
 | Block reward initial | **50 ARTCB** par bloc PoL accepté (`R_0`, ancre `R(H=1M)=50`) |
-| Intervalle cible | ~10 minutes (600 s → 52 596 blocs/an) |
-| Halving | Tous les **210 000 blocs** PoL acceptés |
-| Séquence halving | 50 → 25 → 12,5 → … → ~0 |
-| Identité du plafond | `50 × 210 000 × 2 = 21 000 000` |
+| Intervalle cible | ~10 minutes (600 s → 52 596 blocs/an) — **rythme de bloc, pas de coupe du reward** |
+| Halving 210 000 blocs | **RETIRÉ** (ex D-016) |
+| Halving vélocité `extra_epochs` | **RETIRÉ** |
+| Émission live | `R_block = min(R(H), remaining_21M)` |
+| Identité du plafond | **21 000 000 = hard cap** (D-014). Ce n’est plus `50 × 210 000 × 2` comme calendrier. |
 
-**Correction rapport 124 :** le code `1 ARTCB / 105 000 blocs` (rapports 045/080) convergeait vers **210 000 ARTCB**, pas 21 M. Ce n'est plus le protocole.
-
-**Note rapport 160 (2026-08-26) :** les dumps 158–159 abrogent le **calendrier 210 000 blocs** et le dynamic halving comme règles d’émission (`R_block = min(R(H_adult), remaining)`). Le **code de cette branche suit encore §4.1**. Pas de changement ici tant que D-016 n’est pas amendé. Voir `rapports/160_audit_croise_simulations_124_a_159_2026-08-26.md`.
+**Correction rapport 124 :** le code `1 ARTCB / 105 000 blocs` convergeait vers 210 000 ARTCB.  
+**Correction rapport 161 :** le calendrier `50 × 210 000 × 2` n’est plus la règle d’émission ; 21 M reste intouchable.
 
 ### 4.2 Durée d'émission estimée
 
-Avec halving tous les 210 000 blocs et intervalle ~10 min :
+Sans calendrier, la date d’épuisement des 21 M **dépend de H(t)** :
 
-- ~4 ans par epoch de halving ;
-- ~2,63 M ARTCB la 1re année, ~11,82 M à 5 ans, ~17,07 M à 10 ans, ~20,35 M à 20 ans ;
-- émission complète des 21 M sur plusieurs décennies (même ordre de grandeur que Bitcoin).
+- tant que H ≤ 1 M : 50 ARTCB/bloc → 21 M en **420 000 blocs** si H reste bas ;
+- si H monte, R(H) baisse, l’épuisement recule (voir tables rapport 159).
 
-**Note :** `R(H)` et le halving dynamique (vitesse) ne peuvent que **réduire** l'émission par rapport à ce calendrier ; jamais la faire dépasser 21 M.
+Les frais collectés reviennent au **supply restant** (rapport 161).
+
+**Note :** `R(H)` ne peut que **réduire** l’émission par rapport à 50/bloc ; jamais dépasser 21 M.
 
 ---
 

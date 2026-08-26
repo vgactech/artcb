@@ -134,7 +134,11 @@ def create_genesis(creator_addr: str, dev_addr: str) -> dict:
             "max_supply_artcb":    21_000_000,
             "satoshi_per_artcb":   100_000_000,
             "initial_block_reward": 50.0,
-            "halving_interval":    210_000,
+            "emission_model":      "R(H)",
+            "issued_formula":      "min(R(H), remaining_21M)",
+            "halving_interval":    None,
+            "halving_removed":     True,
+            "deprecated_halving_interval_archive": 210_000,
             "pol_threshold":       0.6,
             "pqc_algorithm":       "ML-DSA-65 FIPS204",
             "signature_scheme":    "Ed25519 + ML-DSA-65 hybrid",
@@ -143,7 +147,7 @@ def create_genesis(creator_addr: str, dev_addr: str) -> dict:
 
         "mission_statement": MISSION,
         "network_id":        "artcb-mainnet-1",
-        "genesis_version":   "3.0",
+        "genesis_version":   "4.0",
     }
 
     return genesis

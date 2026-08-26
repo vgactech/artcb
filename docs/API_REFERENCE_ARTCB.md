@@ -355,15 +355,15 @@ Score Proof-of-Link courant.
 
 ---
 
-## Economics (D-023 — 2026-08-25)
+## Economics (D-024 — 2026-08-26)
 
 Base : `/api/v1/economics`
 
 ### `GET /economics/params`
-Constantes immuables : `max_supply_artcb=21000000`, `initial_block_reward_artcb=50`, `halving_interval=210000`.
+Constantes : `max_supply_artcb=21000000`, `initial_block_reward_artcb=50`, `emission_model=R(H)`, `halving_removed=true`, `halving_interval=null`.
 
 ### `GET /economics/emission?block_index=&verified_humans=`
-`issued = min(schedule, R(H), remaining_21M)`.
+`issued = min(R(H), remaining_21M)`. `block_index` n’applique plus de halving.
 
 ### `GET /economics/hbp?verified_humans=`
 HBP 10 % → 60 % → 20 %.

@@ -2,6 +2,11 @@
 ARTCB — Étude économique complète 100 ans
 Cible : totalité des utilisateurs IA mondiaux (3 milliards d'ici 2030)
 Données sources : TechCrunch 2026, Searchlab, AICPB
+
+ARCHIVE — ce script simule encore un calendrier 210 000 blocs.
+Le protocole live (D-024, 2026-08-26) n'utilise PLUS ce calendrier :
+R_block = min(R(H), remaining_21M). Ne pas copier ces constantes dans le code.
+Voir rapports/161_reponses_bootstrap_hbp_halving_geopop_2026-08-26.md.
 """
 from __future__ import annotations
 import math

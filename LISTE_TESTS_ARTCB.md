@@ -224,7 +224,7 @@
 
 | ID | Commande / scénario | Attendu | Statut | Dernière exec |
 |----|---------------------|---------|--------|---------------|
-| T-E01 | `pytest tests/test_economics_protocol.py` | 21M identity, R(H), HBP, P_owner, settlement, API | [x] | 2026-08-25  ✅ |
-| T-E02 | `pytest tests/test_wallet_rewards.py` | genesis 50 ARTCB, halving 210k | [x] | 2026-08-25 ✅ |
-| T-E03 | `python3 -m pytest tests/ -q` | suite complète 0 fail | [x] | 2026-08-25 535 passed, 20 skipped, 0 fail |
+| T-E01 | `pytest tests/test_economics_protocol.py` | 21M cap, R(H) sans halving index, HBP, P_owner, settlement, API | [x] | 2026-08-26  D-024 |
+| T-E02 | `pytest tests/test_wallet_rewards.py` | genesis 50 ARTCB, index 210k **ne coupe plus** | [x] | 2026-08-26 D-024 |
+| T-E03 | `python3 -m pytest tests/ -q` | suite complète 0 fail | [x] | 2026-08-26 **534 passed, 20 skipped, 0 fail** |
 

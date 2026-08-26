@@ -1134,3 +1134,13 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Interdit :** implémenter 158–159 sans GO explicite + réponses rapport 160 §8. Ne pas présenter 535 tests comme protocole complet (156 §19).
 - **D-016 / D-023 :** en conflit documentaire avec 158–159 — ne pas « corriger » les décisions sans l’utilisateur.
 - Rapport : `rapports/160_audit_croise_simulations_124_a_159_2026-08-26.md`
+
+## [2026-08-26T20:15:00Z] Rapport 161 — D-024 géopopulation, retrait 210k live
+
+- **GO utilisateur :** plus de halving 210 000 blocs ; émission = `min(R(H), remaining_21M)`.
+- **D-016 abrogé.** D-023 amendé (partie 210k). D-014 (21 M) inchangé. Frais → supply restant (spec, pas encore module fee).
+- **HBP 10→60→20 confirmé.** Bootstrap : créateur déjà 100 % vérifié, puis H0=100. Finder par défaut, acceptation en ligne. 272,16/j = sim ; réel estimé 20–30/j.
+- **Code live :** `emission.py` / `ChainManager._calculate_block_reward` sans schedule ni extra_epochs. `_compute_dynamic_epoch` retourne 0. Helpers 210k = deprecated+warning.
+- **Genesis 4.0** `halving_interval=null`. API params `halving_removed=true`.
+- **Pas encore :** settlement N_A, HBP 18+, Finder, fees dynamiques.
+- Rapport : `rapports/161_reponses_bootstrap_hbp_halving_geopop_2026-08-26.md`

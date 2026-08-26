@@ -18,7 +18,6 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from artcb.economics.emission import (  # noqa: E402
-    cumulative_schedule_artcb,
     issued_reward_satoshi,
     population_reward_artcb,
 )
@@ -26,7 +25,7 @@ from artcb.economics.hbp import hbp_rate
 from artcb.economics.owner_decay import owner_share
 from artcb.economics.settlement import MachineContribution, settle_block
 from artcb.tokenomics import (  # noqa: E402
-    HALVING_INTERVAL,
+    EMISSION_MODEL,
     INITIAL_BLOCK_REWARD_ARTCB,
     MAX_SUPPLY_ARTCB,
     SATOSHI_PER_ARTCB,
@@ -42,7 +41,8 @@ logger = logging.getLogger("artcb.simulate_economics")
 
 
 def main() -> dict:
-    identity = INITIAL_BLOCK_REWARD_ARTCB * HALVING_INTERVAL * 2
+    same_late = issued_reward_satoshi(210_000)
+    same_early = issued_reward_satoshi(0)
     r_h_table = {
         str(h): population_reward_artcb(h)
         for h in (0, 1_000_000, 10_000_000, 64_000_000, 100_000_000, 1_000_000_000)
@@ -54,11 +54,6 @@ def main() -> dict:
     owner_table = {
         str(n): owner_share(n)
         for n in (1, 2, 3, 4, 5, 10, 100, 1_000, 10_000, 100_000)
-    }
-    blocks_per_year = 52_596
-    supply_table = {
-        f"{years}y": cumulative_schedule_artcb(years * blocks_per_year)
-        for years in (1, 2, 5, 10, 20, 50, 100)
     }
 
     machines = [
@@ -88,15 +83,14 @@ def main() -> dict:
         "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "identity": {
             "R0": INITIAL_BLOCK_REWARD_ARTCB,
-            "halving_interval": HALVING_INTERVAL,
-            "R0_times_H_times_2": identity,
+            "emission_model": EMISSION_MODEL,
+            "halving_removed": True,
+            "index_210k_still_50": same_late == same_early == int(50 * SATOSHI_PER_ARTCB),
             "max_supply": MAX_SUPPLY_ARTCB,
-            "matches_21m": identity == MAX_SUPPLY_ARTCB,
         },
         "r_h_artcb": r_h_table,
         "hbp_rate": hbp_table,
         "owner_share": owner_table,
-        "cumulative_schedule_artcb": supply_table,
         "settlement_100m_R50": {
             "r_block_artcb": 50.0,
             "hbp_rate": settlement.hbp_rate,

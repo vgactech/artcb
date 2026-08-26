@@ -145,3 +145,8 @@
 **Leçon :** Un settlement JSON non haché n’est pas du consensus. Changer le canonique C est un fork.
 **Action :** Noté 160 §6.12 ; attendre GO + spec des champs.
 
+### L-032 — D-024 retrait halving 210k (26 août 2026)
+**Contexte :** L'utilisateur confirme la géopopulation et exige de retirer tout ce qui est lié au halving 210 000 blocs sans casser le reste.
+**Leçon :** Un calendrier Bitcoin `R0 >> (index//H)` n'est pas compatible avec `R = f(H)`. Le garder « en plus » (min(schedule, R(H))) recoupe encore le reward au bloc 210k. Il faut le sortir du chemin live, pas seulement le documenter. La vélocité `extra_epochs` était un second halving : même retrait. 21 M reste un cap, plus une identité 50×210k×2 d'émission.
+**Action :** Rapport 161. Tests : index 210k = toujours 50 si H≤1M. Archive `DEPRECATED_HALVING_INTERVAL`.
+

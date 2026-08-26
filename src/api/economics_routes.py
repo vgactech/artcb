@@ -12,7 +12,6 @@ from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from src.artcb.economics.emission import (
-    cumulative_schedule_artcb,
     issued_reward_satoshi,
     population_reward_artcb,
 )
@@ -23,7 +22,7 @@ from src.artcb.economics.owner_decay import human_share, owner_share
 from src.artcb.economics.preblocks import partition_block_reward
 from src.artcb.economics.settlement import MachineContribution, settle_block
 from src.artcb.tokenomics import (
-    HALVING_INTERVAL,
+    EMISSION_MODEL,
     INITIAL_BLOCK_REWARD_ARTCB,
     MAX_SUPPLY_ARTCB,
     SATOSHI_PER_ARTCB,
@@ -79,11 +78,11 @@ def economics_params() -> dict:
     return {
         "max_supply_artcb": MAX_SUPPLY_ARTCB,
         "initial_block_reward_artcb": INITIAL_BLOCK_REWARD_ARTCB,
-        "halving_interval": HALVING_INTERVAL,
-        "identity": (
-            f"{INITIAL_BLOCK_REWARD_ARTCB} × {HALVING_INTERVAL} × 2 = "
-            f"{INITIAL_BLOCK_REWARD_ARTCB * HALVING_INTERVAL * 2:.0f}"
-        ),
+        "emission_model": EMISSION_MODEL,
+        "issued_formula": "min(R(H), remaining_21M)",
+        "halving_interval": None,
+        "halving_removed": True,
+        "identity": "21_000_000 hard cap (D-014) — not 50×210000×2 schedule",
         "r_h": "50 * (max(H, 1e6) / 1e6) ** (-ln(50)/ln(64))",
         "hbp": "10% → 60% @ 4.15e9 → 20% @ 8.3e9",
         "owner_decay": "P(1)=100%; P(n≥2): 50% → 10% continuous",
@@ -94,22 +93,21 @@ def economics_params() -> dict:
 def economics_emission(
     block_index: int = 0,
     verified_humans: float = 0,
-    extra_epochs: int = 0,
 ) -> dict:
-    if block_index < 0 or verified_humans < 0 or extra_epochs < 0:
+    if block_index < 0 or verified_humans < 0:
         raise HTTPException(status_code=400, detail="indices and counts must be >= 0")
     issued = issued_reward_satoshi(
         block_index,
         verified_humans=verified_humans,
-        extra_epochs=extra_epochs,
     )
     return {
         "block_index": block_index,
+        "block_index_unused_for_schedule": True,
         "verified_humans": verified_humans,
         "r_h_artcb": population_reward_artcb(verified_humans),
         "issued_satoshi": issued,
         "issued_artcb": issued / SATOSHI_PER_ARTCB,
-        "cumulative_schedule_artcb": cumulative_schedule_artcb(block_index + 1),
+        "emission_model": EMISSION_MODEL,
     }
 
 

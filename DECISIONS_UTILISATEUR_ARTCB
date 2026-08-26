@@ -24,14 +24,16 @@
 | D-013 | Crédits Cursor = hors scope agent | ✅ Q-010 — utilisateur |
 | D-014 | Supply max **21 000 000 ARTCB** (8 décimales) | ✅ |
 | D-015 | Répartition **collective** block reward (split PoL) | ✅ |
-| D-016 | Halving tous les **210 000 blocs** PoL | ✅ |
+| D-016 | Halving tous les **210 000 blocs** PoL | ❌ **ABROGÉ** 2026-08-26 par D-024 (géopopulation). Conservé comme archive `DEPRECATED_HALVING_INTERVAL`. |
+| D-017 | Réseau test = **`artcb-devnet`** — pas Bitcoin testnet | ✅ |
 | D-017 | Réseau test = **`artcb-devnet`** — pas Bitcoin testnet | ✅ |
 | D-018 | ARTCB = incentive PoL, pas clone crypto PoW | ✅ |
 | D-019 | **Deux unités coin (C)** — `pARTCB` privé + `pubARTCB` public | ✅ Q-015 |
 | D-020 | Mineurs **humain + agent IA** (C), signatures Ed25519 distinctes | ✅ Q-016 |
 | D-021 | Clés API **Bob + Gradium** (Q-009 = D) | ✅ `.env` local |
 | D-022 | **Pas d'OpenRouter hackathon** — LLM via clé **Bob CLI** (`BOB_API_KEY` ou alias `OPENROUTER_API_KEY`) | ✅ |
-| D-023 | Tokenomics 21 M cohérente : **R_0=50**, **H=210 000**, **R(H)**, **HBP 10→60→20 %**, **P_owner continu 100 % / 50 %→10 %**, binding humain, pré-blocs conservatifs, Job Provider | ✅ 2026-08-25 — **CONFLIT** avec dumps 158–159 (rapport 160) : calendrier 210k et HBP 8,3 Md abrogés en conversation, **pas encore** en code ni par décision écrite nouvelle |
+| D-023 | Tokenomics 21 M cohérente : **R_0=50**, **H=210 000**, **R(H)**, **HBP 10→60→20 %**, **P_owner continu 100 % / 50 %→10 %**, binding humain, pré-blocs conservatifs, Job Provider | ⚠️ 2026-08-25 — **amendé par D-024** : la partie 210 000 blocs est retirée ; R0=50, 21 M, R(H), HBP 10→60→20, P_owner, binding, pré-blocs, Job Provider restent |
+| D-024 | Émission **géopopulation** : `R_block = min(R(H), remaining_21M)`. **Retrait** du calendrier 210 000 blocs et du `extra_epochs` vélocité. 21 M intouchable. Frais → supply restant. HBP **10→60→20** confirmé. Bootstrap : créateur déjà vérifié 100 % ; H0=100 ensuite. | ✅ 2026-08-26 |
 
 ---
 
@@ -120,12 +122,8 @@ Humains **et** agents IA autonomes (Explorateur / Critique) peuvent miner — **
 
 Voir `TOKENOMICS_ARTCB` §6 — split `reward_i = block_reward × (PoL_i / Σ PoL_j)`.
 
-## [2026-08-26] Note — D-016 / D-023 vs conversations 158–159
+## [2026-08-26] Note — D-024 actée (retrait 210k)
 
-**Pas de nouvelle décision actée ici.** Rapport 160 constate :
-
-- D-014 (21 M) reste l’invariant.
-- D-016 (halving 210 000 blocs) et la partie « 210k + HBP 4,15e9/8,3e9 + P_owner(index) » de D-023 sont **le modèle du code `25b832f`**.
-- Les dumps 158–159 demandent `R = min(R(H_adult), remaining)` sans calendrier ni vélocité, HBP calé sur adultes 18+, settlement au taux courant `N_A`.
-
-Toute modification de D-016/D-023 exige un **GO utilisateur explicite** (AUTO_PROMPT : ne pas développer sans ordre). Questions Q-E01…Q-E12 dans `QUESTIONS_OUVERTES_ARTCB`.
+GO utilisateur 2026-08-26 : géopopulation, plus de halving 210 000 blocs.  
+D-016 abrogé. D-023 amendé (la partie 210k). D-014 (21 M) inchangé.  
+Détail du retrait code : `rapports/161_reponses_bootstrap_hbp_halving_geopop_2026-08-26.md`.
