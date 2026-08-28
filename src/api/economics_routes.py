@@ -18,7 +18,6 @@ from src.artcb.economics.emission import (
 from src.artcb.economics.hbp import hbp_rate
 from src.artcb.economics.human_binding import HumanBindingError
 from src.artcb.economics.job_provider import JobProviderError
-from src.artcb.economics.owner_decay import human_share, owner_share
 from src.artcb.economics.preblocks import partition_block_reward
 from src.artcb.economics.settlement import MachineContribution, settle_block
 from src.artcb.tokenomics import (
@@ -26,6 +25,7 @@ from src.artcb.tokenomics import (
     INITIAL_BLOCK_REWARD_ARTCB,
     MAX_SUPPLY_ARTCB,
     SATOSHI_PER_ARTCB,
+    TARGET_BLOCK_SECONDS,
 )
 
 logger = logging.getLogger("artcb.api.economics")
@@ -79,13 +79,18 @@ def economics_params() -> dict:
         "max_supply_artcb": MAX_SUPPLY_ARTCB,
         "initial_block_reward_artcb": INITIAL_BLOCK_REWARD_ARTCB,
         "emission_model": EMISSION_MODEL,
-        "issued_formula": "min(R(H), remaining_21M)",
+        "issued_formula": "min(R(H) * dt/TARGET_BLOCK_SECONDS, remaining_21M)",
         "halving_interval": None,
         "halving_removed": True,
+        "target_block_seconds": TARGET_BLOCK_SECONDS,
         "identity": "21_000_000 hard cap (D-014) — not 50×210000×2 schedule",
         "r_h": "50 * (max(H, 1e6) / 1e6) ** (-ln(50)/ln(64))",
-        "hbp": "10% → 60% @ 4.15e9 → 20% @ 8.3e9",
-        "owner_decay": "P(1)=100%; P(n≥2): 50% → 10% continuous",
+        "hbp": "10% → 60% @ 4.15e9 → 20% @ 8.3e9 (anchors still provisional vs adults 18+)",
+        "owner_decay": "M1=100% always; M2+ share P(N_economic)=0.10+0.40*exp(-k*(N-2)); k from P(3)=49%",
+        "provider_worker": "50/50 start, HBP-like weights, clamp 20–80% (parameter)",
+        "fees": "ARTCB only for PoL; USD cap = cheapest observed L2 native p50 (Base 0.000311 2026-08-26)",
+        "dividend": "UniversalDividendVault — not remaining supply",
+        "lock_days": 30,
     }
 
 
@@ -120,14 +125,20 @@ def economics_hbp(verified_humans: float = 0) -> dict:
 
 
 @router.get("/owner-share")
-def economics_owner_share(machine_index: int = 1) -> dict:
+def economics_owner_share(machine_index: int = 1, n_economic: int | None = None) -> dict:
     if machine_index < 1:
         raise HTTPException(status_code=400, detail="machine_index must be >= 1")
-    p = owner_share(machine_index)
+    from src.artcb.economics.owner_decay import fleet_owner_share, payout_owner_share
+
+    n_econ = n_economic if n_economic is not None else machine_index
+    p = payout_owner_share(is_first_machine=(machine_index == 1), n_economic=n_econ)
     return {
         "machine_index": machine_index,
+        "n_economic": n_econ,
         "owner_share": p,
-        "human_share": human_share(machine_index),
+        "human_share": 1.0 - p,
+        "m1_always_100": machine_index == 1,
+        "fleet_p_extras": fleet_owner_share(max(n_econ, 2)),
     }
 
 

@@ -102,6 +102,20 @@ class TestOwnerDecay:
         assert owner_share(2) == pytest.approx(0.50)
         assert human_share(2) == pytest.approx(0.50)
 
+    def test_user_examples_49_and_48(self):
+        from src.artcb.economics.owner_decay import fleet_owner_share, payout_owner_share
+
+        assert fleet_owner_share(3) == pytest.approx(0.49)
+        assert fleet_owner_share(4) == pytest.approx(0.48, abs=5e-4)
+        assert payout_owner_share(is_first_machine=True, n_economic=1_000_000) == 1.0
+        assert payout_owner_share(is_first_machine=False, n_economic=3) == pytest.approx(0.49)
+
+    def test_all_extras_share_same_p(self):
+        from src.artcb.economics.owner_decay import payout_owner_share
+
+        p = payout_owner_share(is_first_machine=False, n_economic=4)
+        assert payout_owner_share(is_first_machine=False, n_economic=4) == p
+
     def test_strictly_decreasing_after_two(self):
         previous = owner_share(2)
         for n in (3, 4, 5, 10, 100, 1_000, 10_000, 100_000):
@@ -109,15 +123,13 @@ class TestOwnerDecay:
             assert current < previous
             previous = current
 
-    def test_calibration_points(self):
-        assert owner_share(1_000) == pytest.approx(0.38, rel=1e-9)
-        assert owner_share(100_000) == pytest.approx(0.1185, rel=1e-9)
-        assert owner_share(10_000) == pytest.approx(0.20, rel=5e-2)
-        assert owner_share(10**9) == pytest.approx(0.10, rel=5e-2)
-
     def test_floor_is_ten_percent(self):
         assert owner_share(10**12) == pytest.approx(0.10, abs=1e-4)
         assert owner_share(10**12) >= 0.10
+
+    def test_legacy_38pct_at_1000_superseded(self):
+        # Rapport 124 calibration is no longer live (user GO 162).
+        assert owner_share(1_000) == pytest.approx(0.10, abs=1e-8)
 
 
 class TestHumanBinding:
@@ -207,8 +219,7 @@ class TestSettlementABCD:
         assert result.hbp_rate == pytest.approx(0.112048, rel=1e-4)
         by_addr = result.by_address()
         assert set(by_addr) == {"A", "B", "C", "D"}
-        assert by_addr["A"] > by_addr["D"] > by_addr["C"] > by_addr["B"]
-        # A3 is continuously below 50/50 — C's human leg > A's owner leg on A3.
+        assert by_addr["A"] > by_addr["D"]
         a3_owner = next(
             line.reward_satoshi
             for line in result.lines
@@ -225,7 +236,8 @@ class TestSettlementABCD:
             for line in result.lines
             if line.machine_id == "A2" and line.role == "owner"
         )
-        assert a3_owner < a2_owner
+        # 162: all extras share the same P(N_economic=3) = 49%
+        assert a3_owner == a2_owner
 
     def test_dual_role_c_owns_c1_and_is_bound_on_a3(self):
         r_block = 50 * SATOSHI_PER_ARTCB

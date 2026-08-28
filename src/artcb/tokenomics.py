@@ -1,12 +1,12 @@
 """ARTCB tokenomics constants — single source of truth.
 
-Decisions (D-014, D-024 — 2026-08-26) :
+Decisions (D-014, D-024, D-025) :
   - Supply max      : 21 000 000 ARTCB (hard cap immuable, D-014)
   - Reward initial  : 50 ARTCB/bloc  (R_0, ancre R(H=1M)=50)
-  - Emission live   : R_block = min(R(H), remaining_21M)  — geopopulation
+  - Emission live   : R_block = min(R(H) * dt/TARGET_BLOCK_SECONDS, remaining_21M)
   - R(H)            : 50 × (H / 1_000_000)^(-α), α = ln(50)/ln(64)
   - HBP(H)          : 10 % → 60 % → 20 %
-  - P_owner(n)      : 100 % (n=1), puis 50 % → 10 % en continu
+  - P_owner         : M1 always 100%; extras share P(N_economic) (D-025)
   - Anti-Sybil      : conserve pour securite anti-malveillants uniquement
   - Pas de rate-limit : l'IA fonctionne en temps reel sans file d'attente
 
@@ -53,11 +53,17 @@ MAX_HALVINGS = 64
 # ── Supply max (hard cap absolue) ─────────────────────────────────────────
 # 21 000 000 ARTCB — decision de design immuable (D-014).
 # Le reseau rejette tout bloc qui ferait depasser ce plafond.
-# Les frais collectés reviennent au budget restant (rapport 161).
+# Fees do not mint. Rapport 162 / D-025: collected ARTCB fees go to
+# UniversalDividendVault (not RemainingSupply). RemainingSupply only shrinks
+# with issued block rewards, clipped by this hard cap.
 MAX_SUPPLY_ARTCB    = 21_000_000.0
 MAX_SUPPLY_SATOSHI  = int(MAX_SUPPLY_ARTCB * SATOSHI_PER_ARTCB)
 
-EMISSION_MODEL = "R(H)"  # min(population_reward, remaining_hard_cap)
+EMISSION_MODEL = "R(H)"  # min(R(H) * dt/TARGET_BLOCK_SECONDS, remaining_hard_cap)
+
+# Target block interval — TOKENOMICS §4.1 (~10 min). Rapport 162 GO:
+# 10× faster blocks ⇒ 1/10 reward/block. Not a 210k calendar.
+TARGET_BLOCK_SECONDS = 600.0
 
 # ── CONSTANTES IMMUABLES DU PROTOCOLE ─────────────────────────────────────
 IMMUTABLE_POL_THRESHOLD    = 0.6           # Jamais depuis .env — gravé genesis

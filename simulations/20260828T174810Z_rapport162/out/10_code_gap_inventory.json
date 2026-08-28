@@ -1,0 +1,149 @@
+{
+  "live_modules": [
+    "emission.py",
+    "hbp.py",
+    "human_binding.py",
+    "job_provider.py",
+    "owner_decay.py",
+    "preblocks.py",
+    "satoshi.py",
+    "settlement.py"
+  ],
+  "requested_vs_code": [
+    {
+      "item": "R_block=min(R(H), remaining)",
+      "code": "emission.py issued_reward_satoshi",
+      "status": "DONE D-024"
+    },
+    {
+      "item": "no 210k live",
+      "code": "emission.py / manager.py",
+      "status": "DONE D-024"
+    },
+    {
+      "item": "time-normalized emission vs block frequency",
+      "code": "MISSING",
+      "status": "GAP — user GO 162"
+    },
+    {
+      "item": "H = verified adults 18+",
+      "code": "verified_humans unlabeled",
+      "status": "GAP naming"
+    },
+    {
+      "item": "DemographicReference Model B",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "HBP 10→60→20",
+      "code": "hbp.py",
+      "status": "DONE trajectory; anchors still 4.15e9/8.3e9 provisional"
+    },
+    {
+      "item": "HBP weighted by contribution",
+      "code": "settlement.py equal split",
+      "status": "GAP"
+    },
+    {
+      "item": "M1=100% always",
+      "code": "owner_share(1)=1 but index-based extras",
+      "status": "PARTIAL"
+    },
+    {
+      "item": "M2+ share P(N_economic)",
+      "code": "owner_share(machine_index)",
+      "status": "GAP — wrong axis"
+    },
+    {
+      "item": "offline≠removed",
+      "code": "human_binding.py no states",
+      "status": "GAP"
+    },
+    {
+      "item": "external binding ≤1",
+      "code": "only unique per owner, not global",
+      "status": "GAP"
+    },
+    {
+      "item": "N_A can decrease after transfer/retire",
+      "code": "register-only, no transfer",
+      "status": "GAP"
+    },
+    {
+      "item": "WorkID unique settlement",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "Partition Hash mod N",
+      "code": "preblocks.py capacity weights only",
+      "status": "GAP"
+    },
+    {
+      "item": "missing PB requeue",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "N_max dynamic",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "Provider/Worker 50/50 dynamic",
+      "code": "job_provider.py no split",
+      "status": "GAP"
+    },
+    {
+      "item": "JobPayment ≠ BlockReward on-chain",
+      "code": "JobRecord payload only",
+      "status": "GAP"
+    },
+    {
+      "item": "UniversalDividendVault",
+      "code": "MISSING (161 remaining-supply spec superseded)",
+      "status": "GAP"
+    },
+    {
+      "item": "fee USD-capped oracle",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "30-day monthly lock",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "EconomicRoot in BlockHash",
+      "code": "C hash before economics",
+      "status": "GAP"
+    },
+    {
+      "item": "append-only binary audit log",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "Finder Q=100 / HumanID",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "creator revalidation >100 validators",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "PoLRecord native format",
+      "code": "MISSING",
+      "status": "GAP"
+    },
+    {
+      "item": "LLM tokens ≠ PoL",
+      "code": "not enforced",
+      "status": "GAP"
+    }
+  ]
+}

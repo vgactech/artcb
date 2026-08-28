@@ -1,19 +1,18 @@
-"""Continuous owner share P_owner(n) — no 50/40/30/20/10 steps.
+"""Continuous OwnerDecay — rapport 162 (user GO).
 
-Calibration (simulation ARTCB 2026-08-25)::
+M1 (first economically active machine of an owner) is **always 100%**.
+Every extra machine (n≥2) shares the **same** P(N_economic):
 
-    P_owner(1)        = 100 %
-    P_owner(2)        ≈  50 %
-    P_owner(1_000)    ≈  38 %
-    P_owner(100_000)  ≈  11.85 %
-    lim n→∞           =  10 %
+    P(N) = 0.10 + 0.40 * exp(-k * (N-2))   for N ≥ 2
+    P(2) = 50%
+    P(3) = 49%   (user example — k is fitted to this identity)
+    P(4) ≈ 48.025%  (user example ~48%)
+    lim N→∞ P = 10%
 
-For n ≥ 2::
+N_economic counts ACTIVE/GRACE/OFFLINE/… — never a momentary ping.
+The previous per-index calibration (38% @ 1000) is **superseded** by 162.
 
-    P(n) = floor + span / (1 + ((n-2)/τ)^β)
-
-τ and β are fitted at import time from the mid/far calibration points so
-those anchors are identities, not approximations.
+k is not a free magic number: it is derived from the user-locked P(3)=49%.
 """
 
 from __future__ import annotations
@@ -26,45 +25,60 @@ logger = logging.getLogger("artcb.economics.owner_decay")
 P_OWNER_FIRST = 1.0
 P_OWNER_FLOOR = 0.10
 P_OWNER_AT_TWO = 0.50
-CALIB_N_MID = 1_000
-CALIB_P_MID = 0.38
-CALIB_N_FAR = 100_000
-CALIB_P_FAR = 0.1185
+P_OWNER_AT_THREE = 0.49  # user GO 162
+P_OWNER_AT_FOUR_TARGET = 0.48
+
+# k such that 0.10 + 0.40 * e^{-k} = 0.49
+OWNER_DECAY_K = -math.log((P_OWNER_AT_THREE - P_OWNER_FLOOR) / (P_OWNER_AT_TWO - P_OWNER_FLOOR))
+
+# Archived 124 calibration (do not use for live payout).
+LEGACY_CALIB_N_MID = 1_000
+LEGACY_CALIB_P_MID = 0.38
+LEGACY_CALIB_N_FAR = 100_000
+LEGACY_CALIB_P_FAR = 0.1185
 
 
-def _g_from_p(share: float) -> float:
+def fleet_owner_share(n_economic: int) -> float:
+    """Owner share applied to **all** extra machines given current N_economic."""
+    if n_economic < 1:
+        raise ValueError(f"n_economic must be >= 1, got {n_economic}")
+    if n_economic == 1:
+        return P_OWNER_FIRST
     span = P_OWNER_AT_TWO - P_OWNER_FLOOR
-    return (share - P_OWNER_FLOOR) / span
+    share = P_OWNER_FLOOR + span * math.exp(-OWNER_DECAY_K * (n_economic - 2))
+    logger.debug("fleet_owner_share N=%s P=%.12f k=%.12f", n_economic, share, OWNER_DECAY_K)
+    return share
 
 
-def _fit_tau_beta() -> tuple[float, float]:
-    g_mid = _g_from_p(CALIB_P_MID)
-    g_far = _g_from_p(CALIB_P_FAR)
-    x_mid = float(CALIB_N_MID - 2)
-    x_far = float(CALIB_N_FAR - 2)
-    rhs_mid = (1.0 / g_mid) - 1.0
-    rhs_far = (1.0 / g_far) - 1.0
-    beta = math.log(rhs_far / rhs_mid) / math.log(x_far / x_mid)
-    tau = x_mid / (rhs_mid ** (1.0 / beta))
-    return tau, beta
+def fleet_human_share(n_economic: int) -> float:
+    return 1.0 - fleet_owner_share(n_economic)
 
 
-OWNER_DECAY_TAU, OWNER_DECAY_BETA = _fit_tau_beta()
+def payout_owner_share(*, is_first_machine: bool, n_economic: int) -> float:
+    """M1 always 100%; extras use fleet P(N_economic)."""
+    if is_first_machine:
+        logger.debug("payout M1=100%% (N_economic=%s ignored for M1)", n_economic)
+        return P_OWNER_FIRST
+    if n_economic < 2:
+        # Extra machine while economic count says 1: treat as N=2 (50/50).
+        n_economic = 2
+    return fleet_owner_share(n_economic)
 
 
 def owner_share(machine_index: int) -> float:
-    """P_owner(n) for the n-th machine of a given owner (1-based)."""
+    """Compatibility wrapper.
+
+    For index==1 → 100%. For index≥2 the share is the **fleet** P(N=index),
+    i.e. all extras at that fleet size share the same rate (162), not the
+    old per-index 38%@1000 curve.
+    Prefer ``payout_owner_share`` + explicit ``n_economic`` at settlement.
+    """
     if machine_index < 1:
         raise ValueError(f"machine_index must be >= 1, got {machine_index}")
     if machine_index == 1:
         return P_OWNER_FIRST
-    span = P_OWNER_AT_TWO - P_OWNER_FLOOR
-    scaled = ((machine_index - 2) / OWNER_DECAY_TAU) ** OWNER_DECAY_BETA
-    share = P_OWNER_FLOOR + span / (1.0 + scaled)
-    logger.debug("P_owner(n=%s)=%.10f", machine_index, share)
-    return share
+    return fleet_owner_share(machine_index)
 
 
 def human_share(machine_index: int) -> float:
-    """Complement 1 - P_owner(n). Zero on the owner's first machine."""
     return 1.0 - owner_share(machine_index)

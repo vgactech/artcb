@@ -1,14 +1,16 @@
-"""Block settlement — owner / bound-human / HBP, conservation of R_block.
+"""Block settlement — rapport 162.
 
-For a machine M_{A,n} with normalized work weight W::
+Envelope::
 
-    Reward_owner  = W * R(H) * (1 - HBP(H)) * P_owner(n)
-    Reward_human  = W * R(H) * (1 - HBP(H)) * (1 - P_owner(n))
-    Reward_HBP    = R(H) * HBP(H)   (split among unique verified humans
-                                     participating in the block)
+    R_block → HBP(H) + PoL
+    PoL     → ProviderPool + WorkerPool   (50/50 start if provider_scores given)
+    Worker  → machines by work_weight
+    machine n=1 → owner 100%
+    machine n≥2 → owner P(N_economic), human 1-P  (same P for all extras)
 
-sum of all legs = R_block. Pre-blocks must already sum to the same R_block
-before this function is called.
+HBP is weighted by contribution scores when provided, else equal among
+unique verified humans (legacy fallback).
+sum of all legs = R_block.
 """
 
 from __future__ import annotations
@@ -17,7 +19,8 @@ import logging
 from dataclasses import dataclass, field
 
 from src.artcb.economics.hbp import hbp_rate
-from src.artcb.economics.owner_decay import human_share, owner_share
+from src.artcb.economics.owner_decay import payout_owner_share
+from src.artcb.economics.provider_worker import PROVIDER_START, split_pol_pool
 from src.artcb.economics.satoshi import allocate_satoshi, satoshi_to_artcb
 
 logger = logging.getLogger("artcb.economics.settlement")
@@ -30,6 +33,10 @@ class MachineContribution:
     machine_index: int
     bound_human_address: str | None
     work_weight: float
+    n_economic: int | None = None
+    is_first_machine: bool | None = None
+    hbp_contribution: float = 1.0
+    provider_score: float = 0.0
 
 
 @dataclass
@@ -48,6 +55,9 @@ class SettlementResult:
     hbp_rate: float
     work_pool_satoshi: int
     hbp_pool_satoshi: int
+    provider_pool_satoshi: int = 0
+    worker_pool_satoshi: int = 0
+    economic_parts: dict = field(default_factory=dict)
     lines: list[SettlementLine] = field(default_factory=list)
 
     @property
@@ -61,11 +71,29 @@ class SettlementResult:
         return totals
 
 
+def _n_economic_for(machine: MachineContribution, machines: list[MachineContribution]) -> int:
+    if machine.n_economic is not None:
+        return machine.n_economic
+    return max(
+        1,
+        sum(1 for other in machines if other.owner_address == machine.owner_address),
+    )
+
+
+def _is_first(machine: MachineContribution) -> bool:
+    if machine.is_first_machine is not None:
+        return machine.is_first_machine
+    return machine.machine_index == 1
+
+
 def settle_block(
     *,
     r_block_satoshi: int,
     verified_humans: float,
     machines: list[MachineContribution],
+    provider_scores: dict[str, float] | None = None,
+    provider_share: float | None = None,
+    hbp_scores: dict[str, float] | None = None,
 ) -> SettlementResult:
     if r_block_satoshi < 0:
         raise ValueError("r_block_satoshi must be >= 0")
@@ -73,82 +101,97 @@ def settle_block(
         raise ValueError("settlement requires at least one machine")
 
     rate = hbp_rate(verified_humans)
-    pools = allocate_satoshi(
-        {"hbp": rate, "work": 1.0 - rate},
-        r_block_satoshi,
-    )
+    pools = allocate_satoshi({"hbp": rate, "work": 1.0 - rate}, r_block_satoshi)
     hbp_pool = pools["hbp"]
     work_pool = pools["work"]
 
-    work_weights = {
-        m.machine_id: max(0.0, m.work_weight) for m in machines
-    }
-    if sum(work_weights.values()) <= 0:
+    worker_scores = {m.machine_id: max(0.0, m.work_weight) for m in machines}
+    if sum(worker_scores.values()) <= 0:
         raise ValueError("machine work weights must sum to a positive value")
-    machine_work = allocate_satoshi(work_weights, work_pool)
+
+    scores_p = provider_scores if provider_scores else {
+        m.owner_address: m.provider_score for m in machines if m.provider_score > 0
+    }
+    share = PROVIDER_START if provider_share is None else provider_share
+    provider_pay, worker_pay, provider_pool, worker_pool = split_pol_pool(
+        work_pool,
+        provider_share=share,
+        provider_scores=scores_p,
+        worker_scores=worker_scores,
+    )
 
     lines: list[SettlementLine] = []
-    for machine in machines:
-        envelope = machine_work[machine.machine_id]
-        p_owner = owner_share(machine.machine_index)
-        p_human = human_share(machine.machine_index)
-        if machine.machine_index == 1:
-            legs = {f"owner:{machine.owner_address}": 1.0}
-        else:
-            if not machine.bound_human_address:
-                raise ValueError(
-                    f"machine {machine.machine_id} index {machine.machine_index} "
-                    "requires a bound verified human"
-                )
-            legs = {
-                f"owner:{machine.owner_address}": p_owner,
-                f"human:{machine.bound_human_address}": p_human,
-            }
-        split = allocate_satoshi(legs, envelope)
-        for key, satoshi in split.items():
-            role, address = key.split(":", 1)
-            share = satoshi_to_artcb(satoshi) / satoshi_to_artcb(r_block_satoshi) if r_block_satoshi else 0.0
-            lines.append(
-                SettlementLine(
-                    address=address,
-                    role=role,
-                    machine_id=machine.machine_id,
-                    reward_satoshi=satoshi,
-                    share=share,
-                )
-            )
 
-    humans = []
-    seen: set[str] = set()
+    def _add(address: str, role: str, machine_id: str | None, satoshi: int) -> None:
+        share_of_block = (
+            satoshi_to_artcb(satoshi) / satoshi_to_artcb(r_block_satoshi) if r_block_satoshi else 0.0
+        )
+        lines.append(
+            SettlementLine(
+                address=address,
+                role=role,
+                machine_id=machine_id,
+                reward_satoshi=satoshi,
+                share=share_of_block,
+            )
+        )
+
+    for address, satoshi in provider_pay.items():
+        _add(address, "provider", None, satoshi)
+
     for machine in machines:
-        for address in (machine.owner_address, machine.bound_human_address):
-            if address and address not in seen:
-                seen.add(address)
-                humans.append(address)
+        envelope = worker_pay.get(machine.machine_id, 0)
+        n_econ = _n_economic_for(machine, machines)
+        first = _is_first(machine)
+        p_owner = payout_owner_share(is_first_machine=first, n_economic=n_econ)
+        if first:
+            _add(machine.owner_address, "owner", machine.machine_id, envelope)
+            continue
+        if not machine.bound_human_address:
+            raise ValueError(
+                f"machine {machine.machine_id} index {machine.machine_index} "
+                "requires a bound verified human"
+            )
+        split = allocate_satoshi(
+            {"owner": p_owner, "human": 1.0 - p_owner},
+            envelope,
+        )
+        _add(machine.owner_address, "owner", machine.machine_id, split["owner"])
+        _add(machine.bound_human_address, "human", machine.machine_id, split["human"])
+
+    humans_weights: dict[str, float] = {}
+    if hbp_scores:
+        humans_weights = {addr: max(0.0, w) for addr, w in hbp_scores.items() if addr}
+    else:
+        seen: set[str] = set()
+        for machine in machines:
+            for address in (machine.owner_address, machine.bound_human_address):
+                if address and address not in seen:
+                    seen.add(address)
+                    humans_weights[address] = max(0.0, machine.hbp_contribution)
     if hbp_pool > 0:
-        if not humans:
+        if not humans_weights:
             raise ValueError("HBP pool is non-zero but no verified human is present")
-        hbp_weights = {f"hbp:{addr}": 1.0 for addr in humans}
-        hbp_split = allocate_satoshi(hbp_weights, hbp_pool)
-        for key, satoshi in hbp_split.items():
-            _, address = key.split(":", 1)
-            share = satoshi_to_artcb(satoshi) / satoshi_to_artcb(r_block_satoshi) if r_block_satoshi else 0.0
-            lines.append(
-                SettlementLine(
-                    address=address,
-                    role="hbp",
-                    machine_id=None,
-                    reward_satoshi=satoshi,
-                    share=share,
-                )
-            )
+        hbp_split = allocate_satoshi(humans_weights, hbp_pool)
+        for address, satoshi in hbp_split.items():
+            _add(address, "hbp", None, satoshi)
 
+    parts = {
+        "r_block_satoshi": r_block_satoshi,
+        "hbp_pool_satoshi": hbp_pool,
+        "provider_pool_satoshi": provider_pool,
+        "worker_pool_satoshi": worker_pool,
+        "lines": [(ln.address, ln.role, ln.machine_id, ln.reward_satoshi) for ln in lines],
+    }
     result = SettlementResult(
         r_block_satoshi=r_block_satoshi,
         verified_humans=verified_humans,
         hbp_rate=rate,
         work_pool_satoshi=work_pool,
         hbp_pool_satoshi=hbp_pool,
+        provider_pool_satoshi=provider_pool,
+        worker_pool_satoshi=worker_pool,
+        economic_parts=parts,
         lines=lines,
     )
     if result.total_satoshi != r_block_satoshi:
@@ -156,12 +199,13 @@ def settle_block(
             f"settlement conservation broken: {result.total_satoshi} != {r_block_satoshi}"
         )
     logger.debug(
-        "settled R_block=%s H=%s HBP=%.6f work=%s hbp=%s lines=%s",
+        "settled R=%s H=%s HBP=%.6f work=%s provider=%s worker=%s lines=%s",
         r_block_satoshi,
         verified_humans,
         rate,
         work_pool,
-        hbp_pool,
+        provider_pool,
+        worker_pool,
         len(lines),
     )
     return result

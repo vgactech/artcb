@@ -21,6 +21,7 @@ from src.artcb.crypto.pqc import (
     pqc_enabled,
     unpack_keypair,
 )
+from src.artcb.economics.economic_root import economic_root, mix_merkle_with_economic_root
 from src.artcb.economics.emission import issued_reward_satoshi
 from src.artcb.economics.settlement import MachineContribution, settle_block
 from src.artcb.security.anti_sybil import AntiSybilValidator
@@ -265,6 +266,7 @@ class ChainManager:
             block_reward = self._calculate_block_reward(
                 index,
                 verified_humans=verified_humans if verified_humans is not None else 0.0,
+                actual_block_interval_seconds=self._last_observed_interval_seconds(),
             )
 
         final_contributors = []
@@ -309,7 +311,14 @@ class ChainManager:
                     "hbp_rate": settlement.hbp_rate,
                     "work_pool_satoshi": settlement.work_pool_satoshi,
                     "hbp_pool_satoshi": settlement.hbp_pool_satoshi,
+                    "provider_pool_satoshi": settlement.provider_pool_satoshi,
+                    "worker_pool_satoshi": settlement.worker_pool_satoshi,
+                    "economic_root": economic_root(settlement.economic_parts),
+                    "pre_economic_merkle": merkle,
                 }
+                merkle = mix_merkle_with_economic_root(
+                    merkle, economics_payload["economic_root"]
+                )
             else:
                 from src.artcb.economics.satoshi import allocate_satoshi
 
@@ -369,16 +378,51 @@ class ChainManager:
         block_index: int,
         *,
         verified_humans: float = 0.0,
+        actual_block_interval_seconds: float | None = None,
     ) -> int:
-        """Reward issued = min(R(H), remaining 21M cap). Index does not cut R.
+        """Reward issued = min(R(H)*dt/T, remaining 21M cap). Index does not cut R.
 
         The 210_000-block schedule and velocity extra_epochs were removed (D-024).
+        Rapport 162: faster blocks scale the per-block amount, not the cap.
         """
         return issued_reward_satoshi(
             block_index,
             verified_humans=verified_humans,
             issued_so_far_satoshi=self._issued_so_far_satoshi(),
+            actual_block_interval_seconds=actual_block_interval_seconds,
         )
+
+    def _last_observed_interval_seconds(self) -> float | None:
+        """Median inter-block time for emission scaling (rapport 162).
+
+        Sub-second bursts (CPU test appends) are ignored so a lab loop cannot
+        accidentally mint near-zero rewards; a real 10 s chain still scales.
+        This floor is a measurement filter, not a 210k calendar.
+        """
+        from src.artcb.tokenomics import TARGET_BLOCK_SECONDS
+
+        blocks = self._read_all_blocks()
+        if len(blocks) < 2:
+            return TARGET_BLOCK_SECONDS
+        stamps: list[datetime] = []
+        for block in blocks[-13:]:
+            ts_raw = block.get("timestamp", "")
+            try:
+                stamps.append(datetime.fromisoformat(str(ts_raw).replace("Z", "+00:00")))
+            except (ValueError, TypeError):
+                continue
+        if len(stamps) < 2:
+            return TARGET_BLOCK_SECONDS
+        stamps.sort()
+        intervals = [
+            (stamps[i] - stamps[i - 1]).total_seconds()
+            for i in range(1, len(stamps))
+            if (stamps[i] - stamps[i - 1]).total_seconds() >= 1.0
+        ]
+        if not intervals:
+            return TARGET_BLOCK_SECONDS
+        intervals.sort()
+        return intervals[len(intervals) // 2]
 
     def _compute_dynamic_epoch(self, velocity_ref: int, window_sec: int) -> int:
         """REMOVED from emission (D-024). Kept as a velocity *metric* only.

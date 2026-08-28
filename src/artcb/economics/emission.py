@@ -37,6 +37,7 @@ from src.artcb.tokenomics import (
     MAX_HALVINGS,
     MAX_SUPPLY_SATOSHI,
     SATOSHI_PER_ARTCB,
+    TARGET_BLOCK_SECONDS,
 )
 
 logger = logging.getLogger("artcb.economics.emission")
@@ -72,14 +73,18 @@ def issued_reward_satoshi(
     verified_humans: float = 0,
     issued_so_far_satoshi: int = 0,
     extra_epochs: int = 0,
+    actual_block_interval_seconds: float | None = None,
 ) -> int:
-    """Reward actually issued for this block: min(R(H), remaining_hard_cap).
+    """Reward actually issued: min(R(H) * dt/T, remaining_hard_cap).
 
     ``block_index`` is kept for call-site compatibility and logging only.
-    It does **not** reduce the reward.
+    It does **not** reduce the reward (D-024 — no 210k).
+
+    ``actual_block_interval_seconds`` (rapport 162 GO): if the chain is 10×
+    faster than ``TARGET_BLOCK_SECONDS`` (600 s, TOKENOMICS §4.1), each
+    block issues 1/10 of R(H). This is **not** a calendar halving.
 
     ``extra_epochs`` is accepted then ignored (removed velocity/halving path).
-    Passing a non-zero value logs a warning so leftover callers are visible.
     """
     if block_index < 0:
         raise ValueError(f"block_index must be >= 0, got {block_index}")
@@ -94,12 +99,24 @@ def issued_reward_satoshi(
     if remaining <= 0:
         logger.debug("hard cap reached issued_so_far=%s", issued_so_far_satoshi)
         return 0
-    population = artcb_to_satoshi(population_reward_artcb(verified_humans))
+    r_h = population_reward_artcb(verified_humans)
+    interval = (
+        float(actual_block_interval_seconds)
+        if actual_block_interval_seconds is not None
+        else TARGET_BLOCK_SECONDS
+    )
+    if interval <= 0:
+        raise ValueError("actual_block_interval_seconds must be > 0")
+    scaled = r_h * (interval / TARGET_BLOCK_SECONDS)
+    population = artcb_to_satoshi(scaled)
     issued = min(population, remaining)
     logger.debug(
-        "issued_reward index=%s (unused for schedule) R(H)=%s remaining=%s -> %s",
+        "issued_reward index=%s (unused) H=%s interval=%s R(H)=%.10f scaled=%.10f remaining=%s -> %s",
         block_index,
-        population,
+        verified_humans,
+        interval,
+        r_h,
+        scaled,
         remaining,
         issued,
     )

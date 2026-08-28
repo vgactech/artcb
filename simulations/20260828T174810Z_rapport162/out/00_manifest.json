@@ -1,0 +1,71 @@
+{
+  "manifest": [
+    {
+      "run": "01_emission",
+      "output": "out/01_emission.json",
+      "note": "R(H), 210k not cutting, time-normalization vs naive",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "02_owner_decay",
+      "output": "out/02_owner_decay.json",
+      "note": "M1 100%, fleet P(N), offline vs economic count",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "03_hbp_finder",
+      "output": "out/03_hbp_finder.json",
+      "note": "HBP envelope + Finder 25/j vs 272",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "04_workid_partition",
+      "output": "out/04_workid_partition.json",
+      "note": "unique WorkID, hash partition, missing PB",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "05_provider_worker",
+      "output": "out/05_provider_worker.json",
+      "note": "50/50 start, weighted, dynamic clamp",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "06_settlement_economic_root",
+      "output": "out/06_settlement_economic_root.json",
+      "note": "conservation + root sensitivity + live vs 162",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "07_fees_dividend_lock",
+      "output": "out/07_fees_dividend_lock.json",
+      "note": "USD fee cap, vault, 30-day lock",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "08_identity_machines",
+      "output": "out/08_identity_machines.json",
+      "note": "Q=100, binding<=1, machine states",
+      "utc": "2026-08-28T17:50:31Z"
+    },
+    {
+      "run": "09_monte_carlo",
+      "output": "out/09_monte_carlo.json",
+      "note": "seed=42 runs=2000 12-month worlds",
+      "utc": "2026-08-28T17:50:32Z"
+    },
+    {
+      "run": "09_monte_carlo_csv",
+      "output": "out/09_monte_carlo_runs.csv",
+      "note": "per-run issued/H/interval",
+      "utc": "2026-08-28T17:50:32Z"
+    },
+    {
+      "run": "10_code_gap_inventory",
+      "output": "out/10_code_gap_inventory.json",
+      "note": "function-by-function 162 vs src/artcb/economics",
+      "utc": "2026-08-28T17:50:32Z"
+    }
+  ],
+  "failures": []
+}
