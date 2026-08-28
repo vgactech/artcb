@@ -2,7 +2,7 @@
 
 **Horodatage UTC :** 2026-08-28T20:08:00Z  
 **Branche :** `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
-**HEAD de référence :** `5ed39c4` (fix HumanID≠wallet) + `ffbd1bf` (GHA Stripe trim) ; ce commit docs suit.  
+**HEAD :** `509e537`  
 **Dump / audit ChatGPT de HEAD `f6c9c59` :** lu ; **simulations 162/163 non relancées.**  
 **Simulation canonique :** `simulations/20260828T200518Z_e2e164/` (`failures: []`)  
 **Pytest :** `logs/20260828_pytest_rapport164_full.txt` — **584 passed, 21 skipped, 0 fail**  
