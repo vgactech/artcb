@@ -2,7 +2,7 @@
 
 **Horodatage UTC :** 2026-08-28T18:10:00Z  
 **Branche :** `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
-**HEAD au moment de ce fichier :** `df2c0b5` (code) + commit suivant (ce rapport + docs protocole)  
+**HEAD au moment de ce fichier :** `01662cb36ff84a24d506202632f5ff915ed42900`  
 **Dump lu en entier :** `rapports/162 conversation chat et simulation artcb.md` (12 928 lignes, ordre conversationnel reconstitué)  
 **Simulations :** `simulations/20260828T174810Z_rapport162/`  
 **Pytest :** `logs/20260828_pytest_rapport163.txt` — **554 passed, 20 skipped, 0 fail**  
