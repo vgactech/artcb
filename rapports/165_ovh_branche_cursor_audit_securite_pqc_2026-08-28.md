@@ -2,7 +2,7 @@
 
 **Horodatage UTC :** 2026-08-28T22:12:00Z  
 **Branche :** `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
-**HEAD au moment du rapport :** voir `git rev-parse HEAD` (série 165, après `77a5560` + docs).  
+**HEAD au moment du rapport :** `fc993da940f33d5ec6efda6666174aec2e10000f` (chmod scripts ; docs `ea6a173` ; code `77a5560` / `42df315`).  
 **Base de départ :** `8e783631571cd853321663a43b9044123ab84d5b`  
 **PR #34 :** **OUVERTE**, **non fusionnée**. Compare : https://github.com/vgactech/artcb/compare/main...cursor/tokenomics-21m-hbp-owner-decay-3fcb  
 **Simulation canonique :** `simulations/20260828T220852Z_e2e165/` (`failures: []`)  
