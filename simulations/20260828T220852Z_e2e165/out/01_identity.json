@@ -1,0 +1,48 @@
+{
+  "h_adult": 5,
+  "machines_A": [
+    {
+      "machine_id": "A:M1",
+      "owner_address": "A",
+      "machine_index": 1,
+      "bound_human_address": null,
+      "registered_at": "2026-08-28T22:08:52Z",
+      "device_fingerprint": null,
+      "status": "ACTIVE",
+      "is_first_machine": true
+    },
+    {
+      "machine_id": "A:M2",
+      "owner_address": "A",
+      "machine_index": 2,
+      "bound_human_address": "B",
+      "registered_at": "2026-08-28T22:08:52Z",
+      "device_fingerprint": null,
+      "status": "ACTIVE",
+      "is_first_machine": false
+    },
+    {
+      "machine_id": "A:M3",
+      "owner_address": "A",
+      "machine_index": 3,
+      "bound_human_address": "C",
+      "registered_at": "2026-08-28T22:08:52Z",
+      "device_fingerprint": null,
+      "status": "ACTIVE",
+      "is_first_machine": false
+    },
+    {
+      "machine_id": "A:M4",
+      "owner_address": "A",
+      "machine_index": 4,
+      "bound_human_address": "D",
+      "registered_at": "2026-08-28T22:08:52Z",
+      "device_fingerprint": null,
+      "status": "ACTIVE",
+      "is_first_machine": false
+    }
+  ],
+  "n_A": 4,
+  "p_m1": 1.0,
+  "p_extras": 0.48024999999999995
+}

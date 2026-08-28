@@ -1,0 +1,93 @@
+{
+  "trajectory": "10→60→20 inside envelope, no extra mint",
+  "anchors_provisional_vs_adults_18plus": true,
+  "HBP_PEAK_HUMANS": 4150000000,
+  "HBP_END_HUMANS": 8300000000,
+  "table": [
+    {
+      "H": 0,
+      "hbp_rate": 0.1,
+      "HBP_artcb_if_R": 5.0,
+      "work_artcb_if_R": 45.0,
+      "sum": 50.0
+    },
+    {
+      "H": 1,
+      "hbp_rate": 0.10000000012048194,
+      "HBP_artcb_if_R": 5.000000006024097,
+      "work_artcb_if_R": 44.999999993975905,
+      "sum": 50.0
+    },
+    {
+      "H": 100,
+      "hbp_rate": 0.10000001204819278,
+      "HBP_artcb_if_R": 5.0000006024096395,
+      "work_artcb_if_R": 44.999999397590365,
+      "sum": 50.0
+    },
+    {
+      "H": 1000000,
+      "hbp_rate": 0.10012048192771085,
+      "HBP_artcb_if_R": 5.006024096385542,
+      "work_artcb_if_R": 44.993975903614455,
+      "sum": 50.0
+    },
+    {
+      "H": 100000000,
+      "hbp_rate": 0.11204819277108434,
+      "HBP_artcb_if_R": 0.0736358770522404,
+      "work_artcb_if_R": 0.5835445310483997,
+      "sum": 0.65718040810064
+    },
+    {
+      "H": 1000000000,
+      "hbp_rate": 0.22048192771084338,
+      "HBP_artcb_if_R": 0.016611731650321832,
+      "work_artcb_if_R": 0.05873109496042745,
+      "sum": 0.07534282661074929
+    },
+    {
+      "H": 4150000000,
+      "hbp_rate": 0.6,
+      "HBP_artcb_if_R": 0.011853066759472604,
+      "work_artcb_if_R": 0.007902044506315068,
+      "sum": 0.019755111265787672
+    },
+    {
+      "H": 5820000000,
+      "hbp_rate": 0.43903614457831325,
+      "HBP_artcb_if_R": 0.006309907098227389,
+      "work_artcb_if_R": 0.008062274272597893,
+      "sum": 0.014372181370825283
+    },
+    {
+      "H": 8300000000,
+      "hbp_rate": 0.2,
+      "HBP_artcb_if_R": 0.002058485481929131,
+      "work_artcb_if_R": 0.008233941927716523,
+      "sum": 0.010292427409645654
+    }
+  ],
+  "split_equal_satoshi": {
+    "B": 166666666,
+    "C": 166666667,
+    "D": 166666667
+  },
+  "split_weighted_satoshi": {
+    "B": 285714286,
+    "C": 142857143,
+    "D": 71428571
+  },
+  "user_GO_weighted": true,
+  "finder": {
+    "Q": 100,
+    "creator_genesis_verified": true,
+    "attestations_per_day_sim": 25,
+    "discarded_272": 272.16,
+    "new_adults_per_day": 191014,
+    "attestations_needed": 19101400,
+    "finders_at_25": 764056.0,
+    "finders_at_272": 70184.4503233392,
+    "ratio_vs_old_70k": 10.886314739616727
+  }
+}

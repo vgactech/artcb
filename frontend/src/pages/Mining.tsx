@@ -13,7 +13,8 @@ export function Mining() {
   const [blocks, setBlocks] = useState<ChainBlock[]>([]);
   const [status, setStatus] = useState<{
     current_reward_artcb: number;
-    blocks_until_halving: number;
+    blocks_until_halving: number | null;
+    remaining_supply_artcb?: number | null;
     total_rewards_artcb: number;
     pol_score: number;
   } | null>(null);

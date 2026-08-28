@@ -21,7 +21,16 @@ from src.artcb.crypto.pqc import (
     pqc_enabled,
     unpack_keypair,
 )
-from src.artcb.pol.scorer import PolScorer
+from src.artcb.economics.economic_root import (
+    HASH_VERSION_V1,
+    HASH_VERSION_V2,
+    economic_root,
+    mix_merkle_with_economic_root,
+    native_economic_root_available,
+)
+from src.artcb.economics.emission import issued_reward_satoshi
+from src.artcb.economics.settlement import MachineContribution, settle_block
+from src.artcb.economics.workid import WorkIDError, WorkStatus
 from src.artcb.security.anti_sybil import AntiSybilValidator
 from src.artcb.security.slashing import SlashingManager
 from src.artcb.wallet.encryption import (
@@ -53,6 +62,8 @@ class ChainBlock:
     contributors: list[dict] = field(default_factory=list)
     public_symbols: dict[str, str] = field(default_factory=dict)
     hash_sha3: str | None = None
+    economics: dict | None = None
+    hash_version: int = HASH_VERSION_V1
 
     def to_json_line(self) -> str:
         payload = {
@@ -69,7 +80,13 @@ class ChainBlock:
             "group_id": self.group_id,
             "block_reward": self.block_reward,
             "contributors": self.contributors,
+            "hash_version": self.hash_version,
         }
+        if self.economics and self.economics.get("economic_root"):
+            # Top-level BEFORE nested economics so C strstr hits the consensus field first.
+            payload["economic_root"] = self.economics["economic_root"]
+        if self.economics:
+            payload["economics"] = self.economics
         if self.public_symbols:
             payload["public_symbols"] = self.public_symbols
         if self.hash_sha3:
@@ -99,6 +116,9 @@ class ChainManager:
         self._signing_key, self._pqc_secret_key, self._pqc_public_key = self._load_or_create_keys()
 
         self.enable_security = enable_security
+        self.human_registry = None
+        self.machine_registry = None
+        self.work_registry = None
         if enable_security:
             self.anti_sybil = AntiSybilValidator()
             self.slashing = SlashingManager()
@@ -107,6 +127,31 @@ class ChainManager:
             self.anti_sybil = None
             self.slashing = None
             logger.warning("Security modules DISABLED")
+
+    def bind_identity(
+        self,
+        *,
+        human_registry=None,
+        machine_registry=None,
+        work_registry=None,
+    ) -> None:
+        """Attach live identity registries so H_adult and WorkID are consensus-visible."""
+        self.human_registry = human_registry
+        self.machine_registry = machine_registry
+        self.work_registry = work_registry
+        logger.debug(
+            "chain identity bound humans=%s machines=%s work=%s",
+            human_registry is not None,
+            machine_registry is not None,
+            work_registry is not None,
+        )
+
+    def adult_verified_count(self) -> float:
+        if self.human_registry is None:
+            return 0.0
+        count = float(self.human_registry.verified_adult_count())
+        logger.debug("H_adult from HumanRegistry=%s", count)
+        return count
 
     def _load_or_create_keys(self) -> tuple[signing.SigningKey, bytes | None, bytes | None]:
         if self.key_path.exists():
@@ -224,6 +269,8 @@ class ChainManager:
         block_reward: int | None = None,
         public_symbols: dict[str, str] | None = None,
         source: str = "unknown",  # "ai_memo" | "ai_think" | "mining" — pour bypass AI
+        verified_humans: float | None = None,
+        h_adult: float | None = None,
     ) -> ChainBlock:
         all_blocks = self._read_all_blocks()
         index = len(all_blocks)
@@ -256,29 +303,127 @@ class ChainManager:
                         logger.error("Contributor %s... not allowed: %s", contributor["address"][:12], reason)
                         raise ValueError(f"Contributor blocked: {reason}")
 
+        humans = self._resolve_adult_h(verified_humans=verified_humans, h_adult=h_adult)
+
+        if self.work_registry is not None and contributors:
+            _assert_workids_unsettleable(self.work_registry, contributors)
+
         if block_reward is None:
-            block_reward = self._calculate_block_reward(index)
+            block_reward = self._calculate_block_reward(
+                index,
+                verified_humans=humans,
+                actual_block_interval_seconds=self._last_observed_interval_seconds(),
+            )
 
         final_contributors = []
+        economics_payload: dict | None = None
+        hash_version = HASH_VERSION_V1
+        eco_root_for_hash: str | None = None
         if contributors:
-            contributor_scores = {c["address"]: c["pol_score"] for c in contributors}
-            rewards = PolScorer.split_reward(block_reward / 1e8, contributor_scores)
+            machine_contribs = _machine_contributions(contributors)
+            if machine_contribs is not None:
+                hbp_scores = {
+                    str(c.get("bound_human_address") or c.get("owner_address") or c.get("address")): float(
+                        c["hbp_score"]
+                    )
+                    for c in contributors
+                    if c.get("hbp_score") is not None
+                }
+                provider_scores = {
+                    str(c.get("owner_address") or c.get("address")): float(c["provider_score"])
+                    for c in contributors
+                    if c.get("provider_score") is not None and float(c.get("provider_score") or 0) > 0
+                }
+                settlement = settle_block(
+                    r_block_satoshi=block_reward,
+                    verified_humans=humans,
+                    h_adult=humans,
+                    machines=machine_contribs,
+                    provider_scores=provider_scores or None,
+                    hbp_scores=hbp_scores or None,
+                )
+                pol_by_address = {
+                    c["address"]: c.get("pol_score", 0.0) for c in contributors
+                }
+                sig_by_address = {
+                    c["address"]: c.get("signature", "") for c in contributors
+                }
+                merged: dict[str, dict] = {}
+                for line in settlement.lines:
+                    entry = merged.setdefault(
+                        line.address,
+                        {
+                            "address": line.address,
+                            "pol_score": pol_by_address.get(line.address, 0.0),
+                            "reward_satoshi": 0,
+                            "signature": sig_by_address.get(line.address, ""),
+                            "role": line.role,
+                            "legs": [],
+                        },
+                    )
+                    entry["reward_satoshi"] += line.reward_satoshi
+                    entry["legs"].append({
+                        "role": line.role,
+                        "machine_id": line.machine_id,
+                        "reward_satoshi": line.reward_satoshi,
+                    })
+                final_contributors = list(merged.values())
+                eco = economic_root(settlement.economic_parts)
+                economics_payload = {
+                    "verified_humans": humans,
+                    "h_adult": humans,
+                    "hbp_rate": settlement.hbp_rate,
+                    "work_pool_satoshi": settlement.work_pool_satoshi,
+                    "hbp_pool_satoshi": settlement.hbp_pool_satoshi,
+                    "provider_pool_satoshi": settlement.provider_pool_satoshi,
+                    "worker_pool_satoshi": settlement.worker_pool_satoshi,
+                    "economic_root": eco,
+                    "pre_economic_merkle": merkle,
+                }
+                if native_economic_root_available():
+                    hash_version = HASH_VERSION_V2
+                    eco_root_for_hash = eco
+                    logger.debug(
+                        "native C EconomicRoot v2 index=%s root=%s",
+                        index,
+                        eco[:16],
+                    )
+                else:
+                    merkle = mix_merkle_with_economic_root(merkle, eco)
+                    economics_payload["hash_path"] = "python_merkle_mix_fallback"
+                    logger.debug(
+                        "C ABI v2 missing — Python merkle mix fallback index=%s",
+                        index,
+                    )
+            else:
+                from src.artcb.economics.satoshi import allocate_satoshi
 
-            for contributor in contributors:
-                address = contributor["address"]
-                final_contributors.append({
-                    "address": address,
-                    "pol_score": contributor["pol_score"],
-                    "reward_satoshi": int(rewards[address] * 1e8),
-                    "signature": contributor.get("signature", ""),
-                    "role": contributor.get("role", "contributor"),
-                })
+                contributor_scores = {c["address"]: float(c["pol_score"]) for c in contributors}
+                allocated = allocate_satoshi(contributor_scores, block_reward)
+                for contributor in contributors:
+                    address = contributor["address"]
+                    final_contributors.append({
+                        "address": address,
+                        "pol_score": contributor["pol_score"],
+                        "reward_satoshi": allocated.get(address, 0),
+                        "signature": contributor.get("signature", ""),
+                        "role": contributor.get("role", "contributor"),
+                    })
 
         block_hash = ffi.build_block_hash(
-            index, timestamp, prev_hash, graph_root, merkle, pol_score
+            index,
+            timestamp,
+            prev_hash,
+            graph_root,
+            merkle,
+            pol_score,
+            economic_root=eco_root_for_hash,
         )
         hash_sha3 = sha3_256_hex(block_hash)
         signature = self._sign_block(block_hash)
+
+        if self.work_registry is not None and contributors:
+            _mark_workids_settled(self.work_registry, contributors)
 
         block = ChainBlock(
             index=index,
@@ -296,6 +441,8 @@ class ChainManager:
             block_reward=block_reward,
             contributors=final_contributors,
             public_symbols=dict(public_symbols) if public_symbols else {},
+            economics=economics_payload,
+            hash_version=hash_version,
         )
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(block.to_json_line() + "\n")
@@ -309,64 +456,95 @@ class ChainManager:
         )
         return block
 
-    def _calculate_block_reward(self, block_index: int) -> int:
-        """
-        Calcule le reward du bloc avec halving fixe (tous les 105 000 blocs)
-        ET halving dynamique basé sur la vitesse de minage observée sur 24h.
+    def _issued_so_far_satoshi(self) -> int:
+        return sum(int(b.get("block_reward", 0) or 0) for b in self._read_all_blocks())
 
-        Formule :
-            epoch_fixe  = block_index // HALVING_INTERVAL
-            epoch_dyn   = floor(log2(max(1, velocity_24h / VELOCITY_REFERENCE)))
-            epoch_total = epoch_fixe + epoch_dyn
-            reward      = INITIAL_REWARD >> min(epoch_total, MAX_HALVINGS - 1)
+    def _calculate_block_reward(
+        self,
+        block_index: int,
+        *,
+        verified_humans: float = 0.0,
+        actual_block_interval_seconds: float | None = None,
+    ) -> int:
+        """Reward issued = min(R(H)*dt/T, remaining 21M cap). Index does not cut R.
 
-        La vitesse est mesurée depuis les blocs existants (fenêtre glissante 24h).
-        À faible adoption (devnet) : epoch_dyn = 0, comportement identique au halving fixe.
-        À forte adoption (1M+ users/j) : epoch_dyn augmente → reward divisé automatiquement.
+        The 210_000-block schedule and velocity extra_epochs were removed (D-024).
+        Rapport 162: faster blocks scale the per-block amount, not the cap.
         """
-        import math
-        from src.artcb.tokenomics import (
-            HALVING_INTERVAL, INITIAL_BLOCK_REWARD_SATOSHI, MAX_HALVINGS,
-            VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS,
+        return issued_reward_satoshi(
+            block_index,
+            verified_humans=verified_humans,
+            issued_so_far_satoshi=self._issued_so_far_satoshi(),
+            actual_block_interval_seconds=actual_block_interval_seconds,
         )
 
-        # ── Halving fixe ────────────────────────────────────────────────────
-        epoch_fixe = block_index // HALVING_INTERVAL
+    def _last_observed_interval_seconds(self) -> float | None:
+        """Median inter-block time for emission scaling (rapport 162).
 
-        # ── Halving dynamique : mesure de la vitesse sur 24h ───────────────
-        epoch_dyn = self._compute_dynamic_epoch(VELOCITY_REFERENCE, VELOCITY_WINDOW_SECONDS)
+        Sub-second bursts (CPU test appends) are ignored so a lab loop cannot
+        accidentally mint near-zero rewards; a real 10 s chain still scales.
+        This floor is a measurement filter, not a 210k calendar.
+        """
+        from src.artcb.tokenomics import TARGET_BLOCK_SECONDS
 
-        # ── Epoch total et reward ───────────────────────────────────────────
-        epoch_total = epoch_fixe + epoch_dyn
-        if epoch_total >= MAX_HALVINGS:
-            return 0
-        return INITIAL_BLOCK_REWARD_SATOSHI >> epoch_total
+        blocks = self._read_all_blocks()
+        if len(blocks) < 2:
+            return TARGET_BLOCK_SECONDS
+        stamps: list[datetime] = []
+        for block in blocks[-13:]:
+            ts_raw = block.get("timestamp", "")
+            try:
+                stamps.append(datetime.fromisoformat(str(ts_raw).replace("Z", "+00:00")))
+            except (ValueError, TypeError):
+                continue
+        if len(stamps) < 2:
+            return TARGET_BLOCK_SECONDS
+        stamps.sort()
+        intervals = [
+            (stamps[i] - stamps[i - 1]).total_seconds()
+            for i in range(1, len(stamps))
+            if (stamps[i] - stamps[i - 1]).total_seconds() >= 1.0
+        ]
+        if not intervals:
+            return TARGET_BLOCK_SECONDS
+        intervals.sort()
+        return intervals[len(intervals) // 2]
 
     def _compute_dynamic_epoch(self, velocity_ref: int, window_sec: int) -> int:
-        """
-        Mesure la vitesse de minage sur la fenêtre window_sec et retourne
-        l'epoch dynamique supplémentaire (entier ≥ 0).
+        """REMOVED from emission (D-024). Kept as a velocity *metric* only.
 
-        velocity_24h = nombre de blocs créés dans les dernières window_sec secondes
-        epoch_dyn    = floor(log2(max(1, velocity_24h / velocity_ref)))
-
-        Exemples (velocity_ref = 144 blocs/jour) :
-          velocity = 22   blocs/j → epoch_dyn = floor(log2(0.15)) = 0 (pas d'effet)
-          velocity = 144  blocs/j → epoch_dyn = floor(log2(1))    = 0 (référence)
-          velocity = 288  blocs/j → epoch_dyn = floor(log2(2))    = 1
-          velocity = 1440 blocs/j → epoch_dyn = floor(log2(10))   = 3
-          velocity = 14400 blocs/j → epoch_dyn = floor(log2(100)) = 6
-          velocity = 1M   blocs/j → epoch_dyn = floor(log2(6944)) = 12
-          velocity = 1B   blocs/j → epoch_dyn = floor(log2(6.9M)) = 22
+        Always returns 0 so leftover dashboard callers cannot re-halve R_block.
+        Use ``_observe_velocity_per_day`` if a UI needs blocs/jour.
         """
-        import math
+        logger.debug(
+            "dynamic epoch unused for reward velocity_ref=%s window_sec=%s",
+            velocity_ref,
+            window_sec,
+        )
+        return 0
+
+    def _resolve_adult_h(
+        self,
+        *,
+        verified_humans: float | None,
+        h_adult: float | None,
+    ) -> float:
+        if h_adult is not None:
+            logger.debug("H_adult explicit=%s", h_adult)
+            return float(h_adult)
+        if verified_humans is not None:
+            logger.debug("H from verified_humans override=%s", verified_humans)
+            return float(verified_humans)
+        return self.adult_verified_count()
+
+    def _observe_velocity_per_day(self, window_sec: int = 86_400) -> float:
+        """Blocs/jour observés sur la fenêtre — métrique, pas un halving."""
         from datetime import UTC, datetime, timedelta
 
         try:
             all_blocks = self._read_all_blocks()
             if len(all_blocks) < 2:
-                return 0
-
+                return 0.0
             cutoff = datetime.now(UTC) - timedelta(seconds=window_sec)
             count_recent = 0
             for b in all_blocks:
@@ -377,14 +555,9 @@ class ChainManager:
                         count_recent += 1
                 except (ValueError, AttributeError):
                     pass
-
-            # Normaliser en blocs/jour
-            velocity_day = count_recent * (86_400 / window_sec)
-            ratio = max(1.0, velocity_day / velocity_ref)
-            return int(math.log2(ratio))
+            return count_recent * (86_400 / window_sec)
         except Exception:
-            # Si erreur de lecture, comportement conservateur : pas d'epoch dynamique
-            return 0
+            return 0.0
 
     def verify(self) -> dict:
         try:
@@ -405,6 +578,14 @@ class ChainManager:
         if block.get("visibility") != "public":
             return False
         try:
+            eco = None
+            version = int(block.get("hash_version") or HASH_VERSION_V1)
+            if version >= HASH_VERSION_V2:
+                eco = str(
+                    block.get("economic_root")
+                    or (block.get("economics") or {}).get("economic_root")
+                    or ""
+                )
             expected = ffi.build_block_hash(
                 int(block["index"]),
                 str(block["timestamp"]),
@@ -412,9 +593,76 @@ class ChainManager:
                 str(block["graph_root"]),
                 str(block.get("merkle_root") or block["graph_root"]),
                 float(block["pol_score"]),
+                economic_root=eco,
             )
         except (KeyError, TypeError, ValueError):
             return False
         if block.get("hash") != expected:
             return False
         return self.verify_block_signature(str(block["hash"]), str(block.get("signature", "")))
+
+
+def _machine_contributions(contributors: list[dict]) -> list[MachineContribution] | None:
+    """Return machine contributions when worker rows carry machine fields.
+
+    Job-provider rows (role=provider) are ignored here; their scores are
+    collected separately. Mixed/legacy lists without machine fields keep
+    the historic PoL split.
+    """
+    if not contributors:
+        return None
+    machine_rows = [c for c in contributors if c.get("role") != "provider"]
+    if not machine_rows:
+        return None
+    if not all("machine_index" in c and "owner_address" in c for c in machine_rows):
+        return None
+    result: list[MachineContribution] = []
+    for contributor in machine_rows:
+        n_econ = contributor.get("n_economic")
+        result.append(
+            MachineContribution(
+                machine_id=str(
+                    contributor.get("machine_id")
+                    or f"{contributor['owner_address']}:{contributor['machine_index']}"
+                ),
+                owner_address=str(contributor["owner_address"]),
+                machine_index=int(contributor["machine_index"]),
+                bound_human_address=contributor.get("bound_human_address"),
+                work_weight=float(contributor.get("work_weight", contributor.get("pol_score", 0.0))),
+                n_economic=int(n_econ) if n_econ is not None else None,
+                is_first_machine=contributor.get("is_first_machine"),
+                provider_score=float(contributor.get("provider_score", 0.0) or 0.0),
+                hbp_contribution=float(
+                    contributor.get("hbp_contribution", contributor.get("hbp_score", 1.0)) or 1.0
+                ),
+            )
+        )
+    return result
+
+
+def _assert_workids_unsettleable(work_registry, contributors: list[dict]) -> None:
+    for contributor in contributors:
+        work_id = contributor.get("work_id")
+        if not work_id:
+            continue
+        rec = work_registry.get(str(work_id))
+        if rec is None:
+            continue
+        if rec.status == WorkStatus.SETTLED.value or rec.settlement_count >= 1:
+            raise WorkIDError(f"REJECT_DOUBLE_SETTLEMENT: {work_id}")
+
+
+def _mark_workids_settled(work_registry, contributors: list[dict]) -> None:
+    seen: set[str] = set()
+    for contributor in contributors:
+        work_id = contributor.get("work_id")
+        if not work_id or work_id in seen:
+            continue
+        seen.add(str(work_id))
+        rec = work_registry.get(str(work_id))
+        if rec is None:
+            work_registry.create(
+                work_id=str(work_id),
+                job_id=str(contributor.get("job_id") or "mining"),
+            )
+        work_registry.transition(str(work_id), WorkStatus.SETTLED)

@@ -1,0 +1,440 @@
+sim tag=e2e165 security=ON min_block_interval_sec=0 (0 = sequential sim, not production)
+liboqs-python faulthandler is disabled
+Generated ML-DSA-65 keypair (pub=1952 bytes)
+Chain PQC key generation skipped: ARTCB_WALLET_PASSPHRASE is not set — cannot encrypt or decrypt wallet private keys. Set a strong passphrase in .env (never commit it).
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=0s ai_bypass=False study_mode=False
+SlashingManager initialized: 0 events, 0 blacklisted addresses
+Security modules enabled (Anti-Sybil + Slashing)
+WalletManager initialized wallet_dir=data/wallets
+demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+Security modules ENABLED (Anti-Sybil + Slashing)
+chain identity bound humans=True machines=True work=True
+Security modules ENABLED — Anti-Sybil + Slashing attached to ProtocolEngine
+bootstrap creator id=H-A addr=A
+creator-direct validated H-B
+creator-direct validated H-C
+creator-direct validated H-D
+creator-direct validated H-E
+registered DeviceID=DEV-A human=H-A
+bound WalletID=WLT-H-A addr=A human=H-A device=DEV-A
+registered DeviceID=DEV-B human=H-B
+bound WalletID=WLT-H-B addr=B human=H-B device=DEV-B
+registered DeviceID=DEV-C human=H-C
+bound WalletID=WLT-H-C addr=C human=H-C device=DEV-C
+registered DeviceID=DEV-D human=H-D
+bound WalletID=WLT-H-D addr=D human=H-D device=DEV-D
+registered DeviceID=DEV-E human=H-E
+bound WalletID=WLT-H-E addr=E human=H-E device=DEV-E
+registered machine id=A:M1 owner=A index=1 first=True human=None N_econ=1
+registered machine id=A:M2 owner=A index=2 first=False human=B N_econ=2
+registered machine id=A:M3 owner=A index=3 first=False human=C N_econ=3
+registered machine id=A:M4 owner=A index=4 first=False human=D N_econ=4
+H_adult live=5 source=HumanRegistry.adult_verified
+payout M1=100% (N_economic=4 ignored for M1)
+fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/01_identity.json
+registered machine id=A:M5 owner=A index=5 first=False human=E N_econ=5
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/02_m5_p_n.json
+WorkID W-small -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2100000000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-small epoch=0 N=5 -> 0
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+Block 0 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Loaded C library path=/workspace/src/c/libartcb_chain.so v2=True
+native C EconomicRoot v2 index=0 root=902627f46fa55647
+C v2 hash index=0 eco=902627f46fa5 -> 739798d51dc20abb
+WorkID W-small -> SETTLED score=0.0
+Block 0 recorded in reputation for 1 contributors
+Appended block index=0 hash=739798d51dc20abbfbf9fc955c66496d34a1ece4cacad7ab3c09c86c121d8b29 sha3=b46ed01de3702b4a reward=5000000000 contributors=1 hybrid=True
+audit append type=protocol_block hash=2fab7a3be47f7e5b
+protocol block=0 hash=739798d51dc20abb H_adult=5.0 paid=5000000000 supply=5000000000 v=2
+WorkID W-big -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099995000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-big epoch=0 N=5 -> 1
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+EconomicRoot=09db4b076db39b98 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+Block 1 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+EconomicRoot=09db4b076db39b98 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=1 root=09db4b076db39b98
+C v2 hash index=1 eco=09db4b076db3 -> 50b178cee3281c06
+WorkID W-big -> SETTLED score=0.0
+Block 1 recorded in reputation for 4 contributors
+Appended block index=1 hash=50b178cee3281c060fbc86a3b005221ec3cc7385558c88195969cf9aa8c6af15 sha3=4c989363ef2546b3 reward=5000000000 contributors=4 hybrid=True
+audit append type=protocol_block hash=f855c18da1523fbe
+protocol block=1 hash=50b178cee3281c06 H_adult=5.0 paid=5000000000 supply=10000000000 v=2
+WorkID W-par-1 -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099990000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-par-1 epoch=1 N=5 -> 0
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+Block 2 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=2 root=902627f46fa55647
+C v2 hash index=2 eco=902627f46fa5 -> 23f86c49555da9cf
+WorkID W-par-1 -> SETTLED score=0.0
+Block 2 recorded in reputation for 1 contributors
+Appended block index=2 hash=23f86c49555da9cfdef8571af05c4eb5b35576722cb6f121557d4de97898b2c6 sha3=e82255feaa5b4fd3 reward=5000000000 contributors=1 hybrid=True
+audit append type=protocol_block hash=a606449cb9b0b5b2
+protocol block=2 hash=23f86c49555da9cf H_adult=5.0 paid=5000000000 supply=15000000000 v=2
+WorkID W-par-2 -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099985000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-par-2 epoch=2 N=5 -> 2
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=4
+EconomicRoot=29827cbfa33132ef keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+Block 3 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=4
+EconomicRoot=29827cbfa33132ef keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=3 root=29827cbfa33132ef
+C v2 hash index=3 eco=29827cbfa331 -> 92bae05e00c60e66
+WorkID W-par-2 -> SETTLED score=0.0
+Block 3 recorded in reputation for 1 contributors
+Appended block index=3 hash=92bae05e00c60e6667756e19685359e59219e657053c173d4aa96956a0a37980 sha3=391d5c145e2c7d8b reward=5000000000 contributors=2 hybrid=True
+audit append type=protocol_block hash=ec1be284ad46e174
+protocol block=3 hash=92bae05e00c60e66 H_adult=5.0 paid=5000000000 supply=20000000000 v=2
+WorkID W-more-pb -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099980000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-more-pb epoch=3 N=8 -> 0
+partitioned R_block=5000000000 into 8 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+EconomicRoot=2729e9ed7df75e63 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+Block 4 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+EconomicRoot=2729e9ed7df75e63 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=4 root=2729e9ed7df75e63
+C v2 hash index=4 eco=2729e9ed7df7 -> dc924275e053403c
+WorkID W-more-pb -> SETTLED score=0.0
+Block 4 recorded in reputation for 2 contributors
+Appended block index=4 hash=dc924275e053403c93b05aef967a12d88b26ce5b659a7b5d6f0bae4c0f759e4f sha3=f765ad836d8e92e0 reward=5000000000 contributors=2 hybrid=True
+audit append type=protocol_block hash=49d5e09631947190
+protocol block=4 hash=dc924275e053403c H_adult=5.0 paid=5000000000 supply=25000000000 v=2
+WorkID W-partial -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099975000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-partial epoch=4 N=5 -> 3
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+WorkID W-partial:requeue:pb3 -> REQUEUED score=0.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 3599999998
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=4000000000 H_adult=5.0 HBP=0.100000 work=3599999998 provider=0 worker=3599999998 lines=5
+EconomicRoot=94cfbd0d8c917ab1 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+Block 5 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 3599999998
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=4000000000 H_adult=5.0 HBP=0.100000 work=3599999998 provider=0 worker=3599999998 lines=5
+EconomicRoot=94cfbd0d8c917ab1 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=5 root=94cfbd0d8c917ab1
+C v2 hash index=5 eco=94cfbd0d8c91 -> b14ea3a12176da87
+WorkID W-partial -> SETTLED score=0.0
+Block 5 recorded in reputation for 2 contributors
+Appended block index=5 hash=b14ea3a12176da87717b2760cdd8a2b9a1ad7c58fe633e12b36004526681ef6e sha3=10ba2a08e39a298e reward=4000000000 contributors=2 hybrid=True
+audit append type=protocol_block hash=4ee13cf39b88b3d0
+protocol block=5 hash=b14ea3a12176da87 H_adult=5.0 paid=4000000000 supply=29000000000 v=2
+WorkID W-priority -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099971000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-priority epoch=5 N=5 -> 2
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+Block 6 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=6 root=902627f46fa55647
+C v2 hash index=6 eco=902627f46fa5 -> 3d21a426416d3715
+WorkID W-priority -> SETTLED score=0.0
+Block 6 recorded in reputation for 1 contributors
+Appended block index=6 hash=3d21a426416d37159ddf21f1119817ea5f072685bb2c9cf68b2561030c20fce7 sha3=c75af5e89154ab78 reward=5000000000 contributors=1 hybrid=True
+audit append type=protocol_block hash=d16c78048d2973a3
+protocol block=6 hash=3d21a426416d3715 H_adult=5.0 paid=5000000000 supply=34000000000 v=2
+WorkID W-providers -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099966000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-providers epoch=6 N=5 -> 4
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=4
+EconomicRoot=050e6c45a5cdd6d3 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+provider contributor JP1 score=1.0
+provider contributor JP2 score=1.0
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+Block 7 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=4
+EconomicRoot=050e6c45a5cdd6d3 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=7 root=050e6c45a5cdd6d3
+C v2 hash index=7 eco=050e6c45a5cd -> ed8da611ac40e25f
+WorkID W-providers -> SETTLED score=0.0
+Block 7 recorded in reputation for 3 contributors
+Appended block index=7 hash=ed8da611ac40e25f7a4f8f42a83d6eb2505307bd92bfbc2d1a17ea797c31b86b sha3=c9b9b795a67ca4f5 reward=5000000000 contributors=3 hybrid=True
+audit append type=protocol_block hash=b3ccb718b8059462
+protocol block=7 hash=ed8da611ac40e25f H_adult=5.0 paid=5000000000 supply=39000000000 v=2
+Stripe JobPayment failed — consensus continues (JobPayment ≠ mint): no Stripe secret in env (KEY_API_STRIPE_ACTION / STRIPE_SECRET_KEY / STRIPE_API_KEY)
+stripe attempt_live ok=False consensus_blocked=False
+WorkID W-stripe-down -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099961000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-stripe-down epoch=7 N=5 -> 3
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+Block 8 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=8 root=902627f46fa55647
+C v2 hash index=8 eco=902627f46fa5 -> 0a54ec5ddf94728e
+WorkID W-stripe-down -> SETTLED score=0.0
+Block 8 recorded in reputation for 1 contributors
+Appended block index=8 hash=0a54ec5ddf94728e9b98ad9570a07dac5ccc9634703fd5d7fbe0773a16520799 sha3=68a19083241b4b0b reward=5000000000 contributors=1 hybrid=True
+audit append type=protocol_block hash=b9627e6ea3520a47
+protocol block=8 hash=0a54ec5ddf94728e H_adult=5.0 paid=5000000000 supply=44000000000 v=2
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/03_jobs.json
+job submitted id=job_1f7765a073964a7a provider=A
+job job_1f7765a073964a7a cancelled
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/04_cancelled.json
+WorkID W-load-faible -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099956000000000 -> 5000000000
+N_max=12 cpu=16 ram=16 net=1000.0 val=16.0
+partition work=W-load-faible epoch=8 N=5 -> 4
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+Block 9 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=9 root=902627f46fa55647
+C v2 hash index=9 eco=902627f46fa5 -> 776182aaa096dbeb
+WorkID W-load-faible -> SETTLED score=0.0
+Block 9 recorded in reputation for 1 contributors
+Appended block index=9 hash=776182aaa096dbeb4c497882473e8f763ee248830c0cd1c5aef2e3bcb87f4b7e sha3=759e73456cb45d27 reward=5000000000 contributors=1 hybrid=True
+audit append type=protocol_block hash=a45c687fe89d5b4f
+protocol block=9 hash=776182aaa096dbeb H_adult=5.0 paid=5000000000 supply=49000000000 v=2
+WorkID W-load-moyenne -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099951000000000 -> 5000000000
+N_max=1 cpu=8 ram=8 net=20.0 val=2.6402640264026402
+partition work=W-load-moyenne epoch=9 N=1 -> 0
+partitioned R_block=5000000000 into 1 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+Block 10 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=10 root=902627f46fa55647
+C v2 hash index=10 eco=902627f46fa5 -> 1b8db02798c4eb35
+WorkID W-load-moyenne -> SETTLED score=0.0
+Block 10 recorded in reputation for 1 contributors
+Appended block index=10 hash=1b8db02798c4eb35c7a2f42d6a2292f2a6851cd28cb7369a13088cca2f35e1e6 sha3=abd5ab1d9d0a2a22 reward=5000000000 contributors=1 hybrid=True
+audit append type=protocol_block hash=12fc839f64fc7256
+protocol block=10 hash=1b8db02798c4eb35 H_adult=5.0 paid=5000000000 supply=54000000000 v=2
+WorkID W-load-forte -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099946000000000 -> 5000000000
+N_max=1 cpu=2 ram=2 net=0.25 val=0.07936507936507936
+partition work=W-load-forte epoch=10 N=1 -> 0
+partitioned R_block=5000000000 into 1 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Network bandwidth measured: 100.00 Mbps -> class=BONNE
+compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+Block 11 passed anti-Sybil validation (source=mining)
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=11 root=902627f46fa55647
+C v2 hash index=11 eco=902627f46fa5 -> 845edd716638dc04
+WorkID W-load-forte -> SETTLED score=0.0
+Block 11 recorded in reputation for 1 contributors
+Appended block index=11 hash=845edd716638dc04a18620684cfac97275edcd2d5778fb11e6cd9ec4f102fcba sha3=dace88bb7409d5f6 reward=5000000000 contributors=1 hybrid=True
+audit append type=protocol_block hash=c1f2c022d9d39a27
+protocol block=11 hash=845edd716638dc04 H_adult=5.0 paid=5000000000 supply=59000000000 v=2
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/05_load.json
+registered machine id=Z:M1 owner=Z index=1 first=True human=None N_econ=1
+offline A:M2 N_econ unchanged=5
+transferred out A:M2 from A
+registered machine id=A:M2:to:E owner=E index=1 first=True human=None N_econ=1
+fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+H_adult live=5 source=HumanRegistry.adult_verified
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=2 ignored for M1)
+fleet_owner_share N=2 P=0.500000000000 k=0.025317807984
+settled R=5000000000 H_adult=5 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+EconomicRoot=3491a7262ad4c221 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+EconomicRoot=61519c9e271bd9f9 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+EconomicRoot=3491a7262ad4c221 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+EconomicRoot=61519c9e271bd9f9 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/06_attacks.json
+USD→ARTCB oracle NOT live (forced stub)
+fee quote usd=0.000311000 congestion=1000.0 cap=0.000311
+USD→ARTCB oracle NOT live (forced stub)
+oracle NOT live — fee satoshi unavailable (price not invented)
+fee quote usd=0.000001000 congestion=0.0 cap=0.000311
+usd=0.000001000 price=1.0 -> satoshi=100
+fee satoshi=100 usd=0.000001000 price=1.0
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/07_oracle.json
+stripe webhook duplicate event_id=evt_sim164
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/08_stripe.json
+PQC native ML-DSA-65 ENABLED
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/11_pqc.json
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/10_wallet_balances.json
+H_adult live=5 source=HumanRegistry.adult_verified
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/00_manifest.json
+wrote /workspace/simulations/20260828T220828Z_e2e165/out/09_summary.json

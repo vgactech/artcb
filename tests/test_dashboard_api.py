@@ -55,7 +55,7 @@ def test_dashboard_mining_status(client: TestClient) -> None:
     r = client.get("/api/v1/dashboard/mining/status")
     assert r.status_code == 200
     data = r.json()
-    assert data["current_reward_artcb"] == 1.0
+    assert data["current_reward_artcb"] == 50.0
     assert "blocks_until_halving" in data
 
 

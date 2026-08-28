@@ -57,7 +57,7 @@ def _pipeline(request: Request) -> MiningPipeline:
     state = _state(request)
     from src.artcb.wallet.manager import WalletManager
 
-    return MiningPipeline(
+    pipe = MiningPipeline(
         dual=state.dual,
         chain=state.chain,
         wallet_manager=WalletManager(),
@@ -66,6 +66,12 @@ def _pipeline(request: Request) -> MiningPipeline:
         timeline=state.timeline,
         register_graph=state.register_graph,
     )
+    pipe.bind_identity(
+        machine_registry=state.machine_registry,
+        human_registry=state.human_registry,
+        work_registry=state.work_registry,
+    )
+    return pipe
 
 
 @router.post("/pipeline")
@@ -257,4 +263,76 @@ def run_bulk_mining(body: BulkMiningRequest, request: Request) -> dict:
         "batches_processed": len(results),
         "results": results,
         "message": f"Minage bulk terminé — {len(results)} lots traités (apprentissage + raisonnement + blocs)",
+    }
+
+
+class ProtocolMineIn(BaseModel):
+    graph_id: str = "g_protocol"
+    graph_root: str
+    pol_score: float = Field(0.8, ge=0, le=1)
+    work_id: str
+    machine_ids: list[str]
+    job_id: str | None = None
+    interval_seconds: float | None = 600
+    n_partitions: int | None = None
+    missing_preblock_ids: list[str] | None = None
+
+
+@router.post("/protocol")
+def mine_protocol(body: ProtocolMineIn, request: Request) -> dict:
+    """One-shot H_adult → R(H) → HBP → P/W → OwnerDecay → Settlement → C hash v2."""
+    engine = _state(request).protocol_engine
+    if engine is None:
+        raise HTTPException(status_code=503, detail="protocol engine not bound")
+    from src.artcb.mining.protocol import ProtocolReject
+
+    try:
+        result = engine.execute_block(
+            graph_id=body.graph_id,
+            graph_root=body.graph_root,
+            pol_score=body.pol_score,
+            work_id=body.work_id,
+            machine_ids=body.machine_ids,
+            job_id=body.job_id,
+            interval_seconds=body.interval_seconds,
+            n_partitions=body.n_partitions,
+            missing_preblock_ids=body.missing_preblock_ids,
+        )
+    except ProtocolReject as exc:
+        raise HTTPException(status_code=400, detail={"code": exc.code, "message": str(exc)}) from exc
+    return {
+        "block_index": result.block_index,
+        "block_hash": result.block_hash,
+        "hash_version": result.hash_version,
+        "h_adult": result.h_adult,
+        "r_block_satoshi": result.r_block_satoshi,
+        "hbp_rate": result.hbp_rate,
+        "economic_root": result.economic_root,
+        "total_paid_satoshi": result.total_paid_satoshi,
+        "supply_satoshi": result.supply_satoshi,
+        "conservation": result.total_paid_satoshi == result.r_block_satoshi,
+        "by_address_satoshi": result.by_address_satoshi,
+        "lines": result.lines,
+        "phases": result.phases,
+        "job_payment_distinct_from_r_block": True,
+    }
+
+
+@router.get("/protocol/status")
+def protocol_status(request: Request) -> dict:
+    engine = _state(request).protocol_engine
+    chain = _state(request).chain
+    from src.artcb.chain import ffi
+    from src.artcb.tokenomics import MAX_SUPPLY_SATOSHI
+
+    h_adult = engine.h_adult() if engine else 0
+    supply = chain._issued_so_far_satoshi()
+    return {
+        "h_adult": h_adult,
+        "h_adult_source": "HumanRegistry.verified_adult_count",
+        "adult_age_years": 18,
+        "supply_satoshi": supply,
+        "max_supply_satoshi": MAX_SUPPLY_SATOSHI,
+        "c_economic_root_abi": ffi.has_economic_root_abi(),
+        "wired": engine is not None,
     }

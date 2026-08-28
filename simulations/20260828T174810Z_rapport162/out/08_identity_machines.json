@@ -1,0 +1,42 @@
+{
+  "Q": 100,
+  "creator_direct_bootstrap": true,
+  "revalidation_when_validators_gt_100": true,
+  "validators_after_120_inscriptions_model": 101,
+  "genesis_validated_count": 101,
+  "external_binding_attempts": [
+    {
+      "human": "B",
+      "machine": "C-M7",
+      "accepted": false
+    },
+    {
+      "human": "B",
+      "machine": "D-M14",
+      "accepted": false
+    }
+  ],
+  "own_plus_one_external": true,
+  "B_second_external_rejected": true,
+  "machine_states": [
+    "ACTIVE",
+    "ATTESTED",
+    "COMPROMISED",
+    "DEACTIVATION_REQUESTED",
+    "GRACE",
+    "OFFLINE",
+    "REGISTERED",
+    "RETIRED",
+    "TRANSFERRED",
+    "TRANSFER_PENDING"
+  ],
+  "N_economic_states": [
+    "ACTIVE",
+    "ATTESTED",
+    "DEACTIVATION_REQUESTED",
+    "GRACE",
+    "OFFLINE",
+    "REGISTERED"
+  ],
+  "biometric_raw_never_on_chain": true
+}

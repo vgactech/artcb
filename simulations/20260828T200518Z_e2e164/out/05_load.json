@@ -1,0 +1,17 @@
+{
+  "faible": {
+    "n_max": 12,
+    "n_partitions": 5,
+    "paid": 5000000000
+  },
+  "moyenne": {
+    "n_max": 1,
+    "n_partitions": 1,
+    "paid": 5000000000
+  },
+  "forte": {
+    "n_max": 1,
+    "n_partitions": 1,
+    "paid": 5000000000
+  }
+}

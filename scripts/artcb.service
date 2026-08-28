@@ -11,6 +11,7 @@ WorkingDirectory=/home/ubuntu/artcb
 # Si présent, start_node.sh injecte les secrets via `doppler run`
 # et aucun .env n'est nécessaire sur le serveur.
 EnvironmentFile=-/etc/artcb/doppler.env
+EnvironmentFile=-/etc/artcb/release.env
 ExecStart=/home/ubuntu/artcb/scripts/start_node.sh
 Restart=always
 RestartSec=5

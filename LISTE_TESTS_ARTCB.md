@@ -13,7 +13,7 @@
 | ID | Commande | Attendu | Statut | Dernière exec |
 |----|----------|---------|--------|---------------|
 | T-B01 | `python3 -m pytest tests/ -q` | 478/478 passed | [x] | 2026-08-05 478/478 ✅ (8 skipped bridges live intentionnels) |
-| T-B02 | `python3 -m pytest tests/test_wallet_rewards.py -q` | all pass, reward 1 ARTCB | [x] | 2026-07-07 |
+| T-B02 | `python3 -m pytest tests/test_wallet_rewards.py -q` | all pass, reward 50 ARTCB / 210k | [x] | 2026-08-25 |
 | T-B03 | `python3 -m pytest tests/test_pol.py -q` | split 1.0 ARTCB | [x] | 2026-07-07 |
 | T-B04 | `python3 -m pytest tests/test_api.py -q` | API OK | [x] | 2026-07-07 |
 | T-B05 | `python3 -m pytest tests/test_chain.py -q` | C verify OK | [x] | 2026-07-07 |
@@ -217,4 +217,22 @@
 | Date UTC | Session | Tests passés | Notes |
 |----------|---------|--------------|-------|
 | 2026-08-05T16:00Z | Audit sécurité "unsigned" + endpoints | 478/478 pytest + 25/25 P2P Replit | Rapport 116 |
+
+---
+
+## 12. Tests protocole économique D-023 (2026-08-25)
+
+| ID | Commande / scénario | Attendu | Statut | Dernière exec |
+|----|---------------------|---------|--------|---------------|
+| T-E01 | `pytest tests/test_economics_protocol.py` | 21M cap, R(H) sans halving index, HBP, P_owner, settlement, API | [x] | 2026-08-26  D-024 |
+| T-E02 | `pytest tests/test_wallet_rewards.py` | genesis 50 ARTCB, index 210k **ne coupe plus** | [x] | 2026-08-26 D-024 |
+| T-E03 | `python3 -m pytest tests/ -q` | suite complète 0 fail | [x] | 2026-08-26 **534 passed, 20 skipped, 0 fail** |
+| T-E04 | `pytest tests/test_economics_rapport162.py` | time-norm, M1, fleet P, binding≤1, WorkID, vault, lock 30j, EconomicRoot | [x] | 2026-08-28 |
+| T-E05 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite complète post-162 | [x] | 2026-08-28 **554 passed, 20 skipped, 0 fail** — `logs/20260828_pytest_rapport163.txt` |
+| T-E06 | `pytest tests/test_e2e_protocol_164.py tests/test_economic_root_native.py tests/test_oracle_fees.py tests/test_stripe_priority_job.py` | e2e ProtocolEngine, C v2, oracle honnête, Stripe no-mint | [x] | 2026-08-28 |
+| T-E07 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite complète post-164 | [x] | 2026-08-28 **584 passed, 21 skipped, 0 fail** — `logs/20260828_pytest_rapport164_full.txt` |
+| T-E08 | `make -C src/c clean all test` | EconomicRoot v2 empty==v1, tamper change hash | [x] | 2026-08-28 |
+| T-E09 | `python3 scripts/run_sim164_e2e.py` | sim 164 failures=[] conservation+21M+attaques | [x] | 2026-08-28 `simulations/20260828T200518Z_e2e164/` |
+| T-E10 | Stripe CI `scripts/stripe_job_payment_ci.py` | skip propre si secret absent ; GHA `secrets.KEY_API_STRIPE_ACTION` | [x] | 2026-08-28 skip local (secret unset) |
+| T-E11 | OVH `http://152.228.144.34:8000/health` | 200 healthy ; routes 164 = 404 (ancienne image) | [x] | 2026-08-28 |
 

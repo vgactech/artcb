@@ -1,0 +1,32 @@
+{
+  "start_50_50": {
+    "provider_share": 0.5,
+    "worker_share": 0.5,
+    "provider_satoshi": {
+      "P1": 1000000000,
+      "P2": 600000000,
+      "P3": 400000000
+    },
+    "worker_satoshi": {
+      "W1": 1000000000,
+      "W2": 500000000,
+      "W3": 500000000
+    },
+    "provider_pool": 2000000000,
+    "worker_pool": 2000000000,
+    "sum": 4000000000
+  },
+  "dynamic": {
+    "bounds": [
+      0.2,
+      0.8
+    ],
+    "providers_rare": 0.54999999387315,
+    "workers_rare": 0.4570307960551819,
+    "balanced": 0.5491803278688525
+  },
+  "job_payment_ne_block_reward": true,
+  "external_priority_does_not_mint": true,
+  "historical_30_70_is_test_not_rule": true,
+  "user_GO_start_50_50": true
+}

@@ -5,7 +5,8 @@
 #  Usage (depuis une machine ayant un accès SSH à l'instance) :
 #    bash scripts/deploy_ovh.sh [IP] [BRANCHE]
 #
-#  Défauts : IP=152.228.144.34 (artcb-node-1, GRA11), BRANCHE=main
+#  Défauts : IP=152.228.144.34 (artcb-node-1, GRA11). BRANCHE obligatoire
+#  (ne pas déployer main par défaut). ARTCB_DEPLOY_BRANCH peut la fournir.
 #  Prérequis : clé SSH autorisée pour l'utilisateur ubuntu.
 #  Variables : ARTCB_SSH_KEY=~/.ssh/xxx pour forcer une clé.
 #
@@ -16,10 +17,17 @@
 set -Eeuo pipefail
 
 SERVER_IP="${1:-${OVH_SERVER_IP:-152.228.144.34}}"
-BRANCH="${2:-main}"
+BRANCH="${2:-${ARTCB_DEPLOY_BRANCH:-}}"
 SSH_USER="${OVH_SERVER_USER:-ubuntu}"
 SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o ConnectTimeout=10)
 [ -n "${ARTCB_SSH_KEY:-}" ] && SSH_OPTS+=(-i "$ARTCB_SSH_KEY")
+
+if [ -z "$BRANCH" ]; then
+  echo "Usage: bash scripts/deploy_ovh.sh [IP] BRANCH"
+  echo "BRANCH is required (do not silently deploy main)."
+  echo "Example: bash scripts/deploy_ovh.sh 152.228.144.34 cursor/tokenomics-21m-hbp-owner-decay-3fcb"
+  exit 1
+fi
 
 echo "── Déploiement ARTCB → $SSH_USER@$SERVER_IP (branche $BRANCH)"
 
@@ -34,7 +42,15 @@ cd ~/artcb
 git fetch origin "$BRANCH"
 git checkout "$BRANCH"
 git reset --hard "origin/$BRANCH"
-echo "── Commit déployé : \$(git log --oneline -1)"
+DEPLOYED_SHA=\$(git rev-parse HEAD)
+DEPLOYED_BRANCH=\$(git rev-parse --abbrev-ref HEAD)
+echo "── Commit déployé : \$(git log --oneline -1) sha=\$DEPLOYED_SHA"
+mkdir -p /home/ubuntu/artcb
+printf 'ARTCB_GIT_SHA=%s\nARTCB_GIT_BRANCH=%s\n' "\$DEPLOYED_SHA" "\$DEPLOYED_BRANCH" > /tmp/artcb_release.env
+chmod 644 /tmp/artcb_release.env
+sudo mkdir -p /etc/artcb
+sudo cp /tmp/artcb_release.env /etc/artcb/release.env
+sudo chmod 644 /etc/artcb/release.env
 
 # 2. Installation (idempotente)
 bash install.sh

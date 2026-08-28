@@ -1,0 +1,124 @@
+{
+  "alpha": 0.9406426982957875,
+  "H_REF": 1000000,
+  "H_BOOTSTRAP": 1,
+  "Q_FINDER_is_not_H_REF": true,
+  "R_H_table": [
+    {
+      "H": 0,
+      "R_H": 50.0,
+      "live_index_0": 50.0,
+      "live_index_210000": 50.0,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 1,
+      "R_H": 50.0,
+      "live_index_0": 50.0,
+      "live_index_210000": 50.0,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 100,
+      "R_H": 50.0,
+      "live_index_0": 50.0,
+      "live_index_210000": 50.0,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 1000000,
+      "R_H": 50.0,
+      "live_index_0": 50.0,
+      "live_index_210000": 50.0,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 10000000,
+      "R_H": 5.7322788143139025,
+      "live_index_0": 5.73227881,
+      "live_index_210000": 5.73227881,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 64000000,
+      "R_H": 0.9999999999999999,
+      "live_index_0": 1.0,
+      "live_index_210000": 1.0,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 100000000,
+      "R_H": 0.65718040810064,
+      "live_index_0": 0.65718041,
+      "live_index_210000": 0.65718041,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 1000000000,
+      "R_H": 0.07534282661074929,
+      "live_index_0": 0.07534283,
+      "live_index_210000": 0.07534283,
+      "index_does_not_cut": true
+    },
+    {
+      "H": 5820000000,
+      "R_H": 0.014372181370825283,
+      "live_index_0": 0.01437218,
+      "live_index_210000": 0.01437218,
+      "index_does_not_cut": true
+    }
+  ],
+  "exhaustion": [
+    {
+      "interval_label": "600s_tokenomics",
+      "interval_seconds": 600.0,
+      "blocks_per_day": 144.0,
+      "naive_r_per_block": 50.0,
+      "naive_days_to_21M": 2916.6666666666665,
+      "naive_years_to_21M": 7.985398129135295,
+      "normalized_r_per_block": 50.0,
+      "normalized_days_to_21M": 2916.6666666666665,
+      "normalized_years_to_21M": 7.985398129135295,
+      "normalized_matches_600s_budget": true
+    },
+    {
+      "interval_label": "60s",
+      "interval_seconds": 60.0,
+      "blocks_per_day": 1440.0,
+      "naive_r_per_block": 50.0,
+      "naive_days_to_21M": 291.6666666666667,
+      "naive_years_to_21M": 0.7985398129135296,
+      "normalized_r_per_block": 5.0,
+      "normalized_days_to_21M": 2916.6666666666665,
+      "normalized_years_to_21M": 7.985398129135295,
+      "normalized_matches_600s_budget": true
+    },
+    {
+      "interval_label": "10s",
+      "interval_seconds": 10.0,
+      "blocks_per_day": 8640.0,
+      "naive_r_per_block": 50.0,
+      "naive_days_to_21M": 48.611111111111114,
+      "naive_years_to_21M": 0.1330899688189216,
+      "normalized_r_per_block": 0.8333333333333334,
+      "normalized_days_to_21M": 2916.6666666666665,
+      "normalized_years_to_21M": 7.985398129135295,
+      "normalized_matches_600s_budget": true
+    },
+    {
+      "interval_label": "1s",
+      "interval_seconds": 1.0,
+      "blocks_per_day": 86400.0,
+      "naive_r_per_block": 50.0,
+      "naive_days_to_21M": 4.861111111111111,
+      "naive_years_to_21M": 0.013308996881892158,
+      "normalized_r_per_block": 0.08333333333333334,
+      "normalized_days_to_21M": 2916.6666666666665,
+      "normalized_years_to_21M": 7.985398129135295,
+      "normalized_matches_600s_budget": true
+    }
+  ],
+  "hard_cap_last_block_satoshi": 1,
+  "extra_epochs_ignored": true,
+  "problem_discovered": "Naive 50 ARTCB/block at 10s exhausts 21M in ~48.6 days; time-normalization (user GO) keeps ~7.99 years at H<=1M."
+}

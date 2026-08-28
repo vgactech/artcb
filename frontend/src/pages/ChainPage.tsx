@@ -59,7 +59,7 @@ export function ChainPage() {
           </p>
           <p className="mc-gold-text">
             <strong>{t('chain_reward')}:</strong>{" "}
-            {detail.block_reward != null ? `${(detail.block_reward / 1e8).toFixed(8)} ARTCB` : "1 ARTCB"}
+            {detail.block_reward != null ? `${(detail.block_reward / 1e8).toFixed(8)} ARTCB` : "50 ARTCB"}
           </p>
           {detail.contributors && detail.contributors.length > 0 && (
             <table className="mc-table">
@@ -132,7 +132,7 @@ export function ChainPage() {
                 <td className="mc-mono">{b.hash.slice(0, 16)}…</td>
                 <td>{b.pol_score?.toFixed(2)}</td>
                 <td className="mc-gold-text">
-                  {b.block_reward != null ? `${(b.block_reward / 1e8).toFixed(2)} ₳` : "1 ₳"}
+                  {b.block_reward != null ? `${(b.block_reward / 1e8).toFixed(2)} ₳` : "50 ₳"}
                 </td>
                 <td>{b.visibility ?? "private"}</td>
                 <td className="mc-mono">{b.graph_id?.slice(0, 12)}…</td>

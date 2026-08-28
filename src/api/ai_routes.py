@@ -360,6 +360,10 @@ def ai_memo(
             pol_score=0.75,
             wallet=wallet,
             graph_root=graph_root,
+            machine_registry=getattr(state, "machine_registry", None),
+            human_registry=getattr(state, "human_registry", None),
+            work_registry=getattr(state, "work_registry", None),
+            graph_id=graph.graph_id if graph else None,
         )
 
     # Marquer le bloc comme memo IA via public_symbols
@@ -721,31 +725,21 @@ def chain_block_sizes(
     - **graph_root / merkle_root** : hash SHA-256 du graphe IR encodé (taille fixe 64 chars)
 
     ### La taille affecte-t-elle la quantité de coins disponibles ?
-    **NON** — le reward est calculé depuis l'**index** (halving fixe) ET la **vitesse actuelle** (halving dynamique) :
-    ```
-    epoch_fixe  = block_index // 105_000          # halving tous les 105 000 blocs
-    epoch_dyn   = floor(log2(max(1, velocity_24h / 144)))  # vitesse vs référence Bitcoin
-    epoch_total = epoch_fixe + epoch_dyn
-    reward      = 1 ARTCB >> epoch_total
-    ```
-    Un bloc de 1 octet et un bloc de 1 Mo reçoivent le même reward à index et vitesse égaux.
+    **NON** — le reward est `min(R(H), remaining_21M)` (D-024, géopopulation).
+    L'index de bloc et la vitesse de minage **ne coupent plus** le reward.
+    Un bloc de 1 octet et un bloc de 1 Mo reçoivent le même reward à H et supply restante égaux.
 
     ### Ce qui affecte RÉELLEMENT les coins disponibles :
-    1. **Index du bloc** → détermine l'epoch fixe (halving)
-    2. **Vitesse de minage (24h)** → détermine l'epoch dynamique (halving adaptatif)
-    3. **Nombre de contributors** → split du reward entre participants
-    4. **PoL score** → poids dans la distribution du reward (split proportionnel)
+    1. **R(H)** → reward population (50 à ≤1M humains, ~0.075 à 1 milliard)
+    2. **Supply restante** → hard cap 21 000 000 (D-014) ; les frais reviennent au restant
+    3. **HBP(H)** + **P_owner(n)** → répartition, pas le volume émis
+    4. **PoL score** → poids W de chaque machine dans le pool travail
 
-    ### Réponse rapide (sans accélération dynamique) :
-    - Bloc #0 à #104 999 → 1 ARTCB/bloc (epoch 0)
-    - Bloc #105 000 à #209 999 → 0.5 ARTCB/bloc (epoch 1)
-    - Bloc #210 000 à #314 999 → 0.25 ARTCB/bloc (epoch 2)
-    - … jusqu'au halving #64 (reward = 0)
-    - Supply max = 21 000 000 ARTCB (hard cap immuable — D-014)
-    - À forte adoption (1M blocs/j) : epoch_dyn ≈ 13 → reward divisé par 8 192 automatiquement
+    ### Réponse rapide (H ≤ 1M) :
+    - Chaque bloc émet **50 ARTCB** tant que H ≤ 1M et qu'il reste du cap
+    - Le passage du bloc 209 999 au bloc 210 000 **ne divise plus** le reward
+    - Supply max = 21 000 000 ARTCB (hard cap, plus un calendrier 50×210k×2)
     """
-    import math
-
     state = _state(request)
 
     try:
@@ -836,17 +830,21 @@ def chain_block_sizes(
 
     # ── Tokenomics — impact coins ────────────────────────────────────────────
     from src.artcb.tokenomics import (
-        HALVING_INTERVAL, INITIAL_BLOCK_REWARD_ARTCB,
-        MAX_HALVINGS, SATOSHI_PER_ARTCB, MAX_SUPPLY_ARTCB
+        EMISSION_MODEL,
+        SATOSHI_PER_ARTCB,
+        MAX_SUPPLY_ARTCB,
     )
-    current_epoch = (len(raw_blocks) - 1) // HALVING_INTERVAL
-    current_reward = INITIAL_BLOCK_REWARD_ARTCB / (2 ** min(current_epoch, MAX_HALVINGS - 1))
-    next_halving_at = (current_epoch + 1) * HALVING_INTERVAL
-    blocks_until_halving = next_halving_at - len(raw_blocks)
+    from src.artcb.economics.emission import issued_reward_satoshi, population_reward_artcb
 
-    # Coins minés jusqu'ici
+    issued_so_far = total_reward_satoshi
+    current_reward_satoshi = issued_reward_satoshi(
+        len(raw_blocks),
+        issued_so_far_satoshi=issued_so_far,
+    )
+    current_reward = current_reward_satoshi / SATOSHI_PER_ARTCB
+
     mined_artcb = total_reward_satoshi / SATOSHI_PER_ARTCB
-    supply_max = MAX_SUPPLY_ARTCB  # 21_000_000 ARTCB hard cap (D-014 — rapport 079b/080)
+    supply_max = MAX_SUPPLY_ARTCB
     mined_pct = mined_artcb / supply_max * 100
 
     tokenomics = {
@@ -854,22 +852,28 @@ def chain_block_sizes(
         "mined_artcb": round(mined_artcb, 8),
         "mined_pct": round(mined_pct, 6),
         "remaining_artcb": round(supply_max - mined_artcb, 8),
-        "current_epoch_fixe": current_epoch_fixe,
-        "current_epoch_dynamique": current_epoch_dyn,
-        "current_epoch_total": current_epoch,
+        "emission_model": EMISSION_MODEL,
+        "halving_removed": True,
+        "current_epoch_fixe": None,
+        "current_epoch_dynamique": None,
+        "current_epoch_total": None,
         "current_reward_artcb": round(current_reward, 8),
-        "next_halving_at_block": next_halving_at,
-        "blocks_until_halving": blocks_until_halving,
-        "halving_interval": HALVING_INTERVAL,
-        "max_halvings": MAX_HALVINGS,
+        "r_h_artcb": round(population_reward_artcb(0), 8),
+        "next_halving_at_block": None,
+        "blocks_until_halving": None,
+        "halving_interval": None,
+        "max_halvings": None,
         "size_does_NOT_affect_reward": True,
-        "reward_formula": "reward = 1 ARTCB >> (epoch_fixe + epoch_dyn)  [halving fixe 105K + dyn]",
+        "reward_formula": "min(R(H), remaining_21M)  [D-024 geopopulation, no 210k schedule]",
         "what_affects_reward": [
-            "block_index (epoch/halving)",
+            "verified_humans R(H)",
+            "remaining 21M hard cap",
             "contributors count (split du reward)",
             "pol_score (pondération du split entre contributors)",
         ],
         "what_does_NOT_affect_reward": [
+            "block_index (plus de halving 210k)",
+            "mining velocity extra_epochs",
             "block_size_bytes",
             "content volume",
             "visibility (private/public)",

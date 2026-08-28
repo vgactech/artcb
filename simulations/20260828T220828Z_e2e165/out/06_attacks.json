@@ -1,0 +1,32 @@
+{
+  "double_binding_B": {
+    "code": "REJECT_DOUBLE_BINDING",
+    "message": "human B already has an external machine binding (max 1)"
+  },
+  "double_workid": {
+    "code": "REJECT_DOUBLE_SETTLEMENT",
+    "message": "REJECT_DOUBLE_SETTLEMENT: WorkID already settled: W-small"
+  },
+  "owner_cut_B": {
+    "code": "REJECT_OWNER_CUT_PAYMENT",
+    "message": "REJECT_OWNER_CUT_PAYMENT: IMPOSSIBLE: owner cannot redirect bound-human payment on A:M2"
+  },
+  "offline_transfer": {
+    "n_before": 5,
+    "grace": "GRACE",
+    "offline": "OFFLINE",
+    "n_while_offline": 5,
+    "n_A_after_transfer": 4,
+    "n_E": 1,
+    "p_A_after": 0.48024999999999995
+  },
+  "tamper_economic_root": {
+    "before": "3491a7262ad4c2210c2be43438e4a53ae3fd39b60b174a6a8afeb0328c7c8ab8",
+    "after": "61519c9e271bd9f9007cd0fa1aa02fec0a6def62fea9d4c651c8f010a0828a5b",
+    "changed": true
+  },
+  "fake_human_multi_binding": {
+    "code": "FAKE_HUMAN",
+    "message": "FAKE_HUMAN: address already bound to another HumanID: B"
+  }
+}

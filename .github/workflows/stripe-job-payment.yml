@@ -1,0 +1,68 @@
+name: ARTCB — Stripe JobPayment (test mode)
+
+# Manual + optional call from the main tests workflow.
+# Secret name (GitHub Actions): KEY_API_STRIPE_ACTION  (sk_test_…)
+# The secret is NEVER echoed, NEVER written to the repo, NEVER sent to logs.
+# JobPayment ≠ R_block and NEVER mints ARTCB.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why this Stripe JobPayment test is running"
+        required: false
+        default: "priority job payment test"
+  workflow_call:
+
+env:
+  ARTCB_DEBUG: "true"
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  stripe-job-payment:
+    name: "Stripe test-mode PaymentIntent for priority Job"
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile C chain lib
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libssl-dev
+          make -C src/c all
+
+      - name: Stripe JobPayment (test)
+        env:
+          KEY_API_STRIPE_ACTION: ${{ secrets.KEY_API_STRIPE_ACTION }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KEY_API_STRIPE_ACTION}" ]; then
+            echo "KEY_API_STRIPE_ACTION is empty in this run — workflow is still valid."
+            echo "Add the secret in Settings → Secrets and variables → Actions."
+            python3 scripts/stripe_job_payment_ci.py
+            exit 0
+          fi
+          echo "KEY_API_STRIPE_ACTION is set (value not printed)"
+          _prefix=$(printf '%s' "$KEY_API_STRIPE_ACTION" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | cut -c1-8)
+          case "${_prefix}" in
+            sk_live*|rk_live*)
+              echo "REFUSED: live key detected. Use sk_test only."
+              unset _prefix
+              exit 2
+              ;;
+            sk_test*|rk_test*)
+              echo "mode=test"
+              ;;
+            *)
+              echo "mode=unknown — tests still run create+cancel, never capture"
+              ;;
+          esac
+          unset _prefix
+          python3 scripts/stripe_job_payment_ci.py

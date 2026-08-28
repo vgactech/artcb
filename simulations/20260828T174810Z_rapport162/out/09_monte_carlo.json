@@ -1,0 +1,69 @@
+{
+  "seed": 42,
+  "runs": 2000,
+  "horizon_months_per_run": 12,
+  "invariant_violations": {
+    "supply": 0,
+    "m1": 0,
+    "offline": 0,
+    "binding": 8,
+    "workid": 0,
+    "pb": 0,
+    "root": 0,
+    "lock": 0,
+    "external_mint": 0
+  },
+  "issued_min": 2592000.0,
+  "issued_median": 2592000.0,
+  "issued_max": 2592000.0000000005,
+  "issued_always_le_21M": true,
+  "m1_always_100_violations": 0,
+  "note_100y": "100-year horizon is covered analytically in 01_emission (normalized emission ≈ 7.99 y to cap at H<=1M, longer if H grows).",
+  "sample_first_5": [
+    {
+      "run": 0,
+      "H_end": 29,
+      "issued": 2592000.0,
+      "remaining": 18408000.0,
+      "interval": 10.0,
+      "n_a": 3,
+      "m1": 1.0
+    },
+    {
+      "run": 1,
+      "H_end": 308,
+      "issued": 2592000.0,
+      "remaining": 18408000.0,
+      "interval": 600.0,
+      "n_a": 7,
+      "m1": 1.0
+    },
+    {
+      "run": 2,
+      "H_end": 18,
+      "issued": 2592000.0000000005,
+      "remaining": 18408000.0,
+      "interval": 1.0,
+      "n_a": 6,
+      "m1": 1.0
+    },
+    {
+      "run": 3,
+      "H_end": 21,
+      "issued": 2592000.0,
+      "remaining": 18408000.0,
+      "interval": 10.0,
+      "n_a": 2,
+      "m1": 1.0
+    },
+    {
+      "run": 4,
+      "H_end": 77,
+      "issued": 2592000.0,
+      "remaining": 18408000.0,
+      "interval": 600.0,
+      "n_a": 4,
+      "m1": 1.0
+    }
+  ]
+}

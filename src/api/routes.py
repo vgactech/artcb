@@ -97,6 +97,9 @@ def health(request: Request) -> dict:
         chain_status = {"available": True, **state.chain.verify()}
     except FileNotFoundError as exc:
         chain_status = {"available": False, "message": str(exc)}
+    from src.artcb.release import release_identity
+
+    identity = release_identity()
     return {
         "status": "ok",
         "debug": state.settings.debug,
@@ -104,6 +107,9 @@ def health(request: Request) -> dict:
         "bob_configured": bool(state.settings.bob_api_key),
         "demo_book": str(state.settings.demo_book_pdf),
         "chain": chain_status,
+        "git_sha": identity["git_sha"],
+        "git_branch": identity["git_branch"],
+        "version": identity["version"],
     }
 
 
@@ -288,6 +294,10 @@ async def store(body: StoreRequest, request: Request) -> dict:
             pol_score=pol.pol_score,
             wallet=wallet,
             graph_root=graph_root,
+            machine_registry=state.machine_registry,
+            human_registry=state.human_registry,
+            work_registry=state.work_registry,
+            graph_id=graph.graph_id,
         )
 
     public_symbols = graph.orig_symbols if body.visibility == "public" and graph.orig_symbols else None
@@ -622,6 +632,10 @@ async def ir_learn(body: IrLearnRequest, request: Request) -> dict:
             pol_score=pol.pol_score,
             wallet=None,
             graph_root=graph_root,
+            machine_registry=state.machine_registry,
+            human_registry=state.human_registry,
+            work_registry=state.work_registry,
+            graph_id=graph.graph_id,
         )
 
     # Graver le bloc

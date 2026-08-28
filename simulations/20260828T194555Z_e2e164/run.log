@@ -1,0 +1,266 @@
+2026-08-28 19:55:44,197 DEBUG artcb.chain.manager Generated new Ed25519 chain key path=/workspace/simulations/20260828T194555Z_e2e164/data/chain.key
+2026-08-28 19:55:44,212 WARNING artcb.chain.manager Chain PQC key generation skipped: liboqs native library not found — fallback Ed25519 actif. Compiler liboqs (cmake) pour ML-DSA-65 complet.
+2026-08-28 19:55:44,212 WARNING artcb.chain.manager Security modules DISABLED
+2026-08-28 19:55:44,213 DEBUG artcb.wallet.manager WalletManager initialized wallet_dir=data/wallets
+2026-08-28 19:55:44,213 DEBUG artcb.economics.demographic demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+2026-08-28 19:55:44,213 DEBUG artcb.chain.manager chain identity bound humans=True machines=True work=True
+2026-08-28 19:55:44,213 DEBUG artcb.economics.identity bootstrap creator id=H-A addr=A
+2026-08-28 19:55:44,214 DEBUG artcb.economics.identity creator-direct validated H-B
+2026-08-28 19:55:44,214 DEBUG artcb.economics.identity registered DeviceID=D-B human=H-B
+2026-08-28 19:55:44,214 DEBUG artcb.economics.identity bound WalletID=WLT-B addr=B human=H-B device=D-B
+2026-08-28 19:55:44,214 DEBUG artcb.economics.identity creator-direct validated H-C
+2026-08-28 19:55:44,215 DEBUG artcb.economics.identity registered DeviceID=D-C human=H-C
+2026-08-28 19:55:44,215 DEBUG artcb.economics.identity bound WalletID=WLT-C addr=C human=H-C device=D-C
+2026-08-28 19:55:44,215 DEBUG artcb.economics.identity creator-direct validated H-D
+2026-08-28 19:55:44,215 DEBUG artcb.economics.identity registered DeviceID=D-D human=H-D
+2026-08-28 19:55:44,215 DEBUG artcb.economics.identity bound WalletID=WLT-D addr=D human=H-D device=D-D
+2026-08-28 19:55:44,215 DEBUG artcb.economics.identity registered DeviceID=D-A human=H-A
+2026-08-28 19:55:44,215 DEBUG artcb.economics.identity bound WalletID=WLT-A addr=A human=H-A device=D-A
+2026-08-28 19:55:44,215 DEBUG artcb.economics.human_binding registered machine id=M1 owner=A index=1 first=True human=None N_econ=1
+2026-08-28 19:55:44,216 DEBUG artcb.economics.human_binding registered machine id=M2 owner=A index=2 first=False human=B N_econ=2
+2026-08-28 19:55:44,216 DEBUG artcb.economics.human_binding registered machine id=M3 owner=A index=3 first=False human=C N_econ=3
+2026-08-28 19:55:44,216 DEBUG artcb.economics.human_binding registered machine id=M4 owner=A index=4 first=False human=D N_econ=4
+2026-08-28 19:55:44,216 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,217 DEBUG artcb.mining.protocol H_adult live=4 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,217 DEBUG sim164 bootstrap N_A=4 P_extras=0.480250 H_adult=4
+2026-08-28 19:55:44,217 DEBUG artcb.mining.protocol H_adult live=4 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,217 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,217 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/01_bootstrap.json
+2026-08-28 19:55:44,217 DEBUG artcb.economics.job_provider job submitted id=job_1bc0c388d08a4dc3 provider=A
+2026-08-28 19:55:44,217 DEBUG artcb.economics.job_provider job submitted id=job_121be54f3c284fe8 provider=A
+2026-08-28 19:55:44,217 DEBUG artcb.economics.job_provider job submitted id=job_dbf99251774b4bc8 provider=B
+2026-08-28 19:55:44,217 DEBUG artcb.economics.job_provider job submitted id=job_62c5f361a04646ce provider=C
+2026-08-28 19:55:44,217 DEBUG artcb.economics.job_provider job submitted id=job_a35c8a9d942e44b9 provider=D
+2026-08-28 19:55:44,217 DEBUG artcb.economics.job_provider job job_a35c8a9d942e44b9 cancelled
+2026-08-28 19:55:44,217 DEBUG artcb.economics.job_provider job submitted id=job_645e4882ba324810 provider=A
+2026-08-28 19:55:44,218 DEBUG artcb.economics.preblocks partitioned R_block=1000 into 2 preblocks total=1000
+2026-08-28 19:55:44,218 DEBUG artcb.economics.job_provider job job_645e4882ba324810 partitioned n=2 R_block=1000
+2026-08-28 19:55:44,218 DEBUG artcb.economics.job_provider job job_645e4882ba324810 partial completed_pb=1
+2026-08-28 19:55:44,218 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/02_jobs.json
+2026-08-28 19:55:44,219 DEBUG artcb.economics.workid WorkID W-load-low -> EXECUTING score=0.0
+2026-08-28 19:55:44,219 DEBUG artcb.mining.protocol H_adult live=4 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,219 DEBUG artcb.economics.emission R(H) h_adult=4 clamped=1000000.0 reward=50.0000000000
+2026-08-28 19:55:44,219 DEBUG artcb.economics.emission issued_reward index=0 (unused) H_adult=4 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2100000000000000 -> 5000000000
+2026-08-28 19:55:44,219 DEBUG artcb.economics.network_capacity N_max=3 cpu=4 ram=4 net=5.0 val=4.0
+2026-08-28 19:55:44,219 DEBUG artcb.economics.partition_map partition work=W-load-low epoch=0 N=3 -> 2
+2026-08-28 19:55:44,219 DEBUG artcb.economics.preblocks partitioned R_block=5000000000 into 3 preblocks total=5000000000
+2026-08-28 19:55:44,219 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,219 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,219 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,219 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,219 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,219 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=12
+2026-08-28 19:55:44,219 DEBUG artcb.economics.economic_root EconomicRoot=dd67e6244cd28bec keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,220 DEBUG artcb.chain.manager H_adult explicit=4
+2026-08-28 19:55:44,220 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,220 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,220 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,220 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,220 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,220 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4.0 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=13
+2026-08-28 19:55:44,220 DEBUG artcb.economics.economic_root EconomicRoot=928fed0f8bff410a keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,220 DEBUG artcb.chain.ffi Loaded C library path=/workspace/src/c/libartcb_chain.so v2=True
+2026-08-28 19:55:44,220 DEBUG artcb.chain.manager native C EconomicRoot v2 index=0 root=928fed0f8bff410a
+2026-08-28 19:55:44,220 DEBUG artcb.chain.ffi C v2 hash index=0 eco=928fed0f8bff -> d9b075c61ebc7d0b
+2026-08-28 19:55:44,220 DEBUG artcb.economics.workid WorkID W-load-low -> SETTLED score=0.0
+2026-08-28 19:55:44,221 DEBUG artcb.chain.manager Appended block index=0 hash=d9b075c61ebc7d0bbf2648703fc55f24d18a66270dbf1082dfa17263e9e91dc6 sha3=4359eee41368ebd9 reward=5000000000 contributors=5 hybrid=False
+2026-08-28 19:55:44,221 DEBUG artcb.economics.audit_log audit append type=protocol_block hash=34f0fca58901cd4c
+2026-08-28 19:55:44,221 DEBUG artcb.mining.protocol protocol block=0 hash=d9b075c61ebc7d0b H_adult=4 paid=5000000000 supply=5000000000 v=2
+2026-08-28 19:55:44,221 DEBUG artcb.economics.workid WorkID W-load-medium -> EXECUTING score=0.0
+2026-08-28 19:55:44,221 DEBUG artcb.mining.protocol H_adult live=4 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,221 DEBUG artcb.economics.emission R(H) h_adult=4 clamped=1000000.0 reward=50.0000000000
+2026-08-28 19:55:44,221 DEBUG artcb.economics.emission issued_reward index=0 (unused) H_adult=4 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099995000000000 -> 5000000000
+2026-08-28 19:55:44,221 DEBUG artcb.economics.network_capacity N_max=9 cpu=16 ram=16 net=100.0 val=13.201320132013201
+2026-08-28 19:55:44,221 DEBUG artcb.economics.partition_map partition work=W-load-medium epoch=0 N=5 -> 2
+2026-08-28 19:55:44,221 DEBUG artcb.economics.preblocks partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 19:55:44,221 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,222 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=12
+2026-08-28 19:55:44,222 DEBUG artcb.economics.economic_root EconomicRoot=dd67e6244cd28bec keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,222 DEBUG artcb.chain.manager H_adult explicit=4
+2026-08-28 19:55:44,222 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,222 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,222 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4.0 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=13
+2026-08-28 19:55:44,222 DEBUG artcb.economics.economic_root EconomicRoot=928fed0f8bff410a keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,222 DEBUG artcb.chain.manager native C EconomicRoot v2 index=1 root=928fed0f8bff410a
+2026-08-28 19:55:44,222 DEBUG artcb.chain.ffi C v2 hash index=1 eco=928fed0f8bff -> 7a406226b3993078
+2026-08-28 19:55:44,222 DEBUG artcb.economics.workid WorkID W-load-medium -> SETTLED score=0.0
+2026-08-28 19:55:44,223 DEBUG artcb.chain.manager Appended block index=1 hash=7a406226b399307868383267ca7d38b3ea2065069ee8a47a1842127aded7c627 sha3=45ab0c514b492f3f reward=5000000000 contributors=5 hybrid=False
+2026-08-28 19:55:44,223 DEBUG artcb.economics.audit_log audit append type=protocol_block hash=fe70bb84201296dc
+2026-08-28 19:55:44,223 DEBUG artcb.mining.protocol protocol block=1 hash=7a406226b3993078 H_adult=4 paid=5000000000 supply=10000000000 v=2
+2026-08-28 19:55:44,223 DEBUG artcb.economics.workid WorkID W-load-high -> EXECUTING score=0.0
+2026-08-28 19:55:44,223 DEBUG artcb.mining.protocol H_adult live=4 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,223 DEBUG artcb.economics.emission R(H) h_adult=4 clamped=1000000.0 reward=50.0000000000
+2026-08-28 19:55:44,223 DEBUG artcb.economics.emission issued_reward index=0 (unused) H_adult=4 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099990000000000 -> 5000000000
+2026-08-28 19:55:44,223 DEBUG artcb.economics.network_capacity N_max=22 cpu=64 ram=64 net=2000.0 val=30.476190476190474
+2026-08-28 19:55:44,223 DEBUG artcb.economics.partition_map partition work=W-load-high epoch=1 N=8 -> 5
+2026-08-28 19:55:44,224 DEBUG artcb.economics.preblocks partitioned R_block=5000000000 into 8 preblocks total=5000000000
+2026-08-28 19:55:44,224 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,224 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=12
+2026-08-28 19:55:44,224 DEBUG artcb.economics.economic_root EconomicRoot=dd67e6244cd28bec keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,224 DEBUG artcb.chain.manager H_adult explicit=4
+2026-08-28 19:55:44,224 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,224 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,224 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4.0 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=13
+2026-08-28 19:55:44,224 DEBUG artcb.economics.economic_root EconomicRoot=928fed0f8bff410a keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,224 DEBUG artcb.chain.manager native C EconomicRoot v2 index=2 root=928fed0f8bff410a
+2026-08-28 19:55:44,224 DEBUG artcb.chain.ffi C v2 hash index=2 eco=928fed0f8bff -> a18b93e15ffafc50
+2026-08-28 19:55:44,225 DEBUG artcb.economics.workid WorkID W-load-high -> SETTLED score=0.0
+2026-08-28 19:55:44,225 DEBUG artcb.chain.manager Appended block index=2 hash=a18b93e15ffafc500d66c7d0ec03500ed20c2ca63efbbf241ec2857c3f02b5dc sha3=f82c239a8bddd91a reward=5000000000 contributors=5 hybrid=False
+2026-08-28 19:55:44,225 DEBUG artcb.economics.audit_log audit append type=protocol_block hash=a9bcd539c463e2d5
+2026-08-28 19:55:44,225 DEBUG artcb.mining.protocol protocol block=2 hash=a18b93e15ffafc50 H_adult=4 paid=5000000000 supply=15000000000 v=2
+2026-08-28 19:55:44,225 DEBUG artcb.economics.workid WorkID W-more-pb -> EXECUTING score=0.0
+2026-08-28 19:55:44,225 DEBUG artcb.mining.protocol H_adult live=4 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,225 DEBUG artcb.economics.emission R(H) h_adult=4 clamped=1000000.0 reward=50.0000000000
+2026-08-28 19:55:44,225 DEBUG artcb.economics.emission issued_reward index=0 (unused) H_adult=4 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099985000000000 -> 5000000000
+2026-08-28 19:55:44,225 DEBUG artcb.economics.network_capacity N_max=22 cpu=64 ram=64 net=2000.0 val=30.476190476190474
+2026-08-28 19:55:44,226 DEBUG artcb.economics.partition_map partition work=W-more-pb epoch=2 N=12 -> 11
+2026-08-28 19:55:44,226 DEBUG artcb.economics.preblocks partitioned R_block=5000000000 into 12 preblocks total=5000000000
+2026-08-28 19:55:44,226 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,226 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=12
+2026-08-28 19:55:44,226 DEBUG artcb.economics.economic_root EconomicRoot=dd67e6244cd28bec keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,226 DEBUG artcb.chain.manager H_adult explicit=4
+2026-08-28 19:55:44,226 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,226 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,226 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=4.0 HBP=0.100000 work=4499999998 provider=2249999999 worker=2249999999 lines=13
+2026-08-28 19:55:44,226 DEBUG artcb.economics.economic_root EconomicRoot=928fed0f8bff410a keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,226 DEBUG artcb.chain.manager native C EconomicRoot v2 index=3 root=928fed0f8bff410a
+2026-08-28 19:55:44,226 DEBUG artcb.chain.ffi C v2 hash index=3 eco=928fed0f8bff -> a98c51f06b3787b3
+2026-08-28 19:55:44,227 DEBUG artcb.economics.workid WorkID W-more-pb -> SETTLED score=0.0
+2026-08-28 19:55:44,227 DEBUG artcb.chain.manager Appended block index=3 hash=a98c51f06b3787b319eb6264ca10927de26fdfa15dbcb4ade0397a6a3a7cd543 sha3=612ee23ff6c33514 reward=5000000000 contributors=5 hybrid=False
+2026-08-28 19:55:44,227 DEBUG artcb.economics.audit_log audit append type=protocol_block hash=98dcd5f63e07cbbf
+2026-08-28 19:55:44,227 DEBUG artcb.mining.protocol protocol block=3 hash=a98c51f06b3787b3 H_adult=4 paid=5000000000 supply=20000000000 v=2
+2026-08-28 19:55:44,227 DEBUG artcb.economics.workid WorkID W-missing-pb -> EXECUTING score=0.0
+2026-08-28 19:55:44,227 DEBUG artcb.mining.protocol H_adult live=4 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,228 DEBUG artcb.economics.emission R(H) h_adult=4 clamped=1000000.0 reward=50.0000000000
+2026-08-28 19:55:44,228 DEBUG artcb.economics.emission issued_reward index=0 (unused) H_adult=4 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099980000000000 -> 5000000000
+2026-08-28 19:55:44,228 DEBUG artcb.economics.network_capacity N_max=9 cpu=16 ram=16 net=100.0 val=13.201320132013201
+2026-08-28 19:55:44,228 DEBUG artcb.economics.partition_map partition work=W-missing-pb epoch=3 N=5 -> 3
+2026-08-28 19:55:44,228 DEBUG artcb.economics.preblocks partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 19:55:44,228 DEBUG artcb.economics.workid WorkID W-missing-pb:requeue:pb3 -> REQUEUED score=0.0
+2026-08-28 19:55:44,228 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,228 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,228 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,228 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,228 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,229 DEBUG artcb.economics.settlement settled R=4000000000 H_adult=4 HBP=0.100000 work=3599999998 provider=1799999999 worker=1799999999 lines=12
+2026-08-28 19:55:44,229 DEBUG artcb.economics.economic_root EconomicRoot=b31a3c94e8b0d5d4 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,229 DEBUG artcb.chain.manager H_adult explicit=4
+2026-08-28 19:55:44,229 DEBUG artcb.economics.hbp HBP(H) h_adult=4.0 rate=0.1000000005
+2026-08-28 19:55:44,229 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 19:55:44,229 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,229 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,229 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,229 DEBUG artcb.economics.settlement settled R=4000000000 H_adult=4.0 HBP=0.100000 work=3599999998 provider=1799999999 worker=1799999999 lines=13
+2026-08-28 19:55:44,229 DEBUG artcb.economics.economic_root EconomicRoot=fd9aaa0e071c0d0b keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,229 DEBUG artcb.chain.manager native C EconomicRoot v2 index=4 root=fd9aaa0e071c0d0b
+2026-08-28 19:55:44,229 DEBUG artcb.chain.ffi C v2 hash index=4 eco=fd9aaa0e071c -> b997d7236dfacd83
+2026-08-28 19:55:44,230 DEBUG artcb.economics.workid WorkID W-missing-pb -> SETTLED score=0.0
+2026-08-28 19:55:44,230 DEBUG artcb.chain.manager Appended block index=4 hash=b997d7236dfacd833786e0540f375d7ad0806ac5811732bf2b94975a2a4f556e sha3=c930b048f2905ab7 reward=4000000000 contributors=5 hybrid=False
+2026-08-28 19:55:44,230 DEBUG artcb.economics.audit_log audit append type=protocol_block hash=6e419b2d43d5a4ea
+2026-08-28 19:55:44,230 DEBUG artcb.mining.protocol protocol block=4 hash=b997d7236dfacd83 H_adult=4 paid=4000000000 supply=24000000000 v=2
+2026-08-28 19:55:44,230 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/03_blocks_jobs_network.json
+2026-08-28 19:55:44,231 DEBUG artcb.economics.identity creator-direct validated H-E
+2026-08-28 19:55:44,231 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,231 DEBUG artcb.economics.human_binding registered machine id=M5 owner=A index=5 first=False human=E N_econ=5
+2026-08-28 19:55:44,231 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,231 DEBUG artcb.economics.workid WorkID W-m5 -> EXECUTING score=0.0
+2026-08-28 19:55:44,232 DEBUG artcb.mining.protocol H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,232 DEBUG artcb.economics.emission R(H) h_adult=5 clamped=1000000.0 reward=50.0000000000
+2026-08-28 19:55:44,232 DEBUG artcb.economics.emission issued_reward index=0 (unused) H_adult=5 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099976000000000 -> 5000000000
+2026-08-28 19:55:44,232 DEBUG artcb.economics.network_capacity N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 19:55:44,232 DEBUG artcb.economics.partition_map partition work=W-m5 epoch=4 N=5 -> 4
+2026-08-28 19:55:44,232 DEBUG artcb.economics.preblocks partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 19:55:44,232 DEBUG artcb.economics.hbp HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 19:55:44,232 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 19:55:44,232 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,232 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,232 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,232 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,232 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=5 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=15
+2026-08-28 19:55:44,232 DEBUG artcb.economics.economic_root EconomicRoot=f51be52aeb19f715 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,233 DEBUG artcb.chain.manager H_adult explicit=5
+2026-08-28 19:55:44,233 DEBUG artcb.economics.hbp HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 19:55:44,233 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 19:55:44,233 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,233 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,233 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,233 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,233 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=16
+2026-08-28 19:55:44,233 DEBUG artcb.economics.economic_root EconomicRoot=09f34966ec292208 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,233 DEBUG artcb.chain.manager native C EconomicRoot v2 index=5 root=09f34966ec292208
+2026-08-28 19:55:44,233 DEBUG artcb.chain.ffi C v2 hash index=5 eco=09f34966ec29 -> 2a2de2a6cd3c3ba6
+2026-08-28 19:55:44,233 DEBUG artcb.economics.workid WorkID W-m5 -> SETTLED score=0.0
+2026-08-28 19:55:44,233 DEBUG artcb.chain.manager Appended block index=5 hash=2a2de2a6cd3c3ba64ba88a1b8dd70288da25bc6a5cc43961ecb8b1d1c8cc8095 sha3=e5d8a876d5d9fcda reward=5000000000 contributors=6 hybrid=False
+2026-08-28 19:55:44,234 DEBUG artcb.economics.audit_log audit append type=protocol_block hash=2fb5eb576233dd4f
+2026-08-28 19:55:44,234 DEBUG artcb.mining.protocol protocol block=5 hash=2a2de2a6cd3c3ba6 H_adult=5 paid=5000000000 supply=29000000000 v=2
+2026-08-28 19:55:44,234 DEBUG artcb.mining.protocol H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,234 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/04_m5_pn_change.json
+2026-08-28 19:55:44,234 DEBUG sim164 ATTACK1 REJECT human B is already bound to another machine of A
+2026-08-28 19:55:44,234 DEBUG sim164 ATTACK2 REJECT REJECT_DOUBLE_SETTLEMENT: WorkID already settled: W-m5
+2026-08-28 19:55:44,234 DEBUG artcb.economics.settlement owner payment cut rejected IMPOSSIBLE
+2026-08-28 19:55:44,234 DEBUG artcb.economics.workid WorkID W-owner-cut -> EXECUTING score=0.0
+2026-08-28 19:55:44,235 DEBUG artcb.economics.human_binding offline M2 N_econ unchanged=5
+2026-08-28 19:55:44,235 DEBUG artcb.economics.workid WorkID W-resume-offline -> EXECUTING score=0.0
+2026-08-28 19:55:44,235 DEBUG artcb.mining.protocol H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,235 DEBUG artcb.economics.emission R(H) h_adult=5 clamped=1000000.0 reward=50.0000000000
+2026-08-28 19:55:44,235 DEBUG artcb.economics.emission issued_reward index=0 (unused) H_adult=5 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099971000000000 -> 5000000000
+2026-08-28 19:55:44,235 DEBUG artcb.economics.network_capacity N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 19:55:44,236 DEBUG artcb.economics.partition_map partition work=W-resume-offline epoch=5 N=5 -> 4
+2026-08-28 19:55:44,236 DEBUG artcb.economics.preblocks partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 19:55:44,236 DEBUG artcb.economics.hbp HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 19:55:44,236 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 19:55:44,236 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,236 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,236 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,236 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=5 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=12
+2026-08-28 19:55:44,236 DEBUG artcb.economics.economic_root EconomicRoot=fc89f58a34731c6a keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,237 DEBUG artcb.chain.manager H_adult explicit=5
+2026-08-28 19:55:44,237 DEBUG artcb.economics.hbp HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 19:55:44,237 DEBUG artcb.economics.owner_decay payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 19:55:44,237 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,237 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,237 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,237 DEBUG artcb.economics.settlement settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=13
+2026-08-28 19:55:44,237 DEBUG artcb.economics.economic_root EconomicRoot=b1ae484eb2080cdd keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 19:55:44,237 DEBUG artcb.chain.manager native C EconomicRoot v2 index=6 root=b1ae484eb2080cdd
+2026-08-28 19:55:44,237 DEBUG artcb.chain.ffi C v2 hash index=6 eco=b1ae484eb208 -> 0c522f87c6fce5dc
+2026-08-28 19:55:44,238 DEBUG artcb.economics.workid WorkID W-resume-offline -> SETTLED score=0.0
+2026-08-28 19:55:44,238 DEBUG artcb.chain.manager Appended block index=6 hash=0c522f87c6fce5dc57ae2937b2e56c8ec9c4e2a45bb4827910034b7323ef2f7c sha3=d429fb3a53dc8fe2 reward=5000000000 contributors=5 hybrid=False
+2026-08-28 19:55:44,238 DEBUG artcb.economics.audit_log audit append type=protocol_block hash=9eb9086b384505fa
+2026-08-28 19:55:44,238 DEBUG artcb.mining.protocol protocol block=6 hash=0c522f87c6fce5dc H_adult=5 paid=5000000000 supply=34000000000 v=2
+2026-08-28 19:55:44,238 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/05_offline_resume.json
+2026-08-28 19:55:44,239 DEBUG artcb.economics.owner_decay fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 19:55:44,239 DEBUG artcb.economics.human_binding transferred out M2 from A
+2026-08-28 19:55:44,239 DEBUG artcb.economics.human_binding registered machine id=M2:to:Z owner=Z index=1 first=True human=None N_econ=1
+2026-08-28 19:55:44,239 DEBUG artcb.economics.owner_decay fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 19:55:44,239 DEBUG artcb.economics.economic_root EconomicRoot=9f91b0127ff0d0ba keys=['r_block_satoshi', 'tamper']
+2026-08-28 19:55:44,239 DEBUG artcb.chain.ffi C v2 hash index=6 eco=9f91b0127ff0 -> c3fb7b2715e33f4a
+2026-08-28 19:55:44,239 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/06_attacks.json
+2026-08-28 19:55:44,240 DEBUG artcb.mining.protocol H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 19:55:44,240 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/00_summary.json
+2026-08-28 19:55:44,240 DEBUG sim164 wrote /workspace/simulations/20260828T194555Z_e2e164/out/00_manifest.json
+{
+  "ok": true,
+  "failures": []
+}

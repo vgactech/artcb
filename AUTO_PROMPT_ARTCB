@@ -1104,3 +1104,73 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 
 ### Tests : 497/497 PASS | Build TypeScript 0 erreur
 ### Avancement global : 99.5 %
+
+## [2026-08-25T18:40:00Z] Rapport 124 — Tokenomics 21M cohérente + couche R(H)/HBP/OwnerDecay
+
+- **Divergence corrigée :** `1 ARTCB × 105_000 × 2 = 210_000` n'atteignait pas le plafond 21 M.
+- **Protocole restauré (D-014 + D-016 + D-023) :** `R_0=50`, `HALVING_INTERVAL=210_000`, `50×210_000×2=21_000_000`.
+- **Nouvelle couche** `src/artcb/economics/` :
+  - `R(H)=50×(H/1e6)^(-ln(50)/ln(64))` — pas de plancher à 1 ARTCB
+  - `HBP(H)` 10 % → 60 % @ 4,15e9 → 20 % @ 8,3e9
+  - `P_owner(n)` continu : 100 % (n=1), 50 %→10 % (n≥2), ancres 38 % @ 1k et 11,85 % @ 100k
+  - Human binding obligatoire pour machine n≥2 (humain distinct)
+  - Pré-blocs : `∑ Reward(PB_i)=R_block` (aucune monnaie extra)
+  - Job Provider + settlement owner/humain/HBP
+- **Branché** sur `ChainManager.append_block` (legacy PoL split conservé si pas de champs machine)
+- **API** `/api/v1/economics/*`
+- Tests : `tests/test_economics_protocol.py` + `test_wallet_rewards.py` alignés 50/210k
+- Source unique : `src/artcb/tokenomics.py` — jamais depuis .env
+
+## [2026-08-26T18:20:00Z] Rapport 160 — audit croisé dumps 124→159 vs code branche
+
+- **Branche :** `cursor/tokenomics-21m-hbp-owner-decay-3fcb` (HEAD conversation `73efd0d`, code economics `25b832f`)
+- **Ordre de vérité conversationnel ≠ numéros de fichiers.** Recoller : 125 (hors ARTCB) → 127 TPM → 126 fondation → 128–133 tokenomics → 134–145 Finder/Q=100/DDPBA → 146–155 spec pré-code → **124 code** → 156 audit post-code → 157 sim pré-pivot → **158–159 reset (spec finale conversation)**
+- **Doublons md5 :** 140≡141, 154≡155. Ne pas écraser.
+- **Code 124 = spec 153–155** (50/210k + R(H) + HBP 4.15e9/8.3e9 + P_owner **par index machine**). **535 tests verts = ce modèle-là.**
+- **Spec 158–159 ABROGE :** calendrier 210k, velocity `extra_epochs`, 8.3 Md comme Hmax, pic HBP 4.15 Md, settlement par index, cap 100k machines. **Le code n’a PAS suivi.** 21 M reste hard cap.
+- **159 demande :** `R_block = min(R(H_adult 18+), remaining)` ; HBP vs `H/H_adult,max` (chiffre WPP **non gelé**, 5.82 Md = estimation) ; settlement `P(N_A)` **commun** à tous les humains de A.
+- **Contradiction 159 non tranchée :** M1 toujours 100 % vs P(N_A) appliqué aussi à M1 dès N≥2.
+- **0 % code :** Finder Q=100, HumanID, WorkID/PartitionMap, EconomicRoot dans `build_block_hash`, Provider % dans settle, mining fields machine.
+- **Interdit :** implémenter 158–159 sans GO explicite + réponses rapport 160 §8. Ne pas présenter 535 tests comme protocole complet (156 §19).
+- **D-016 / D-023 :** en conflit documentaire avec 158–159 — ne pas « corriger » les décisions sans l’utilisateur.
+- Rapport : `rapports/160_audit_croise_simulations_124_a_159_2026-08-26.md`
+
+## [2026-08-26T20:15:00Z] Rapport 161 — D-024 géopopulation, retrait 210k live
+
+- **GO utilisateur :** plus de halving 210 000 blocs ; émission = `min(R(H), remaining_21M)`.
+- **D-016 abrogé.** D-023 amendé (partie 210k). D-014 (21 M) inchangé. Frais → supply restant (spec, pas encore module fee).
+- **HBP 10→60→20 confirmé.** Bootstrap : créateur déjà 100 % vérifié, puis H0=100. Finder par défaut, acceptation en ligne. 272,16/j = sim ; réel estimé 20–30/j.
+- **Code live :** `emission.py` / `ChainManager._calculate_block_reward` sans schedule ni extra_epochs. `_compute_dynamic_epoch` retourne 0. Helpers 210k = deprecated+warning.
+- **Genesis 4.0** `halving_interval=null`. API params `halving_removed=true`.
+- **Pas encore :** settlement N_A, HBP 18+, Finder, fees dynamiques.
+- Rapport : `rapports/161_reponses_bootstrap_hbp_halving_geopop_2026-08-26.md`
+
+## [2026-08-28T20:08:00Z] Rapport 164 — E2E ProtocolEngine + EconomicRoot C v2 + Stripe/OVH
+
+- **Simu :** `simulations/20260828T200518Z_e2e164/` (`failures: []`). A–E, M1–M5, jobs, charge, attaques, soldes = supply 490 ARTCB ≤ 21 M.
+- **Câblage :** `ProtocolEngine` H_adult → R(H) → HBP → P/W → OwnerDecay → Settlement → hash C v2. Mining sans machines = encore PoL héritage.
+- **C :** `artcb_build_canonical_v2` ; v1 inchangé ; HumanID ≠ bound wallet.
+- **Oracle :** probes CoinGecko/Frankfurter live ; ARTCB unlisted → `fee_satoshi=None` (pas de prix inventé).
+- **Stripe :** workflows `KEY_API_STRIPE_ACTION` ; live **ce** runtime KO (secret absent). JobPayment ≠ mint.
+- **OVH :** `/health` 200 ; economics/mining 164 = 404 ; SSH refus ; Doppler 401.
+- **Tests :** 584 passed / 21 skipped. **≠ protocole complet.**
+- Rapport : `rapports/164_e2e_protocol_stripe_ovh_2026-08-28.md`
+
+## [2026-08-28T22:12:00Z] Rapport 165 — OVH depuis Cursor + sécurité ON + PQC + Provider + Stripe≠consensus
+
+- **Branche seulement.** PR #34 **OPEN**, pas de merge main. Compare : https://github.com/vgactech/artcb/compare/main...cursor/tokenomics-21m-hbp-owner-decay-3fcb
+- **OVH :** push OK ; `deploy_ovh.sh` cette branche → SSH publickey denied ; Doppler 401 ; API OVH Invalid signature. Live `/health` 200 **sans** git_sha ; economics/mining **404**. Box ≠ 165.
+- **Simu canonique :** `simulations/20260828T220852Z_e2e165/` (`failures: []`). Security ENABLED. PQC ML-DSA-65 natif. JP1/JP2 50/50. Stripe down ≠ bloc. Σ wallets = 590 ARTCB ≤ 21 M. `hmax_frozen=false`.
+- **164 non écrasé.** Scaffold multi-nœuds : `20260828T220830Z_multinode165_scaffold` (pas une certification).
+- **Tests :** 606 passed / 9 skipped. Log `logs/20260828_pytest_rapport165_full.txt`.
+- **ManagePullRequest** absent ; body PR #34 non mis à jour (`gh` lecture seule).
+- Rapport : `rapports/165_ovh_branche_cursor_audit_securite_pqc_2026-08-28.md`
+
+## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
+
+- **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.
+- **Simu :** `simulations/20260828T174810Z_rapport162/` (11 runs + post-impl, 0 fail). Naive 50@10s = 48,6 j ; time-norm ≈ 7,99 ans. MC 2000 : issued ≤ 21 M, M1 0 violation.
+- **D-025 :** M1 100 % toujours ; P(N_econ) commun extras ; time-norm dt/600 ; vault ≠ remaining ; binding ≤1 externe ; lock 30 j ; 50/50 P/W ; Q=100 creator-direct.
+- **Pas de 210k.** Ancres HBP 4.15e9/8.3e9 encore provisoires. Finder/WorkID = modules, pas encore pipeline mining.
+- **Tests :** 554 passed / 20 skipped. Log `logs/20260828_pytest_rapport163.txt`.
+- Rapport : `rapports/163_tokenomics_simu_go162_alignement_2026-08-28.md`

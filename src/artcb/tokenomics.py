@@ -1,20 +1,22 @@
 """ARTCB tokenomics constants — single source of truth.
 
-Decisions validees (D-014 revise) :
-  - Supply max      : 21 000 000 ARTCB (hard cap immuable)
-  - Reward initial  : 1 ARTCB/bloc
-  - Halving fixe    : tous les 105 000 blocs (reduit de moitie vs Bitcoin)
-  - Halving dyna.   : s'accelere proportionnellement si vitesse > VELOCITY_REFERENCE
+Decisions (D-014, D-024, D-025) :
+  - Supply max      : 21 000 000 ARTCB (hard cap immuable, D-014)
+  - Reward initial  : 50 ARTCB/bloc  (R_0, ancre R(H=1M)=50)
+  - Emission live   : R_block = min(R(H) * dt/TARGET_BLOCK_SECONDS, remaining_21M)
+  - R(H)            : 50 × (H / 1_000_000)^(-α), α = ln(50)/ln(64)
+  - HBP(H)          : 10 % → 60 % → 20 %
+  - P_owner         : M1 always 100%; extras share P(N_economic) (D-025)
   - Anti-Sybil      : conserve pour securite anti-malveillants uniquement
   - Pas de rate-limit : l'IA fonctionne en temps reel sans file d'attente
 
-Contexte (source : TechCrunch/Gartner juin 2026) :
-  - 3,4 milliards d'utilisateurs IA mondiaux en 2026
-  - ARTCB vise la totalite des plateformes IA (ChatGPT, Gemini, Claude, Meta AI)
-  - A 0.1% adoption = 3.4M users -> supply epuisee en 2 jours sans halving dynamique
-  - Le halving dynamique corrige cela automatiquement SANS bloquer le minage temps reel
+REMOVED from live emission (D-024, rapports 158–159–161) :
+  - Halving fixe tous les 210 000 blocs (ex D-016)
+  - extra_epochs / epoch_dyn = floor(log2(velocity_24h / 144))
+  - identity 50 × 210_000 × 2 as the emission *schedule*
+    (21M stays the hard cap; exhaustion date now depends on H(t))
 
-CONSTANTES IMMUABLES (rapports 112 + 106 — 2026-08-04) :
+CONSTANTES IMMUABLES (rapports 112 + 106 — 2026-08-04, revise 124, 161) :
   Ces valeurs NE PEUVENT PAS etre modifiees via .env / Doppler / Replit secrets.
   Elles sont utilisees directement par le code (IMMUTABLE_*).
   Tout changement necessite un vote de gouvernance + nouveau deploiement de code.
@@ -33,79 +35,45 @@ CONSTANTES IMMUABLES (rapports 112 + 106 — 2026-08-04) :
 SATOSHI_PER_ARTCB = 100_000_000
 
 # ── Reward initial ─────────────────────────────────────────────────────────
-INITIAL_BLOCK_REWARD_ARTCB    = 1.0
+# 50 ARTCB = ancre R(H=1M)=50. Plus un calendrier Bitcoin.
+INITIAL_BLOCK_REWARD_ARTCB    = 50.0
 INITIAL_BLOCK_REWARD_SATOSHI  = int(INITIAL_BLOCK_REWARD_ARTCB * SATOSHI_PER_ARTCB)
 
-# ── Halving fixe de base ───────────────────────────────────────────────────
-# 105 000 blocs (moitié de l'intervalle Bitcoin de 210 000).
-# Raison : à faible adoption, les halvings arrivent plus tôt → émission plus
-# contrôlée dès le départ, même en devnet solo.
-HALVING_INTERVAL = 105_000
+# ── Calendrier 210 000 — RETIRÉ du chemin d'émission (D-024) ───────────────
+# Conservé uniquement comme archive pour les helpers deprecated et les
+# anciennes chaînes / genesis v3.0. Ne PAS l'utiliser pour calculer R_block.
+DEPRECATED_HALVING_INTERVAL = 210_000
+# Alias transitoire : imports historiques ne cassent pas ; valeur non utilisée
+# par issued_reward_satoshi / ChainManager._calculate_block_reward.
+HALVING_INTERVAL = DEPRECATED_HALVING_INTERVAL
 
-# Nombre maximal de halvings (après quoi reward = 0)
+# Nombre maximal de halvings de l'ANCIEN calendrier (helpers deprecated only)
 MAX_HALVINGS = 64
 
 # ── Supply max (hard cap absolue) ─────────────────────────────────────────
 # 21 000 000 ARTCB — decision de design immuable (D-014).
 # Le reseau rejette tout bloc qui ferait depasser ce plafond.
+# Fees do not mint. Rapport 162 / D-025: collected ARTCB fees go to
+# UniversalDividendVault (not RemainingSupply). RemainingSupply only shrinks
+# with issued block rewards, clipped by this hard cap.
 MAX_SUPPLY_ARTCB    = 21_000_000.0
 MAX_SUPPLY_SATOSHI  = int(MAX_SUPPLY_ARTCB * SATOSHI_PER_ARTCB)
 
+EMISSION_MODEL = "R(H)"  # min(R(H) * dt/TARGET_BLOCK_SECONDS, remaining_hard_cap)
+
+# Target block interval — TOKENOMICS §4.1 (~10 min). Rapport 162 GO:
+# 10× faster blocks ⇒ 1/10 reward/block. Not a 210k calendar.
+TARGET_BLOCK_SECONDS = 600.0
+
 # ── CONSTANTES IMMUABLES DU PROTOCOLE ─────────────────────────────────────
-# Ces valeurs sont utilisees DIRECTEMENT dans le code — jamais depuis .env.
-# Elles refletent les regles gravees dans le genesis block (protocol_constants).
-# Modifier ces valeurs sans vote de gouvernance = violation du protocole ARTCB.
-#
-# IMMUTABLE_POL_THRESHOLD   : seuil minimum de qualite PoL — aucun bloc en dessous
-#                             de ce score n'est jamais accepte dans la chaine.
-#                             Correspond a genesis["protocol_constants"]["pol_threshold"].
-#
-# IMMUTABLE_MAX_SUPPLY_ARTCB : plafond absolu de la supply — identique a MAX_SUPPLY_ARTCB
-#                              mais nomme IMMUTABLE pour signaler l'interdiction de le
-#                              lire depuis une variable d'environnement.
-#
-# IMMUTABLE_SATOSHI_PER_ARTCB : granularite monetaire — 1 ARTCB = 10^8 satoshi.
-#                               Immuable pour garantir la coherence des calculs
-#                               sur toute la duree de vie de la chaine.
 IMMUTABLE_POL_THRESHOLD    = 0.6           # Jamais depuis .env — gravé genesis
 IMMUTABLE_MAX_SUPPLY_ARTCB = 21_000_000    # Jamais depuis .env — gravé genesis
 IMMUTABLE_SATOSHI_PER_ARTCB = 100_000_000  # Jamais depuis .env — granularite fixe
 
 # ── Multiplicateur de poids du vote createur ───────────────────────────────
-# Poids createur = max(1, votes_communaute * IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER)
-# Ratio constant : 20 / 21 = 95.24% quelle que soit la taille de la communaute.
-# Jamais depuis .env — immuable par definition du protocole.
-# Utilise par governance/manager.py — ne jamais lire depuis une variable d'environnement.
 IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER = 20
 
-# ── Halving dynamique ──────────────────────────────────────────────────────
-# Si la vitesse de minage dépasse VELOCITY_REFERENCE blocs/jour, le reward
-# est divisé proportionnellement par un facteur dynamique.
-#
-# Formule complète du reward pour un bloc à l'index I :
-#
-#   epoch_fixe    = I // HALVING_INTERVAL
-#   epoch_dyn     = floor(log2(max(1, velocity_24h / VELOCITY_REFERENCE)))
-#   epoch_total   = epoch_fixe + epoch_dyn
-#   reward        = INITIAL_REWARD >> min(epoch_total, MAX_HALVINGS - 1)
-#
-# Exemple :
-#   velocity = 1 440 blocs/jour (= VELOCITY_REFERENCE × 10)
-#   → epoch_dyn = floor(log2(10)) = 3
-#   → 3 halvings dynamiques supplémentaires → reward divisé par 8
-#   → un bloc à l'index 0 vaut 1/8 ARTCB au lieu de 1 ARTCB
-#
-# Effets :
-#   - 1 utilisateur (22 blocs/j)     → epoch_dyn = 0 (pas de pénalité)
-#   - 10K utilisateurs (10K blocs/j) → epoch_dyn = 6 → reward/64
-#   - 1M utilisateurs (1M blocs/j)   → epoch_dyn = 13 → reward/8192
-#   - 1B utilisateurs (1B blocs/j)   → epoch_dyn = 26 → reward/67M
-#
-# Résultat : la supply dure toujours ~21M ARTCB quelle que soit la vitesse,
-# sans jamais bloquer un seul utilisateur (pas de file d'attente).
-#
-VELOCITY_REFERENCE = 144  # blocs/jour — référence Bitcoin (ajustable par gouvernance)
-
-# Fenêtre temporelle pour mesurer la vitesse actuelle (en secondes)
+# ── Vélocité — RETIRÉE du reward (D-024) ───────────────────────────────────
+# Conservée comme métrique d'observation uniquement, plus comme extra_epochs.
+VELOCITY_REFERENCE = 144  # blocs/jour — métrique, PAS un halving
 VELOCITY_WINDOW_SECONDS = 86_400  # 24 heures
-

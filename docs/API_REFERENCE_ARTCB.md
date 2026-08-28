@@ -352,3 +352,34 @@ Score Proof-of-Link courant.
 | `graph_id` optionnel dans `/store` | Si `text` fourni, l'encode automatique avant gravure |
 | `/api-keys/generate` requiert session | POST /auth/login d'abord, puis Bearer sess_xxx |
 | Gouvernance sans signature → rejeté | Pas de bypass dev — `GovernanceError` immédiat |
+
+---
+
+## Economics (D-024 — 2026-08-26)
+
+Base : `/api/v1/economics`
+
+### `GET /economics/params`
+Constantes : `max_supply_artcb=21000000`, `initial_block_reward_artcb=50`, `emission_model=R(H)`, `halving_removed=true`, `halving_interval=null`.
+
+### `GET /economics/emission?block_index=&verified_humans=`
+`issued = min(R(H), remaining_21M)`. `block_index` n’applique plus de halving.
+
+### `GET /economics/hbp?verified_humans=`
+HBP 10 % → 60 % → 20 %.
+
+### `GET /economics/owner-share?machine_index=`
+`P_owner(n)` continu.
+
+### `POST /economics/settle`
+Preview settlement owner / humain lié / HBP. Conservation `sum = R_block`.
+
+### `POST /economics/preblocks/partition`
+`sum Reward(PB_i) = R_block`.
+
+### `POST /economics/machines` · `GET /economics/machines/{owner}`
+Registre machine + binding humain (n≥2 obligatoire).
+
+### `POST /economics/jobs` · `POST /economics/jobs/{id}/partition`
+Job Provider : submit → partition par capacité.
+

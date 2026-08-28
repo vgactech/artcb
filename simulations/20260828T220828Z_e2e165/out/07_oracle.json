@@ -1,0 +1,68 @@
+{
+  "snapshot": {
+    "fetched_at": "2026-08-28T22:08:30Z",
+    "source": "stub",
+    "timeout_seconds": 8.0,
+    "probe_ok": false,
+    "probe_detail": "forced stub",
+    "usdt_usd": null,
+    "btc_usd": null,
+    "usd_eur": null,
+    "artcb_usd": 0.0,
+    "artcb_usd_source": "stub",
+    "live": false,
+    "fallback_used": true,
+    "fallback_reason": "ARTCB_ORACLE_FORCE_STUB \u2014 not a live ARTCB/USD price",
+    "stub_reason": "ARTCB_ORACLE_FORCE_STUB \u2014 not a live ARTCB/USD price",
+    "note": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing."
+  },
+  "fee_unlisted_or_live": {
+    "quoted_usd": 0.000311,
+    "cap_usd": 0.000311,
+    "floor_usd": 1e-06,
+    "congestion": 1000.0,
+    "fee_source": "OpenChainBench Base native transfer p50 2026-08-26",
+    "artcb_usd": 0.0,
+    "fee_satoshi": null,
+    "mints": false,
+    "destination": "UniversalDividendVault",
+    "oracle": {
+      "fetched_at": "2026-08-28T22:08:30Z",
+      "source": "stub",
+      "timeout_seconds": 8.0,
+      "probe_ok": false,
+      "probe_detail": "forced stub",
+      "usdt_usd": null,
+      "btc_usd": null,
+      "usd_eur": null,
+      "artcb_usd": 0.0,
+      "artcb_usd_source": "stub",
+      "live": false,
+      "fallback_used": true,
+      "fallback_reason": "ARTCB_ORACLE_FORCE_STUB \u2014 not a live ARTCB/USD price",
+      "stub_reason": "ARTCB_ORACLE_FORCE_STUB \u2014 not a live ARTCB/USD price",
+      "note": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing."
+    },
+    "live": false
+  },
+  "fee_explicit_price_1usd": {
+    "quoted_usd": 1e-06,
+    "cap_usd": 0.000311,
+    "floor_usd": 1e-06,
+    "congestion": 0.0,
+    "fee_source": "OpenChainBench Base native transfer p50 2026-08-26",
+    "artcb_usd": 1.0,
+    "fee_satoshi": 100,
+    "mints": false,
+    "destination": "UniversalDividendVault",
+    "live": true,
+    "oracle": {
+      "artcb_usd_source": "caller"
+    }
+  },
+  "probes_attempted": true,
+  "invented_price": false,
+  "conversion_refused": true,
+  "fee_satoshi_when_unlisted_is_none": true,
+  "explicit_converts": true
+}

@@ -130,3 +130,39 @@
 **Leçon :** `LimitReachedError` est une sous-classe de `PdfReadError` mais doit être attrapée explicitement. Aussi attraper `Exception` générique à tous les niveaux (reader init + page extract).  
 **Action :** `except (PdfReadError, LimitReachedError, Exception)` aux 3 endroits + test assoupli.
 
+### L-029 — Tokenomics 1/105k ≠ 21 M (25 août 2026)
+**Contexte :** Audit simulation vs `main` : `INITIAL_BLOCK_REWARD=1`, `HALVING_INTERVAL=105_000` ⇒ plafond asymptotique 210 000 ARTCB, alors que D-014 annonce 21 M. D-016 disait déjà 210 000 blocs.
+**Leçon :** Un hard cap documenté n'est réel que si `R_0 × intervalle × 2` l'atteint. Toute réduction du reward initial doit recalculer l'intervalle (ou l'inverse).
+**Action :** Rapport 124 — R_0=50, intervalle=210k, couche R(H)/HBP/P_owner continue. Ne plus mélanger le calendrier 1/105k avec le modèle validé.
+
+### L-030 — Dumps de conversation hors ordre + spec qui bouge après le code (26 août 2026)
+**Contexte :** Fichiers `rapports/125`…`159` sont des copier-coller ChatGPT ; 140≡141, 154≡155 ; 159 contient 3 sessions. Le code `25b832f` implémente 153–155. Les rapports 158–159 abrogent ensuite 210k, la vélocité et le settlement par index.
+**Leçon :** (1) Lire les dumps dans l’**ordre de discussion**, pas l’ordre des numéros. (2) Un « je verrouille » ChatGPT ≠ D-xxx tant que DECISIONS n’est pas amendé. (3) 535 pytest verts figent le modèle 124, pas le dernier mot conversationnel. (4) Ne pas patcher 159 tant que M1-après-M2 et H_adult,max ne sont pas tranchés par l’utilisateur.
+**Action :** Rapport 160 — inventaire questions / code / manques. Pas d’implémentation 158–159 dans cette passe.
+
+### L-031 — EconomicRoot hors du hash de bloc
+**Contexte :** `ffi.build_block_hash` canonise index/timestamp/prev/graph/merkle/pol **avant** d’écrire `economics` et `contributors` réécrits par `settle_block` (rapport 156 §14, confirmé lecture `chain/manager.py`).
+**Leçon :** Un settlement JSON non haché n’est pas du consensus. Changer le canonique C est un fork.
+**Action :** Noté 160 §6.12 ; attendre GO + spec des champs.
+
+### L-032 — D-024 retrait halving 210k (26 août 2026)
+**Contexte :** L'utilisateur confirme la géopopulation et exige de retirer tout ce qui est lié au halving 210 000 blocs sans casser le reste.
+**Leçon :** Un calendrier Bitcoin `R0 >> (index//H)` n'est pas compatible avec `R = f(H)`. Le garder « en plus » (min(schedule, R(H))) recoupe encore le reward au bloc 210k. Il faut le sortir du chemin live, pas seulement le documenter. La vélocité `extra_epochs` était un second halving : même retrait. 21 M reste un cap, plus une identité 50×210k×2 d'émission.
+**Action :** Rapport 161. Tests : index 210k = toujours 50 si H≤1M. Archive `DEPRECATED_HALVING_INTERVAL`.
+
+### L-033 — OwnerDecay flotte + time-norm + vault vs remaining (28 août 2026)
+**Contexte :** Dump 162. L’utilisateur tranche M1=100 % pour toujours et « même P pour toutes les extras » (49 % @N=3, ~48 % @N=4), pas la courbe index 38 %@1000. Il exige aussi : 10× plus de blocs ⇒ 1/10 reward (sans 210k). Frais → UniversalDividendVault, ce qui **contredit** 161 remaining-supply.
+**Leçon :** (1) P(n_index) ≠ P(N_economic). (2) Un reward/bloc fixe avec un intervalle variable épuise 21 M (48,6 j @10 s). Normaliser par T déjà documenté (600 s) n’est pas un halving. (3) Dernier GO utilisateur > spec 161 sur les frais. (4) k se **dérive** des exemples (P(3)=49 %), on n’invente pas un 3e ancrage. (5) Burst tests <1 s doivent filtrer dt sinon time-norm casse 50+25 ARTCB.
+**Action :** Rapport 163, D-025, `fleet_owner_share` / `issued_reward_satoshi(..., actual_block_interval_seconds)`.
+
+### L-034 — Câblage e2e ≠ modules isolés (28 août 2026, sim 164)
+**Contexte :** Audit croisé : ~82 % des modules economics existent, mais mining/API tombaient encore en PoL 50/50 héritage faute de `machine_index` / `HumanID` / `WorkID` sur les contributors. EconomicRoot était mixé dans merkle Python, pas dans le canonique C. OVH healthy n’implique pas « cette branche est déployée ».
+**Leçon :** (1) Un module `settle_block` n’est du consensus que s’il est dans `append_block` **et** dans le hash C. (2) Versionner le hash (v1 sans root, v2 avec) plutôt que casser les blocs anciens. (3) Ne jamais copier BTC/USDT comme prix ARTCB. (4) JobPayment Stripe ≠ mint. (5) Doppler token 401 et SSH sans clé = documenter, pas inventer un token.
+**Action :** Rapport 164. `ProtocolEngine`, ABI C v2, oracle stub honnête, workflow `stripe-priority.yml`.
+
+### L-035 — HumanID ≠ adresse de paiement (28 août 2026)
+**Contexte :** `_machine_contributions` utilisait `bound_human_address or human_id`. M1 (pas d’humain bindé) recevait `human_id=H-A` comme destinataire HBP. ProtocolEngine et `append_block` calculaient deux EconomicRoot différents (2 vs 3 lines).
+**Leçon :** HumanID est une identité ; le settlement ne paie que des **wallets**. Un fallback « or human_id » est une fuite de satoshi hors carnet d’adresses.
+**Action :** `bound_human_address` seul ; sim 164 `20260828T200518Z` roots identiques.
+
+

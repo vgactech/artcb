@@ -1,0 +1,803 @@
+{
+  "blocks": [
+    {
+      "load": "low",
+      "block_index": 0,
+      "block_hash": "d9b075c61ebc7d0bbf2648703fc55f24d18a66270dbf1082dfa17263e9e91dc6",
+      "hash_version": 2,
+      "h_adult": 4,
+      "r_block_satoshi": 5000000000,
+      "hbp_rate": 0.10000000048192771,
+      "economic_root": "928fed0f8bff410a4384c5b4a5201e0de72997da06e7b5b4ea96613c74cccb03",
+      "total_paid_satoshi": 5000000000,
+      "conservation": true,
+      "supply_satoshi": 5000000000,
+      "supply_le_21m": true,
+      "by_address_satoshi": {
+        "A": 3747921873,
+        "B": 417359375,
+        "C": 417359376,
+        "D": 417359376
+      },
+      "lines": [
+        {
+          "address": "A",
+          "role": "provider",
+          "machine_id": null,
+          "reward_satoshi": 2249999999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M1",
+          "reward_satoshi": 562499999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M2",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "B",
+          "role": "human",
+          "machine_id": "M2",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M3",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "C",
+          "role": "human",
+          "machine_id": "M3",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M4",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "D",
+          "role": "human",
+          "machine_id": "M4",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "B",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "C",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        },
+        {
+          "address": "D",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        }
+      ],
+      "missing_preblocks": [],
+      "requeued": [],
+      "n_max": 3,
+      "n_partitions": 3,
+      "phases": {
+        "h_adult": {
+          "count": 4,
+          "source": "HumanRegistry.verified_adult_count",
+          "adult_age_years": 18,
+          "demographic_ref": {
+            "dataset_id": "provisional-not-wpp-freeze",
+            "source": "estimation only \u2014 Q-E03 still open for dated UN WPP 18+",
+            "publication_date": "2026-08-28",
+            "adult_population_estimate": 5820000000,
+            "methodology_hash": "pending",
+            "effective_epoch": 0
+          },
+          "hmax_frozen": false
+        },
+        "r_h": {
+          "h_adult": 4,
+          "r_block_satoshi": 5000000000,
+          "interval_seconds": 600.0,
+          "issued_so_far_satoshi": 0
+        },
+        "preblocks": {
+          "n_partitions": 3,
+          "n_max": 3,
+          "partition_of_work": {
+            "W-load-low": 2
+          },
+          "missing": [],
+          "present_satoshi": 5000000000,
+          "requeued": []
+        },
+        "hbp": {
+          "rate": 0.10000000048192771,
+          "pool": 500000002
+        },
+        "provider_worker": {
+          "provider_pool": 2249999999,
+          "worker_pool": 2249999999
+        },
+        "owner_decay": {
+          "M1": {
+            "n_economic": 4,
+            "is_first": true
+          },
+          "M2": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M3": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M4": {
+            "n_economic": 4,
+            "is_first": false
+          }
+        }
+      },
+      "job_payment": null
+    },
+    {
+      "load": "medium",
+      "block_index": 1,
+      "block_hash": "7a406226b399307868383267ca7d38b3ea2065069ee8a47a1842127aded7c627",
+      "hash_version": 2,
+      "h_adult": 4,
+      "r_block_satoshi": 5000000000,
+      "hbp_rate": 0.10000000048192771,
+      "economic_root": "928fed0f8bff410a4384c5b4a5201e0de72997da06e7b5b4ea96613c74cccb03",
+      "total_paid_satoshi": 5000000000,
+      "conservation": true,
+      "supply_satoshi": 10000000000,
+      "supply_le_21m": true,
+      "by_address_satoshi": {
+        "A": 3747921873,
+        "B": 417359375,
+        "C": 417359376,
+        "D": 417359376
+      },
+      "lines": [
+        {
+          "address": "A",
+          "role": "provider",
+          "machine_id": null,
+          "reward_satoshi": 2249999999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M1",
+          "reward_satoshi": 562499999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M2",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "B",
+          "role": "human",
+          "machine_id": "M2",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M3",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "C",
+          "role": "human",
+          "machine_id": "M3",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M4",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "D",
+          "role": "human",
+          "machine_id": "M4",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "B",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "C",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        },
+        {
+          "address": "D",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        }
+      ],
+      "missing_preblocks": [],
+      "requeued": [],
+      "n_max": 9,
+      "n_partitions": 5,
+      "phases": {
+        "h_adult": {
+          "count": 4,
+          "source": "HumanRegistry.verified_adult_count",
+          "adult_age_years": 18,
+          "demographic_ref": {
+            "dataset_id": "provisional-not-wpp-freeze",
+            "source": "estimation only \u2014 Q-E03 still open for dated UN WPP 18+",
+            "publication_date": "2026-08-28",
+            "adult_population_estimate": 5820000000,
+            "methodology_hash": "pending",
+            "effective_epoch": 0
+          },
+          "hmax_frozen": false
+        },
+        "r_h": {
+          "h_adult": 4,
+          "r_block_satoshi": 5000000000,
+          "interval_seconds": 600.0,
+          "issued_so_far_satoshi": 5000000000
+        },
+        "preblocks": {
+          "n_partitions": 5,
+          "n_max": 9,
+          "partition_of_work": {
+            "W-load-medium": 2
+          },
+          "missing": [],
+          "present_satoshi": 5000000000,
+          "requeued": []
+        },
+        "hbp": {
+          "rate": 0.10000000048192771,
+          "pool": 500000002
+        },
+        "provider_worker": {
+          "provider_pool": 2249999999,
+          "worker_pool": 2249999999
+        },
+        "owner_decay": {
+          "M1": {
+            "n_economic": 4,
+            "is_first": true
+          },
+          "M2": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M3": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M4": {
+            "n_economic": 4,
+            "is_first": false
+          }
+        }
+      },
+      "job_payment": null
+    },
+    {
+      "load": "high",
+      "block_index": 2,
+      "block_hash": "a18b93e15ffafc500d66c7d0ec03500ed20c2ca63efbbf241ec2857c3f02b5dc",
+      "hash_version": 2,
+      "h_adult": 4,
+      "r_block_satoshi": 5000000000,
+      "hbp_rate": 0.10000000048192771,
+      "economic_root": "928fed0f8bff410a4384c5b4a5201e0de72997da06e7b5b4ea96613c74cccb03",
+      "total_paid_satoshi": 5000000000,
+      "conservation": true,
+      "supply_satoshi": 15000000000,
+      "supply_le_21m": true,
+      "by_address_satoshi": {
+        "A": 3747921873,
+        "B": 417359375,
+        "C": 417359376,
+        "D": 417359376
+      },
+      "lines": [
+        {
+          "address": "A",
+          "role": "provider",
+          "machine_id": null,
+          "reward_satoshi": 2249999999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M1",
+          "reward_satoshi": 562499999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M2",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "B",
+          "role": "human",
+          "machine_id": "M2",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M3",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "C",
+          "role": "human",
+          "machine_id": "M3",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M4",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "D",
+          "role": "human",
+          "machine_id": "M4",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "B",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "C",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        },
+        {
+          "address": "D",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        }
+      ],
+      "missing_preblocks": [],
+      "requeued": [],
+      "n_max": 22,
+      "n_partitions": 8,
+      "phases": {
+        "h_adult": {
+          "count": 4,
+          "source": "HumanRegistry.verified_adult_count",
+          "adult_age_years": 18,
+          "demographic_ref": {
+            "dataset_id": "provisional-not-wpp-freeze",
+            "source": "estimation only \u2014 Q-E03 still open for dated UN WPP 18+",
+            "publication_date": "2026-08-28",
+            "adult_population_estimate": 5820000000,
+            "methodology_hash": "pending",
+            "effective_epoch": 0
+          },
+          "hmax_frozen": false
+        },
+        "r_h": {
+          "h_adult": 4,
+          "r_block_satoshi": 5000000000,
+          "interval_seconds": 600.0,
+          "issued_so_far_satoshi": 10000000000
+        },
+        "preblocks": {
+          "n_partitions": 8,
+          "n_max": 22,
+          "partition_of_work": {
+            "W-load-high": 5
+          },
+          "missing": [],
+          "present_satoshi": 5000000000,
+          "requeued": []
+        },
+        "hbp": {
+          "rate": 0.10000000048192771,
+          "pool": 500000002
+        },
+        "provider_worker": {
+          "provider_pool": 2249999999,
+          "worker_pool": 2249999999
+        },
+        "owner_decay": {
+          "M1": {
+            "n_economic": 4,
+            "is_first": true
+          },
+          "M2": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M3": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M4": {
+            "n_economic": 4,
+            "is_first": false
+          }
+        }
+      },
+      "job_payment": null
+    },
+    {
+      "load": "more_preblocks",
+      "block_index": 3,
+      "block_hash": "a98c51f06b3787b319eb6264ca10927de26fdfa15dbcb4ade0397a6a3a7cd543",
+      "hash_version": 2,
+      "h_adult": 4,
+      "r_block_satoshi": 5000000000,
+      "hbp_rate": 0.10000000048192771,
+      "economic_root": "928fed0f8bff410a4384c5b4a5201e0de72997da06e7b5b4ea96613c74cccb03",
+      "total_paid_satoshi": 5000000000,
+      "conservation": true,
+      "supply_satoshi": 20000000000,
+      "supply_le_21m": true,
+      "by_address_satoshi": {
+        "A": 3747921873,
+        "B": 417359375,
+        "C": 417359376,
+        "D": 417359376
+      },
+      "lines": [
+        {
+          "address": "A",
+          "role": "provider",
+          "machine_id": null,
+          "reward_satoshi": 2249999999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M1",
+          "reward_satoshi": 562499999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M2",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "B",
+          "role": "human",
+          "machine_id": "M2",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M3",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "C",
+          "role": "human",
+          "machine_id": "M3",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M4",
+          "reward_satoshi": 270140625
+        },
+        {
+          "address": "D",
+          "role": "human",
+          "machine_id": "M4",
+          "reward_satoshi": 292359375
+        },
+        {
+          "address": "A",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "B",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000000
+        },
+        {
+          "address": "C",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        },
+        {
+          "address": "D",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 125000001
+        }
+      ],
+      "missing_preblocks": [],
+      "requeued": [],
+      "n_max": 22,
+      "n_partitions": 12,
+      "phases": {
+        "h_adult": {
+          "count": 4,
+          "source": "HumanRegistry.verified_adult_count",
+          "adult_age_years": 18,
+          "demographic_ref": {
+            "dataset_id": "provisional-not-wpp-freeze",
+            "source": "estimation only \u2014 Q-E03 still open for dated UN WPP 18+",
+            "publication_date": "2026-08-28",
+            "adult_population_estimate": 5820000000,
+            "methodology_hash": "pending",
+            "effective_epoch": 0
+          },
+          "hmax_frozen": false
+        },
+        "r_h": {
+          "h_adult": 4,
+          "r_block_satoshi": 5000000000,
+          "interval_seconds": 600.0,
+          "issued_so_far_satoshi": 15000000000
+        },
+        "preblocks": {
+          "n_partitions": 12,
+          "n_max": 22,
+          "partition_of_work": {
+            "W-more-pb": 11
+          },
+          "missing": [],
+          "present_satoshi": 5000000000,
+          "requeued": []
+        },
+        "hbp": {
+          "rate": 0.10000000048192771,
+          "pool": 500000002
+        },
+        "provider_worker": {
+          "provider_pool": 2249999999,
+          "worker_pool": 2249999999
+        },
+        "owner_decay": {
+          "M1": {
+            "n_economic": 4,
+            "is_first": true
+          },
+          "M2": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M3": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M4": {
+            "n_economic": 4,
+            "is_first": false
+          }
+        }
+      },
+      "job_payment": null
+    },
+    {
+      "load": "missing_pb",
+      "block_index": 4,
+      "block_hash": "b997d7236dfacd833786e0540f375d7ad0806ac5811732bf2b94975a2a4f556e",
+      "hash_version": 2,
+      "h_adult": 4,
+      "r_block_satoshi": 4000000000,
+      "hbp_rate": 0.10000000048192771,
+      "economic_root": "fd9aaa0e071c0d0b3375ac16da2ad3c400e9be7a4fddeeaac8af718a5642701f",
+      "total_paid_satoshi": 4000000000,
+      "conservation": true,
+      "supply_satoshi": 24000000000,
+      "supply_le_21m": true,
+      "by_address_satoshi": {
+        "A": 2998337498,
+        "B": 333887500,
+        "C": 333887501,
+        "D": 333887501
+      },
+      "lines": [
+        {
+          "address": "A",
+          "role": "provider",
+          "machine_id": null,
+          "reward_satoshi": 1799999999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M1",
+          "reward_satoshi": 449999999
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M2",
+          "reward_satoshi": 216112500
+        },
+        {
+          "address": "B",
+          "role": "human",
+          "machine_id": "M2",
+          "reward_satoshi": 233887500
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M3",
+          "reward_satoshi": 216112500
+        },
+        {
+          "address": "C",
+          "role": "human",
+          "machine_id": "M3",
+          "reward_satoshi": 233887500
+        },
+        {
+          "address": "A",
+          "role": "owner",
+          "machine_id": "M4",
+          "reward_satoshi": 216112500
+        },
+        {
+          "address": "D",
+          "role": "human",
+          "machine_id": "M4",
+          "reward_satoshi": 233887500
+        },
+        {
+          "address": "A",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 100000000
+        },
+        {
+          "address": "B",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 100000000
+        },
+        {
+          "address": "C",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 100000001
+        },
+        {
+          "address": "D",
+          "role": "hbp",
+          "machine_id": null,
+          "reward_satoshi": 100000001
+        }
+      ],
+      "missing_preblocks": [
+        "pb3"
+      ],
+      "requeued": [
+        "W-missing-pb:requeue:pb3"
+      ],
+      "n_max": 9,
+      "n_partitions": 5,
+      "phases": {
+        "h_adult": {
+          "count": 4,
+          "source": "HumanRegistry.verified_adult_count",
+          "adult_age_years": 18,
+          "demographic_ref": {
+            "dataset_id": "provisional-not-wpp-freeze",
+            "source": "estimation only \u2014 Q-E03 still open for dated UN WPP 18+",
+            "publication_date": "2026-08-28",
+            "adult_population_estimate": 5820000000,
+            "methodology_hash": "pending",
+            "effective_epoch": 0
+          },
+          "hmax_frozen": false
+        },
+        "r_h": {
+          "h_adult": 4,
+          "r_block_satoshi": 5000000000,
+          "interval_seconds": 600.0,
+          "issued_so_far_satoshi": 20000000000
+        },
+        "preblocks": {
+          "n_partitions": 5,
+          "n_max": 9,
+          "partition_of_work": {
+            "W-missing-pb": 3
+          },
+          "missing": [
+            "pb3"
+          ],
+          "present_satoshi": 4000000000,
+          "requeued": [
+            "W-missing-pb:requeue:pb3"
+          ]
+        },
+        "hbp": {
+          "rate": 0.10000000048192771,
+          "pool": 400000002
+        },
+        "provider_worker": {
+          "provider_pool": 1799999999,
+          "worker_pool": 1799999999
+        },
+        "owner_decay": {
+          "M1": {
+            "n_economic": 4,
+            "is_first": true
+          },
+          "M2": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M3": {
+            "n_economic": 4,
+            "is_first": false
+          },
+          "M4": {
+            "n_economic": 4,
+            "is_first": false
+          }
+        }
+      },
+      "job_payment": null
+    }
+  ],
+  "wallets": {
+    "A": 14991687492,
+    "B": 1669437500,
+    "C": 1669437504,
+    "D": 1669437504
+  }
+}

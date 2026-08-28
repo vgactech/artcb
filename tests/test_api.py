@@ -21,7 +21,10 @@ def client(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> TestClient:
 def test_health(client: TestClient) -> None:
     response = client.get("/api/v1/health")
     assert response.status_code == 200
-    assert response.json()["status"] == "ok"
+    body = response.json()
+    assert body["status"] == "ok"
+    assert "git_sha" in body
+    assert "git_branch" in body
 
 
 def test_encode_decode_roundtrip(client: TestClient) -> None:

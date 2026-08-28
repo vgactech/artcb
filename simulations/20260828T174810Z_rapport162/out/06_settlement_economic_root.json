@@ -1,0 +1,93 @@
+{
+  "live_total": 5000000000,
+  "live_conservation": true,
+  "live_hbp_rate": 0.11204819277108434,
+  "live_by_address": {
+    "A": 2359368031,
+    "B": 695030120,
+    "C": 695601849,
+    "D": 1250000000
+  },
+  "sim162_provider_pool": 2219879518,
+  "sim162_worker_pool": 2219879518,
+  "sim162_lines": [
+    {
+      "addr": "A",
+      "role": "owner",
+      "mid": "A1",
+      "sat": 554969879,
+      "p": 1.0
+    },
+    {
+      "addr": "A",
+      "role": "owner",
+      "mid": "A2",
+      "sat": 271935241,
+      "p": 0.49
+    },
+    {
+      "addr": "B",
+      "role": "human",
+      "mid": "A2",
+      "sat": 283034638,
+      "p": 0.51
+    },
+    {
+      "addr": "A",
+      "role": "owner",
+      "mid": "A3",
+      "sat": 271935241,
+      "p": 0.49
+    },
+    {
+      "addr": "C",
+      "role": "human",
+      "mid": "A3",
+      "sat": 283034639,
+      "p": 0.51
+    },
+    {
+      "addr": "D",
+      "role": "owner",
+      "mid": "D1",
+      "sat": 554969880,
+      "p": 1.0
+    },
+    {
+      "addr": "A",
+      "role": "hbp",
+      "mid": null,
+      "sat": 140060241,
+      "p": null
+    },
+    {
+      "addr": "B",
+      "role": "hbp",
+      "mid": null,
+      "sat": 140060241,
+      "p": null
+    },
+    {
+      "addr": "C",
+      "role": "hbp",
+      "mid": null,
+      "sat": 140060241,
+      "p": null
+    },
+    {
+      "addr": "D",
+      "role": "hbp",
+      "mid": null,
+      "sat": 140060241,
+      "p": null
+    }
+  ],
+  "sim162_sum_lines": 5000000000,
+  "A2_and_A3_same_P_in_162": 0.49,
+  "live_A2_P": 0.5,
+  "live_A3_P": 0.4994849008817076,
+  "economic_root_a": "df16f53e9348ee7645c58edd2fbc2256133359b306dc967d8d62ab11dd2e167a",
+  "economic_root_b_mutated": "d559c0916c6ab44328a6d2d2b5b2d18b857ad5c6f23eee66cb5673be27844772",
+  "root_changes_on_settlement_edit": true,
+  "C_hash_gap": "ffi.build_block_hash does not include EconomicRoot today (fork if added to C)."
+}

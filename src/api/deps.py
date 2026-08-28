@@ -11,6 +11,12 @@ from src.artcb.chain.manager import ChainManager
 from src.artcb.config import ArtcbSettings, load_settings
 from src.artcb.connectors.manager import ConnectorManager
 from src.artcb.devnet.faucet import DevnetFaucet
+from src.artcb.economics.human_binding import MachineRegistry
+from src.artcb.economics.identity import HumanRegistry
+from src.artcb.economics.job_provider import JobProvider
+from src.artcb.economics.workid import WorkRegistry
+from src.artcb.mining.protocol import ProtocolEngine
+from src.artcb.payments.stripe_jobs import StripeJobLedger
 from src.artcb.governance.manager import GovernanceManager
 from src.artcb.groups.join_requests import JoinRequestManager
 from src.artcb.groups.manager import GroupManager
@@ -71,6 +77,12 @@ class AppState:
     optimization: OptimizationProfile | None = None
     device_identity: DeviceIdentity | None = None
     wallet_device_binding: WalletDeviceBindingStore | None = None
+    machine_registry: MachineRegistry | None = None
+    job_provider: JobProvider | None = None
+    human_registry: HumanRegistry | None = None
+    work_registry: WorkRegistry | None = None
+    protocol_engine: ProtocolEngine | None = None
+    stripe_ledger: StripeJobLedger | None = None
     pol_state: dict[str, Any] = field(default_factory=lambda: {
         "pol_score": 0.6,
         "delta_compression": 0.68,
@@ -133,10 +145,28 @@ def build_app_state() -> AppState:
     )
     gossip = GossipRegistry(settings.data_dir)
     faucet = DevnetFaucet(settings.data_dir)
+    machine_registry = MachineRegistry(settings.data_dir / "economics" / "machines.json")
+    job_provider = JobProvider(settings.data_dir / "economics" / "jobs.json")
+    human_registry = HumanRegistry(settings.data_dir / "economics" / "humans.json")
+    work_registry = WorkRegistry(settings.data_dir / "economics" / "works.json")
+    stripe_ledger = StripeJobLedger(settings.data_dir / "economics" / "stripe_jobs.json")
     encoder = IREncoder(symbol_registry=symbol_registry.registry)
     explorer = ExplorerAgent(encoder=encoder, symbol_registry=symbol_registry)
     dual = DualAgentLoop(explorer=explorer)
     chain = ChainManager(settings.data_dir / "chain" / "blocks.jsonl")
+    chain.bind_identity(
+        human_registry=human_registry,
+        machine_registry=machine_registry,
+        work_registry=work_registry,
+    )
+    protocol_engine = ProtocolEngine(
+        settings.data_dir,
+        chain=chain,
+        machine_registry=machine_registry,
+        job_provider=job_provider,
+        human_registry=human_registry,
+        work_registry=work_registry,
+    )
     timeline = RTLEGTimeline()
     p2p_sync = P2PSyncService(
         chain=chain,
@@ -175,6 +205,12 @@ def build_app_state() -> AppState:
         optimization=optimization,
         device_identity=device_identity,
         wallet_device_binding=wallet_device_binding,
+        machine_registry=machine_registry,
+        job_provider=job_provider,
+        human_registry=human_registry,
+        work_registry=work_registry,
+        protocol_engine=protocol_engine,
+        stripe_ledger=stripe_ledger,
     )
 
     def _run_pool_reasoning(text: str) -> dict[str, Any]:
@@ -204,6 +240,11 @@ def build_app_state() -> AppState:
             timeline=state.timeline,
             register_graph=state.register_graph,
             publish_public_symbols=state.publish_public_symbols,
+        )
+        pipeline.bind_identity(
+            machine_registry=state.machine_registry,
+            human_registry=state.human_registry,
+            work_registry=state.work_registry,
         )
         result = pipeline.run_from_text(
             full_text,

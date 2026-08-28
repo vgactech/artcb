@@ -1,0 +1,17 @@
+{
+  "fetched_at": "2026-08-28T20:05:19Z",
+  "source": "coingecko",
+  "timeout_seconds": 8.0,
+  "probe_ok": true,
+  "probe_detail": "ping=True btc=True:77530.0 usdt=True:0.999891 artcb_listed=False frankfurter=True:0.85889",
+  "usdt_usd": 0.999891,
+  "btc_usd": 77530.0,
+  "usd_eur": 0.85889,
+  "artcb_usd": 0.0,
+  "artcb_usd_source": "unlisted",
+  "live": false,
+  "fallback_used": true,
+  "fallback_reason": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.",
+  "stub_reason": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.",
+  "note": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing."
+}

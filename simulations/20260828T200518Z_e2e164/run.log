@@ -1,0 +1,320 @@
+Chain PQC key generation skipped: liboqs native library not found — fallback Ed25519 actif. Compiler liboqs (cmake) pour ML-DSA-65 complet.
+Security modules DISABLED
+WalletManager initialized wallet_dir=data/wallets
+demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+chain identity bound humans=True machines=True work=True
+bootstrap creator id=H-A addr=A
+creator-direct validated H-B
+creator-direct validated H-C
+creator-direct validated H-D
+creator-direct validated H-E
+registered DeviceID=DEV-A human=H-A
+bound WalletID=WLT-H-A addr=A human=H-A device=DEV-A
+registered DeviceID=DEV-B human=H-B
+bound WalletID=WLT-H-B addr=B human=H-B device=DEV-B
+registered DeviceID=DEV-C human=H-C
+bound WalletID=WLT-H-C addr=C human=H-C device=DEV-C
+registered DeviceID=DEV-D human=H-D
+bound WalletID=WLT-H-D addr=D human=H-D device=DEV-D
+registered DeviceID=DEV-E human=H-E
+bound WalletID=WLT-H-E addr=E human=H-E device=DEV-E
+registered machine id=A:M1 owner=A index=1 first=True human=None N_econ=1
+registered machine id=A:M2 owner=A index=2 first=False human=B N_econ=2
+registered machine id=A:M3 owner=A index=3 first=False human=C N_econ=3
+registered machine id=A:M4 owner=A index=4 first=False human=D N_econ=4
+H_adult live=5 source=HumanRegistry.adult_verified
+payout M1=100% (N_economic=4 ignored for M1)
+fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/01_identity.json
+registered machine id=A:M5 owner=A index=5 first=False human=E N_econ=5
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/02_m5_p_n.json
+WorkID W-small -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2100000000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-small epoch=0 N=5 -> 0
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+Loaded C library path=/workspace/src/c/libartcb_chain.so v2=True
+native C EconomicRoot v2 index=0 root=902627f46fa55647
+C v2 hash index=0 eco=902627f46fa5 -> c205945b88f5a1fd
+WorkID W-small -> SETTLED score=0.0
+Appended block index=0 hash=c205945b88f5a1fdbb61911813082a50b40135442936f4cbb63780c62cc6f9aa sha3=e72ede3c995576f8 reward=5000000000 contributors=1 hybrid=False
+audit append type=protocol_block hash=9687d75a9f525c1b
+protocol block=0 hash=c205945b88f5a1fd H_adult=5.0 paid=5000000000 supply=5000000000 v=2
+WorkID W-big -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099995000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-big epoch=0 N=5 -> 3
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+EconomicRoot=09db4b076db39b98 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+EconomicRoot=09db4b076db39b98 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=1 root=09db4b076db39b98
+C v2 hash index=1 eco=09db4b076db3 -> ec9b78c18ce3420c
+WorkID W-big -> SETTLED score=0.0
+Appended block index=1 hash=ec9b78c18ce3420c4246f7b23dec8122151c55b60ee1936abda7939ccbf792c7 sha3=5fe1499f546c0b2b reward=5000000000 contributors=4 hybrid=False
+audit append type=protocol_block hash=d4c85deffc76ebe0
+protocol block=1 hash=ec9b78c18ce3420c H_adult=5.0 paid=5000000000 supply=10000000000 v=2
+WorkID W-par-1 -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099990000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-par-1 epoch=1 N=5 -> 1
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=2 root=902627f46fa55647
+C v2 hash index=2 eco=902627f46fa5 -> b3ab0b398c1bc738
+WorkID W-par-1 -> SETTLED score=0.0
+Appended block index=2 hash=b3ab0b398c1bc738a8688e551d8962ee5cc012f0df8dc752759dad4e5c065970 sha3=3b5d316023d042f4 reward=5000000000 contributors=1 hybrid=False
+audit append type=protocol_block hash=b769c7f5a8cf441d
+protocol block=2 hash=b3ab0b398c1bc738 H_adult=5.0 paid=5000000000 supply=15000000000 v=2
+WorkID W-par-2 -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099985000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-par-2 epoch=2 N=5 -> 0
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=4
+EconomicRoot=29827cbfa33132ef keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=4
+EconomicRoot=29827cbfa33132ef keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=3 root=29827cbfa33132ef
+C v2 hash index=3 eco=29827cbfa331 -> 25cd38d39c74b755
+WorkID W-par-2 -> SETTLED score=0.0
+Appended block index=3 hash=25cd38d39c74b755ea01c28b1ae224bd68dd5f538037892f646bf7ec4d77970d sha3=8ffd83b0a6d66f34 reward=5000000000 contributors=2 hybrid=False
+audit append type=protocol_block hash=3b9c1c3bcbcd7417
+protocol block=3 hash=25cd38d39c74b755 H_adult=5.0 paid=5000000000 supply=20000000000 v=2
+WorkID W-more-pb -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099980000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-more-pb epoch=3 N=8 -> 0
+partitioned R_block=5000000000 into 8 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+EconomicRoot=2729e9ed7df75e63 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+EconomicRoot=2729e9ed7df75e63 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=4 root=2729e9ed7df75e63
+C v2 hash index=4 eco=2729e9ed7df7 -> 8d1bdf1a4e79d728
+WorkID W-more-pb -> SETTLED score=0.0
+Appended block index=4 hash=8d1bdf1a4e79d728bf4839e1cfebb3affbc7ee47f41c97fa437b5a2084a200de sha3=48cae1bcc3b3aed8 reward=5000000000 contributors=2 hybrid=False
+audit append type=protocol_block hash=e2cf0ae6bb4cd9dd
+protocol block=4 hash=8d1bdf1a4e79d728 H_adult=5.0 paid=5000000000 supply=25000000000 v=2
+WorkID W-partial -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099975000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-partial epoch=4 N=5 -> 4
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+WorkID W-partial:requeue:pb3 -> REQUEUED score=0.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 3599999998
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=4000000000 H_adult=5.0 HBP=0.100000 work=3599999998 provider=0 worker=3599999998 lines=5
+EconomicRoot=94cfbd0d8c917ab1 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 3599999998
+payout M1=100% (N_economic=5 ignored for M1)
+fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+settled R=4000000000 H_adult=5.0 HBP=0.100000 work=3599999998 provider=0 worker=3599999998 lines=5
+EconomicRoot=94cfbd0d8c917ab1 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=5 root=94cfbd0d8c917ab1
+C v2 hash index=5 eco=94cfbd0d8c91 -> 96dd77f32d6e3097
+WorkID W-partial -> SETTLED score=0.0
+Appended block index=5 hash=96dd77f32d6e309738161c6e55cadfc2774d7a60e49f9796b8a79a3c1760600a sha3=71baef890e67476d reward=4000000000 contributors=2 hybrid=False
+audit append type=protocol_block hash=061ee41da676ff06
+protocol block=5 hash=96dd77f32d6e3097 H_adult=5.0 paid=4000000000 supply=29000000000 v=2
+WorkID W-priority -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099971000000000 -> 5000000000
+N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+partition work=W-priority epoch=5 N=5 -> 3
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=6 root=902627f46fa55647
+C v2 hash index=6 eco=902627f46fa5 -> 91ec890eb4d3c283
+WorkID W-priority -> SETTLED score=0.0
+Appended block index=6 hash=91ec890eb4d3c2835add444db9597dbde8c40f93e6741d499ae14e9e53ec97db sha3=c009eea1f9c135e4 reward=5000000000 contributors=1 hybrid=False
+audit append type=protocol_block hash=e3e6acb713b21171
+protocol block=6 hash=91ec890eb4d3c283 H_adult=5.0 paid=5000000000 supply=34000000000 v=2
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/03_jobs.json
+job submitted id=job_310488e29a8d4260 provider=A
+job job_310488e29a8d4260 cancelled
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/04_cancelled.json
+WorkID W-load-faible -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099966000000000 -> 5000000000
+N_max=12 cpu=16 ram=16 net=1000.0 val=16.0
+partition work=W-load-faible epoch=6 N=5 -> 1
+partitioned R_block=5000000000 into 5 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=7 root=902627f46fa55647
+C v2 hash index=7 eco=902627f46fa5 -> c0db7857a50bd5ef
+WorkID W-load-faible -> SETTLED score=0.0
+Appended block index=7 hash=c0db7857a50bd5ef21c5e860dd0e28b95ffd9ebefab3b3efeb32dbac609342fb sha3=0c7891d12c5f5404 reward=5000000000 contributors=1 hybrid=False
+audit append type=protocol_block hash=33030e93ba20245f
+protocol block=7 hash=c0db7857a50bd5ef H_adult=5.0 paid=5000000000 supply=39000000000 v=2
+WorkID W-load-moyenne -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099961000000000 -> 5000000000
+N_max=1 cpu=8 ram=8 net=20.0 val=2.6402640264026402
+partition work=W-load-moyenne epoch=7 N=1 -> 0
+partitioned R_block=5000000000 into 1 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=8 root=902627f46fa55647
+C v2 hash index=8 eco=902627f46fa5 -> e0ade8a3dad9afe8
+WorkID W-load-moyenne -> SETTLED score=0.0
+Appended block index=8 hash=e0ade8a3dad9afe83c4f1d1c158eec9bd6515994a36e04addd16a033f0faeb7b sha3=19dcad8c6dbbfa13 reward=5000000000 contributors=1 hybrid=False
+audit append type=protocol_block hash=fde34c7084503387
+protocol block=8 hash=e0ade8a3dad9afe8 H_adult=5.0 paid=5000000000 supply=44000000000 v=2
+WorkID W-load-forte -> EXECUTING score=0.0
+H_adult live=5 source=HumanRegistry.adult_verified
+R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099956000000000 -> 5000000000
+N_max=1 cpu=2 ram=2 net=0.25 val=0.07936507936507936
+partition work=W-load-forte epoch=8 N=1 -> 0
+partitioned R_block=5000000000 into 1 preblocks total=5000000000
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+H_adult explicit=5.0
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=5 ignored for M1)
+settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+native C EconomicRoot v2 index=9 root=902627f46fa55647
+C v2 hash index=9 eco=902627f46fa5 -> f7c05f24f7eca736
+WorkID W-load-forte -> SETTLED score=0.0
+Appended block index=9 hash=f7c05f24f7eca736ddec0890831bbd2cf69a63d7f5622a57795dd775eab255aa sha3=ef2cfbc1d12c0868 reward=5000000000 contributors=1 hybrid=False
+audit append type=protocol_block hash=0fb552d3858300e3
+protocol block=9 hash=f7c05f24f7eca736 H_adult=5.0 paid=5000000000 supply=49000000000 v=2
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/05_load.json
+registered machine id=Z:M1 owner=Z index=1 first=True human=None N_econ=1
+offline A:M2 N_econ unchanged=5
+transferred out A:M2 from A
+registered machine id=A:M2:to:E owner=E index=1 first=True human=None N_econ=1
+fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+H_adult live=5 source=HumanRegistry.adult_verified
+HBP(H) h_adult=5.0 rate=0.1000000006
+no provider scores — worker takes full PoL pool 4499999997
+payout M1=100% (N_economic=2 ignored for M1)
+fleet_owner_share N=2 P=0.500000000000 k=0.025317807984
+settled R=5000000000 H_adult=5 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+EconomicRoot=3491a7262ad4c221 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+EconomicRoot=61519c9e271bd9f9 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+EconomicRoot=3491a7262ad4c221 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+EconomicRoot=61519c9e271bd9f9 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/06_attacks.json
+USD→ARTCB oracle NOT live — BTC/USDT probes are not an ARTCB price (ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.)
+oracle artcb_usd=0.0 source=unlisted live=False fallback=True digest=3224518cb58b554f NOT_INVENTED
+fee quote usd=0.000311000 congestion=1000.0 cap=0.000311
+USD→ARTCB oracle NOT live — BTC/USDT probes are not an ARTCB price (ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.)
+oracle artcb_usd=0.0 source=unlisted live=False fallback=True digest=3224518cb58b554f NOT_INVENTED
+oracle NOT live — fee satoshi unavailable (price not invented)
+fee quote usd=0.000001000 congestion=0.0 cap=0.000311
+usd=0.000001000 price=1.0 -> satoshi=100
+fee satoshi=100 usd=0.000001000 price=1.0
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/07_oracle.json
+stripe webhook duplicate event_id=evt_sim164
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/08_stripe.json
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/10_wallet_balances.json
+H_adult live=5 source=HumanRegistry.adult_verified
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/00_manifest.json
+wrote /workspace/simulations/20260828T200518Z_e2e164/out/09_summary.json

@@ -1,0 +1,25 @@
+{
+  "h_adult": 5,
+  "h_adult_source": "HumanRegistry.verified_adult_count",
+  "adult_age_years": 18,
+  "hmax_frozen": false,
+  "security_modules": "ENABLED",
+  "security_named_disable_reason": null,
+  "pqc": {
+    "native_liboqs": true,
+    "pqc_available": true,
+    "algorithm": "ML-DSA-65",
+    "fallback": false
+  },
+  "supply_satoshi": 59000000000,
+  "supply_artcb": 590.0,
+  "cap_ok": true,
+  "wallet_sum_equals_supply": true,
+  "blocks": 12,
+  "wallet_sum_satoshi": 59000000000,
+  "chain_valid": true,
+  "hash_abi": 2,
+  "providers_nonzero_split": true,
+  "stripe_consensus_blocked": false,
+  "failures": []
+}

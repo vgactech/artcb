@@ -1,0 +1,61 @@
+{
+  "fee_quotes_usd": [
+    {
+      "base_usd": 1e-06,
+      "congestion": 0.0,
+      "quoted_usd": 1e-06,
+      "cap_usd": 0.000311,
+      "floor_usd": 1e-06
+    },
+    {
+      "base_usd": 1e-06,
+      "congestion": 1.0,
+      "quoted_usd": 2e-06,
+      "cap_usd": 0.000311,
+      "floor_usd": 1e-06
+    },
+    {
+      "base_usd": 1e-06,
+      "congestion": 10.0,
+      "quoted_usd": 1.1e-05,
+      "cap_usd": 0.000311,
+      "floor_usd": 1e-06
+    },
+    {
+      "base_usd": 1e-06,
+      "congestion": 100.0,
+      "quoted_usd": 0.000101,
+      "cap_usd": 0.000311,
+      "floor_usd": 1e-06
+    },
+    {
+      "base_usd": 1e-06,
+      "congestion": 1000.0,
+      "quoted_usd": 0.000311,
+      "cap_usd": 0.000311,
+      "floor_usd": 1e-06
+    }
+  ],
+  "fee_cap_source": "OpenChainBench 2026-08-26 Base native transfer p50 USD 0.000311",
+  "solana_p50_usd": 0.000484,
+  "pol_fees_artcb_only": true,
+  "external_1eur": {
+    "gross": 1.0,
+    "processor_fee_example_not_frozen": 0.265,
+    "net_to_dividend_vault_fiat": 0.735,
+    "does_not_mint_artcb": true,
+    "priority_not_guaranteed_execution": true
+  },
+  "dividend": {
+    "fee_pool_artcb": 100000.0,
+    "eligible_users": 1000000,
+    "equal_share": 0.1,
+    "eligibility": "VERIFIED_ADULT AND NOT own_active_machine AND NOT external_binding",
+    "vault_separated_from_remaining_supply": true
+  },
+  "lock": {
+    "days": 30,
+    "from": "monthly_settlement_finality",
+    "example": "work in January → settle 31 Jan → unlock 2 Mar (30d after settlement)"
+  }
+}

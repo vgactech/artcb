@@ -1,0 +1,22 @@
+{
+  "kind": "JobPayment",
+  "distinct_from": "R_block",
+  "mints": false,
+  "secret_present": false,
+  "webhook_first": {
+    "duplicate": false,
+    "event_id": "evt_sim164",
+    "type": "payment_intent.succeeded",
+    "kind": "JobPayment",
+    "job_id": "job_sim",
+    "mints": false,
+    "distinct_from": "R_block",
+    "payment_intent_id": "pi_sim",
+    "status": "succeeded"
+  },
+  "webhook_dup": {
+    "duplicate": true,
+    "event_id": "evt_sim164",
+    "mints": false
+  }
+}

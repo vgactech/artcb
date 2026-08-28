@@ -1,0 +1,33 @@
+{
+  "utc": "2026-08-28T19:55:44Z",
+  "h_adult": 5,
+  "supply_satoshi": 34000000000,
+  "supply_artcb": 340.0,
+  "supply_le_21m": true,
+  "wallets": {
+    "A": 14991687492,
+    "B": 1669437500,
+    "C": 1669437504,
+    "D": 1669437504
+  },
+  "wallet_sum_satoshi": 20000000000,
+  "n_a": 4,
+  "conservation_ok": true,
+  "c_economic_root_abi": true,
+  "hash_abi_version": 2,
+  "attacks": {
+    "1_double_binding": true,
+    "2_double_settlement": true,
+    "3_owner_cut": true,
+    "3_owner_cut_engine": true,
+    "4_offline_grace": true,
+    "5_transfer": true,
+    "6_fake_human": true,
+    "6_fake_human_id": true,
+    "7_tamper_root": true
+  },
+  "failures": [],
+  "pipeline": "HumanID\u2192MachineID\u2192WalletID\u2192HumanBinding\u2192JobID/WorkID\u2192Capacity\u2192Partition\u2192PB\u2192PoL\u2192Provider/Worker\u2192HBP\u2192OwnerDecay\u2192EconomicRoot\u2192BlockHash\u2192Settlement\u2192wallets",
+  "job_payment_ne_block_reward": true,
+  "stripe_mints": false
+}

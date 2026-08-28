@@ -1,0 +1,82 @@
+name: ARTCB — Stripe priority JobPayment (TEST)
+
+# Uses repository secret KEY_API_STRIPE_ACTION.
+# The secret is injected as an env var and is NEVER echoed, printed, or committed.
+# JobPayment ≠ BlockReward: tests prove minted_satoshi == 0 and supply cap unchanged.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Raison du lancement Stripe TEST"
+        required: false
+        default: "priority job payment TEST"
+  push:
+    branches:
+      - cursor/tokenomics-21m-hbp-owner-decay-3fcb
+    paths:
+      - "src/artcb/payments/**"
+      - "src/artcb/economics/job_payment.py"
+      - "tests/test_stripe_priority_job.py"
+      - ".github/workflows/stripe-priority.yml"
+  pull_request:
+    paths:
+      - "src/artcb/payments/**"
+      - "src/artcb/economics/job_payment.py"
+      - "tests/test_stripe_priority_job.py"
+      - ".github/workflows/stripe-priority.yml"
+
+jobs:
+  stripe-priority:
+    name: Stripe TEST PaymentIntent (no mint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      ARTCB_DEBUG: "true"
+      ARTCB_ORACLE_FORCE_STUB: "1"
+      # Injected for tests; never print this value.
+      KEY_API_STRIPE_ACTION: ${{ secrets.KEY_API_STRIPE_ACTION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile C chain lib
+        run: sudo apt-get update -qq && sudo apt-get install -y libssl-dev && make -C src/c all
+
+      - name: Install Python deps
+        run: pip install -r requirements.txt
+
+      - name: Secret presence (boolean only)
+        run: |
+          if [ -n "$KEY_API_STRIPE_ACTION" ]; then
+            echo "KEY_API_STRIPE_ACTION is set (value not printed)"
+            # Trim CR/LF/spaces for prefix check only — never echo the value.
+            _prefix=$(printf '%s' "$KEY_API_STRIPE_ACTION" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | cut -c1-8)
+            case "$_prefix" in
+              sk_test_*) echo "mode=test" ;;
+              rk_test_*) echo "mode=test (restricted)" ;;
+              sk_live_*) echo "mode=live (create+cancel only)" ;;
+              rk_live_*) echo "mode=live (restricted, create+cancel only)" ;;
+              *) echo "mode=unknown" ;;
+            esac
+            unset _prefix
+          else
+            echo "KEY_API_STRIPE_ACTION is empty — tests will skip live Stripe calls"
+          fi
+
+      - name: Stripe + conservation tests
+        env:
+          PYTHONPATH: src
+        run: python3 -m pytest tests/test_stripe_priority_job.py tests/test_e2e_protocol_164.py::test_job_payment_does_not_mint -q --tb=short
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Stripe JobPayment" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Secret injected: $([ -n \"$KEY_API_STRIPE_ACTION\" ] && echo yes || echo no)" >> "$GITHUB_STEP_SUMMARY"
+          echo "- minted_satoshi must be 0 (JobPayment ≠ R_block)" >> "$GITHUB_STEP_SUMMARY"

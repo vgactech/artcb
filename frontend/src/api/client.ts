@@ -263,7 +263,9 @@ export async function fetchMiningStatus() {
   return data as {
     block_count: number;
     current_reward_artcb: number;
-    blocks_until_halving: number;
+    blocks_until_halving: number | null;
+    remaining_supply_artcb?: number | null;
+    halving_removed?: boolean;
     total_rewards_artcb: number;
     pol_score: number;
   };

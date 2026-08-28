@@ -1,0 +1,45 @@
+{
+  "partition_formula": "SHA256(WorkID|Epoch|ParentRoot) mod N",
+  "n_partitions": 5,
+  "work_ids": 10000,
+  "counts_per_partition": {
+    "4": 2072,
+    "0": 1962,
+    "1": 1954,
+    "3": 1999,
+    "2": 2013
+  },
+  "determinism_ok": true,
+  "settlement_events": [
+    {
+      "work_id": "W-00001",
+      "result": "SETTLED"
+    },
+    {
+      "work_id": "W-00001",
+      "result": "REJECT_DOUBLE_SETTLEMENT"
+    },
+    {
+      "work_id": "W-00002",
+      "result": "SETTLED"
+    }
+  ],
+  "settlement_count_W00001": 1,
+  "missing_pb3": {
+    "present_preblocks": [
+      "pb1",
+      "pb2",
+      "pb4",
+      "pb5"
+    ],
+    "present_satoshi": 4000000000,
+    "r_block": 5000000000,
+    "unissued_or_requeued_satoshi": 1000000000,
+    "block_continues": true,
+    "conservation_le": true
+  },
+  "n_max_dynamic_examples": {
+    "healthy": 75,
+    "saturated": 1
+  }
+}

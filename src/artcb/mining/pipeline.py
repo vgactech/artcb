@@ -43,6 +43,11 @@ def build_contributors(
     extra_contributors: list[dict] | None = None,
     anti_sybil=None,
     source: str = "unknown",
+    machine_registry=None,
+    human_registry=None,
+    work_registry=None,
+    job_id: str | None = None,
+    graph_id: str | None = None,
 ) -> list[dict]:
     """
     Construit la liste contributeurs pour minage collectif PoL.
@@ -62,6 +67,23 @@ def build_contributors(
             "pol_score": float(extra.get("pol_score", pol_score)),
             "signature": extra.get("signature", ""),
             "role": extra.get("role", "contributor"),
+            **{
+                k: extra[k]
+                for k in (
+                    "machine_index",
+                    "owner_address",
+                    "machine_id",
+                    "human_id",
+                    "work_id",
+                    "job_id",
+                    "bound_human_address",
+                    "n_economic",
+                    "is_first_machine",
+                    "provider_score",
+                    "work_weight",
+                )
+                if k in extra
+            },
         })
 
     signature = ""
@@ -82,15 +104,23 @@ def build_contributors(
             candidates, source=source
         )
         if excluded:
-            import logging as _log
-            _log.getLogger("artcb.mining.pipeline").warning(
+            logger.warning(
                 "build_contributors: %d wallet(s) exclus avant attribution job : %s",
                 len(excluded),
                 [e["address"][:12] + "… — " + e["reason"] for e in excluded],
             )
-        return eligible
+        candidates = eligible
 
-    return candidates
+    from src.artcb.mining.identity import enrich_contributors_with_identity
+
+    return enrich_contributors_with_identity(
+        candidates,
+        machine_registry=machine_registry,
+        human_registry=human_registry,
+        work_registry=work_registry,
+        job_id=job_id,
+        graph_id=graph_id,
+    )
 
 
 class MiningPipeline:
@@ -116,6 +146,14 @@ class MiningPipeline:
         self.timeline = timeline
         self._register_graph = register_graph
         self._publish_public_symbols = publish_public_symbols
+        self.machine_registry = None
+        self.human_registry = None
+        self.work_registry = None
+
+    def bind_identity(self, *, machine_registry=None, human_registry=None, work_registry=None) -> None:
+        self.machine_registry = machine_registry
+        self.human_registry = human_registry
+        self.work_registry = work_registry
 
     def run_from_text(
         self,
@@ -217,6 +255,10 @@ class MiningPipeline:
                 extra_contributors=extra_contributors,
                 anti_sybil=anti_sybil,
                 source="mining",
+                machine_registry=self.machine_registry or getattr(self.chain, "machine_registry", None),
+                human_registry=self.human_registry or getattr(self.chain, "human_registry", None),
+                work_registry=self.work_registry or getattr(self.chain, "work_registry", None),
+                graph_id=graph.graph_id,
             )
 
             public_symbols = graph.orig_symbols if visibility == "public" and graph.orig_symbols else None
@@ -229,6 +271,7 @@ class MiningPipeline:
                 group_id=group_id,
                 contributors=contributors if actor_address else None,
                 public_symbols=public_symbols,
+                source="mining",
             )
             if visibility == "public" and public_symbols and self._publish_public_symbols:
                 self._publish_public_symbols(
@@ -244,6 +287,9 @@ class MiningPipeline:
                 "block_index": block_index,
                 "reward_satoshi": block_reward,
                 "contributor_count": len(contributors),
+                "hash_version": getattr(block, "hash_version", 1),
+                "h_adult": (block.economics or {}).get("h_adult") if block.economics else None,
+                "economic_root": (block.economics or {}).get("economic_root") if block.economics else None,
             }
 
             if self.timeline:

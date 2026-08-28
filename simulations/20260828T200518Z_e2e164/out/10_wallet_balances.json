@@ -1,0 +1,32 @@
+{
+  "balances": {
+    "A": {
+      "address": "A",
+      "balance_satoshi": 41613619215,
+      "balance_artcb": 416.13619215
+    },
+    "B": {
+      "address": "B",
+      "balance_satoshi": 4504727657,
+      "balance_artcb": 45.04727657
+    },
+    "C": {
+      "address": "C",
+      "balance_satoshi": 2161239846,
+      "balance_artcb": 21.61239846
+    },
+    "D": {
+      "address": "D",
+      "balance_satoshi": 720413282,
+      "balance_artcb": 7.20413282
+    },
+    "E": {
+      "address": "E",
+      "balance_satoshi": 0,
+      "balance_artcb": 0.0
+    }
+  },
+  "sum_balances_satoshi": 49000000000,
+  "supply_satoshi": 49000000000,
+  "conservation": true
+}
