@@ -216,3 +216,35 @@ def test_pool_create_job_raises_if_no_eligible_worker(tmp_path) -> None:
     ]
     with pytest.raises(PoolError, match="Aucun worker éligible"):
         service.create_job("texte", workers=workers, anti_sybil=sybil)
+
+
+def test_fleet_same_owner_different_machines_is_not_sybil() -> None:
+    sybil = _sybil(0)
+    ok, reason = sybil.validate_block(
+        [
+            {"address": "A", "pol_score": 0.8, "machine_id": "A:M1", "role": "worker"},
+            {"address": "A", "pol_score": 0.8, "machine_id": "A:M2", "role": "worker"},
+            {"address": "JP1", "pol_score": 0.8, "role": "provider"},
+            {"address": "JP2", "pol_score": 0.8, "role": "provider"},
+        ],
+        0.8,
+        0,
+        source="mining",
+    )
+    assert ok is True
+    assert reason is None
+
+
+def test_true_duplicate_contributor_identity_rejected() -> None:
+    sybil = _sybil(0)
+    ok, reason = sybil.validate_block(
+        [
+            {"address": "A", "pol_score": 0.8, "machine_id": "A:M1", "role": "worker"},
+            {"address": "A", "pol_score": 0.8, "machine_id": "A:M1", "role": "worker"},
+        ],
+        0.8,
+        0,
+        source="mining",
+    )
+    assert ok is False
+    assert "Duplicate" in (reason or "")

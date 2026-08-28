@@ -524,10 +524,16 @@ class AntiSybilValidator:
                     logger.warning("Block %d rejected: %s", block_index, reason)
                     return False, reason
 
-        # ── Règle 4 : Adresses dupliquées (TOUJOURS actif) ─────────────────
-        addresses = [c.get("address", "") for c in contributors]
-        if len(addresses) != len(set(addresses)):
-            reason = "Duplicate addresses in contributors"
+        # Same owner on several MachineIDs is fleet identity, not a Sybil clone.
+        # Duplicate = same (address, machine_id, role) twice.
+        identities = []
+        for contributor in contributors:
+            address = contributor.get("address", "")
+            machine_id = contributor.get("machine_id") or ""
+            role = contributor.get("role") or ""
+            identities.append((address, machine_id, role))
+        if len(identities) != len(set(identities)):
+            reason = "Duplicate contributor identities"
             logger.warning("Block %d rejected: %s", block_index, reason)
             return False, reason
 

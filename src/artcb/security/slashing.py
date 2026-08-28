@@ -11,7 +11,7 @@ Implémente :
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ class AddressStatus:
     @property
     def is_suspended(self) -> bool:
         """Adresse suspendue temporairement ?"""
-        return bool(self.ban_until and datetime.utcnow() < self.ban_until)
+        return bool(self.ban_until and datetime.now(UTC) < self.ban_until)
 
     @property
     def risk_level(self) -> str:
@@ -153,7 +153,7 @@ class SlashingManager:
         Returns:
             SlashingEvent créé
         """
-        now = datetime.utcnow()
+        now = datetime.now(UTC)
 
         # Calculer pénalité
         penalty = 0
@@ -229,7 +229,7 @@ class SlashingManager:
                 return False, "Address is permanently banned"
 
             if status.is_suspended and status.ban_until:
-                remaining = (status.ban_until - datetime.utcnow()).total_seconds()
+                remaining = (status.ban_until - datetime.now(UTC)).total_seconds()
                 return False, f"Address is suspended for {remaining/3600:.1f}h"
 
         return True, None
