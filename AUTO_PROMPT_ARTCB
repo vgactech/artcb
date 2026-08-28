@@ -1145,6 +1145,17 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Pas encore :** settlement N_A, HBP 18+, Finder, fees dynamiques.
 - Rapport : `rapports/161_reponses_bootstrap_hbp_halving_geopop_2026-08-26.md`
 
+## [2026-08-28T20:08:00Z] Rapport 164 — E2E ProtocolEngine + EconomicRoot C v2 + Stripe/OVH
+
+- **Simu :** `simulations/20260828T200518Z_e2e164/` (`failures: []`). A–E, M1–M5, jobs, charge, attaques, soldes = supply 490 ARTCB ≤ 21 M.
+- **Câblage :** `ProtocolEngine` H_adult → R(H) → HBP → P/W → OwnerDecay → Settlement → hash C v2. Mining sans machines = encore PoL héritage.
+- **C :** `artcb_build_canonical_v2` ; v1 inchangé ; HumanID ≠ bound wallet.
+- **Oracle :** probes CoinGecko/Frankfurter live ; ARTCB unlisted → `fee_satoshi=None` (pas de prix inventé).
+- **Stripe :** workflows `KEY_API_STRIPE_ACTION` ; live **ce** runtime KO (secret absent). JobPayment ≠ mint.
+- **OVH :** `/health` 200 ; economics/mining 164 = 404 ; SSH refus ; Doppler 401.
+- **Tests :** 584 passed / 21 skipped. **≠ protocole complet.**
+- Rapport : `rapports/164_e2e_protocol_stripe_ovh_2026-08-28.md`
+
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 
 - **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.

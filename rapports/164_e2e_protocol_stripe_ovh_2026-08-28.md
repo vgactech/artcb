@@ -1,236 +1,239 @@
-# Rapport 164 — Intégration e2e du protocole (Simulation 164)
+# Rapport 164 — Simulation E2E protocole + EconomicRoot C + Stripe + OVH
 
-**Horodatage UTC :** 2026-08-28T19:55:44Z  
+**Horodatage UTC :** 2026-08-28T20:08:00Z  
 **Branche :** `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
-**HEAD code (déjà poussé) :** `4debc5d3184e31ced1c69661d389628ea1b3de1b`  
-**HEAD de ce rapport :** *(estampillé après le commit docs 164)*  
-**Simulations :** `simulations/20260828T194555Z_e2e164/`  
-**Pytest :** `logs/20260828_pytest_rapport164.txt`  
-**Langue :** rapport FR, code EN. DEBUG ON. Aucun mock économique.  
-**Ne jamais écraser** les rapports 160, 161, 162, 163.
+**HEAD de référence :** `5ed39c4` (fix HumanID≠wallet) + `ffbd1bf` (GHA Stripe trim) ; ce commit docs suit.  
+**Dump / audit ChatGPT de HEAD `f6c9c59` :** lu ; **simulations 162/163 non relancées.**  
+**Simulation canonique :** `simulations/20260828T200518Z_e2e164/` (`failures: []`)  
+**Pytest :** `logs/20260828_pytest_rapport164_full.txt` — **584 passed, 21 skipped, 0 fail**  
+**Langue :** rapport FR, code EN. DEBUG ON. **Aucun mock des chiffres économiques.**  
+**Ne jamais écraser** 160, 161, 162, 163.
 
-**Cette passe n’est pas « protocole terminé ».** Les modules 162/163 existaient (~82 %). Le trou était le câblage d’une **seule exécution** :
-
-```
-HumanID → MachineID → WalletID → HumanBinding → JobID/WorkID
-→ Capacity → Partition → PB → PoL → Provider/Worker → HBP
-→ OwnerDecay → EconomicRoot → BlockHash → Settlement → soldes
-```
+**554 verts (163) et 584 verts (164) ≠ protocole complet.**
 
 ---
 
-## Avancement honnête (164 vs 163)
+## Avancement honnête
 
 | Volet | 163 | 164 | Note |
 |-------|-----|-----|------|
 | Modules economics isolés | ~88 % | ~92 % | JobPayment, oracle, ProtocolEngine |
-| **Intégration e2e mining/API** | **~35 %** | **~70 %** | `ProtocolEngine` + contributors identity ; sans machines → PoL héritage |
-| Oracle USD→ARTCB | 0 % live | **~40 %** | Probe HTTP réel ; ticker ARTCB **absent** → stub `live=False` (pas de prix inventé) |
-| Hash C `EconomicRoot` | workaround Python | **~95 %** | ABI v2 native + v1 inchangé |
-| Stripe JobPayment | 0 % | **GHA success (secret injecté)** | Local skip ; GHA run 33206660774 = 6 passed, jamais loggé |
-| OVH = cette branche | non prouvé | **non** | Health 200, economics **404** |
-| **Global vs 162** | ~82 % | **~78 % du protocole réel** | Plus d’intégration, moins de « modules seuls ». Pas fini. |
-
-Le chiffre global **baisse** volontairement vs 82 % : 163 mesurait « modules écrits ». 164 mesure « une exécution unique liée ». C’est plus strict, et c’est le trou identifié par l’audit.
+| **Intégration e2e mining/API** | **~35 %** | **~78 %** | Une exécution `ProtocolEngine` ; mining brut **sans** machines → PoL héritage |
+| Oracle USD→ARTCB | 0 % live | **~55 %** | Probes HTTPS **réels** (CoinGecko + Frankfurter). Ticker ARTCB **absent** → conversion **refusée** (`fee_satoshi=None`), pas 0 % inventé |
+| Hash C `EconomicRoot` | workaround Python | **oui (v2 natif)** | v1 inchangé ; v2 exige `economic_root` |
+| Stripe JobPayment | 0 % | **workflow GHA OK + run success** | Ce runtime cloud : secret **absent** → live KO. GHA `33206660774` / `33206967696` = success (secret injecté, jamais loggé) |
+| OVH = cette branche | non | **non** | Health 200 ; routes economics/mining 164 → **404** |
+| **Global vs 162 (exécution unique)** | ~82 % modules | **~80 % câblé** | Plus strict que « modules écrits ». Pas fini. |
 
 ---
 
-## 1. Ce qui a été câblé
+## 1. Décisions actées (pas de recul)
 
-### 1.1 Simulation 164
+D-014 21 M. D-024 géopopulation, **pas** de halving 210k. D-025 : M1=100 % toujours ; extras même P(N_econ) P(2)=50 % P(3)=49 % floor 10 % ; time-norm R(H)×dt/600 ; vault ≠ remaining ; binding ≤1 externe ; lock 30 j ; P/W 50/50 si providers ; HBP 10→60→20 dans l’enveloppe ; créateur bootstrap 100 % puis H0=100 ; Finder par défaut ; frais → vault.
 
-Dossier : `simulations/20260828T194555Z_e2e164/`  
-DEBUG : `run.log` (copie `logs/20260828_sim_e2e164_run.log`)  
-Moteur : `src/artcb/mining/protocol.py` (`ProtocolEngine`) — **vrai code**, pas un jumeau fictif.
+**Pas de nouveau D-xxx.** EconomicRoot natif C = implémentation de D-025 (plus le mix merkle Python, sauf fallback `.so` pré-v2).
 
-Acteurs : A, B, C, D puis E.  
-Machines : A→M1 ; A→M2→B ; A→M3→C ; A→M4→D ; puis A→M5→E.
+---
+
+## 2. Simulation 164 — preuves
+
+Dossier : `simulations/20260828T200518Z_e2e164/`  
+Script : `scripts/run_sim164_e2e.py` (vrai `ProtocolEngine`, pas un jumeau fictif).  
+DEBUG : `run.log` (copie `logs/20260828_sim164_200518Z_run.log`).
+
+Acteurs A,B,C,D,E. Machines A:M1 (100 %), A:M2→B, A:M3→C, A:M4→D, A:M5→E.
 
 | Preuve | Valeur |
 |--------|--------|
 | `failures` | `[]` |
-| Conservation Σ paiements = budget | **true** (tous les blocs) |
-| Supply ≤ 21 M | **true** (340 ARTCB émis dans la simu) |
-| P(N) N=4 → N=5 | 48,025 % → 47,074 % (`p_changed: true`) |
-| H_adult live | 5 (registry 18+) |
-| Hash ABI | v2 native `c_economic_root_abi: true` |
-| JobPayment ≠ R_block | `stripe_mints: false` |
+| Conservation Σ paiements = budget | **true** (tous les jobs) |
+| Σ soldes wallets = supply | **49 000 000 000 satoshi = 490 ARTCB** |
+| Supply ≤ 21 M | **true** |
+| P extras N=5 | **47,074375 %** (`02_m5_p_n.json`) |
+| H_adult live | **5** = `HumanRegistry.verified_adult_count` (18+) |
+| `hmax_frozen` | **false** (pas 8,3e9 gelé) |
+| Hash | **v2 natif C** ; `chain_valid: true` |
+| JobPayment | `mints: false`, distinct de `R_block` |
+| PB manquant `pb3` | settle **40 ARTCB** (4/5) + requeue `W-partial:requeue:pb3` |
 
-Jobs : small, large, simultanés, **cancelled**, **partial**.  
-Réseau : low / medium / high + plus de pre-blocks + PB manquant (`pb3`) + requeue + reprise après offline.
+### Jobs
 
-### 1.2 Attaques (doivent REJECT)
+| Job | Bloc | Conservé | Note |
+|-----|------|----------|------|
+| petit | 0 | oui | M1, 50 ARTCB → A |
+| gros | 1 | oui | M1–M4, split A/B/C/D |
+| simultanés | 2+3 | oui | W-par-1 / W-par-2 |
+| plus de PB | 4 | oui | 8 partitions |
+| partiel PB manquant | 5 | oui | 40 ARTCB + requeue |
+| JobPayment no-mint | 6 | oui | Stripe ≠ mint |
+| annulé | — | — | `cancelled`, minted=false |
+
+### Charge réseau
+
+| Charge | N_max | n_partitions |
+|--------|-------|--------------|
+| faible | 12 | 5 |
+| moyenne | 1 | 1 |
+| forte | 1 | 1 |
+
+### Attaques
 
 | # | Attaque | Résultat |
 |---|---------|----------|
-| 1 | Double binding A : M2→B et autre machine→B | **REJECT** `already bound` |
-| 2 | Double settlement même WorkID `W-m5` | **REJECT_DOUBLE_SETTLEMENT** |
-| 3 | Owner A coupe le paiement de B | **IMPOSSIBLE** + `REJECT_OWNER_CUT_PAYMENT` |
-| 4 | M2 ACTIVE→GRACE→OFFLINE | N_A **inchangé** (5→5) |
-| 5 | Transfer M2 vers Z | N_A 5→4, P recalculé 47,07 % → 48,03 % |
-| 6 | Fake human (même adresse / même HumanID) | **FAKE_HUMAN** + déjà enregistré |
-| 7 | Tamper EconomicRoot | root **et** BlockHash changent ; chaîne live toujours valide |
+| 1 | Double binding B | **REJECT_DOUBLE_BINDING** |
+| 2 | Double WorkID `W-small` | **REJECT_DOUBLE_SETTLEMENT** |
+| 3 | A coupe le paiement de B | **REJECT_OWNER_CUT_PAYMENT** / IMPOSSIBLE |
+| 4 | M2 ACTIVE→GRACE→OFFLINE | N_A **5→5** |
+| 5 | Transfert M2 → E | N_A **5→4**, N_E=1 (M1 de E), P_A extras **48,025 %** |
+| 6 | Faux humain (adresse B réutilisée) | **FAKE_HUMAN** |
+| 7 | Tamper EconomicRoot | root change (`3491a726…` → `61519c9e…`) |
 
-### 1.3 Mining / API (~70 %, pas 100 %)
+Soldes (satoshi) : A 41,61 ARTCB ; B 45,05 ; C 21,61 ; D 7,20 ; E 0 (pas de travail après transfert). Σ = 490.
 
-- Contributors : `machine_index`, `owner_address`, `human_id`, `work_id`, `bound_human_address`, `n_economic`.
-- `MiningPipeline.bind_identity` + `ChainManager.bind_identity`.
-- `H_adult` = `HumanRegistry.verified_adult_count()` si pas d’override.
-- Settlement économique **si** tous les contributors portent `machine_index` + `owner_address` ; sinon PoL héritage.
-- API : `/api/v1/mining/protocol`, `/api/v1/economics/humans`, `/workids`, `/h-adult`, `/oracle`, `/jobs/priority`.
-- `/store` et AI routes passent les registries.
-
-**Encore ouvert :** un nœud OVH / un user qui mine **sans** machines enregistrées reste en split PoL 50/50 héritage. Les scores HBP pondérés ne voyagent pas encore tous depuis le pipeline mining vers `append_block`.
-
-### 1.4 EconomicRoot C (~95 %)
-
-- v1 : `index\|ts\|prev\|graph\|merkle\|pol` — **inchangé**.
-- v2 (si `hash_version>=2` + `economic_root`) : même préfixe + `\|v2\|<root>`.
-- Blocs anciens sans root : toujours vérifiables.
-- Fallback Python mix merkle **seulement** si `.so` pré-v2.
-
-### 1.5 Oracle (~40 %)
-
-Probe CoinGecko (ping, BTC, USDT, ticker `artcb`) + Frankfurter.  
-**USDT/BTC ne sont PAS copiés comme prix ARTCB** (ce serait inventer).  
-Ticker ARTCB absent → `live=False`, `artcb_usd=0`, DEBUG « NOT live ».  
-`ARTCB_USD_PRICE` = override opérateur documenté.  
-Frais : D-025 vault (pas mint, pas remaining 21M). Le remaining 21M ne baisse que par `R_block`.
-
-### 1.6 Stripe GHA
-
-Fichiers :
-- `.github/workflows/stripe-priority.yml` (push sur cette branche)
-- `.github/workflows/stripe-job-payment.yml` (`workflow_dispatch` / `workflow_call`)
-- `.github/workflows/tests.yml` injecte le secret dans pytest (jamais écrit dans `.env`)
-
-Secret : `secrets.KEY_API_STRIPE_ACTION` (jamais loggé, jamais commité).  
-Tests : `tests/test_stripe_priority_job.py` — **skip** si env vide.
-
-Ce runtime cloud : `KEY_API_STRIPE_ACTION` **unset** → skip local OK.
-
-**GHA réel (push `4debc5d`)** : https://github.com/vgactech/artcb/actions/runs/33206660774  
-- conclusion **success**
-- « KEY_API_STRIPE_ACTION is set (value not printed) »
-- bash `mode=unknown` (préfixe non matché tel quel ; probable CR/LF — trim ajouté ensuite). Python `.strip()` avant l’appel API.
-- pytest Stripe : **6 passed** en 1,06 s (create+cancel + conservation, **pas** skip)
-- Preuve protocole : `minted_satoshi == 0`, cap 21 M inchangé
-
-Chemin TEST : PaymentIntent `capture_method=manual` puis **cancel**. Live key : même geste, montant plafonné, jamais de capture.
+Runs antérieurs conservés (non écrasés) : `20260828T194555Z_e2e164`, `195611Z`, `195646Z`, `200447Z`. Canonique = **200518Z** (après fix HumanID ≠ wallet).
 
 ---
 
-## 2. OVH — résultats live (pas de fiction)
+## 3. Câblage mining / API (~78 %)
+
+Une exécution :
+
+```
+H_adult → R(H)×dt/T → HBP → Worker → Provider → OwnerDecay
+→ Settlement → EconomicRoot C v2 → BlockHash → soldes contributeurs
+```
+
+- `ProtocolEngine` (`src/artcb/mining/protocol.py`)
+- `MiningPipeline.bind_identity` + `ChainManager.bind_identity`
+- Contributors : `machine_index`, `owner_address`, `human_id`, `work_id`, `bound_human_address`, `n_economic`, `work_weight`
+- API : `/api/v1/mining/protocol`, `/protocol/status`, `/economics/h-adult`, `/oracle`, `/jobs/priority`, `/webhooks/stripe`, humans/workids
+- H mining = registry 18+, alias `verified_humans` conservé
+
+**Encore ouvert :** un nœud qui mine **sans** machines enregistrées reste en split PoL héritage. Scores HBP pondérés pas toujours poussés depuis le pipeline texte brut.
+
+---
+
+## 4. EconomicRoot C — **oui**
+
+- v1 : `index|ts|prev|graph|merkle|pol` — **byte-identique** si root vide.
+- v2 : `…|v2|<economic_root>` si `hash_version>=2` **et** root présent.
+- Blocs historiques sans root : toujours valides.
+- Champ top-level `economic_root` **avant** `economics` (C `strstr`).
+- Fallback Python mix merkle **seulement** si `.so` pré-v2.
+- Tests C : `make -C src/c clean all test` → `all C tests passed`.
+- Fix 164 : **ne plus** copier `human_id` dans `bound_human_address` (HBP partait vers `H-A` au lieu du wallet).
+
+---
+
+## 5. Oracle (~55 %)
+
+Sources live (timeout 8 s, User-Agent `ARTCB-oracle/164`) :
+
+- CoinGecko ping, BTC/USD, USDT/USD, ticker `artcb`
+- Frankfurter USD→EUR
+
+**Preuve sim 200518Z :** `probe_ok=true`, BTC=77530, USDT=0,999891, EUR=0,85889, **artcb_listed=false**.  
+USDT/BTC = **liveness only**, jamais copiés comme prix ARTCB.  
+Unlisted → `live=False`, `fee_satoshi=None` (pas 0 % de frais).  
+Override documenté : `ARTCB_USD_PRICE` ou argument `artcb_usd_price=` (sim : 1,0 USD → 100 satoshi, `mints=false`, vault).  
+Frais D-025 → UniversalDividendVault, **pas** mint, **pas** remaining 21 M.
+
+---
+
+## 6. Stripe — workflow OK / live ce runtime **KO** / GHA **OK**
+
+| Élément | État |
+|---------|------|
+| Secret GitHub Actions | `secrets.KEY_API_STRIPE_ACTION` dans `tests.yml`, `stripe-job-payment.yml`, `stripe-priority.yml` |
+| Ce runtime cloud | **unset** (`KEY_API_STRIPE_*` / `STRIPE_*` absents) |
+| Live PaymentIntent **ici** | **KO** — raison : secret non injecté dans le pod Cloud Agent |
+| GHA live | **OK** — runs `33206660774` et `33206967696` **success** (secret injecté, 6 tests, valeur jamais loggée). Prefix check trim CR/LF (`mode=test` vs `unknown`) |
+| Script CI | `scripts/stripe_job_payment_ci.py` ici → `stripe_skipped: true`, `mints: false` |
+| Anti-spam | floor 50 cents |
+| Webhook | idempotence `event_id` ; `artcb_mints=true` **rejeté** |
+| Capture | `manual` + **cancel** ; `sk_live` refusé sur le workflow JobPayment dédié |
+| Mint | **interdit** (`REJECT_STRIPE_MINT`) |
+
+JobPayment ≠ R_block. La clé n’est jamais loggée ni commitée.
+
+---
+
+## 7. OVH — ce qui a été réellement hit
 
 Public : `http://152.228.144.34:8000`
 
-| Appel | HTTP | Corps / note |
-|-------|------|----------------|
-| `GET /health` | **200** | `{"status":"healthy","version":"0.3.0","bootstrap_mode":false,"pqc":{"available":true,"algorithm":"ML-DSA-65"}}` |
-| `GET /api/v1/health` | **200** | chain `valid:true`, `block_count:0` (fichier chaîne vide OK) |
+| Appel | HTTP | Note |
+|-------|------|------|
+| `GET /health` | **200** | healthy, v0.3.0, bootstrap_mode=false, ML-DSA-65 |
+| `GET /api/v1/health` | **200** | chain valid, **0 blocs**, fichier chaîne vide OK |
 | `GET /api/v1/chain/verify` | **200** | idem |
-| `GET /api/v1/economics/params` | **404** | Not Found |
-| `GET /api/v1/economics/emission` | **404** | Not Found |
-| `GET /api/v1/economics/hbp` | **404** | Not Found |
-| `GET /api/v1/economics/identity` | **404** | Not Found |
-| `GET /api/v1/mining/protocol` | **404** | Not Found (re-probe 2026-08-28T20:10Z) |
-| `POST /api/v1/economics/settle` | **405** | Method Not Allowed (pas la route 164) |
+| `GET /api/v1/economics/params` | **404** | ancienne image |
+| `GET /api/v1/economics/h-adult` | **404** | cette branche **absente** |
+| `GET /api/v1/economics/oracle` | **404** | |
+| `GET /api/v1/mining/protocol/status` | **404** | |
 
-**Conclusion :** OVH est **up** et n’exécute **pas** cette branche. Ne pas affirmer que le serveur tourne le câblage 164. Re-probe identique après le commit code.
-
-### Auth / ops
-
-| Canal | Résultat |
-|-------|----------|
-| Doppler `DOPPLER_TOKEN` | **HTTP 401** `Invalid Auth token` — identique à la passe précédente. **Aucun token inventé.** |
-| SSH `ubuntu@152.228.144.34` | `Permission denied (publickey)` — `~/.ssh` n’a que `known_hosts`, **aucune** clé privée |
-| `OVH_CONSUMER_KEY` | présent dans l’env ; non utilisé (révoqué historiquement) |
+**SSH** `ubuntu@152.228.144.34` : `Permission denied (publickey)`.  
+**Doppler** `DOPPLER_TOKEN` : HTTP 401 `Invalid Auth token`. **Aucun credential inventé.**  
+Script prêt : `scripts/deploy_ovh.sh` (défaut IP 152.228.144.34, branche en argument). Déploiement **impossible** sans SSH.
 
 ---
 
-## 3. H_adult mining
-
-`ADULT_AGE_YEARS=18`. Compteur live = registry.  
-`H_REF=1e6` **inchangé**. Pas de chiffre ONU WPP inventé.  
-Ancres HBP 4,15e9 / 8,3e9 **provisoires**.  
-Provider/Worker **50/50 = point de départ** (D-025).
-
----
-
-## 4. Trous restants (%)
-
-| Trou | % | Bloquant ? |
-|------|---|------------|
-| Mining sans MachineRegistry → PoL héritage | ~30 % du câblage mining | Oui pour « tout le monde en e2e » |
-| HBP scores / provider scores pas toujours sur `append_block` mining brut | ~15 % | Moyen |
-| Oracle ARTCB listé | 0 % ticker | Conversion USD→satoshi |
-| WPP 18+ daté | 0 % | Q-E03 |
-| OVH = cette branche | 0 % | Déploiement |
-| Stripe réel ce runtime | skip | GHA peut le faire |
-| P2P exige identity | 0 % | Réseau |
-| Délai RETIRE/TRANSFER | non figé | Q-retire |
-| Protocole « fini » | **non** | — |
-
----
-
-## 5. DEBUG traces (extraits)
-
-```
-HBP(H) h_adult=5.0 rate=0.1000000006
-fleet_owner_share N=5 P=0.470743750000
-native C EconomicRoot v2 index=6 root=b1ae484eb2080cdd
-C v2 hash index=6 eco=b1ae484eb208 -> 0c522f87c6fce5dc
-WorkID W-resume-offline -> SETTLED
-USD→ARTCB oracle NOT live (forced stub / unlisted)
-```
-
----
-
-## 6. Erreurs rencontrées + correctifs
+## 8. Erreurs en cours de route + correctifs
 
 | # | Symptôme | Cause | Correctif |
 |---|----------|--------|-----------|
-| 1 | Doublon `artcb_build_canonical_v2` à la compilation | Deux implémentations dans `libartcb_chain.c` | Fichier C réécrit, une seule v2 (vide = v1) |
-| 2 | `_compute_dynamic_epoch` cassé | Patch `_resolve_adult_h` a avalé le corps | Fonctions séparées |
-| 3 | `ImportError fetch_artcb_usd_quote` | Oracle réécrit en parallèle (USDT comme prix ARTCB) | Merge : probes riches, **pas** USDT=ARTCB ; alias `fetch_artcb_usd_quote` |
-| 4 | `quote_fee_satoshi` raise si prix 0 | « never 0% » vs « ne pas inventer » | Stub `live=False`, `fee_satoshi=None` |
-| 5 | Secret Stripe absent ici | Pas dans l’env cloud | Skip local + workflow GHA |
-| 6 | OVH economics 404 | Déploiement ≠ cette branche | Documenté, pas de claim |
-
-Simu 164 : **0 fail**. C `test_chain` : **all C tests passed**.
+| 1 | Doublon `artcb_build_canonical_v2` à la compile | deux implémentations C | une seule v2 (vide = v1) |
+| 2 | `quote_fee_satoshi` raise si prix 0 | « pas 0 % » vs « ne pas inventer » | `live=False`, `fee_satoshi=None` |
+| 3 | Sim 164 `failures: oracle price 0` | unlisted compté comme fail | refuse conversion = **succès honnête** |
+| 4 | EconomicRoot ProtocolEngine ≠ chain | `human_id` copié comme bound wallet | bound = wallet only (`5ed39c4`) |
+| 5 | Stripe live ici | secret GHA non injecté | skip + workflow correct |
+| 6 | OVH economics 404 | box ≠ cette branche | documenté, pas de claim |
+| 7 | Doppler 401 / SSH refus | token/clé invalides (cas connu) | pas d’invention de secrets |
+| 8 | Double settle lignes 2 vs 3 | même bug HumanID | roots identiques après fix (`902627f46fa55647`) |
 
 ---
 
-## 7. Fichiers clés
+## 9. Tests
+
+Commande : `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line`  
+Log : `logs/20260828_pytest_rapport164_full.txt`  
+**584 passed, 21 skipped, 0 fail** (180,62 s).  
+C : `make -C src/c clean all test` → all C tests passed.  
+Nouveaux : `tests/test_e2e_protocol_164.py`, `test_economic_root_native.py`, `test_oracle_fees.py`, `test_stripe_priority_job.py`.
+
+Stripe live pytest **skip** si secret absent — **attendu**.
+
+---
+
+## 10. Trous restants
+
+| Trou | Bloquant ? |
+|------|------------|
+| Mining sans MachineRegistry → PoL héritage | Oui pour « tout le monde en e2e » |
+| WPP 18+ daté (Q-E03) | Ancres HBP encore provisoires |
+| Ticker ARTCB listé | Conversion live USD→satoshi |
+| OVH = cette branche | Déploiement SSH |
+| Stripe réel **ce** runtime | GHA peut le faire |
+| P2P exige identity | Réseau |
+| Délai RETIRE/TRANSFER | Q-retire |
+
+---
+
+## 11. Git / PR
+
+Branche uniquement : `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
+**Pas de merge `origin/main`.**  
+Compare : https://github.com/vgactech/artcb/compare/main...cursor/tokenomics-21m-hbp-owner-decay-3fcb
+
+---
+
+## 12. Fichiers clés
 
 - `src/c/libartcb_chain.c` / `.h` — ABI v2
 - `src/artcb/chain/ffi.py`, `chain/manager.py`
 - `src/artcb/mining/protocol.py`, `mining/identity.py`, `mining/pipeline.py`
-- `src/artcb/economics/oracle.py`, `job_payment.py`, `identity.py`, `workid.py`
+- `src/artcb/economics/oracle.py`, `job_payment.py`, `fees.py`
 - `src/artcb/payments/stripe_jobs.py`
 - `src/api/economics_routes.py`, `mining_routes.py`, `deps.py`
-- `.github/workflows/stripe-priority.yml`
-- `tests/test_e2e_protocol_164.py`, `test_economic_root_native.py`, `test_stripe_priority_job.py`, `test_oracle_fees.py`
-
----
-
-## 8. Pytest
-
-Commande : `PYTHONPATH=src ARTCB_ORACLE_FORCE_STUB=1 python3 -m pytest tests/ -q --tb=short`  
-Log : `logs/20260828_pytest_rapport164.txt`
-
-**584 passed, 21 skipped, 0 failed** (163 était 554 / 20 skipped). Stripe local skip inclus dans les 21.
-
-Stripe local : skip si `KEY_API_STRIPE_ACTION` unset — **attendu**.
-
-Workflows : `.github/workflows/stripe-priority.yml` et `.github/workflows/stripe-job-payment.yml` (secret `KEY_API_STRIPE_ACTION`, jamais loggé).
-
----
-
-## 9. Git / PR
-
-Branche uniquement : `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
-**Pas de merge `origin/main`.**  
-`gh pr list --head` : **aucune PR ouverte** (outil ManagePullRequest absent de cette session ; `gh` en lecture seule).  
-
-Compare : https://github.com/vgactech/artcb/compare/main...cursor/tokenomics-21m-hbp-owner-decay-3fcb
+- `.github/workflows/stripe-job-payment.yml`, `stripe-priority.yml`, `tests.yml`
+- `scripts/run_sim164_e2e.py`, `scripts/stripe_job_payment_ci.py`, `scripts/deploy_ovh.sh`

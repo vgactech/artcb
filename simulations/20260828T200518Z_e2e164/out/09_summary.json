@@ -1,0 +1,14 @@
+{
+  "h_adult": 5,
+  "h_adult_source": "HumanRegistry.verified_adult_count",
+  "adult_age_years": 18,
+  "hmax_frozen": false,
+  "supply_satoshi": 49000000000,
+  "supply_artcb": 490.0,
+  "cap_ok": true,
+  "blocks": 10,
+  "wallet_sum_satoshi": 49000000000,
+  "chain_valid": true,
+  "hash_abi": 2,
+  "failures": []
+}

@@ -160,4 +160,9 @@
 **Leçon :** (1) Un module `settle_block` n’est du consensus que s’il est dans `append_block` **et** dans le hash C. (2) Versionner le hash (v1 sans root, v2 avec) plutôt que casser les blocs anciens. (3) Ne jamais copier BTC/USDT comme prix ARTCB. (4) JobPayment Stripe ≠ mint. (5) Doppler token 401 et SSH sans clé = documenter, pas inventer un token.
 **Action :** Rapport 164. `ProtocolEngine`, ABI C v2, oracle stub honnête, workflow `stripe-priority.yml`.
 
+### L-035 — HumanID ≠ adresse de paiement (28 août 2026)
+**Contexte :** `_machine_contributions` utilisait `bound_human_address or human_id`. M1 (pas d’humain bindé) recevait `human_id=H-A` comme destinataire HBP. ProtocolEngine et `append_block` calculaient deux EconomicRoot différents (2 vs 3 lines).
+**Leçon :** HumanID est une identité ; le settlement ne paie que des **wallets**. Un fallback « or human_id » est une fuite de satoshi hors carnet d’adresses.
+**Action :** `bound_human_address` seul ; sim 164 `20260828T200518Z` roots identiques.
+
 

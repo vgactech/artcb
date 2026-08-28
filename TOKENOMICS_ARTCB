@@ -386,3 +386,10 @@ Cap frais USD = min observé L2 fee-charging (Base p50 0,000311 au 2026-08-26). 
 ### 15.3 Provider / Worker
 
 Départ 50/50 du pool PoL si des providers sont présents. Sans provider scores : 100 % workers (chemin mining). Bornes 20–80 % = paramètre.
+
+### 15.4 Addendum 164 (2026-08-28) — hash C + oracle + JobPayment
+
+- **EconomicRoot natif C** (`hash_version=2`) : préimage `index|ts|prev|graph|merkle|pol|v2|<root>`. Blocs v1 sans root restent valides. Fallback mix merkle Python seulement si `libartcb_chain.so` pré-v2.
+- **Oracle USD→ARTCB :** probes live (CoinGecko, Frankfurter). ARTCB non listé → conversion refusée (`fee_satoshi=None`), jamais USDT/BTC comme prix ARTCB. Override `ARTCB_USD_PRICE`.
+- **JobPayment Stripe ≠ R_block** et **ne mint jamais**. Anti-spam 50 cents ; webhook idempotent. Frais PoL → vault (D-025).
+- **H mining** = `H_adult` registry 18+, pas un float anonyme déconnecté. Hmax WPP **non gelé**.

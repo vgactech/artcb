@@ -172,3 +172,15 @@ Nouvelles questions : Q-k (P(4) exact 48 % ?), Q-retire (délai), Q-fee-oracle, 
 
 Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economics de cette branche), Q-stripe-gha (secret `KEY_API_STRIPE_ACTION` injecté en GHA — run 33206660774 success / 6 passed ; bash `mode=unknown` avant trim CR/LF ; absent de ce runtime cloud).
 
+---
+
+## [2026-08-28T20:08:00Z] Sim 164 canonique 200518Z (ne supprime pas les tableaux ci-dessus)
+
+| ID | État | Note |
+|----|------|------|
+| Q-E10 | ⏳ **~78 %** | `ProtocolEngine` e2e. Sans machines → PoL héritage. |
+| Q-C-ABI | ✅ **oui** | v2 natif ; HumanID ≠ wallet (`5ed39c4`). |
+| Q-fee-oracle | ⏳ | Probes live ; ticker ARTCB absent → `fee_satoshi=None`. |
+| Q-ovh-deploy | ⏳ | `/health` 200 ; `/economics/h-adult` et `/mining/protocol/status` **404**. SSH denied. |
+| Q-stripe-gha | ⏳ | Workflows OK. Ce runtime cloud : secret **absent** → live KO. |
+

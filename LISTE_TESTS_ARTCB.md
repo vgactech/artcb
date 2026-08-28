@@ -229,4 +229,10 @@
 | T-E03 | `python3 -m pytest tests/ -q` | suite complète 0 fail | [x] | 2026-08-26 **534 passed, 20 skipped, 0 fail** |
 | T-E04 | `pytest tests/test_economics_rapport162.py` | time-norm, M1, fleet P, binding≤1, WorkID, vault, lock 30j, EconomicRoot | [x] | 2026-08-28 |
 | T-E05 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite complète post-162 | [x] | 2026-08-28 **554 passed, 20 skipped, 0 fail** — `logs/20260828_pytest_rapport163.txt` |
+| T-E06 | `pytest tests/test_e2e_protocol_164.py tests/test_economic_root_native.py tests/test_oracle_fees.py tests/test_stripe_priority_job.py` | e2e ProtocolEngine, C v2, oracle honnête, Stripe no-mint | [x] | 2026-08-28 |
+| T-E07 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite complète post-164 | [x] | 2026-08-28 **584 passed, 21 skipped, 0 fail** — `logs/20260828_pytest_rapport164_full.txt` |
+| T-E08 | `make -C src/c clean all test` | EconomicRoot v2 empty==v1, tamper change hash | [x] | 2026-08-28 |
+| T-E09 | `python3 scripts/run_sim164_e2e.py` | sim 164 failures=[] conservation+21M+attaques | [x] | 2026-08-28 `simulations/20260828T200518Z_e2e164/` |
+| T-E10 | Stripe CI `scripts/stripe_job_payment_ci.py` | skip propre si secret absent ; GHA `secrets.KEY_API_STRIPE_ACTION` | [x] | 2026-08-28 skip local (secret unset) |
+| T-E11 | OVH `http://152.228.144.34:8000/health` | 200 healthy ; routes 164 = 404 (ancienne image) | [x] | 2026-08-28 |
 

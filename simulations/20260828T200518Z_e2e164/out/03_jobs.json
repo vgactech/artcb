@@ -1,0 +1,117 @@
+{
+  "petit": {
+    "block_index": 0,
+    "hash": "c205945b88f5a1fdbb61911813082a50b40135442936f4cbb63780c62cc6f9aa",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "902627f46fa55647f5e14378dce10eedf6a5fc4149b07a221c120782d03f3709",
+    "by_address": {
+      "A": 5000000000
+    },
+    "missing": [],
+    "requeued": []
+  },
+  "gros": {
+    "block_index": 1,
+    "hash": "ec9b78c18ce3420c4246f7b23dec8122151c55b60ee1936abda7939ccbf792c7",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "09db4b076db39b98520caa84456760de874739b5f27977e9febd0fc16fce1781",
+    "by_address": {
+      "A": 2838760154,
+      "B": 720413282,
+      "C": 720413282,
+      "D": 720413282
+    },
+    "missing": [],
+    "requeued": []
+  },
+  "simultane_1": {
+    "block_index": 2,
+    "hash": "b3ab0b398c1bc738a8688e551d8962ee5cc012f0df8dc752759dad4e5c065970",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "902627f46fa55647f5e14378dce10eedf6a5fc4149b07a221c120782d03f3709",
+    "by_address": {
+      "A": 5000000000
+    },
+    "missing": [],
+    "requeued": []
+  },
+  "simultane_2": {
+    "block_index": 3,
+    "hash": "25cd38d39c74b755ea01c28b1ae224bd68dd5f538037892f646bf7ec4d77970d",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "29827cbfa33132efaf7bec20df74243e1f2f28959fa578d17e9b78af5ef964d9",
+    "by_address": {
+      "A": 2368346875,
+      "B": 2631653125
+    },
+    "missing": [],
+    "requeued": []
+  },
+  "plus_de_pb": {
+    "block_index": 4,
+    "hash": "8d1bdf1a4e79d728bf4839e1cfebb3affbc7ee47f41c97fa437b5a2084a200de",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "2729e9ed7df75e63b71c0ecc1df43a846ea639113085b76a615647b30463e71c",
+    "by_address": {
+      "A": 3559173436,
+      "C": 1440826564
+    },
+    "missing": [],
+    "requeued": []
+  },
+  "partiel_pb_manquant": {
+    "block_index": 5,
+    "hash": "96dd77f32d6e309738161c6e55cadfc2774d7a60e49f9796b8a79a3c1760600a",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 4000000000,
+    "paid": 4000000000,
+    "conservation": true,
+    "economic_root": "94cfbd0d8c917ab1bc8abbcb497694760c7628c2c5a9ba74c1b699165ab212a7",
+    "by_address": {
+      "A": 2847338750,
+      "B": 1152661250
+    },
+    "missing": [
+      "pb3"
+    ],
+    "requeued": [
+      "W-partial:requeue:pb3"
+    ]
+  },
+  "job_payment_no_mint": {
+    "block_index": 6,
+    "hash": "91ec890eb4d3c2835add444db9597dbde8c40f93e6741d499ae14e9e53ec97db",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "902627f46fa55647f5e14378dce10eedf6a5fc4149b07a221c120782d03f3709",
+    "by_address": {
+      "A": 5000000000
+    },
+    "missing": [],
+    "requeued": []
+  }
+}
