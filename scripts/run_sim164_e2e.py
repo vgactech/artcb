@@ -9,6 +9,7 @@ import sys
 import traceback
 from datetime import UTC, datetime
 from pathlib import Path
+import os
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -33,6 +34,9 @@ from src.artcb.tokenomics import MAX_SUPPLY_SATOSHI, SATOSHI_PER_ARTCB  # noqa: 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 logger = logging.getLogger("sim164")
 
+SIM_TAG = os.getenv("ARTCB_SIM_TAG", "e2e164")
+os.environ.setdefault("ARTCB_MIN_BLOCK_INTERVAL_SEC", "0")
+
 
 def dump(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
@@ -41,7 +45,7 @@ def dump(path: Path, payload: dict) -> None:
 
 def main() -> int:
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    out_dir = ROOT / "simulations" / f"{stamp}_e2e164"
+    out_dir = ROOT / "simulations" / f"{stamp}_{SIM_TAG}"
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "out").mkdir(exist_ok=True)
     log_path = out_dir / "run.log"
@@ -51,8 +55,16 @@ def main() -> int:
 
     failures: list[str] = []
     data = out_dir / "data"
-    chain = ChainManager(data / "blocks.jsonl", enable_security=False)
+    interval_note = os.environ.get("ARTCB_MIN_BLOCK_INTERVAL_SEC", "")
+    logger.info(
+        "sim tag=%s security=ON min_block_interval_sec=%s (0 = sequential sim, not production)",
+        SIM_TAG,
+        interval_note,
+    )
+    chain = ChainManager(data / "blocks.jsonl", enable_security=True)
     eng = ProtocolEngine(data, chain=chain)
+    assert chain.enable_security is True
+    logger.info("Security modules ENABLED — Anti-Sybil + Slashing attached to ProtocolEngine")
 
     eng.humans.bootstrap_creator(human_id="H-A", address="A")
     for hid, addr in (("H-B", "B"), ("H-C", "C"), ("H-D", "D"), ("H-E", "E")):
@@ -105,6 +117,25 @@ def main() -> int:
             ["A:M1"],
             {"job_payment": {"kind": "JobPayment", "mints": False, "payment_intent_id": "pi_sim164"}},
         ),
+        (
+            "providers_nonzero",
+            "W-providers",
+            ["A:M1"],
+            {"provider_scores": {"JP1": 1.0, "JP2": 1.0}},
+        ),
+        (
+            "stripe_down_no_block",
+            "W-stripe-down",
+            ["A:M1"],
+            {
+                "job_payment": {
+                    "kind": "JobPayment",
+                    "mints": False,
+                    "attempt_live": True,
+                    "job_id": "job_sim_stripe_down",
+                }
+            },
+        ),
     ):
         try:
             result = eng.execute_block(
@@ -128,6 +159,8 @@ def main() -> int:
                 "by_address": result.by_address_satoshi,
                 "missing": result.missing_preblocks,
                 "requeued": result.requeued_work_ids,
+                "provider_worker": result.phases.get("provider_worker"),
+                "job_payment_phase": result.phases.get("job_payment"),
             }
             if result.total_paid_satoshi != result.r_block_satoshi:
                 failures.append(f"{name} conservation")
@@ -135,6 +168,21 @@ def main() -> int:
             failures.append(f"{name}: {exc}")
             jobs[name] = {"error": str(exc), "trace": traceback.format_exc()}
     dump(out_dir / "out" / "03_jobs.json", jobs)
+    providers_job = jobs.get("providers_nonzero") or {}
+    pw = providers_job.get("provider_worker") or {}
+    if not pw.get("provider_pool") or not pw.get("worker_pool"):
+        failures.append("providers_nonzero: expected non-zero provider and worker pools")
+    addrs = providers_job.get("by_address") or {}
+    if not addrs.get("JP1") or not addrs.get("JP2"):
+        failures.append("providers_nonzero: JP1/JP2 missing from settlement")
+    stripe_job = jobs.get("stripe_down_no_block") or {}
+    sphase = stripe_job.get("job_payment_phase") or {}
+    if sphase.get("consensus_blocked") is True:
+        failures.append("stripe_down_no_block blocked consensus")
+    if sphase.get("mints") is True:
+        failures.append("stripe_down_no_block minted")
+    if stripe_job.get("conservation") is not True:
+        failures.append("stripe_down_no_block conservation")
 
     cancelled_job = eng.jobs.submit(provider_address="A", payload="cancel-me")
     eng.jobs.cancel(cancelled_job.job_id)
@@ -297,9 +345,33 @@ def main() -> int:
             logger.error("stripe live failed: %s", exc)
     dump(out_dir / "out" / "08_stripe.json", stripe_out)
 
+    pqc_out: dict = {}
+    try:
+        from src.artcb.crypto.liboqs_runtime import native_liboqs_available
+        from src.artcb.crypto.pqc import PQC_SIG_ALGORITHM, pqc_available
+
+        native = native_liboqs_available()
+        available = pqc_available()
+        pqc_out = {
+            "native_liboqs": native,
+            "pqc_available": available,
+            "algorithm": PQC_SIG_ALGORITHM if available else "Ed25519 (fallback)",
+            "fallback": not available,
+        }
+        if available:
+            logger.info("PQC native ML-DSA-65 ENABLED")
+        else:
+            logger.warning(
+                "PQC fallback Ed25519 — liboqs native library not found (explicit, not silent)"
+            )
+    except Exception as exc:
+        pqc_out = {"error": str(exc), "fallback": True, "algorithm": "Ed25519 (fallback)"}
+        logger.warning("PQC probe failed: %s", exc)
+    dump(out_dir / "out" / "11_pqc.json", pqc_out)
+
     balances: dict[str, dict] = {}
     chain_path = eng.chain.blocks_path
-    totals: dict[str, int] = {addr: 0 for addr in ("A", "B", "C", "D", "E")}
+    totals: dict[str, int] = {}
     all_paid = 0
     if chain_path.is_file():
         for line in chain_path.read_text(encoding="utf-8").splitlines():
@@ -310,9 +382,10 @@ def main() -> int:
                 addr = str(contributor.get("address") or "")
                 sat = int(contributor.get("reward_satoshi") or 0)
                 all_paid += sat
-                if addr in totals:
-                    totals[addr] += sat
-    for addr, sat in totals.items():
+                if addr:
+                    totals[addr] = totals.get(addr, 0) + sat
+    for addr in ("A", "B", "C", "D", "E", "JP1", "JP2"):
+        sat = totals.get(addr, 0)
         balances[addr] = {"address": addr, "balance_satoshi": sat, "balance_artcb": sat / SATOSHI_PER_ARTCB}
     paid_on_chain = all_paid
     supply = eng.chain._issued_so_far_satoshi()
@@ -334,33 +407,44 @@ def main() -> int:
         "h_adult_source": "HumanRegistry.verified_adult_count",
         "adult_age_years": 18,
         "hmax_frozen": False,
+        "security_modules": "ENABLED" if chain.enable_security else "DISABLED",
+        "security_named_disable_reason": os.getenv("ARTCB_SECURITY_DISABLE_REASON") or None,
+        "pqc": pqc_out,
         "supply_satoshi": supply,
         "supply_artcb": supply / SATOSHI_PER_ARTCB,
         "cap_ok": supply <= MAX_SUPPLY_SATOSHI,
+        "wallet_sum_equals_supply": paid_on_chain == supply,
         "blocks": len(eng.chain.list_blocks()),
         "wallet_sum_satoshi": paid_on_chain,
         "chain_valid": verify.get("valid"),
         "hash_abi": 2,
+        "providers_nonzero_split": bool((jobs.get("providers_nonzero") or {}).get("provider_worker", {}).get("provider_pool")),
+        "stripe_consensus_blocked": bool((jobs.get("stripe_down_no_block") or {}).get("job_payment_phase", {}).get("consensus_blocked")),
         "failures": failures,
     }
     dump(out_dir / "out" / "00_manifest.json", {
-        "simulation": 164,
+        "simulation": SIM_TAG,
         "utc": stamp,
         "failures": failures,
         "dir": str(out_dir),
+        "security_modules": "ENABLED" if chain.enable_security else "DISABLED",
+        "hmax_frozen": False,
     })
     dump(out_dir / "out" / "09_summary.json", summary)
 
     readme = out_dir / "README.md"
     readme.write_text(
-        f"""# Simulation 164 — E2E Protocol Integration
+        f"""# Simulation {SIM_TAG} — E2E Protocol Integration
 
 UTC: {stamp}
 DEBUG: on. No economic mocks.
+Security modules: ENABLED (Anti-Sybil + Slashing). Sequential sim uses ARTCB_MIN_BLOCK_INTERVAL_SEC=0.
+hmax_frozen: false (adult max unfrozen; no UN WPP lock).
 
 ## Scenario
 Users A,B,C,D,E. Machines A:M1 (100%), A:M2→B, A:M3→C, A:M4→D, A:M5→E (P(N) changes).
-Jobs: petit, gros, simultanés, plus de PB, annulé, partiel (PB manquant + requeue), JobPayment no-mint.
+Jobs: petit, gros, simultanés, plus de PB, annulé, partiel (PB manquant + requeue), JobPayment no-mint,
+providers_nonzero (JP1+JP2 scores), stripe_down_no_block (Stripe fail ≠ chain fail).
 Load: faible / moyenne / forte.
 Attacks: double binding B, double WorkID, owner cut B, offline GRACE→OFFLINE, transfer M2, fake human, tamper EconomicRoot.
 Wallets: Σ balances = supply (chain contributors). Oracle: live probes; unlisted → conversion refused (not 0%).

@@ -11,6 +11,7 @@ Order per block (D-025)::
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -105,6 +106,17 @@ class ProtocolEngine:
         self.audit = AuditLog(eco / "audit.bin")
         self.vault = UniversalDividendVault(eco / "dividend_vault.json")
         self.demographic = default_provisional_reference()
+        if not getattr(chain, "enable_security", False):
+            reason = os.getenv("ARTCB_SECURITY_DISABLE_REASON", "").strip()
+            if not reason:
+                raise RuntimeError(
+                    "ProtocolEngine requires ChainManager(enable_security=True). "
+                    "Silent disable is forbidden. Set ARTCB_SECURITY_DISABLE_REASON "
+                    "only when a named dependency is missing."
+                )
+            logger.error("Security modules DISABLED named_reason=%s", reason)
+        else:
+            logger.info("Security modules ENABLED (Anti-Sybil + Slashing)")
         self.chain.bind_identity(
             human_registry=self.humans,
             machine_registry=self.machines,
@@ -154,12 +166,30 @@ class ProtocolEngine:
                 raise ProtocolReject("REJECT_STRIPE_MINT", "JobPayment must never mint R_block")
             if job_payment.get("kind") not in {"JobPayment", "priority_job"}:
                 raise ProtocolReject("REJECT_JOB_PAYMENT_KIND", "expected JobPayment kind")
+            from src.artcb.payments.stripe_jobs import (
+                BLOCK_REWARD_KIND,
+                JOB_PAYMENT_KIND,
+                attempt_job_payment_or_continue,
+            )
+
             phases["job_payment"] = {
-                "kind": "JobPayment",
+                "kind": JOB_PAYMENT_KIND,
                 "mints": False,
-                "distinct_from": "R_block",
+                "distinct_from": BLOCK_REWARD_KIND,
                 "payment_intent_id": job_payment.get("payment_intent_id"),
+                "consensus_blocked": False,
+                "stripe_is_consensus_dependency": False,
             }
+            if job_payment.get("attempt_live"):
+                live = attempt_job_payment_or_continue(
+                    job_id=str(job_payment.get("job_id") or job_id or work_id),
+                )
+                phases["job_payment"].update(live)
+                logger.debug(
+                    "stripe attempt_live ok=%s consensus_blocked=%s",
+                    live.get("ok"),
+                    live.get("consensus_blocked"),
+                )
 
         machines_recs = []
         for mid in machine_ids:
@@ -335,6 +365,21 @@ class ProtocolEngine:
                 "hbp_contribution": (hbp_scores or {}).get(hbp_addr, 1.0),
                 "role": "worker",
             })
+        if provider_scores:
+            for addr, score in provider_scores.items():
+                if float(score) <= 0:
+                    continue
+                contributors.append({
+                    "address": addr,
+                    "pol_score": pol_score,
+                    "signature": "",
+                    "role": "provider",
+                    "provider_score": float(score),
+                    "owner_address": addr,
+                    "work_id": work_id,
+                    "job_id": job_id,
+                })
+                logger.debug("provider contributor %s score=%s", addr, score)
 
         block = self.chain.append_block(
             graph_id=graph_id,

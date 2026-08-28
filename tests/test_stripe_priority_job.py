@@ -103,3 +103,29 @@ def test_secret_not_in_env_dump_when_absent(monkeypatch: pytest.MonkeyPatch) -> 
     monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
     dumped = {k: v for k, v in os.environ.items() if "STRIPE" in k.upper() or k == "KEY_API_STRIPE_ACTION"}
     assert "KEY_API_STRIPE_ACTION" not in dumped or not dumped.get("KEY_API_STRIPE_ACTION")
+
+
+def test_stripe_failure_is_not_consensus_dependency(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    from src.artcb.payments.stripe_jobs import (
+        attempt_job_payment_or_continue,
+        stripe_is_consensus_dependency,
+    )
+
+    monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
+    monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
+    monkeypatch.delenv("STRIPE_API_KEY", raising=False)
+    assert stripe_is_consensus_dependency() is False
+    missing = attempt_job_payment_or_continue(job_id="job_missing")
+    assert missing["ok"] is False
+    assert missing["mints"] is False
+    assert missing["consensus_blocked"] is False
+
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_invalid_not_a_real_secret")
+    pi_fail = attempt_job_payment_or_continue(
+        job_id="job_pi_fail",
+        ledger=StripeJobLedger(tmp_path / "stripe_fail.json"),
+    )
+    assert pi_fail["ok"] is False
+    assert pi_fail["mints"] is False
+    assert pi_fail["consensus_blocked"] is False
+    assert pi_fail["stripe_is_consensus_dependency"] is False

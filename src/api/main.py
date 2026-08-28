@@ -84,11 +84,15 @@ def create_app() -> FastAPI:
 
         def _bootstrap_health_response() -> dict:
             from src.artcb.crypto.pqc import pqc_available
+            from src.artcb.release import release_identity
             _pqc = pqc_available()
+            identity = release_identity()
             return {
                 "status": "bootstrap",
                 "service": "ARTCB API",
-                "version": "0.3.0",
+                "version": identity["version"],
+                "git_sha": identity["git_sha"],
+                "git_branch": identity["git_branch"],
                 "bootstrap_mode": True,
                 "message": (
                     "Nœud non configuré. "
@@ -207,11 +211,15 @@ def create_app() -> FastAPI:
     async def health_check():
         """Health check endpoint."""
         from src.artcb.crypto.pqc import pqc_available
+        from src.artcb.release import release_identity
         _pqc = pqc_available()
+        identity = release_identity()
         return {
             "status": "healthy",
             "service": "ARTCB API",
-            "version": "0.3.0",
+            "version": identity["version"],
+            "git_sha": identity["git_sha"],
+            "git_branch": identity["git_branch"],
             "bootstrap_mode": False,
             "pqc": {
                 "available": _pqc,

@@ -22,7 +22,7 @@ def _engine(tmp_path: Path) -> ProtocolEngine:
     chain = ChainManager(
         tmp_path / "blocks.jsonl",
         key_path=tmp_path / "chain.key",
-        enable_security=False,
+        enable_security=True,
     )
     return ProtocolEngine(tmp_path, chain=chain)
 
@@ -264,7 +264,7 @@ def test_native_c_economic_root_versioning() -> None:
 
 
 def test_v1_block_still_verifies(tmp_path: Path) -> None:
-    chain = ChainManager(tmp_path / "blocks.jsonl", enable_security=False)
+    chain = ChainManager(tmp_path / "blocks.jsonl", enable_security=True)
     block = chain.append_block(graph_id="g", graph_root="abc", pol_score=0.8)
     assert block.hash_version == 1
     assert chain.verify()["valid"] is True
@@ -273,7 +273,7 @@ def test_v1_block_still_verifies(tmp_path: Path) -> None:
 def test_v2_tamper_economic_root_fails_c_verify(tmp_path: Path) -> None:
     import json
 
-    chain = ChainManager(tmp_path / "blocks.jsonl", enable_security=False)
+    chain = ChainManager(tmp_path / "blocks.jsonl", enable_security=True)
     chain.append_block(
         graph_id="g",
         graph_root="abc",
@@ -333,6 +333,101 @@ def test_stripe_webhook_idempotent(tmp_path: Path) -> None:
     assert first["distinct_from"] == BLOCK_REWARD_KIND
     with pytest.raises(StripeJobError, match="anti-spam"):
         create_priority_job_payment(job_id="j", amount_cents=1)
+
+
+def test_provider_worker_split_with_nonzero_scores(tmp_path: Path) -> None:
+    engine = _engine(tmp_path)
+    _people(engine)
+    result = engine.execute_block(
+        graph_id="g-providers",
+        graph_root="p" * 64,
+        pol_score=0.85,
+        work_id="W-providers",
+        machine_ids=["M1"],
+        provider_scores={"JP1": 1.0, "JP2": 1.0},
+        interval_seconds=600.0,
+    )
+    pools = result.phases["provider_worker"]
+    assert pools["provider_pool"] > 0
+    assert pools["worker_pool"] > 0
+    assert abs(pools["provider_pool"] - pools["worker_pool"]) <= 1
+    assert result.by_address_satoshi.get("JP1", 0) > 0
+    assert result.by_address_satoshi.get("JP2", 0) > 0
+    assert result.by_address_satoshi["JP1"] == result.by_address_satoshi["JP2"] or abs(
+        result.by_address_satoshi["JP1"] - result.by_address_satoshi["JP2"]
+    ) <= 1
+    assert result.total_paid_satoshi == result.r_block_satoshi
+    roles = {line["role"] for line in result.lines if line["address"] in {"JP1", "JP2"}}
+    assert "provider" in roles
+
+
+def test_stripe_down_does_not_block_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
+    monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
+    monkeypatch.delenv("STRIPE_API_KEY", raising=False)
+    engine = _engine(tmp_path)
+    _people(engine)
+    result = engine.execute_block(
+        graph_id="g-stripe-down",
+        graph_root="s" * 64,
+        pol_score=0.82,
+        work_id="W-stripe-down",
+        machine_ids=["M1"],
+        interval_seconds=600.0,
+        job_payment={
+            "kind": "JobPayment",
+            "mints": False,
+            "attempt_live": True,
+            "job_id": "job_stripe_down",
+        },
+    )
+    jp = result.phases["job_payment"]
+    assert jp["mints"] is False
+    assert jp["consensus_blocked"] is False
+    assert jp["stripe_is_consensus_dependency"] is False
+    assert jp["ok"] is False
+    assert engine.chain.verify()["valid"] is True
+    assert result.total_paid_satoshi == result.r_block_satoshi
+    assert result.supply_satoshi <= MAX_SUPPLY_SATOSHI
+
+
+def test_stripe_payment_intent_fail_does_not_block_chain(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_invalid_not_a_real_secret")
+    monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
+    monkeypatch.delenv("STRIPE_API_KEY", raising=False)
+    engine = _engine(tmp_path)
+    _people(engine)
+    result = engine.execute_block(
+        graph_id="g-stripe-pi-fail",
+        graph_root="f" * 64,
+        pol_score=0.82,
+        work_id="W-stripe-pi-fail",
+        machine_ids=["M1"],
+        interval_seconds=600.0,
+        job_payment={
+            "kind": "JobPayment",
+            "mints": False,
+            "attempt_live": True,
+            "job_id": "job_stripe_pi_fail",
+        },
+    )
+    jp = result.phases["job_payment"]
+    assert jp["mints"] is False
+    assert jp["consensus_blocked"] is False
+    assert jp.get("ok") is False
+    assert engine.chain.verify()["valid"] is True
+
+
+def test_protocol_engine_refuses_silent_security_disable(tmp_path: Path) -> None:
+    chain = ChainManager(
+        tmp_path / "blocks.jsonl",
+        key_path=tmp_path / "chain.key",
+        enable_security=False,
+    )
+    with pytest.raises(RuntimeError, match="Silent disable is forbidden"):
+        ProtocolEngine(tmp_path, chain=chain)
 
 
 def test_oracle_zero_rejected_and_explicit_price_converts() -> None:

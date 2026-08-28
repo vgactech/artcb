@@ -14,6 +14,10 @@ set -Eeuo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_DIR"
 
+export ARTCB_GIT_SHA="${ARTCB_GIT_SHA:-$(git rev-parse HEAD 2>/dev/null || true)}"
+export ARTCB_GIT_BRANCH="${ARTCB_GIT_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)}"
+echo "── git ${ARTCB_GIT_BRANCH:-?}@${ARTCB_GIT_SHA:-unknown}"
+
 UVICORN=(.venv/bin/python -m uvicorn src.api.main:app --host 0.0.0.0 --port "${ARTCB_PORT:-8000}")
 
 if [ -n "${DOPPLER_TOKEN:-}" ] && command -v doppler &>/dev/null; then

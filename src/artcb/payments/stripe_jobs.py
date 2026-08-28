@@ -166,6 +166,9 @@ def _stripe_post(path: str, fields: dict, *, key: str, idempotency_key: str) -> 
         detail = exc.read().decode("utf-8", errors="replace")[:500]
         logger.error("stripe HTTP %s (key not logged) body=%s", exc.code, detail)
         raise StripeJobError(f"stripe HTTP {exc.code}") from exc
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        logger.error("stripe network error (key not logged) type=%s", type(exc).__name__)
+        raise StripeJobError("stripe network error") from exc
     logger.debug(
         "stripe POST %s id=%s status=%s mode=%s",
         path,
@@ -277,6 +280,56 @@ def handle_stripe_webhook(
         "payment_intent_id": obj.get("id"),
         "status": obj.get("status"),
     }
+
+
+def stripe_is_consensus_dependency() -> bool:
+    """JobPayment is a queue-priority fee. It is never a consensus input."""
+    return False
+
+
+def attempt_job_payment_or_continue(
+    *,
+    job_id: str,
+    amount_cents: int = DEFAULT_PRIORITY_CENTS,
+    currency: str = "usd",
+    ledger: StripeJobLedger | None = None,
+) -> dict:
+    """Try Stripe JobPayment. Failures must not block block production.
+
+    Missing secret, HTTP 401/5xx, or PaymentIntent errors are recorded.
+    ``mints`` stays False. ``consensus_blocked`` stays False.
+    """
+    payload = {
+        "kind": JOB_PAYMENT_KIND,
+        "mints": False,
+        "distinct_from": BLOCK_REWARD_KIND,
+        "consensus_blocked": False,
+        "stripe_is_consensus_dependency": False,
+        "job_id": job_id,
+    }
+    try:
+        rec = create_priority_job_payment(
+            job_id=job_id,
+            amount_cents=amount_cents,
+            currency=currency,
+            ledger=ledger,
+        )
+        payload.update(
+            {
+                "ok": True,
+                "status": rec.status,
+                "payment_intent_id": rec.payment_intent_id,
+            }
+        )
+        logger.debug("stripe JobPayment ok job=%s status=%s minted=0", job_id, rec.status)
+        return payload
+    except StripeJobError as exc:
+        payload.update({"ok": False, "reason": str(exc)})
+        logger.warning(
+            "Stripe JobPayment failed — consensus continues (JobPayment ≠ mint): %s",
+            exc,
+        )
+        return payload
 
 
 def new_job_id() -> str:

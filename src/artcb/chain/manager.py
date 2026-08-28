@@ -603,16 +603,21 @@ class ChainManager:
 
 
 def _machine_contributions(contributors: list[dict]) -> list[MachineContribution] | None:
-    """Return machine contributions when every contributor carries machine fields.
+    """Return machine contributions when worker rows carry machine fields.
 
-    Mixed/legacy contributor lists keep the historic PoL split (100% of R_block).
+    Job-provider rows (role=provider) are ignored here; their scores are
+    collected separately. Mixed/legacy lists without machine fields keep
+    the historic PoL split.
     """
     if not contributors:
         return None
-    if not all("machine_index" in c and "owner_address" in c for c in contributors):
+    machine_rows = [c for c in contributors if c.get("role") != "provider"]
+    if not machine_rows:
+        return None
+    if not all("machine_index" in c and "owner_address" in c for c in machine_rows):
         return None
     result: list[MachineContribution] = []
-    for contributor in contributors:
+    for contributor in machine_rows:
         n_econ = contributor.get("n_economic")
         result.append(
             MachineContribution(
