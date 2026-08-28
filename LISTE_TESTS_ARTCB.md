@@ -227,4 +227,6 @@
 | T-E01 | `pytest tests/test_economics_protocol.py` | 21M cap, R(H) sans halving index, HBP, P_owner, settlement, API | [x] | 2026-08-26  D-024 |
 | T-E02 | `pytest tests/test_wallet_rewards.py` | genesis 50 ARTCB, index 210k **ne coupe plus** | [x] | 2026-08-26 D-024 |
 | T-E03 | `python3 -m pytest tests/ -q` | suite complète 0 fail | [x] | 2026-08-26 **534 passed, 20 skipped, 0 fail** |
+| T-E04 | `pytest tests/test_economics_rapport162.py` | time-norm, M1, fleet P, binding≤1, WorkID, vault, lock 30j, EconomicRoot | [x] | 2026-08-28 |
+| T-E05 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite complète post-162 | [x] | 2026-08-28 **554 passed, 20 skipped, 0 fail** — `logs/20260828_pytest_rapport163.txt` |
 

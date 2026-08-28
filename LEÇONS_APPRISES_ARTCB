@@ -150,3 +150,8 @@
 **Leçon :** Un calendrier Bitcoin `R0 >> (index//H)` n'est pas compatible avec `R = f(H)`. Le garder « en plus » (min(schedule, R(H))) recoupe encore le reward au bloc 210k. Il faut le sortir du chemin live, pas seulement le documenter. La vélocité `extra_epochs` était un second halving : même retrait. 21 M reste un cap, plus une identité 50×210k×2 d'émission.
 **Action :** Rapport 161. Tests : index 210k = toujours 50 si H≤1M. Archive `DEPRECATED_HALVING_INTERVAL`.
 
+### L-033 — OwnerDecay flotte + time-norm + vault vs remaining (28 août 2026)
+**Contexte :** Dump 162. L’utilisateur tranche M1=100 % pour toujours et « même P pour toutes les extras » (49 % @N=3, ~48 % @N=4), pas la courbe index 38 %@1000. Il exige aussi : 10× plus de blocs ⇒ 1/10 reward (sans 210k). Frais → UniversalDividendVault, ce qui **contredit** 161 remaining-supply.
+**Leçon :** (1) P(n_index) ≠ P(N_economic). (2) Un reward/bloc fixe avec un intervalle variable épuise 21 M (48,6 j @10 s). Normaliser par T déjà documenté (600 s) n’est pas un halving. (3) Dernier GO utilisateur > spec 161 sur les frais. (4) k se **dérive** des exemples (P(3)=49 %), on n’invente pas un 3e ancrage. (5) Burst tests <1 s doivent filtrer dt sinon time-norm casse 50+25 ARTCB.
+**Action :** Rapport 163, D-025, `fleet_owner_share` / `issued_reward_satoshi(..., actual_block_interval_seconds)`.
+

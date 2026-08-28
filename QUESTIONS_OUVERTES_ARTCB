@@ -139,3 +139,21 @@ Ces questions **ne remplacent pas** le tableau MVP ci-dessus. Elles bloquent tou
 | Q-E12 | 1 wallet/device (rapport 114) vs N machines / 1 owner | ⏳ |
 
 Détail et catalogue complet : `rapports/160_audit_croise_simulations_124_a_159_2026-08-26.md` §3 et §8.
+
+---
+
+## [2026-08-28T18:10:00Z] Mise à jour tokenomics post-162 (ne supprime pas le tableau ci-dessus)
+
+| ID | État au 2026-08-28 | Note |
+|----|--------------------|------|
+| Q-E02 | ✅ D-025 | M1 **toujours 100 %** ; P(N_economic) pour M2+ seulement |
+| Q-E03 | ⏳ | Modèle B codé (`demographic.py`) ; WPP 18+ daté **toujours manquant** |
+| Q-E04 | ⏳ partiel | H=0 → HBP 10 % vers humains **présents** ; cas liste vide encore ouvert |
+| Q-E05 | ✅ D-025 | Pondéré si `hbp_scores` ; équiparti = fallback |
+| Q-E06 | ✅ D-025 départ | 50/50 start ; 20–80 % = paramètre non figé |
+| Q-E08 | ✅ D-025 | Courbe fleet expo k(P(3)=49 %) ; **38 %@1000 abrogé live** |
+| Q-E09 | ✅ D-025 | Max 1 binding externe ; N_A baisse après TRANSFERRED/RETIRED |
+| Q-E10 | ⏳ partiel | Modules identity/WorkID/partition **présent** ; **pas** encore mining/API |
+| Q-E12 | ⏳ | 162 = machine propre + 1 externe (implémenté) vs 1 wallet/device (114) |
+
+Nouvelles questions : Q-k (P(4) exact 48 % ?), Q-retire (délai), Q-fee-oracle, Q-Finder-delay 0/7/30j, Q-revalid, Q-geo Finders, Q-C-ABI EconomicRoot natif. Voir rapport 163 §8.

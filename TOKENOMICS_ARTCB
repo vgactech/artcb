@@ -78,7 +78,7 @@ C'est une **blockchain de traçabilité cognitive** avec une **unité de compte 
 | Intervalle cible | ~10 minutes (600 s → 52 596 blocs/an) — **rythme de bloc, pas de coupe du reward** |
 | Halving 210 000 blocs | **RETIRÉ** (ex D-016) |
 | Halving vélocité `extra_epochs` | **RETIRÉ** |
-| Émission live | `R_block = min(R(H), remaining_21M)` |
+| Émission live | `R_block = min(R(H) × Δt / 600 s, remaining_21M)` (D-025 time-norm ; toujours pas de 210k) |
 | Identité du plafond | **21 000 000 = hard cap** (D-014). Ce n’est plus `50 × 210 000 × 2` comme calendrier. |
 
 **Correction rapport 124 :** le code `1 ARTCB / 105 000 blocs` convergeait vers 210 000 ARTCB.  
@@ -91,7 +91,7 @@ Sans calendrier, la date d’épuisement des 21 M **dépend de H(t)** :
 - tant que H ≤ 1 M : 50 ARTCB/bloc → 21 M en **420 000 blocs** si H reste bas ;
 - si H monte, R(H) baisse, l’épuisement recule (voir tables rapport 159).
 
-Les frais collectés reviennent au **supply restant** (rapport 161).
+Les frais collectés allaient au **supply restant** (rapport 161). **Amendé D-025 :** UniversalDividendVault, pas remaining.
 
 **Note :** `R(H)` ne peut que **réduire** l’émission par rapport à 50/bloc ; jamais dépasser 21 M.
 
@@ -135,6 +135,8 @@ Contraintes :
   PoL_score_i > 0 pour être éligible
   Σ PoL_score_j > 0 sinon bloc rejeté (pas d'émission)
 ```
+
+**Addendum 2026-08-28 (D-024/D-025) :** `block_reward = f(halving_epoch)` est **obsolète**. Live = `min(R(H)×Δt/600, remaining_21M)`. La répartition proportionnelle PoL (§6.1) reste vraie sur le pool worker/legacy.
 
 ### 6.3 Exemple
 
@@ -350,3 +352,37 @@ Reward_human,n  = W_n × R(H) × (1 − HBP(H)) × (1 − P_owner(n))
 Reward_HBP      = R(H) × HBP(H)
 ∑               = R_block
 ```
+
+---
+
+## 15. Addendum v1.2 — 2026-08-28 (D-025, rapports 162–163)
+
+Le §14.3 (τ/β, 38 %@1000) est **historique**. Live :
+
+```
+M1                          = 100 %  (toujours, quel que soit N)
+P(N≥2) extras (toutes)      = 0,10 + 0,40 × exp(-k × (N-2))
+k = -ln((0,49-0,10)/(0,50-0,10)) ≈ 0,025317808
+P(2)=50 %  P(3)=49 %  P(4)≈48,025 %  lim=10 %
+```
+
+N = N_economic (ACTIVE/GRACE/OFFLINE/…) ; pas le ping.
+
+### 15.1 Émission time-normée
+
+```
+R_block = min( R(H) × Δt / TARGET_BLOCK_SECONDS , remaining_21M )
+TARGET_BLOCK_SECONDS = 600   (§4.1, déjà documenté)
+```
+
+10× plus de blocs ⇒ 1/10 par bloc. **Toujours pas** de calendrier 210 000.
+
+### 15.2 Frais et dividende (amenda D-024)
+
+Frais PoL déjà mintés → `UniversalDividendVault`.  
+Ils **ne** ré-alimentent **pas** RemainingSupply. Remaining ne baisse que par `R_block` émis.  
+Cap frais USD = min observé L2 fee-charging (Base p50 0,000311 au 2026-08-26). Conversion ARTCB = oracle (ouvert).
+
+### 15.3 Provider / Worker
+
+Départ 50/50 du pool PoL si des providers sont présents. Sans provider scores : 100 % workers (chemin mining). Bornes 20–80 % = paramètre.

@@ -1144,3 +1144,12 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Genesis 4.0** `halving_interval=null`. API params `halving_removed=true`.
 - **Pas encore :** settlement N_A, HBP 18+, Finder, fees dynamiques.
 - Rapport : `rapports/161_reponses_bootstrap_hbp_halving_geopop_2026-08-26.md`
+
+## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
+
+- **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.
+- **Simu :** `simulations/20260828T174810Z_rapport162/` (11 runs + post-impl, 0 fail). Naive 50@10s = 48,6 j ; time-norm ≈ 7,99 ans. MC 2000 : issued ≤ 21 M, M1 0 violation.
+- **D-025 :** M1 100 % toujours ; P(N_econ) commun extras ; time-norm dt/600 ; vault ≠ remaining ; binding ≤1 externe ; lock 30 j ; 50/50 P/W ; Q=100 creator-direct.
+- **Pas de 210k.** Ancres HBP 4.15e9/8.3e9 encore provisoires. Finder/WorkID = modules, pas encore pipeline mining.
+- **Tests :** 554 passed / 20 skipped. Log `logs/20260828_pytest_rapport163.txt`.
+- Rapport : `rapports/163_tokenomics_simu_go162_alignement_2026-08-28.md`
