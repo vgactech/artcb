@@ -2,7 +2,8 @@
 
 **Horodatage UTC :** 2026-08-28T19:55:44Z  
 **Branche :** `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
-**HEAD au moment de ce fichier :** *(estampillé après commit)*  
+**HEAD code (déjà poussé) :** `4debc5d3184e31ced1c69661d389628ea1b3de1b`  
+**HEAD de ce rapport :** *(estampillé après le commit docs 164)*  
 **Simulations :** `simulations/20260828T194555Z_e2e164/`  
 **Pytest :** `logs/20260828_pytest_rapport164.txt`  
 **Langue :** rapport FR, code EN. DEBUG ON. Aucun mock économique.  
@@ -26,7 +27,7 @@ HumanID → MachineID → WalletID → HumanBinding → JobID/WorkID
 | **Intégration e2e mining/API** | **~35 %** | **~70 %** | `ProtocolEngine` + contributors identity ; sans machines → PoL héritage |
 | Oracle USD→ARTCB | 0 % live | **~40 %** | Probe HTTP réel ; ticker ARTCB **absent** → stub `live=False` (pas de prix inventé) |
 | Hash C `EconomicRoot` | workaround Python | **~95 %** | ABI v2 native + v1 inchangé |
-| Stripe JobPayment | 0 % | **workflow GHA prêt** | Secret local **absent** → tests skip ; GHA utilise `secrets.KEY_API_STRIPE_ACTION` |
+| Stripe JobPayment | 0 % | **GHA success (secret injecté)** | Local skip ; GHA run 33206660774 = 6 passed, jamais loggé |
 | OVH = cette branche | non prouvé | **non** | Health 200, economics **404** |
 | **Global vs 162** | ~82 % | **~78 % du protocole réel** | Plus d’intégration, moins de « modules seuls ». Pas fini. |
 
@@ -98,14 +99,24 @@ Frais : D-025 vault (pas mint, pas remaining 21M). Le remaining 21M ne baisse qu
 
 ### 1.6 Stripe GHA
 
-Fichier : `.github/workflows/stripe-priority.yml`  
-Secret : `secrets.KEY_API_STRIPE_ACTION` (jamais loggé, jamais commité).  
-Tests : `tests/test_stripe_priority_job.py` — **skip** si env vide.  
-Ce runtime : `KEY_API_STRIPE_ACTION` **unset** → skip local OK.  
-Chemin TEST : PaymentIntent `capture_method=manual` puis **cancel**. Live key : même geste, montant plafonné, jamais de capture.  
-Preuve protocole : `minted_satoshi == 0`, cap 21 M inchangé.
+Fichiers :
+- `.github/workflows/stripe-priority.yml` (push sur cette branche)
+- `.github/workflows/stripe-job-payment.yml` (`workflow_dispatch` / `workflow_call`)
+- `.github/workflows/tests.yml` injecte le secret dans pytest (jamais écrit dans `.env`)
 
-`tests.yml` injecte aussi le secret dans pytest (sans l’afficher).
+Secret : `secrets.KEY_API_STRIPE_ACTION` (jamais loggé, jamais commité).  
+Tests : `tests/test_stripe_priority_job.py` — **skip** si env vide.
+
+Ce runtime cloud : `KEY_API_STRIPE_ACTION` **unset** → skip local OK.
+
+**GHA réel (push `4debc5d`)** : https://github.com/vgactech/artcb/actions/runs/33206660774  
+- conclusion **success**
+- « KEY_API_STRIPE_ACTION is set (value not printed) »
+- bash `mode=unknown` (préfixe non matché tel quel ; probable CR/LF — trim ajouté ensuite). Python `.strip()` avant l’appel API.
+- pytest Stripe : **6 passed** en 1,06 s (create+cancel + conservation, **pas** skip)
+- Preuve protocole : `minted_satoshi == 0`, cap 21 M inchangé
+
+Chemin TEST : PaymentIntent `capture_method=manual` puis **cancel**. Live key : même geste, montant plafonné, jamais de capture.
 
 ---
 
@@ -122,16 +133,17 @@ Public : `http://152.228.144.34:8000`
 | `GET /api/v1/economics/emission` | **404** | Not Found |
 | `GET /api/v1/economics/hbp` | **404** | Not Found |
 | `GET /api/v1/economics/identity` | **404** | Not Found |
+| `GET /api/v1/mining/protocol` | **404** | Not Found (re-probe 2026-08-28T20:10Z) |
 | `POST /api/v1/economics/settle` | **405** | Method Not Allowed (pas la route 164) |
 
-**Conclusion :** OVH est **up** et n’exécute **pas** cette branche. Ne pas affirmer que le serveur tourne le câblage 164.
+**Conclusion :** OVH est **up** et n’exécute **pas** cette branche. Ne pas affirmer que le serveur tourne le câblage 164. Re-probe identique après le commit code.
 
 ### Auth / ops
 
 | Canal | Résultat |
 |-------|----------|
 | Doppler `DOPPLER_TOKEN` | **HTTP 401** `Invalid Auth token` — identique à la passe précédente. **Aucun token inventé.** |
-| SSH `ubuntu@152.228.144.34` | `Permission denied (publickey)` — pas de clé dans `~/.ssh` |
+| SSH `ubuntu@152.228.144.34` | `Permission denied (publickey)` — `~/.ssh` n’a que `known_hosts`, **aucune** clé privée |
 | `OVH_CONSUMER_KEY` | présent dans l’env ; non utilisé (révoqué historiquement) |
 
 ---
@@ -219,4 +231,6 @@ Workflows : `.github/workflows/stripe-priority.yml` et `.github/workflows/stripe
 
 Branche uniquement : `cursor/tokenomics-21m-hbp-owner-decay-3fcb`  
 **Pas de merge `origin/main`.**  
+`gh pr list --head` : **aucune PR ouverte** (outil ManagePullRequest absent de cette session ; `gh` en lecture seule).  
+
 Compare : https://github.com/vgactech/artcb/compare/main...cursor/tokenomics-21m-hbp-owner-decay-3fcb

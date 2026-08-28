@@ -49,12 +49,13 @@ def _redact_key(key: str) -> str:
 
 def assert_test_key(key: str) -> str:
     """Return key mode. Live keys are allowed only for create+cancel (no capture)."""
-    if key.startswith("sk_test"):
+    key = key.strip()
+    if key.startswith(("sk_test", "rk_test")):
         return "test"
-    if key.startswith("sk_live"):
+    if key.startswith(("sk_live", "rk_live")):
         logger.debug("LIVE stripe key detected — create+cancel only, never capture")
         return "live"
-    logger.debug("Stripe key prefix is neither sk_test nor sk_live")
+    logger.debug("Stripe key prefix is neither sk_test nor sk_live (value never logged)")
     return "unknown"
 
 

@@ -55,11 +55,16 @@ jobs:
         run: |
           if [ -n "$KEY_API_STRIPE_ACTION" ]; then
             echo "KEY_API_STRIPE_ACTION is set (value not printed)"
-            case "$KEY_API_STRIPE_ACTION" in
+            # Trim CR/LF/spaces for prefix check only — never echo the value.
+            _prefix=$(printf '%s' "$KEY_API_STRIPE_ACTION" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | cut -c1-8)
+            case "$_prefix" in
               sk_test_*) echo "mode=test" ;;
+              rk_test_*) echo "mode=test (restricted)" ;;
               sk_live_*) echo "mode=live (create+cancel only)" ;;
+              rk_live_*) echo "mode=live (restricted, create+cancel only)" ;;
               *) echo "mode=unknown" ;;
             esac
+            unset _prefix
           else
             echo "KEY_API_STRIPE_ACTION is empty — tests will skip live Stripe calls"
           fi

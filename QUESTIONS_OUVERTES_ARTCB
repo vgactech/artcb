@@ -170,5 +170,5 @@ Nouvelles questions : Q-k (P(4) exact 48 % ?), Q-retire (délai), Q-fee-oracle, 
 | Q-E03 | ⏳ | Toujours pas d’extrait ONU WPP 18+ daté. `H_REF=1e6` inchangé. |
 | Q-HBP-ancres | ⏳ | 4,15e9 / 8,3e9 **provisoires** |
 
-Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economics de cette branche), Q-stripe-gha (secret `KEY_API_STRIPE_ACTION` pour GHA, absent de ce runtime).
+Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economics de cette branche), Q-stripe-gha (secret `KEY_API_STRIPE_ACTION` injecté en GHA — run 33206660774 success / 6 passed ; bash `mode=unknown` avant trim CR/LF ; absent de ce runtime cloud).
 

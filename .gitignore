@@ -24,6 +24,8 @@ data/founders/*_private.json
 !data/fixtures/wailly_le_roi_de_l_inconnu.pdf
 *.faiss
 *.key
+# Simulation runtime data (chain keys, local ledgers)
+simulations/**/data/
 src/c/*.so
 src/c/test_chain
 frontend/node_modules/

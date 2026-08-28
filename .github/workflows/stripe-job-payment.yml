@@ -49,10 +49,20 @@ jobs:
             python3 scripts/stripe_job_payment_ci.py
             exit 0
           fi
-          case "${KEY_API_STRIPE_ACTION}" in
-            sk_live*)
+          echo "KEY_API_STRIPE_ACTION is set (value not printed)"
+          _prefix=$(printf '%s' "$KEY_API_STRIPE_ACTION" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | cut -c1-8)
+          case "${_prefix}" in
+            sk_live*|rk_live*)
               echo "REFUSED: live key detected. Use sk_test only."
+              unset _prefix
               exit 2
               ;;
+            sk_test*|rk_test*)
+              echo "mode=test"
+              ;;
+            *)
+              echo "mode=unknown — tests still run create+cancel, never capture"
+              ;;
           esac
+          unset _prefix
           python3 scripts/stripe_job_payment_ci.py

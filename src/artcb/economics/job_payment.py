@@ -58,9 +58,10 @@ def stripe_secret_from_env() -> str | None:
 
 
 def stripe_key_mode(secret: str) -> str:
-    if secret.startswith("sk_test_"):
+    secret = secret.strip()
+    if secret.startswith(("sk_test_", "rk_test_")):
         return "test"
-    if secret.startswith("sk_live_"):
+    if secret.startswith(("sk_live_", "rk_live_")):
         return "live"
     return "unknown"
 
