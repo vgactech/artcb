@@ -288,6 +288,10 @@ async def store(body: StoreRequest, request: Request) -> dict:
             pol_score=pol.pol_score,
             wallet=wallet,
             graph_root=graph_root,
+            machine_registry=state.machine_registry,
+            human_registry=state.human_registry,
+            work_registry=state.work_registry,
+            graph_id=graph.graph_id,
         )
 
     public_symbols = graph.orig_symbols if body.visibility == "public" and graph.orig_symbols else None
@@ -622,6 +626,10 @@ async def ir_learn(body: IrLearnRequest, request: Request) -> dict:
             pol_score=pol.pol_score,
             wallet=None,
             graph_root=graph_root,
+            machine_registry=state.machine_registry,
+            human_registry=state.human_registry,
+            work_registry=state.work_registry,
+            graph_id=graph.graph_id,
         )
 
     # Graver le bloc

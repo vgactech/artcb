@@ -224,6 +224,9 @@ async def stream_thought_ws(websocket: WebSocket) -> None:
                                 pol_score=0.72,
                                 wallet=wallet,
                                 graph_root=graph_root,
+                                machine_registry=getattr(state, "machine_registry", None),
+                                human_registry=getattr(state, "human_registry", None),
+                                work_registry=getattr(state, "work_registry", None),
                             )
                         except Exception:
                             pass

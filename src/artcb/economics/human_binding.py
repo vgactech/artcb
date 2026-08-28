@@ -230,6 +230,16 @@ class MachineRegistry:
         )
         return record
 
+    def mark_active(self, machine_id: str) -> MachineRecord:
+        rec = self.get(machine_id)
+        if rec is None:
+            raise HumanBindingError(f"unknown machine {machine_id}")
+        if rec.status in EXITED_STATES:
+            raise HumanBindingError("exited machine cannot return to ACTIVE")
+        rec.status = "ACTIVE"
+        self._save_record(rec)
+        return rec
+
     def mark_offline(self, machine_id: str) -> MachineRecord:
         rec = self.get(machine_id)
         if rec is None:

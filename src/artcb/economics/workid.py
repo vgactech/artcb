@@ -93,14 +93,14 @@ class WorkRegistry:
         if rec is None:
             raise WorkIDError(f"unknown WorkID {work_id}")
         if rec.status == WorkStatus.SETTLED.value and new_status == WorkStatus.SETTLED:
-            raise WorkIDError(f"SettlementCount(WorkID) already 1: {work_id}")
+            raise WorkIDError(f"REJECT_DOUBLE_SETTLEMENT: SettlementCount(WorkID) already 1: {work_id}")
         rec.status = new_status.value
         if useful_work_score is not None:
             rec.useful_work_score = float(useful_work_score)
         if new_status == WorkStatus.SETTLED:
             rec.settlement_count += 1
             if rec.settlement_count > 1:
-                raise WorkIDError(f"SettlementCount(WorkID)>1: {work_id}")
+                raise WorkIDError(f"REJECT_DOUBLE_SETTLEMENT: SettlementCount(WorkID)>1: {work_id}")
         if new_status == WorkStatus.REJECTED:
             rec.useful_work_score = 0.0
         self._save(rec)

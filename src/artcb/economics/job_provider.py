@@ -136,6 +136,26 @@ class JobProvider:
         )
         return shares
 
+    def cancel(self, job_id: str) -> JobRecord:
+        job = self.get(job_id)
+        if job is None:
+            raise JobProviderError(f"unknown job {job_id}")
+        if job.status in {"settled", "cancelled"}:
+            raise JobProviderError(f"job {job_id} cannot cancel from status={job.status}")
+        job.status = "cancelled"
+        logger.debug("job %s cancelled", job_id)
+        return self._save(job)
+
+    def mark_partial(self, job_id: str, *, completed_preblocks: int) -> JobRecord:
+        job = self.get(job_id)
+        if job is None:
+            raise JobProviderError(f"unknown job {job_id}")
+        if job.status not in {"partitioned", "submitted", "partial"}:
+            raise JobProviderError(f"job {job_id} cannot mark partial from status={job.status}")
+        job.status = "partial"
+        logger.debug("job %s partial completed_pb=%s", job_id, completed_preblocks)
+        return self._save(job)
+
     def mark_settled(self, job_id: str) -> JobRecord:
         job = self.get(job_id)
         if job is None:

@@ -22,11 +22,14 @@ HBP_PEAK_HUMANS = 4_150_000_000
 HBP_END_HUMANS = 8_300_000_000
 
 
-def hbp_rate(verified_humans: float) -> float:
-    """Share of the block reward reserved for the verified-human pool."""
-    if verified_humans < 0:
-        raise ValueError(f"verified_humans must be >= 0, got {verified_humans}")
-    humans = float(verified_humans)
+def hbp_rate(verified_humans: float | None = None, *, h_adult: float | None = None) -> float:
+    """Share of the block reward reserved for the verified-human pool (H_adult 18+)."""
+    humans_raw = h_adult if h_adult is not None else (
+        0.0 if verified_humans is None else verified_humans
+    )
+    if humans_raw < 0:
+        raise ValueError(f"h_adult/verified_humans must be >= 0, got {humans_raw}")
+    humans = float(humans_raw)
     if humans <= HBP_PEAK_HUMANS:
         rate = HBP_START + (HBP_PEAK - HBP_START) * (humans / HBP_PEAK_HUMANS)
     elif humans >= HBP_END_HUMANS:
@@ -34,5 +37,5 @@ def hbp_rate(verified_humans: float) -> float:
     else:
         span = HBP_END_HUMANS - HBP_PEAK_HUMANS
         rate = HBP_PEAK + (HBP_END - HBP_PEAK) * ((humans - HBP_PEAK_HUMANS) / span)
-    logger.debug("HBP(H) verified_humans=%s rate=%.10f", humans, rate)
+    logger.debug("HBP(H) h_adult=%s rate=%.10f", humans, rate)
     return rate

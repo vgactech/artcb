@@ -48,19 +48,29 @@ H_REF = 1_000_000
 REWARD_POPULATION_ALPHA = math.log(INITIAL_BLOCK_REWARD_ARTCB) / math.log(64.0)
 
 
-def population_reward_artcb(verified_humans: float) -> float:
+def population_reward_artcb(
+    verified_humans: float | None = None,
+    *,
+    h_adult: float | None = None,
+) -> float:
     """R(H) — population-scaled block reward in ARTCB.
+
+    Canonical H is H_adult (verified humans 18+, identity registry).
+    ``verified_humans`` is kept as a positional alias for existing callers.
 
     H <= H_REF (including 0 / unknown) → genesis reward 50 ARTCB.
     H > H_REF → strictly decreasing, no floor at 1.
     """
-    if verified_humans < 0:
-        raise ValueError(f"verified_humans must be >= 0, got {verified_humans}")
-    humans = max(float(verified_humans), float(H_REF))
+    humans_raw = h_adult if h_adult is not None else (
+        0.0 if verified_humans is None else verified_humans
+    )
+    if humans_raw < 0:
+        raise ValueError(f"h_adult/verified_humans must be >= 0, got {humans_raw}")
+    humans = max(float(humans_raw), float(H_REF))
     reward = INITIAL_BLOCK_REWARD_ARTCB * (humans / H_REF) ** (-REWARD_POPULATION_ALPHA)
     logger.debug(
-        "R(H) verified_humans=%s clamped=%s reward=%.10f",
-        verified_humans,
+        "R(H) h_adult=%s clamped=%s reward=%.10f",
+        humans_raw,
         humans,
         reward,
     )
@@ -71,6 +81,7 @@ def issued_reward_satoshi(
     block_index: int = 0,
     *,
     verified_humans: float = 0,
+    h_adult: float | None = None,
     issued_so_far_satoshi: int = 0,
     extra_epochs: int = 0,
     actual_block_interval_seconds: float | None = None,
@@ -99,7 +110,8 @@ def issued_reward_satoshi(
     if remaining <= 0:
         logger.debug("hard cap reached issued_so_far=%s", issued_so_far_satoshi)
         return 0
-    r_h = population_reward_artcb(verified_humans)
+    humans = h_adult if h_adult is not None else verified_humans
+    r_h = population_reward_artcb(h_adult=humans)
     interval = (
         float(actual_block_interval_seconds)
         if actual_block_interval_seconds is not None
@@ -111,9 +123,9 @@ def issued_reward_satoshi(
     population = artcb_to_satoshi(scaled)
     issued = min(population, remaining)
     logger.debug(
-        "issued_reward index=%s (unused) H=%s interval=%s R(H)=%.10f scaled=%.10f remaining=%s -> %s",
+        "issued_reward index=%s (unused) H_adult=%s interval=%s R(H)=%.10f scaled=%.10f remaining=%s -> %s",
         block_index,
-        verified_humans,
+        humans,
         interval,
         r_h,
         scaled,

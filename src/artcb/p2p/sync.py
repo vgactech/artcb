@@ -9,6 +9,7 @@ from typing import Any
 import httpx
 
 from src.artcb.chain import ffi
+from src.artcb.chain.ffi import HASH_VERSION_V1, HASH_VERSION_V2
 from src.artcb.chain.manager import ChainManager
 from src.artcb.crypto.kem import decrypt_payload, encrypt_payload
 from src.artcb.p2p.node_identity import NodeIdentity
@@ -72,6 +73,14 @@ class P2PSyncService:
     def verify_block_structure(block: dict) -> bool:
         """Vérifie cohérence hash — signature = clé du nœud émetteur (pas vérifiable localement)."""
         try:
+            eco = None
+            version = int(block.get("hash_version") or HASH_VERSION_V1)
+            if version >= HASH_VERSION_V2:
+                eco = str(
+                    block.get("economic_root")
+                    or (block.get("economics") or {}).get("economic_root")
+                    or ""
+                )
             expected = ffi.build_block_hash(
                 int(block["index"]),
                 str(block["timestamp"]),
@@ -79,6 +88,7 @@ class P2PSyncService:
                 str(block["graph_root"]),
                 str(block.get("merkle_root") or block["graph_root"]),
                 float(block["pol_score"]),
+                economic_root=eco,
             )
         except (KeyError, TypeError, ValueError):
             return False

@@ -21,9 +21,16 @@ from src.artcb.crypto.pqc import (
     pqc_enabled,
     unpack_keypair,
 )
-from src.artcb.economics.economic_root import economic_root, mix_merkle_with_economic_root
+from src.artcb.economics.economic_root import (
+    HASH_VERSION_V1,
+    HASH_VERSION_V2,
+    economic_root,
+    mix_merkle_with_economic_root,
+    native_economic_root_available,
+)
 from src.artcb.economics.emission import issued_reward_satoshi
 from src.artcb.economics.settlement import MachineContribution, settle_block
+from src.artcb.economics.workid import WorkIDError, WorkStatus
 from src.artcb.security.anti_sybil import AntiSybilValidator
 from src.artcb.security.slashing import SlashingManager
 from src.artcb.wallet.encryption import (
@@ -56,6 +63,7 @@ class ChainBlock:
     public_symbols: dict[str, str] = field(default_factory=dict)
     hash_sha3: str | None = None
     economics: dict | None = None
+    hash_version: int = HASH_VERSION_V1
 
     def to_json_line(self) -> str:
         payload = {
@@ -72,7 +80,11 @@ class ChainBlock:
             "group_id": self.group_id,
             "block_reward": self.block_reward,
             "contributors": self.contributors,
+            "hash_version": self.hash_version,
         }
+        if self.economics and self.economics.get("economic_root"):
+            # Top-level BEFORE nested economics so C strstr hits the consensus field first.
+            payload["economic_root"] = self.economics["economic_root"]
         if self.economics:
             payload["economics"] = self.economics
         if self.public_symbols:
@@ -104,6 +116,9 @@ class ChainManager:
         self._signing_key, self._pqc_secret_key, self._pqc_public_key = self._load_or_create_keys()
 
         self.enable_security = enable_security
+        self.human_registry = None
+        self.machine_registry = None
+        self.work_registry = None
         if enable_security:
             self.anti_sybil = AntiSybilValidator()
             self.slashing = SlashingManager()
@@ -112,6 +127,31 @@ class ChainManager:
             self.anti_sybil = None
             self.slashing = None
             logger.warning("Security modules DISABLED")
+
+    def bind_identity(
+        self,
+        *,
+        human_registry=None,
+        machine_registry=None,
+        work_registry=None,
+    ) -> None:
+        """Attach live identity registries so H_adult and WorkID are consensus-visible."""
+        self.human_registry = human_registry
+        self.machine_registry = machine_registry
+        self.work_registry = work_registry
+        logger.debug(
+            "chain identity bound humans=%s machines=%s work=%s",
+            human_registry is not None,
+            machine_registry is not None,
+            work_registry is not None,
+        )
+
+    def adult_verified_count(self) -> float:
+        if self.human_registry is None:
+            return 0.0
+        count = float(self.human_registry.verified_adult_count())
+        logger.debug("H_adult from HumanRegistry=%s", count)
+        return count
 
     def _load_or_create_keys(self) -> tuple[signing.SigningKey, bytes | None, bytes | None]:
         if self.key_path.exists():
@@ -230,6 +270,7 @@ class ChainManager:
         public_symbols: dict[str, str] | None = None,
         source: str = "unknown",  # "ai_memo" | "ai_think" | "mining" — pour bypass AI
         verified_humans: float | None = None,
+        h_adult: float | None = None,
     ) -> ChainBlock:
         all_blocks = self._read_all_blocks()
         index = len(all_blocks)
@@ -262,23 +303,44 @@ class ChainManager:
                         logger.error("Contributor %s... not allowed: %s", contributor["address"][:12], reason)
                         raise ValueError(f"Contributor blocked: {reason}")
 
+        humans = self._resolve_adult_h(verified_humans=verified_humans, h_adult=h_adult)
+
+        if self.work_registry is not None and contributors:
+            _assert_workids_unsettleable(self.work_registry, contributors)
+
         if block_reward is None:
             block_reward = self._calculate_block_reward(
                 index,
-                verified_humans=verified_humans if verified_humans is not None else 0.0,
+                verified_humans=humans,
                 actual_block_interval_seconds=self._last_observed_interval_seconds(),
             )
 
         final_contributors = []
         economics_payload: dict | None = None
+        hash_version = HASH_VERSION_V1
+        eco_root_for_hash: str | None = None
         if contributors:
             machine_contribs = _machine_contributions(contributors)
             if machine_contribs is not None:
-                humans = verified_humans if verified_humans is not None else 0.0
+                hbp_scores = {
+                    str(c.get("bound_human_address") or c.get("owner_address") or c.get("address")): float(
+                        c["hbp_score"]
+                    )
+                    for c in contributors
+                    if c.get("hbp_score") is not None
+                }
+                provider_scores = {
+                    str(c.get("owner_address") or c.get("address")): float(c["provider_score"])
+                    for c in contributors
+                    if c.get("provider_score") is not None and float(c.get("provider_score") or 0) > 0
+                }
                 settlement = settle_block(
                     r_block_satoshi=block_reward,
                     verified_humans=humans,
+                    h_adult=humans,
                     machines=machine_contribs,
+                    provider_scores=provider_scores or None,
+                    hbp_scores=hbp_scores or None,
                 )
                 pol_by_address = {
                     c["address"]: c.get("pol_score", 0.0) for c in contributors
@@ -306,19 +368,33 @@ class ChainManager:
                         "reward_satoshi": line.reward_satoshi,
                     })
                 final_contributors = list(merged.values())
+                eco = economic_root(settlement.economic_parts)
                 economics_payload = {
                     "verified_humans": humans,
+                    "h_adult": humans,
                     "hbp_rate": settlement.hbp_rate,
                     "work_pool_satoshi": settlement.work_pool_satoshi,
                     "hbp_pool_satoshi": settlement.hbp_pool_satoshi,
                     "provider_pool_satoshi": settlement.provider_pool_satoshi,
                     "worker_pool_satoshi": settlement.worker_pool_satoshi,
-                    "economic_root": economic_root(settlement.economic_parts),
+                    "economic_root": eco,
                     "pre_economic_merkle": merkle,
                 }
-                merkle = mix_merkle_with_economic_root(
-                    merkle, economics_payload["economic_root"]
-                )
+                if native_economic_root_available():
+                    hash_version = HASH_VERSION_V2
+                    eco_root_for_hash = eco
+                    logger.debug(
+                        "native C EconomicRoot v2 index=%s root=%s",
+                        index,
+                        eco[:16],
+                    )
+                else:
+                    merkle = mix_merkle_with_economic_root(merkle, eco)
+                    economics_payload["hash_path"] = "python_merkle_mix_fallback"
+                    logger.debug(
+                        "C ABI v2 missing — Python merkle mix fallback index=%s",
+                        index,
+                    )
             else:
                 from src.artcb.economics.satoshi import allocate_satoshi
 
@@ -335,10 +411,19 @@ class ChainManager:
                     })
 
         block_hash = ffi.build_block_hash(
-            index, timestamp, prev_hash, graph_root, merkle, pol_score
+            index,
+            timestamp,
+            prev_hash,
+            graph_root,
+            merkle,
+            pol_score,
+            economic_root=eco_root_for_hash,
         )
         hash_sha3 = sha3_256_hex(block_hash)
         signature = self._sign_block(block_hash)
+
+        if self.work_registry is not None and contributors:
+            _mark_workids_settled(self.work_registry, contributors)
 
         block = ChainBlock(
             index=index,
@@ -357,6 +442,7 @@ class ChainManager:
             contributors=final_contributors,
             public_symbols=dict(public_symbols) if public_symbols else {},
             economics=economics_payload,
+            hash_version=hash_version,
         )
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(block.to_json_line() + "\n")
@@ -437,6 +523,20 @@ class ChainManager:
         )
         return 0
 
+    def _resolve_adult_h(
+        self,
+        *,
+        verified_humans: float | None,
+        h_adult: float | None,
+    ) -> float:
+        if h_adult is not None:
+            logger.debug("H_adult explicit=%s", h_adult)
+            return float(h_adult)
+        if verified_humans is not None:
+            logger.debug("H from verified_humans override=%s", verified_humans)
+            return float(verified_humans)
+        return self.adult_verified_count()
+
     def _observe_velocity_per_day(self, window_sec: int = 86_400) -> float:
         """Blocs/jour observés sur la fenêtre — métrique, pas un halving."""
         from datetime import UTC, datetime, timedelta
@@ -478,6 +578,14 @@ class ChainManager:
         if block.get("visibility") != "public":
             return False
         try:
+            eco = None
+            version = int(block.get("hash_version") or HASH_VERSION_V1)
+            if version >= HASH_VERSION_V2:
+                eco = str(
+                    block.get("economic_root")
+                    or (block.get("economics") or {}).get("economic_root")
+                    or ""
+                )
             expected = ffi.build_block_hash(
                 int(block["index"]),
                 str(block["timestamp"]),
@@ -485,6 +593,7 @@ class ChainManager:
                 str(block["graph_root"]),
                 str(block.get("merkle_root") or block["graph_root"]),
                 float(block["pol_score"]),
+                economic_root=eco,
             )
         except (KeyError, TypeError, ValueError):
             return False
@@ -504,6 +613,7 @@ def _machine_contributions(contributors: list[dict]) -> list[MachineContribution
         return None
     result: list[MachineContribution] = []
     for contributor in contributors:
+        n_econ = contributor.get("n_economic")
         result.append(
             MachineContribution(
                 machine_id=str(
@@ -512,8 +622,43 @@ def _machine_contributions(contributors: list[dict]) -> list[MachineContribution
                 ),
                 owner_address=str(contributor["owner_address"]),
                 machine_index=int(contributor["machine_index"]),
-                bound_human_address=contributor.get("bound_human_address"),
-                work_weight=float(contributor.get("pol_score", contributor.get("work_weight", 0.0))),
+                bound_human_address=contributor.get("bound_human_address")
+                or contributor.get("human_id"),
+                work_weight=float(contributor.get("work_weight", contributor.get("pol_score", 0.0))),
+                n_economic=int(n_econ) if n_econ is not None else None,
+                is_first_machine=contributor.get("is_first_machine"),
+                provider_score=float(contributor.get("provider_score", 0.0) or 0.0),
+                hbp_contribution=float(
+                    contributor.get("hbp_contribution", contributor.get("hbp_score", 1.0)) or 1.0
+                ),
             )
         )
     return result
+
+
+def _assert_workids_unsettleable(work_registry, contributors: list[dict]) -> None:
+    for contributor in contributors:
+        work_id = contributor.get("work_id")
+        if not work_id:
+            continue
+        rec = work_registry.get(str(work_id))
+        if rec is None:
+            continue
+        if rec.status == WorkStatus.SETTLED.value or rec.settlement_count >= 1:
+            raise WorkIDError(f"REJECT_DOUBLE_SETTLEMENT: {work_id}")
+
+
+def _mark_workids_settled(work_registry, contributors: list[dict]) -> None:
+    seen: set[str] = set()
+    for contributor in contributors:
+        work_id = contributor.get("work_id")
+        if not work_id or work_id in seen:
+            continue
+        seen.add(str(work_id))
+        rec = work_registry.get(str(work_id))
+        if rec is None:
+            work_registry.create(
+                work_id=str(work_id),
+                job_id=str(contributor.get("job_id") or "mining"),
+            )
+        work_registry.transition(str(work_id), WorkStatus.SETTLED)

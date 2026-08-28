@@ -91,6 +91,9 @@ def economics_params() -> dict:
         "fees": "ARTCB only for PoL; USD cap = cheapest observed L2 native p50 (Base 0.000311 2026-08-26)",
         "dividend": "UniversalDividendVault — not remaining supply",
         "lock_days": 30,
+        "h_adult": "live counter = HumanRegistry.verified_adult_count (18+); Hmax NOT frozen at 8.3e9",
+        "hash_version": "v1 historic without EconomicRoot; v2 native C economic_root",
+        "job_payment": "Stripe JobPayment ≠ R_block and never mints",
     }
 
 
@@ -270,3 +273,178 @@ def partition_job(job_id: str, body: JobPartitionIn, request: Request) -> dict:
             for s in shares
         ],
     }
+
+
+@router.get("/h-adult")
+def economics_h_adult(request: Request) -> dict:
+    engine = _state(request).protocol_engine
+    humans = _state(request).human_registry
+    count = engine.h_adult() if engine else (humans.verified_adult_count() if humans else 0)
+    from src.artcb.economics.demographic import default_provisional_reference
+    from src.artcb.economics.identity import ADULT_AGE_YEARS
+
+    ref = default_provisional_reference()
+    return {
+        "h_adult": count,
+        "source": "HumanRegistry.verified_adult_count",
+        "adult_age_years": ADULT_AGE_YEARS,
+        "hmax_frozen": False,
+        "demographic_reference": ref.to_dict(),
+        "demographic_digest": ref.digest(),
+        "note": "8.3e9 is NOT frozen Hmax; WPP 18+ dated extract still Q-E03",
+    }
+
+
+@router.get("/oracle")
+def economics_oracle(request: Request) -> dict:
+    from src.artcb.economics.fees import quote_fee_satoshi
+    from src.artcb.economics.oracle import OracleError, fetch_oracle_snapshot
+
+    snap_path = _state(request).settings.data_dir / "economics" / "oracle_snapshot.json"
+    try:
+        snap = fetch_oracle_snapshot(snapshot_path=snap_path)
+        fee = quote_fee_satoshi(congestion=0.0, snapshot_path=snap_path)
+    except OracleError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return {
+        "oracle": snap.to_dict(),
+        "digest": snap.digest(),
+        "fee": fee,
+        "mints": False,
+        "price_is_zero": snap.artcb_usd <= 0,
+    }
+
+
+@router.post("/humans/bootstrap")
+def bootstrap_creator(body: dict, request: Request) -> dict:
+    humans = _state(request).human_registry
+    from src.artcb.economics.identity import IdentityError
+
+    try:
+        rec = humans.bootstrap_creator(human_id=body["human_id"], address=body["address"])
+    except (IdentityError, KeyError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return rec.to_dict()
+
+
+@router.post("/humans")
+def register_human(body: dict, request: Request) -> dict:
+    humans = _state(request).human_registry
+    from src.artcb.economics.identity import IdentityError
+
+    try:
+        rec = humans.register_candidate(human_id=body["human_id"], address=body["address"])
+        if body.get("creator_id"):
+            rec = humans.creator_direct_validate(body["human_id"], creator_id=body["creator_id"])
+    except (IdentityError, KeyError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return rec.to_dict()
+
+
+class PriorityJobIn(BaseModel):
+    provider_address: str
+    payload: str
+    amount_cents: int = Field(200, ge=50)
+    currency: str = "usd"
+
+
+@router.post("/jobs/priority")
+def submit_priority_job(body: PriorityJobIn, request: Request) -> dict:
+    """Create a priority job + Stripe PaymentIntent. Does NOT mint R_block."""
+    from src.artcb.payments.stripe_jobs import (
+        BLOCK_REWARD_KIND,
+        JOB_PAYMENT_KIND,
+        StripeJobError,
+        create_priority_job_payment,
+        stripe_secret,
+    )
+
+    provider = _state(request).job_provider
+    ledger = _state(request).stripe_ledger
+    try:
+        job = provider.submit(provider_address=body.provider_address, payload=body.payload)
+    except JobProviderError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    if not stripe_secret():
+        return {
+            "job": job.to_dict(),
+            "kind": JOB_PAYMENT_KIND,
+            "mints": False,
+            "distinct_from": BLOCK_REWARD_KIND,
+            "stripe": None,
+            "stripe_skipped": True,
+            "reason": "KEY_API_STRIPE_ACTION / STRIPE_* not in this runtime",
+        }
+    try:
+        pay = create_priority_job_payment(
+            job_id=job.job_id,
+            amount_cents=body.amount_cents,
+            currency=body.currency,
+            ledger=ledger,
+        )
+    except StripeJobError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {
+        "job": job.to_dict(),
+        "kind": pay.kind,
+        "mints": pay.mints,
+        "distinct_from": pay.distinct_from,
+        "stripe": pay.to_dict(),
+    }
+
+
+@router.get("/humans")
+def list_humans(request: Request) -> dict:
+    humans = _state(request).human_registry
+    if humans is None:
+        raise HTTPException(status_code=503, detail="human registry not bound")
+    rows = humans._read()
+    return {
+        "count": len(rows),
+        "h_adult": humans.verified_adult_count(),
+        "humans": rows,
+    }
+
+
+class WorkCreateIn(BaseModel):
+    work_id: str
+    job_id: str
+
+
+@router.post("/workids")
+def create_workid(body: WorkCreateIn, request: Request) -> dict:
+    works = _state(request).work_registry
+    if works is None:
+        raise HTTPException(status_code=503, detail="work registry not bound")
+    from src.artcb.economics.workid import WorkIDError
+
+    try:
+        rec = works.create(work_id=body.work_id, job_id=body.job_id)
+    except WorkIDError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return rec.to_dict()
+
+
+@router.get("/workids/{work_id}")
+def get_workid(work_id: str, request: Request) -> dict:
+    works = _state(request).work_registry
+    if works is None:
+        raise HTTPException(status_code=503, detail="work registry not bound")
+    rec = works.get(work_id)
+    if rec is None:
+        raise HTTPException(status_code=404, detail=f"unknown WorkID {work_id}")
+    return rec.to_dict()
+
+
+@router.post("/webhooks/stripe")
+def stripe_webhook(body: dict, request: Request) -> dict:
+    from src.artcb.payments.stripe_jobs import StripeJobError, handle_stripe_webhook
+
+    ledger = _state(request).stripe_ledger
+    if ledger is None:
+        raise HTTPException(status_code=503, detail="stripe ledger not bound")
+    try:
+        result = handle_stripe_webhook(body, ledger=ledger)
+    except StripeJobError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return result

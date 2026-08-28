@@ -71,6 +71,7 @@ jobs:
           # Valeur : votre passphrase (min 12 caractères)
           # Si absent : valeur de dev utilisée (tests seulement, jamais en production)
           ARTCB_WALLET_PASSPHRASE: ${{ secrets.ARTCB_WALLET_PASSPHRASE }}
+          KEY_API_STRIPE_ACTION: ${{ secrets.KEY_API_STRIPE_ACTION }}
         run: |
           cat > .env << EOF
           ARTCB_DEBUG=true
@@ -82,10 +83,28 @@ jobs:
           ARTCB_BOOTSTRAP_NODE=true
           ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:-artcb_ci_test_passphrase_devonly}
           EOF
+          if [ -n "$KEY_API_STRIPE_ACTION" ]; then
+            echo "KEY_API_STRIPE_ACTION is set for pytest (value not printed)"
+          else
+            echo "KEY_API_STRIPE_ACTION unset — Stripe live tests will skip"
+          fi
           echo ".env créé (passphrase = ${ARTCB_WALLET_PASSPHRASE:+depuis_github_secrets} ${ARTCB_WALLET_PASSPHRASE:-valeur_dev_par_defaut})"
 
+      - name: Compiler libartcb_chain.so (EconomicRoot v2)
+        run: make -C src/c clean all test
+
       - name: Lancer la suite de tests complète
+        env:
+          KEY_API_STRIPE_ACTION: ${{ secrets.KEY_API_STRIPE_ACTION }}
+          PYTHONPATH: src
         run: python3 -m pytest tests/ -q --tb=short --timeout=120
+
+      - name: Stripe JobPayment (test mode, optional)
+        env:
+          KEY_API_STRIPE_ACTION: ${{ secrets.KEY_API_STRIPE_ACTION }}
+          PYTHONPATH: src
+        run: python3 scripts/stripe_job_payment_ci.py
+        continue-on-error: true
 
       - name: Résumé
         if: always()

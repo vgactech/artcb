@@ -360,6 +360,10 @@ def ai_memo(
             pol_score=0.75,
             wallet=wallet,
             graph_root=graph_root,
+            machine_registry=getattr(state, "machine_registry", None),
+            human_registry=getattr(state, "human_registry", None),
+            work_registry=getattr(state, "work_registry", None),
+            graph_id=graph.graph_id if graph else None,
         )
 
     # Marquer le bloc comme memo IA via public_symbols

@@ -94,6 +94,13 @@ class HumanRegistry:
                 return HumanRecord(**row)
         return None
 
+    def get_by_address(self, address: str) -> HumanRecord | None:
+        addr = address.strip()
+        for row in self._read():
+            if row.get("address") == addr:
+                return HumanRecord(**row)
+        return None
+
     def validator_count(self) -> int:
         ok = {
             HumanStatus.GENESIS_VALIDATED.value,
@@ -108,6 +115,10 @@ class HumanRegistry:
     def register_candidate(self, *, human_id: str, address: str) -> HumanRecord:
         if self.get(human_id) is not None:
             raise IdentityError(f"human already registered: {human_id}")
+        if self.get_by_address(address) is not None:
+            raise IdentityError(
+                f"FAKE_HUMAN: address already bound to another HumanID: {address}"
+            )
         rec = HumanRecord(
             human_id=human_id,
             address=address,
@@ -176,3 +187,132 @@ class HumanRegistry:
                 return
         rows.append(rec.to_dict())
         self._write(rows)
+
+
+@dataclass
+class DeviceRecord:
+    device_id: str
+    fingerprint: str
+    human_id: str | None
+    created_at: str
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+class DeviceRegistry:
+    """DeviceID store — fingerprint is a hash, never raw hardware serials on-chain."""
+
+    def __init__(self, path: Path) -> None:
+        self.path = Path(path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        if not self.path.is_file():
+            self._write([])
+
+    def _read(self) -> list[dict]:
+        try:
+            data = json.loads(self.path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.error("device registry unreadable %s %s", self.path, exc)
+            return []
+        return data if isinstance(data, list) else []
+
+    def _write(self, rows: list[dict]) -> None:
+        self.path.write_text(json.dumps(rows, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    def get(self, device_id: str) -> DeviceRecord | None:
+        for row in self._read():
+            if row.get("device_id") == device_id:
+                return DeviceRecord(**row)
+        return None
+
+    def register(self, *, device_id: str, fingerprint: str, human_id: str | None = None) -> DeviceRecord:
+        if self.get(device_id) is not None:
+            raise IdentityError(f"device already registered: {device_id}")
+        rec = DeviceRecord(
+            device_id=device_id,
+            fingerprint=fingerprint,
+            human_id=human_id,
+            created_at=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        )
+        rows = self._read()
+        rows.append(rec.to_dict())
+        self._write(rows)
+        logger.debug("registered DeviceID=%s human=%s", device_id, human_id)
+        return rec
+
+
+@dataclass
+class WalletIdRecord:
+    wallet_id: str
+    address: str
+    human_id: str
+    device_id: str
+    created_at: str
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+class WalletIdRegistry:
+    """WalletID bound to HumanID + DeviceID. Does not mint."""
+
+    def __init__(self, path: Path) -> None:
+        self.path = Path(path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        if not self.path.is_file():
+            self._write([])
+
+    def _read(self) -> list[dict]:
+        try:
+            data = json.loads(self.path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.error("wallet-id registry unreadable %s %s", self.path, exc)
+            return []
+        return data if isinstance(data, list) else []
+
+    def _write(self, rows: list[dict]) -> None:
+        self.path.write_text(json.dumps(rows, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    def get(self, wallet_id: str) -> WalletIdRecord | None:
+        for row in self._read():
+            if row.get("wallet_id") == wallet_id:
+                return WalletIdRecord(**row)
+        return None
+
+    def by_address(self, address: str) -> WalletIdRecord | None:
+        for row in self._read():
+            if row.get("address") == address:
+                return WalletIdRecord(**row)
+        return None
+
+    def bind(
+        self,
+        *,
+        wallet_id: str,
+        address: str,
+        human_id: str,
+        device_id: str,
+    ) -> WalletIdRecord:
+        if self.get(wallet_id) is not None:
+            raise IdentityError(f"WalletID already bound: {wallet_id}")
+        if self.by_address(address) is not None:
+            raise IdentityError(f"address already has a WalletID: {address}")
+        rec = WalletIdRecord(
+            wallet_id=wallet_id,
+            address=address,
+            human_id=human_id,
+            device_id=device_id,
+            created_at=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        )
+        rows = self._read()
+        rows.append(rec.to_dict())
+        self._write(rows)
+        logger.debug(
+            "bound WalletID=%s addr=%s human=%s device=%s",
+            wallet_id,
+            address,
+            human_id,
+            device_id,
+        )
+        return rec

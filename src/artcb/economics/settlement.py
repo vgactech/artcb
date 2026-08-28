@@ -89,7 +89,8 @@ def _is_first(machine: MachineContribution) -> bool:
 def settle_block(
     *,
     r_block_satoshi: int,
-    verified_humans: float,
+    verified_humans: float | None = None,
+    h_adult: float | None = None,
     machines: list[MachineContribution],
     provider_scores: dict[str, float] | None = None,
     provider_share: float | None = None,
@@ -100,7 +101,10 @@ def settle_block(
     if not machines:
         raise ValueError("settlement requires at least one machine")
 
-    rate = hbp_rate(verified_humans)
+    humans = h_adult if h_adult is not None else (
+        0.0 if verified_humans is None else verified_humans
+    )
+    rate = hbp_rate(h_adult=humans)
     pools = allocate_satoshi({"hbp": rate, "work": 1.0 - rate}, r_block_satoshi)
     hbp_pool = pools["hbp"]
     work_pool = pools["work"]
@@ -178,6 +182,7 @@ def settle_block(
 
     parts = {
         "r_block_satoshi": r_block_satoshi,
+        "h_adult": humans,
         "hbp_pool_satoshi": hbp_pool,
         "provider_pool_satoshi": provider_pool,
         "worker_pool_satoshi": worker_pool,
@@ -185,7 +190,7 @@ def settle_block(
     }
     result = SettlementResult(
         r_block_satoshi=r_block_satoshi,
-        verified_humans=verified_humans,
+        verified_humans=humans,
         hbp_rate=rate,
         work_pool_satoshi=work_pool,
         hbp_pool_satoshi=hbp_pool,
@@ -199,9 +204,9 @@ def settle_block(
             f"settlement conservation broken: {result.total_satoshi} != {r_block_satoshi}"
         )
     logger.debug(
-        "settled R=%s H=%s HBP=%.6f work=%s provider=%s worker=%s lines=%s",
+        "settled R=%s H_adult=%s HBP=%.6f work=%s provider=%s worker=%s lines=%s",
         r_block_satoshi,
-        verified_humans,
+        humans,
         rate,
         work_pool,
         provider_pool,
@@ -209,3 +214,14 @@ def settle_block(
         len(lines),
     )
     return result
+
+
+class OwnerCannotCutPaymentError(RuntimeError):
+    """Owner A cannot reduce bound-human B's protocol payment."""
+
+
+def reject_owner_payment_cut(*_args, **_kwargs) -> None:
+    logger.debug("owner payment cut rejected IMPOSSIBLE")
+    raise OwnerCannotCutPaymentError(
+        "IMPOSSIBLE: owner cannot cut a bound-human settlement line"
+    )
