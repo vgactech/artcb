@@ -1,0 +1,69 @@
+{
+  "1_double_binding": {
+    "rejected": true,
+    "code": "REJECT_DOUBLE_BINDING",
+    "error": "human B is already bound to another machine of A"
+  },
+  "2_double_settlement": {
+    "rejected": true,
+    "code": "REJECT_DOUBLE_SETTLEMENT",
+    "error": "REJECT_DOUBLE_SETTLEMENT: WorkID already settled: W-m5",
+    "expect": "REJECT_DOUBLE_SETTLEMENT"
+  },
+  "3_owner_cut": {
+    "rejected": true,
+    "code": "IMPOSSIBLE",
+    "error": "IMPOSSIBLE: owner cannot cut a bound-human settlement line"
+  },
+  "3_owner_cut_engine": {
+    "rejected": true,
+    "code": "REJECT_OWNER_CUT_PAYMENT",
+    "error": "REJECT_OWNER_CUT_PAYMENT: owner cannot redirect bound-human payment on M2",
+    "expect": "REJECT_OWNER_CUT_PAYMENT"
+  },
+  "4_offline_grace": {
+    "status_grace": "GRACE",
+    "status_offline": "OFFLINE",
+    "n_before": 5,
+    "n_after": 5,
+    "n_unchanged": true,
+    "rejected_shrink": true
+  },
+  "5_transfer": {
+    "n_a_before": 5,
+    "n_a_after": 4,
+    "p_before": 0.47074375,
+    "p_after": 0.48024999999999995,
+    "n_z": 1,
+    "transferred": {
+      "machine_id": "M2:to:Z",
+      "owner_address": "Z",
+      "machine_index": 1,
+      "bound_human_address": null,
+      "registered_at": "2026-08-28T19:55:44Z",
+      "device_fingerprint": null,
+      "status": "ACTIVE",
+      "is_first_machine": true
+    },
+    "n_decreased": true
+  },
+  "6_fake_human": {
+    "rejected": true,
+    "code": "REJECT_FAKE_HUMAN",
+    "error": "FAKE_HUMAN: address already bound to another HumanID: B"
+  },
+  "6_fake_human_id": {
+    "rejected": true,
+    "error": "human already registered: H-B"
+  },
+  "7_tamper_root": {
+    "original_root": "b1ae484eb2080cdd2d5985e5eb398aabf80d7ab936b4a74f8078b91bf912054b",
+    "tampered_root": "9f91b0127ff0d0baa076c96419ab36f4dfc855c5e6677dac56afca5aaaf7dbab",
+    "root_changed": true,
+    "original_hash": "0c522f87c6fce5dc57ae2937b2e56c8ec9c4e2a45bb4827910034b7323ef2f7c",
+    "hash_after_recompute": "c3fb7b2715e33f4a7844402ef317145c070b6a36f679de26212b5f0199689f0c",
+    "hash_changed": true,
+    "live_chain_still_valid": true,
+    "c_abi_v2": true
+  }
+}

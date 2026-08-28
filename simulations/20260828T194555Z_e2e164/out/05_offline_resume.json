@@ -1,0 +1,166 @@
+{
+  "attack4": {
+    "status_grace": "GRACE",
+    "status_offline": "OFFLINE",
+    "n_before": 5,
+    "n_after": 5,
+    "n_unchanged": true,
+    "rejected_shrink": true
+  },
+  "resume": {
+    "block_index": 6,
+    "block_hash": "0c522f87c6fce5dc57ae2937b2e56c8ec9c4e2a45bb4827910034b7323ef2f7c",
+    "hash_version": 2,
+    "h_adult": 5,
+    "r_block_satoshi": 5000000000,
+    "hbp_rate": 0.10000000060240964,
+    "economic_root": "b1ae484eb2080cdd2d5985e5eb398aabf80d7ab936b4a74f8078b91bf912054b",
+    "total_paid_satoshi": 5000000000,
+    "conservation": true,
+    "supply_satoshi": 34000000000,
+    "supply_le_21m": true,
+    "by_address_satoshi": {
+      "A": 3731880074,
+      "C": 422706642,
+      "D": 422706642,
+      "E": 422706642
+    },
+    "lines": [
+      {
+        "address": "A",
+        "role": "provider",
+        "machine_id": null,
+        "reward_satoshi": 2249999998
+      },
+      {
+        "address": "A",
+        "role": "owner",
+        "machine_id": "M1",
+        "reward_satoshi": 562499999
+      },
+      {
+        "address": "A",
+        "role": "owner",
+        "machine_id": "M3",
+        "reward_satoshi": 264793359
+      },
+      {
+        "address": "C",
+        "role": "human",
+        "machine_id": "M3",
+        "reward_satoshi": 297706641
+      },
+      {
+        "address": "A",
+        "role": "owner",
+        "machine_id": "M4",
+        "reward_satoshi": 264793359
+      },
+      {
+        "address": "D",
+        "role": "human",
+        "machine_id": "M4",
+        "reward_satoshi": 297706641
+      },
+      {
+        "address": "A",
+        "role": "owner",
+        "machine_id": "M5",
+        "reward_satoshi": 264793359
+      },
+      {
+        "address": "E",
+        "role": "human",
+        "machine_id": "M5",
+        "reward_satoshi": 297706641
+      },
+      {
+        "address": "A",
+        "role": "hbp",
+        "machine_id": null,
+        "reward_satoshi": 125000000
+      },
+      {
+        "address": "C",
+        "role": "hbp",
+        "machine_id": null,
+        "reward_satoshi": 125000001
+      },
+      {
+        "address": "D",
+        "role": "hbp",
+        "machine_id": null,
+        "reward_satoshi": 125000001
+      },
+      {
+        "address": "E",
+        "role": "hbp",
+        "machine_id": null,
+        "reward_satoshi": 125000001
+      }
+    ],
+    "missing_preblocks": [],
+    "requeued": [],
+    "n_max": 6,
+    "n_partitions": 5,
+    "phases": {
+      "h_adult": {
+        "count": 5,
+        "source": "HumanRegistry.verified_adult_count",
+        "adult_age_years": 18,
+        "demographic_ref": {
+          "dataset_id": "provisional-not-wpp-freeze",
+          "source": "estimation only \u2014 Q-E03 still open for dated UN WPP 18+",
+          "publication_date": "2026-08-28",
+          "adult_population_estimate": 5820000000,
+          "methodology_hash": "pending",
+          "effective_epoch": 0
+        },
+        "hmax_frozen": false
+      },
+      "r_h": {
+        "h_adult": 5,
+        "r_block_satoshi": 5000000000,
+        "interval_seconds": 600.0,
+        "issued_so_far_satoshi": 29000000000
+      },
+      "preblocks": {
+        "n_partitions": 5,
+        "n_max": 6,
+        "partition_of_work": {
+          "W-resume-offline": 4
+        },
+        "missing": [],
+        "present_satoshi": 5000000000,
+        "requeued": []
+      },
+      "hbp": {
+        "rate": 0.10000000060240964,
+        "pool": 500000003
+      },
+      "provider_worker": {
+        "provider_pool": 2249999998,
+        "worker_pool": 2249999999
+      },
+      "owner_decay": {
+        "M1": {
+          "n_economic": 5,
+          "is_first": true
+        },
+        "M3": {
+          "n_economic": 5,
+          "is_first": false
+        },
+        "M4": {
+          "n_economic": 5,
+          "is_first": false
+        },
+        "M5": {
+          "n_economic": 5,
+          "is_first": false
+        }
+      }
+    },
+    "job_payment": null
+  }
+}

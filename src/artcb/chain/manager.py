@@ -622,8 +622,7 @@ def _machine_contributions(contributors: list[dict]) -> list[MachineContribution
                 ),
                 owner_address=str(contributor["owner_address"]),
                 machine_index=int(contributor["machine_index"]),
-                bound_human_address=contributor.get("bound_human_address")
-                or contributor.get("human_id"),
+                bound_human_address=contributor.get("bound_human_address"),
                 work_weight=float(contributor.get("work_weight", contributor.get("pol_score", 0.0))),
                 n_economic=int(n_econ) if n_econ is not None else None,
                 is_first_machine=contributor.get("is_first_machine"),

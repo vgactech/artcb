@@ -1,0 +1,76 @@
+{
+  "small": {
+    "job_id": "job_1bc0c388d08a4dc3",
+    "provider_address": "A",
+    "payload": "small useful work",
+    "status": "submitted",
+    "created_at": "2026-08-28T19:55:44Z",
+    "worker_capacities": [],
+    "preblocks": [],
+    "r_block_satoshi": null
+  },
+  "large": {
+    "job_id": "job_121be54f3c284fe8",
+    "provider_address": "A",
+    "payload": "large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large large ",
+    "status": "submitted",
+    "created_at": "2026-08-28T19:55:44Z",
+    "worker_capacities": [],
+    "preblocks": [],
+    "r_block_satoshi": null
+  },
+  "sim_a": {
+    "job_id": "job_dbf99251774b4bc8",
+    "provider_address": "B",
+    "payload": "simultaneous-a",
+    "status": "submitted",
+    "created_at": "2026-08-28T19:55:44Z",
+    "worker_capacities": [],
+    "preblocks": [],
+    "r_block_satoshi": null
+  },
+  "sim_b": {
+    "job_id": "job_62c5f361a04646ce",
+    "provider_address": "C",
+    "payload": "simultaneous-b",
+    "status": "submitted",
+    "created_at": "2026-08-28T19:55:44Z",
+    "worker_capacities": [],
+    "preblocks": [],
+    "r_block_satoshi": null
+  },
+  "cancelled": {
+    "job_id": "job_a35c8a9d942e44b9",
+    "provider_address": "D",
+    "payload": "will cancel",
+    "status": "cancelled",
+    "created_at": "2026-08-28T19:55:44Z",
+    "worker_capacities": [],
+    "preblocks": [],
+    "r_block_satoshi": null
+  },
+  "partial": {
+    "job_id": "job_645e4882ba324810",
+    "provider_address": "A",
+    "payload": "partial",
+    "status": "partial",
+    "created_at": "2026-08-28T19:55:44Z",
+    "worker_capacities": [
+      1.0,
+      1.0
+    ],
+    "preblocks": [
+      {
+        "preblock_id": "pb1",
+        "weight": 0.5,
+        "reward_satoshi": 500
+      },
+      {
+        "preblock_id": "pb2",
+        "weight": 0.5,
+        "reward_satoshi": 500
+      }
+    ],
+    "r_block_satoshi": 1000
+  }
+}

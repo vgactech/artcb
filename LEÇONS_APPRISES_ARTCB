@@ -155,3 +155,9 @@
 **Leçon :** (1) P(n_index) ≠ P(N_economic). (2) Un reward/bloc fixe avec un intervalle variable épuise 21 M (48,6 j @10 s). Normaliser par T déjà documenté (600 s) n’est pas un halving. (3) Dernier GO utilisateur > spec 161 sur les frais. (4) k se **dérive** des exemples (P(3)=49 %), on n’invente pas un 3e ancrage. (5) Burst tests <1 s doivent filtrer dt sinon time-norm casse 50+25 ARTCB.
 **Action :** Rapport 163, D-025, `fleet_owner_share` / `issued_reward_satoshi(..., actual_block_interval_seconds)`.
 
+### L-034 — Câblage e2e ≠ modules isolés (28 août 2026, sim 164)
+**Contexte :** Audit croisé : ~82 % des modules economics existent, mais mining/API tombaient encore en PoL 50/50 héritage faute de `machine_index` / `HumanID` / `WorkID` sur les contributors. EconomicRoot était mixé dans merkle Python, pas dans le canonique C. OVH healthy n’implique pas « cette branche est déployée ».
+**Leçon :** (1) Un module `settle_block` n’est du consensus que s’il est dans `append_block` **et** dans le hash C. (2) Versionner le hash (v1 sans root, v2 avec) plutôt que casser les blocs anciens. (3) Ne jamais copier BTC/USDT comme prix ARTCB. (4) JobPayment Stripe ≠ mint. (5) Doppler token 401 et SSH sans clé = documenter, pas inventer un token.
+**Action :** Rapport 164. `ProtocolEngine`, ABI C v2, oracle stub honnête, workflow `stripe-priority.yml`.
+
+

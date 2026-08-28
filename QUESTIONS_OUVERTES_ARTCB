@@ -157,3 +157,18 @@ Détail et catalogue complet : `rapports/160_audit_croise_simulations_124_a_159_
 | Q-E12 | ⏳ | 162 = machine propre + 1 externe (implémenté) vs 1 wallet/device (114) |
 
 Nouvelles questions : Q-k (P(4) exact 48 % ?), Q-retire (délai), Q-fee-oracle, Q-Finder-delay 0/7/30j, Q-revalid, Q-geo Finders, Q-C-ABI EconomicRoot natif. Voir rapport 163 §8.
+
+---
+
+## [2026-08-28T19:55:00Z] Mise à jour post-simulation 164 (ne supprime pas les tableaux ci-dessus)
+
+| ID | État au 2026-08-28T19:55Z | Note |
+|----|---------------------------|------|
+| Q-E10 | ⏳ **partiel ~70 %** | `ProtocolEngine` + mining `build_contributors` + API `/mining/protocol` + identity/WorkID routes. Sans machines enregistrées le minage reste le split PoL héritage. |
+| Q-C-ABI | ✅ **partiel ~95 %** | `artcb_build_canonical_v2` natif ; v1 inchangé ; `hash_version=2` dans le JSON. Fallback mix merkle si `.so` pré-v2. |
+| Q-fee-oracle | ⏳ **probe live, prix ARTCB 0 % listé** | CoinGecko ping/BTC/USDT = liveness. ARTCB unlisted → `live=False`, on n’invente pas un prix. `ARTCB_USD_PRICE` = override opérateur. |
+| Q-E03 | ⏳ | Toujours pas d’extrait ONU WPP 18+ daté. `H_REF=1e6` inchangé. |
+| Q-HBP-ancres | ⏳ | 4,15e9 / 8,3e9 **provisoires** |
+
+Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economics de cette branche), Q-stripe-gha (secret `KEY_API_STRIPE_ACTION` pour GHA, absent de ce runtime).
+

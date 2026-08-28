@@ -210,7 +210,7 @@ class ProtocolEngine:
                 )
             )
 
-        h_adult = self.h_adult()
+        h_adult = float(self.h_adult())
         phases["h_adult"] = {
             "count": h_adult,
             "source": "HumanRegistry.verified_adult_count",
