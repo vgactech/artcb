@@ -118,10 +118,13 @@ class TestOwnerDecay:
 
     def test_strictly_decreasing_after_two(self):
         previous = owner_share(2)
-        for n in (3, 4, 5, 10, 100, 1_000, 10_000, 100_000):
+        for n in (3, 4, 5, 10, 50, 100, 200):
             current = owner_share(n)
             assert current < previous
             previous = current
+        # Fleet curve hits the 10% floor well before n=1000 (162 k from P(3)=49%).
+        assert owner_share(10_000) == pytest.approx(0.10)
+        assert owner_share(100_000) == pytest.approx(0.10)
 
     def test_floor_is_ten_percent(self):
         assert owner_share(10**12) == pytest.approx(0.10, abs=1e-4)

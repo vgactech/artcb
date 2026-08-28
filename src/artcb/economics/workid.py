@@ -113,6 +113,7 @@ class WorkRegistry:
             out.append(self.transition(wid, WorkStatus.REQUEUED))
         return out
 
+    @staticmethod
     def pol_from_useful_work(*, compression: float, validation: float, retrieval: float, llm_tokens: int = 0) -> float:
         """LLM token count is a cost, never sufficient proof (user GO 162)."""
         del llm_tokens  # explicitly unused as PoL
