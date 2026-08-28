@@ -1,0 +1,443 @@
+2026-08-28 22:08:28,432 sim164 INFO sim tag=e2e165 security=ON min_block_interval_sec=0 (0 = sequential sim, not production)
+liboqs-python faulthandler is disabled
+2026-08-28 22:08:28,463 oqs.oqs INFO liboqs-python faulthandler is disabled
+2026-08-28 22:08:28,499 artcb.crypto.pqc DEBUG Generated ML-DSA-65 keypair (pub=1952 bytes)
+2026-08-28 22:08:28,499 artcb.chain.manager WARNING Chain PQC key generation skipped: ARTCB_WALLET_PASSPHRASE is not set — cannot encrypt or decrypt wallet private keys. Set a strong passphrase in .env (never commit it).
+2026-08-28 22:08:28,606 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:28,606 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:28,607 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:28,607 src.artcb.security.anti_sybil INFO AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=0s ai_bypass=False study_mode=False
+2026-08-28 22:08:28,607 src.artcb.security.slashing INFO SlashingManager initialized: 0 events, 0 blacklisted addresses
+2026-08-28 22:08:28,607 artcb.chain.manager INFO Security modules enabled (Anti-Sybil + Slashing)
+2026-08-28 22:08:28,607 artcb.wallet.manager DEBUG WalletManager initialized wallet_dir=data/wallets
+2026-08-28 22:08:28,608 artcb.economics.demographic DEBUG demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+2026-08-28 22:08:28,608 artcb.mining.protocol INFO Security modules ENABLED (Anti-Sybil + Slashing)
+2026-08-28 22:08:28,608 artcb.chain.manager DEBUG chain identity bound humans=True machines=True work=True
+2026-08-28 22:08:28,608 sim164 INFO Security modules ENABLED — Anti-Sybil + Slashing attached to ProtocolEngine
+2026-08-28 22:08:28,608 artcb.economics.identity DEBUG bootstrap creator id=H-A addr=A
+2026-08-28 22:08:28,609 artcb.economics.identity DEBUG creator-direct validated H-B
+2026-08-28 22:08:28,610 artcb.economics.identity DEBUG creator-direct validated H-C
+2026-08-28 22:08:28,610 artcb.economics.identity DEBUG creator-direct validated H-D
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG creator-direct validated H-E
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG registered DeviceID=DEV-A human=H-A
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG bound WalletID=WLT-H-A addr=A human=H-A device=DEV-A
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG registered DeviceID=DEV-B human=H-B
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG bound WalletID=WLT-H-B addr=B human=H-B device=DEV-B
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG registered DeviceID=DEV-C human=H-C
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG bound WalletID=WLT-H-C addr=C human=H-C device=DEV-C
+2026-08-28 22:08:28,611 artcb.economics.identity DEBUG registered DeviceID=DEV-D human=H-D
+2026-08-28 22:08:28,612 artcb.economics.identity DEBUG bound WalletID=WLT-H-D addr=D human=H-D device=DEV-D
+2026-08-28 22:08:28,612 artcb.economics.identity DEBUG registered DeviceID=DEV-E human=H-E
+2026-08-28 22:08:28,612 artcb.economics.identity DEBUG bound WalletID=WLT-H-E addr=E human=H-E device=DEV-E
+2026-08-28 22:08:28,612 artcb.economics.human_binding DEBUG registered machine id=A:M1 owner=A index=1 first=True human=None N_econ=1
+2026-08-28 22:08:28,613 artcb.economics.human_binding DEBUG registered machine id=A:M2 owner=A index=2 first=False human=B N_econ=2
+2026-08-28 22:08:28,613 artcb.economics.human_binding DEBUG registered machine id=A:M3 owner=A index=3 first=False human=C N_econ=3
+2026-08-28 22:08:28,613 artcb.economics.human_binding DEBUG registered machine id=A:M4 owner=A index=4 first=False human=D N_econ=4
+2026-08-28 22:08:28,613 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:28,614 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=4 ignored for M1)
+2026-08-28 22:08:28,614 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 22:08:28,614 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/01_identity.json
+2026-08-28 22:08:28,614 artcb.economics.human_binding DEBUG registered machine id=A:M5 owner=A index=5 first=False human=E N_econ=5
+2026-08-28 22:08:28,614 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,614 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/02_m5_p_n.json
+2026-08-28 22:08:28,615 artcb.economics.workid DEBUG WorkID W-small -> EXECUTING score=0.0
+2026-08-28 22:08:28,615 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:28,615 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:28,615 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2100000000000000 -> 5000000000
+2026-08-28 22:08:28,615 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:28,615 artcb.economics.partition_map DEBUG partition work=W-small epoch=0 N=5 -> 0
+2026-08-28 22:08:28,615 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:28,615 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:28,615 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:28,615 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:28,615 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:28,615 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:28,716 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:28,716 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:28,716 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:28,716 src.artcb.security.anti_sybil DEBUG Block 0 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:28,716 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:28,716 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:28,716 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:28,716 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:28,716 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:28,716 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:28,716 artcb.chain.ffi DEBUG Loaded C library path=/workspace/src/c/libartcb_chain.so v2=True
+2026-08-28 22:08:28,716 artcb.chain.manager DEBUG native C EconomicRoot v2 index=0 root=902627f46fa55647
+2026-08-28 22:08:28,716 artcb.chain.ffi DEBUG C v2 hash index=0 eco=902627f46fa5 -> 739798d51dc20abb
+2026-08-28 22:08:28,741 artcb.economics.workid DEBUG WorkID W-small -> SETTLED score=0.0
+2026-08-28 22:08:28,741 src.artcb.security.anti_sybil DEBUG Block 0 recorded in reputation for 1 contributors
+2026-08-28 22:08:28,741 artcb.chain.manager DEBUG Appended block index=0 hash=739798d51dc20abbfbf9fc955c66496d34a1ece4cacad7ab3c09c86c121d8b29 sha3=b46ed01de3702b4a reward=5000000000 contributors=1 hybrid=True
+2026-08-28 22:08:28,741 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=2fab7a3be47f7e5b
+2026-08-28 22:08:28,741 artcb.mining.protocol DEBUG protocol block=0 hash=739798d51dc20abb H_adult=5.0 paid=5000000000 supply=5000000000 v=2
+2026-08-28 22:08:28,742 artcb.economics.workid DEBUG WorkID W-big -> EXECUTING score=0.0
+2026-08-28 22:08:28,742 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:28,742 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:28,742 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099995000000000 -> 5000000000
+2026-08-28 22:08:28,742 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:28,742 artcb.economics.partition_map DEBUG partition work=W-big epoch=0 N=5 -> 1
+2026-08-28 22:08:28,742 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:28,742 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:28,742 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:28,742 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:28,742 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,742 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,742 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,743 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+2026-08-28 22:08:28,743 artcb.economics.economic_root DEBUG EconomicRoot=09db4b076db39b98 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:28,843 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:28,843 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:28,843 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:28,843 src.artcb.security.anti_sybil DEBUG Block 1 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:28,843 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:28,844 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:28,844 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:28,844 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:28,844 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,844 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,844 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,844 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+2026-08-28 22:08:28,844 artcb.economics.economic_root DEBUG EconomicRoot=09db4b076db39b98 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:28,844 artcb.chain.manager DEBUG native C EconomicRoot v2 index=1 root=09db4b076db39b98
+2026-08-28 22:08:28,844 artcb.chain.ffi DEBUG C v2 hash index=1 eco=09db4b076db3 -> 50b178cee3281c06
+2026-08-28 22:08:28,868 artcb.economics.workid DEBUG WorkID W-big -> SETTLED score=0.0
+2026-08-28 22:08:28,869 src.artcb.security.anti_sybil DEBUG Block 1 recorded in reputation for 4 contributors
+2026-08-28 22:08:28,869 artcb.chain.manager DEBUG Appended block index=1 hash=50b178cee3281c060fbc86a3b005221ec3cc7385558c88195969cf9aa8c6af15 sha3=4c989363ef2546b3 reward=5000000000 contributors=4 hybrid=True
+2026-08-28 22:08:28,869 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=f855c18da1523fbe
+2026-08-28 22:08:28,869 artcb.mining.protocol DEBUG protocol block=1 hash=50b178cee3281c06 H_adult=5.0 paid=5000000000 supply=10000000000 v=2
+2026-08-28 22:08:28,869 artcb.economics.workid DEBUG WorkID W-par-1 -> EXECUTING score=0.0
+2026-08-28 22:08:28,870 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:28,870 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:28,870 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099990000000000 -> 5000000000
+2026-08-28 22:08:28,870 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:28,870 artcb.economics.partition_map DEBUG partition work=W-par-1 epoch=1 N=5 -> 0
+2026-08-28 22:08:28,870 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:28,870 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:28,870 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:28,870 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:28,870 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:28,870 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:28,971 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:28,971 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:28,971 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:28,971 src.artcb.security.anti_sybil DEBUG Block 2 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:28,971 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:28,971 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:28,971 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:28,971 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:28,971 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:28,971 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:28,971 artcb.chain.manager DEBUG native C EconomicRoot v2 index=2 root=902627f46fa55647
+2026-08-28 22:08:28,971 artcb.chain.ffi DEBUG C v2 hash index=2 eco=902627f46fa5 -> 23f86c49555da9cf
+2026-08-28 22:08:28,995 artcb.economics.workid DEBUG WorkID W-par-1 -> SETTLED score=0.0
+2026-08-28 22:08:28,995 src.artcb.security.anti_sybil DEBUG Block 2 recorded in reputation for 1 contributors
+2026-08-28 22:08:28,995 artcb.chain.manager DEBUG Appended block index=2 hash=23f86c49555da9cfdef8571af05c4eb5b35576722cb6f121557d4de97898b2c6 sha3=e82255feaa5b4fd3 reward=5000000000 contributors=1 hybrid=True
+2026-08-28 22:08:28,996 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=a606449cb9b0b5b2
+2026-08-28 22:08:28,996 artcb.mining.protocol DEBUG protocol block=2 hash=23f86c49555da9cf H_adult=5.0 paid=5000000000 supply=15000000000 v=2
+2026-08-28 22:08:28,997 artcb.economics.workid DEBUG WorkID W-par-2 -> EXECUTING score=0.0
+2026-08-28 22:08:28,997 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:28,997 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:28,997 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099985000000000 -> 5000000000
+2026-08-28 22:08:28,997 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:28,997 artcb.economics.partition_map DEBUG partition work=W-par-2 epoch=2 N=5 -> 2
+2026-08-28 22:08:28,997 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:28,997 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:28,997 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:28,997 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:28,997 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=4
+2026-08-28 22:08:28,997 artcb.economics.economic_root DEBUG EconomicRoot=29827cbfa33132ef keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,098 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,098 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,098 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,098 src.artcb.security.anti_sybil DEBUG Block 3 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,098 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,098 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,098 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,098 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:29,098 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=4
+2026-08-28 22:08:29,098 artcb.economics.economic_root DEBUG EconomicRoot=29827cbfa33132ef keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,098 artcb.chain.manager DEBUG native C EconomicRoot v2 index=3 root=29827cbfa33132ef
+2026-08-28 22:08:29,098 artcb.chain.ffi DEBUG C v2 hash index=3 eco=29827cbfa331 -> 92bae05e00c60e66
+2026-08-28 22:08:29,122 artcb.economics.workid DEBUG WorkID W-par-2 -> SETTLED score=0.0
+2026-08-28 22:08:29,123 src.artcb.security.anti_sybil DEBUG Block 3 recorded in reputation for 1 contributors
+2026-08-28 22:08:29,123 artcb.chain.manager DEBUG Appended block index=3 hash=92bae05e00c60e6667756e19685359e59219e657053c173d4aa96956a0a37980 sha3=391d5c145e2c7d8b reward=5000000000 contributors=2 hybrid=True
+2026-08-28 22:08:29,123 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=ec1be284ad46e174
+2026-08-28 22:08:29,123 artcb.mining.protocol DEBUG protocol block=3 hash=92bae05e00c60e66 H_adult=5.0 paid=5000000000 supply=20000000000 v=2
+2026-08-28 22:08:29,124 artcb.economics.workid DEBUG WorkID W-more-pb -> EXECUTING score=0.0
+2026-08-28 22:08:29,124 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:29,124 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:29,124 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099980000000000 -> 5000000000
+2026-08-28 22:08:29,124 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:29,125 artcb.economics.partition_map DEBUG partition work=W-more-pb epoch=3 N=8 -> 0
+2026-08-28 22:08:29,125 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 8 preblocks total=5000000000
+2026-08-28 22:08:29,125 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,125 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,125 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,125 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:29,125 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+2026-08-28 22:08:29,125 artcb.economics.economic_root DEBUG EconomicRoot=2729e9ed7df75e63 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,226 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,226 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,226 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,226 src.artcb.security.anti_sybil DEBUG Block 4 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,226 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,226 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,226 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,226 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,226 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:29,226 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+2026-08-28 22:08:29,226 artcb.economics.economic_root DEBUG EconomicRoot=2729e9ed7df75e63 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,226 artcb.chain.manager DEBUG native C EconomicRoot v2 index=4 root=2729e9ed7df75e63
+2026-08-28 22:08:29,226 artcb.chain.ffi DEBUG C v2 hash index=4 eco=2729e9ed7df7 -> dc924275e053403c
+2026-08-28 22:08:29,252 artcb.economics.workid DEBUG WorkID W-more-pb -> SETTLED score=0.0
+2026-08-28 22:08:29,252 src.artcb.security.anti_sybil DEBUG Block 4 recorded in reputation for 2 contributors
+2026-08-28 22:08:29,252 artcb.chain.manager DEBUG Appended block index=4 hash=dc924275e053403c93b05aef967a12d88b26ce5b659a7b5d6f0bae4c0f759e4f sha3=f765ad836d8e92e0 reward=5000000000 contributors=2 hybrid=True
+2026-08-28 22:08:29,252 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=49d5e09631947190
+2026-08-28 22:08:29,252 artcb.mining.protocol DEBUG protocol block=4 hash=dc924275e053403c H_adult=5.0 paid=5000000000 supply=25000000000 v=2
+2026-08-28 22:08:29,253 artcb.economics.workid DEBUG WorkID W-partial -> EXECUTING score=0.0
+2026-08-28 22:08:29,253 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:29,253 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:29,253 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099975000000000 -> 5000000000
+2026-08-28 22:08:29,253 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:29,254 artcb.economics.partition_map DEBUG partition work=W-partial epoch=4 N=5 -> 3
+2026-08-28 22:08:29,254 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:29,254 artcb.economics.workid DEBUG WorkID W-partial:requeue:pb3 -> REQUEUED score=0.0
+2026-08-28 22:08:29,254 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,254 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 3599999998
+2026-08-28 22:08:29,254 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,254 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:29,254 artcb.economics.settlement DEBUG settled R=4000000000 H_adult=5.0 HBP=0.100000 work=3599999998 provider=0 worker=3599999998 lines=5
+2026-08-28 22:08:29,254 artcb.economics.economic_root DEBUG EconomicRoot=94cfbd0d8c917ab1 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,355 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,355 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,355 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,355 src.artcb.security.anti_sybil DEBUG Block 5 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,355 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,356 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,356 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 3599999998
+2026-08-28 22:08:29,356 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,356 artcb.economics.owner_decay DEBUG fleet_owner_share N=5 P=0.470743750000 k=0.025317807984
+2026-08-28 22:08:29,356 artcb.economics.settlement DEBUG settled R=4000000000 H_adult=5.0 HBP=0.100000 work=3599999998 provider=0 worker=3599999998 lines=5
+2026-08-28 22:08:29,356 artcb.economics.economic_root DEBUG EconomicRoot=94cfbd0d8c917ab1 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,356 artcb.chain.manager DEBUG native C EconomicRoot v2 index=5 root=94cfbd0d8c917ab1
+2026-08-28 22:08:29,356 artcb.chain.ffi DEBUG C v2 hash index=5 eco=94cfbd0d8c91 -> b14ea3a12176da87
+2026-08-28 22:08:29,380 artcb.economics.workid DEBUG WorkID W-partial -> SETTLED score=0.0
+2026-08-28 22:08:29,380 src.artcb.security.anti_sybil DEBUG Block 5 recorded in reputation for 2 contributors
+2026-08-28 22:08:29,380 artcb.chain.manager DEBUG Appended block index=5 hash=b14ea3a12176da87717b2760cdd8a2b9a1ad7c58fe633e12b36004526681ef6e sha3=10ba2a08e39a298e reward=4000000000 contributors=2 hybrid=True
+2026-08-28 22:08:29,381 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=4ee13cf39b88b3d0
+2026-08-28 22:08:29,381 artcb.mining.protocol DEBUG protocol block=5 hash=b14ea3a12176da87 H_adult=5.0 paid=4000000000 supply=29000000000 v=2
+2026-08-28 22:08:29,381 artcb.economics.workid DEBUG WorkID W-priority -> EXECUTING score=0.0
+2026-08-28 22:08:29,381 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:29,382 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:29,382 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099971000000000 -> 5000000000
+2026-08-28 22:08:29,382 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:29,382 artcb.economics.partition_map DEBUG partition work=W-priority epoch=5 N=5 -> 2
+2026-08-28 22:08:29,382 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:29,382 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,382 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,382 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,382 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,382 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,483 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,483 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,483 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,483 src.artcb.security.anti_sybil DEBUG Block 6 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,483 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,483 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,483 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,483 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,484 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,484 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,484 artcb.chain.manager DEBUG native C EconomicRoot v2 index=6 root=902627f46fa55647
+2026-08-28 22:08:29,484 artcb.chain.ffi DEBUG C v2 hash index=6 eco=902627f46fa5 -> 3d21a426416d3715
+2026-08-28 22:08:29,508 artcb.economics.workid DEBUG WorkID W-priority -> SETTLED score=0.0
+2026-08-28 22:08:29,509 src.artcb.security.anti_sybil DEBUG Block 6 recorded in reputation for 1 contributors
+2026-08-28 22:08:29,509 artcb.chain.manager DEBUG Appended block index=6 hash=3d21a426416d37159ddf21f1119817ea5f072685bb2c9cf68b2561030c20fce7 sha3=c75af5e89154ab78 reward=5000000000 contributors=1 hybrid=True
+2026-08-28 22:08:29,509 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=d16c78048d2973a3
+2026-08-28 22:08:29,509 artcb.mining.protocol DEBUG protocol block=6 hash=3d21a426416d3715 H_adult=5.0 paid=5000000000 supply=34000000000 v=2
+2026-08-28 22:08:29,510 artcb.economics.workid DEBUG WorkID W-providers -> EXECUTING score=0.0
+2026-08-28 22:08:29,510 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:29,510 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:29,510 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099966000000000 -> 5000000000
+2026-08-28 22:08:29,510 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:29,511 artcb.economics.partition_map DEBUG partition work=W-providers epoch=6 N=5 -> 4
+2026-08-28 22:08:29,511 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:29,511 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,511 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,511 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=4
+2026-08-28 22:08:29,511 artcb.economics.economic_root DEBUG EconomicRoot=050e6c45a5cdd6d3 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,511 artcb.mining.protocol DEBUG provider contributor JP1 score=1.0
+2026-08-28 22:08:29,511 artcb.mining.protocol DEBUG provider contributor JP2 score=1.0
+2026-08-28 22:08:29,612 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,612 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=1 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,612 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=1 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,612 src.artcb.security.anti_sybil DEBUG Block 7 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,612 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,612 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,612 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,612 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=4
+2026-08-28 22:08:29,612 artcb.economics.economic_root DEBUG EconomicRoot=050e6c45a5cdd6d3 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,612 artcb.chain.manager DEBUG native C EconomicRoot v2 index=7 root=050e6c45a5cdd6d3
+2026-08-28 22:08:29,612 artcb.chain.ffi DEBUG C v2 hash index=7 eco=050e6c45a5cd -> ed8da611ac40e25f
+2026-08-28 22:08:29,636 artcb.economics.workid DEBUG WorkID W-providers -> SETTLED score=0.0
+2026-08-28 22:08:29,637 src.artcb.security.anti_sybil DEBUG Block 7 recorded in reputation for 3 contributors
+2026-08-28 22:08:29,637 artcb.chain.manager DEBUG Appended block index=7 hash=ed8da611ac40e25f7a4f8f42a83d6eb2505307bd92bfbc2d1a17ea797c31b86b sha3=c9b9b795a67ca4f5 reward=5000000000 contributors=3 hybrid=True
+2026-08-28 22:08:29,637 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=b3ccb718b8059462
+2026-08-28 22:08:29,637 artcb.mining.protocol DEBUG protocol block=7 hash=ed8da611ac40e25f H_adult=5.0 paid=5000000000 supply=39000000000 v=2
+2026-08-28 22:08:29,637 artcb.payments.stripe_jobs WARNING Stripe JobPayment failed — consensus continues (JobPayment ≠ mint): no Stripe secret in env (KEY_API_STRIPE_ACTION / STRIPE_SECRET_KEY / STRIPE_API_KEY)
+2026-08-28 22:08:29,637 artcb.mining.protocol DEBUG stripe attempt_live ok=False consensus_blocked=False
+2026-08-28 22:08:29,638 artcb.economics.workid DEBUG WorkID W-stripe-down -> EXECUTING score=0.0
+2026-08-28 22:08:29,638 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:29,638 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:29,638 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099961000000000 -> 5000000000
+2026-08-28 22:08:29,638 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-28 22:08:29,639 artcb.economics.partition_map DEBUG partition work=W-stripe-down epoch=7 N=5 -> 3
+2026-08-28 22:08:29,639 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:29,639 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,639 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,639 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,639 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,639 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,740 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,740 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,740 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,740 src.artcb.security.anti_sybil DEBUG Block 8 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,740 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,740 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,740 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,740 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,740 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,740 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,740 artcb.chain.manager DEBUG native C EconomicRoot v2 index=8 root=902627f46fa55647
+2026-08-28 22:08:29,740 artcb.chain.ffi DEBUG C v2 hash index=8 eco=902627f46fa5 -> 0a54ec5ddf94728e
+2026-08-28 22:08:29,765 artcb.economics.workid DEBUG WorkID W-stripe-down -> SETTLED score=0.0
+2026-08-28 22:08:29,766 src.artcb.security.anti_sybil DEBUG Block 8 recorded in reputation for 1 contributors
+2026-08-28 22:08:29,766 artcb.chain.manager DEBUG Appended block index=8 hash=0a54ec5ddf94728e9b98ad9570a07dac5ccc9634703fd5d7fbe0773a16520799 sha3=68a19083241b4b0b reward=5000000000 contributors=1 hybrid=True
+2026-08-28 22:08:29,766 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=b9627e6ea3520a47
+2026-08-28 22:08:29,766 artcb.mining.protocol DEBUG protocol block=8 hash=0a54ec5ddf94728e H_adult=5.0 paid=5000000000 supply=44000000000 v=2
+2026-08-28 22:08:29,766 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/03_jobs.json
+2026-08-28 22:08:29,766 artcb.economics.job_provider DEBUG job submitted id=job_1f7765a073964a7a provider=A
+2026-08-28 22:08:29,766 artcb.economics.job_provider DEBUG job job_1f7765a073964a7a cancelled
+2026-08-28 22:08:29,767 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/04_cancelled.json
+2026-08-28 22:08:29,767 artcb.economics.workid DEBUG WorkID W-load-faible -> EXECUTING score=0.0
+2026-08-28 22:08:29,768 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:29,768 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:29,768 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099956000000000 -> 5000000000
+2026-08-28 22:08:29,768 artcb.economics.network_capacity DEBUG N_max=12 cpu=16 ram=16 net=1000.0 val=16.0
+2026-08-28 22:08:29,768 artcb.economics.partition_map DEBUG partition work=W-load-faible epoch=8 N=5 -> 4
+2026-08-28 22:08:29,768 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-28 22:08:29,768 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,768 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,768 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,769 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,769 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,869 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,869 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,869 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,870 src.artcb.security.anti_sybil DEBUG Block 9 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,870 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,870 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,870 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,870 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,870 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,870 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,870 artcb.chain.manager DEBUG native C EconomicRoot v2 index=9 root=902627f46fa55647
+2026-08-28 22:08:29,870 artcb.chain.ffi DEBUG C v2 hash index=9 eco=902627f46fa5 -> 776182aaa096dbeb
+2026-08-28 22:08:29,895 artcb.economics.workid DEBUG WorkID W-load-faible -> SETTLED score=0.0
+2026-08-28 22:08:29,895 src.artcb.security.anti_sybil DEBUG Block 9 recorded in reputation for 1 contributors
+2026-08-28 22:08:29,895 artcb.chain.manager DEBUG Appended block index=9 hash=776182aaa096dbeb4c497882473e8f763ee248830c0cd1c5aef2e3bcb87f4b7e sha3=759e73456cb45d27 reward=5000000000 contributors=1 hybrid=True
+2026-08-28 22:08:29,895 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=a45c687fe89d5b4f
+2026-08-28 22:08:29,896 artcb.mining.protocol DEBUG protocol block=9 hash=776182aaa096dbeb H_adult=5.0 paid=5000000000 supply=49000000000 v=2
+2026-08-28 22:08:29,896 artcb.economics.workid DEBUG WorkID W-load-moyenne -> EXECUTING score=0.0
+2026-08-28 22:08:29,897 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:29,897 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:29,897 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099951000000000 -> 5000000000
+2026-08-28 22:08:29,897 artcb.economics.network_capacity DEBUG N_max=1 cpu=8 ram=8 net=20.0 val=2.6402640264026402
+2026-08-28 22:08:29,897 artcb.economics.partition_map DEBUG partition work=W-load-moyenne epoch=9 N=1 -> 0
+2026-08-28 22:08:29,897 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 1 preblocks total=5000000000
+2026-08-28 22:08:29,898 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,898 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,898 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,898 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,898 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,999 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:29,999 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:29,999 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:29,999 src.artcb.security.anti_sybil DEBUG Block 10 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:29,999 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:29,999 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:29,999 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:29,999 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:29,999 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:29,999 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:29,999 artcb.chain.manager DEBUG native C EconomicRoot v2 index=10 root=902627f46fa55647
+2026-08-28 22:08:29,999 artcb.chain.ffi DEBUG C v2 hash index=10 eco=902627f46fa5 -> 1b8db02798c4eb35
+2026-08-28 22:08:30,024 artcb.economics.workid DEBUG WorkID W-load-moyenne -> SETTLED score=0.0
+2026-08-28 22:08:30,025 src.artcb.security.anti_sybil DEBUG Block 10 recorded in reputation for 1 contributors
+2026-08-28 22:08:30,025 artcb.chain.manager DEBUG Appended block index=10 hash=1b8db02798c4eb35c7a2f42d6a2292f2a6851cd28cb7369a13088cca2f35e1e6 sha3=abd5ab1d9d0a2a22 reward=5000000000 contributors=1 hybrid=True
+2026-08-28 22:08:30,025 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=12fc839f64fc7256
+2026-08-28 22:08:30,025 artcb.mining.protocol DEBUG protocol block=10 hash=1b8db02798c4eb35 H_adult=5.0 paid=5000000000 supply=54000000000 v=2
+2026-08-28 22:08:30,025 artcb.economics.workid DEBUG WorkID W-load-forte -> EXECUTING score=0.0
+2026-08-28 22:08:30,026 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:30,026 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-28 22:08:30,026 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099946000000000 -> 5000000000
+2026-08-28 22:08:30,026 artcb.economics.network_capacity DEBUG N_max=1 cpu=2 ram=2 net=0.25 val=0.07936507936507936
+2026-08-28 22:08:30,027 artcb.economics.partition_map DEBUG partition work=W-load-forte epoch=10 N=1 -> 0
+2026-08-28 22:08:30,027 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 1 preblocks total=5000000000
+2026-08-28 22:08:30,027 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:30,027 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:30,027 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:30,027 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:30,027 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:30,128 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-28 22:08:30,128 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-28 22:08:30,128 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-28 22:08:30,128 src.artcb.security.anti_sybil DEBUG Block 11 passed anti-Sybil validation (source=mining)
+2026-08-28 22:08:30,128 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-28 22:08:30,128 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:30,128 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:30,128 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=5 ignored for M1)
+2026-08-28 22:08:30,128 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=2
+2026-08-28 22:08:30,128 artcb.economics.economic_root DEBUG EconomicRoot=902627f46fa55647 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:30,128 artcb.chain.manager DEBUG native C EconomicRoot v2 index=11 root=902627f46fa55647
+2026-08-28 22:08:30,128 artcb.chain.ffi DEBUG C v2 hash index=11 eco=902627f46fa5 -> 845edd716638dc04
+2026-08-28 22:08:30,153 artcb.economics.workid DEBUG WorkID W-load-forte -> SETTLED score=0.0
+2026-08-28 22:08:30,153 src.artcb.security.anti_sybil DEBUG Block 11 recorded in reputation for 1 contributors
+2026-08-28 22:08:30,153 artcb.chain.manager DEBUG Appended block index=11 hash=845edd716638dc04a18620684cfac97275edcd2d5778fb11e6cd9ec4f102fcba sha3=dace88bb7409d5f6 reward=5000000000 contributors=1 hybrid=True
+2026-08-28 22:08:30,153 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=c1f2c022d9d39a27
+2026-08-28 22:08:30,153 artcb.mining.protocol DEBUG protocol block=11 hash=845edd716638dc04 H_adult=5.0 paid=5000000000 supply=59000000000 v=2
+2026-08-28 22:08:30,154 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/05_load.json
+2026-08-28 22:08:30,154 artcb.economics.human_binding DEBUG registered machine id=Z:M1 owner=Z index=1 first=True human=None N_econ=1
+2026-08-28 22:08:30,155 artcb.economics.human_binding DEBUG offline A:M2 N_econ unchanged=5
+2026-08-28 22:08:30,155 artcb.economics.human_binding DEBUG transferred out A:M2 from A
+2026-08-28 22:08:30,156 artcb.economics.human_binding DEBUG registered machine id=A:M2:to:E owner=E index=1 first=True human=None N_econ=1
+2026-08-28 22:08:30,156 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-28 22:08:30,156 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:30,156 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-28 22:08:30,156 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-28 22:08:30,156 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=2 ignored for M1)
+2026-08-28 22:08:30,156 artcb.economics.owner_decay DEBUG fleet_owner_share N=2 P=0.500000000000 k=0.025317807984
+2026-08-28 22:08:30,156 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=5
+2026-08-28 22:08:30,156 artcb.economics.economic_root DEBUG EconomicRoot=3491a7262ad4c221 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:30,156 artcb.economics.economic_root DEBUG EconomicRoot=61519c9e271bd9f9 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:30,157 artcb.economics.economic_root DEBUG EconomicRoot=3491a7262ad4c221 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:30,157 artcb.economics.economic_root DEBUG EconomicRoot=61519c9e271bd9f9 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-28 22:08:30,157 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/06_attacks.json
+2026-08-28 22:08:30,181 artcb.economics.oracle DEBUG USD→ARTCB oracle NOT live (forced stub)
+2026-08-28 22:08:30,181 artcb.economics.fees DEBUG fee quote usd=0.000311000 congestion=1000.0 cap=0.000311
+2026-08-28 22:08:30,181 artcb.economics.oracle DEBUG USD→ARTCB oracle NOT live (forced stub)
+2026-08-28 22:08:30,181 artcb.economics.fees DEBUG oracle NOT live — fee satoshi unavailable (price not invented)
+2026-08-28 22:08:30,181 artcb.economics.fees DEBUG fee quote usd=0.000001000 congestion=0.0 cap=0.000311
+2026-08-28 22:08:30,181 artcb.economics.fees DEBUG usd=0.000001000 price=1.0 -> satoshi=100
+2026-08-28 22:08:30,181 artcb.economics.fees DEBUG fee satoshi=100 usd=0.000001000 price=1.0
+2026-08-28 22:08:30,181 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/07_oracle.json
+2026-08-28 22:08:30,181 artcb.payments.stripe_jobs DEBUG stripe webhook duplicate event_id=evt_sim164
+2026-08-28 22:08:30,181 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/08_stripe.json
+2026-08-28 22:08:30,228 sim164 INFO PQC native ML-DSA-65 ENABLED
+2026-08-28 22:08:30,228 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/11_pqc.json
+2026-08-28 22:08:30,229 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/10_wallet_balances.json
+2026-08-28 22:08:30,229 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-28 22:08:30,230 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/00_manifest.json
+2026-08-28 22:08:30,230 sim164 DEBUG wrote /workspace/simulations/20260828T220828Z_e2e165/out/09_summary.json
+SIM164_DIR=/workspace/simulations/20260828T220828Z_e2e165
+FAILURES=[]

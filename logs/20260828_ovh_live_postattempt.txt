@@ -1,0 +1,23 @@
+=== UTC 2026-08-28T22:09:02Z ===
+=== BRANCH_HEAD 77a5560dc92e1cbab911a64f3d1dc722c751797d ===
+=== DEPLOY: SSH Permission denied — live box unchanged ===
+----- GET http://152.228.144.34:8000/health -----
+{"status":"healthy","service":"ARTCB API","version":"0.3.0","bootstrap_mode":false,"pqc":{"available":true,"algorithm":"ML-DSA-65","action_required":null}}
+HTTP_CODE=200
+
+----- GET http://152.228.144.34:8000/api/v1/health -----
+{"status":"ok","debug":true,"llm_enabled":false,"bob_configured":true,"demo_book":"data/fixtures/wailly_le_roi_de_l_inconnu.pdf","chain":{"available":true,"valid":true,"message":"chain file not found (empty ok)","block_count":0,"public_key":"u3WrGfKSYatkntc6ctlZqDyHI/98yV2PfJ8FTC/IXSU=","hybrid_signatures":true,"pqc_algorithm":"ML-DSA-65"}}
+HTTP_CODE=200
+
+----- GET http://152.228.144.34:8000/api/v1/economics/params -----
+{"detail":"Not Found"}
+HTTP_CODE=404
+
+----- GET http://152.228.144.34:8000/api/v1/economics/h-adult -----
+{"detail":"Not Found"}
+HTTP_CODE=404
+
+----- GET http://152.228.144.34:8000/api/v1/mining/protocol/status -----
+{"detail":"Not Found"}
+HTTP_CODE=404
+

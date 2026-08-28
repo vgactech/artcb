@@ -1,0 +1,8 @@
+{
+  "simulation": "e2e165",
+  "utc": "20260828T220852Z",
+  "failures": [],
+  "dir": "/workspace/simulations/20260828T220852Z_e2e165",
+  "security_modules": "ENABLED",
+  "hmax_frozen": false
+}

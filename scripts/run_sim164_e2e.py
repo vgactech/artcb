@@ -36,6 +36,8 @@ logger = logging.getLogger("sim164")
 
 SIM_TAG = os.getenv("ARTCB_SIM_TAG", "e2e164")
 os.environ.setdefault("ARTCB_MIN_BLOCK_INTERVAL_SEC", "0")
+# Pytest monkeypatch can leak this into a reused shell; live probes are the default for e2e.
+os.environ.pop("ARTCB_ORACLE_FORCE_STUB", None)
 
 
 def dump(path: Path, payload: dict) -> None:

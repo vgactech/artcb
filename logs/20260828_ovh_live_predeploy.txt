@@ -1,0 +1,34 @@
+=== UTC 2026-08-28T21:55:47Z ===
+=== HEAD 8e783631571cd853321663a43b9044123ab84d5b ===
+----- GET http://152.228.144.34:8000/health -----
+{"status":"healthy","service":"ARTCB API","version":"0.3.0","bootstrap_mode":false,"pqc":{"available":true,"algorithm":"ML-DSA-65","action_required":null}}
+HTTP_CODE=200 TIME=0.178325
+
+----- GET http://152.228.144.34:8000/api/v1/health -----
+{"status":"ok","debug":true,"llm_enabled":false,"bob_configured":true,"demo_book":"data/fixtures/wailly_le_roi_de_l_inconnu.pdf","chain":{"available":true,"valid":true,"message":"chain file not found (empty ok)","block_count":0,"public_key":"u3WrGfKSYatkntc6ctlZqDyHI/98yV2PfJ8FTC/IXSU=","hybrid_signatures":true,"pqc_algorithm":"ML-DSA-65"}}
+HTTP_CODE=200 TIME=0.172246
+
+----- GET http://152.228.144.34:8000/api/v1/economics/params -----
+{"detail":"Not Found"}
+HTTP_CODE=404 TIME=0.169047
+
+----- GET http://152.228.144.34:8000/api/v1/economics/h-adult -----
+{"detail":"Not Found"}
+HTTP_CODE=404 TIME=0.166035
+
+----- GET http://152.228.144.34:8000/api/v1/economics/oracle -----
+{"detail":"Not Found"}
+HTTP_CODE=404 TIME=0.167611
+
+----- GET http://152.228.144.34:8000/api/v1/mining/protocol -----
+{"detail":"Not Found"}
+HTTP_CODE=404 TIME=0.167918
+
+----- GET http://152.228.144.34:8000/api/v1/mining/protocol/status -----
+{"detail":"Not Found"}
+HTTP_CODE=404 TIME=0.167224
+
+----- GET http://152.228.144.34:8000/api/v1/chain/verify -----
+{"valid":true,"message":"chain file not found (empty ok)","block_count":0,"public_key":"u3WrGfKSYatkntc6ctlZqDyHI/98yV2PfJ8FTC/IXSU=","hybrid_signatures":true,"pqc_algorithm":"ML-DSA-65"}
+HTTP_CODE=200 TIME=0.166804
+

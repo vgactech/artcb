@@ -1156,6 +1156,16 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Tests :** 584 passed / 21 skipped. **≠ protocole complet.**
 - Rapport : `rapports/164_e2e_protocol_stripe_ovh_2026-08-28.md`
 
+## [2026-08-28T22:12:00Z] Rapport 165 — OVH depuis Cursor + sécurité ON + PQC + Provider + Stripe≠consensus
+
+- **Branche seulement.** PR #34 **OPEN**, pas de merge main. Compare : https://github.com/vgactech/artcb/compare/main...cursor/tokenomics-21m-hbp-owner-decay-3fcb
+- **OVH :** push OK ; `deploy_ovh.sh` cette branche → SSH publickey denied ; Doppler 401 ; API OVH Invalid signature. Live `/health` 200 **sans** git_sha ; economics/mining **404**. Box ≠ 165.
+- **Simu canonique :** `simulations/20260828T220852Z_e2e165/` (`failures: []`). Security ENABLED. PQC ML-DSA-65 natif. JP1/JP2 50/50. Stripe down ≠ bloc. Σ wallets = 590 ARTCB ≤ 21 M. `hmax_frozen=false`.
+- **164 non écrasé.** Scaffold multi-nœuds : `20260828T220830Z_multinode165_scaffold` (pas une certification).
+- **Tests :** 606 passed / 9 skipped. Log `logs/20260828_pytest_rapport165_full.txt`.
+- **ManagePullRequest** absent ; body PR #34 non mis à jour (`gh` lecture seule).
+- Rapport : `rapports/165_ovh_branche_cursor_audit_securite_pqc_2026-08-28.md`
+
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 
 - **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.

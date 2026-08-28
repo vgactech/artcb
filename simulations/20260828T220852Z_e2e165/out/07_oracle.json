@@ -1,0 +1,68 @@
+{
+  "snapshot": {
+    "fetched_at": "2026-08-28T22:08:54Z",
+    "source": "coingecko",
+    "timeout_seconds": 8.0,
+    "probe_ok": true,
+    "probe_detail": "ping=True btc=True:77399.0 usdt=True:1.0 artcb_listed=False frankfurter=True:0.85889",
+    "usdt_usd": 1.0,
+    "btc_usd": 77399.0,
+    "usd_eur": 0.85889,
+    "artcb_usd": 0.0,
+    "artcb_usd_source": "unlisted",
+    "live": false,
+    "fallback_used": true,
+    "fallback_reason": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.",
+    "stub_reason": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.",
+    "note": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing."
+  },
+  "fee_unlisted_or_live": {
+    "quoted_usd": 0.000311,
+    "cap_usd": 0.000311,
+    "floor_usd": 1e-06,
+    "congestion": 1000.0,
+    "fee_source": "OpenChainBench Base native transfer p50 2026-08-26",
+    "artcb_usd": 0.0,
+    "fee_satoshi": null,
+    "mints": false,
+    "destination": "UniversalDividendVault",
+    "oracle": {
+      "fetched_at": "2026-08-28T22:08:54Z",
+      "source": "coingecko",
+      "timeout_seconds": 8.0,
+      "probe_ok": true,
+      "probe_detail": "ping=True btc=True:77399.0 usdt=True:1.0 artcb_listed=False frankfurter=True:0.85889",
+      "usdt_usd": 1.0,
+      "btc_usd": 77399.0,
+      "usd_eur": 0.85889,
+      "artcb_usd": 0.0,
+      "artcb_usd_source": "unlisted",
+      "live": false,
+      "fallback_used": true,
+      "fallback_reason": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.",
+      "stub_reason": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing.",
+      "note": "ARTCB has no listed USD market. BTC/USDT probes are liveness-only and are NOT used as the ARTCB price. Pass ARTCB_USD_PRICE or wait for listing."
+    },
+    "live": false
+  },
+  "fee_explicit_price_1usd": {
+    "quoted_usd": 1e-06,
+    "cap_usd": 0.000311,
+    "floor_usd": 1e-06,
+    "congestion": 0.0,
+    "fee_source": "OpenChainBench Base native transfer p50 2026-08-26",
+    "artcb_usd": 1.0,
+    "fee_satoshi": 100,
+    "mints": false,
+    "destination": "UniversalDividendVault",
+    "live": true,
+    "oracle": {
+      "artcb_usd_source": "caller"
+    }
+  },
+  "probes_attempted": true,
+  "invented_price": false,
+  "conversion_refused": true,
+  "fee_satoshi_when_unlisted_is_none": true,
+  "explicit_converts": true
+}

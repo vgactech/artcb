@@ -1,0 +1,211 @@
+{
+  "petit": {
+    "block_index": 0,
+    "hash": "739798d51dc20abbfbf9fc955c66496d34a1ece4cacad7ab3c09c86c121d8b29",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "902627f46fa55647f5e14378dce10eedf6a5fc4149b07a221c120782d03f3709",
+    "by_address": {
+      "A": 5000000000
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 4499999997
+    },
+    "job_payment_phase": null
+  },
+  "gros": {
+    "block_index": 1,
+    "hash": "50b178cee3281c060fbc86a3b005221ec3cc7385558c88195969cf9aa8c6af15",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "09db4b076db39b98520caa84456760de874739b5f27977e9febd0fc16fce1781",
+    "by_address": {
+      "A": 2838760154,
+      "B": 720413282,
+      "C": 720413282,
+      "D": 720413282
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 4499999997
+    },
+    "job_payment_phase": null
+  },
+  "simultane_1": {
+    "block_index": 2,
+    "hash": "23f86c49555da9cfdef8571af05c4eb5b35576722cb6f121557d4de97898b2c6",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "902627f46fa55647f5e14378dce10eedf6a5fc4149b07a221c120782d03f3709",
+    "by_address": {
+      "A": 5000000000
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 4499999997
+    },
+    "job_payment_phase": null
+  },
+  "simultane_2": {
+    "block_index": 3,
+    "hash": "92bae05e00c60e6667756e19685359e59219e657053c173d4aa96956a0a37980",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "29827cbfa33132efaf7bec20df74243e1f2f28959fa578d17e9b78af5ef964d9",
+    "by_address": {
+      "A": 2368346875,
+      "B": 2631653125
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 4499999997
+    },
+    "job_payment_phase": null
+  },
+  "plus_de_pb": {
+    "block_index": 4,
+    "hash": "dc924275e053403c93b05aef967a12d88b26ce5b659a7b5d6f0bae4c0f759e4f",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "2729e9ed7df75e63b71c0ecc1df43a846ea639113085b76a615647b30463e71c",
+    "by_address": {
+      "A": 3559173436,
+      "C": 1440826564
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 4499999997
+    },
+    "job_payment_phase": null
+  },
+  "partiel_pb_manquant": {
+    "block_index": 5,
+    "hash": "b14ea3a12176da87717b2760cdd8a2b9a1ad7c58fe633e12b36004526681ef6e",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 4000000000,
+    "paid": 4000000000,
+    "conservation": true,
+    "economic_root": "94cfbd0d8c917ab1bc8abbcb497694760c7628c2c5a9ba74c1b699165ab212a7",
+    "by_address": {
+      "A": 2847338750,
+      "B": 1152661250
+    },
+    "missing": [
+      "pb3"
+    ],
+    "requeued": [
+      "W-partial:requeue:pb3"
+    ],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 3599999998
+    },
+    "job_payment_phase": null
+  },
+  "job_payment_no_mint": {
+    "block_index": 6,
+    "hash": "3d21a426416d37159ddf21f1119817ea5f072685bb2c9cf68b2561030c20fce7",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "902627f46fa55647f5e14378dce10eedf6a5fc4149b07a221c120782d03f3709",
+    "by_address": {
+      "A": 5000000000
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 4499999997
+    },
+    "job_payment_phase": {
+      "kind": "JobPayment",
+      "mints": false,
+      "distinct_from": "R_block",
+      "payment_intent_id": "pi_sim164",
+      "consensus_blocked": false,
+      "stripe_is_consensus_dependency": false
+    }
+  },
+  "providers_nonzero": {
+    "block_index": 7,
+    "hash": "ed8da611ac40e25f7a4f8f42a83d6eb2505307bd92bfbc2d1a17ea797c31b86b",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "050e6c45a5cdd6d3dbdc3a4c5b0bb1b9f7fceb72aeb35f245416bae5a200c709",
+    "by_address": {
+      "JP1": 1124999999,
+      "JP2": 1124999999,
+      "A": 2750000002
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 2249999998,
+      "worker_pool": 2249999999
+    },
+    "job_payment_phase": null
+  },
+  "stripe_down_no_block": {
+    "block_index": 8,
+    "hash": "0a54ec5ddf94728e9b98ad9570a07dac5ccc9634703fd5d7fbe0773a16520799",
+    "hash_version": 2,
+    "h_adult": 5.0,
+    "r_block_satoshi": 5000000000,
+    "paid": 5000000000,
+    "conservation": true,
+    "economic_root": "902627f46fa55647f5e14378dce10eedf6a5fc4149b07a221c120782d03f3709",
+    "by_address": {
+      "A": 5000000000
+    },
+    "missing": [],
+    "requeued": [],
+    "provider_worker": {
+      "provider_pool": 0,
+      "worker_pool": 4499999997
+    },
+    "job_payment_phase": {
+      "kind": "JobPayment",
+      "mints": false,
+      "distinct_from": "R_block",
+      "payment_intent_id": null,
+      "consensus_blocked": false,
+      "stripe_is_consensus_dependency": false,
+      "job_id": "job_sim_stripe_down",
+      "ok": false,
+      "reason": "no Stripe secret in env (KEY_API_STRIPE_ACTION / STRIPE_SECRET_KEY / STRIPE_API_KEY)"
+    }
+  }
+}

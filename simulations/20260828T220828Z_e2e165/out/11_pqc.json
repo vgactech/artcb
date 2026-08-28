@@ -1,0 +1,6 @@
+{
+  "native_liboqs": true,
+  "pqc_available": true,
+  "algorithm": "ML-DSA-65",
+  "fallback": false
+}
