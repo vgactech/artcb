@@ -1,0 +1,31 @@
+{
+  "simulation": "e2e167_distributed_consolidated",
+  "dir": "/workspace/simulations/20260829T191632Z_e2e167_distributed_consolidated",
+  "failures": [],
+  "failure_count": 0,
+  "invariants": {
+    "M1_100": true,
+    "settlement_workid_x_eq_1": true,
+    "transfer_does_not_mutate_live_until_next_epoch": true,
+    "n_decreases_next_epoch_after_transfer": true,
+    "offline_still_counts": true,
+    "stripe_down_does_not_block": true,
+    "partition_dup_rejected": true,
+    "oracle_unavailable_not_invented": true,
+    "oracle_quorum_median": true,
+    "provider_unavailable_still_settles": true,
+    "restart_preserves_height": true,
+    "supply_le_21m": true
+  },
+  "certified_distributed_mainnet": false,
+  "invented": false,
+  "pending_validation": [
+    "V-01",
+    "V-02",
+    "V-03",
+    "V-04",
+    "V-05",
+    "V-06",
+    "V-07"
+  ]
+}

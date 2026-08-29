@@ -1,0 +1,27 @@
+{
+  "simulation": "e2e167_distributed_consolidated",
+  "dir": "/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated",
+  "failures": [
+    {
+      "code": "UNCAUGHT",
+      "detail": "HumanBindingError: first machine of an owner cannot bind a third-party human"
+    }
+  ],
+  "failure_count": 1,
+  "invariants": {
+    "M1_100": true,
+    "settlement_workid_x_eq_1": true,
+    "transfer_does_not_mutate_live_until_next_epoch": true
+  },
+  "certified_distributed_mainnet": false,
+  "invented": false,
+  "pending_validation": [
+    "V-01",
+    "V-02",
+    "V-03",
+    "V-04",
+    "V-05",
+    "V-06",
+    "V-07"
+  ]
+}

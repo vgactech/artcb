@@ -1,0 +1,9 @@
+{
+  "clock_skew_seconds": {
+    "A": 0,
+    "B": 0,
+    "C": 7,
+    "D": 0
+  },
+  "note": "skew is injected latency metadata; blocks use wall UTC"
+}

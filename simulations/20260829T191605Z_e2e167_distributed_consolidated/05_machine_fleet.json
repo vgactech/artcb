@@ -1,0 +1,10 @@
+{
+  "A": [
+    "M1",
+    "M2",
+    "M3",
+    "M4"
+  ],
+  "M1": "100%",
+  "extras": "P(N_economic) from snapshot"
+}

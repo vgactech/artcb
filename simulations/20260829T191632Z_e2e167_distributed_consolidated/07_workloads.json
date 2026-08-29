@@ -1,0 +1,21 @@
+{
+  "WorkID-X": {
+    "ok": 1,
+    "rejected": 3,
+    "settlement_count": 1
+  },
+  "WorkID-transfer-window": {
+    "ok": true,
+    "node": "A",
+    "work_id": "WorkID-transfer-window",
+    "block_index": 1,
+    "block_hash": "ad173a412adaac9dc30b1d0ec3057801eb224d9e2f89fc67828297cf2dd722aa",
+    "economic_root": "02fe78d43b756b17ae09df39ea0eed52e0c30d7af1e8ad2564b5d015d6db23b3",
+    "paid": 5000000000,
+    "r_block": 5000000000,
+    "supply": 10000000000,
+    "settlement_id": "c8f4ea2e73666613b8c2c58b8322fdcc1870c2ebfcaf8155ca71828c742b09fb",
+    "h_adult": 5.0
+  },
+  "snapshot_n_economic_A": 4
+}

@@ -1,0 +1,8 @@
+{
+  "h_adult": 5,
+  "hmax_frozen": false,
+  "demographic_digest": "3d371804c570d3a3b4b4a2069a227da34cd8c6b12ce0efcf07d789173bf78788",
+  "hbp_live_absolute": 0.10000000060240964,
+  "hbp_ratio_provisional": 0.10000000060240964,
+  "note": "V-06/V-07 pending — ratio function exists, live mining still uses absolute anchors"
+}

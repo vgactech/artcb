@@ -1,0 +1,30 @@
+[
+  {
+    "settlement_id": "624c8f3ac1eabd042eb4e93525f31c08e389adc528b67809c43af36cd25efb61",
+    "work_id": "WorkID-X",
+    "node_id": "A",
+    "epoch": 1,
+    "consumed_at": "2026-08-29T19:16:32Z"
+  },
+  {
+    "settlement_id": "c8f4ea2e73666613b8c2c58b8322fdcc1870c2ebfcaf8155ca71828c742b09fb",
+    "work_id": "WorkID-transfer-window",
+    "node_id": "A",
+    "epoch": 1,
+    "consumed_at": "2026-08-29T19:16:33Z"
+  },
+  {
+    "settlement_id": "cd3d60d35a42187f0bedd90143787b720a8f26229878e568fdaa3b55e486a4ea",
+    "work_id": "WorkID-stripe-down",
+    "node_id": "A",
+    "epoch": 2,
+    "consumed_at": "2026-08-29T19:16:33Z"
+  },
+  {
+    "settlement_id": "300e6f245bec5c0ea8297035b7869c52a0180ef5fa7ac9e13505ca250d7c326c",
+    "work_id": "WorkID-noprovider",
+    "node_id": "A",
+    "epoch": 2,
+    "consumed_at": "2026-08-29T19:16:33Z"
+  }
+]

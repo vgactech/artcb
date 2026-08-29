@@ -1,0 +1,210 @@
+2026-08-29 19:16:05,465 artcb.wallet.encryption DEBUG Encrypted secret blob (32 bytes → 85 bytes)
+2026-08-29 19:16:05,465 artcb.chain.manager DEBUG Generated new Ed25519 chain key path=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_A/chain.key
+2026-08-29 19:16:05,481 oqs.oqs INFO liboqs-python faulthandler is disabled
+2026-08-29 19:16:05,497 artcb.crypto.pqc DEBUG Generated ML-DSA-65 keypair (pub=1952 bytes)
+2026-08-29 19:16:05,525 artcb.wallet.encryption DEBUG Encrypted secret blob (5984 bytes → 6037 bytes)
+2026-08-29 19:16:05,525 artcb.chain.manager INFO Generated chain hybrid key ML-DSA-65
+2026-08-29 19:16:05,631 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-29 19:16:05,631 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-29 19:16:05,631 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-29 19:16:05,631 src.artcb.security.anti_sybil INFO AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=0s ai_bypass=False study_mode=False
+2026-08-29 19:16:05,631 src.artcb.security.slashing INFO SlashingManager initialized: 0 events, 0 blacklisted addresses
+2026-08-29 19:16:05,631 artcb.chain.manager INFO Security modules enabled (Anti-Sybil + Slashing)
+2026-08-29 19:16:05,631 artcb.wallet.manager DEBUG WalletManager initialized wallet_dir=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_A/wallets
+2026-08-29 19:16:05,632 artcb.economics.demographic DEBUG demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+2026-08-29 19:16:05,632 artcb.mining.protocol INFO Security modules ENABLED (Anti-Sybil + Slashing)
+2026-08-29 19:16:05,632 artcb.chain.manager DEBUG chain identity bound humans=True machines=True work=True
+2026-08-29 19:16:05,632 artcb.economics.identity DEBUG bootstrap creator id=H-A addr=A
+2026-08-29 19:16:05,633 artcb.economics.identity DEBUG creator-direct validated H-B
+2026-08-29 19:16:05,634 artcb.economics.identity DEBUG creator-direct validated H-C
+2026-08-29 19:16:05,635 artcb.economics.identity DEBUG creator-direct validated H-D
+2026-08-29 19:16:05,635 artcb.economics.identity DEBUG creator-direct validated H-E
+2026-08-29 19:16:05,636 artcb.economics.human_binding DEBUG registered machine id=M1 owner=A index=1 first=True human=None N_econ=1
+2026-08-29 19:16:05,636 artcb.economics.human_binding DEBUG registered machine id=M2 owner=A index=2 first=False human=B N_econ=2
+2026-08-29 19:16:05,636 artcb.economics.human_binding DEBUG registered machine id=M3 owner=A index=3 first=False human=C N_econ=3
+2026-08-29 19:16:05,637 artcb.economics.human_binding DEBUG registered machine id=M4 owner=A index=4 first=False human=D N_econ=4
+2026-08-29 19:16:05,661 artcb.wallet.encryption DEBUG Encrypted secret blob (32 bytes → 85 bytes)
+2026-08-29 19:16:05,661 artcb.chain.manager DEBUG Generated new Ed25519 chain key path=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_B/chain.key
+2026-08-29 19:16:05,675 artcb.crypto.pqc DEBUG Generated ML-DSA-65 keypair (pub=1952 bytes)
+2026-08-29 19:16:05,699 artcb.wallet.encryption DEBUG Encrypted secret blob (5984 bytes → 6037 bytes)
+2026-08-29 19:16:05,699 artcb.chain.manager INFO Generated chain hybrid key ML-DSA-65
+2026-08-29 19:16:05,799 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-29 19:16:05,799 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-29 19:16:05,799 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-29 19:16:05,799 src.artcb.security.anti_sybil INFO AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=0s ai_bypass=False study_mode=False
+2026-08-29 19:16:05,799 src.artcb.security.slashing INFO SlashingManager initialized: 0 events, 0 blacklisted addresses
+2026-08-29 19:16:05,799 artcb.chain.manager INFO Security modules enabled (Anti-Sybil + Slashing)
+2026-08-29 19:16:05,800 artcb.wallet.manager DEBUG WalletManager initialized wallet_dir=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_B/wallets
+2026-08-29 19:16:05,800 artcb.economics.demographic DEBUG demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+2026-08-29 19:16:05,800 artcb.mining.protocol INFO Security modules ENABLED (Anti-Sybil + Slashing)
+2026-08-29 19:16:05,800 artcb.chain.manager DEBUG chain identity bound humans=True machines=True work=True
+2026-08-29 19:16:05,800 artcb.economics.identity DEBUG bootstrap creator id=H-A addr=A
+2026-08-29 19:16:05,802 artcb.economics.identity DEBUG creator-direct validated H-B
+2026-08-29 19:16:05,802 artcb.economics.identity DEBUG creator-direct validated H-C
+2026-08-29 19:16:05,802 artcb.economics.identity DEBUG creator-direct validated H-D
+2026-08-29 19:16:05,803 artcb.economics.identity DEBUG creator-direct validated H-E
+2026-08-29 19:16:05,803 artcb.economics.human_binding DEBUG registered machine id=M1 owner=A index=1 first=True human=None N_econ=1
+2026-08-29 19:16:05,803 artcb.economics.human_binding DEBUG registered machine id=M2 owner=A index=2 first=False human=B N_econ=2
+2026-08-29 19:16:05,803 artcb.economics.human_binding DEBUG registered machine id=M3 owner=A index=3 first=False human=C N_econ=3
+2026-08-29 19:16:05,803 artcb.economics.human_binding DEBUG registered machine id=M4 owner=A index=4 first=False human=D N_econ=4
+2026-08-29 19:16:05,827 artcb.wallet.encryption DEBUG Encrypted secret blob (32 bytes → 85 bytes)
+2026-08-29 19:16:05,827 artcb.chain.manager DEBUG Generated new Ed25519 chain key path=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_C/chain.key
+2026-08-29 19:16:05,840 artcb.crypto.pqc DEBUG Generated ML-DSA-65 keypair (pub=1952 bytes)
+2026-08-29 19:16:05,864 artcb.wallet.encryption DEBUG Encrypted secret blob (5984 bytes → 6037 bytes)
+2026-08-29 19:16:05,865 artcb.chain.manager INFO Generated chain hybrid key ML-DSA-65
+2026-08-29 19:16:05,965 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-29 19:16:05,965 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-29 19:16:05,965 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-29 19:16:05,965 src.artcb.security.anti_sybil INFO AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=0s ai_bypass=False study_mode=False
+2026-08-29 19:16:05,965 src.artcb.security.slashing INFO SlashingManager initialized: 0 events, 0 blacklisted addresses
+2026-08-29 19:16:05,965 artcb.chain.manager INFO Security modules enabled (Anti-Sybil + Slashing)
+2026-08-29 19:16:05,965 artcb.wallet.manager DEBUG WalletManager initialized wallet_dir=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_C/wallets
+2026-08-29 19:16:05,966 artcb.economics.demographic DEBUG demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+2026-08-29 19:16:05,966 artcb.mining.protocol INFO Security modules ENABLED (Anti-Sybil + Slashing)
+2026-08-29 19:16:05,966 artcb.chain.manager DEBUG chain identity bound humans=True machines=True work=True
+2026-08-29 19:16:05,966 artcb.economics.identity DEBUG bootstrap creator id=H-A addr=A
+2026-08-29 19:16:05,967 artcb.economics.identity DEBUG creator-direct validated H-B
+2026-08-29 19:16:05,967 artcb.economics.identity DEBUG creator-direct validated H-C
+2026-08-29 19:16:05,969 artcb.economics.identity DEBUG creator-direct validated H-D
+2026-08-29 19:16:05,970 artcb.economics.identity DEBUG creator-direct validated H-E
+2026-08-29 19:16:05,970 artcb.economics.human_binding DEBUG registered machine id=M1 owner=A index=1 first=True human=None N_econ=1
+2026-08-29 19:16:05,970 artcb.economics.human_binding DEBUG registered machine id=M2 owner=A index=2 first=False human=B N_econ=2
+2026-08-29 19:16:05,971 artcb.economics.human_binding DEBUG registered machine id=M3 owner=A index=3 first=False human=C N_econ=3
+2026-08-29 19:16:05,971 artcb.economics.human_binding DEBUG registered machine id=M4 owner=A index=4 first=False human=D N_econ=4
+2026-08-29 19:16:05,995 artcb.wallet.encryption DEBUG Encrypted secret blob (32 bytes → 85 bytes)
+2026-08-29 19:16:05,995 artcb.chain.manager DEBUG Generated new Ed25519 chain key path=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_D/chain.key
+2026-08-29 19:16:06,008 artcb.crypto.pqc DEBUG Generated ML-DSA-65 keypair (pub=1952 bytes)
+2026-08-29 19:16:06,032 artcb.wallet.encryption DEBUG Encrypted secret blob (5984 bytes → 6037 bytes)
+2026-08-29 19:16:06,032 artcb.chain.manager INFO Generated chain hybrid key ML-DSA-65
+2026-08-29 19:16:06,133 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-29 19:16:06,133 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-29 19:16:06,133 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-29 19:16:06,133 src.artcb.security.anti_sybil INFO AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=0s ai_bypass=False study_mode=False
+2026-08-29 19:16:06,133 src.artcb.security.slashing INFO SlashingManager initialized: 0 events, 0 blacklisted addresses
+2026-08-29 19:16:06,133 artcb.chain.manager INFO Security modules enabled (Anti-Sybil + Slashing)
+2026-08-29 19:16:06,133 artcb.wallet.manager DEBUG WalletManager initialized wallet_dir=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated/work/node_D/wallets
+2026-08-29 19:16:06,134 artcb.economics.demographic DEBUG demographic ref digest=3d371804c570d3a3 adult_max=5820000000
+2026-08-29 19:16:06,134 artcb.mining.protocol INFO Security modules ENABLED (Anti-Sybil + Slashing)
+2026-08-29 19:16:06,134 artcb.chain.manager DEBUG chain identity bound humans=True machines=True work=True
+2026-08-29 19:16:06,134 artcb.economics.identity DEBUG bootstrap creator id=H-A addr=A
+2026-08-29 19:16:06,136 artcb.economics.identity DEBUG creator-direct validated H-B
+2026-08-29 19:16:06,137 artcb.economics.identity DEBUG creator-direct validated H-C
+2026-08-29 19:16:06,138 artcb.economics.identity DEBUG creator-direct validated H-D
+2026-08-29 19:16:06,138 artcb.economics.identity DEBUG creator-direct validated H-E
+2026-08-29 19:16:06,139 artcb.economics.human_binding DEBUG registered machine id=M1 owner=A index=1 first=True human=None N_econ=1
+2026-08-29 19:16:06,139 artcb.economics.human_binding DEBUG registered machine id=M2 owner=A index=2 first=False human=B N_econ=2
+2026-08-29 19:16:06,139 artcb.economics.human_binding DEBUG registered machine id=M3 owner=A index=3 first=False human=C N_econ=3
+2026-08-29 19:16:06,139 artcb.economics.human_binding DEBUG registered machine id=M4 owner=A index=4 first=False human=D N_econ=4
+2026-08-29 19:16:06,140 artcb.economics.economic_snapshot INFO epoch=1 snapshot=f7773e144849424d applied=0 machines=4 h_adult=5
+2026-08-29 19:16:06,140 artcb.economics.economic_snapshot INFO epoch=1 snapshot=f7773e144849424d applied=0 machines=4 h_adult=5
+2026-08-29 19:16:06,140 artcb.economics.economic_snapshot INFO epoch=1 snapshot=f7773e144849424d applied=0 machines=4 h_adult=5
+2026-08-29 19:16:06,140 artcb.economics.economic_snapshot INFO epoch=1 snapshot=f7773e144849424d applied=0 machines=4 h_adult=5
+2026-08-29 19:16:06,141 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=4 ignored for M1)
+2026-08-29 19:16:06,141 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,141 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-29 19:16:06,141 artcb.economics.hbp DEBUG HBP(ratio) h=5.0 max=5820000000 ratio=0.000000 peak_r=0.713058 end_r=1.000000 rate=0.1000000006
+2026-08-29 19:16:06,148 artcb.economics.workid DEBUG WorkID WorkID-X -> EXECUTING score=0.0
+2026-08-29 19:16:06,148 artcb.economics.economic_snapshot DEBUG SettlementID work=WorkID-X sid=32d523886b26bcae
+2026-08-29 19:16:06,148 artcb.economics.economic_snapshot DEBUG settlement consumed sid=32d523886b26bcae node=A
+2026-08-29 19:16:06,148 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-29 19:16:06,148 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-29 19:16:06,148 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2100000000000000 -> 5000000000
+2026-08-29 19:16:06,148 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-29 19:16:06,148 artcb.economics.partition_map DEBUG partition work=WorkID-X epoch=0 N=5 -> 2
+2026-08-29 19:16:06,148 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-29 19:16:06,148 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-29 19:16:06,148 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=4 ignored for M1)
+2026-08-29 19:16:06,148 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,148 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,148 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,148 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=13
+2026-08-29 19:16:06,148 artcb.economics.economic_root DEBUG EconomicRoot=672de758ab333e1a keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-29 19:16:06,149 artcb.mining.protocol DEBUG provider contributor JP1 score=1.0
+2026-08-29 19:16:06,149 artcb.mining.protocol DEBUG provider contributor JP2 score=1.0
+2026-08-29 19:16:06,155 artcb.economics.workid DEBUG WorkID WorkID-X -> EXECUTING score=0.0
+2026-08-29 19:16:06,155 artcb.economics.economic_snapshot DEBUG SettlementID work=WorkID-X sid=32d523886b26bcae
+2026-08-29 19:16:06,163 artcb.economics.workid DEBUG WorkID WorkID-X -> EXECUTING score=0.0
+2026-08-29 19:16:06,163 artcb.economics.economic_snapshot DEBUG SettlementID work=WorkID-X sid=32d523886b26bcae
+2026-08-29 19:16:06,223 artcb.economics.workid DEBUG WorkID WorkID-X -> EXECUTING score=0.0
+2026-08-29 19:16:06,223 artcb.economics.economic_snapshot DEBUG SettlementID work=WorkID-X sid=32d523886b26bcae
+2026-08-29 19:16:06,249 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-29 19:16:06,249 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-29 19:16:06,249 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-29 19:16:06,249 src.artcb.security.anti_sybil DEBUG Block 0 passed anti-Sybil validation (source=mining)
+2026-08-29 19:16:06,249 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-29 19:16:06,249 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-29 19:16:06,249 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=4 ignored for M1)
+2026-08-29 19:16:06,249 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,249 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,249 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,249 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=2249999998 worker=2249999999 lines=13
+2026-08-29 19:16:06,250 artcb.economics.economic_root DEBUG EconomicRoot=672de758ab333e1a keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-29 19:16:06,250 artcb.chain.ffi DEBUG Loaded C library path=/workspace/src/c/libartcb_chain.so v2=True
+2026-08-29 19:16:06,250 artcb.chain.manager DEBUG native C EconomicRoot v2 index=0 root=672de758ab333e1a
+2026-08-29 19:16:06,250 artcb.chain.ffi DEBUG C v2 hash index=0 eco=672de758ab33 -> 25bdc26271658b2c
+2026-08-29 19:16:06,264 artcb.economics.workid DEBUG WorkID WorkID-X -> SETTLED score=0.0
+2026-08-29 19:16:06,264 src.artcb.security.anti_sybil DEBUG Block 0 recorded in reputation for 6 contributors
+2026-08-29 19:16:06,264 artcb.chain.manager DEBUG Appended block index=0 hash=25bdc26271658b2ceddc8f8b6e3da7484b4380abbdbc2d4f7faff59f53ed9f95 sha3=65523581c596b721 reward=5000000000 contributors=6 hybrid=True
+2026-08-29 19:16:06,264 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=4bfab1adec9ed76f
+2026-08-29 19:16:06,264 artcb.mining.protocol DEBUG protocol block=0 hash=25bdc26271658b2c H_adult=5.0 paid=5000000000 supply=5000000000 v=2
+2026-08-29 19:16:06,265 artcb.economics.economic_snapshot DEBUG queued transfer M4 -> B effective_epoch=2
+2026-08-29 19:16:06,272 artcb.economics.workid DEBUG WorkID WorkID-transfer-window -> EXECUTING score=0.0
+2026-08-29 19:16:06,272 artcb.economics.economic_snapshot DEBUG SettlementID work=WorkID-transfer-window sid=f308da5d60aa1231
+2026-08-29 19:16:06,272 artcb.economics.economic_snapshot DEBUG settlement consumed sid=f308da5d60aa1231 node=A
+2026-08-29 19:16:06,272 artcb.mining.protocol DEBUG H_adult live=5 source=HumanRegistry.adult_verified
+2026-08-29 19:16:06,272 artcb.economics.emission DEBUG R(H) h_adult=5.0 clamped=1000000.0 reward=50.0000000000
+2026-08-29 19:16:06,272 artcb.economics.emission DEBUG issued_reward index=0 (unused) H_adult=5.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099995000000000 -> 5000000000
+2026-08-29 19:16:06,272 artcb.economics.network_capacity DEBUG N_max=6 cpu=8.0 ram=8.0 net=100.0 val=8.0
+2026-08-29 19:16:06,272 artcb.economics.partition_map DEBUG partition work=WorkID-transfer-window epoch=0 N=5 -> 2
+2026-08-29 19:16:06,272 artcb.economics.preblocks DEBUG partitioned R_block=5000000000 into 5 preblocks total=5000000000
+2026-08-29 19:16:06,273 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-29 19:16:06,273 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-29 19:16:06,273 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=4 ignored for M1)
+2026-08-29 19:16:06,273 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,273 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,273 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,273 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+2026-08-29 19:16:06,273 artcb.economics.economic_root DEBUG EconomicRoot=02fe78d43b756b17 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-29 19:16:06,373 artcb.system.hardware DEBUG Network bandwidth measured: 100.00 Mbps -> class=BONNE
+2026-08-29 19:16:06,373 artcb.system.optimizer DEBUG compute_max_contributors: wallets_active=3 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-08-29 19:16:06,374 src.artcb.security.anti_sybil DEBUG Dynamic max_contributors recalculated: wallets_30d=3 bw=100.0Mbps class=BONNE -> limit=10
+2026-08-29 19:16:06,374 src.artcb.security.anti_sybil DEBUG Block 1 passed anti-Sybil validation (source=mining)
+2026-08-29 19:16:06,374 artcb.chain.manager DEBUG H_adult explicit=5.0
+2026-08-29 19:16:06,374 artcb.economics.hbp DEBUG HBP(H) h_adult=5.0 rate=0.1000000006
+2026-08-29 19:16:06,374 artcb.economics.provider_worker DEBUG no provider scores — worker takes full PoL pool 4499999997
+2026-08-29 19:16:06,374 artcb.economics.owner_decay DEBUG payout M1=100% (N_economic=4 ignored for M1)
+2026-08-29 19:16:06,374 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,374 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,374 artcb.economics.owner_decay DEBUG fleet_owner_share N=4 P=0.480250000000 k=0.025317807984
+2026-08-29 19:16:06,374 artcb.economics.settlement DEBUG settled R=5000000000 H_adult=5.0 HBP=0.100000 work=4499999997 provider=0 worker=4499999997 lines=11
+2026-08-29 19:16:06,374 artcb.economics.economic_root DEBUG EconomicRoot=02fe78d43b756b17 keys=['h_adult', 'hbp_pool_satoshi', 'lines', 'provider_pool_satoshi', 'r_block_satoshi', 'worker_pool_satoshi']
+2026-08-29 19:16:06,374 artcb.chain.manager DEBUG native C EconomicRoot v2 index=1 root=02fe78d43b756b17
+2026-08-29 19:16:06,374 artcb.chain.ffi DEBUG C v2 hash index=1 eco=02fe78d43b75 -> 20735f08ea29dca8
+2026-08-29 19:16:06,388 artcb.economics.workid DEBUG WorkID WorkID-transfer-window -> SETTLED score=0.0
+2026-08-29 19:16:06,388 src.artcb.security.anti_sybil DEBUG Block 1 recorded in reputation for 4 contributors
+2026-08-29 19:16:06,389 artcb.chain.manager DEBUG Appended block index=1 hash=20735f08ea29dca80132506f9b58d97e81c82bea55a602a3be414222d6dd00d0 sha3=c5eff41270f6f4ff reward=5000000000 contributors=4 hybrid=True
+2026-08-29 19:16:06,389 artcb.economics.audit_log DEBUG audit append type=protocol_block hash=58bc8f74a205debd
+2026-08-29 19:16:06,389 artcb.mining.protocol DEBUG protocol block=1 hash=20735f08ea29dca8 H_adult=5.0 paid=5000000000 supply=10000000000 v=2
+2026-08-29 19:16:06,389 artcb.economics.human_binding DEBUG transferred out M4 from A
+2026-08-29 19:16:06,389 sim167 ERROR FAIL UNCAUGHT HumanBindingError: first machine of an owner cannot bind a third-party human
+2026-08-29 19:16:06,390 sim167 ERROR uncaught
+Traceback (most recent call last):
+  File "/workspace/scripts/run_sim167_distributed.py", line 255, in main
+    snaps2 = begin_aligned_epoch(nodes[:1], parent_root=node_a.tip_hash())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/src/artcb/economics/distributed.py", line 129, in begin_aligned_epoch
+    snap = node.coordinator.begin_epoch(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/src/artcb/economics/economic_snapshot.py", line 288, in begin_epoch
+    applied = self.apply_due_ops(machines, now=now)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/src/artcb/economics/economic_snapshot.py", line 266, in apply_due_ops
+    machines.transfer(
+  File "/workspace/src/artcb/economics/human_binding.py", line 302, in transfer
+    return self.register(
+           ^^^^^^^^^^^^^^
+  File "/workspace/src/artcb/economics/human_binding.py", line 190, in register
+    raise HumanBindingError(
+src.artcb.economics.human_binding.HumanBindingError: first machine of an owner cannot bind a third-party human
+
+2026-08-29 19:16:06,390 sim167 INFO SIM167_DIR=/workspace/simulations/20260829T191605Z_e2e167_distributed_consolidated failures=1

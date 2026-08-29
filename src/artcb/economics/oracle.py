@@ -252,6 +252,56 @@ def fetch_artcb_usd_quote(*, force_stub: bool | None = None) -> OracleQuote:
     )
 
 
+@dataclass(frozen=True)
+class OracleConsensus:
+    status: str  # quorum | OracleUnavailable
+    median: float | None
+    sources_ok: int
+    min_sources: int
+    quotes: tuple[float | None, ...]
+    invented: bool
+
+    def to_dict(self) -> dict:
+        return asdict(self)
+
+
+def oracle_median_or_unavailable(
+    quotes: list[float | None],
+    *,
+    min_sources: int = 2,
+) -> OracleConsensus:
+    """V-33: median of authentic quotes. No quorum → OracleUnavailable, never invent."""
+    valid = [float(q) for q in quotes if q is not None and float(q) > 0]
+    if len(valid) < min_sources:
+        logger.debug(
+            "OracleUnavailable valid=%s min=%s invented=false",
+            len(valid),
+            min_sources,
+        )
+        return OracleConsensus(
+            status="OracleUnavailable",
+            median=None,
+            sources_ok=len(valid),
+            min_sources=min_sources,
+            quotes=tuple(quotes),
+            invented=False,
+        )
+    ordered = sorted(valid)
+    mid = len(ordered) // 2
+    if len(ordered) % 2:
+        med = ordered[mid]
+    else:
+        med = (ordered[mid - 1] + ordered[mid]) / 2.0
+    return OracleConsensus(
+        status="quorum",
+        median=med,
+        sources_ok=len(valid),
+        min_sources=min_sources,
+        quotes=tuple(quotes),
+        invented=False,
+    )
+
+
 def require_artcb_usd_price(explicit_price: float | None = None) -> float:
     if explicit_price is not None:
         if explicit_price <= 0:

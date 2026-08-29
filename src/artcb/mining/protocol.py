@@ -158,6 +158,9 @@ class ProtocolEngine:
         owner_redirect: dict[str, str] | None = None,
         visibility: str = "private",
         job_payment: dict | None = None,
+        epoch_snapshot=None,
+        settlement_ledger=None,
+        node_id: str = "local",
     ) -> ProtocolBlockResult:
         phases: dict[str, Any] = {}
 
@@ -225,18 +228,53 @@ class ProtocolEngine:
 
         weights = work_weights or {m.machine_id: 1.0 for m in machines_recs}
         contribs: list[MachineContribution] = []
+        snapshot_sid = None
+        if epoch_snapshot is not None:
+            from src.artcb.economics.economic_snapshot import settlement_id as make_sid
+
+            snapshot_sid = make_sid(
+                work_id=work_id,
+                snapshot_digest=epoch_snapshot.digest(),
+                protocol_version=epoch_snapshot.protocol_version,
+            )
+            phases["snapshot"] = {
+                "epoch": epoch_snapshot.epoch,
+                "digest": epoch_snapshot.digest(),
+                "settlement_id": snapshot_sid,
+                "rule": "Settlement=f(EconomicStateSnapshot) V-01",
+            }
+            if settlement_ledger is not None:
+                from src.artcb.economics.economic_snapshot import AlreadySettled
+
+                try:
+                    settlement_ledger.consume(
+                        snapshot_sid,
+                        work_id=work_id,
+                        node_id=node_id,
+                        epoch=epoch_snapshot.epoch,
+                    )
+                except AlreadySettled as exc:
+                    raise ProtocolReject(REJECT_DOUBLE_SETTLEMENT, str(exc)) from exc
         for rec in machines_recs:
-            n_econ = self.machines.economic_count(rec.owner_address)
+            snap_m = epoch_snapshot.machine(rec.machine_id) if epoch_snapshot is not None else None
+            owner = snap_m.owner_address if snap_m else rec.owner_address
+            n_econ = (
+                epoch_snapshot.n_economic(owner)
+                if epoch_snapshot is not None
+                else self.machines.economic_count(rec.owner_address)
+            )
+            first = snap_m.is_first_machine if snap_m else (rec.is_first_machine or rec.machine_index == 1)
+            bound = snap_m.bound_human_address if snap_m else rec.bound_human_address
             contribs.append(
                 MachineContribution(
                     machine_id=rec.machine_id,
-                    owner_address=rec.owner_address,
-                    machine_index=rec.machine_index,
-                    bound_human_address=rec.bound_human_address,
+                    owner_address=owner,
+                    machine_index=snap_m.machine_index if snap_m else rec.machine_index,
+                    bound_human_address=bound,
                     work_weight=float(weights.get(rec.machine_id, 1.0)),
                     n_economic=n_econ,
-                    is_first_machine=rec.is_first_machine or rec.machine_index == 1,
-                    provider_score=(provider_scores or {}).get(rec.owner_address, 0.0),
+                    is_first_machine=first,
+                    provider_score=(provider_scores or {}).get(owner, 0.0),
                 )
             )
 

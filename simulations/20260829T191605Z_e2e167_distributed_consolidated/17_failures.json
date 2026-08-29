@@ -1,0 +1,6 @@
+[
+  {
+    "code": "UNCAUGHT",
+    "detail": "HumanBindingError: first machine of an owner cannot bind a third-party human"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "commit_sha": "b365ab7f67a52a6ab6ece2328271b3c080f34e9e",
+  "protocol_version": "167-distributed-snapshot",
+  "economic_rules_version": "D-025+V01-V07-provisional",
+  "simulation_id": "e2e167_distributed_consolidated",
+  "random_seed": 167,
+  "started_at": "2026-08-29T19:16:05Z",
+  "finished_at": "2026-08-29T19:16:06Z",
+  "python_version": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "dependency_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+  "invented_results": false
+}
