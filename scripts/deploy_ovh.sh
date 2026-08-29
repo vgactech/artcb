@@ -53,8 +53,14 @@ if [ ! -d ~/artcb/.git ]; then
 fi
 cd ~/artcb
 git fetch origin "$BRANCH"
-git checkout "$BRANCH"
-git reset --hard "origin/$BRANCH"
+# fetch updates FETCH_HEAD / origin/<branch> but may not create a local branch
+if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+  git checkout -B "$BRANCH" "origin/$BRANCH"
+  git reset --hard "origin/$BRANCH"
+else
+  git checkout -B "$BRANCH" FETCH_HEAD
+  git reset --hard FETCH_HEAD
+fi
 DEPLOYED_SHA=\$(git rev-parse HEAD)
 DEPLOYED_BRANCH=\$(git rev-parse --abbrev-ref HEAD)
 echo "── Commit déployé : \$(git log --oneline -1) sha=\$DEPLOYED_SHA"
