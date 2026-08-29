@@ -1189,6 +1189,17 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Tests :** 613 passed / 8 skipped. Log `logs/20260829_pytest_rapport167.txt`.
 - Rapport : `rapports/167_e2e_distributed_snapshot_2026-08-29.md`
 
+## [2026-08-29T19:52:00Z] Rapport 168 — nœud live à CHAQUE prompt + clé agent
+
+- **OBLIGATOIRE en tête de tâche :** `PYTHONPATH=src python3 scripts/artcb_live_bootstrap.py` (jamais afficher `artcb_…`).
+- **Nœud :** `http://152.228.144.34:8000` — wallet `cursor-cloud-agent` / `kid_abad2468682059ef`.
+- **Clé :** Doppler `ARTCB_API_KEY` (écrit en 168) → sinon `~/.artcb/cursor_agent.env` → sinon SSH nœud. Ajouter aussi le secret Cursor UI.
+- **Preuve live :** `POST /ai/memo` bloc **#0** hash `8d542e49…` PoL 0.75. Nœud encore **166** (`084f32e`), pas redéployé.
+- **Simu :** `simulations/20260829T195130Z_e2e168_adversarial_live/` replay WorkID rejeté, `failures=[]`.
+- **Tests :** 618 passed / 8 skipped. Log `logs/20260829_pytest_rapport168.txt`.
+- Règle Cursor : `.cursor/rules/artcb-live-node.mdc`.
+- Rapport : `rapports/168_live_node_agent_key_adversarial_2026-08-29.md` SHA `a5fa643`.
+
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 
 - **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.

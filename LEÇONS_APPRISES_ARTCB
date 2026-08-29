@@ -175,4 +175,9 @@
 **Leçon :** Un transfert vers un owner sans flotte crée un M1. L’unicité doit porter sur **WorkID réseau**, pas seulement hash(snapshot). Un timestamp non aligné casse la reproductibilité du SID.
 **Action :** Rapport 167. Ledger `consume` refuse le même WorkID. Epoch aligné. MB1 pré-enregistré.
 
+### L-038 — Clé agent = login nœud, pas un secret inventé (29 août 2026)
+**Contexte :** Demande d’utiliser le nœud live à chaque prompt. 0 wallet / 0 clé sur OVH. `generate` exige `sess_`. Doppler `PUT` secrets = 404 ; `POST` = OK. `ArtcbClient()` / MCP lisaient l’env live et cassaient les tests localhost.
+**Leçon :** (1) Provisionner sur le nœud (wallet + hash de clé). (2) Stocker dans Doppler + fichier 600, jamais dans le chat. (3) Bootstrap obligatoire. (4) Isoler `ARTCB_API_URL` dans les tests. (5) Le nœud peut rester en 166 alors que `main` est en 167 — le health `git_sha` prime.
+**Action :** Rapport 168. `artcb_live_bootstrap.py`. D-027.
+
 

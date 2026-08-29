@@ -241,4 +241,8 @@
 | T-E15 | `pytest tests/test_economic_snapshot_167.py` | SID déterministe, WorkID unique, snapshot N figé | [x] | 2026-08-29 |
 | T-E16 | `python scripts/run_sim167_distributed.py` | `failures=[]` ; 191632 canonique ; 191605 erreur réelle conservée | [x] | 2026-08-29 |
 | T-E17 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite post-167 | [x] | 2026-08-29 **613 passed, 8 skipped** |
+| T-E18 | `python3 scripts/artcb_live_bootstrap.py` | health 200 + `/api-keys/me` 200, token non imprimé | [x] | 2026-08-29 `kid_abad2468682059ef` |
+| T-E19 | `python3 scripts/run_sim168_adversarial_live.py` | replay WorkID rejeté ; live_ok | [x] | 2026-08-29 `20260829T195130Z` |
+| T-E20 | `POST /api/v1/ai/memo` Bearer agent | bloc gravé | [x] | 2026-08-29 bloc #0 PoL 0.75 |
+| T-E21 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite post-168 | [x] | 2026-08-29 **618 passed, 8 skipped** |
 

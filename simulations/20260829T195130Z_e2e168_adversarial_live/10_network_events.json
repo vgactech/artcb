@@ -1,0 +1,4 @@
+{
+  "note": "local adversarial; live probe separate",
+  "probe_branch": "cursor/ovh-deploy-stripe-secrets-475d"
+}

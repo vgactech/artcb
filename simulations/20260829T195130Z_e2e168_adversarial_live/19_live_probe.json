@@ -1,0 +1,22 @@
+{
+  "bootstrap_rc": 0,
+  "economics_http": 200,
+  "git_branch": "cursor/ovh-deploy-stripe-secrets-475d",
+  "git_sha": "084f32eb3f0a338a83eb31adff6fde4cb2ab85be",
+  "h_adult": 0,
+  "health_http": 200,
+  "key_id": "kid_abad2468682059ef",
+  "key_present": true,
+  "key_source": "env_or_local_file",
+  "live_url": "http://152.228.144.34:8000",
+  "me_http": 200,
+  "ok": true,
+  "pqc": "ML-DSA-65",
+  "protocol_http": 200,
+  "scopes": [
+    "read",
+    "write",
+    "mining"
+  ],
+  "token_printed": false
+}

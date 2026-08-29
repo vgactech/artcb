@@ -198,3 +198,10 @@ Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economi
 | V-06 | H_adult_max | DemographicReference versionnée, pas gel WPP | ⏳ |
 | V-07 | HBP | 10→60→20 sur H/H_adult_max ; live encore ancres absolues | ⏳ |
 
+## [2026-08-29T19:52:00Z] Nœud live agent (168)
+
+| ID | État | Note |
+|----|------|------|
+| Q-live-key | ✅ D-027 | `kid_abad2468682059ef` ; Doppler `ARTCB_API_KEY` écrit ; **secret Cursor UI encore à coller une fois** |
+| Q-ovh-deploy | ⏳ | Live toujours `084f32e` / branche 166. `main` 167 **non déployé** (pas d’ordre) |
+

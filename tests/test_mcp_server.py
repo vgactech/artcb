@@ -79,9 +79,16 @@ def _mock_api_get(url: str):
 # ---------------------------------------------------------------------------
 
 class TestArtcbMCPServerInit:
-    def test_default_api_url(self):
+    def test_default_api_url(self, monkeypatch):
+        monkeypatch.delenv("ARTCB_API_URL", raising=False)
+        monkeypatch.delenv("ARTCB_NODE_URL", raising=False)
         srv = ArtcbMCPServer()
         assert "localhost:8000" in srv.api_url
+
+    def test_env_api_url(self, monkeypatch):
+        monkeypatch.setenv("ARTCB_API_URL", "http://152.228.144.34:8000")
+        srv = ArtcbMCPServer()
+        assert srv.api_url == "http://152.228.144.34:8000"
 
     def test_custom_api_url(self):
         srv = ArtcbMCPServer(api_url="http://mynode:9000")

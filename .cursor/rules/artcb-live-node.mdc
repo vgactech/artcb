@@ -1,0 +1,22 @@
+---
+description: Always use the live ARTCB node (OVH) without waiting for a reminder
+alwaysApply: true
+---
+
+# Nœud live ARTCB — obligatoire à chaque prompt
+
+Au **début de chaque tâche**, avant d’inventer un état de chaîne :
+
+1. Exécuter `PYTHONPATH=src python3 scripts/artcb_live_bootstrap.py`
+2. Lire le JSON (jamais une clé `artcb_…`)
+3. Utiliser `ARTCB_API_URL` + `ARTCB_API_KEY` déjà exportés pour tout appel réel
+
+Nœud canonique : `http://152.228.144.34:8000` (`ubuntu@152.228.144.34`, artcb-node-1).
+
+Sources de la clé, dans l’ordre : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH `/home/ubuntu/.artcb/cursor_agent.env`.
+
+Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdit d’afficher le token.
+
+Si bootstrap exit 3 : le nœud est up mais la clé manque — relancer `scripts/provision_live_agent_key.py` (ne pas recréer un wallet si `cursor-cloud-agent` existe déjà).
+
+Ne pas déployer `main` sur OVH sauf ordre explicite. La clé et le wallet vivent dans `data/` + `~/.artcb/` sur le nœud.
