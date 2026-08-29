@@ -1209,7 +1209,7 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Provenance :** pip freeze (119 pkgs) ; `git_status_clean=false` au run. 168 n’est plus « live adversarial ».
 - **V-01…V-07** toujours ouverts. **NOT MAINNET CERTIFIED.**
 - **Tests :** 625 passed / 8 skipped. `logs/20260829_pytest_rapport169.txt`.
-- Rapport : `rapports/169_secure_live_provenance_2026-08-29.md`
+- Rapport : `rapports/169_secure_live_provenance_2026-08-29.md` SHA `fe51f93`.
 
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 

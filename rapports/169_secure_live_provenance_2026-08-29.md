@@ -3,6 +3,7 @@
 **Horodatage UTC :** 2026-08-29T21:45:00Z  
 **Branche :** `cursor/e2e169-secure-live-provenance-475d`  
 **main vérifié :** `5b4b24ae692ac2bb8255a4a5a3ca941b4365db29` (PR #37 MERGED)  
+**Commit docs+preuves :** `fe51f939acbdeee048ca88acb45908ff2de1cad0`  
 **Aucune nouvelle machine OVH.**  
 **Ne jamais écraser** 160–168.
 
