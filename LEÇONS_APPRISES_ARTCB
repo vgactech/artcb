@@ -180,4 +180,9 @@
 **Leçon :** (1) Provisionner sur le nœud (wallet + hash de clé). (2) Stocker dans Doppler + fichier 600, jamais dans le chat. (3) Bootstrap obligatoire. (4) Isoler `ARTCB_API_URL` dans les tests. (5) Le nœud peut rester en 166 alors que `main` est en 167 — le health `git_sha` prime.
 **Action :** Rapport 168. `artcb_live_bootstrap.py`. D-027.
 
+### L-039 — Provenance + même nœud, pas une 2ᵉ VM (29 août 2026)
+**Contexte :** Audit post-PR #37. Sim 168 avait `commit_sha` de la base et un `dependency_hash` = python+git. Live était en 166. HTTP Bearer. Demande : tout corriger **sans** nouveau compte OVH.
+**Leçon :** (1) Manifeste = SHA du tree + dirty + pip freeze. (2) `main` SHA doit égaler `/health.git_sha`. (3) Self-signed + pin > HTTP clair ; Let’s Encrypt exige un DNS. (4) 4 process ≠ 4 VM. (5) `apply_key_to_environ` ne doit pas écrire `ARTCB_API_URL` (fuite vers les tests SDK).
+**Action :** Rapport 169. `deploy_ovh.sh main`. `enable_ovh_https.sh`.
+
 

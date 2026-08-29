@@ -83,7 +83,6 @@ def apply_key_to_environ(key: str) -> None:
     if not key.startswith("artcb_"):
         raise ValueError("ARTCB API key must start with artcb_")
     os.environ["ARTCB_API_KEY"] = key
-    os.environ.setdefault("ARTCB_API_URL", resolve_api_url())
 
 
 def auth_headers(api_key: str | None = None) -> dict[str, str]:

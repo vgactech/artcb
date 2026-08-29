@@ -1,0 +1,38 @@
+{
+  "categories": {
+    "DISTRIBUTED_CONSENSUS": "4 HTTP replicas on 127.0.0.1 \u2014 NOT 4 OVH VMs",
+    "LIVE_NODE_PROBE": {
+      "classification": "PROBE LIVE",
+      "expected_main_sha": "5b4b24ae692ac2bb8255a4a5a3ca941b4365db29",
+      "http_health": 200,
+      "http_me": 200,
+      "https_health": 200,
+      "https_me": 200,
+      "https_up": true,
+      "key_id": "kid_abad2468682059ef",
+      "live_git_branch": "main",
+      "live_git_sha": "5b4b24ae692ac2bb8255a4a5a3ca941b4365db29",
+      "new_ovh_machine": false,
+      "sha_match_main": true
+    },
+    "LOCAL_ADVERSARIAL": "see 168 artifacts (not re-labelled as live)"
+  },
+  "certified_distributed_mainnet": false,
+  "dir": "/workspace/simulations/20260829T214058Z_e2e169_secure_live",
+  "failure_count": 0,
+  "failures": [],
+  "https_up": true,
+  "invented": false,
+  "new_ovh_machine": false,
+  "pending_validation": [
+    "V-01",
+    "V-02",
+    "V-03",
+    "V-04",
+    "V-05",
+    "V-06",
+    "V-07"
+  ],
+  "sha_match": true,
+  "simulation": "e2e169_secure_live"
+}

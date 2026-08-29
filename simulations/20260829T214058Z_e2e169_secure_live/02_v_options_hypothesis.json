@@ -1,0 +1,23 @@
+{
+  "M1_100": 1.0,
+  "V-01_snapshot_start": "implemented default; not user-locked",
+  "V-02_transfer_next_epoch": "implemented default; not user-locked",
+  "V-03_grace_24h": "implemented default; sim uses 1s",
+  "V-04_retire_next_snapshot": "implemented default; not user-locked",
+  "V-05_finality": {
+    "N_confirmations": 2,
+    "quorum": "not implemented",
+    "status": "unfrozen"
+  },
+  "V-06_h_adult_max": "DemographicReference model exists; WPP 18+ extract still missing",
+  "V-07_hbp": {
+    "live_hbp_rate_H0": 0.1,
+    "live_path_unchanged": true,
+    "ratio_0": 0.1,
+    "ratio_half": 0.35,
+    "ratio_one": 0.6
+  },
+  "classification": "HYPOTHESIS",
+  "extra_n4": 0.48024999999999995,
+  "not_a_go": true
+}

@@ -76,7 +76,10 @@ class ArtcbClient:
         self.timeout = timeout
         if self.api_key and self.base_url.startswith("http://"):
             allow = os.environ.get("ARTCB_ALLOW_INSECURE_HTTP", "").lower() in {"1", "true", "yes"}
-            local = "localhost" in self.base_url or "127.0.0.1" in self.base_url
+            local = any(
+                host in self.base_url
+                for host in ("localhost", "127.0.0.1", "[::1]", "testserver")
+            )
             if not allow and not local:
                 raise ArtcbError(
                     "Refuse Bearer over cleartext HTTP to a remote node. "
