@@ -58,10 +58,10 @@ class GenerateKeyRequest(BaseModel):
         description="Droits: read, write, mining, admin",
     )
     expires_days: int | None = Field(
-        default=None,
+        default=90,
         ge=1,
         le=3650,
-        description="Durée de validité en jours (None = illimitée)",
+        description="Durée de validité en jours (défaut agent = 90 ; None = illimitée)",
     )
 
 
@@ -223,7 +223,10 @@ def generate_key(
 
 
 @router.get("/list", summary="Lister les clés actives")
-def list_keys(request: Request) -> dict:
+def list_keys(
+    request: Request,
+    session: Annotated[dict, Depends(_require_session)],
+) -> dict:
     """Liste toutes les clés (tokens masqués)."""
     path = _keys_path(request)
     keys = _load_keys(path)
@@ -265,7 +268,11 @@ def key_info(
 
 
 @router.delete("/{key_id}", summary="Révoquer une clé")
-def revoke_key(key_id: str, request: Request) -> dict:
+def revoke_key(
+    key_id: str,
+    request: Request,
+    session: Annotated[dict, Depends(_require_session)],
+) -> dict:
     """Révoque (désactive) une clé par son key_id."""
     path = _keys_path(request)
     keys = _load_keys(path)

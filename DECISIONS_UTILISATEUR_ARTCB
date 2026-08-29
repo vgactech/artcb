@@ -37,6 +37,7 @@
 | D-025 | Rapport 162 GO : M1 **toujours 100 %** ; extras **même P(N_economic)** (P(2)=50 %, P(3)=49 %, →10 %) ; binding propre + **max 1 externe** ; N_A baisse après transfer/retire final ; offline≠retiré (GRACE) ; émission **time-norm** `R(H)×dt/600s` (pas de 210k) ; HBP pondéré si scores ; P/W **50/50 départ** ; frais PoL → **UniversalDividendVault** (pas remaining) ; lock **30 j** après finalité mensuelle ; Finder Q=100 + creator-direct + revalidation si >100 validateurs ; jobs on-chain ; H=adultes 18+ ; DemographicReference **modèle B** (dataset hash, pas gel WPP) ; EconomicRoot mixé dans le hash (workaround merkle). | ✅ 2026-08-28 |
 | D-026 | Sim 167 **provisoire** (V-01…V-07 **à valider**) : snapshot début d’epoch ; transfert/retrait au snapshot suivant ; reconnect grace 24 h (1 s en sim) ; finalité N=2 confirmations ; HBP ratio optionnel ; SettlementID + unicité WorkID. **Pas un gel.** | ⚠️ 2026-08-29 — en attente V-01…V-07 |
 | D-027 | Chaque agent Cursor **utilise le nœud OVH live** (`152.228.144.34:8000`) via bootstrap + `ARTCB_API_KEY` (Doppler / secret Cursor / fichier nœud). Génération = login wallet `cursor-cloud-agent`, pas de clé inventée dans le chat. | ✅ 2026-08-29 — GO implicite « à chaque prompt » |
+| D-028 | 169 : **pas de nouvelle machine OVH**. Alignement live=`main`. TLS self-signed :8443. Bearer HTTP distant interdit (SDK). V-01…V-07 **non gelés**. | ✅ 2026-08-29 — contrainte utilisateur |
 
 ---
 

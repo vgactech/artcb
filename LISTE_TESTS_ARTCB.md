@@ -245,4 +245,8 @@
 | T-E19 | `python3 scripts/run_sim168_adversarial_live.py` | replay WorkID rejeté ; live_ok | [x] | 2026-08-29 `20260829T195130Z` |
 | T-E20 | `POST /api/v1/ai/memo` Bearer agent | bloc gravé | [x] | 2026-08-29 bloc #0 PoL 0.75 |
 | T-E21 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite post-168 | [x] | 2026-08-29 **618 passed, 8 skipped** |
+| T-E22 | OVH `GET /health` | `git_sha=5b4b24ae` `branch=main` | [x] | 2026-08-29 deploy `main` |
+| T-E23 | `https://152.228.144.34:8443/health` + `/api-keys/me` | 200 + key_id | [x] | 2026-08-29 self-signed |
+| T-E24 | `python scripts/run_sim169_secure_live.py` | `failures=[]` sha_match https_up | [x] | `20260829T214058Z` |
+| T-E25 | pytest post-169 | 625 passed / 8 skipped | [x] | `logs/20260829_pytest_rapport169.txt` |
 

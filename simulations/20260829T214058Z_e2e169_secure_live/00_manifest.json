@@ -1,0 +1,26 @@
+{
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "b9a1985ad3f608684c392b816cbd6fb841c789b546ee383fddaa061868917468",
+    "package_count": 119,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-provisional+D-027",
+  "existing_node_only": true,
+  "finished_at": "2026-08-29T21:41:00Z",
+  "git_branch": "cursor/e2e169-secure-live-provenance-475d",
+  "git_commit_sha": "5a980095b49df2a09121c088a35d8225fe28631e",
+  "git_status_clean": false,
+  "invented_results": false,
+  "new_ovh_machine": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "169-secure-live",
+  "python_version": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim169_secure_live.py",
+  "script_sha256": "da17c8f47b6ea950390e8c9a568ac0ef3919cb937996801ddd692225a25c2b3e",
+  "seed": 169,
+  "simulation_id": "e2e169_secure_live",
+  "started_at": "2026-08-29T21:40:58Z",
+  "working_tree_diff_hash": "7584235df914b3a2068d48a7c4a2739167bfd2ff22ba3397bc2e85d2bc324e10"
+}

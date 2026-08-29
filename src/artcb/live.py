@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import ssl
 import stat
 import subprocess
 from pathlib import Path
@@ -25,8 +26,11 @@ from urllib.request import Request, urlopen
 logger = logging.getLogger("artcb.live")
 
 DEFAULT_LIVE_URL = "http://152.228.144.34:8000"
+DEFAULT_LIVE_HTTPS_URL = "https://152.228.144.34:8443"
 DEFAULT_SSH_HOST = "152.228.144.34"
 DEFAULT_SSH_USER = "ubuntu"
+KNOWN_HOSTS = Path(__file__).resolve().parents[2] / "deploy" / "ovh_artcb_node_1.known_hosts"
+PINNED_TLS_CERT = Path(__file__).resolve().parents[2] / "deploy" / "ovh_artcb_node_1.crt"
 REMOTE_ENV_PATH = "/home/ubuntu/.artcb/cursor_agent.env"
 DOPPLER_PROJECT = "artcb-blockchain"
 DOPPLER_CONFIG = "dev"
@@ -79,7 +83,6 @@ def apply_key_to_environ(key: str) -> None:
     if not key.startswith("artcb_"):
         raise ValueError("ARTCB API key must start with artcb_")
     os.environ["ARTCB_API_KEY"] = key
-    os.environ.setdefault("ARTCB_API_URL", resolve_api_url())
 
 
 def auth_headers(api_key: str | None = None) -> dict[str, str]:
@@ -183,7 +186,9 @@ def pull_remote_agent_env() -> dict[str, str]:
         "-i",
         str(key_path),
         "-o",
-        "StrictHostKeyChecking=accept-new",
+        f"UserKnownHostsFile={KNOWN_HOSTS}" if KNOWN_HOSTS.is_file() else "StrictHostKeyChecking=accept-new",
+        "-o",
+        "StrictHostKeyChecking=yes" if KNOWN_HOSTS.is_file() else "StrictHostKeyChecking=accept-new",
         "-o",
         "IdentitiesOnly=yes",
         "-o",
@@ -204,11 +209,52 @@ def pull_remote_agent_env() -> dict[str, str]:
     return parse_env_file(dest)
 
 
+def tls_context(url: str) -> ssl.SSLContext | None:
+    if not url.startswith("https://"):
+        return None
+    ctx = ssl.create_default_context()
+    if PINNED_TLS_CERT.is_file():
+        ctx.load_verify_locations(cafile=str(PINNED_TLS_CERT))
+        ctx.check_hostname = False
+    return ctx
+
+
+class LiveSecurityError(RuntimeError):
+    """Live operation refused (HTTP bearer, localhost while required, missing bootstrap)."""
+
+
+def assert_live_transport(url: str, *, sending_bearer: bool) -> None:
+    """Refuse sending an API key over cleartext HTTP unless explicitly allowed."""
+    allow = os.environ.get("ARTCB_ALLOW_INSECURE_HTTP", "").lower() in {"1", "true", "yes"}
+    if sending_bearer and url.startswith("http://") and not allow:
+        raise LiveSecurityError(
+            f"Refuse Bearer over HTTP ({url}). Use HTTPS or set ARTCB_ALLOW_INSECURE_HTTP=1 for localhost/dev."
+        )
+    required = os.environ.get("ARTCB_LIVE_REQUIRED", "").lower() in {"1", "true", "yes"}
+    if required and ("localhost" in url or "127.0.0.1" in url):
+        raise LiveSecurityError(f"ARTCB_LIVE_REQUIRED forbids localhost URL {url}")
+
+
+def write_bootstrap_stamp(payload: dict[str, Any]) -> Path:
+    dest = Path.home() / ".artcb" / "bootstrap_ok.json"
+    dest.parent.mkdir(mode=0o700, exist_ok=True)
+    dest.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    dest.chmod(stat.S_IRUSR | stat.S_IWUSR)
+    return dest
+
+
 def http_json(method: str, url: str, *, api_key: str | None = None, body: dict | None = None) -> tuple[int, Any]:
+    token = api_key or resolve_api_key()
+    if token:
+        try:
+            assert_live_transport(url, sending_bearer=True)
+        except LiveSecurityError as exc:
+            return 0, {"error": "LiveSecurityError", "detail": str(exc)}
     data = None if body is None else json.dumps(body).encode()
-    req = Request(url, data=data, method=method, headers=auth_headers(api_key))
+    req = Request(url, data=data, method=method, headers=auth_headers(token or None))
+    ctx = tls_context(url)
     try:
-        with urlopen(req, timeout=20) as resp:
+        with urlopen(req, timeout=20, context=ctx) as resp:
             raw = resp.read().decode("utf-8")
             return resp.status, json.loads(raw) if raw else {}
     except HTTPError as exc:

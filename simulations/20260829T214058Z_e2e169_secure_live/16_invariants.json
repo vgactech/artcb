@@ -1,0 +1,11 @@
+{
+  "T10_snapshot_change": true,
+  "T1_concurrent_same_sid": true,
+  "T2_same_work_different_sid": true,
+  "T3_same_work_different_snapshot": true,
+  "T4_crash_restart_no_double": true,
+  "T5_partition_majority_A_B": true,
+  "T6_heal_no_double": true,
+  "T8_replay_after_epoch": true,
+  "T9_transfer_window": null
+}

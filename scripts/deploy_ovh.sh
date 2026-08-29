@@ -22,7 +22,13 @@ set -Eeuo pipefail
 SERVER_IP="${1:-152.228.144.34}"
 BRANCH="${2:-${ARTCB_DEPLOY_BRANCH:-}}"
 SSH_USER="${OVH_DEPLOY_USER:-ubuntu}"
-SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o IdentitiesOnly=yes -o BatchMode=yes)
+KNOWN_HOSTS="${ARTCB_SSH_KNOWN_HOSTS:-$(cd "$(dirname "$0")/.." && pwd)/deploy/ovh_artcb_node_1.known_hosts}"
+SSH_OPTS=(-o ConnectTimeout=15 -o IdentitiesOnly=yes -o BatchMode=yes)
+if [ -f "$KNOWN_HOSTS" ]; then
+  SSH_OPTS+=(-o "UserKnownHostsFile=$KNOWN_HOSTS" -o StrictHostKeyChecking=yes)
+else
+  SSH_OPTS+=(-o StrictHostKeyChecking=accept-new)
+fi
 
 if [ -z "${ARTCB_SSH_KEY:-}" ]; then
   if [ -f "${HOME}/.ssh/artcb_ovh_deploy" ]; then

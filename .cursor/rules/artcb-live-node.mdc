@@ -11,7 +11,8 @@ Au **début de chaque tâche**, avant d’inventer un état de chaîne :
 2. Lire le JSON (jamais une clé `artcb_…`)
 3. Utiliser `ARTCB_API_URL` + `ARTCB_API_KEY` déjà exportés pour tout appel réel
 
-Nœud canonique : `http://152.228.144.34:8000` (`ubuntu@152.228.144.34`, artcb-node-1).
+Nœud canonique : `http://152.228.144.34:8000` (health) et `https://152.228.144.34:8443` (Bearer). Même machine `ubuntu@152.228.144.34`. **Pas de 2ᵉ VM OVH.**
+Vérifier `git_sha` live == `origin/main`. Ne pas envoyer la clé en HTTP distant.
 
 Sources de la clé, dans l’ordre : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH `/home/ubuntu/.artcb/cursor_agent.env`.
 

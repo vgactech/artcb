@@ -1200,6 +1200,17 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Règle Cursor : `.cursor/rules/artcb-live-node.mdc`.
 - Rapport : `rapports/168_live_node_agent_key_adversarial_2026-08-29.md` SHA `a5fa643`.
 
+## [2026-08-29T21:45:00Z] Rapport 169 — provenance + OVH=main + TLS même nœud
+
+- **main** `5b4b24ae` (PR #37). **Pas de nouvelle VM OVH.**
+- **Live = main :** `/health` `git_sha=5b4b24ae…` `git_branch=main` (HTTP et HTTPS).
+- **TLS :** `https://152.228.144.34:8443` nginx self-signed ; cert public `deploy/ovh_artcb_node_1.crt`. Bearer distant refusé en HTTP par le SDK.
+- **Simu :** `simulations/20260829T214058Z_e2e169_secure_live/` `failures=[]` ; 4 process HTTP **pas** 4 OVH. T9 = SIMULÉ.
+- **Provenance :** pip freeze (119 pkgs) ; `git_status_clean=false` au run. 168 n’est plus « live adversarial ».
+- **V-01…V-07** toujours ouverts. **NOT MAINNET CERTIFIED.**
+- **Tests :** 625 passed / 8 skipped. `logs/20260829_pytest_rapport169.txt`.
+- Rapport : `rapports/169_secure_live_provenance_2026-08-29.md` SHA `fe51f93`.
+
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 
 - **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.

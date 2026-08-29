@@ -105,8 +105,8 @@ if not token.startswith("artcb_"):
         "/api/v1/api-keys/generate",
         {
             "label": "cursor-cloud-agent",
-            "scopes": ["read", "write", "mining"],
-            "expires_days": 365,
+            "scopes": ["read", "write"],
+            "expires_days": 90,
         },
         token=sess["session_token"],
     )

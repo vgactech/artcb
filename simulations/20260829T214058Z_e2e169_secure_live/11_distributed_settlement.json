@@ -1,0 +1,77 @@
+{
+  "all_boolean_pass": true,
+  "tests": [
+    {
+      "classification": "DISTRIBUTED PROCESS SIMULATION",
+      "counts": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 1
+      },
+      "expected": "exactly_one_ok",
+      "id": "T1_concurrent_same_sid",
+      "ok_count": 1,
+      "pass": true
+    },
+    {
+      "classification": "DISTRIBUTED PROCESS SIMULATION",
+      "expected": "reject",
+      "id": "T2_same_work_different_sid",
+      "ok": false,
+      "pass": true,
+      "reason": "no_majority"
+    },
+    {
+      "classification": "DISTRIBUTED PROCESS SIMULATION",
+      "expected": "reject (WorkID uniqueness)",
+      "id": "T3_same_work_different_snapshot",
+      "ok": false,
+      "pass": true
+    },
+    {
+      "after_reload": 1,
+      "before": 1,
+      "classification": "DISTRIBUTED PROCESS SIMULATION",
+      "id": "T4_crash_restart_no_double",
+      "pass": true
+    },
+    {
+      "classification": "DISTRIBUTED PROCESS SIMULATION",
+      "id": "T5_partition_majority_A_B",
+      "note": "majority is 3 of 4; isolating C+D leaves 2 < 3 so settle must fail",
+      "ok": false,
+      "pass": true,
+      "prepared": 1
+    },
+    {
+      "classification": "DISTRIBUTED PROCESS SIMULATION",
+      "counts": {
+        "A": 0,
+        "B": 1,
+        "C": 1,
+        "D": 1
+      },
+      "id": "T6_heal_no_double",
+      "pass": true,
+      "second_ok": true
+    },
+    {
+      "classification": "DISTRIBUTED PROCESS SIMULATION",
+      "id": "T8_replay_after_epoch",
+      "ok": false,
+      "pass": true
+    },
+    {
+      "classification": "SIMUL\u00c9 (167 EpochCoordinator, not re-run as 4 OVH VMs)",
+      "id": "T9_transfer_window",
+      "note": "see 167 transfer_does_not_mutate_live_until_next_epoch",
+      "pass": null
+    },
+    {
+      "classification": "SIMUL\u00c9 (same WorkID uniqueness as T3)",
+      "id": "T10_snapshot_change",
+      "pass": true
+    }
+  ]
+}
