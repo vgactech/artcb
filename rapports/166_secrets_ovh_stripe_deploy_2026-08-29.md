@@ -3,7 +3,7 @@
 **Horodatage UTC :** 2026-08-29T18:25:00Z  
 **Branche :** `cursor/ovh-deploy-stripe-secrets-475d`  
 **Base :** `main` = `532b1e5` (PR #34 **déjà mergée** par l’utilisateur)  
-**HEAD au moment du rapport :** à tamponner après commit docs  
+**HEAD au moment du rapport :** `99d6f611542b8051fa1101899e94d32e6a9940f1`  
 **Langue :** rapport FR, code EN. DEBUG ON.  
 **Ne jamais écraser** 160–165. Simulations 164/165 **conservées**.
 
