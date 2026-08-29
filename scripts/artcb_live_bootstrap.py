@@ -24,6 +24,7 @@ from artcb.live import (  # noqa: E402
     pull_remote_agent_env,
     resolve_api_key,
     resolve_api_url,
+    write_bootstrap_stamp,
     write_local_env,
 )
 
@@ -74,6 +75,16 @@ def main() -> int:
         "h_adult": proto.get("h_adult") if isinstance(proto, dict) else None,
         "token_printed": False,
     }
+    write_bootstrap_stamp(
+        {
+            "bootstrap_ok": health_code == 200 and bool(key) and me_code == 200,
+            "node_url": url,
+            "node_git_sha": health.get("git_sha") if isinstance(health, dict) else None,
+            "node_identity": health.get("service") if isinstance(health, dict) else None,
+            "api_key_id": me.get("key_id") if isinstance(me, dict) else None,
+            "scopes": me.get("scopes") if isinstance(me, dict) else None,
+        }
+    )
     print(json.dumps(status, indent=2))
     if health_code != 200:
         return 2
