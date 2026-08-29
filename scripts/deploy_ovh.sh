@@ -16,10 +16,23 @@
 # ══════════════════════════════════════════════════════════════════
 set -Eeuo pipefail
 
-SERVER_IP="${1:-${OVH_SERVER_IP:-152.228.144.34}}"
+# Live node = ubuntu@152.228.144.34 (GRA11). Doppler OVH_SERVER_IP currently
+# points at another host (51.255.22.253) whose SSH:22 times out — ignore it
+# unless the caller passes an explicit IP.
+SERVER_IP="${1:-152.228.144.34}"
 BRANCH="${2:-${ARTCB_DEPLOY_BRANCH:-}}"
-SSH_USER="${OVH_SERVER_USER:-ubuntu}"
-SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o ConnectTimeout=10)
+SSH_USER="${OVH_DEPLOY_USER:-ubuntu}"
+SSH_OPTS=(-o StrictHostKeyChecking=accept-new -o ConnectTimeout=15 -o IdentitiesOnly=yes -o BatchMode=yes)
+
+if [ -z "${ARTCB_SSH_KEY:-}" ]; then
+  if [ -f "${HOME}/.ssh/artcb_ovh_deploy" ]; then
+    ARTCB_SSH_KEY="${HOME}/.ssh/artcb_ovh_deploy"
+  elif [ -n "${DOPPLER_TOKEN:-}" ]; then
+    echo "── Chargement SSH_PRIVATE_KEY depuis Doppler (jamais affiché)"
+    python3 "$(dirname "$0")/load_ovh_ssh_from_doppler.py"
+    ARTCB_SSH_KEY="${HOME}/.ssh/artcb_ovh_deploy"
+  fi
+fi
 [ -n "${ARTCB_SSH_KEY:-}" ] && SSH_OPTS+=(-i "$ARTCB_SSH_KEY")
 
 if [ -z "$BRANCH" ]; then
@@ -40,8 +53,14 @@ if [ ! -d ~/artcb/.git ]; then
 fi
 cd ~/artcb
 git fetch origin "$BRANCH"
-git checkout "$BRANCH"
-git reset --hard "origin/$BRANCH"
+# fetch updates FETCH_HEAD / origin/<branch> but may not create a local branch
+if git show-ref --verify --quiet "refs/remotes/origin/$BRANCH"; then
+  git checkout -B "$BRANCH" "origin/$BRANCH"
+  git reset --hard "origin/$BRANCH"
+else
+  git checkout -B "$BRANCH" FETCH_HEAD
+  git reset --hard FETCH_HEAD
+fi
 DEPLOYED_SHA=\$(git rev-parse HEAD)
 DEPLOYED_BRANCH=\$(git rev-parse --abbrev-ref HEAD)
 echo "── Commit déployé : \$(git log --oneline -1) sha=\$DEPLOYED_SHA"
@@ -73,11 +92,19 @@ sudo cp scripts/artcb.service /etc/systemd/system/artcb.service
 sudo systemctl daemon-reload
 sudo systemctl enable artcb.service
 sudo systemctl restart artcb.service
-sleep 5
-sudo systemctl --no-pager --lines=5 status artcb.service || true
+# Doppler + uvicorn need more than 5s after a token/code swap
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  if curl -sf http://127.0.0.1:8000/health >/dev/null; then
+    echo "── santé locale OK (tentative \$i)"
+    break
+  fi
+  sleep 2
+done
+sudo systemctl --no-pager --lines=8 status artcb.service || true
 
 # 5. Vérification santé locale
 curl -sf http://127.0.0.1:8000/api/v1/health | head -c 400 && echo
+curl -sf http://127.0.0.1:8000/api/v1/economics/params | head -c 200 && echo
 REMOTE
 
 echo "── Vérification santé publique"

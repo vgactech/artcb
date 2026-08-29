@@ -1,0 +1,28 @@
+HTTP 200
+{
+  "job": {
+    "job_id": "job_3cb8d67474e44e61",
+    "provider_address": "artcb1testpriorityjob000000000000000000000",
+    "payload": "priority job stripe live probe 166 \u2014 not a mint",
+    "status": "submitted",
+    "created_at": "2026-08-29T18:19:44Z",
+    "worker_capacities": [],
+    "preblocks": [],
+    "r_block_satoshi": null
+  },
+  "kind": "JobPayment",
+  "mints": false,
+  "distinct_from": "R_block",
+  "stripe": {
+    "job_id": "job_3cb8d67474e44e61",
+    "kind": "JobPayment",
+    "mints": false,
+    "amount_cents": 50,
+    "currency": "eur",
+    "payment_intent_id": "pi_3U9qqyH8iCu6cONU0Ztpzy49",
+    "status": "canceled",
+    "idempotency_key": "af6c0170fabc405ffea6f5d2d1d0ec0a81ed58219b4f91b9af5eb3fa5f215776",
+    "created_at": "2026-08-29T18:19:44Z",
+    "distinct_from": "R_block"
+  }
+}

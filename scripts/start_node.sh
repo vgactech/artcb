@@ -21,9 +21,11 @@ echo "── git ${ARTCB_GIT_BRANCH:-?}@${ARTCB_GIT_SHA:-unknown}"
 UVICORN=(.venv/bin/python -m uvicorn src.api.main:app --host 0.0.0.0 --port "${ARTCB_PORT:-8000}")
 
 if [ -n "${DOPPLER_TOKEN:-}" ] && command -v doppler &>/dev/null; then
-  echo "── Démarrage via Doppler (secrets distants, aucun .env requis)"
-  exec doppler run -- "${UVICORN[@]}"
-else
-  echo "── Démarrage via .env local (DOPPLER_TOKEN absent)"
-  exec "${UVICORN[@]}"
+  if doppler me >/dev/null 2>&1; then
+    echo "── Démarrage via Doppler (secrets distants, aucun .env requis)"
+    exec doppler run -- "${UVICORN[@]}"
+  fi
+  echo "── Doppler token présent mais rejeté (Invalid Auth). Fallback .env — corriger /etc/artcb/doppler.env"
 fi
+echo "── Démarrage via .env local"
+exec "${UVICORN[@]}"

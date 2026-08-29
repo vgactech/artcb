@@ -24,7 +24,13 @@ from src.artcb.tokenomics import MAX_SUPPLY_SATOSHI
 logger = logging.getLogger("artcb.economics.job_payment")
 
 STRIPE_API = "https://api.stripe.com/v1"
-ENV_KEYS = ("KEY_API_STRIPE_ACTION", "STRIPE_SECRET_KEY")
+# Keep in sync with src.artcb.payments.stripe_jobs.STRIPE_SECRET_ENV_NAMES
+ENV_KEYS = (
+    "KEY_API_STRIPE_ACTION",
+    "KEY_API_STRIPE",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_API_KEY",
+)
 
 
 class JobPaymentError(ValueError):
@@ -99,7 +105,7 @@ def create_and_cancel_payment_intent(
     """
     secret = secret or stripe_secret_from_env()
     if not secret:
-        raise JobPaymentError("stripe secret unset (KEY_API_STRIPE_ACTION / STRIPE_SECRET_KEY)")
+        raise JobPaymentError("stripe secret unset (KEY_API_STRIPE_ACTION / KEY_API_STRIPE / STRIPE_*)")
     mode = stripe_key_mode(secret)
     logger.debug("stripe PI create+cancel mode=%s amount_cents=%s (key not logged)", mode, amount_cents)
     if mode == "live":

@@ -1,0 +1,47 @@
+[
+  {
+    "url": "http://152.228.144.34:8000/health",
+    "http": 200,
+    "body": "{\"status\":\"healthy\",\"service\":\"ARTCB API\",\"version\":\"0.3.0\",\"git_sha\":\"deaf6209bed35d427407f4f832cc66dd400132dd\",\"git_branch\":\"cursor/ovh-deploy-stripe-secrets-475d\",\"bootstrap_mode\":false,\"pqc\":{\"available\":true,\"algorithm\":\"ML-DSA-65\",\"action_required\":null}}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/health",
+    "http": 200,
+    "body": "{\"status\":\"ok\",\"debug\":true,\"llm_enabled\":false,\"bob_configured\":true,\"demo_book\":\"data/fixtures/wailly_le_roi_de_l_inconnu.pdf\",\"chain\":{\"available\":true,\"valid\":true,\"message\":\"chain file not found (empty ok)\",\"block_count\":0,\"public_key\":\"u3WrGfKSYatkntc6ctlZqDyHI/98yV2PfJ8FTC/IXSU=\",\"hybrid_signatures\":true,\"pqc_algorithm\":\"ML-DSA-65\"},\"git_sha\":\"deaf6209bed35d427407f4f832cc66dd400132dd\",\"git_branch\":\"cursor/ovh-deploy-stripe-secrets-475d\",\"version\":\"0.3.0\"}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/economics/params",
+    "http": 200,
+    "body": "{\"max_supply_artcb\":21000000.0,\"initial_block_reward_artcb\":50.0,\"emission_model\":\"R(H)\",\"issued_formula\":\"min(R(H) * dt/TARGET_BLOCK_SECONDS, remaining_21M)\",\"halving_interval\":null,\"halving_removed\":true,\"target_block_seconds\":600.0,\"identity\":\"21_000_000 hard cap (D-014) \u2014 not 50\u00d7210000\u00d72 schedule\",\"r_h\":\"50 * (max(H, 1e6) / 1e6) ** (-ln(50)/ln(64))\",\"hbp\":\"10% \u2192 60% @ 4.15e9 \u2192 20% @ 8.3e9 (anchors still provisional vs adults 18+)\",\"owner_decay\":\"M1=100% always; M2+ share P(N_economic)=0.10+0.40*exp(-k*(N-2)); k from P(3)=49%\",\"provider_worker\":\"50/50 start, HBP-like weights, clamp 20\u201380% (parameter)\",\"fees\":\"ARTCB only for PoL; USD cap = cheapest observed L2 native p50 (Base 0.000311 2026-08-26)\",\"dividend\":\"UniversalDividendVault \u2014 not remaining supply\",\"lock_days\":30,\"h_adult\":\"live counter = HumanRegistry.verified_adult_count (18+); Hmax NOT frozen at 8.3e9\",\"hash_version\":\"v1 historic without EconomicRoot; v2 native C economic_root\",\"job_payment\":\"Stripe JobPayment \u2260 R_block and never mints\"}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/economics/h-adult",
+    "http": 200,
+    "body": "{\"h_adult\":0,\"source\":\"HumanRegistry.verified_adult_count\",\"adult_age_years\":18,\"hmax_frozen\":false,\"demographic_reference\":{\"dataset_id\":\"provisional-not-wpp-freeze\",\"source\":\"estimation only \u2014 Q-E03 still open for dated UN WPP 18+\",\"publication_date\":\"2026-08-28\",\"adult_population_estimate\":5820000000,\"methodology_hash\":\"pending\",\"effective_epoch\":0},\"demographic_digest\":\"3d371804c570d3a3b4b4a2069a227da34cd8c6b12ce0efcf07d789173bf78788\",\"note\":\"8.3e9 is NOT frozen Hmax; WPP 18+ dated extract still Q-E03\"}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/economics/emission?verified_humans=5",
+    "http": 200,
+    "body": "{\"block_index\":0,\"block_index_unused_for_schedule\":true,\"verified_humans\":5.0,\"r_h_artcb\":50.0,\"issued_satoshi\":5000000000,\"issued_artcb\":50.0,\"emission_model\":\"R(H)\"}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/economics/hbp?verified_humans=5",
+    "http": 200,
+    "body": "{\"verified_humans\":5.0,\"hbp_rate\":0.10000000060240964,\"hbp_percent\":10.000000060240964}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/economics/owner-share?machine_index=1&n_economic=5",
+    "http": 200,
+    "body": "{\"machine_index\":1,\"n_economic\":5,\"owner_share\":1.0,\"human_share\":0.0,\"m1_always_100\":true,\"fleet_p_extras\":0.47074375}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/mining/protocol",
+    "http": 404,
+    "body": "{\"detail\":\"Not Found\"}"
+  },
+  {
+    "url": "http://152.228.144.34:8000/api/v1/mining/protocol/status",
+    "http": 200,
+    "body": "{\"h_adult\":0,\"h_adult_source\":\"HumanRegistry.verified_adult_count\",\"adult_age_years\":18,\"supply_satoshi\":0,\"max_supply_satoshi\":2100000000000000,\"c_economic_root_abi\":true,\"wired\":true}"
+  }
+]
