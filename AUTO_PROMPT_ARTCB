@@ -1182,7 +1182,7 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 
 ## [2026-08-29T19:20:00Z] Rapport 167 — snapshot économique + sim 4 nœuds
 
-- **Base :** `main` `46fdd234` (PR #34+#35 mergées). Branche `cursor/e2e167-distributed-snapshot-475d`.
+- **Base :** `main` `46fdd234` (PR #34+#35 mergées). Branche `cursor/e2e167-distributed-snapshot-475d`. SHA docs `0fd87d3`.
 - **Simu canonique :** `simulations/20260829T191632Z_e2e167_distributed_consolidated/` `failures=[]`. 191605 conservé (transfert B sans M1 → HumanBindingError).
 - **Règles code :** Settlement = f(snapshot) ; SID + unicité WorkID ; transfert/retrait epoch+1 ; M1=100 % ; Stripe down ≠ bloc ; OracleUnavailable > prix inventé.
 - **Pas une certif mainnet.** Gossip = tips. V-01…V-07 + D-026 provisoires.

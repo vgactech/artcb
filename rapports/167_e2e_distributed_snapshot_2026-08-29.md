@@ -4,6 +4,7 @@
 **Branche :** `cursor/e2e167-distributed-snapshot-475d`  
 **Base :** `origin/main` = `46fdd234` (merge PR #35)  
 **Code P0 :** `b365ab7` puis correctifs unicité WorkID / transfert  
+**Commit docs + correctifs :** `0fd87d3f5b166b5dc14f9d9aa6beceaf5439c20b`  
 **Simulation canonique :** `simulations/20260829T191632Z_e2e167_distributed_consolidated/`  
 **Run échoué conservé :** `simulations/20260829T191605Z_e2e167_distributed_consolidated/` (preuve, pas inventé)  
 **Pytest :** `logs/20260829_pytest_rapport167.txt` — **613 passed, 8 skipped, 0 fail**  
