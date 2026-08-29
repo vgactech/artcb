@@ -363,6 +363,7 @@ def test_provider_worker_split_with_nonzero_scores(tmp_path: Path) -> None:
 
 def test_stripe_down_does_not_block_chain(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
+    monkeypatch.delenv("KEY_API_STRIPE", raising=False)
     monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
     monkeypatch.delenv("STRIPE_API_KEY", raising=False)
     engine = _engine(tmp_path)
@@ -396,6 +397,7 @@ def test_stripe_payment_intent_fail_does_not_block_chain(
 ) -> None:
     monkeypatch.setenv("STRIPE_SECRET_KEY", "sk_test_invalid_not_a_real_secret")
     monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
+    monkeypatch.delenv("KEY_API_STRIPE", raising=False)
     monkeypatch.delenv("STRIPE_API_KEY", raising=False)
     engine = _engine(tmp_path)
     _people(engine)

@@ -26,7 +26,7 @@ def _has_stripe_secret() -> bool:
     return bool(stripe_secret() or stripe_secret_from_env())
 
 
-@pytest.mark.skipif(not _has_stripe_secret(), reason="KEY_API_STRIPE_ACTION / STRIPE_SECRET_KEY unset")
+@pytest.mark.skipif(not _has_stripe_secret(), reason="KEY_API_STRIPE_ACTION / KEY_API_STRIPE / STRIPE_* unset")
 def test_stripe_create_and_cancel_does_not_mint(tmp_path: Path) -> None:
     ledger = StripeJobLedger(tmp_path / "stripe.json")
     rec = create_priority_job_payment(
@@ -58,6 +58,7 @@ def test_stripe_create_and_cancel_does_not_mint(tmp_path: Path) -> None:
 
 def test_stripe_skipped_without_secret(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
+    monkeypatch.delenv("KEY_API_STRIPE", raising=False)
     monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
     monkeypatch.delenv("STRIPE_API_KEY", raising=False)
     assert stripe_secret() is None
@@ -112,6 +113,7 @@ def test_stripe_failure_is_not_consensus_dependency(monkeypatch: pytest.MonkeyPa
     )
 
     monkeypatch.delenv("KEY_API_STRIPE_ACTION", raising=False)
+    monkeypatch.delenv("KEY_API_STRIPE", raising=False)
     monkeypatch.delenv("STRIPE_SECRET_KEY", raising=False)
     monkeypatch.delenv("STRIPE_API_KEY", raising=False)
     assert stripe_is_consensus_dependency() is False

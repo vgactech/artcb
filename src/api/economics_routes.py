@@ -373,7 +373,7 @@ def submit_priority_job(body: PriorityJobIn, request: Request) -> dict:
             "distinct_from": BLOCK_REWARD_KIND,
             "stripe": None,
             "stripe_skipped": True,
-            "reason": "KEY_API_STRIPE_ACTION / STRIPE_* not in this runtime",
+            "reason": "KEY_API_STRIPE_ACTION / KEY_API_STRIPE / STRIPE_* not in this runtime",
         }
     try:
         pay = create_priority_job_payment(

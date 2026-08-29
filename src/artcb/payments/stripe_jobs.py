@@ -3,8 +3,9 @@
 JobPayment (fiat, PaymentIntent) is a queue-priority fee. It is NOT the
 block reward. Conservation of satoshi is unchanged.
 
-Secrets: KEY_API_STRIPE_ACTION or STRIPE_SECRET_KEY / STRIPE_API_KEY.
-Never log the key. Test-mode sk_test expected.
+Secrets (first match wins): KEY_API_STRIPE_ACTION (GitHub Actions),
+KEY_API_STRIPE (Cursor Cloud / Doppler), STRIPE_SECRET_KEY, STRIPE_API_KEY.
+Never log the key. Test-mode sk_test / rk_test expected.
 """
 
 from __future__ import annotations
@@ -24,6 +25,13 @@ logger = logging.getLogger("artcb.payments.stripe_jobs")
 STRIPE_API = "https://api.stripe.com/v1"
 JOB_PAYMENT_KIND = "JobPayment"
 BLOCK_REWARD_KIND = "R_block"
+# Cursor/Doppler use KEY_API_STRIPE; GitHub Actions use KEY_API_STRIPE_ACTION.
+STRIPE_SECRET_ENV_NAMES = (
+    "KEY_API_STRIPE_ACTION",
+    "KEY_API_STRIPE",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_API_KEY",
+)
 # Anti-spam floor for a priority job (USD cents). Parameter, not a D-xxx freeze.
 PRIORITY_JOB_MIN_CENTS = 50
 DEFAULT_PRIORITY_CENTS = 200  # $2.00 test
@@ -34,7 +42,7 @@ class StripeJobError(RuntimeError):
 
 
 def stripe_secret() -> str | None:
-    for name in ("KEY_API_STRIPE_ACTION", "STRIPE_SECRET_KEY", "STRIPE_API_KEY"):
+    for name in STRIPE_SECRET_ENV_NAMES:
         value = os.environ.get(name, "").strip()
         if value:
             return value
@@ -194,7 +202,7 @@ def create_priority_job_payment(
     key = stripe_secret()
     if not key:
         raise StripeJobError(
-            "no Stripe secret in env (KEY_API_STRIPE_ACTION / STRIPE_SECRET_KEY / STRIPE_API_KEY)"
+            "no Stripe secret in env (KEY_API_STRIPE_ACTION / KEY_API_STRIPE / STRIPE_SECRET_KEY / STRIPE_API_KEY)"
         )
     mode = assert_test_key(key)
     if mode == "live":

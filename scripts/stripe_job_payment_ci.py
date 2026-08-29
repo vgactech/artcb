@@ -22,7 +22,10 @@ from src.artcb.payments.stripe_jobs import (  # noqa: E402
 
 
 def _has_secret_name() -> bool:
-    return any(os.environ.get(n) for n in ("KEY_API_STRIPE_ACTION", "STRIPE_SECRET_KEY", "STRIPE_API_KEY"))
+    return any(
+        os.environ.get(n)
+        for n in ("KEY_API_STRIPE_ACTION", "KEY_API_STRIPE", "STRIPE_SECRET_KEY", "STRIPE_API_KEY")
+    )
 
 
 def main() -> int:
