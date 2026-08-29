@@ -1,0 +1,23 @@
+{
+  "M1_100": true,
+  "settlement_workid_x_eq_1": true,
+  "transfer_does_not_mutate_live_until_next_epoch": true,
+  "n_decreases_next_epoch_after_transfer": true,
+  "offline_still_counts": true,
+  "stripe_down_does_not_block": true,
+  "partition_dup_rejected": true,
+  "oracle_unavailable_not_invented": true,
+  "oracle_quorum_median": true,
+  "provider_unavailable_still_settles": true,
+  "restart_preserves_height": true,
+  "supply_le_21m": true,
+  "finality_example": {
+    "height_0_final_at_tip": true,
+    "n": 2
+  },
+  "canonical": {
+    "node": "A",
+    "height": 4,
+    "tip": "df97b67cbfc141e6214d07d5ce5a1085312fe4f2a1ba0b2479ae33a570d8698d"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "validated": {
+    "D-014": "21M cap",
+    "D-024": "no 210k halving",
+    "D-025": "M1=100%, fleet P(N), time-norm, Stripe≠mint"
+  },
+  "pending_user_validation": {
+    "V-01": "EconomicStateSnapshot at epoch start (implemented, pending lock)",
+    "V-02": "transfer effect = next epoch (implemented, pending lock)",
+    "V-03": "reconnect grace 24h prod / 1s in this sim (pending lock)",
+    "V-04": "retire effect = next snapshot (implemented, pending lock)",
+    "V-05": "finality = N confirmations (N=2) vs quorum (pending lock)",
+    "V-06": "H_adult_max = versioned DemographicReference (not frozen)",
+    "V-07": "HBP 10→60→20 on H_verified/H_adult_max (function added, live path unchanged)"
+  },
+  "matrix": [
+    {
+      "decision": "21M",
+      "code": "emission",
+      "test": "cap",
+      "sim": "supply"
+    },
+    {
+      "decision": "M1=100%",
+      "code": "owner_decay",
+      "test": "m1",
+      "sim": "fleet"
+    },
+    {
+      "decision": "OwnerDecay",
+      "code": "economics",
+      "test": "fleet",
+      "sim": "N changes"
+    },
+    {
+      "decision": "HBP envelope",
+      "code": "hbp",
+      "test": "budget",
+      "sim": "demographic"
+    },
+    {
+      "decision": "SettlementID",
+      "code": "economic_snapshot",
+      "test": "uniqueness",
+      "sim": "S2"
+    },
+    {
+      "decision": "Stripe≠mint",
+      "code": "payments",
+      "test": "isolation",
+      "sim": "S9"
+    }
+  ]
+}

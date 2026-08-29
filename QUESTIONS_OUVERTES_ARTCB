@@ -184,3 +184,17 @@ Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economi
 | Q-ovh-deploy | ⏳ | `/health` 200 ; `/economics/h-adult` et `/mining/protocol/status` **404**. SSH denied. |
 | Q-stripe-gha | ⏳ | Workflows OK. Ce runtime cloud : secret **absent** → live KO. |
 
+---
+
+## [2026-08-29T19:20:00Z] Simulation 167 — V-01…V-07 (ne pas geler sans GO)
+
+| ID | Question | Recommandation code | Statut |
+|----|----------|---------------------|--------|
+| V-01 | Instant du snapshot économique | Début d’epoch (Solution A) | ⏳ |
+| V-02 | Effet d’un transfert | Epoch suivant | ⏳ |
+| V-03 | Grace reconnect | 24 h (1 s en sim) | ⏳ |
+| V-04 | Effet d’un retrait | Prochain snapshot | ⏳ |
+| V-05 | Finalité | N=2 confirmations vs quorum | ⏳ |
+| V-06 | H_adult_max | DemographicReference versionnée, pas gel WPP | ⏳ |
+| V-07 | HBP | 10→60→20 sur H/H_adult_max ; live encore ancres absolues | ⏳ |
+

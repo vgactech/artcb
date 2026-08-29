@@ -238,4 +238,7 @@
 | T-E12 | OVH `POST /api/v1/economics/jobs/priority` | JobPayment Stripe create+cancel, `mints=false` | [x] | 2026-08-29 `pi_…` canceled |
 | T-E13 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite post-166 | [x] | 2026-08-29 **607 passed, 8 skipped, 0 fail** |
 | T-E14 | Doppler `GET /v3/me` + SSH `ubuntu@152.228.144.34` | token Cursor valide ; clé `SSH_PRIVATE_KEY` Doppler | [x] | 2026-08-29 |
+| T-E15 | `pytest tests/test_economic_snapshot_167.py` | SID déterministe, WorkID unique, snapshot N figé | [x] | 2026-08-29 |
+| T-E16 | `python scripts/run_sim167_distributed.py` | `failures=[]` ; 191632 canonique ; 191605 erreur réelle conservée | [x] | 2026-08-29 |
+| T-E17 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite post-167 | [x] | 2026-08-29 **613 passed, 8 skipped** |
 

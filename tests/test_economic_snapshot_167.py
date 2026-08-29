@@ -50,6 +50,8 @@ def test_ledger_rejects_second_consume(tmp_path: Path) -> None:
     ledger.consume("sid1", work_id="W-X", node_id="A", epoch=1)
     with pytest.raises(AlreadySettled):
         ledger.consume("sid1", work_id="W-X", node_id="B", epoch=1)
+    with pytest.raises(AlreadySettled):
+        ledger.consume("sid2-different-snapshot", work_id="W-X", node_id="C", epoch=1)
     assert ledger.count_for_work("W-X") == 1
 
 

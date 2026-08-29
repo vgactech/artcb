@@ -170,4 +170,9 @@
 **Leçon :** (1) Un service token par usage (Cursor / Replit / serveur). (2) Après rotation, mettre à jour le fichier serveur ou le nœud meurt au prochain restart. (3) `doppler me` avant `doppler run`. (4) Ne jamais prendre `OVH_SERVER_IP` Doppler comme cible de deploy sans vérifier le ping SSH. (5) Noms de secrets : vérifier `CLOUD_AGENT_INJECTED_SECRET_NAMES` avant de conclure « absent ».
 **Action :** Rapport 166. `start_node.sh` preflight. `load_ovh_ssh_from_doppler.py`.
 
+### L-037 — Snapshot + WorkID global, pas seulement SettlementID (29 août 2026)
+**Contexte :** Sim 167. (1) Transfert de M4 vers B sans M1 chez B → `first machine cannot bind third-party`. (2) `taken_at` par nœud → SID différents pour le même WorkID → 4 settles possibles.
+**Leçon :** Un transfert vers un owner sans flotte crée un M1. L’unicité doit porter sur **WorkID réseau**, pas seulement hash(snapshot). Un timestamp non aligné casse la reproductibilité du SID.
+**Action :** Rapport 167. Ledger `consume` refuse le même WorkID. Epoch aligné. MB1 pré-enregistré.
+
 

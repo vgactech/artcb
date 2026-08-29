@@ -168,6 +168,11 @@ class SettlementLedger:
         with self._lock:
             if sid in self._consumed:
                 raise AlreadySettled(f"AlreadySettled SettlementID={sid[:16]} work={work_id}")
+            for row in self._consumed.values():
+                if row.get("work_id") == work_id:
+                    raise AlreadySettled(
+                        f"AlreadySettled WorkID={work_id} prior_sid={str(row.get('settlement_id'))[:16]}"
+                    )
             row = {
                 "settlement_id": sid,
                 "work_id": work_id,
@@ -299,12 +304,13 @@ class EpochCoordinator:
                     n_economic=machines.economic_count(rec.owner_address),
                 )
             )
+        taken = now or datetime.now(UTC)
         snap = EconomicStateSnapshot(
             epoch=self.epoch,
             parent_root=parent_root,
             protocol_version=self.protocol_version,
             economic_rules_version=ECONOMIC_RULES_VERSION,
-            taken_at=(now or datetime.now(UTC)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            taken_at=taken.strftime("%Y-%m-%dT%H:%M:%SZ"),
             h_adult=humans.verified_adult_count(),
             demographic_digest=demographic_digest,
             machines=tuple(rows),

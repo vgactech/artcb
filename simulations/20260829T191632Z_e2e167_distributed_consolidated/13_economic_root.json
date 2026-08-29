@@ -1,0 +1,69 @@
+{
+  "ok_blocks": [
+    {
+      "ok": true,
+      "node": "A",
+      "work_id": "WorkID-X",
+      "block_index": 0,
+      "block_hash": "9d2870e276a8c5b2adacb2f93695956cc0257deffc86f28df3ec5d160e79ea4b",
+      "economic_root": "672de758ab333e1a8bf8a7b2e05273c677c0a3bd9d80f31e7a7fea345c25aa41",
+      "paid": 5000000000,
+      "r_block": 5000000000,
+      "supply": 5000000000,
+      "settlement_id": "624c8f3ac1eabd042eb4e93525f31c08e389adc528b67809c43af36cd25efb61",
+      "h_adult": 5.0
+    },
+    {
+      "ok": true,
+      "node": "A",
+      "work_id": "WorkID-transfer-window",
+      "block_index": 1,
+      "block_hash": "ad173a412adaac9dc30b1d0ec3057801eb224d9e2f89fc67828297cf2dd722aa",
+      "economic_root": "02fe78d43b756b17ae09df39ea0eed52e0c30d7af1e8ad2564b5d015d6db23b3",
+      "paid": 5000000000,
+      "r_block": 5000000000,
+      "supply": 10000000000,
+      "settlement_id": "c8f4ea2e73666613b8c2c58b8322fdcc1870c2ebfcaf8155ca71828c742b09fb",
+      "h_adult": 5.0
+    },
+    {
+      "ok": true,
+      "node": "A",
+      "work_id": "WorkID-stripe-down",
+      "block_index": 2,
+      "block_hash": "a786af1d9991bc71b0bb1bdffd3d7a41322cb819dcaeba0ba72a4d5405229ca7",
+      "economic_root": "dbcf63e9c46b64ddcc11bd010b6537b91a31f1d76f276d7fbc735610defa8e45",
+      "paid": 5000000000,
+      "r_block": 5000000000,
+      "supply": 15000000000,
+      "settlement_id": "cd3d60d35a42187f0bedd90143787b720a8f26229878e568fdaa3b55e486a4ea",
+      "h_adult": 5.0
+    }
+  ],
+  "oracle": {
+    "no_quorum": {
+      "status": "OracleUnavailable",
+      "median": null,
+      "sources_ok": 0,
+      "min_sources": 2,
+      "quotes": [
+        null,
+        null,
+        null
+      ],
+      "invented": false
+    },
+    "quorum": {
+      "status": "quorum",
+      "median": 1.1,
+      "sources_ok": 2,
+      "min_sources": 2,
+      "quotes": [
+        1.0,
+        1.2,
+        null
+      ],
+      "invented": false
+    }
+  }
+}

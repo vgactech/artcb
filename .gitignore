@@ -26,6 +26,7 @@ data/founders/*_private.json
 *.key
 # Simulation runtime data (chain keys, local ledgers)
 simulations/**/data/
+simulations/**/work/
 src/c/*.so
 src/c/test_chain
 frontend/node_modules/

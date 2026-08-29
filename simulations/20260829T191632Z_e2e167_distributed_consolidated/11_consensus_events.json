@@ -1,0 +1,47 @@
+{
+  "S1_S2_WorkID-X": [
+    {
+      "ok": false,
+      "node": "B",
+      "work_id": "WorkID-X",
+      "error": "ProtocolReject",
+      "detail": "REJECT_DOUBLE_SETTLEMENT: AlreadySettled SettlementID=624c8f3ac1eabd04 work=WorkID-X"
+    },
+    {
+      "ok": false,
+      "node": "D",
+      "work_id": "WorkID-X",
+      "error": "ProtocolReject",
+      "detail": "REJECT_DOUBLE_SETTLEMENT: AlreadySettled SettlementID=624c8f3ac1eabd04 work=WorkID-X"
+    },
+    {
+      "ok": false,
+      "node": "C",
+      "work_id": "WorkID-X",
+      "error": "ProtocolReject",
+      "detail": "REJECT_DOUBLE_SETTLEMENT: AlreadySettled SettlementID=624c8f3ac1eabd04 work=WorkID-X"
+    },
+    {
+      "ok": true,
+      "node": "A",
+      "work_id": "WorkID-X",
+      "block_index": 0,
+      "block_hash": "9d2870e276a8c5b2adacb2f93695956cc0257deffc86f28df3ec5d160e79ea4b",
+      "economic_root": "672de758ab333e1a8bf8a7b2e05273c677c0a3bd9d80f31e7a7fea345c25aa41",
+      "paid": 5000000000,
+      "r_block": 5000000000,
+      "supply": 5000000000,
+      "settlement_id": "624c8f3ac1eabd042eb4e93525f31c08e389adc528b67809c43af36cd25efb61",
+      "h_adult": 5.0
+    }
+  ],
+  "consumed": [
+    {
+      "settlement_id": "624c8f3ac1eabd042eb4e93525f31c08e389adc528b67809c43af36cd25efb61",
+      "work_id": "WorkID-X",
+      "node_id": "A",
+      "epoch": 1,
+      "consumed_at": "2026-08-29T19:16:32Z"
+    }
+  ]
+}

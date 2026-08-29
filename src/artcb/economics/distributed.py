@@ -83,6 +83,8 @@ def _people(engine: ProtocolEngine) -> None:
     engine.machines.register(machine_id="M2", owner_address="A", bound_human_address="B")
     engine.machines.register(machine_id="M3", owner_address="A", bound_human_address="C")
     engine.machines.register(machine_id="M4", owner_address="A", bound_human_address="D")
+    # B already has M1-equivalent so a later transfer of A's extra is not B's first machine
+    engine.machines.register(machine_id="MB1", owner_address="B")
 
 
 def build_nodes(root: Path, *, ledger: SettlementLedger) -> list[SimNode]:
@@ -124,6 +126,9 @@ def build_nodes(root: Path, *, ledger: SettlementLedger) -> list[SimNode]:
 
 
 def begin_aligned_epoch(nodes: list[SimNode], *, parent_root: str) -> dict[str, EconomicStateSnapshot]:
+    from datetime import UTC, datetime
+
+    shared_now = datetime.now(UTC)
     snaps: dict[str, EconomicStateSnapshot] = {}
     for node in nodes:
         snap = node.coordinator.begin_epoch(
@@ -132,6 +137,7 @@ def begin_aligned_epoch(nodes: list[SimNode], *, parent_root: str) -> dict[str, 
             parent_root=parent_root,
             work_ids_open=[],
             demographic_digest=node.engine.demographic.digest(),
+            now=shared_now,
         )
         snaps[node.node_id] = snap
         node.record("epoch_start", epoch=snap.epoch, digest=snap.digest())
