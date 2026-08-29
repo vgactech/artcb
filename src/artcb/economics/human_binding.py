@@ -126,6 +126,11 @@ class MachineRegistry:
                 return self._hydrate(row)
         return None
 
+    def all(self) -> list[MachineRecord]:
+        records = [self._hydrate(row) for row in self._read()]
+        records.sort(key=lambda rec: (rec.owner_address, rec.machine_index, rec.machine_id))
+        return records
+
     def external_bindings_of(self, human_address: str) -> list[MachineRecord]:
         human = human_address.strip()
         out = []
