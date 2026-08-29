@@ -1198,7 +1198,7 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Simu :** `simulations/20260829T195130Z_e2e168_adversarial_live/` replay WorkID rejeté, `failures=[]`.
 - **Tests :** 618 passed / 8 skipped. Log `logs/20260829_pytest_rapport168.txt`.
 - Règle Cursor : `.cursor/rules/artcb-live-node.mdc`.
-- Rapport : `rapports/168_live_node_agent_key_adversarial_2026-08-29.md`
+- Rapport : `rapports/168_live_node_agent_key_adversarial_2026-08-29.md` SHA `a5fa643`.
 
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 

@@ -3,6 +3,7 @@
 **Horodatage UTC :** 2026-08-29T19:52:00Z  
 **Branche :** `cursor/live-node-agent-key-475d`  
 **Base :** `origin/main` = `4dfc154` (merge PR #36 / Simulation 167)  
+**Commit :** `a5fa64380f907b672a0b75be5678dbbd55841467`  
 **Ne jamais écraser** 160–167. Run 167 191605 **conservé**.
 
 **Aucun token `artcb_…` n’est reproduit ici.**
