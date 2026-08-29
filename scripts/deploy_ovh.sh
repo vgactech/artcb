@@ -92,11 +92,19 @@ sudo cp scripts/artcb.service /etc/systemd/system/artcb.service
 sudo systemctl daemon-reload
 sudo systemctl enable artcb.service
 sudo systemctl restart artcb.service
-sleep 5
-sudo systemctl --no-pager --lines=5 status artcb.service || true
+# Doppler + uvicorn need more than 5s after a token/code swap
+for i in 1 2 3 4 5 6 7 8 9 10; do
+  if curl -sf http://127.0.0.1:8000/health >/dev/null; then
+    echo "── santé locale OK (tentative \$i)"
+    break
+  fi
+  sleep 2
+done
+sudo systemctl --no-pager --lines=8 status artcb.service || true
 
 # 5. Vérification santé locale
 curl -sf http://127.0.0.1:8000/api/v1/health | head -c 400 && echo
+curl -sf http://127.0.0.1:8000/api/v1/economics/params | head -c 200 && echo
 REMOTE
 
 echo "── Vérification santé publique"

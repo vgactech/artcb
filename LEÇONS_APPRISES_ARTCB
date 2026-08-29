@@ -165,4 +165,9 @@
 **Leçon :** HumanID est une identité ; le settlement ne paie que des **wallets**. Un fallback « or human_id » est une fuite de satoshi hors carnet d’adresses.
 **Action :** `bound_human_address` seul ; sim 164 `20260828T200518Z` roots identiques.
 
+### L-036 — Régénérer Doppler casse le nœud OVH (29 août 2026)
+**Contexte :** Token Cursor mis à jour et valide. Token dans `/etc/artcb/doppler.env` (root 600) resté l’ancien → `doppler run` « Invalid Auth token » → crash loop après `systemctl restart`. Doppler `OVH_SERVER_IP` ≠ IP live. Secret Stripe Cursor = `KEY_API_STRIPE`, pas `KEY_API_STRIPE_ACTION`. Clé SSH = `SSH_PRIVATE_KEY` Doppler, pas `OVH_SSH_PRIVATE_KEY`.
+**Leçon :** (1) Un service token par usage (Cursor / Replit / serveur). (2) Après rotation, mettre à jour le fichier serveur ou le nœud meurt au prochain restart. (3) `doppler me` avant `doppler run`. (4) Ne jamais prendre `OVH_SERVER_IP` Doppler comme cible de deploy sans vérifier le ping SSH. (5) Noms de secrets : vérifier `CLOUD_AGENT_INJECTED_SECRET_NAMES` avant de conclure « absent ».
+**Action :** Rapport 166. `start_node.sh` preflight. `load_ovh_ssh_from_doppler.py`.
+
 

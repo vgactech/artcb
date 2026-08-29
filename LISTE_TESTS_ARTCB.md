@@ -233,6 +233,9 @@
 | T-E07 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite complète post-164 | [x] | 2026-08-28 **584 passed, 21 skipped, 0 fail** — `logs/20260828_pytest_rapport164_full.txt` |
 | T-E08 | `make -C src/c clean all test` | EconomicRoot v2 empty==v1, tamper change hash | [x] | 2026-08-28 |
 | T-E09 | `python3 scripts/run_sim164_e2e.py` | sim 164 failures=[] conservation+21M+attaques | [x] | 2026-08-28 `simulations/20260828T200518Z_e2e164/` |
-| T-E10 | Stripe CI `scripts/stripe_job_payment_ci.py` | skip propre si secret absent ; GHA `secrets.KEY_API_STRIPE_ACTION` | [x] | 2026-08-28 skip local (secret unset) |
-| T-E11 | OVH `http://152.228.144.34:8000/health` | 200 healthy ; routes 164 = 404 (ancienne image) | [x] | 2026-08-28 |
+| T-E10 | Stripe CI `scripts/stripe_job_payment_ci.py` | skip propre si secret absent ; accepte `KEY_API_STRIPE` (Cursor/Doppler) et `KEY_API_STRIPE_ACTION` (GHA) | [x] | 2026-08-29 PI `canceled` `mints=false` |
+| T-E11 | OVH `http://152.228.144.34:8000/health` | 200 + `git_sha` branche déployée ; economics 200 | [x] | 2026-08-29 `deaf620` puis HEAD 166 |
+| T-E12 | OVH `POST /api/v1/economics/jobs/priority` | JobPayment Stripe create+cancel, `mints=false` | [x] | 2026-08-29 `pi_…` canceled |
+| T-E13 | `PYTHONPATH=src python3 -m pytest tests/ -q --tb=line` | suite post-166 | [x] | 2026-08-29 **607 passed, 8 skipped, 0 fail** |
+| T-E14 | Doppler `GET /v3/me` + SSH `ubuntu@152.228.144.34` | token Cursor valide ; clé `SSH_PRIVATE_KEY` Doppler | [x] | 2026-08-29 |
 

@@ -1,0 +1,1 @@
+{"ok": true, "kind": "JobPayment", "mints": false, "distinct_from": "R_block", "status": "canceled", "payment_intent_id": "pi_3U9qqzH8iCu6cONU0h7cRGiB", "amount_cents": 200}

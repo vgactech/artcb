@@ -1166,6 +1166,20 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **ManagePullRequest** absent ; body PR #34 non mis à jour (`gh` lecture seule).
 - Rapport : `rapports/165_ovh_branche_cursor_audit_securite_pqc_2026-08-28.md`
 
+## [2026-08-29T18:25:00Z] Rapport 166 — secrets Cursor OK, OVH déployé, Stripe live test
+
+- **PR #34 mergée** dans `main` (`532b1e5`) par l’utilisateur. Travail infra sur `cursor/ovh-deploy-stripe-secrets-475d`.
+- **Doppler Cursor :** token **valide** (`/v3/me` 200). **Stripe :** secret réel = `KEY_API_STRIPE` (`rk_test`), pas `KEY_API_STRIPE_ACTION`. PI create+cancel, `mints=false`.
+- **SSH :** pas `OVH_SSH_PRIVATE_KEY` dans Cursor ; clé = Doppler `SSH_PRIVATE_KEY` → `ubuntu@152.228.144.34` OK.
+- **Piège :** Doppler `OVH_SERVER_IP=51.255.22.253` n’est **pas** artcb-node-1 (SSH:22 timeout).
+- **Token serveur** `/etc/artcb/doppler.env` était **révoqué** → crash loop après deploy ; remplacé (jamais imprimé).
+- **API OVH :** HMAC `Invalid signature` (AK/AS Cursor ≠ Doppler). SSH suffit.
+- **Live :** economics 200, `git_sha` exposé, PQC ML-DSA-65, `bob_configured=true`.
+- **Tests :** 607 passed / 8 skipped. Log `logs/20260829_pytest_rapport166.txt`.
+- **PR GitHub :** toujours `must be a collaborator`. Compare : https://github.com/vgactech/artcb/compare/main...cursor/ovh-deploy-stripe-secrets-475d
+- **Replit :** créer un **autre** service token ; ne pas coller une valeur depuis le chat (Doppler ne réaffiche jamais).
+- Rapport : `rapports/166_secrets_ovh_stripe_deploy_2026-08-29.md`
+
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 
 - **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.

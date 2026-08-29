@@ -1,0 +1,5 @@
+UTC 2026-08-29T18:17:29.001747Z
+predeploy box still on old branch (expected 404 economics)
+200 http://152.228.144.34:8000/health {"status":"healthy","service":"ARTCB API","version":"0.3.0","bootstrap_mode":false,"pqc":{"available":true,"algorithm":"ML-DSA-65","action_required":null}}
+200 http://152.228.144.34:8000/api/v1/health {"status":"ok","debug":true,"llm_enabled":false,"bob_configured":true,"demo_book":"data/fixtures/wailly_le_roi_de_l_inconnu.pdf","chain":{"available":true,"valid":true,"message":"chain file not found (empty ok)","block_count":0,"public_key":"u3WrGfKSYatkntc6ctlZqDyHI/98yV2PfJ8FTC/IXSU=","hybrid_signatures":true,"pqc_algorithm":"ML-DSA-65"}}
+404 http://152.228.144.34:8000/api/v1/economics/params {"detail":"Not Found"}
