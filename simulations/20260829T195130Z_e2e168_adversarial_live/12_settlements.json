@@ -1,0 +1,37 @@
+{
+  "count_x": 1,
+  "count_y": 1,
+  "events": [
+    {
+      "node": "A",
+      "ok": true,
+      "op": "first",
+      "sid": "073f4aceb2462f4e"
+    },
+    {
+      "error": "AlreadySettled",
+      "node": "B",
+      "ok": false,
+      "op": "replay"
+    },
+    {
+      "error": "AlreadySettled",
+      "node": "C",
+      "ok": false,
+      "op": "replay"
+    },
+    {
+      "error": "AlreadySettled",
+      "node": "A",
+      "ok": false,
+      "op": "replay"
+    }
+  ],
+  "first_sid_prefix": "073f4aceb2462f4e",
+  "invariants": {
+    "all_replays_rejected": true,
+    "workid_x_eq_1": true,
+    "y_unique": true
+  },
+  "y_duplicate_rejected": true
+}

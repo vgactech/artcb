@@ -57,12 +57,22 @@ class ArtcbClient:
 
     def __init__(
         self,
-        base_url: str = "http://localhost:8000",
+        base_url: str | None = None,
         api_key: str | None = None,
         timeout: int = 30,
     ) -> None:
-        self.base_url = base_url.rstrip("/")
-        self.api_key = api_key or os.environ.get("ARTCB_API_KEY")
+        if base_url is None:
+            base_url = (
+                os.environ.get("ARTCB_API_URL")
+                or os.environ.get("ARTCB_NODE_URL")
+                or "http://localhost:8000"
+            )
+        self.base_url = str(base_url).rstrip("/")
+        self.api_key = (
+            api_key
+            or os.environ.get("ARTCB_API_KEY")
+            or os.environ.get("ARTCB_NODE_API_KEY")
+        )
         self.timeout = timeout
 
     # ── Helpers ───────────────────────────────────────────────────────────────
@@ -366,7 +376,7 @@ class ArtcbClient:
 # ── Convenience factory ────────────────────────────────────────────────────────
 
 def connect(
-    base_url: str = "http://localhost:8000",
+    base_url: str | None = None,
     api_key: str | None = None,
 ) -> ArtcbClient:
     """

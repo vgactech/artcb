@@ -32,7 +32,7 @@ class ArtcbMCPServer:
     """Serveur MCP ARTCB — implémente le protocole JSON-RPC MCP v1."""
 
     def __init__(self, api_url: str | None = None) -> None:
-        self.api_url = api_url or os.getenv("ARTCB_API_URL", "http://localhost:8000")
+        self.api_url = api_url or os.getenv("ARTCB_API_URL") or os.getenv("ARTCB_NODE_URL") or "http://localhost:8000"
 
     # ------------------------------------------------------------------
     # Handlers JSON-RPC

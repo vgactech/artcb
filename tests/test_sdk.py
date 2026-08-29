@@ -41,9 +41,16 @@ def sdk():
 
 class TestArtcbClientInit:
 
-    def test_default_base_url(self):
+    def test_default_base_url(self, monkeypatch):
+        monkeypatch.delenv("ARTCB_API_URL", raising=False)
+        monkeypatch.delenv("ARTCB_NODE_URL", raising=False)
         c = ArtcbClient()
         assert c.base_url == "http://localhost:8000"
+
+    def test_env_base_url(self, monkeypatch):
+        monkeypatch.setenv("ARTCB_API_URL", "http://152.228.144.34:8000")
+        c = ArtcbClient()
+        assert c.base_url == "http://152.228.144.34:8000"
 
     def test_custom_base_url(self):
         c = ArtcbClient("http://myhost:9999")

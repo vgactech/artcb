@@ -1,0 +1,13 @@
+{
+  "commit_sha": "4dfc154b3ea3a4782dd4e0bd77caee0335afde0f",
+  "dependency_hash": "424960010b6a2da077cd8bd2c49c14ec329091a5334e602a0d6026398903cc14",
+  "economic_rules_version": "D-025+V01-V07-provisional",
+  "finished_at": "2026-08-29T19:51:31Z",
+  "invented_results": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "168-adversarial-live",
+  "python_version": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+  "random_seed": 168,
+  "simulation_id": "e2e168_adversarial_live",
+  "started_at": "2026-08-29T19:51:30Z"
+}

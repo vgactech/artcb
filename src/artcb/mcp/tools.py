@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import urllib.request
 import urllib.error
 from typing import Any
@@ -148,10 +149,18 @@ TOOLS: list[dict[str, Any]] = [
 # Exécution des outils
 # ---------------------------------------------------------------------------
 
+def _auth_headers() -> dict[str, str]:
+    headers = {"Content-Type": "application/json", "Accept": "application/json"}
+    token = (os.environ.get("ARTCB_API_KEY") or os.environ.get("ARTCB_NODE_API_KEY") or "").strip()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
 def _api_post(url: str, data: dict[str, Any]) -> dict[str, Any]:
     """HTTP POST vers l'API ARTCB — utilise urllib (pas de dépendances supplémentaires)."""
     body = json.dumps(data).encode()
-    req = urllib.request.Request(url, data=body, headers={"Content-Type": "application/json"})
+    req = urllib.request.Request(url, data=body, headers=_auth_headers())
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             return json.loads(resp.read())
@@ -164,7 +173,7 @@ def _api_post(url: str, data: dict[str, Any]) -> dict[str, Any]:
 
 def _api_get(url: str) -> dict[str, Any] | list:
     """HTTP GET vers l'API ARTCB."""
-    req = urllib.request.Request(url, headers={"Accept": "application/json"})
+    req = urllib.request.Request(url, headers=_auth_headers())
     try:
         with urllib.request.urlopen(req, timeout=15) as resp:
             return json.loads(resp.read())
