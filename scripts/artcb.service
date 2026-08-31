@@ -12,6 +12,8 @@ WorkingDirectory=/home/ubuntu/artcb
 # et aucun .env n'est nécessaire sur le serveur.
 EnvironmentFile=-/etc/artcb/doppler.env
 EnvironmentFile=-/etc/artcb/release.env
+Environment=OQS_INSTALL_PATH=/home/ubuntu/_oqs
+Environment=LD_LIBRARY_PATH=/home/ubuntu/_oqs/lib:/home/ubuntu/_oqs/lib64
 ExecStart=/home/ubuntu/artcb/scripts/start_node.sh
 Restart=always
 RestartSec=5

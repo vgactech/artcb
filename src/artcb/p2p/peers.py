@@ -23,6 +23,7 @@ class PeerRecord:
     last_seen: str | None = None
     last_sync_ok: bool | None = None
     blocks_received: int = 0
+    crypto_suite: str = ""
 
     @property
     def base_url(self) -> str:
@@ -39,6 +40,7 @@ class PeerRecord:
             "last_seen": self.last_seen,
             "last_sync_ok": self.last_sync_ok,
             "blocks_received": self.blocks_received,
+            "crypto_suite": self.crypto_suite,
             "base_url": self.base_url,
         }
 
@@ -83,6 +85,7 @@ class PeerManager:
             last_seen=item.get("last_seen"),
             last_sync_ok=item.get("last_sync_ok"),
             blocks_received=int(item.get("blocks_received", 0)),
+            crypto_suite=str(item.get("crypto_suite") or ""),
         )
 
     def add_peer(
@@ -93,10 +96,26 @@ class PeerManager:
         kem_public_key_hex: str,
         label: str = "",
         peer_id: str | None = None,
+        crypto_suite: str = "",
     ) -> PeerRecord:
+        from src.artcb.crypto.pqc import pqc_available
+        from src.artcb.crypto_policy import accept_peer_suite
+
         if len(kem_public_key_hex) < 32:
             raise ValueError("kem_public_key_hex invalide")
         pid = peer_id or f"peer_{host.replace('.', '_')}_{port}"
+        previous = None
+        for existing in self.list_peers():
+            if existing.peer_id == pid:
+                previous = existing.crypto_suite
+                break
+        ok, reason = accept_peer_suite(
+            advertised=crypto_suite or None,
+            previously_seen=previous,
+            pqc_available_here=pqc_available(),
+        )
+        if not ok:
+            raise ValueError(f"crypto_policy_reject:{reason}")
         now = self._now()
         raw = self._read()
         items = raw.get("peers", [])
@@ -110,6 +129,7 @@ class PeerManager:
             "last_seen": None,
             "last_sync_ok": None,
             "blocks_received": 0,
+            "crypto_suite": crypto_suite or reason,
         }
         items = [p for p in items if p["peer_id"] != pid]
         items.append(record)

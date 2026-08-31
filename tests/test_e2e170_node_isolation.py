@@ -42,7 +42,7 @@ def test_ovh1_public_identity_unchanged() -> None:
     assert n1.ssh_host == "152.228.144.34"
     assert n1.api_https == "https://152.228.144.34:8443"
     n2 = NODES["ovh-node-2"]
-    assert n2.ssh_host is None
+    assert n2.ssh_host == "151.80.107.29"
     assert "vc491276-ovh" in n2.public_notes
 
 

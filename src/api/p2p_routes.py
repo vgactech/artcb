@@ -7,6 +7,8 @@ import logging
 from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
+from src.artcb.crypto.pqc import pqc_available
+from src.artcb.crypto_policy import capabilities, local_suite
 from src.artcb.p2p.sync import P2PSyncError
 
 logger = logging.getLogger("artcb.api.p2p")
@@ -18,6 +20,7 @@ class AddPeerRequest(BaseModel):
     port: int = Field(ge=1, le=65535)
     kem_public_key_hex: str = Field(min_length=32)
     label: str = ""
+    crypto_suite: str = ""
 
 
 class ReceiveBlocksRequest(BaseModel):
@@ -35,6 +38,7 @@ def p2p_status(request: Request) -> dict:
     peers = state.p2p_peers.list_peers()
     public_count = len(state.chain.list_blocks(visibility="public"))
     incoming_count = len(state.p2p_archive.list_blocks())
+    pqc = pqc_available()
     return {
         "network_id": identity.network_id,
         "node_id": identity.node_id,
@@ -48,6 +52,9 @@ def p2p_status(request: Request) -> dict:
         "private_never_synced": True,
         "pool_e2e_available": True,
         "pool_crypto": "ML-KEM-768",
+        "protocol_version": "173-devnet-1",
+        "crypto_suite": local_suite(pqc),
+        "crypto_policy": capabilities(pqc),
         "message": "Calcul local par défaut — pool opt-in E2E ML-KEM ; sync P2P = blocs publics chiffrés",
     }
 
@@ -67,6 +74,7 @@ def add_peer(body: AddPeerRequest, request: Request) -> dict:
             port=body.port,
             kem_public_key_hex=body.kem_public_key_hex,
             label=body.label,
+            crypto_suite=body.crypto_suite,
         )
         return {"peer": peer.to_dict(), "message": "Pair ajouté"}
     except ValueError as exc:
@@ -131,12 +139,14 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
 
     # Tenter de récupérer la clé KEM publique du nœud distant
     kem_public_hex = ""
+    remote_suite = ""
     try:
         import httpx
         with httpx.Client(timeout=5.0) as client:
             r = client.get(f"{url}/api/v1/p2p/status")
             r.raise_for_status()
             kem_public_hex = r.json().get("kem_public_key_hex", "")
+            remote_suite = r.json().get("crypto_suite") or ""
     except Exception as exc:
         logger.info("Could not fetch KEM key from %s: %s", url, exc)
         kem_public_hex = "00" * 32  # placeholder si le nœud n'est pas encore joignable
@@ -149,6 +159,7 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
             kem_public_key_hex=kem_public_hex,
             label=body.node_label or f"Node {peer_id[:8]}",
             peer_id=peer_id,
+            crypto_suite=remote_suite,
         )
         logger.info(
             "New node registered: peer_id=%s url=%s fingerprint=%s... repo=%s",

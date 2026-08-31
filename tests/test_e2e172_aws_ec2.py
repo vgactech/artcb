@@ -17,7 +17,7 @@ def test_aws_notes_record_admin_and_aliases() -> None:
     assert "AdministratorAccess" in notes
     assert "AWS_API_KEY_AGENT_3" in notes
     assert "IAMUserChangePassword" in notes
-    assert NODES["ovh-node-2"].ssh_host is None
+    assert NODES["ovh-node-2"].ssh_host == "151.80.107.29"
     assert NODES["ovh-node-1"].ssh_host == "152.228.144.34"
     assert NODES["aws-node-3"].ssh_host == "51.44.222.232"
     assert NODES["aws-node-3"].health_http == "http://51.44.222.232:8000"

@@ -68,3 +68,5 @@ logs/*_artcb_api.json
 # AWS node 3 private key (public key may be in deploy/)
 **/artcb_aws_node_3
 **/.ssh/artcb_aws_node_3
+**/artcb_ovh_node_2
+**/.ssh/artcb_ovh_node_2

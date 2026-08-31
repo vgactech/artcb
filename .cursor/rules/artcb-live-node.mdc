@@ -20,14 +20,14 @@ Vérifier `git_sha` live == `origin/main` **à chaque tâche** (PR #38 a cassé 
 | node_id | Doppler | Compute |
 |---------|---------|---------|
 | ovh-node-1 | `artcb-blockchain` (dédié `artcb-ovh-node-1` non créé) | 152.228.144.34 (existe) |
-| ovh-node-2 | `artcb-2` (token Cursor `KEY_API_ARTCB_DOPPLER_2`) | compte `vc491276-ovh` — **pas de VM** (validation OVH) |
+| ovh-node-2 | `artcb-2` (token Cursor `KEY_API_ARTCB_DOPPLER_2`) | `151.80.107.29` GRA11 `node-artcb-ovh-2` projet `1fc10a3fb27d4511a8c7873cd16243f2` |
 | aws-node-3 | `artcb3` (token Cursor `KEY_API_ARTCB_DOPPLER_3`) | AWS `599128160879` — `i-085b74abd1aaf04ee` `51.44.222.232` eu-west-3 |
 
 `artcb-blockchain` = secrets **partagés** (Stripe, Bob, GitHub). Pas les clés cloud d’un nœud.  
 Aiguillage : `ARTCB_NODE_ID`. Staging local : `~/.artcb/nodes/*.env` mode 0600, **hors git**.  
 Création de **nouveaux** projets : `DOPPLER_PERSONAL_TOKEN`. Binding `artcb-2`/`artcb3` : `scripts/provision_doppler_node_projects.py`.
 
-Ne pas créer de VM OVH-2 tant que Public Cloud n’est pas validé. Access keys AWS : aliases Cursor `AWS_API_KEY_AGENT_3` / `AWS_API_CLI_AGENT_3`. Ne pas déployer `main` sur `:34` sans ordre explicite.
+Ne pas déployer `main` sur `:34` (OVH1) sans ordre explicite. Phase test : IAM large autorisé. Politique crypto **D-032 B** : ML-DSA-65 prioritaire, Ed25519 temporaire jusqu’au 2026-12-31, hybride si liboqs.
 
 Sources de la clé nœud 1 : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH nœud 1.
 

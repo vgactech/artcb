@@ -58,11 +58,15 @@ NODES: dict[str, NodeSpec] = {
         provider="ovh",
         doppler_project="artcb-2",
         doppler_token_env="KEY_API_ARTCB_DOPPLER_2",
+        health_http="http://151.80.107.29:8000",
+        api_https="https://151.80.107.29:8443",
+        ssh_host="151.80.107.29",
+        ssh_user="ubuntu",
         public_notes=(
             "OVH nic vc491276-ovh (vgac4237@gmail.com). "
-            "Doppler project artcb-2 (service token Cursor KEY_API_ARTCB_DOPPLER_2). "
-            "API application: Agent-Autonome node artcb 2. "
-            "No Public Cloud / VPS / IPv4 — waiting OVH account validation. Do not create a VM."
+            "Public Cloud project 1fc10a3fb27d4511a8c7873cd16243f2. "
+            "Instance node-artcb-ovh-2 GRA11 d2-8 id 6470522e-1561-4741-9254-5f58b909eeb9 "
+            "IPv4 151.80.107.29. Doppler artcb-2. SSH key artcb-ovh-node-2."
         ),
     ),
     "aws-node-3": NodeSpec(

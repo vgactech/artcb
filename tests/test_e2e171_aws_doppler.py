@@ -59,7 +59,7 @@ def test_resolve_uses_real_slugs(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_ovh2_still_has_no_ssh_host() -> None:
-    assert NODES["ovh-node-2"].ssh_host is None
+    assert NODES["ovh-node-2"].ssh_host == "151.80.107.29"
     assert "vc491276-ovh" in NODES["ovh-node-2"].public_notes
     assert NODES["ovh-node-1"].ssh_host == "152.228.144.34"
     assert "IAMUserChangePassword" in NODES["aws-node-3"].public_notes

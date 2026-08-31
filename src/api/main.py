@@ -83,33 +83,28 @@ def create_app() -> FastAPI:
         )
 
         def _bootstrap_health_response() -> dict:
-            from src.artcb.crypto.pqc import pqc_available
-            from src.artcb.release import release_identity
-            _pqc = pqc_available()
-            identity = release_identity()
-            return {
-                "status": "bootstrap",
-                "service": "ARTCB API",
-                "version": identity["version"],
-                "git_sha": identity["git_sha"],
-                "git_branch": identity["git_branch"],
-                "bootstrap_mode": True,
-                "message": (
-                    "Nœud non configuré. "
-                    "Appelez POST /setup/init-node avec {node_name, password} pour initialiser."
-                ),
-                "setup_url": "/setup/init-node",
-                "pqc": {
-                    "available": _pqc,
-                    "algorithm": "ML-DSA-65" if _pqc else "Ed25519 (fallback)",
-                    "action_required": (
-                        None if _pqc else
-                        "liboqs absent — wallets créés sans PQC (hybrid=False). "
-                        "Pour activer ML-DSA-65 : installer cmake+gcc puis `pip install liboqs-python`. "
-                        "Sur Replit : replit_start.sh le fait automatiquement en arrière-plan."
-                    ),
-                },
-            }
+        from src.artcb.crypto.pqc import pqc_available
+        from src.artcb.crypto_policy import public_health_block
+        from src.artcb.release import release_identity
+        _pqc = pqc_available()
+        identity = release_identity()
+        pqc_block = public_health_block(_pqc)
+        return {
+            "status": "bootstrap",
+            "service": "ARTCB API",
+            "version": identity["version"],
+            "git_sha": identity["git_sha"],
+            "git_branch": identity["git_branch"],
+            "bootstrap_mode": True,
+            "network_id": "artcb-devnet-1",
+            "protocol_version": "173-devnet-1",
+            "message": (
+                "Nœud non configuré. "
+                "Appelez POST /setup/init-node avec {node_name, password} pour initialiser."
+            ),
+            "setup_url": "/setup/init-node",
+            "pqc": pqc_block,
+        }
 
         @app.get("/health")
         async def health_bootstrap():
@@ -211,6 +206,7 @@ def create_app() -> FastAPI:
     async def health_check():
         """Health check endpoint."""
         from src.artcb.crypto.pqc import pqc_available
+        from src.artcb.crypto_policy import public_health_block
         from src.artcb.release import release_identity
         _pqc = pqc_available()
         identity = release_identity()
@@ -221,16 +217,9 @@ def create_app() -> FastAPI:
             "git_sha": identity["git_sha"],
             "git_branch": identity["git_branch"],
             "bootstrap_mode": False,
-            "pqc": {
-                "available": _pqc,
-                "algorithm": "ML-DSA-65" if _pqc else "Ed25519 (fallback)",
-                "action_required": (
-                    None if _pqc else
-                    "liboqs absent — wallets créés sans PQC (hybrid=False). "
-                    "Pour activer ML-DSA-65 : installer cmake+gcc puis `pip install liboqs-python`. "
-                    "Sur Replit : replit_start.sh le fait automatiquement en arrière-plan."
-                ),
-            },
+            "network_id": "artcb-devnet-1",
+            "protocol_version": "173-devnet-1",
+            "pqc": public_health_block(_pqc),
         }
 
     # Serve React frontend (built dist/) at root
