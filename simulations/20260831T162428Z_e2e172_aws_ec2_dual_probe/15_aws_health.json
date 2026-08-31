@@ -1,0 +1,12 @@
+{
+  "classification": "PROBE LIVE",
+  "git_branch": "cursor/aws-node-3-ec2-launch-16d8",
+  "git_sha": "0d3d432cea363ea7fd47ecf8dad63543eec2a0db",
+  "http_health": 200,
+  "https_health": 0,
+  "ip": "51.44.222.232",
+  "p2p_has_kem": true,
+  "p2p_http": 200,
+  "p2p_node_id": "artcb1dtgrdhn6ldqcfvqn9mkwegaekprjfqnq3w04hg",
+  "reachable": true
+}

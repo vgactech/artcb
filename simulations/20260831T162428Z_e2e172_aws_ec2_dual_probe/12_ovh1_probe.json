@@ -1,0 +1,15 @@
+{
+  "classification": "PROBE LIVE",
+  "expected_origin_main_sha": "d092b6161e516dd94c564d3d80b058aa0583f7fa",
+  "http_health": 200,
+  "https_health": 200,
+  "https_me": 200,
+  "key_id": "kid_abad2468682059ef",
+  "live_git_branch": "main",
+  "live_git_sha": "5b4b24ae692ac2bb8255a4a5a3ca941b4365db29",
+  "new_ovh_machine": false,
+  "p2p_has_kem": true,
+  "p2p_http": 200,
+  "p2p_node_id": "artcb1_REMPLACER_PAR_VOTRE_ADRESSE",
+  "sha_match_current_main": false
+}

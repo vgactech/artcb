@@ -1,0 +1,29 @@
+{
+  "exit": 0,
+  "parsed": {
+    "account": "599128160879",
+    "blocker": null,
+    "caller_arn": "arn:aws:iam::599128160879:user/node_artcb_3_agent",
+    "credential_alias_used": true,
+    "doppler_project": "artcb3",
+    "ec2_allowed": true,
+    "ec2_describe_exit": 0,
+    "has_access_key": true,
+    "instance_id": "i-085b74abd1aaf04ee",
+    "instance_type": "t3.large",
+    "launched": false,
+    "node_id": "aws-node-3",
+    "public_ip": "51.44.222.232",
+    "reason": "existing_tagged_instance",
+    "region": "eu-west-3",
+    "reused": true,
+    "secrets_printed": false,
+    "state": "running",
+    "stderr_tail": "",
+    "sts_http_or_exit": 0,
+    "sts_ok": true
+  },
+  "script": "provision_aws_ec2.py",
+  "stderr_tail": "",
+  "stdout_is_json": true
+}

@@ -19,6 +19,8 @@ def test_aws_notes_record_admin_and_aliases() -> None:
     assert "IAMUserChangePassword" in notes
     assert NODES["ovh-node-2"].ssh_host is None
     assert NODES["ovh-node-1"].ssh_host == "152.228.144.34"
+    assert NODES["aws-node-3"].ssh_host == "51.44.222.232"
+    assert NODES["aws-node-3"].health_http == "http://51.44.222.232:8000"
 
 
 def test_aws_alias_secrets_are_allowlisted() -> None:

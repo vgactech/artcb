@@ -71,6 +71,10 @@ NODES: dict[str, NodeSpec] = {
         provider="aws",
         doppler_project="artcb3",
         doppler_token_env="KEY_API_ARTCB_DOPPLER_3",
+        health_http="http://51.44.222.232:8000",
+        api_https="https://51.44.222.232:8443",
+        ssh_host="51.44.222.232",
+        ssh_user="ubuntu",
         public_notes=(
             "AWS account 599128160879 IAM user node_artcb_3_agent. "
             "Doppler project artcb3 (service token Cursor KEY_API_ARTCB_DOPPLER_3). "
@@ -78,7 +82,8 @@ NODES: dict[str, NodeSpec] = {
             "Cursor secret aliases AWS_API_KEY_AGENT_3 / AWS_API_CLI_AGENT_3 map to "
             "AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY. "
             "IAM 2026-08-31 later session: AdministratorAccess + AmazonEC2FullAccess "
-            "+ IAMFullAccess + IAMUserChangePassword (earlier probe had ChangePassword only)."
+            "+ IAMFullAccess + IAMUserChangePassword (earlier probe had ChangePassword only). "
+            "EC2 i-085b74abd1aaf04ee public IP 51.44.222.232 (t3.small fallback from t3.large)."
         ),
     ),
 }

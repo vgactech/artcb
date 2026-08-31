@@ -1230,6 +1230,14 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Tokenomics inchangée. V-01…V-07 ouverts. **NOT MAINNET CERTIFIED.**
 - Rapport : `rapports/172_aws_ec2_dual_ovh1_2026-08-31.md`
 
+## [2026-08-31T16:25:00Z] 172 déployé — 2 nœuds live (OVH1+AWS3)
+
+- **AWS3** `i-085b74abd1aaf04ee` `51.44.222.232` eu-west-3 t3.small. Health 200 SHA `0d3d432`. TLS :8443.
+- **OVH1** inchangé SHA `5b4b24ae`. P2P register croisé 200/200, peer_count=1 chaque.
+- **OVH2** nic `vc491276-ovh` 0 VM. Sim `20260831T162428Z_e2e172_aws_ec2_dual_probe` failures=[].
+- **16** pytest 170+171+172. PR GitHub collaborator fail. **NOT MAINNET CERTIFIED.**
+
+
 
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 

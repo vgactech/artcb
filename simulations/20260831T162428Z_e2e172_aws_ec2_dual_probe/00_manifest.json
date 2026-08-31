@@ -1,0 +1,26 @@
+{
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "0c5c8a99a1e807bb37b20c32d6872abd799fb3d665e5ca2a29ddd0cc2d91a34c",
+    "package_count": 45,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-provisional+D-027+D-029+D-030+D-031",
+  "finished_at": "2026-08-31T16:24:42Z",
+  "git_branch": "cursor/aws-node-3-ec2-launch-16d8",
+  "git_commit_sha": "0d3d432cea363ea7fd47ecf8dad63543eec2a0db",
+  "git_status_clean": false,
+  "invented_results": false,
+  "launch_requested": true,
+  "new_ovh_machine": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "172-aws-ec2-dual-probe",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim172_aws_ec2.py",
+  "script_sha256": "b29346acc3dcf3916995e1c37eb117e5b8f6b1ea11c24201d832a904ab0e819f",
+  "seed": 172,
+  "simulation_id": "e2e172_aws_ec2_dual_probe",
+  "started_at": "2026-08-31T16:24:29Z",
+  "working_tree_diff_hash": "779defea238bfbc9d7597bc2b7b217325d6fe078e424b4a4fcc1091214cf00fc"
+}

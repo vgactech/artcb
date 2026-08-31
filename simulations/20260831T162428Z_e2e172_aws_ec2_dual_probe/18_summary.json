@@ -1,0 +1,77 @@
+{
+  "aws_ec2_allowed": true,
+  "aws_instance_id": "i-085b74abd1aaf04ee",
+  "aws_launched": false,
+  "aws_public_ip": "51.44.222.232",
+  "aws_reused": true,
+  "categories": {
+    "AWS3": {
+      "classification": "PROBE LIVE",
+      "git_branch": "cursor/aws-node-3-ec2-launch-16d8",
+      "git_sha": "0d3d432cea363ea7fd47ecf8dad63543eec2a0db",
+      "http_health": 200,
+      "https_health": 0,
+      "ip": "51.44.222.232",
+      "p2p_has_kem": true,
+      "p2p_http": 200,
+      "p2p_node_id": "artcb1dtgrdhn6ldqcfvqn9mkwegaekprjfqnq3w04hg",
+      "reachable": true
+    },
+    "DISTRIBUTED_CONSENSUS": "PARTIAL \u2014 2/4 live VMs (OVH1+AWS3); OVH2 waiting; 4th not planned here",
+    "DOPPLER_BIND": {
+      "aws3_bound": true,
+      "aws3_has_stripe": false,
+      "aws3_vault": "artcb3",
+      "ovh1_vault": "artcb-blockchain",
+      "ovh2_bound": true,
+      "ovh2_has_stripe": false,
+      "ovh2_vault": "artcb-2"
+    },
+    "LIVE_OVH1": {
+      "classification": "PROBE LIVE",
+      "expected_origin_main_sha": "d092b6161e516dd94c564d3d80b058aa0583f7fa",
+      "http_health": 200,
+      "https_health": 200,
+      "https_me": 200,
+      "key_id": "kid_abad2468682059ef",
+      "live_git_branch": "main",
+      "live_git_sha": "5b4b24ae692ac2bb8255a4a5a3ca941b4365db29",
+      "new_ovh_machine": false,
+      "p2p_has_kem": true,
+      "p2p_http": 200,
+      "p2p_node_id": "artcb1_REMPLACER_PAR_VOTRE_ADRESSE",
+      "sha_match_current_main": false
+    },
+    "OVH2_INVENTORY": "PROBE LIVE \u2014 still 0 Public Cloud instances",
+    "P2P_CROSS": {
+      "aws3_registers_ovh1": {
+        "http": 200,
+        "registered": true
+      },
+      "ovh1_registers_aws3": {
+        "http": 200,
+        "registered": true
+      }
+    }
+  },
+  "certified_distributed_mainnet": false,
+  "dir": "/workspace/simulations/20260831T162428Z_e2e172_aws_ec2_dual_probe",
+  "failure_count": 0,
+  "failures": [],
+  "invented": false,
+  "new_aws_machine": false,
+  "new_ovh_machine": false,
+  "ovh2_vm_count": 0,
+  "pending_validation": [
+    "V-01",
+    "V-02",
+    "V-03",
+    "V-04",
+    "V-05",
+    "V-06",
+    "V-07"
+  ],
+  "sha_match_current_main": false,
+  "simulation": "e2e172_aws_ec2_dual_probe",
+  "two_live_nodes": true
+}

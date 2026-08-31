@@ -9,7 +9,7 @@ alwaysApply: false
 - Doppler : projet **`artcb3`** (token Cursor `KEY_API_ARTCB_DOPPLER_3`). Jamais Stripe/Bob ici.
 - Mot de passe console : **local only** — jamais git, jamais Doppler, jamais le chat. Ne plus le coller.
 - Access keys : secrets Cursor `AWS_API_KEY_AGENT_3` / `AWS_API_CLI_AGENT_3` (mappés vers `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`). Staging `~/.artcb/nodes/aws-node-3.env` mode 0600.
-- IAM 2026-08-31 (session suivante) : `AdministratorAccess` + `AmazonEC2FullAccess` + `IAMFullAccess` + `IAMUserChangePassword`. Probe STS + `ec2:Describe*` OK.
+- Probe 2026-08-31 session 172 : instance `i-085b74abd1aaf04ee` IP `51.44.222.232` (t3.small). Health HTTP 8000 + HTTPS 8443.
 - Scripts : `scripts/provision_aws_ec2.py --yes` (idempotent, SG 22/8000/8443, IP publique) ; `scripts/deploy_aws.sh IP BRANCH`.
 - Ne pas toucher au nœud OVH 1 (`152.228.144.34`) sans ordre de déploiement explicite. Pas de VM OVH 2 tant que Public Cloud n'est pas validé.
 - Tags : `Name=node-artcb-3`, `artcb-node-id=aws-node-3`. Pas d'em dash dans les noms de ressources.

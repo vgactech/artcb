@@ -21,7 +21,7 @@ Vérifier `git_sha` live == `origin/main` **à chaque tâche** (PR #38 a cassé 
 |---------|---------|---------|
 | ovh-node-1 | `artcb-blockchain` (dédié `artcb-ovh-node-1` non créé) | 152.228.144.34 (existe) |
 | ovh-node-2 | `artcb-2` (token Cursor `KEY_API_ARTCB_DOPPLER_2`) | compte `vc491276-ovh` — **pas de VM** (validation OVH) |
-| aws-node-3 | `artcb3` (token Cursor `KEY_API_ARTCB_DOPPLER_3`) | AWS `599128160879` IAM admin — EC2 `eu-west-3` via `provision_aws_ec2.py --yes` |
+| aws-node-3 | `artcb3` (token Cursor `KEY_API_ARTCB_DOPPLER_3`) | AWS `599128160879` — `i-085b74abd1aaf04ee` `51.44.222.232` eu-west-3 |
 
 `artcb-blockchain` = secrets **partagés** (Stripe, Bob, GitHub). Pas les clés cloud d’un nœud.  
 Aiguillage : `ARTCB_NODE_ID`. Staging local : `~/.artcb/nodes/*.env` mode 0600, **hors git**.  

@@ -254,10 +254,10 @@
 | T-E28 | `python3 scripts/provision_doppler_node_projects.py` | 3 projets créés **ou** 403 service token documenté | [x] | 2026-08-31 **403** ×3 — `11_doppler_provision.json` |
 | T-E29 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | `/me` nic `vc491276-ovh` ; VM count honnête | [x] | 2026-08-31 me=200, 0 VM |
 | T-E31 | pytest post-170 (C lib built, no liboqs) | 617 passed / 20 skipped / 2 fail 503 suite-order | [x] | `logs/20260831_pytest_rapport170_cbuilt.txt` |
-| T-E32 | `pytest tests/test_e2e171_aws_doppler.py tests/test_e2e172_aws_ec2.py` | isolation slugs + aliases AWS + pas de secrets | [ ] | 2026-08-31 172 |
-| T-E33 | `python3 scripts/provision_aws_ec2.py` (diagnose) | STS + ec2_allowed | [ ] | 2026-08-31 |
-| T-E34 | `python3 scripts/provision_aws_ec2.py --yes` | instance tagged `aws-node-3` + IP publique | [ ] | 2026-08-31 |
-| T-E35 | `bash scripts/deploy_aws.sh IP BRANCH` | health HTTP 8000 + HTTPS 8443 ; OVH1 inchangé | [ ] | 2026-08-31 |
-| T-E36 | OVH1 + AWS3 health simultanés | 2/4 compute ; OVH2 = 0 VM | [ ] | 2026-08-31 |
-| T-E37 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | nic `vc491276-ovh` ; 0 instance | [ ] | 2026-08-31 |
+| T-E32 | `pytest tests/test_e2e171_aws_doppler.py tests/test_e2e172_aws_ec2.py` | isolation slugs + aliases AWS + pas de secrets | [x] | 2026-08-31 16 passed with 170 |
+| T-E33 | `python3 scripts/provision_aws_ec2.py` (diagnose) | STS + ec2_allowed | [x] | 2026-08-31 STS 0 / Describe 0 |
+| T-E34 | `python3 scripts/provision_aws_ec2.py --yes` | instance tagged `aws-node-3` + IP publique | [x] | `i-085b74abd1aaf04ee` `51.44.222.232` t3.small |
+| T-E35 | `bash scripts/deploy_aws.sh IP BRANCH` | health HTTP 8000 + HTTPS 8443 ; OVH1 inchangé | [x] | SHA AWS `0d3d432` ; OVH1 `5b4b24ae` |
+| T-E36 | OVH1 + AWS3 health simultanés | 2/4 compute ; OVH2 = 0 VM | [x] | sim `20260831T162428Z` failures=[] P2P 200/200 |
+| T-E37 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | nic `vc491276-ovh` ; 0 instance | [x] | me=200 projects=[] |
 

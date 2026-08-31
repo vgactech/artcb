@@ -1,0 +1,10 @@
+{
+  "aws3_registers_ovh1": {
+    "http": 200,
+    "registered": true
+  },
+  "ovh1_registers_aws3": {
+    "http": 200,
+    "registered": true
+  }
+}
