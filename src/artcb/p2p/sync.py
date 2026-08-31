@@ -49,7 +49,13 @@ class P2PSyncService:
         blocks = self.chain.list_blocks(visibility="public")
         return [b for b in blocks if int(b.get("index", 0)) >= from_index]
 
-    def import_public_blocks(self, blocks: list[dict[str, Any]], *, from_node_id: str = "unknown") -> int:
+    def import_public_blocks(
+        self,
+        blocks: list[dict[str, Any]],
+        *,
+        from_node_id: str = "unknown",
+        extend_tip: bool = False,
+    ) -> int:
         """Archive blocs publics reçus — vérifie hash structure (signature nœud distant)."""
         valid: list[dict[str, Any]] = []
         for block in blocks:
@@ -60,21 +66,20 @@ class P2PSyncService:
                 logger.warning("Rejected invalid public block structure index=%s", block.get("index"))
                 continue
             valid.append(block)
+        stored = 0
         if self.archive:
             stored = self.archive.store_blocks(valid, from_node_id=from_node_id)
-            extended = 0
+        extended = 0
+        if extend_tip:
             for block in valid:
                 try:
                     if self.chain.import_extending_public_block(block):
                         extended += 1
                 except Exception as exc:
                     logger.debug("public block did not extend local tip: %s", exc)
-            if self.symbol_sync:
-                self.symbol_sync.extract_from_blocks(valid, from_node_id=from_node_id)
-            return stored + extended
         if self.symbol_sync:
             self.symbol_sync.extract_from_blocks(valid, from_node_id=from_node_id)
-        return len(valid)
+        return stored + extended
 
     @staticmethod
     def verify_block_structure(block: dict) -> bool:
@@ -148,7 +153,11 @@ class P2PSyncService:
                 r = client.get(url, params={"from_index": from_index})
                 r.raise_for_status()
                 blocks = r.json().get("blocks", [])
-            imported = self.import_public_blocks(blocks, from_node_id=peer.peer_id)
+            imported = self.import_public_blocks(
+                blocks,
+                from_node_id=peer.peer_id,
+                extend_tip=bool(getattr(peer, "protocol_compatible", False)),
+            )
             self.peers.update_peer_status(
                 peer.peer_id,
                 last_sync_ok=True,

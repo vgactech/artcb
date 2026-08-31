@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Any, Final
 
-from src.artcb.economics.economic_snapshot import DEFAULT_FINALITY_CONFIRMATIONS
+from artcb.economics.economic_snapshot import DEFAULT_FINALITY_CONFIRMATIONS
 
 # Live P2P/API: no N/F/Q Byzantine formula is enforced.
 LIVE_BFT_IMPLEMENTED: Final[bool] = False

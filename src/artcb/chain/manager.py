@@ -265,10 +265,34 @@ class ChainManager:
         return hashlib.sha256(material).hexdigest()
 
     def import_extending_public_block(self, block: dict) -> bool:
-        """Append a remote public block if it extends the local tip (PRE-DV-04)."""
+        """Append a remote public block if it extends the local tip (PRE-DV-04).
+
+        Hash structure is verified. The producer signature uses the remote
+        chain key and is not checked against this node's key.
+        """
         if block.get("visibility") != "public":
             return False
-        if not self.verify_block_dict(block):
+        try:
+            eco = None
+            version = int(block.get("hash_version") or HASH_VERSION_V1)
+            if version >= HASH_VERSION_V2:
+                eco = str(
+                    block.get("economic_root")
+                    or (block.get("economics") or {}).get("economic_root")
+                    or ""
+                )
+            expected = ffi.build_block_hash(
+                int(block["index"]),
+                str(block["timestamp"]),
+                str(block["prev_hash"]),
+                str(block["graph_root"]),
+                str(block.get("merkle_root") or block["graph_root"]),
+                float(block["pol_score"]),
+                economic_root=eco,
+            )
+        except (KeyError, TypeError, ValueError):
+            return False
+        if block.get("hash") != expected:
             return False
         expected_index = len(self._read_all_blocks())
         if int(block.get("index", -1)) != expected_index:

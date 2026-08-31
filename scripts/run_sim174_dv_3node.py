@@ -16,6 +16,8 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
@@ -130,6 +132,20 @@ def dv02_hostile(ip: str) -> dict:
 
 def predv04(ovh2: str, aws3: str) -> dict:
     """Create a public block on OVH2 and pull it on AWS3. Does not touch OVH1 chain."""
+    for name, target, source in (
+        ("aws3_ovh2", f"http://{aws3}:8000", f"http://{ovh2}:8000"),
+        ("ovh2_aws3", f"http://{ovh2}:8000", f"http://{aws3}:8000"),
+    ):
+        _http(
+            f"{target}/api/v1/p2p/register-public",
+            "POST",
+            {
+                "node_public_url": source,
+                "device_fingerprint": f"e2e174-predv04-{name}",
+                "node_label": name,
+                "network_id": NETWORK_ID,
+            },
+        )
     before_2, s2 = _http(f"http://{ovh2}:8000/api/v1/chain/status")
     before_3, s3 = _http(f"http://{aws3}:8000/api/v1/chain/status")
     store_c, store_b = _http(
