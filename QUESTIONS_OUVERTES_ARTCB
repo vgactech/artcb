@@ -203,8 +203,8 @@ Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economi
 | ID | État | Note |
 |----|------|------|
 | Q-live-key | ✅ D-027 | `kid_abad2468682059ef` ; Doppler `ARTCB_API_KEY` écrit ; **secret Cursor UI encore à coller une fois** |
-| Q-ovh-deploy | ⏳ 170 | Live `git_sha=5b4b24ae` ≠ `origin/main` `376b0e4c` (PR #38). 169 était vrai *au moment du test*. |
-| Q-doppler-nodes | ⏳ 170 | 3 projets Doppler **spécifiés** ; **non créés** (service token 403). Staging `~/.artcb/nodes/*.env`. |
-| Q-ovh2-vm | ⏳ | Compte `vc491276-ovh` joignable ; **0** instance. |
-| Q-aws3 | ⏳ | IAM console existe ; pas d’access key / pas de `aws login` headless. |
+| Q-ovh-deploy | ⏳ 172 | Live `git_sha=5b4b24ae` ≠ `origin/main` (pas d’ordre deploy `:34`) |
+| Q-doppler-nodes | ✅ 171/172 | slugs UI `artcb-2` / `artcb3` bound ; coffre dédié OVH1 toujours non créé |
+| Q-ovh2-vm | ⏳ | Compte `vc491276-ovh` joignable ; **0** instance (validation Public Cloud) |
+| Q-aws3 | ✅ D-031 | IAM admin + access keys Cursor aliases ; EC2 `eu-west-3` |
 

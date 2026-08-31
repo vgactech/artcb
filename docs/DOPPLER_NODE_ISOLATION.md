@@ -8,7 +8,7 @@ Il ne doit plus recevoir les clés OVH-2 ni AWS-3.
 |---------|-----------|-------------------------|--------------|---------|
 | `ovh-node-1` | node artcb 1 | `artcb-blockchain` (coffre dédié `artcb-ovh-node-1` **non créé** — token service `artcb-node-1`) | `DOPPLER_TOKEN` | `152.228.144.34` GRA11 — **existe** |
 | `ovh-node-2` | node artcb 2 | **`artcb-2`** | `KEY_API_ARTCB_DOPPLER_2` | nic `vc491276-ovh` — **aucun** Public Cloud / VPS / IP (validation OVH en cours) |
-| `aws-node-3` | node artcb 3 | **`artcb3`** | `KEY_API_ARTCB_DOPPLER_3` | AWS `599128160879` IAM `node_artcb_3_agent` — **aucune instance** (IAM = `IAMUserChangePassword` seulement) |
+| `aws-node-3` | node artcb 3 | **`artcb3`** | `KEY_API_ARTCB_DOPPLER_3` | AWS `599128160879` IAM `node_artcb_3_agent` — EC2 `eu-west-3` (aliases Cursor `AWS_API_KEY_AGENT_3`) |
 
 Les slugs 170 (`artcb-ovh-node-2`, `artcb-aws-node-3`) n’existent pas : l’utilisateur a créé `artcb-2` et `artcb3` dans l’UI Doppler. Le registre suit la réalité.
 
@@ -32,24 +32,22 @@ Coffre dédié OVH1 : `DOPPLER_PERSONAL_TOKEN` (personnel) toujours requis.
 
 Aiguillage : `ARTCB_NODE_ID=ovh-node-1|ovh-node-2|aws-node-3`
 
-## AWS — bloquant IAM (171)
+## AWS — IAM élargi (172)
 
-Console probe 2026-08-31 (session IAM réelle) :
+Session suivante 2026-08-31 : politiques `AdministratorAccess` + `AmazonEC2FullAccess` + `IAMFullAccess` + `IAMUserChangePassword`.  
+Secrets Cursor `AWS_API_KEY_AGENT_3` / `AWS_API_CLI_AGENT_3` (pas les noms standard). STS + Describe* **OK**.
 
-- `iam:ListAccessKeys` AccessDenied
-- `ec2:DescribeInstanceStatus` AccessDenied
-- `health:Describe*` AccessDenied
+```bash
+PYTHONPATH=src python3 scripts/provision_aws_ec2.py --yes
+bash scripts/deploy_aws.sh IP BRANCH
+PYTHONPATH=src python3 scripts/run_sim172_aws_ec2.py --yes
+```
 
-Un admin du compte `599128160879` doit attacher à `node_artcb_3_agent` au minimum :
+Le mot de passe console n’entre **pas** dans Doppler / git / chat.
 
-- `AmazonEC2FullAccess` (ou équivalent RunInstances / Describe* / CreateSecurityGroup / CreateKeyPair / CreateTags dans `eu-west-3`)
-- `iam:CreateAccessKey` + `iam:ListAccessKeys` sur `user/node_artcb_3_agent`
+## Ce que 172 ne fait pas
 
-Puis `PYTHONPATH=src python3 scripts/provision_aws_ec2.py --yes` et `bash scripts/deploy_aws.sh IP BRANCH`.
-
-## Ce que 171 ne fait pas
-
-- Ne crée **pas** de VM OVH 2 (compte sans Public Cloud).
-- Ne lance **pas** d’instance EC2 (IAM insuffisant).
-- Ne mélange **pas** Stripe/Bob dans `artcb-2` / `artcb3`.
+- Ne crée **pas** de VM OVH 2 (compte sans Public Cloud — validation en cours).
 - Ne redéploie **pas** `main` sur `:34` sans ordre explicite.
+- Ne mélange **pas** Stripe/Bob dans `artcb-2` / `artcb3`.
+- Ne certifie **pas** 4 nœuds WAN ni V-01…V-07.

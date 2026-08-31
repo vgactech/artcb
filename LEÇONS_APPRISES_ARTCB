@@ -190,4 +190,9 @@
 **Leçon :** (1) Isolation des secrets **avant** le 2ᵉ nœud compute. (2) Service token ≠ token personnel. (3) Re-prouver `live_git_sha == origin/main` après chaque merge. (4) Signature OVH officielle = AS+CK+METHOD+URL+BODY+TS (**sans** application key). (5) Ne pas coller mot de passe console / application secret dans le chat — les rotator.
 **Action :** Rapport 170. `node_registry.py`. `provision_doppler_node_projects.py`. D-029.
 
+### L-041 — Access keys Cursor ≠ noms AWS standard (31 août 2026)
+**Contexte :** 171 a vu IAM `IAMUserChangePassword` seulement et `aws login` navigateur. L’utilisateur a ensuite attaché `AdministratorAccess` + `AmazonEC2FullAccess` + `IAMFullAccess` et injecté des access keys, mais sous `AWS_API_KEY_AGENT_3` / `AWS_API_CLI_AGENT_3` — pas `AWS_ACCESS_KEY_ID`. Un probe qui ne cherche que les noms standard conclut à tort « pas de credentials ». Mot de passe console recollé dans le chat (à rotator). OVH2 toujours 0 VM.
+**Leçon :** (1) Lister `CLOUD_AGENT_INJECTED_SECRET_NAMES` et les aliases avant de déclarer IAM bloqué. (2) Mapper les aliases vers les noms AWS. (3) Security group + IP publique font partie du provision, pas seulement RunInstances. (4) 2 nœuds live ≠ 4 nœuds prévus. (5) Ne jamais coller mot de passe / application secret dans le chat.
+**Action :** Rapport 172. `provision_aws_ec2.py --yes`. D-031.
+
 

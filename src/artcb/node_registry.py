@@ -75,9 +75,10 @@ NODES: dict[str, NodeSpec] = {
             "AWS account 599128160879 IAM user node_artcb_3_agent. "
             "Doppler project artcb3 (service token Cursor KEY_API_ARTCB_DOPPLER_3). "
             "CLI profile artcb-node-3. Region eu-west-3 (Paris). "
-            "IAM attached policy observed 2026-08-31: IAMUserChangePassword only. "
-            "No ListAccessKeys / no EC2 Describe* / no RunInstances until an admin "
-            "attaches EC2+self access-key policies or injects AWS_ACCESS_KEY_ID."
+            "Cursor secret aliases AWS_API_KEY_AGENT_3 / AWS_API_CLI_AGENT_3 map to "
+            "AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY. "
+            "IAM 2026-08-31 later session: AdministratorAccess + AmazonEC2FullAccess "
+            "+ IAMFullAccess + IAMUserChangePassword (earlier probe had ChangePassword only)."
         ),
     ),
 }
@@ -119,12 +120,18 @@ NODE_SECRET_ALLOWLIST = {
         {
             "AWS_ACCESS_KEY_ID",
             "AWS_SECRET_ACCESS_KEY",
+            "AWS_API_KEY_AGENT_3",
+            "AWS_API_CLI_AGENT_3",
             "AWS_ACCOUNT_ID",
             "AWS_DEFAULT_REGION",
             "AWS_IAM_USER",
             "AWS_CONSOLE_URL",
+            "AWS_CLI_PROFILE",
+            "AWS_SERVER_IP",
+            "AWS_INSTANCE_ID",
             "ARTCB_API_KEY",
             "ARTCB_API_URL",
+            "ARTCB_WALLET_PASSPHRASE",
         }
     ),
 }

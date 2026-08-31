@@ -1220,6 +1220,17 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Pas de 4 nœuds réels.** Tokenomics inchangée. V-01…V-07 ouverts. **NOT MAINNET CERTIFIED.**
 - Rapport : `rapports/170_doppler_node_isolation_2026-08-31.md` SHA `6b92dba`.
 
+## [2026-08-31T16:20:00Z] Rapport 172 — EC2 aws-node-3 + dual probe OVH1
+
+- **GO utilisateur :** créer l’instance AWS et tester avec le nœud OVH1 déjà opérationnel. OVH2 toujours **sans serveur** (validation). Ne pas redéployer `:34`.
+- **IAM :** `AdministratorAccess` + EC2 + IAM. Access keys Cursor `AWS_API_KEY_AGENT_3` / `AWS_API_CLI_AGENT_3` (pas les noms standard). STS OK.
+- **Doppler :** `artcb-2` / `artcb3` déjà bound. Stripe absent des coffres nœud.
+- **Live OVH1 :** `git_sha=5b4b24ae` ≠ `origin/main` `d092b61`. Pas d’ordre deploy.
+- **Rotater** mot de passe console AWS et secret d’app OVH2 recollés dans le chat.
+- Tokenomics inchangée. V-01…V-07 ouverts. **NOT MAINNET CERTIFIED.**
+- Rapport : `rapports/172_aws_ec2_dual_ovh1_2026-08-31.md`
+
+
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 
 - **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.

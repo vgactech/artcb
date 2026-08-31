@@ -22,11 +22,61 @@ from artcb.node_registry import local_env_path  # noqa: E402
 OVH_BASE = "https://eu.api.ovh.com/1.0"
 
 
+def _doppler_ovh_creds(node_id: str) -> dict[str, str]:
+    """Load OVH keys from the node Doppler vault. Values never logged."""
+    from artcb.node_registry import NODES, doppler_token_env_for  # noqa: PLC0415
+
+    spec = NODES.get(node_id)
+    if spec is None or spec.provider != "ovh":
+        return {}
+    token = (os.environ.get(doppler_token_env_for(node_id)) or os.environ.get("DOPPLER_TOKEN") or "").strip()
+    if not token:
+        return {}
+    names = (
+        "OVH_APPLICATION_KEY",
+        "OVH_APPLICATION_SECRET",
+        "OVH_CONSUMER_KEY",
+        "OVH_ENDPOINT",
+        "OVH_CLOUD_PROJECT_ID",
+        "OVH_NIC",
+    )
+    out: dict[str, str] = {}
+    req = Request(
+        "https://api.doppler.com/v3/configs/config/secrets"
+        f"?project={spec.doppler_project}&config={spec.doppler_config}",
+        headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+    )
+    try:
+        with urlopen(req, timeout=20) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError):
+        return {}
+    secrets = payload.get("secrets") if isinstance(payload, dict) else {}
+    if not isinstance(secrets, dict):
+        return {}
+    for name in names:
+        meta = secrets.get(name)
+        raw = ""
+        if isinstance(meta, dict):
+            raw = str(meta.get("computed") or meta.get("raw") or meta.get("value") or "").strip()
+        elif isinstance(meta, str):
+            raw = meta.strip()
+        if raw:
+            out[name] = raw
+    return out
+
+
 def _creds_from(node_id: str | None) -> dict[str, str]:
     if node_id:
         parsed = parse_env_file(local_env_path(node_id))
         if parsed.get("OVH_APPLICATION_KEY"):
             return parsed
+        doppler = _doppler_ovh_creds(node_id)
+        if doppler.get("OVH_APPLICATION_KEY"):
+            return doppler
+        if node_id != "ovh-node-1":
+            # Do not fall back to Cursor/shared OVH1 keys for another node.
+            return doppler
     return {
         "OVH_APPLICATION_KEY": os.environ.get("OVH_APPLICATION_KEY", ""),
         "OVH_APPLICATION_SECRET": os.environ.get("OVH_APPLICATION_SECRET", ""),

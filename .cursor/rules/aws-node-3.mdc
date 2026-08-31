@@ -7,8 +7,10 @@ alwaysApply: false
 
 - Compte `599128160879`, IAM `node_artcb_3_agent`, profil CLI `artcb-node-3`, région **`eu-west-3`** (Paris).
 - Doppler : projet **`artcb3`** (token Cursor `KEY_API_ARTCB_DOPPLER_3`). Jamais Stripe/Bob ici.
-- Mot de passe console : `~/.artcb/nodes/aws-node-3.env` (0600) seulement — pas git, pas Doppler, pas le chat.
-- Probe 2026-08-31 : l’IAM n’a que `IAMUserChangePassword`. `iam:ListAccessKeys` et `ec2:Describe*` = AccessDenied. Ne pas appeler `RunInstances` tant qu’un admin n’a pas élargi les politiques (ou injecté `AWS_ACCESS_KEY_ID`).
-- Scripts : `scripts/provision_aws_ec2.py` (diagnostic, `--yes` pour lancer) ; `scripts/deploy_aws.sh IP BRANCH`.
-- Ne pas toucher au nœud OVH 1 (`152.228.144.34`) sans ordre de déploiement explicite.
-- Préférer AWS CLI + IaC (tags `Name=node-artcb-3`, `artcb-node-id=aws-node-3`). Pas d’em dash dans les noms de ressources.
+- Mot de passe console : **local only** — jamais git, jamais Doppler, jamais le chat. Ne plus le coller.
+- Access keys : secrets Cursor `AWS_API_KEY_AGENT_3` / `AWS_API_CLI_AGENT_3` (mappés vers `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY`). Staging `~/.artcb/nodes/aws-node-3.env` mode 0600.
+- IAM 2026-08-31 (session suivante) : `AdministratorAccess` + `AmazonEC2FullAccess` + `IAMFullAccess` + `IAMUserChangePassword`. Probe STS + `ec2:Describe*` OK.
+- Scripts : `scripts/provision_aws_ec2.py --yes` (idempotent, SG 22/8000/8443, IP publique) ; `scripts/deploy_aws.sh IP BRANCH`.
+- Ne pas toucher au nœud OVH 1 (`152.228.144.34`) sans ordre de déploiement explicite. Pas de VM OVH 2 tant que Public Cloud n'est pas validé.
+- Tags : `Name=node-artcb-3`, `artcb-node-id=aws-node-3`. Pas d'em dash dans les noms de ressources.
+- AWS CLI via access keys (pas `aws login` navigateur sur cet agent headless).
