@@ -48,6 +48,7 @@
 | D-036 | **OVH1 reste sur `5b4b24ae`** pour DV-03 inter-version. Pas de redéploiement `:34`. (Expert : D-035 B.) | ✅ 2026-08-31 |
 | D-037 | **GO NODE4.** PRE-DV-04 déjà PASS. Créer OVH4 nic `xy4589-ovh` projet `926bb1d6755e4f2c98ae9db06ef44e4f` GRA11 d2-8, Doppler `artcb-4`. Protocole **174-devnet-1** (homogène OVH2/AWS3). OVH1 non redéployé. DV-04 C reste bloqué tant que 4 nœuds **protocol-compatibles** ne convergent pas (OVH1 legacy ne compte pas). | ✅ 2026-08-31 |
 | D-038 | **Replit substitue le rôle d’OVH1** pour les tests 174. **Ne pas redéployer** `152.228.144.34` (D-036 intact). Replit `https://artcb--vgac42.replit.app` doit pull `cursor/replit-sync-ready-16d8`, exposer SHA, `/live`, PQC 0.16, init-node. Pas un PASS DV-04 tant que `/ready`+hybride AND+tip. | ✅ 2026-08-31 |
+| D-039 | **Audit adversarial Replit avant init-wallet (V-R01…V-R04).** `/health` `pqc.available` ≠ enforcement hybrid AND sur tous les chemins. Git sync = Architecture A (PIN SHA, pas `reset --hard` flottant). Ne pas créer le wallet tant que V-R01–V-R04 ne sont pas verts. D-032 (fenêtre Ed25519 jusqu’au 2026-12-31) reste la politique réseau ; on ne ment plus en disant « plus de fallback ». | ✅ 2026-08-31 |
 
 ---
 

@@ -123,13 +123,15 @@ else
 fi
 _log "STEP end port=$ARTCB_PORT"
 
-# ── 0. Pull GitHub EN PREMIER — avant tout build ─────────────────
-# Autoscale snapshots often have NO .git, or a Replit remote without "github"
-# in `git remote -v`. The old `if` then did nothing → SHA=None and stale code.
+# ── 0. Git sync Architecture A (pin SHA) — jamais reset --hard sur un tip flottant
+# Fetch is allowed. Checkout happens only if ARTCB_REPLIT_PIN_SHA is set and
+# that object exists. A floating `git reset --hard origin/$BRANCH` is refused
+# (supply-chain: a push to the branch would otherwise become live code).
 CURRENT_STEP="git_sync"
 _log "STEP begin"
 ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-${GITHUB_BRANCH:-cursor/replit-sync-ready-16d8}}"
 ARTCB_REPLIT_REMOTE="${ARTCB_REPLIT_REMOTE:-https://github.com/vgactech/artcb.git}"
+ARTCB_REPLIT_PIN_SHA="${ARTCB_REPLIT_PIN_SHA:-}"
 _write_release() {
   local sha="${1:-}"
   local branch="${2:-}"
@@ -142,38 +144,74 @@ _write_release() {
   _log "release_written sha=${sha:-NONE} branch=${branch:-NONE}"
 }
 git config --global --add safe.directory "$REPL_DIR" 2>/dev/null || true
-if [ ! -d "$REPL_DIR/.git" ]; then
-  _log "no .git — fetching $ARTCB_REPLIT_REMOTE branch=$ARTCB_REPLIT_BRANCH"
-  echo "[0/6] Clone GitHub (workspace without .git) ..."
-  if git clone --depth 1 --branch "$ARTCB_REPLIT_BRANCH" "$ARTCB_REPLIT_REMOTE" /tmp/artcb-src-$$; then
-    cp -a /tmp/artcb-src-$$/. "$REPL_DIR/"
-    rm -rf /tmp/artcb-src-$$
-    _log "clone_rsync_ok"
-  else
-    _log "WARN git clone failed — starting with snapshot files"
+_ensure_origin() {
+  if ! git -C "$REPL_DIR" remote get-url origin >/dev/null 2>&1; then
+    git -C "$REPL_DIR" remote add origin "$ARTCB_REPLIT_REMOTE" || true
   fi
-elif git -C "$REPL_DIR" remote -v 2>/dev/null | grep -qiE 'github|vgactech'; then
-  echo "[0/6] Fetch GitHub branch $ARTCB_REPLIT_BRANCH ..."
-  git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" || git -C "$REPL_DIR" fetch origin || true
-  if git -C "$REPL_DIR" rev-parse --verify "origin/$ARTCB_REPLIT_BRANCH" >/dev/null 2>&1; then
-    git -C "$REPL_DIR" checkout -B "$ARTCB_REPLIT_BRANCH" "origin/$ARTCB_REPLIT_BRANCH" || true
-    git -C "$REPL_DIR" reset --hard "origin/$ARTCB_REPLIT_BRANCH" || true
+}
+if [ ! -d "$REPL_DIR/.git" ]; then
+  if [ -z "$ARTCB_REPLIT_PIN_SHA" ]; then
+    _log "WARN Architecture A: no .git and no ARTCB_REPLIT_PIN_SHA — keeping snapshot (no floating clone)"
   else
-    git -C "$REPL_DIR" pull --ff-only origin "$ARTCB_REPLIT_BRANCH" \
-      || git -C "$REPL_DIR" pull --ff-only origin main \
-      || _log "WARN git pull failed — snapshot files"
+    _log "no .git — cloning pin $ARTCB_REPLIT_PIN_SHA from $ARTCB_REPLIT_REMOTE"
+    if git clone --no-checkout "$ARTCB_REPLIT_REMOTE" /tmp/artcb-src-$$; then
+      git -C /tmp/artcb-src-$$ fetch --depth 1 origin "$ARTCB_REPLIT_PIN_SHA" \
+        || git -C /tmp/artcb-src-$$ fetch origin "$ARTCB_REPLIT_BRANCH" || true
+      if git -C /tmp/artcb-src-$$ checkout --detach "$ARTCB_REPLIT_PIN_SHA" 2>/dev/null \
+        || git -C /tmp/artcb-src-$$ checkout --detach "origin/$ARTCB_REPLIT_BRANCH"; then
+        _GOT="$(git -C /tmp/artcb-src-$$ rev-parse HEAD)"
+        case "$_GOT" in
+          "$ARTCB_REPLIT_PIN_SHA"*) cp -a /tmp/artcb-src-$$/. "$REPL_DIR/"; _log "clone_pin_ok sha=$_GOT" ;;
+          *)
+            if echo "$ARTCB_REPLIT_PIN_SHA" | grep -qi "^${_GOT}"; then
+              cp -a /tmp/artcb-src-$$/. "$REPL_DIR/"
+              _log "clone_pin_ok sha=$_GOT"
+            else
+              _log "ERROR pin mismatch got=$_GOT want=$ARTCB_REPLIT_PIN_SHA — snapshot kept"
+            fi
+            ;;
+        esac
+      else
+        _log "WARN checkout pin failed — snapshot kept"
+      fi
+      rm -rf /tmp/artcb-src-$$
+    else
+      _log "WARN git clone failed — starting with snapshot files"
+    fi
   fi
 else
-  _log "WARN remotes have no github — adding origin $ARTCB_REPLIT_REMOTE"
-  git -C "$REPL_DIR" remote remove origin 2>/dev/null || true
-  git -C "$REPL_DIR" remote add origin "$ARTCB_REPLIT_REMOTE" || true
-  git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" || true
-  git -C "$REPL_DIR" checkout -B "$ARTCB_REPLIT_BRANCH" "origin/$ARTCB_REPLIT_BRANCH" || true
+  _ensure_origin
+  echo "[0/6] Fetch GitHub (Architecture A — pin=${ARTCB_REPLIT_PIN_SHA:-UNSET}) ..."
+  git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" || git -C "$REPL_DIR" fetch origin || true
+  if [ -n "$ARTCB_REPLIT_PIN_SHA" ]; then
+    if git -C "$REPL_DIR" cat-file -t "$ARTCB_REPLIT_PIN_SHA" >/dev/null 2>&1 \
+      || git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_PIN_SHA"; then
+      git -C "$REPL_DIR" checkout --detach "$ARTCB_REPLIT_PIN_SHA" || true
+      _GOT="$(git -C "$REPL_DIR" rev-parse HEAD 2>/dev/null || true)"
+      case "$_GOT" in
+        "$ARTCB_REPLIT_PIN_SHA"*) _log "checkout_pin_ok sha=$_GOT" ;;
+        *)
+          if [ -n "$_GOT" ] && echo "$ARTCB_REPLIT_PIN_SHA" | grep -qi "^${_GOT}"; then
+            _log "checkout_pin_ok sha=$_GOT"
+          else
+            _log "ERROR pin mismatch got=${_GOT:-NONE} want=$ARTCB_REPLIT_PIN_SHA"
+          fi
+          ;;
+      esac
+    else
+      _log "ERROR pin $ARTCB_REPLIT_PIN_SHA not fetchable — snapshot kept"
+    fi
+  else
+    _log "WARN Architecture A: ARTCB_REPLIT_PIN_SHA unset — refusing git reset --hard origin/$ARTCB_REPLIT_BRANCH"
+  fi
 fi
 _REL_SHA="$(git -C "$REPL_DIR" rev-parse HEAD 2>/dev/null || true)"
 _REL_BR="$(git -C "$REPL_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$ARTCB_REPLIT_BRANCH")"
+if [ "$_REL_BR" = "HEAD" ]; then
+  _REL_BR="$ARTCB_REPLIT_BRANCH"
+fi
 _write_release "$_REL_SHA" "$_REL_BR"
-_log "STEP end sha=${_REL_SHA:-NONE} branch=${_REL_BR:-NONE}"
+_log "STEP end sha=${_REL_SHA:-NONE} branch=${_REL_BR:-NONE} pin=${ARTCB_REPLIT_PIN_SHA:-UNSET}"
 
 # ── 1. Venv Python isolé (contourne NixOS PEP 668) ───────────────
 CURRENT_STEP="python_venv"

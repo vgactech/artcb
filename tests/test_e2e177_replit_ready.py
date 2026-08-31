@@ -13,12 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_replit_start_always_logs_git_sync_reason() -> None:
     body = (ROOT / "scripts" / "replit_start.sh").read_text(encoding="utf-8")
-    assert "no .git — fetching" in body
+    assert "Architecture A" in body
+    assert "ARTCB_REPLIT_PIN_SHA" in body
+    assert "refusing git reset --hard" in body
     assert ".artcb_release" in body
     assert "replit_live_shim.py" in body
     assert "install_native_liboqs_replit.sh" in body
     assert "cursor/replit-sync-ready-16d8" in body
-    assert 'grep -q github' not in body or "WARN remotes have no github" in body
 
 
 def test_release_identity_reads_artcb_release(tmp_path: Path, monkeypatch) -> None:
@@ -93,6 +94,13 @@ def test_bootstrap_live_and_chain_verify_not_404(tmp_path, monkeypatch) -> None:
     body = verify.json()
     assert body["bootstrap_mode"] is True
     assert body["valid"] is False
-    assert client.get("/ready").status_code == 503
-    assert client.get("/api/v1/wallet/list").status_code == 503
+    ready = client.get("/ready")
+    assert ready.status_code == 503
+    wallet = client.get("/api/v1/wallet/list")
+    assert wallet.status_code == 503
+    body_w = wallet.json()
+    assert body_w["status"] == "bootstrap_required"
+    assert body_w["wallet_initialized"] is False
+    assert body_w["chain_available"] is False
+    assert body_w["reason"] == "wallet_initialization_required"
     assert client.get("/api/v1/chain").status_code == 503

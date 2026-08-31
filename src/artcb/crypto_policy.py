@@ -145,6 +145,9 @@ def public_health_block(pqc_available: bool) -> dict[str, Any]:
         "available": pqc_available,
         "algorithm": PREFERRED_SIG if pqc_available else f"{TEMPORARY_SIG} (fallback)",
         "policy": capabilities(pqc_available),
+        "availability_is_not_enforcement": True,
+        "high_value_hybrid_enforced": False,
+        "ed25519_only_still_accepted": fallback_still_open(),
         "action_required": (
             None
             if pqc_available

@@ -97,9 +97,12 @@ def health(request: Request) -> dict:
         chain_status = {"available": True, **state.chain.verify()}
     except FileNotFoundError as exc:
         chain_status = {"available": False, "message": str(exc)}
+    from src.artcb.crypto.pqc import pqc_available
+    from src.artcb.crypto_policy import public_health_block
     from src.artcb.release import release_identity
 
     identity = release_identity()
+    pqc = pqc_available()
     return {
         "status": "ok",
         "debug": state.settings.debug,
@@ -109,7 +112,11 @@ def health(request: Request) -> dict:
         "chain": chain_status,
         "git_sha": identity["git_sha"],
         "git_branch": identity["git_branch"],
+        "release_integrity": identity.get("release_integrity"),
+        "pin_sha": identity.get("pin_sha"),
         "version": identity["version"],
+        "bootstrap_mode": False,
+        "pqc": public_health_block(pqc),
     }
 
 

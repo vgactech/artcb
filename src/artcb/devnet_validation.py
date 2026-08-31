@@ -88,6 +88,13 @@ DECISIONS_177: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_178: Final[dict[str, str]] = {
+    "D-039": (
+        "Adversarial Replit audit before wallet init. Health PQC available "
+        "is not path enforcement. Git sync pins SHA (Architecture A)."
+    ),
+}
+
 
 def public_lock() -> dict[str, Any]:
     return {
@@ -99,5 +106,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_174": DECISIONS_174,
         "decisions_175": DECISIONS_175,
         "decisions_177": DECISIONS_177,
+        "decisions_178": DECISIONS_178,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

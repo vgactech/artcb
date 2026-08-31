@@ -101,6 +101,8 @@ def create_app() -> FastAPI:
                 "version": identity["version"],
                 "git_sha": identity["git_sha"],
                 "git_branch": identity["git_branch"],
+                "release_integrity": identity.get("release_integrity"),
+                "pin_sha": identity.get("pin_sha"),
                 "bootstrap_mode": True,
                 "network_id": NETWORK_ID,
                 "protocol_version": PROTOCOL_VERSION,
@@ -194,11 +196,17 @@ def create_app() -> FastAPI:
             return JSONResponse(
                 status_code=503,
                 content={
+                    "status": "bootstrap_required",
                     "error": "bootstrap_mode",
+                    "wallet_initialized": False,
+                    "chain_available": False,
+                    "mining_available": False,
+                    "reason": "wallet_initialization_required",
                     "message": (
                         "Ce nœud ARTCB n'est pas encore configuré. "
                         "Appelez POST /setup/init-node avec {node_name, password} "
-                        "pour créer le wallet de nœud et activer toutes les routes."
+                        "pour créer le wallet de nœud et activer toutes les routes. "
+                        "Ceci n'est pas une erreur interne (500)."
                     ),
                     "setup_endpoint": "/setup/init-node",
                     "doc": "/setup/status",
@@ -272,6 +280,8 @@ def create_app() -> FastAPI:
             "version": identity["version"],
             "git_sha": identity["git_sha"],
             "git_branch": identity["git_branch"],
+            "release_integrity": identity.get("release_integrity"),
+            "pin_sha": identity.get("pin_sha"),
             "bootstrap_mode": False,
             "network_id": NETWORK_ID,
             "protocol_version": PROTOCOL_VERSION,

@@ -25,12 +25,39 @@ class LiveHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         path = (self.path or "/").split("?", 1)[0]
-        if path in {"/", "/live", "/ready", "/health", "/api/v1/health"}:
+        if path in {"/", "/live"}:
             self._ok(
                 {
                     "status": "alive",
                     "phase": "replit_shim",
                     "message": "Process alive; FastAPI not bound yet. This is /live, not blockchain ready.",
+                }
+            )
+            return
+        if path == "/ready":
+            body = {
+                "status": "not_ready",
+                "phase": "replit_shim",
+                "reason": "fastapi_not_bound",
+                "message": "/ready is false until uvicorn replaces this shim.",
+            }
+            raw = json.dumps(body).encode("utf-8")
+            self.send_response(503)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(raw)))
+            self.end_headers()
+            self.wfile.write(raw)
+            return
+        if path in {"/health", "/api/v1/health"}:
+            self._ok(
+                {
+                    "status": "starting",
+                    "phase": "replit_shim",
+                    "git_sha": None,
+                    "git_branch": None,
+                    "bootstrap_mode": None,
+                    "pqc": {"available": False, "availability_is_not_enforcement": True},
+                    "message": "Shim only — not FastAPI /health. Do not treat this as PQC proof.",
                 }
             )
             return

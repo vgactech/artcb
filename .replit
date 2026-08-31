@@ -19,6 +19,8 @@ ARTCB_LLM_ENABLED = "false"
 ARTCB_ANTI_SYBIL_AI_BYPASS = "false"
 ARTCB_REPLIT_BRANCH = "cursor/replit-sync-ready-16d8"
 ARTCB_NODE_ID = "replit-node-1"
+# Architecture A: set ARTCB_REPLIT_PIN_SHA in Replit Secrets to the
+# operator-approved commit (full or 12+ hex). Empty = fetch only, no reset --hard.
 
 [deployment]
 # Uses the same validated startup script as the interactive workflow
