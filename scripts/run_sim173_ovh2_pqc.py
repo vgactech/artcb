@@ -7,6 +7,7 @@ Does not invent live SHA. Does not redeploy OVH1. Never prints secrets.
 from __future__ import annotations
 
 import json
+import ssl
 import subprocess
 import sys
 from datetime import UTC, datetime
@@ -38,9 +39,11 @@ def _write(dir_path: Path, name: str, obj: object) -> None:
 
 
 def _http_json(url: str, timeout: int = 15) -> tuple[int, dict]:
+    """Unauthenticated probe — never send OVH1 Bearer to AWS/OVH2."""
     req = Request(url, headers={"Accept": "application/json"})
+    ctx = ssl._create_unverified_context() if url.startswith("https://") else None
     try:
-        with urlopen(req, timeout=timeout) as resp:
+        with urlopen(req, timeout=timeout, context=ctx) as resp:
             body = json.loads(resp.read().decode())
             return resp.status, body if isinstance(body, dict) else {"raw": body}
     except Exception as exc:  # noqa: BLE001
@@ -51,7 +54,7 @@ def probe_node(name: str, ip: str, https: bool = True) -> dict:
     http_code, http_body = _http_json(f"http://{ip}:8000/health")
     https_code, https_body = (0, {})
     if https:
-        https_code, https_body = http_json("GET", f"https://{ip}:8443/health")
+        https_code, https_body = _http_json(f"https://{ip}:8443/health")
     p2p_code, p2p = _http_json(f"http://{ip}:8000/api/v1/p2p/status")
     source = http_body if http_code == 200 else https_body
     pqc = source.get("pqc") if isinstance(source, dict) else None

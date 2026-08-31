@@ -14,7 +14,7 @@ fi
 ssh -i "$SSH_KEY" -o StrictHostKeyChecking=accept-new -o IdentitiesOnly=yes -o BatchMode=yes \
   "$TARGET" env NODE_NAME="$NODE_NAME" PUBLIC_URL="$PUBLIC_URL" bash -s <<'REMOTE'
 set -Eeuo pipefail
-python3 - <<'PY'
+sudo -E python3 - <<'PY'
 import json, os, urllib.request
 from pathlib import Path
 

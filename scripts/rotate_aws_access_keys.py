@@ -15,6 +15,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Any
 
@@ -179,9 +180,26 @@ def main() -> int:
     keys = ((listed or {}).get("AccessKeyMetadata") or []) if isinstance(listed, dict) else []
     report["keys_before_count"] = len(keys)
     if len(keys) >= 2:
-        report["reason"] = "two_keys_already_exist_delete_inactive_first"
-        print(json.dumps(report, indent=2, sort_keys=True))
-        return 4
+        extras = [k for k in keys if (k.get("AccessKeyId") or "") != old_id]
+        deleted = 0
+        for extra in extras:
+            eid = extra.get("AccessKeyId")
+            if not eid:
+                continue
+            dc, _, _ = _aws(
+                ["iam", "delete-access-key", "--user-name", IAM_USER, "--access-key-id", eid],
+                env,
+            )
+            if dc == 0:
+                deleted += 1
+        report["orphan_keys_deleted"] = deleted
+        code_list, listed, _ = _aws(["iam", "list-access-keys", "--user-name", IAM_USER], env)
+        keys = ((listed or {}).get("AccessKeyMetadata") or []) if isinstance(listed, dict) else []
+        report["keys_after_orphan_cleanup"] = len(keys)
+        if len(keys) >= 2:
+            report["reason"] = "two_keys_already_exist_delete_inactive_first"
+            print(json.dumps(report, indent=2, sort_keys=True))
+            return 4
     code_c, created, err_c = _aws(
         ["iam", "create-access-key", "--user-name", IAM_USER],
         env,
@@ -194,14 +212,28 @@ def main() -> int:
         return 5
     new_id = str(ak["AccessKeyId"])
     new_secret = str(ak["SecretAccessKey"])
-    new_env = env.copy()
-    new_env["AWS_ACCESS_KEY_ID"] = new_id
-    new_env["AWS_SECRET_ACCESS_KEY"] = new_secret
-    new_env.pop("AWS_PROFILE", None)
-    code_n, ident_n, _ = _aws(["sts", "get-caller-identity"], new_env)
+    new_env = {
+        "PATH": env.get("PATH", ""),
+        "HOME": env.get("HOME", ""),
+        "AWS_ACCESS_KEY_ID": new_id,
+        "AWS_SECRET_ACCESS_KEY": new_secret,
+        "AWS_DEFAULT_REGION": env.get("AWS_DEFAULT_REGION") or REGION,
+        "AWS_EC2_METADATA_DISABLED": "true",
+    }
+    code_n, ident_n, err_n = 1, None, ""
+    for attempt in range(6):
+        time.sleep(2 + attempt)
+        code_n, ident_n, err_n = _aws(["sts", "get-caller-identity"], new_env)
+        if code_n == 0:
+            break
     if code_n != 0:
-        report["reason"] = "new_key_sts_failed_old_kept_active"
+        _aws(
+            ["iam", "delete-access-key", "--user-name", IAM_USER, "--access-key-id", new_id],
+            env,
+        )
+        report["reason"] = "new_key_sts_failed_new_key_deleted_old_kept"
         report["new_key_id_prefix"] = new_id[:8]
+        report["sts_retry_stderr_present"] = bool(err_n)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 6
     _write_local(new_id, new_secret, old_id or None)

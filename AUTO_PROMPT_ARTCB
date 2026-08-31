@@ -1237,12 +1237,14 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **OVH2** nic `vc491276-ovh` 0 VM. Sim `20260831T162428Z_e2e172_aws_ec2_dual_probe` failures=[].
 - **16** pytest 170+171+172. PR GitHub collaborator fail. **NOT MAINNET CERTIFIED.**
 
-## [2026-08-31T18:50:00Z] Rapport 173 — OVH2 + politique PQC B
+## [2026-08-31T18:52:12Z] Rapport 173 — OVH2 + politique PQC B
 
 - **D-032 B** : ML-DSA-65 prioritaire, Ed25519 temporaire jusqu’au 2026-12-31, hybride si liboqs, anti-downgrade.
 - **DV-01…DV-07** profil B (série distincte des V tokenomics, toujours ⏳).
-- **OVH2** instance `node-artcb-ovh-2` `151.80.107.29` GRA11 d2-8 projet `1fc10a3fb27d4511a8c7873cd16243f2`. OVH1 non redéployé.
-- Rapport : `rapports/173_ovh2_pqc_policy_b_2026-08-31.md`
+- **OVH2** `151.80.107.29` GRA11 d2-8 SHA `65f2a3a` ML-DSA-65 HTTP/HTTPS 200. **AWS3** même SHA, PQC corrigé (plus Ed25519-only). **OVH1** `5b4b24ae` non redéployé.
+- P2P croisé 6× HTTP 200. Sim `20260831T185212Z_e2e173_ovh2_pqc_policy_b` failures=[]. 21 pytest 170–173.
+- AWS access keys rotatées après STS ; anciennes Inactive ; Cursor aliases périmés. IAM admin conservé.
+- Rapport : `rapports/173_ovh2_pqc_policy_b_2026-08-31.md` **NOT MAINNET CERTIFIED.**
 
 
 

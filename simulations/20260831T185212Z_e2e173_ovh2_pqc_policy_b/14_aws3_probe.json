@@ -1,0 +1,22 @@
+{
+  "bootstrap_mode": false,
+  "classification": "PROBE LIVE",
+  "genesis_hash": "genesis-artcb-v2",
+  "git_branch": "cursor/ovh2-pqc-policy-b-16d8",
+  "git_sha": "65f2a3a31351da2fa7c840956b86de38902b4a3a",
+  "http_health": 200,
+  "https_health": 200,
+  "ip": "51.44.222.232",
+  "name": "aws-node-3",
+  "network_id": "artcb-devnet-1",
+  "p2p_crypto_suite": "hybrid:ed25519+ML-DSA-65",
+  "p2p_http": 200,
+  "p2p_node_id": "artcb1dtgrdhn6ldqcfvqn9mkwegaekprjfqnq3w04hg",
+  "p2p_peer_count": 3,
+  "policy_id": "B-preferred-pqc",
+  "pqc_algorithm": "ML-DSA-65",
+  "pqc_available": true,
+  "protocol_version": "173-devnet-1",
+  "reachable": true,
+  "status": "healthy"
+}

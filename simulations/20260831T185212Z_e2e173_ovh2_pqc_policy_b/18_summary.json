@@ -1,0 +1,137 @@
+{
+  "aws3_sha": "65f2a3a31351da2fa7c840956b86de38902b4a3a",
+  "categories": {
+    "DISTRIBUTED_CONSENSUS": "PARTIAL \u2014 3/4 live VMs; node 4 undefined; DV-04 not PASS",
+    "LIVE_AWS3": {
+      "bootstrap_mode": false,
+      "classification": "PROBE LIVE",
+      "genesis_hash": "genesis-artcb-v2",
+      "git_branch": "cursor/ovh2-pqc-policy-b-16d8",
+      "git_sha": "65f2a3a31351da2fa7c840956b86de38902b4a3a",
+      "http_health": 200,
+      "https_health": 200,
+      "ip": "51.44.222.232",
+      "name": "aws-node-3",
+      "network_id": "artcb-devnet-1",
+      "p2p_crypto_suite": "hybrid:ed25519+ML-DSA-65",
+      "p2p_http": 200,
+      "p2p_node_id": "artcb1dtgrdhn6ldqcfvqn9mkwegaekprjfqnq3w04hg",
+      "p2p_peer_count": 3,
+      "policy_id": "B-preferred-pqc",
+      "pqc_algorithm": "ML-DSA-65",
+      "pqc_available": true,
+      "protocol_version": "173-devnet-1",
+      "reachable": true,
+      "status": "healthy"
+    },
+    "LIVE_OVH1": {
+      "bootstrap_mode": false,
+      "classification": "PROBE LIVE",
+      "expected_origin_main_sha": "66244d72e727de2d55baf8a5454ba7a210110a78",
+      "genesis_hash": null,
+      "git_branch": "main",
+      "git_sha": "5b4b24ae692ac2bb8255a4a5a3ca941b4365db29",
+      "health_url": "http://152.228.144.34:8000",
+      "http_health": 200,
+      "https_health": 200,
+      "https_me": 200,
+      "https_url": "https://152.228.144.34:8443",
+      "ip": "152.228.144.34",
+      "key_id": "kid_abad2468682059ef",
+      "name": "ovh-node-1",
+      "network_id": null,
+      "p2p_crypto_suite": null,
+      "p2p_http": 200,
+      "p2p_node_id": "artcb1_REMPLACER_PAR_VOTRE_ADRESSE",
+      "p2p_peer_count": 3,
+      "policy_id": null,
+      "pqc_algorithm": "ML-DSA-65",
+      "pqc_available": true,
+      "protocol_version": null,
+      "reachable": true,
+      "sha_match_current_main": false,
+      "status": "healthy"
+    },
+    "LIVE_OVH2": {
+      "bootstrap_mode": false,
+      "classification": "PROBE LIVE",
+      "genesis_hash": "genesis-artcb-v2",
+      "git_branch": "cursor/ovh2-pqc-policy-b-16d8",
+      "git_sha": "65f2a3a31351da2fa7c840956b86de38902b4a3a",
+      "http_health": 200,
+      "https_health": 200,
+      "ip": "151.80.107.29",
+      "name": "ovh-node-2",
+      "network_id": "artcb-devnet-1",
+      "p2p_crypto_suite": "hybrid:ed25519+ML-DSA-65",
+      "p2p_http": 200,
+      "p2p_node_id": "artcb1ykchmlksgnt6qmgez7u6pfecgwl5mn96xmsr9z",
+      "p2p_peer_count": 2,
+      "policy_id": "B-preferred-pqc",
+      "pqc_algorithm": "ML-DSA-65",
+      "pqc_available": true,
+      "protocol_version": "173-devnet-1",
+      "reachable": true,
+      "status": "healthy"
+    },
+    "P2P_CROSS": {
+      "aws3_registers_ovh1": {
+        "error": null,
+        "http": 200,
+        "registered": true
+      },
+      "aws3_registers_ovh2": {
+        "error": null,
+        "http": 200,
+        "registered": true
+      },
+      "ovh1_registers_aws3": {
+        "error": null,
+        "http": 200,
+        "registered": true
+      },
+      "ovh1_registers_ovh2": {
+        "error": null,
+        "http": 200,
+        "registered": true
+      },
+      "ovh2_registers_aws3": {
+        "error": null,
+        "http": 200,
+        "registered": true
+      },
+      "ovh2_registers_ovh1": {
+        "error": null,
+        "http": 200,
+        "registered": true
+      }
+    }
+  },
+  "certified_distributed_mainnet": false,
+  "dir": "/workspace/simulations/20260831T185212Z_e2e173_ovh2_pqc_policy_b",
+  "failure_count": 0,
+  "failures": [],
+  "invented": false,
+  "live_count": 3,
+  "ovh1_sha": "5b4b24ae692ac2bb8255a4a5a3ca941b4365db29",
+  "ovh2_sha": "65f2a3a31351da2fa7c840956b86de38902b4a3a",
+  "pending_dv": [
+    "DV-01",
+    "DV-02",
+    "DV-03",
+    "DV-04",
+    "DV-05",
+    "DV-06",
+    "DV-07"
+  ],
+  "pending_economic_v": [
+    "V-01",
+    "V-02",
+    "V-03",
+    "V-04",
+    "V-05",
+    "V-06",
+    "V-07"
+  ],
+  "simulation": "e2e173_ovh2_pqc_policy_b"
+}

@@ -1,0 +1,26 @@
+{
+  "certified_distributed_mainnet": false,
+  "crypto_policy": "B-preferred-pqc",
+  "dependency_lock": {
+    "hash": "0c5c8a99a1e807bb37b20c32d6872abd799fb3d665e5ca2a29ddd0cc2d91a34c",
+    "package_count": 45,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-provisional+D-032+D-033",
+  "finished_at": "2026-08-31T18:52:16Z",
+  "git_branch": "cursor/ovh2-pqc-policy-b-16d8",
+  "git_commit_sha": "65f2a3a31351da2fa7c840956b86de38902b4a3a",
+  "git_status_clean": false,
+  "invented_results": false,
+  "ovh1_redeployed": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "173-devnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim173_ovh2_pqc.py",
+  "script_sha256": "cebfae7cfc2ad39d63600dfbbcb121ad7723cefffca66a3ed15bc08daedd4da7",
+  "seed": 173,
+  "simulation_id": "e2e173_ovh2_pqc_policy_b",
+  "started_at": "2026-08-31T18:52:13Z",
+  "working_tree_diff_hash": "d99f1dc41242a3f86b5fa086c117ea4ded6e195477044b655057224eaa996fa8"
+}

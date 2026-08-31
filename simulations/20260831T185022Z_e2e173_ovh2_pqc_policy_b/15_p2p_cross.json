@@ -1,0 +1,32 @@
+{
+  "aws3_registers_ovh1": {
+    "error": null,
+    "http": 200,
+    "registered": true
+  },
+  "aws3_registers_ovh2": {
+    "error": null,
+    "http": 200,
+    "registered": true
+  },
+  "ovh1_registers_aws3": {
+    "error": null,
+    "http": 200,
+    "registered": true
+  },
+  "ovh1_registers_ovh2": {
+    "error": null,
+    "http": 200,
+    "registered": true
+  },
+  "ovh2_registers_aws3": {
+    "error": null,
+    "http": 200,
+    "registered": true
+  },
+  "ovh2_registers_ovh1": {
+    "error": null,
+    "http": 200,
+    "registered": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "aws3_live": true,
+  "aws3_pqc": true,
+  "declared_genesis_hash": "genesis-artcb-v2",
+  "declared_network_id": "artcb-devnet-1",
+  "declared_protocol_version": "173-devnet-1",
+  "dv_certified": false,
+  "economic_v_still_open": true,
+  "four_machines": false,
+  "invented": false,
+  "ovh1_live": true,
+  "ovh1_not_redeployed": true,
+  "ovh2_live": true,
+  "ovh2_pqc": true,
+  "three_live_compute": true,
+  "tokenomics_untouched": true
+}
