@@ -1,7 +1,7 @@
 """Canonical real-node identities and Doppler project isolation.
 
-One Doppler project per cloud account / real node. Never mix OVH-1, OVH-2, and
-AWS-3 credentials in ``artcb-blockchain`` (shared app secrets only).
+One Doppler project per cloud account / real node. Never mix OVH-1, OVH-2,
+AWS-3, and OVH-4 credentials in ``artcb-blockchain`` (shared app secrets only).
 
 Public identifiers only. Secrets live in Doppler or ``~/.artcb/nodes/*.env``.
 """
@@ -90,6 +90,26 @@ NODES: dict[str, NodeSpec] = {
             "EC2 i-085b74abd1aaf04ee public IP 51.44.222.232 (t3.small fallback from t3.large)."
         ),
     ),
+    "ovh-node-4": NodeSpec(
+        node_id="ovh-node-4",
+        display_name="node artcb 4",
+        provider="ovh",
+        doppler_project="artcb-4",
+        doppler_token_env="KEY_API_ARTCB_DOPPLER_4",
+        health_http="http://91.134.45.8:8000",
+        api_https="https://91.134.45.8:8443",
+        ssh_host="91.134.45.8",
+        ssh_user="ubuntu",
+        public_notes=(
+            "OVH nic xy4589-ovh (vgac42@gmail.com). "
+            "Public Cloud project 926bb1d6755e4f2c98ae9db06ef44e4f "
+            "(description 'node artcb ovh 4'). "
+            "Instance node-artcb-ovh-4 id 22dc6a47-5b79-4084-82d7-eabb4f5b2680 "
+            "GRA11 d2-8 IPv4 91.134.45.8. Doppler slug artcb-4 "
+            "(UI name ARTCB_API_4). SSH key artcb-ovh-node-4. "
+            "Never reuse OVH1 152.228.144.34 or OVH2 151.80.107.29 credentials."
+        ),
+    ),
 }
 
 # Secrets that belong on a node project — never copy Stripe/Bob/GitHub here.
@@ -111,6 +131,22 @@ NODE_SECRET_ALLOWLIST = {
         }
     ),
     "ovh-node-2": frozenset(
+        {
+            "OVH_APPLICATION_KEY",
+            "OVH_APPLICATION_SECRET",
+            "OVH_CONSUMER_KEY",
+            "OVH_ENDPOINT",
+            "OVH_CLOUD_PROJECT_ID",
+            "OVH_SERVER_IP",
+            "OVH_SERVER_USER",
+            "OVH_NIC",
+            "SSH_PRIVATE_KEY",
+            "ARTCB_API_KEY",
+            "ARTCB_API_URL",
+            "ARTCB_WALLET_PASSPHRASE",
+        }
+    ),
+    "ovh-node-4": frozenset(
         {
             "OVH_APPLICATION_KEY",
             "OVH_APPLICATION_SECRET",
