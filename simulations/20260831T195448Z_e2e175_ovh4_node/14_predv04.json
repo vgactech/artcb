@@ -1,0 +1,65 @@
+{
+  "after_hashes": {
+    "aws3": "bff9c3833c3fe95985fe7b51c21efe915bafcf021a981b3f803ce5c78018943d",
+    "ovh1": "8d542e496f58485d8eeab8e8f9c3c9f5756b4256f794bc553caf955f53be8308",
+    "ovh2": "bff9c3833c3fe95985fe7b51c21efe915bafcf021a981b3f803ce5c78018943d",
+    "ovh4": "bff9c3833c3fe95985fe7b51c21efe915bafcf021a981b3f803ce5c78018943d"
+  },
+  "before_hashes": {
+    "aws3": "992f79df7915bb68ac96a938c2cedbd3968f05e843c9670ab66968340a109cb9",
+    "ovh1": "8d542e496f58485d8eeab8e8f9c3c9f5756b4256f794bc553caf955f53be8308",
+    "ovh2": "992f79df7915bb68ac96a938c2cedbd3968f05e843c9670ab66968340a109cb9",
+    "ovh4": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "digests": {
+    "aws3": "d21888c63625be82eb84788e146cc0d45b7866abd798fed5eb7f3c4fdb301837",
+    "ovh2": "d21888c63625be82eb84788e146cc0d45b7866abd798fed5eb7f3c4fdb301837",
+    "ovh4": "d21888c63625be82eb84788e146cc0d45b7866abd798fed5eb7f3c4fdb301837"
+  },
+  "heights": {
+    "aws3": 3,
+    "ovh1": 1,
+    "ovh2": 3,
+    "ovh4": 3
+  },
+  "ovh1_untouched": true,
+  "registrations": {
+    "aws3_ovh2": {
+      "http": 200,
+      "peer_id": "peer_5e7e5e672b05",
+      "status": null
+    },
+    "aws3_ovh4": {
+      "http": 200,
+      "peer_id": "peer_0ab5e97a59c7",
+      "status": null
+    },
+    "ovh2_aws3": {
+      "http": 200,
+      "peer_id": "peer_dc1574b4fb9f",
+      "status": null
+    },
+    "ovh2_ovh4": {
+      "http": 200,
+      "peer_id": "peer_0deb8a25fafb",
+      "status": null
+    },
+    "ovh4_aws3": {
+      "http": 200,
+      "peer_id": "peer_db67ac7e67d9",
+      "status": null
+    },
+    "ovh4_ovh2": {
+      "http": 200,
+      "peer_id": "peer_eba9b01d078f",
+      "status": null
+    }
+  },
+  "store_block_index": 2,
+  "store_http": 200,
+  "sync_http": {
+    "aws3": 200,
+    "ovh4": 500
+  },
+  "tips_equal_homogeneous": true
+}

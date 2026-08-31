@@ -60,6 +60,7 @@ def test_deploy_ovh4_refuses_ovh1_and_ovh2() -> None:
     assert "152.228.144.34" in prov
     init = (ROOT / "scripts" / "init_remote_node.sh").read_text(encoding="utf-8")
     assert "Never prints seed" in init
+    assert "printf '%q'" in init
     sim = (ROOT / "scripts" / "run_sim175_ovh4_node.py").read_text(encoding="utf-8")
     assert "Does not redeploy OVH1" in sim
     assert "DV-04 FINAL stays BLOCKED" in sim
