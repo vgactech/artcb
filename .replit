@@ -78,8 +78,3 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
-
-[userenv]
-
-[userenv.shared]
-LIBOQS_TAG = "0.16.0"
