@@ -119,5 +119,6 @@ Vérifie qu’aucun fichier `*seed*` n’existe sous `data/` **avant** init.
 | `/ready` 200 en bootstrap | Régression 178 |
 | Rapport qui dit « plus de fallback Ed25519 » | Cursor corrige le texte ; le code D-032 n’a pas changé |
 | Tentation d’init-node | **Refuser** — attendre GO V-R05 |
+| liboqs OK en local, OFF sur Autoscale | **Ticket 179** (`docs/TICKET_179_LIBOQS_AUTOSCALE.md`) — signaler, **ne pas** cuire l’image sans GO |
 
 **Interdit :** Doppler, seeds, mots de passe, SSH OVH1, « DV-04 PASS ».
