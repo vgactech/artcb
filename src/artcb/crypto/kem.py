@@ -29,6 +29,9 @@ logger = logging.getLogger("artcb.crypto.kem")
 
 KEM_ALGORITHM: Final[str] = "ML-KEM-768"
 KEM_FALLBACK_ALGORITHM: Final[str] = "X25519-fallback"
+# FIPS 203 ML-KEM-768 encapsulation key size. X25519 is 32 bytes.
+MLKEM768_PUBLIC_BYTES: Final[int] = 1184
+X25519_PUBLIC_BYTES: Final[int] = 32
 ENV_KEM_ENABLED = "ARTCB_KEM_ENABLED"
 NONCE_LEN = 12
 POOL_CHUNK_CONTEXT: Final[bytes] = b"artcb-pool-chunk-v1"
@@ -120,15 +123,39 @@ def generate_kem_keypair() -> tuple[bytes, bytes]:
     return secret_key, public_key
 
 
+def advertised_kem_algorithm(public_key: bytes | str) -> str:
+    """Report the algorithm that matches the stored public key, not a slogan.
+
+    A node that still has a 32-byte X25519 leftover must not claim ML-KEM-768.
+    """
+    raw = public_key if isinstance(public_key, (bytes, bytearray)) else bytes.fromhex(public_key or "")
+    if len(raw) == MLKEM768_PUBLIC_BYTES:
+        return KEM_ALGORITHM
+    if len(raw) == X25519_PUBLIC_BYTES:
+        return KEM_FALLBACK_ALGORITHM
+    return "unknown"
+
+
+def kem_public_usable_for_mlkem768(public_key: bytes) -> bool:
+    return len(public_key) == MLKEM768_PUBLIC_BYTES
+
+
 def encapsulate(peer_public_key: bytes) -> tuple[bytes, bytes]:
     """Return (ciphertext, shared_secret) for sending to peer.
 
     ML-KEM si liboqs disponible, sinon ECDH X25519 éphémère.
     """
     if _oqs_available():
+        if len(peer_public_key) != MLKEM768_PUBLIC_BYTES:
+            raise KEMError(
+                f"invalid_peer_kem_public_len:{len(peer_public_key)}:expected:{MLKEM768_PUBLIC_BYTES}"
+            )
         oqs = _import_oqs()
-        with oqs.KeyEncapsulation(KEM_ALGORITHM) as kem:
-            ciphertext, shared_secret = kem.encap_secret(peer_public_key)
+        try:
+            with oqs.KeyEncapsulation(KEM_ALGORITHM) as kem:
+                ciphertext, shared_secret = kem.encap_secret(peer_public_key)
+        except Exception as exc:  # noqa: BLE001 — liboqs raises RuntimeError
+            raise KEMError("encapsulate_failed") from exc
         return ciphertext, shared_secret
     # Fallback X25519 : générer une paire éphémère côté émetteur
     from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PublicKey

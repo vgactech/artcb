@@ -7,6 +7,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
+from src.artcb.crypto.kem import advertised_kem_algorithm
 from src.artcb.crypto.pqc import pqc_available
 from src.artcb.crypto_policy import (
     GENESIS_HASH,
@@ -71,7 +72,7 @@ def p2p_status(request: Request) -> dict:
         "network_id": identity.network_id,
         "node_id": identity.node_id,
         "kem_public_key_hex": identity.kem_public_key_hex,
-        "kem_algorithm": "ML-KEM-768",
+        "kem_algorithm": advertised_kem_algorithm(identity.kem_public_key_hex),
         "p2p_port": identity.p2p_port,
         "api_port": identity.api_port,
         "peer_count": len(peers),
@@ -264,9 +265,18 @@ def receive_encrypted_blocks(body: ReceiveBlocksRequest, request: Request) -> di
 
 @router.post("/sync")
 def sync_all(request: Request, from_index: int = Query(0, ge=0)) -> dict:
+    """Pull + optional encrypted push for every peer.
+
+    Per-peer crypto/push failures are recorded in ``results`` (HTTP 200).
+    A broken secondary push must not turn the whole route into HTTP 500.
+    """
     sync = _state(request).p2p_sync
-    results = sync.sync_all_peers(from_index=from_index)
-    return {"results": results, "peer_count": len(results)}
+    try:
+        results = sync.sync_all_peers(from_index=from_index)
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("sync_all unexpected")
+        raise HTTPException(status_code=502, detail=type(exc).__name__) from exc
+    return {"results": results, "peer_count": len(results), "http_meaning": "200=route_ok_inspect_per_peer"}
 
 
 @router.post("/sync/{peer_id}")

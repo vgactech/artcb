@@ -30,7 +30,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from src.artcb.crypto.kem import KEMError, generate_kem_keypair
+from src.artcb.crypto.kem import (
+    KEMError,
+    MLKEM768_PUBLIC_BYTES,
+    generate_kem_keypair,
+)
+from src.artcb.crypto.liboqs_runtime import native_liboqs_available
 
 logger = logging.getLogger("artcb.p2p.node_identity")
 
@@ -191,6 +196,24 @@ class NodeIdentityStore:
                 data["node_public_url"] = fresh_url
                 self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
                 logger.info("node_identity: public_url updated %r → %r", stored_url, fresh_url)
+            # AWS3-class leftover: identity created under X25519 fallback (32 bytes)
+            # while liboqs is now present. Upgrade in place so we advertise a real
+            # ML-KEM-768 key instead of lying with kem_algorithm=ML-KEM-768.
+            try:
+                stored_pub = bytes.fromhex(str(data.get("kem_public_key_hex") or ""))
+            except ValueError:
+                stored_pub = b""
+            if native_liboqs_available() and len(stored_pub) != MLKEM768_PUBLIC_BYTES:
+                secret, public = generate_kem_keypair()
+                data["kem_public_key_hex"] = public.hex()
+                data["kem_secret_key_hex"] = secret.hex()
+                self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+                self.path.chmod(0o600)
+                logger.warning(
+                    "Upgraded stale P2P KEM identity from %d-byte public key to ML-KEM-768 (%d bytes)",
+                    len(stored_pub),
+                    MLKEM768_PUBLIC_BYTES,
+                )
             return NodeIdentity(
                 network_id=data.get("network_id", NETWORK_ID),
                 node_id=data["node_id"],
