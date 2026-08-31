@@ -123,6 +123,7 @@ NODE_SECRET_ALLOWLIST = {
             "SSH_PRIVATE_KEY",
             "ARTCB_API_KEY",
             "ARTCB_API_URL",
+            "ARTCB_WALLET_PASSPHRASE",
         }
     ),
     "aws-node-3": frozenset(

@@ -11,6 +11,9 @@ from datetime import UTC, datetime
 from typing import Any, Final
 
 NETWORK_ID: Final[str] = "artcb-devnet-1"
+PROTOCOL_VERSION: Final[str] = "173-devnet-1"
+# Declared network genesis identifier (creator_rights.json), not a live block hash.
+GENESIS_HASH: Final[str] = "genesis-artcb-v2"
 PREFERRED_SIG: Final[str] = "ML-DSA-65"
 TEMPORARY_SIG: Final[str] = "Ed25519"
 HYBRID_SIG: Final[str] = "hybrid:ed25519+ML-DSA-65"
@@ -58,6 +61,8 @@ def capabilities(pqc_available: bool) -> dict[str, Any]:
         "policy_id": POLICY_ID,
         "policy_version": POLICY_VERSION,
         "network_id": NETWORK_ID,
+        "protocol_version": PROTOCOL_VERSION,
+        "genesis_hash": GENESIS_HASH,
         "preferred": PREFERRED_SIG,
         "temporary_allowed": TEMPORARY_SIG if fallback_still_open() else None,
         "ed25519_only_until": ED25519_ONLY_UNTIL,

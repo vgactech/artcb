@@ -8,7 +8,13 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from src.artcb.crypto.pqc import pqc_available
-from src.artcb.crypto_policy import capabilities, local_suite
+from src.artcb.crypto_policy import (
+    GENESIS_HASH,
+    NETWORK_ID,
+    PROTOCOL_VERSION,
+    capabilities,
+    local_suite,
+)
 from src.artcb.p2p.sync import P2PSyncError
 
 logger = logging.getLogger("artcb.api.p2p")
@@ -52,7 +58,8 @@ def p2p_status(request: Request) -> dict:
         "private_never_synced": True,
         "pool_e2e_available": True,
         "pool_crypto": "ML-KEM-768",
-        "protocol_version": "173-devnet-1",
+        "protocol_version": PROTOCOL_VERSION,
+        "genesis_hash": GENESIS_HASH,
         "crypto_suite": local_suite(pqc),
         "crypto_policy": capabilities(pqc),
         "message": "Calcul local par défaut — pool opt-in E2E ML-KEM ; sync P2P = blocs publics chiffrés",
@@ -121,10 +128,10 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
         raise HTTPException(status_code=400, detail="node_public_url doit commencer par http:// ou https://")
 
     # Vérifier que le réseau correspond
-    if body.network_id != "artcb-devnet-1":
+    if body.network_id != NETWORK_ID:
         raise HTTPException(
             status_code=400,
-            detail=f"Réseau inconnu: {body.network_id} — ce nœud est sur artcb-devnet-1",
+            detail=f"Réseau inconnu: {body.network_id} — ce nœud est sur {NETWORK_ID}",
         )
 
     # Extraire host:port depuis l'URL
