@@ -1,0 +1,26 @@
+{
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "35b75b543885d2c2a337674a8e9499f4829aebda97243ec44ee42c6da1ffa6af",
+    "package_count": 48,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V-provisional+D-032+D-033+D-034+D-035+D-036",
+  "finished_at": "2026-08-31T19:36:40Z",
+  "git_branch": "cursor/dv-3node-validation-16d8",
+  "git_commit_sha": "18a35de142841ed264d3fe9c49403d910e93ff30",
+  "git_status_clean": false,
+  "invented_results": false,
+  "node4": false,
+  "ovh1_redeployed": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "174-devnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim174_dv_3node.py",
+  "script_sha256": "e968f7e43b433b5c47aaedc4c47b7ad576f71beffd384e2d07a3e61bacb5197f",
+  "seed": 174,
+  "simulation_id": "e2e174_dv_3node",
+  "started_at": "2026-08-31T19:36:28Z",
+  "working_tree_diff_hash": "bda0fddca381736613f5325c305a5a837e33a791dc0ad04110a06ac2cc0a3912"
+}

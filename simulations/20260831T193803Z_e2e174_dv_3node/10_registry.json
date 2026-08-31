@@ -1,0 +1,56 @@
+{
+  "isolation_rule": "one Doppler project per real node / cloud account",
+  "nodes": {
+    "aws-node-3": {
+      "api_https": "https://51.44.222.232:8443",
+      "display_name": "node artcb 3",
+      "doppler_config": "dev",
+      "doppler_project": "artcb3",
+      "doppler_token_env": "KEY_API_ARTCB_DOPPLER_3",
+      "health_http": "http://51.44.222.232:8000",
+      "notes": "AWS account 599128160879 IAM user node_artcb_3_agent. Doppler project artcb3 (service token Cursor KEY_API_ARTCB_DOPPLER_3). CLI profile artcb-node-3. Region eu-west-3 (Paris). Cursor secret aliases AWS_API_KEY_AGENT_3 / AWS_API_CLI_AGENT_3 map to AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY. IAM 2026-08-31 later session: AdministratorAccess + AmazonEC2FullAccess + IAMFullAccess + IAMUserChangePassword (earlier probe had ChangePassword only). EC2 i-085b74abd1aaf04ee public IP 51.44.222.232 (t3.small fallback from t3.large).",
+      "provider": "aws",
+      "ssh_host": "51.44.222.232",
+      "ssh_user": "ubuntu"
+    },
+    "ovh-node-1": {
+      "api_https": "https://152.228.144.34:8443",
+      "display_name": "node artcb 1",
+      "doppler_config": "dev",
+      "doppler_project": "artcb-blockchain",
+      "doppler_token_env": "DOPPLER_TOKEN",
+      "health_http": "http://152.228.144.34:8000",
+      "notes": "Existing GRA11 live node at 152.228.144.34. Dedicated vault artcb-ovh-node-1 was never created (service token cannot POST /v3/projects). Live token artcb-node-1 stays on shared artcb-blockchain until a personal Doppler token splits OVH-1 keys. SSH key name artcb-cloud-agent-20260819.",
+      "provider": "ovh",
+      "ssh_host": "152.228.144.34",
+      "ssh_user": "ubuntu"
+    },
+    "ovh-node-2": {
+      "api_https": "https://151.80.107.29:8443",
+      "display_name": "node artcb 2",
+      "doppler_config": "dev",
+      "doppler_project": "artcb-2",
+      "doppler_token_env": "KEY_API_ARTCB_DOPPLER_2",
+      "health_http": "http://151.80.107.29:8000",
+      "notes": "OVH nic vc491276-ovh (vgac4237@gmail.com). Public Cloud project 1fc10a3fb27d4511a8c7873cd16243f2. Instance node-artcb-ovh-2 GRA11 d2-8 id 6470522e-1561-4741-9254-5f58b909eeb9 IPv4 151.80.107.29. Doppler artcb-2. SSH key artcb-ovh-node-2.",
+      "provider": "ovh",
+      "ssh_host": "151.80.107.29",
+      "ssh_user": "ubuntu"
+    }
+  },
+  "shared_doppler_config": "dev",
+  "shared_doppler_project": "artcb-blockchain",
+  "shared_only_secret_names": [
+    "ALCHEMY_API_KEY",
+    "BOB_API_KEY",
+    "GITHUB_TOKEN",
+    "GRADIUM_API_KEY",
+    "INFURA_PROJECT_SECRET",
+    "KAGGLE_KEY",
+    "KEY_API_STRIPE",
+    "LOOPQA_API_TOKEN",
+    "MANUS_API_KEY",
+    "NGROK_API_KEY",
+    "NGROK_AUTHTOKEN"
+  ]
+}

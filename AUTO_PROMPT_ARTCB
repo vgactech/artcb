@@ -1237,6 +1237,12 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **OVH2** nic `vc491276-ovh` 0 VM. Sim `20260831T162428Z_e2e172_aws_ec2_dual_probe` failures=[].
 - **16** pytest 170+171+172. PR GitHub collaborator fail. **NOT MAINNET CERTIFIED.**
 
+## [2026-08-31T19:38:03Z] Rapport 174 — DV 3 nœuds
+
+- **D-034 A** hybride AND ; **D-035 B** tests 3 nœuds ; **D-036 B** OVH1 `5b4b24ae` conservé. D-033 profil DV inchangé.
+- DV-03 PARTIAL (OVH2=AWS3 `174-devnet-1` ; OVH1 legacy REJECT). PRE-DV-04 PASS tips `992f79df` height 2. DV-04/05 BLOCKED.
+- Sim `20260831T193803Z_e2e174_dv_3node` failures=[]. Rapport `rapports/174_dv_3node_2026-08-31.md`. **NOT MAINNET CERTIFIED.**
+
 ## [2026-08-31T18:52:12Z] Rapport 173 — OVH2 + politique PQC B
 
 - **D-032 B** : ML-DSA-65 prioritaire, Ed25519 temporaire jusqu’au 2026-12-31, hybride si liboqs, anti-downgrade.
