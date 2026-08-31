@@ -62,9 +62,16 @@ class P2PSyncService:
             valid.append(block)
         if self.archive:
             stored = self.archive.store_blocks(valid, from_node_id=from_node_id)
+            extended = 0
+            for block in valid:
+                try:
+                    if self.chain.import_extending_public_block(block):
+                        extended += 1
+                except Exception as exc:
+                    logger.debug("public block did not extend local tip: %s", exc)
             if self.symbol_sync:
                 self.symbol_sync.extract_from_blocks(valid, from_node_id=from_node_id)
-            return stored
+            return stored + extended
         if self.symbol_sync:
             self.symbol_sync.extract_from_blocks(valid, from_node_id=from_node_id)
         return len(valid)

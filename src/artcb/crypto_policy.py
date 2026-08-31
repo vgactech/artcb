@@ -11,14 +11,14 @@ from datetime import UTC, datetime
 from typing import Any, Final
 
 NETWORK_ID: Final[str] = "artcb-devnet-1"
-PROTOCOL_VERSION: Final[str] = "173-devnet-1"
+PROTOCOL_VERSION: Final[str] = "174-devnet-1"
 # Declared network genesis identifier (creator_rights.json), not a live block hash.
 GENESIS_HASH: Final[str] = "genesis-artcb-v2"
 PREFERRED_SIG: Final[str] = "ML-DSA-65"
 TEMPORARY_SIG: Final[str] = "Ed25519"
 HYBRID_SIG: Final[str] = "hybrid:ed25519+ML-DSA-65"
 POLICY_ID: Final[str] = "B-preferred-pqc"
-POLICY_VERSION: Final[str] = "173-devnet-crypto-b"
+POLICY_VERSION: Final[str] = "174-devnet-crypto-b"
 # Temporary Ed25519-only compatibility window (UTC). After this instant, B
 # becomes A (ML-DSA-65 required) unless a later decision extends it.
 ED25519_ONLY_UNTIL: Final[str] = "2026-12-31T00:00:00Z"
@@ -36,6 +36,11 @@ LOW_VALUE_MESSAGES: Final[tuple[str, ...]] = (
     "health",
     "peer_register_unsigned",
 )
+
+# D-034 A: both hybrid legs must verify. OR is forbidden.
+HYBRID_VERIFY_MODE: Final[str] = "AND"
+# Capability history is keyed by KEM fingerprint, not a spoofable peer_id label.
+IDENTITY_BIND: Final[str] = "kem_public_sha256"
 
 
 class CryptoPolicyError(ValueError):
@@ -69,10 +74,38 @@ def capabilities(pqc_available: bool) -> dict[str, Any]:
         "fallback_open": fallback_still_open(),
         "local_suite": local_suite(pqc_available),
         "hybrid_when_pqc": True,
+        "hybrid_verify_mode": HYBRID_VERIFY_MODE,
+        "identity_bind": IDENTITY_BIND,
         "high_value_messages": list(HIGH_VALUE_MESSAGES),
         "anti_downgrade": True,
         "silent_downgrade_forbidden": True,
+        "unsigned_pqc_not_trusted": True,
     }
+
+
+def accept_peer_protocol(
+    *,
+    advertised_network_id: str | None,
+    advertised_protocol_version: str | None,
+    advertised_genesis_hash: str | None,
+) -> tuple[bool, str]:
+    """DV-03 B: match network_id + protocol_version + genesis_hash.
+
+    Missing fields (legacy node) are not a silent match: the peer is
+    *reachable* but not protocol-compatible.
+    """
+    nid = (advertised_network_id or "").strip()
+    pv = (advertised_protocol_version or "").strip()
+    gh = (advertised_genesis_hash or "").strip()
+    if not nid or not pv or not gh:
+        return False, "legacy_missing_protocol_fields"
+    if nid != NETWORK_ID:
+        return False, f"network_id_mismatch:{nid}"
+    if pv != PROTOCOL_VERSION:
+        return False, f"protocol_version_mismatch:{pv}"
+    if gh != GENESIS_HASH:
+        return False, f"genesis_hash_mismatch:{gh}"
+    return True, "protocol_compatible"
 
 
 def accept_peer_suite(
@@ -80,9 +113,11 @@ def accept_peer_suite(
     advertised: str | None,
     previously_seen: str | None,
     pqc_available_here: bool,
+    signed: bool = False,
+    now: datetime | None = None,
 ) -> tuple[bool, str]:
-    """Return (ok, reason). Anti-downgrade: a peer that advertised ML-DSA
-    cannot later present Ed25519-only under the same node identity.
+    """Return (ok, reason). Anti-downgrade uses *signed* capability history
+    keyed by KEM fingerprint (D-034). Unsigned PQC claims are not trusted.
     """
     suite = (advertised or "").strip() or TEMPORARY_SIG
     prev = (previously_seen or "").strip() or None
@@ -93,10 +128,12 @@ def accept_peer_suite(
         return False, "anti_downgrade: peer previously advertised ML-DSA-65"
 
     if has_pqc:
+        if not signed:
+            return True, "unsigned_untrusted_pqc"
         return True, "pqc_preferred_accepted"
 
     if has_only_ed:
-        if not fallback_still_open():
+        if not fallback_still_open(now):
             return False, "ed25519_window_closed"
         return True, "ed25519_temporary_allowed"
 

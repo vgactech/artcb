@@ -43,6 +43,9 @@
 | D-031 | **GO compute AWS-3.** IAM `node_artcb_3_agent` a `AdministratorAccess` + EC2 + IAM. Access keys via secrets Cursor `AWS_API_KEY_AGENT_3` / `AWS_API_CLI_AGENT_3` (jamais le mot de passe console). Lancer EC2 `eu-west-3` + déployer aws-node-3. Tester **simultanément** avec OVH1 `152.228.144.34` (sans redéployer `:34`). OVH2 : **0 VM** jusqu’à validation Public Cloud. V-01…V-07 **non gelés**. Tokenomics D-024/D-025 **inchangées**. | ⚠️ 2026-08-31 — **amendé par D-032/D-033** (OVH2 créé, politique PQC B) |
 | D-032 | **Politique crypto artcb-devnet-1 = B** : ML-DSA-65 **prioritaire** ; Ed25519 temporairement autorisé jusqu’au **2026-12-31T00:00:00Z** ; signatures **hybrides (C)** dès que le nœud a liboqs. Anti-downgrade par `peer_id`. Pas de négociation implicite. | ✅ 2026-08-31 — GO utilisateur (B prioritaire, C si B impossible — C utilisé quand PQC présent) |
 | D-033 | **Validations distribuées DV-01…DV-07** (série distincte des V-01…V-07 tokenomics, qui restent provisoires). Profil B : DV-01 C, DV-02 C, DV-03 B, DV-04 C, DV-05 C, DV-06 B, DV-07 C. OVH2 instance `node-artcb-ovh-2` projet `1fc10a3fb27d4511a8c7873cd16243f2`. OVH1 **non redéployé**. IAM admin conservé en phase test. | ✅ 2026-08-31 |
+| D-034 | **Hybride = AND** (l’expert l’avait numéroté D-033 A ; D-033 était déjà le profil DV). Les deux jambes Ed25519 **et** ML-DSA-65 doivent vérifier. L’annonce crypto est liée à l’empreinte KEM + carte signée. Une revendication PQC non signée n’est **pas** mémorisée. | ✅ 2026-08-31 |
+| D-035 | **Pré-tests sur les 3 nœuds live** (OVH1+OVH2+AWS3). Pas de NODE4 tant que PRE-DV-04 n’est pas joué. (Expert : D-034 B.) | ✅ 2026-08-31 |
+| D-036 | **OVH1 reste sur `5b4b24ae`** pour DV-03 inter-version. Pas de redéploiement `:34`. (Expert : D-035 B.) | ✅ 2026-08-31 |
 
 ---
 

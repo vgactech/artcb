@@ -256,6 +256,31 @@ class ChainManager:
             return GENESIS_PREV_HASH
         return blocks[-1]["hash"]
 
+    def public_state_digest(self) -> str:
+        """SHA-256 of public block hashes in order — comparable across nodes after sync."""
+        import hashlib
+
+        hashes = [str(b.get("hash") or "") for b in self.list_blocks(visibility="public")]
+        material = "|".join(hashes).encode("utf-8")
+        return hashlib.sha256(material).hexdigest()
+
+    def import_extending_public_block(self, block: dict) -> bool:
+        """Append a remote public block if it extends the local tip (PRE-DV-04)."""
+        if block.get("visibility") != "public":
+            return False
+        if not self.verify_block_dict(block):
+            return False
+        expected_index = len(self._read_all_blocks())
+        if int(block.get("index", -1)) != expected_index:
+            return False
+        if str(block.get("prev_hash") or "") != self.last_hash():
+            return False
+        line = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
+        with self.blocks_path.open("a", encoding="utf-8") as handle:
+            handle.write(line + "\n")
+        logger.info("Imported extending public block index=%s hash=%s", block.get("index"), str(block.get("hash") or "")[:16])
+        return True
+
     def append_block(
         self,
         *,

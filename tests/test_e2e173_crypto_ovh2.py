@@ -33,7 +33,7 @@ def test_economic_v_series_not_overwritten() -> None:
 def test_policy_b_prefers_mldsa_and_allows_ed25519_for_now() -> None:
     assert PREFERRED_SIG == "ML-DSA-65"
     assert NETWORK_ID == "artcb-devnet-1"
-    assert PROTOCOL_VERSION == "173-devnet-1"
+    assert PROTOCOL_VERSION == "174-devnet-1"
     assert GENESIS_HASH == "genesis-artcb-v2"
     assert fallback_still_open() is True
     assert ED25519_ONLY_UNTIL.startswith("2026-12-31")

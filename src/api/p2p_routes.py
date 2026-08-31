@@ -15,6 +15,7 @@ from src.artcb.crypto_policy import (
     capabilities,
     local_suite,
 )
+from src.artcb.p2p.handshake import build_signed_card, load_or_create_handshake_key
 from src.artcb.p2p.sync import P2PSyncError
 
 logger = logging.getLogger("artcb.api.p2p")
@@ -27,6 +28,11 @@ class AddPeerRequest(BaseModel):
     kem_public_key_hex: str = Field(min_length=32)
     label: str = ""
     crypto_suite: str = ""
+    network_id: str = ""
+    protocol_version: str = ""
+    genesis_hash: str = ""
+    capability_card: dict | None = None
+    peer_id: str | None = None
 
 
 class ReceiveBlocksRequest(BaseModel):
@@ -37,6 +43,21 @@ def _state(request: Request):
     return request.app.state.artcb
 
 
+def _local_capability_card(state) -> dict:
+    pqc = pqc_available()
+    identity = state.p2p_identity
+    key = load_or_create_handshake_key(state.settings.data_dir)
+    return build_signed_card(
+        node_id=identity.node_id,
+        kem_public_key_hex=identity.kem_public_key_hex,
+        crypto_suite=local_suite(pqc),
+        protocol_version=PROTOCOL_VERSION,
+        network_id=NETWORK_ID,
+        genesis_hash=GENESIS_HASH,
+        handshake=key,
+    )
+
+
 @router.get("/status")
 def p2p_status(request: Request) -> dict:
     state = _state(request)
@@ -45,6 +66,7 @@ def p2p_status(request: Request) -> dict:
     public_count = len(state.chain.list_blocks(visibility="public"))
     incoming_count = len(state.p2p_archive.list_blocks())
     pqc = pqc_available()
+    card = _local_capability_card(state)
     return {
         "network_id": identity.network_id,
         "node_id": identity.node_id,
@@ -62,6 +84,9 @@ def p2p_status(request: Request) -> dict:
         "genesis_hash": GENESIS_HASH,
         "crypto_suite": local_suite(pqc),
         "crypto_policy": capabilities(pqc),
+        "capability_card": card,
+        "public_state_digest": state.chain.public_state_digest(),
+        "last_hash": state.chain.last_hash(),
         "message": "Calcul local par défaut — pool opt-in E2E ML-KEM ; sync P2P = blocs publics chiffrés",
     }
 
@@ -82,6 +107,11 @@ def add_peer(body: AddPeerRequest, request: Request) -> dict:
             kem_public_key_hex=body.kem_public_key_hex,
             label=body.label,
             crypto_suite=body.crypto_suite,
+            network_id=body.network_id,
+            protocol_version=body.protocol_version,
+            genesis_hash=body.genesis_hash,
+            capability_card=body.capability_card,
+            peer_id=body.peer_id,
         )
         return {"peer": peer.to_dict(), "message": "Pair ajouté"}
     except ValueError as exc:
@@ -147,13 +177,23 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
     # Tenter de récupérer la clé KEM publique du nœud distant
     kem_public_hex = ""
     remote_suite = ""
+    remote_nid = ""
+    remote_pv = ""
+    remote_gh = ""
+    remote_card = None
     try:
         import httpx
         with httpx.Client(timeout=5.0) as client:
             r = client.get(f"{url}/api/v1/p2p/status")
             r.raise_for_status()
-            kem_public_hex = r.json().get("kem_public_key_hex", "")
-            remote_suite = r.json().get("crypto_suite") or ""
+            payload = r.json()
+            kem_public_hex = payload.get("kem_public_key_hex", "")
+            remote_suite = payload.get("crypto_suite") or ""
+            remote_nid = payload.get("network_id") or ""
+            remote_pv = payload.get("protocol_version") or ""
+            remote_gh = payload.get("genesis_hash") or ""
+            if isinstance(payload.get("capability_card"), dict):
+                remote_card = payload.get("capability_card")
     except Exception as exc:
         logger.info("Could not fetch KEM key from %s: %s", url, exc)
         kem_public_hex = "00" * 32  # placeholder si le nœud n'est pas encore joignable
@@ -167,6 +207,10 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
             label=body.node_label or f"Node {peer_id[:8]}",
             peer_id=peer_id,
             crypto_suite=remote_suite,
+            network_id=remote_nid,
+            protocol_version=remote_pv,
+            genesis_hash=remote_gh,
+            capability_card=remote_card,
         )
         logger.info(
             "New node registered: peer_id=%s url=%s fingerprint=%s... repo=%s",

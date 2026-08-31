@@ -55,11 +55,19 @@ DV: Final[dict[str, dict[str, str]]] = {
     "DV-07": {
         "letter": "C",
         "title": "Migration crypto hybride controlee",
-        "rule": "Implements D-032 B: ML-DSA-65 preferred, Ed25519 temporary, hybrid signatures when PQC is present, advertised policy + end date, anti-downgrade.",
+        "rule": "Implements D-032 B + D-034 A: hybrid verify is AND (Ed25519 and ML-DSA). Capability history bound to KEM fingerprint + signed card. Unsigned PQC claims are not trusted.",
     },
 }
 
 PROFILE: Final[str] = "B-balanced"
+
+# Expert 2026-08-31 numbering collided with existing D-033 (DV profile).
+# Locked as D-034/D-035/D-036.
+DECISIONS_174: Final[dict[str, str]] = {
+    "D-034": "A — hybrid verify AND (both legs). Expert labelled this D-033 A; D-033 already used.",
+    "D-035": "B — all possible tests on the 3 live nodes; NODE4 later. Expert D-034 B.",
+    "D-036": "B — keep OVH1 on 5b4b24ae for inter-version DV-03. Expert D-035 B.",
+}
 
 
 def public_lock() -> dict[str, Any]:
@@ -69,5 +77,6 @@ def public_lock() -> dict[str, Any]:
         "distributed_profile": PROFILE,
         "distributed": DV,
         "distributed_certified": False,
+        "decisions_174": DECISIONS_174,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }
