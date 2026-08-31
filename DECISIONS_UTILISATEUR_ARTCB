@@ -38,6 +38,7 @@
 | D-026 | Sim 167 **provisoire** (V-01…V-07 **à valider**) : snapshot début d’epoch ; transfert/retrait au snapshot suivant ; reconnect grace 24 h (1 s en sim) ; finalité N=2 confirmations ; HBP ratio optionnel ; SettlementID + unicité WorkID. **Pas un gel.** | ⚠️ 2026-08-29 — en attente V-01…V-07 |
 | D-027 | Chaque agent Cursor **utilise le nœud OVH live** (`152.228.144.34:8000`) via bootstrap + `ARTCB_API_KEY` (Doppler / secret Cursor / fichier nœud). Génération = login wallet `cursor-cloud-agent`, pas de clé inventée dans le chat. | ✅ 2026-08-29 — GO implicite « à chaque prompt » |
 | D-028 | 169 : **pas de nouvelle machine OVH**. Alignement live=`main`. TLS self-signed :8443. Bearer HTTP distant interdit (SDK). V-01…V-07 **non gelés**. | ✅ 2026-08-29 — contrainte utilisateur |
+| D-029 | **Un projet Doppler par nœud réel.** `artcb-ovh-node-1` / `artcb-ovh-node-2` (nic `vc491276-ovh`) / `artcb-aws-node-3` (AWS `599128160879`). `artcb-blockchain` = secrets partagés seulement. Compte OVH-2 et IAM AWS-3 **existent** ; **aucune VM nœud 2/3 créée** (inventaire 170 : 0 Public Cloud / 0 VPS / 0 IP). Ne pas coller les secrets dans git. V-01…V-07 **non gelés**. Tokenomics D-024/D-025 **inchangées**. | ✅ 2026-08-31 — GO isolation secrets |
 
 ---
 

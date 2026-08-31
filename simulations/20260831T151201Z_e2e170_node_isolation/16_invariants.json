@@ -1,0 +1,13 @@
+{
+  "aws_cli_login": "NON TEST\u00c9 (browser aws login / access keys absents)",
+  "doppler_three_projects": false,
+  "four_real_nodes": false,
+  "live_equals_current_main": false,
+  "live_health": true,
+  "origin_main_known": true,
+  "ovh1_cursor_ck_may_be_expired": true,
+  "ovh2_account_reachable": true,
+  "ovh2_has_no_vm_yet": true,
+  "tokenomics_untouched": true,
+  "v01_v07_still_open": true
+}

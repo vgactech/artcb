@@ -11,13 +11,24 @@ Au **début de chaque tâche**, avant d’inventer un état de chaîne :
 2. Lire le JSON (jamais une clé `artcb_…`)
 3. Utiliser `ARTCB_API_URL` + `ARTCB_API_KEY` déjà exportés pour tout appel réel
 
-Nœud canonique : `http://152.228.144.34:8000` (health) et `https://152.228.144.34:8443` (Bearer). Même machine `ubuntu@152.228.144.34`. **Pas de 2ᵉ VM OVH.**
-Vérifier `git_sha` live == `origin/main`. Ne pas envoyer la clé en HTTP distant.
+Nœud live **actuel** (compute) : health `http://152.228.144.34:8000` ; Bearer `https://152.228.144.34:8443`. SSH `ubuntu@152.228.144.34` = **ovh-node-1**.
 
-Sources de la clé, dans l’ordre : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH `/home/ubuntu/.artcb/cursor_agent.env`.
+Vérifier `git_sha` live == `origin/main` **à chaque tâche** (PR #38 a cassé l’égalité 169). Ne pas envoyer la clé en HTTP distant.
+
+## Isolation Doppler (D-029) — ne pas mélanger les nœuds
+
+| node_id | Doppler | Compute |
+|---------|---------|---------|
+| ovh-node-1 | `artcb-ovh-node-1` | 152.228.144.34 (existe) |
+| ovh-node-2 | `artcb-ovh-node-2` | compte `vc491276-ovh` — **pas de VM encore** |
+| aws-node-3 | `artcb-aws-node-3` | AWS `599128160879` — **pas d’instance encore** |
+
+`artcb-blockchain` = secrets **partagés** (Stripe, Bob, GitHub). Pas les clés cloud d’un nœud.  
+Aiguillage : `ARTCB_NODE_ID`. Staging local : `~/.artcb/nodes/*.env` mode 0600, **hors git**.  
+Création des projets : `DOPPLER_PERSONAL_TOKEN` (le service token Cursor ne peut pas `POST /v3/projects`).
+
+Ne pas créer de VM OVH/AWS sans ordre explicite. Ne pas déployer `main` sur `:34` sans ordre explicite.
+
+Sources de la clé nœud 1 : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH nœud 1.
 
 Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdit d’afficher le token.
-
-Si bootstrap exit 3 : le nœud est up mais la clé manque — relancer `scripts/provision_live_agent_key.py` (ne pas recréer un wallet si `cursor-cloud-agent` existe déjà).
-
-Ne pas déployer `main` sur OVH sauf ordre explicite. La clé et le wallet vivent dans `data/` + `~/.artcb/` sur le nœud.

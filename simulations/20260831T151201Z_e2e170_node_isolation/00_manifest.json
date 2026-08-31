@@ -1,0 +1,26 @@
+{
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "38a67cae6e0a648abfde6d318105a4db89f0cdf60ba7a46e343f04e76f47b3ff",
+    "package_count": 118,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-provisional+D-027+D-029",
+  "existing_node_only_compute": true,
+  "finished_at": "2026-08-31T15:12:06Z",
+  "git_branch": "cursor/e2e170-node-secret-isolation-475d",
+  "git_commit_sha": "376b0e4c887dfd0ea671cd61ceb522dfb0e80a48",
+  "git_status_clean": false,
+  "invented_results": false,
+  "new_ovh_machine": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "170-node-isolation",
+  "python_version": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim170_node_isolation.py",
+  "script_sha256": "d7814f555da1282b666082a62362f5a59d69f131ee61ea3df2c3a3339def78e3",
+  "seed": 170,
+  "simulation_id": "e2e170_node_isolation",
+  "started_at": "2026-08-31T15:12:01Z",
+  "working_tree_diff_hash": "330d5caf1ba201eb4028e49b1dd3deb70b3fc77bd457cf575fc2d3553c72e5d5"
+}

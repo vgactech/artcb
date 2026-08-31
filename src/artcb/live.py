@@ -7,7 +7,10 @@ Never logs or prints secret values. Key sources, in order:
 3. Local file ``~/.artcb/cursor_agent.env`` (copied from the node)
 4. SSH ``ubuntu@152.228.144.34`` file ``/home/ubuntu/.artcb/cursor_agent.env``
 
-Default public URL (not a secret): ``http://152.228.144.34:8000``.
+Default public URL (not a secret): ``https://152.228.144.34:8443`` (Bearer).
+Health without a key may use ``http://152.228.144.34:8000``.
+Doppler: shared app secrets stay in ``artcb-blockchain``; each real node has its
+own project (see ``artcb.node_registry``).
 """
 
 from __future__ import annotations
@@ -23,6 +26,8 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from artcb.node_registry import SHARED_DOPPLER_CONFIG, SHARED_DOPPLER_PROJECT, doppler_project_for
+
 logger = logging.getLogger("artcb.live")
 
 DEFAULT_LIVE_URL = "http://152.228.144.34:8000"
@@ -32,8 +37,8 @@ DEFAULT_SSH_USER = "ubuntu"
 KNOWN_HOSTS = Path(__file__).resolve().parents[2] / "deploy" / "ovh_artcb_node_1.known_hosts"
 PINNED_TLS_CERT = Path(__file__).resolve().parents[2] / "deploy" / "ovh_artcb_node_1.crt"
 REMOTE_ENV_PATH = "/home/ubuntu/.artcb/cursor_agent.env"
-DOPPLER_PROJECT = "artcb-blockchain"
-DOPPLER_CONFIG = "dev"
+DOPPLER_PROJECT = SHARED_DOPPLER_PROJECT
+DOPPLER_CONFIG = SHARED_DOPPLER_CONFIG
 KEY_ENV_NAMES = ("ARTCB_API_KEY", "ARTCB_NODE_API_KEY")
 URL_ENV_NAMES = ("ARTCB_API_URL", "ARTCB_NODE_URL")
 
@@ -47,7 +52,8 @@ def resolve_api_url() -> str:
         raw = (os.environ.get(name) or "").strip()
         if raw:
             return raw.rstrip("/")
-    return DEFAULT_LIVE_URL.rstrip("/")
+    # Bearer must not go over cleartext HTTP. Default to pinned HTTPS.
+    return DEFAULT_LIVE_HTTPS_URL.rstrip("/")
 
 
 def _key_from_mapping(mapping: dict[str, str]) -> str:
@@ -93,11 +99,25 @@ def auth_headers(api_key: str | None = None) -> dict[str, str]:
     return headers
 
 
+def resolve_doppler_project() -> str:
+    """Shared project unless ARTCB_NODE_ID / DOPPLER_PROJECT selects a node vault."""
+    explicit = (os.environ.get("DOPPLER_PROJECT") or "").strip()
+    if explicit:
+        return explicit
+    node_id = (os.environ.get("ARTCB_NODE_ID") or "").strip()
+    if node_id:
+        try:
+            return doppler_project_for(node_id)
+        except KeyError:
+            pass
+    return DOPPLER_PROJECT
+
+
 def fetch_doppler_secret(name: str) -> str:
     token = (os.environ.get("DOPPLER_TOKEN") or "").strip()
     if not token:
         return ""
-    project = os.environ.get("DOPPLER_PROJECT", DOPPLER_PROJECT)
+    project = resolve_doppler_project()
     config = os.environ.get("DOPPLER_CONFIG", DOPPLER_CONFIG)
     url = (
         "https://api.doppler.com/v3/configs/config/secret"
@@ -123,7 +143,7 @@ def write_doppler_secrets(secrets: dict[str, str]) -> dict[str, Any]:
     token = (os.environ.get("DOPPLER_TOKEN") or "").strip()
     if not token:
         return {"ok": False, "reason": "DOPPLER_TOKEN absent"}
-    project = os.environ.get("DOPPLER_PROJECT", DOPPLER_PROJECT)
+    project = resolve_doppler_project()
     config = os.environ.get("DOPPLER_CONFIG", DOPPLER_CONFIG)
     body = json.dumps({"project": project, "config": config, "secrets": secrets}).encode()
     last_reason = "unknown"
