@@ -23,7 +23,8 @@ cmake -S "$SRC" -B "$SRC/build" \
   -GNinja \
   -DCMAKE_INSTALL_PREFIX="$PREFIX" \
   -DBUILD_SHARED_LIBS=ON \
-  -DOQS_DIST_BUILD=ON \
+  -DOQS_DIST_BUILD=OFF \
+  -DOQS_MINIMAL_BUILD="SIG_ml_dsa_65;KEM_ml_kem_768" \
   -DOQS_USE_OPENSSL=ON
 cmake --build "$SRC/build" --parallel
 cmake --install "$SRC/build"

@@ -1237,6 +1237,14 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **OVH2** nic `vc491276-ovh` 0 VM. Sim `20260831T162428Z_e2e172_aws_ec2_dual_probe` failures=[].
 - **16** pytest 170+171+172. PR GitHub collaborator fail. **NOT MAINNET CERTIFIED.**
 
+## [2026-08-31T18:50:00Z] Rapport 173 — OVH2 + politique PQC B
+
+- **D-032 B** : ML-DSA-65 prioritaire, Ed25519 temporaire jusqu’au 2026-12-31, hybride si liboqs, anti-downgrade.
+- **DV-01…DV-07** profil B (série distincte des V tokenomics, toujours ⏳).
+- **OVH2** instance `node-artcb-ovh-2` `151.80.107.29` GRA11 d2-8 projet `1fc10a3fb27d4511a8c7873cd16243f2`. OVH1 non redéployé.
+- Rapport : `rapports/173_ovh2_pqc_policy_b_2026-08-31.md`
+
+
 
 
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
