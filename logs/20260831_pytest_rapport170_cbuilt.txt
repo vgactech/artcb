@@ -1,0 +1,34 @@
+...........................................................ssssssss..... [ 11%]
+............................................FF.......................... [ 22%]
+........................................................................ [ 33%]
+........................................................................ [ 45%]
+........................................................................ [ 56%]
+........................................................................ [ 67%]
+.......................................................ssssssssssss..... [ 78%]
+........................................................................ [ 90%]
+...............................................................          [100%]
+=================================== FAILURES ===================================
+E   AssertionError: assert 503 == 401
+     +  where 503 = <Response [503 Service Unavailable]>.status_code
+     +    where <Response [503 Service Unavailable]> = get('/api/v1/api-keys/list')
+     +      where get = <starlette.testclient.TestClient object at 0x7f6b2619a0c0>.get
+----------------------------- Captured stderr call -----------------------------
+2026-08-31T15:17:40 [DEBUG] asyncio: Using selector: EpollSelector
+2026-08-31T15:17:40 [INFO] httpx2: HTTP Request: GET http://testserver/api/v1/api-keys/list "HTTP/1.1 503 Service Unavailable"
+------------------------------ Captured log call -------------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+INFO     httpx2:_client.py:1085 HTTP Request: GET http://testserver/api/v1/api-keys/list "HTTP/1.1 503 Service Unavailable"
+/workspace/tests/test_e2e169_secure_live.py:68: AssertionError: assert 503 == 401
+E   assert 503 in {200, 401}
+     +  where 503 = <Response [503 Service Unavailable]>.status_code
+----------------------------- Captured stderr call -----------------------------
+2026-08-31T15:17:40 [DEBUG] asyncio: Using selector: EpollSelector
+2026-08-31T15:17:40 [INFO] httpx2: HTTP Request: GET http://testserver/api/v1/api-keys/me "HTTP/1.1 503 Service Unavailable"
+------------------------------ Captured log call -------------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+INFO     httpx2:_client.py:1085 HTTP Request: GET http://testserver/api/v1/api-keys/me "HTTP/1.1 503 Service Unavailable"
+/workspace/tests/test_e2e169_secure_live.py:97: assert 503 in {200, 401}
+=========================== short test summary info ============================
+FAILED tests/test_e2e169_secure_live.py::test_api_key_list_and_revoke_require_session
+FAILED tests/test_e2e169_secure_live.py::test_expired_key_rejected - assert 5...
+2 failed, 617 passed, 20 skipped in 182.33s (0:03:02)

@@ -1218,7 +1218,7 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **OVH2** nic `vc491276-ovh` API `/me` 200 ; **0** cloud project / VPS / IP. Pas de VM créée.
 - **AWS3** IAM `node_artcb_3_agent` compte `599128160879` — `aws login` navigateur non fait. Access keys absentes.
 - **Pas de 4 nœuds réels.** Tokenomics inchangée. V-01…V-07 ouverts. **NOT MAINNET CERTIFIED.**
-- Rapport : `rapports/170_doppler_node_isolation_2026-08-31.md`
+- Rapport : `rapports/170_doppler_node_isolation_2026-08-31.md` SHA `6b92dba`.
 
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 

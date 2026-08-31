@@ -3,6 +3,7 @@
 **Horodatage UTC :** 2026-08-31T15:15:00Z  
 **Branche :** `cursor/e2e170-node-secret-isolation-475d`  
 **origin/main vérifié :** `376b0e4c887dfd0ea671cd61ceb522dfb0e80a48` (PR **#38 MERGED**)  
+**Commit code 170 :** `6b92dba`  
 **Aucune VM OVH ou AWS créée.**  
 **Aucun token, mot de passe console, application secret n’est reproduit ici.**  
 **Certification :** `READY FOR NEXT TEST` — **NOT MAINNET CERTIFIED**.
@@ -144,6 +145,11 @@ Inchangées : consensus 1–8, tokenomics 9–15, identité 16–21, TPM 22–26
 READY FOR NEXT TEST
 NOT MAINNET CERTIFIED
 ```
+
+Pytest ce runtime (C `libartcb_chain.so` compilé ici, **sans** liboqs) : **617 passed / 20 skipped / 2 failed**.  
+Les 2 fails = `test_e2e169` 503 `api-keys` en fin de suite (singleton FastAPI en mode bootstrap) — **41 passed** en run isolé 168+169+170+MCP.  
+625 verts de 169 ≠ ce VM froid. 617 verts ≠ mainnet.
+
 
 ---
 
