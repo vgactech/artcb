@@ -1,0 +1,60 @@
+{
+  "decisions_174": {
+    "D-034": "A \u2014 hybrid verify AND (both legs). Expert labelled this D-033 A; D-033 already used.",
+    "D-035": "B \u2014 all possible tests on the 3 live nodes; NODE4 later. Expert D-034 B.",
+    "D-036": "B \u2014 keep OVH1 on 5b4b24ae for inter-version DV-03. Expert D-035 B."
+  },
+  "decisions_175": {
+    "D-037": "GO NODE4 \u2014 create OVH4 on nic xy4589-ovh / project 926bb1d6755e4f2c98ae9db06ef44e4f (GRA11 d2-8). Amends D-035 (NODE4 later) because PRE-DV-04 already PASS. OVH1 stays on 5b4b24ae (D-036). Protocol remains 174-devnet-1 so OVH2/AWS3/OVH4 are homogeneous. DV-04 C still needs 4 protocol-compatible nodes; OVH1 legacy does not count."
+  },
+  "distributed": {
+    "DV-01": {
+      "letter": "C",
+      "rule": "Crypto identity mandatory now; TPM/hardware attestation when available; attestation required later for critical production.",
+      "title": "Identite hybride progressive"
+    },
+    "DV-02": {
+      "letter": "C",
+      "rule": "HTTP/HTTPS/P2P register+remove+reconnect+timeout+invalid peer, then disconnect/latency/flood scenarios on authorized testnet.",
+      "title": "Connectivite P2P reseau hostile"
+    },
+    "DV-03": {
+      "letter": "B",
+      "rule": "Peers may differ in git_sha; must match protocol_version + genesis_hash + network_id. No implicit negotiation, no silent downgrade. Evolution toward C later.",
+      "title": "Version protocolaire independante du SHA Git"
+    },
+    "DV-04": {
+      "letter": "C",
+      "rule": "PASS only when four live machines show identical state hashes after a transaction. Two-node WAN is a prerequisite, not the lock.",
+      "title": "Replication d etat sur 4 n\u0153uds live"
+    },
+    "DV-05": {
+      "letter": "C",
+      "rule": "Document N/F/Q against the actual code, then honest/offline/delay/double-proposal/divergence scenarios.",
+      "title": "Consensus Byzantine explicite"
+    },
+    "DV-06": {
+      "letter": "B",
+      "rule": "OFF, reboot, latency, packet loss, timeout, reconnection. Chaos (C) later on authorized env.",
+      "title": "Pannes realistes"
+    },
+    "DV-07": {
+      "letter": "C",
+      "rule": "Implements D-032 B + D-034 A: hybrid verify is AND (Ed25519 and ML-DSA). Capability history bound to KEM fingerprint + signed card. Unsigned PQC claims are not trusted.",
+      "title": "Migration crypto hybride controlee"
+    }
+  },
+  "distributed_certified": false,
+  "distributed_profile": "B-balanced",
+  "economic_v_locked": false,
+  "economic_v_series": {
+    "V-01": "Snapshot at epoch start (Solution A) \u2014 provisional",
+    "V-02": "Transfer economic effect = next epoch \u2014 provisional",
+    "V-03": "Reconnect grace = 24h \u2014 provisional",
+    "V-04": "Retirement effect = next snapshot \u2014 provisional",
+    "V-05": "Finality = N confirmations (default 2) \u2014 provisional",
+    "V-06": "H_adult_max = versioned DemographicReference \u2014 provisional",
+    "V-07": "HBP 10\u219260\u219220 on H_verified/H_adult_max \u2014 provisional"
+  },
+  "note": "Choosing DV letters is the validation protocol, not a PASS."
+}

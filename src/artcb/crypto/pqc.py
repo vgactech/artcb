@@ -51,11 +51,11 @@ def pqc_available() -> bool:
         except (ImportError, RuntimeError, OSError, AttributeError, SystemExit, BaseException):
             _PQC_AVAILABLE = False
             logger.warning(
-                "liboqs-python absent ou bibliothèque native introuvable — "
-                "fallback Ed25519 actif. "
-                "ML-DSA-65 désactivé. "
-                "Pour activer PQC : installer cmake + gcc puis `pip install liboqs-python`. "
-                "Voir /health pour le statut en temps réel."
+                "liboqs backend unusable (Python binding may be installed). "
+                "Typical Replit case: liboqs-python 0.16 + native liboqs 0.13 "
+                "→ ML-DSA-65 missing → fallback Ed25519. "
+                "Compile native liboqs 0.16.0 into $OQS_INSTALL_PATH (see "
+                "scripts/install_native_liboqs_replit.sh). Not 'package absent'."
             )
     return _PQC_AVAILABLE
 

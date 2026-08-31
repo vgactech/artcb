@@ -69,6 +69,32 @@ DECISIONS_174: Final[dict[str, str]] = {
     "D-036": "B — keep OVH1 on 5b4b24ae for inter-version DV-03. Expert D-035 B.",
 }
 
+# Operator 2026-08-31: NODE4 credentials + project ready after PRE-DV-04 PASS.
+DECISIONS_175: Final[dict[str, str]] = {
+    "D-037": (
+        "GO NODE4 — create OVH4 on nic xy4589-ovh / project "
+        "926bb1d6755e4f2c98ae9db06ef44e4f (GRA11 d2-8). Amends D-035 "
+        "(NODE4 later) because PRE-DV-04 already PASS. OVH1 stays on "
+        "5b4b24ae (D-036). Protocol remains 174-devnet-1 so OVH2/AWS3/OVH4 "
+        "are homogeneous. DV-04 C still needs 4 protocol-compatible nodes; "
+        "OVH1 legacy does not count."
+    ),
+}
+
+DECISIONS_177: Final[dict[str, str]] = {
+    "D-038": (
+        "Replit substitutes OVH1 role for 174 tests. Do not redeploy "
+        "152.228.144.34. Replit must pull cursor/replit-sync-ready-16d8."
+    ),
+}
+
+DECISIONS_178: Final[dict[str, str]] = {
+    "D-039": (
+        "Adversarial Replit audit before wallet init. Health PQC available "
+        "is not path enforcement. Git sync pins SHA (Architecture A)."
+    ),
+}
+
 
 def public_lock() -> dict[str, Any]:
     return {
@@ -78,5 +104,8 @@ def public_lock() -> dict[str, Any]:
         "distributed": DV,
         "distributed_certified": False,
         "decisions_174": DECISIONS_174,
+        "decisions_175": DECISIONS_175,
+        "decisions_177": DECISIONS_177,
+        "decisions_178": DECISIONS_178,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

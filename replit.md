@@ -37,21 +37,16 @@ See `.env.example` for all options. Key variables already set in `.replit`:
 
 Optional LLM keys (none required to run): `OPENROUTER_API_KEY`, `WATSONX_API_KEY`, `KAGGLE_KEY`, etc. — see `.env.example` for the full list.
 
-### Node identity (optional for startup)
+### Required node identity secrets
 
-The workflow can start without wallet secrets. In that case ARTCB runs in
-**bootstrap mode**: `/health` and `/setup/*` remain available, while routes
-that require a configured node identity return `503` until initialization.
+For a Replit instance operating as an ARTCB node, add these values in the Replit Secrets panel before starting the workflow:
 
-To enable the full P2P node, initialize it through `POST /setup/init-node`
-with a node name and an operator password. The endpoint creates the wallet,
-stores the local node configuration, and returns the `seed_hex` only once.
-Save that seed securely; it is the private signing key.
+| Secret | Purpose |
+|---|---|
+| `ARTCB_NODE_WALLET_ADDRESS` | The node's `artcb1...` wallet address; anonymous node identities are rejected |
+| `ARTCB_NODE_PUBLIC_URL` | The public HTTPS URL advertised by this node |
 
-For a persistent deployment, the resulting `ARTCB_NODE_WALLET_ADDRESS` may
-optionally be added to Replit Secrets. `ARTCB_NODE_PUBLIC_URL` is optional
-because the startup script detects the Replit public URL automatically.
-Never commit wallet addresses together with private seeds or passphrases.
+The current Replit environment has both secrets configured. Their values must never be committed to the repository.
 
 ## Replit-specific notes
 

@@ -7,6 +7,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
+from src.artcb.crypto.kem import advertised_kem_algorithm
 from src.artcb.crypto.pqc import pqc_available
 from src.artcb.crypto_policy import (
     GENESIS_HASH,
@@ -16,6 +17,7 @@ from src.artcb.crypto_policy import (
     local_suite,
 )
 from src.artcb.p2p.handshake import build_signed_card, load_or_create_handshake_key
+from src.artcb.p2p.node_identity import advertised_base_url
 from src.artcb.p2p.sync import P2PSyncError
 
 logger = logging.getLogger("artcb.api.p2p")
@@ -71,7 +73,7 @@ def p2p_status(request: Request) -> dict:
         "network_id": identity.network_id,
         "node_id": identity.node_id,
         "kem_public_key_hex": identity.kem_public_key_hex,
-        "kem_algorithm": "ML-KEM-768",
+        "kem_algorithm": advertised_kem_algorithm(identity.kem_public_key_hex),
         "p2p_port": identity.p2p_port,
         "api_port": identity.api_port,
         "peer_count": len(peers),
@@ -87,6 +89,8 @@ def p2p_status(request: Request) -> dict:
         "capability_card": card,
         "public_state_digest": state.chain.public_state_digest(),
         "last_hash": state.chain.last_hash(),
+        "node_public_url": identity.node_public_url,
+        "advertised_base_url": advertised_base_url(identity.node_public_url, identity.api_port),
         "message": "Calcul local par défaut — pool opt-in E2E ML-KEM ; sync P2P = blocs publics chiffrés",
     }
 
@@ -112,6 +116,12 @@ def add_peer(body: AddPeerRequest, request: Request) -> dict:
             genesis_hash=body.genesis_hash,
             capability_card=body.capability_card,
             peer_id=body.peer_id,
+            scheme=(
+                "https"
+                if body.port == 443
+                or body.host.lower().endswith((".replit.app", ".repl.co"))
+                else "http"
+            ),
         )
         return {"peer": peer.to_dict(), "message": "Pair ajouté"}
     except ValueError as exc:
@@ -169,6 +179,7 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
     parsed = urlparse(url)
     host = parsed.hostname or ""
     port = parsed.port or (443 if parsed.scheme == "https" else 80)
+    peer_scheme = "https" if parsed.scheme == "https" else "http"
 
     # Générer un peer_id basé sur le fingerprint
     import hashlib
@@ -211,6 +222,7 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
             protocol_version=remote_pv,
             genesis_hash=remote_gh,
             capability_card=remote_card,
+            scheme=peer_scheme,
         )
         logger.info(
             "New node registered: peer_id=%s url=%s fingerprint=%s... repo=%s",
@@ -264,9 +276,18 @@ def receive_encrypted_blocks(body: ReceiveBlocksRequest, request: Request) -> di
 
 @router.post("/sync")
 def sync_all(request: Request, from_index: int = Query(0, ge=0)) -> dict:
+    """Pull + optional encrypted push for every peer.
+
+    Per-peer crypto/push failures are recorded in ``results`` (HTTP 200).
+    A broken secondary push must not turn the whole route into HTTP 500.
+    """
     sync = _state(request).p2p_sync
-    results = sync.sync_all_peers(from_index=from_index)
-    return {"results": results, "peer_count": len(results)}
+    try:
+        results = sync.sync_all_peers(from_index=from_index)
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("sync_all unexpected")
+        raise HTTPException(status_code=502, detail=type(exc).__name__) from exc
+    return {"results": results, "peer_count": len(results), "http_meaning": "200=route_ok_inspect_per_peer"}
 
 
 @router.post("/sync/{peer_id}")

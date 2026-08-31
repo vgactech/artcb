@@ -11,7 +11,7 @@ import httpx
 from src.artcb.chain import ffi
 from src.artcb.chain.ffi import HASH_VERSION_V1, HASH_VERSION_V2
 from src.artcb.chain.manager import ChainManager
-from src.artcb.crypto.kem import decrypt_payload, encrypt_payload
+from src.artcb.crypto.kem import KEMError, decrypt_payload, encrypt_payload
 from src.artcb.p2p.node_identity import NodeIdentity
 from src.artcb.p2p.peers import PeerManager, PeerRecord
 from src.artcb.p2p.public_archive import PublicBlockArchive
@@ -125,7 +125,12 @@ class P2PSyncService:
         blocks = self.get_public_blocks(from_index=from_index)
         if not blocks:
             return {"peer_id": peer.peer_id, "pushed": 0, "message": "Aucun bloc public à envoyer"}
-        envelope = self.build_encrypted_envelope(blocks, peer)
+        try:
+            envelope = self.build_encrypted_envelope(blocks, peer)
+        except (KEMError, ValueError, RuntimeError) as exc:
+            logger.error("P2P push envelope to %s failed: %s", peer.peer_id, type(exc).__name__)
+            self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
+            raise P2PSyncError(f"push_encrypt_failed:{type(exc).__name__}") from exc
         url = f"{peer.base_url}/api/v1/p2p/blocks/receive"
         try:
             with httpx.Client(timeout=30.0) as client:
@@ -172,10 +177,29 @@ class P2PSyncService:
     def sync_all_peers(self, *, from_index: int = 0) -> list[dict[str, Any]]:
         results: list[dict[str, Any]] = []
         for peer in self.peers.list_peers():
+            pulled: dict[str, Any] | None = None
             try:
                 pulled = self.pull_from_peer(peer, from_index=from_index)
                 pushed = self.push_to_peer(peer, from_index=from_index)
                 results.append({"peer_id": peer.peer_id, "pull": pulled, "push": pushed, "ok": True})
             except P2PSyncError as exc:
-                results.append({"peer_id": peer.peer_id, "ok": False, "error": str(exc)})
+                results.append(
+                    {
+                        "peer_id": peer.peer_id,
+                        "ok": False,
+                        "error": str(exc),
+                        "pull": pulled,
+                        "push_ok": False,
+                    }
+                )
+            except Exception as exc:  # noqa: BLE001 — never turn a secondary path into HTTP 500
+                logger.error("P2P sync peer %s unexpected: %s", peer.peer_id, type(exc).__name__)
+                results.append(
+                    {
+                        "peer_id": peer.peer_id,
+                        "ok": False,
+                        "error": type(exc).__name__,
+                        "pull": pulled,
+                    }
+                )
         return results

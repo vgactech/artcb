@@ -11,8 +11,9 @@ if [ -z "$TARGET" ] || [ -z "$SSH_KEY" ] || [ -z "$NODE_NAME" ] || [ -z "$PUBLIC
   echo "Usage: bash scripts/init_remote_node.sh USER@HOST SSH_KEY NODE_NAME PUBLIC_URL"
   exit 1
 fi
+# SSH re-parses the remote argv: quote assignments so names with spaces do not break `env`.
 ssh -i "$SSH_KEY" -o StrictHostKeyChecking=accept-new -o IdentitiesOnly=yes -o BatchMode=yes \
-  "$TARGET" env NODE_NAME="$NODE_NAME" PUBLIC_URL="$PUBLIC_URL" bash -s <<'REMOTE'
+  "$TARGET" "env NODE_NAME=$(printf '%q' "$NODE_NAME") PUBLIC_URL=$(printf '%q' "$PUBLIC_URL") bash -s" <<'REMOTE'
 set -Eeuo pipefail
 sudo -E python3 - <<'PY'
 import json, os, urllib.request

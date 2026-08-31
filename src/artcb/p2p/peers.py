@@ -28,10 +28,17 @@ class PeerRecord:
     protocol_reason: str = ""
     identity_fingerprint: str = ""
     capability_signed: bool = False
+    scheme: str = "http"
 
     @property
     def base_url(self) -> str:
-        return f"http://{self.host}:{self.port}"
+        scheme = (self.scheme or "http").lower()
+        host = (self.host or "").lower()
+        if host.endswith((".replit.app", ".repl.co")) or self.port == 443:
+            scheme = "https"
+        if scheme not in {"http", "https"}:
+            scheme = "https" if self.port == 443 else "http"
+        return f"{scheme}://{self.host}:{self.port}"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -49,6 +56,7 @@ class PeerRecord:
             "protocol_reason": self.protocol_reason,
             "identity_fingerprint": self.identity_fingerprint,
             "capability_signed": self.capability_signed,
+            "scheme": self.scheme,
             "base_url": self.base_url,
         }
 
@@ -98,6 +106,7 @@ class PeerManager:
             protocol_reason=str(item.get("protocol_reason") or ""),
             identity_fingerprint=str(item.get("identity_fingerprint") or ""),
             capability_signed=bool(item.get("capability_signed")),
+            scheme=str(item.get("scheme") or ("https" if int(item.get("port") or 0) == 443 else "http")),
         )
 
     def add_peer(
@@ -113,6 +122,7 @@ class PeerManager:
         protocol_version: str = "",
         genesis_hash: str = "",
         capability_card: dict | None = None,
+        scheme: str = "http",
     ) -> PeerRecord:
         from src.artcb.crypto.pqc import pqc_available
         from src.artcb.crypto_policy import accept_peer_protocol, accept_peer_suite
@@ -160,6 +170,7 @@ class PeerManager:
             "identity_fingerprint": fp,
             "capability_signed": signed_ok,
             "capability_sign_reason": signed_reason,
+            "scheme": "https" if str(scheme).lower() == "https" or port == 443 else "http",
         }
         items = [p for p in items if p["peer_id"] != pid]
         items.append(record)

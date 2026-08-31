@@ -33,16 +33,65 @@ def _git(*args: str) -> str:
     return (proc.stdout or "").strip()
 
 
+def _from_release_file() -> tuple[str, str]:
+    """Replit Autoscale often has no .git. replit_start.sh writes this file after pull."""
+    path = ROOT / ".artcb_release"
+    if not path.is_file():
+        return "", ""
+    sha = ""
+    branch = ""
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "=" not in line or line.strip().startswith("#"):
+            continue
+        key, _, val = line.partition("=")
+        if key.strip() == "ARTCB_GIT_SHA":
+            sha = val.strip()
+        elif key.strip() == "ARTCB_GIT_BRANCH":
+            branch = val.strip()
+    return sha, branch
+
+
+def _same_commit(a: str, b: str) -> bool:
+    """Abbreviated and full SHAs of the same commit count as a match."""
+    left, right = a.lower(), b.lower()
+    n = min(len(left), len(right))
+    return n >= 7 and left[:n] == right[:n]
+
+
+def _release_integrity(advertised: str, sources: list[str], pin: str) -> str:
+    if not advertised:
+        return "unknown"
+    for item in sources:
+        if not _same_commit(advertised, item):
+            return "source_mismatch"
+    if pin and not _same_commit(advertised, pin):
+        return "pin_mismatch"
+    return "ok"
+
+
 def release_identity() -> dict:
-    sha = os.getenv("ARTCB_GIT_SHA", "").strip() or _git("rev-parse", "HEAD")
-    branch = os.getenv("ARTCB_GIT_BRANCH", "").strip() or _git("rev-parse", "--abbrev-ref", "HEAD")
+    file_sha, file_branch = _from_release_file()
+    env_sha = os.getenv("ARTCB_GIT_SHA", "").strip()
+    git_sha = _git("rev-parse", "HEAD")
+    sha = env_sha or file_sha or git_sha
+    branch = (
+        os.getenv("ARTCB_GIT_BRANCH", "").strip()
+        or file_branch
+        or _git("rev-parse", "--abbrev-ref", "HEAD")
+    )
+    pin = os.getenv("ARTCB_REPLIT_PIN_SHA", "").strip()
+    sources = [item for item in (env_sha, file_sha, git_sha) if item]
+    integrity = _release_integrity(sha, sources, pin)
     logger.debug(
-        "release identity sha=%s branch=%s",
+        "release identity sha=%s branch=%s integrity=%s",
         (sha[:12] if sha else None),
         branch or None,
+        integrity,
     )
     return {
         "git_sha": sha or None,
         "git_branch": branch or None,
         "version": API_VERSION,
+        "release_integrity": integrity,
+        "pin_sha": pin or None,
     }

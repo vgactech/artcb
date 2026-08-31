@@ -1,8 +1,5 @@
 { pkgs }: {
   deps = [
-    pkgs.liboqs
-    pkgs.tesseract
-    pkgs.pkg-config
     # Python — Replit peut avoir 3.12 ou 3.13 selon le canal Nix
     # stable-23_11 → python312 | plus récent → python313
     # Si python312 absent, décommenter python313
