@@ -249,4 +249,9 @@
 | T-E23 | `https://152.228.144.34:8443/health` + `/api-keys/me` | 200 + key_id | [x] | 2026-08-29 self-signed |
 | T-E24 | `python scripts/run_sim169_secure_live.py` | `failures=[]` sha_match https_up | [x] | `20260829T214058Z` |
 | T-E25 | pytest post-169 | 625 passed / 8 skipped | [x] | `logs/20260829_pytest_rapport169.txt` |
+| T-E26 | `GET /health` vs `origin/main` | égalité SHA **après chaque merge** | [x] | 2026-08-31 live=`5b4b24ae` main=`376b0e4c` **ÉCART DÉMONTRÉ** |
+| T-E27 | `pytest tests/test_e2e170_node_isolation.py` | 3 projets Doppler distincts, Stripe pas sur nœud | [x] | 2026-08-31 6 passed (fichier) |
+| T-E28 | `python3 scripts/provision_doppler_node_projects.py` | 3 projets créés **ou** 403 service token documenté | [x] | 2026-08-31 **403** ×3 — `11_doppler_provision.json` |
+| T-E29 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | `/me` nic `vc491276-ovh` ; VM count honnête | [x] | 2026-08-31 me=200, 0 VM |
+| T-E31 | pytest post-170 (C lib built, no liboqs) | 617 passed / 20 skipped / 2 fail 503 suite-order | [x] | `logs/20260831_pytest_rapport170_cbuilt.txt` |
 

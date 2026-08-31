@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "parsed": {
+    "ak_prefix": "00870b\u2026len=16",
+    "cloud_projects": [],
+    "cloud_projects_http": 200,
+    "instances": [],
+    "me": {
+      "country": "FR",
+      "email": "vgac4237@gmail.com",
+      "nichandle": "vc491276-ovh",
+      "state": "complete"
+    },
+    "me_http": 200,
+    "node_id": "ovh-node-2",
+    "okms": "{\"class\":\"Client::NotFound\",\"message\":\"Got an invalid (or empty) URL\"}",
+    "okms_http": 404,
+    "secrets_printed": false,
+    "ts": 1788189126
+  },
+  "script": "ovh_api_inventory.py",
+  "stderr_tail": "",
+  "stdout_is_json": true
+}

@@ -185,4 +185,9 @@
 **Leçon :** (1) Manifeste = SHA du tree + dirty + pip freeze. (2) `main` SHA doit égaler `/health.git_sha`. (3) Self-signed + pin > HTTP clair ; Let’s Encrypt exige un DNS. (4) 4 process ≠ 4 VM. (5) `apply_key_to_environ` ne doit pas écrire `ARTCB_API_URL` (fuite vers les tests SDK).
 **Action :** Rapport 169. `deploy_ovh.sh main`. `enable_ovh_https.sh`.
 
+### L-040 — Un coffre Doppler par nœud réel (31 août 2026)
+**Contexte :** Nouvel identifiant OVH `vc491276-ovh` + IAM AWS `node_artcb_3_agent`. Le token Cursor `artcb-node-1` est un service token : il écrit `artcb-blockchain/dev` mais **ne crée pas de projet** (403). Les CK OVH du coffre partagé / Cursor env sont **expirées** ; les clés « Agent-Autonome node artcb 2 » authentifient `vc491276-ovh`. Ce compte n’a encore **aucune** VM. `main` a avancé (PR #38 `376b0e4c`) alors que live est resté `5b4b24ae`.
+**Leçon :** (1) Isolation des secrets **avant** le 2ᵉ nœud compute. (2) Service token ≠ token personnel. (3) Re-prouver `live_git_sha == origin/main` après chaque merge. (4) Signature OVH officielle = AS+CK+METHOD+URL+BODY+TS (**sans** application key). (5) Ne pas coller mot de passe console / application secret dans le chat — les rotator.
+**Action :** Rapport 170. `node_registry.py`. `provision_doppler_node_projects.py`. D-029.
+
 

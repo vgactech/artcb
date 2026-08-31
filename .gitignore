@@ -41,6 +41,10 @@ api_key_ionos.json
 .gitignore_local
 data_local/
 
+# Staging local des nœuds (jamais git)
+.artcb/nodes/
+**/.artcb/nodes/
+
 # ── Logs de démarrage et d'exécution — chaque nœud génère ses propres fichiers ──
 # Les logs startup shell (startup_TIMESTAMP_PID.log) sont spécifiques à chaque
 # instance et ne doivent pas être committés — ils polluent le repo et créent

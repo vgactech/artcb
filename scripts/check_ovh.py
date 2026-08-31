@@ -67,8 +67,8 @@ if server_time:
     url = f"{OVH_ENDPOINT_BASE}/me"
     body = ""
     ts = str(server_time)
-    # Format exact OVH : "$1$" + sha1(appKey+"+"+appSecret+"+"+consumerKey+"+"+method+"+"+url+"+"+body+"+"+ts)
-    sig_input = "+".join([OVH_APP_KEY, OVH_APP_SECRET, OVH_CONSUMER_KEY, method, url, body, ts])
+    # Official OVH: "$1$" + sha1(AS+"+"+CK+"+"+METHOD+"+"+URL+"+"+BODY+"+"+TS)
+    sig_input = "+".join([OVH_APP_SECRET, OVH_CONSUMER_KEY, method, url, body, ts])
     sig_hash = hashlib.sha1(sig_input.encode("utf-8")).hexdigest()
     sig = "$1$" + sig_hash
 
@@ -106,7 +106,7 @@ if server_time:
     # Recalcul avec nouveau ts
     req_time = urllib.request.urlopen(f"{OVH_ENDPOINT_BASE}/auth/time", timeout=5)
     ts2 = str(int(json.loads(req_time.read())))
-    sig_input2 = "+".join([OVH_APP_KEY, OVH_APP_SECRET, OVH_CONSUMER_KEY, method2, url2, "", ts2])
+    sig_input2 = "+".join([OVH_APP_SECRET, OVH_CONSUMER_KEY, method2, url2, "", ts2])
     sig2 = "$1$" + hashlib.sha1(sig_input2.encode("utf-8")).hexdigest()
     headers2 = {
         "X-Ovh-Application": OVH_APP_KEY,

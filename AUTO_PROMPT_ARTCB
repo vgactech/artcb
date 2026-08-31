@@ -1211,6 +1211,15 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Tests :** 625 passed / 8 skipped. `logs/20260829_pytest_rapport169.txt`.
 - Rapport : `rapports/169_secure_live_provenance_2026-08-29.md` SHA `fe51f93`.
 
+## [2026-08-31T15:10:00Z] Rapport 170 — isolation Doppler + gap live vs main PR38
+
+- **main** `376b0e4c` (PR #38 MERGED). Live OVH1 `/health` encore `5b4b24ae` — **sha_match_current_main=false** (PROBE LIVE).
+- **Doppler :** token Cursor = service `artcb-node-1` → `POST /v3/projects` **403**. Projets cibles : `artcb-ovh-node-1`, `artcb-ovh-node-2`, `artcb-aws-node-3`. Shared = `artcb-blockchain`.
+- **OVH2** nic `vc491276-ovh` API `/me` 200 ; **0** cloud project / VPS / IP. Pas de VM créée.
+- **AWS3** IAM `node_artcb_3_agent` compte `599128160879` — `aws login` navigateur non fait. Access keys absentes.
+- **Pas de 4 nœuds réels.** Tokenomics inchangée. V-01…V-07 ouverts. **NOT MAINNET CERTIFIED.**
+- Rapport : `rapports/170_doppler_node_isolation_2026-08-31.md` SHA `6b92dba`.
+
 ## [2026-08-28T18:10:00Z] Rapport 163 — GO 162 simulé puis aligné (D-025)
 
 - **Dump :** `rapports/162 conversation chat et simulation artcb.md` lu en entier ; ordre = timestamps user, pas l’UI ChatGPT.
