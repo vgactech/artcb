@@ -1,1 +1,2 @@
 - [Traçabilité des démarrages](startup-traceability.md) — chaque run doit corréler shell, Python, Uvicorn et accès HTTP par un identifiant unique.
+- [Runtime liboqs Replit](liboqs-replit-runtime.md) — le paquet Nix système peut être ABI-incompatible avec liboqs-python ; charger une build native assortie en espace utilisateur.
