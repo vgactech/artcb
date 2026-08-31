@@ -253,5 +253,5 @@
 | T-E27 | `pytest tests/test_e2e170_node_isolation.py` | 3 projets Doppler distincts, Stripe pas sur nœud | [x] | 2026-08-31 6 passed (fichier) |
 | T-E28 | `python3 scripts/provision_doppler_node_projects.py` | 3 projets créés **ou** 403 service token documenté | [x] | 2026-08-31 **403** ×3 — `11_doppler_provision.json` |
 | T-E29 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | `/me` nic `vc491276-ovh` ; VM count honnête | [x] | 2026-08-31 me=200, 0 VM |
-| T-E30 | `python3 scripts/run_sim170_node_isolation.py` | artefacts ; `certified_distributed_mainnet=false` | [x] | `20260831T151201Z` `failures=[doppler_projects_not_created]` |
+| T-E31 | pytest post-170 (C lib built, no liboqs) | 617 passed / 20 skipped / 2 fail 503 suite-order | [x] | `logs/20260831_pytest_rapport170_cbuilt.txt` |
 
