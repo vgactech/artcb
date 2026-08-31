@@ -65,6 +65,15 @@ trap _on_exit EXIT
 trap '_on_signal TERM' TERM
 trap '_on_signal INT' INT
 _log "START pid=$$ repl_dir=$REPL_DIR log_file=$STARTUP_LOG"
+# Bind /live immediately so Autoscale does not mark the deploy as failed
+# while we still clone / pip / compile.
+export ARTCB_PORT="${ARTCB_PORT:-5000}"
+SHIM_PID=""
+if [ -f "$REPL_DIR/scripts/replit_live_shim.py" ]; then
+  python3 "$REPL_DIR/scripts/replit_live_shim.py" &
+  SHIM_PID=$!
+  _log "early_live_shim pid=$SHIM_PID"
+fi
 
 echo ""
 echo "╔══════════════════════════════════════════════════════════╗"
@@ -98,48 +107,73 @@ else
 fi
 _log "STEP end public_url=${ARTCB_NODE_PUBLIC_URL:-UNKNOWN}"
 
-# ── 0c. Détection port libre ──────────────────────────────────────
-# Replit webview attend le port 5000. Si ce port est déjà occupé
-# (redémarrage rapide, autre processus), on cherche le prochain libre.
+# ── 0c. Port 5000 + shim /live (healthcheck Autoscale avant uvicorn) ─
+# Autoscale pings GET / as soon as the container exists. If nothing answers,
+# or an old process answers 500, Replit reports "not detected".
+# Bind a 200-only shim on 5000 immediately, then replace it with uvicorn.
 CURRENT_STEP="port_detect"
 _log "STEP begin"
-_find_free_port() {
-  local preferred="$1"
-  # Vérifier si le port préféré est libre (nc -z → succès si occupé)
-  if ! nc -z 127.0.0.1 "$preferred" 2>/dev/null; then
-    echo "$preferred"
-    return
-  fi
-  # Port occupé → chercher un port libre à partir de preferred+1
-  local port=$((preferred + 1))
-  while [ $port -lt 65535 ]; do
-    if ! nc -z 127.0.0.1 "$port" 2>/dev/null; then
-      echo "$port"
-      return
-    fi
-    port=$((port + 1))
-  done
-  echo "$preferred"  # fallback ultime
-}
-ARTCB_PORT="$(_find_free_port 5000)"
-export ARTCB_PORT
-_log "STEP end port=$ARTCB_PORT"
-if [ "$ARTCB_PORT" != "5000" ]; then
-  echo "  ⚠️  Port 5000 occupé — utilisation du port $ARTCB_PORT"
-  echo "  ⚠️  Si Replit webview ne répond pas, redémarrez le Repl pour libérer le port."
+export ARTCB_PORT="${ARTCB_PORT:-5000}"
+if [ -n "${SHIM_PID:-}" ] && kill -0 "$SHIM_PID" 2>/dev/null; then
+  _log "shim already running pid=$SHIM_PID"
+else
+  python3 "$REPL_DIR/scripts/replit_live_shim.py" &
+  SHIM_PID=$!
+  _log "live_shim launched pid=$SHIM_PID port=$ARTCB_PORT"
 fi
+_log "STEP end port=$ARTCB_PORT"
 
 # ── 0. Pull GitHub EN PREMIER — avant tout build ─────────────────
+# Autoscale snapshots often have NO .git, or a Replit remote without "github"
+# in `git remote -v`. The old `if` then did nothing → SHA=None and stale code.
 CURRENT_STEP="git_sync"
 _log "STEP begin"
-if [ -d .git ] && git remote -v 2>/dev/null | grep -q github; then
-  echo "[0/6] Pull GitHub (mise à jour code) ..."
-  git config --global --add safe.directory "$REPL_DIR" 2>/dev/null || true
-  git pull origin "${GITHUB_BRANCH:-main}" --ff-only \
-    && echo "  Code à jour ✅" \
-    || echo "  ⚠️ git pull échoué — démarrage avec code existant"
+ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-${GITHUB_BRANCH:-cursor/replit-sync-ready-16d8}}"
+ARTCB_REPLIT_REMOTE="${ARTCB_REPLIT_REMOTE:-https://github.com/vgactech/artcb.git}"
+_write_release() {
+  local sha="${1:-}"
+  local branch="${2:-}"
+  {
+    echo "ARTCB_GIT_SHA=$sha"
+    echo "ARTCB_GIT_BRANCH=$branch"
+  } > "$REPL_DIR/.artcb_release"
+  export ARTCB_GIT_SHA="$sha"
+  export ARTCB_GIT_BRANCH="$branch"
+  _log "release_written sha=${sha:-NONE} branch=${branch:-NONE}"
+}
+git config --global --add safe.directory "$REPL_DIR" 2>/dev/null || true
+if [ ! -d "$REPL_DIR/.git" ]; then
+  _log "no .git — fetching $ARTCB_REPLIT_REMOTE branch=$ARTCB_REPLIT_BRANCH"
+  echo "[0/6] Clone GitHub (workspace without .git) ..."
+  if git clone --depth 1 --branch "$ARTCB_REPLIT_BRANCH" "$ARTCB_REPLIT_REMOTE" /tmp/artcb-src-$$; then
+    cp -a /tmp/artcb-src-$$/. "$REPL_DIR/"
+    rm -rf /tmp/artcb-src-$$
+    _log "clone_rsync_ok"
+  else
+    _log "WARN git clone failed — starting with snapshot files"
+  fi
+elif git -C "$REPL_DIR" remote -v 2>/dev/null | grep -qiE 'github|vgactech'; then
+  echo "[0/6] Fetch GitHub branch $ARTCB_REPLIT_BRANCH ..."
+  git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" || git -C "$REPL_DIR" fetch origin || true
+  if git -C "$REPL_DIR" rev-parse --verify "origin/$ARTCB_REPLIT_BRANCH" >/dev/null 2>&1; then
+    git -C "$REPL_DIR" checkout -B "$ARTCB_REPLIT_BRANCH" "origin/$ARTCB_REPLIT_BRANCH" || true
+    git -C "$REPL_DIR" reset --hard "origin/$ARTCB_REPLIT_BRANCH" || true
+  else
+    git -C "$REPL_DIR" pull --ff-only origin "$ARTCB_REPLIT_BRANCH" \
+      || git -C "$REPL_DIR" pull --ff-only origin main \
+      || _log "WARN git pull failed — snapshot files"
+  fi
+else
+  _log "WARN remotes have no github — adding origin $ARTCB_REPLIT_REMOTE"
+  git -C "$REPL_DIR" remote remove origin 2>/dev/null || true
+  git -C "$REPL_DIR" remote add origin "$ARTCB_REPLIT_REMOTE" || true
+  git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" || true
+  git -C "$REPL_DIR" checkout -B "$ARTCB_REPLIT_BRANCH" "origin/$ARTCB_REPLIT_BRANCH" || true
 fi
-_log "STEP end"
+_REL_SHA="$(git -C "$REPL_DIR" rev-parse HEAD 2>/dev/null || true)"
+_REL_BR="$(git -C "$REPL_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$ARTCB_REPLIT_BRANCH")"
+_write_release "$_REL_SHA" "$_REL_BR"
+_log "STEP end sha=${_REL_SHA:-NONE} branch=${_REL_BR:-NONE}"
 
 # ── 1. Venv Python isolé (contourne NixOS PEP 668) ───────────────
 CURRENT_STEP="python_venv"
@@ -155,6 +189,8 @@ export PATH="$VENV/bin:$PATH"
 PIP="$VENV/bin/pip"
 PYTHON="$VENV/bin/python3"
 export PIP_USER=false
+export OQS_INSTALL_PATH="${OQS_INSTALL_PATH:-$HOME/_oqs}"
+export LD_LIBRARY_PATH="$OQS_INSTALL_PATH/lib:$OQS_INSTALL_PATH/lib64:${LD_LIBRARY_PATH:-}"
 _log "STEP end venv=$VENV"
 
 # ── 2. Installation des dépendances via venv ──────────────────────
@@ -322,11 +358,16 @@ raise SystemExit(0 if ok else 1)
     return 0
   fi
 
-  echo "PQC: cmake trouvé ($(cmake --version | head -1)) — compilation liboqs-python..."
+  echo "PQC: cmake trouvé ($(cmake --version | head -1)) — compile native liboqs $LIBOQS_TAG (match liboqs-python 0.16)"
   _log "BACKGROUND cmake_found version=$(cmake --version | head -1)"
+  if bash "$REPL_DIR/scripts/install_native_liboqs_replit.sh"; then
+    _log "BACKGROUND native liboqs 0.16 install ok"
+  else
+    _log "WARN native liboqs compile failed — trying pip wheel (often native 0.13, ML-DSA-65 OFF)"
+  fi
 
-  # Tentative 1 : installation standard pip (utilise le cache wheel si disponible)
-  echo "PQC: tentative 1/2 — pip install liboqs-python..."
+  # Binding Python (does not replace native 0.16 if OQS_INSTALL_PATH is set)
+  echo "PQC: pip install liboqs-python>=0.14 (binding only)..."
   if $PIP install --no-user --upgrade "liboqs-python>=0.14.0" 2>&1; then
     _log "BACKGROUND pip install returned 0"
   else
@@ -414,7 +455,13 @@ if [ -z "${ARTCB_NODE_WALLET_ADDRESS:-}" ]; then
   fi
 fi
 echo "  ✅ Démarrage ARTCB API sur :${ARTCB_PORT} (Replit webview)..."
-_log "FOREGROUND launching uvicorn port=$ARTCB_PORT public_url=${ARTCB_NODE_PUBLIC_URL:-NONE}"
+if [ -n "${SHIM_PID:-}" ] && kill -0 "$SHIM_PID" 2>/dev/null; then
+  _log "stopping live_shim pid=$SHIM_PID so uvicorn can bind :$ARTCB_PORT"
+  kill "$SHIM_PID" 2>/dev/null || true
+  wait "$SHIM_PID" 2>/dev/null || true
+  sleep 0.4
+fi
+_log "FOREGROUND launching uvicorn port=$ARTCB_PORT public_url=${ARTCB_NODE_PUBLIC_URL:-NONE} sha=${ARTCB_GIT_SHA:-NONE}"
 "$PYTHON" -m uvicorn src.api.main:app \
   --host 0.0.0.0 \
   --port "$ARTCB_PORT" \

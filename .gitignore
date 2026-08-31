@@ -64,6 +64,7 @@ logs/*_artcb_api.json
 # .node_config — fichier local persistant l'adresse wallet après /setup/init-node
 # Ne jamais committer — contient l'identité de ce nœud spécifique
 .node_config
+.artcb_release
 
 # AWS node 3 private key (public key may be in deploy/)
 **/artcb_aws_node_3

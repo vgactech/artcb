@@ -57,6 +57,7 @@ def create_app() -> FastAPI:
         f"https://n1.{ARTCB_DOMAIN}",
         f"https://n2.{ARTCB_DOMAIN}",
         f"https://node.{ARTCB_DOMAIN}",
+        "https://artcb--vgac42.replit.app",
         *_extra,
     ]
     app.add_middleware(
@@ -112,6 +113,22 @@ def create_app() -> FastAPI:
                 "pqc": pqc_block,
             }
 
+        @app.get("/live")
+        async def live_bootstrap():
+            return {"status": "alive", "bootstrap_mode": True}
+
+        @app.get("/ready")
+        async def ready_bootstrap():
+            return JSONResponse(
+                status_code=503,
+                content={
+                    "status": "not_ready",
+                    "bootstrap_mode": True,
+                    "reason": "node_identity_missing",
+                    "setup_url": "/setup/init-node",
+                },
+            )
+
         @app.get("/health")
         async def health_bootstrap():
             return _bootstrap_health_response()
@@ -120,6 +137,15 @@ def create_app() -> FastAPI:
         @app.get("/api/v1/health")
         async def health_bootstrap_api():
             return _bootstrap_health_response()
+
+        @app.get("/api/v1/chain/verify")
+        async def chain_verify_bootstrap():
+            return {
+                "valid": False,
+                "bootstrap_mode": True,
+                "reason": "node_not_initialized",
+                "message": "POST /setup/init-node before chain verify is meaningful.",
+            }
 
         @app.get("/")
         async def root_bootstrap():
@@ -156,7 +182,7 @@ def create_app() -> FastAPI:
         @app.get("/{full_path:path}")
         async def bootstrap_catchall(full_path: str):
             # Routes déjà déclarées — FastAPI les intercepte avant ce catchall
-            if full_path in ("", "health", "setup/status", "setup/init-node",
+            if full_path in ("", "health", "live", "ready", "setup/status", "setup/init-node",
                              "api/v1/health", "api/v1/chain/verify"):
                 from fastapi import HTTPException
                 raise HTTPException(status_code=404)
@@ -207,6 +233,25 @@ def create_app() -> FastAPI:
     app.include_router(libp2p_router)
     app.include_router(privacy_router)
     logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
+
+    @app.get("/live")
+    async def live_check():
+        return {"status": "alive", "bootstrap_mode": False}
+
+    @app.get("/ready")
+    async def ready_check():
+        from src.artcb.crypto.pqc import pqc_available
+        from src.artcb.release import release_identity
+        ident = release_identity()
+        pqc = pqc_available()
+        ready = bool(ident.get("git_sha")) and pqc
+        payload = {
+            "status": "ready" if ready else "not_ready",
+            "bootstrap_mode": False,
+            "release_sha": ident.get("git_sha"),
+            "pqc_available": pqc,
+        }
+        return JSONResponse(status_code=200 if ready else 503, content=payload)
 
     @app.get("/health")
     async def health_check():

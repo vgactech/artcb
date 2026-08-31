@@ -110,6 +110,23 @@ NODES: dict[str, NodeSpec] = {
             "Never reuse OVH1 152.228.144.34 or OVH2 151.80.107.29 credentials."
         ),
     ),
+    "replit-node-1": NodeSpec(
+        node_id="replit-node-1",
+        display_name="node artcb replit",
+        provider="replit",
+        doppler_project="artcb-blockchain",
+        doppler_token_env="DOPPLER_TOKEN",
+        health_http="https://artcb--vgac42.replit.app",
+        api_https="https://artcb--vgac42.replit.app",
+        ssh_host=None,
+        ssh_user="runner",
+        public_notes=(
+            "Replit Autoscale https://artcb--vgac42.replit.app (port 5000→80). "
+            "Substitutes OVH1 for 174-devnet-1 tests while D-036 keeps "
+            "152.228.144.34 on 5b4b24ae. Not DV-04 until /ready 200, "
+            "hybrid AND, persistent init-node, SHA known."
+        ),
+    ),
 }
 
 # Secrets that belong on a node project — never copy Stripe/Bob/GitHub here.
@@ -178,6 +195,14 @@ NODE_SECRET_ALLOWLIST = {
             "ARTCB_API_KEY",
             "ARTCB_API_URL",
             "ARTCB_WALLET_PASSPHRASE",
+        }
+    ),
+    "replit-node-1": frozenset(
+        {
+            "ARTCB_API_KEY",
+            "ARTCB_API_URL",
+            "ARTCB_WALLET_PASSPHRASE",
+            "DOPPLER_TOKEN",
         }
     ),
 }

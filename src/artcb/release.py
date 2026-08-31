@@ -33,9 +33,28 @@ def _git(*args: str) -> str:
     return (proc.stdout or "").strip()
 
 
+def _from_release_file() -> tuple[str, str]:
+    """Replit Autoscale often has no .git. replit_start.sh writes this file after pull."""
+    path = ROOT / ".artcb_release"
+    if not path.is_file():
+        return "", ""
+    sha = ""
+    branch = ""
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if "=" not in line or line.strip().startswith("#"):
+            continue
+        key, _, val = line.partition("=")
+        if key.strip() == "ARTCB_GIT_SHA":
+            sha = val.strip()
+        elif key.strip() == "ARTCB_GIT_BRANCH":
+            branch = val.strip()
+    return sha, branch
+
+
 def release_identity() -> dict:
-    sha = os.getenv("ARTCB_GIT_SHA", "").strip() or _git("rev-parse", "HEAD")
-    branch = os.getenv("ARTCB_GIT_BRANCH", "").strip() or _git("rev-parse", "--abbrev-ref", "HEAD")
+    file_sha, file_branch = _from_release_file()
+    sha = os.getenv("ARTCB_GIT_SHA", "").strip() or file_sha or _git("rev-parse", "HEAD")
+    branch = os.getenv("ARTCB_GIT_BRANCH", "").strip() or file_branch or _git("rev-parse", "--abbrev-ref", "HEAD")
     logger.debug(
         "release identity sha=%s branch=%s",
         (sha[:12] if sha else None),

@@ -307,3 +307,21 @@ class NodeIdentityStore:
             payload["node_public_url"] = identity.node_public_url
         self.path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         self.path.chmod(0o600)
+
+
+def advertised_base_url(public_url: str | None, api_port: int) -> str:
+    """URL this node tells peers to use. Never http://replit.host:443."""
+    from urllib.parse import urlparse
+
+    raw = (public_url or "").strip()
+    if raw:
+        parsed = urlparse(raw if "://" in raw else f"https://{raw}")
+        host = parsed.hostname or ""
+        scheme = (parsed.scheme or "").lower()
+        if host.endswith((".replit.app", ".repl.co")):
+            scheme = "https"
+        if scheme not in {"http", "https"}:
+            scheme = "https" if (parsed.port or 0) == 443 else "http"
+        port = parsed.port or (443 if scheme == "https" else api_port)
+        return f"{scheme}://{host}:{port}"
+    return f"http://127.0.0.1:{api_port}"

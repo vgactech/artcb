@@ -81,6 +81,13 @@ DECISIONS_175: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_177: Final[dict[str, str]] = {
+    "D-038": (
+        "Replit substitutes OVH1 role for 174 tests. Do not redeploy "
+        "152.228.144.34. Replit must pull cursor/replit-sync-ready-16d8."
+    ),
+}
+
 
 def public_lock() -> dict[str, Any]:
     return {
@@ -91,5 +98,6 @@ def public_lock() -> dict[str, Any]:
         "distributed_certified": False,
         "decisions_174": DECISIONS_174,
         "decisions_175": DECISIONS_175,
+        "decisions_177": DECISIONS_177,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }
