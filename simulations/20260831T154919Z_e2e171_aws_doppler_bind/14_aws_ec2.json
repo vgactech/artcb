@@ -1,0 +1,22 @@
+{
+  "exit": 3,
+  "parsed": {
+    "account": null,
+    "blocker": "IAM user node_artcb_3_agent has IAMUserChangePassword only (observed 2026-08-31 console: AccessDenied iam:ListAccessKeys, ec2:DescribeInstanceStatus, no RunInstances). Admin of account 599128160879 must attach AmazonEC2FullAccess (or equivalent) plus iam:CreateAccessKey on self, OR inject AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY into Cursor secrets. Do not paste console passwords into git.",
+    "caller_arn": null,
+    "doppler_project": "artcb3",
+    "ec2_allowed": false,
+    "ec2_describe_exit": 253,
+    "instance_type": "t3.large",
+    "launched": false,
+    "node_id": "aws-node-3",
+    "region": "eu-west-3",
+    "secrets_printed": false,
+    "stderr_tail": "\naws: [ERROR]: An error occurred (NoCredentials): Unable to locate credentials. You can configure credentials by running \"aws login\".\n",
+    "sts_http_or_exit": 253,
+    "sts_ok": false
+  },
+  "script": "provision_aws_ec2.py",
+  "stderr_tail": "",
+  "stdout_is_json": true
+}

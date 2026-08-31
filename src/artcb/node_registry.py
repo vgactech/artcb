@@ -23,7 +23,8 @@ class NodeSpec:
     display_name: str
     provider: str
     doppler_project: str
-    doppler_config: str = "prd"
+    doppler_config: str = "dev"
+    doppler_token_env: str = "DOPPLER_TOKEN"
     health_http: str | None = None
     api_https: str | None = None
     ssh_host: str | None = None
@@ -37,40 +38,46 @@ NODES: dict[str, NodeSpec] = {
         node_id="ovh-node-1",
         display_name="node artcb 1",
         provider="ovh",
-        doppler_project="artcb-ovh-node-1",
+        doppler_project="artcb-blockchain",
+        doppler_token_env="DOPPLER_TOKEN",
         health_http="http://152.228.144.34:8000",
         api_https="https://152.228.144.34:8443",
         ssh_host="152.228.144.34",
         ssh_user="ubuntu",
         public_notes=(
             "Existing GRA11 live node at 152.228.144.34. "
-            "OKMS named node artcb 1 in eu-west-par (id not stored in git). "
-            "SSH key name artcb-cloud-agent-20260819. "
-            "OVH API keys currently in Cursor env are a *different* application "
-            "than vc491276-ovh / Agent-Autonome node artcb 2."
+            "Dedicated vault artcb-ovh-node-1 was never created (service token "
+            "cannot POST /v3/projects). Live token artcb-node-1 stays on shared "
+            "artcb-blockchain until a personal Doppler token splits OVH-1 keys. "
+            "SSH key name artcb-cloud-agent-20260819."
         ),
     ),
     "ovh-node-2": NodeSpec(
         node_id="ovh-node-2",
         display_name="node artcb 2",
         provider="ovh",
-        doppler_project="artcb-ovh-node-2",
+        doppler_project="artcb-2",
+        doppler_token_env="KEY_API_ARTCB_DOPPLER_2",
         public_notes=(
             "OVH nic vc491276-ovh (vgac4237@gmail.com). "
+            "Doppler project artcb-2 (service token Cursor KEY_API_ARTCB_DOPPLER_2). "
             "API application: Agent-Autonome node artcb 2. "
-            "No public IPv4 registered in this repo until inventory confirms a VM."
+            "No Public Cloud / VPS / IPv4 — waiting OVH account validation. Do not create a VM."
         ),
     ),
     "aws-node-3": NodeSpec(
         node_id="aws-node-3",
         display_name="node artcb 3",
         provider="aws",
-        doppler_project="artcb-aws-node-3",
+        doppler_project="artcb3",
+        doppler_token_env="KEY_API_ARTCB_DOPPLER_3",
         public_notes=(
             "AWS account 599128160879 IAM user node_artcb_3_agent. "
-            "Console https://599128160879.signin.aws.amazon.com/console. "
-            "CLI profile artcb-node-3. Region default eu-west-3 (Paris) until confirmed. "
-            "Browser aws login required — no access keys in this agent yet."
+            "Doppler project artcb3 (service token Cursor KEY_API_ARTCB_DOPPLER_3). "
+            "CLI profile artcb-node-3. Region eu-west-3 (Paris). "
+            "IAM attached policy observed 2026-08-31: IAMUserChangePassword only. "
+            "No ListAccessKeys / no EC2 Describe* / no RunInstances until an admin "
+            "attaches EC2+self access-key policies or injects AWS_ACCESS_KEY_ID."
         ),
     ),
 }
@@ -164,6 +171,7 @@ def public_registry() -> dict[str, Any]:
                 "provider": spec.provider,
                 "doppler_project": spec.doppler_project,
                 "doppler_config": spec.doppler_config,
+                "doppler_token_env": spec.doppler_token_env,
                 "health_http": spec.health_http,
                 "api_https": spec.api_https,
                 "ssh_host": spec.ssh_host,
@@ -174,6 +182,10 @@ def public_registry() -> dict[str, Any]:
         },
         "shared_only_secret_names": sorted(SHARED_ONLY_SECRETS),
     }
+
+
+def doppler_token_env_for(node_id: str) -> str:
+    return get_node(node_id).doppler_token_env
 
 
 def secret_belongs_on_node(node_id: str, name: str) -> bool:

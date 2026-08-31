@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
 from artcb.live import resolve_api_url, resolve_doppler_project
@@ -20,13 +18,13 @@ from artcb.node_registry import (
 
 def test_three_isolated_doppler_projects() -> None:
     projects = {spec.doppler_project for spec in NODES.values()}
-    assert projects == {
-        "artcb-ovh-node-1",
-        "artcb-ovh-node-2",
-        "artcb-aws-node-3",
-    }
-    assert SHARED_DOPPLER_PROJECT not in projects
-    assert len(projects) == 3
+    assert "artcb-2" in projects
+    assert "artcb3" in projects
+    assert NODES["ovh-node-2"].doppler_project == "artcb-2"
+    assert NODES["aws-node-3"].doppler_project == "artcb3"
+    # OVH1 dedicated vault was never created — live token stays on shared project.
+    assert NODES["ovh-node-1"].doppler_project == SHARED_DOPPLER_PROJECT
+    assert NODES["ovh-node-2"].doppler_project != NODES["aws-node-3"].doppler_project
 
 
 def test_stripe_and_bob_stay_shared() -> None:
@@ -51,9 +49,9 @@ def test_ovh1_public_identity_unchanged() -> None:
 def test_resolve_doppler_project_by_node_id(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("DOPPLER_PROJECT", raising=False)
     monkeypatch.setenv("ARTCB_NODE_ID", "ovh-node-2")
-    assert resolve_doppler_project() == "artcb-ovh-node-2"
+    assert resolve_doppler_project() == "artcb-2"
     monkeypatch.setenv("ARTCB_NODE_ID", "aws-node-3")
-    assert resolve_doppler_project() == "artcb-aws-node-3"
+    assert resolve_doppler_project() == "artcb3"
     monkeypatch.setenv("DOPPLER_PROJECT", "artcb-blockchain")
     assert resolve_doppler_project() == "artcb-blockchain"
 
@@ -72,4 +70,4 @@ def test_public_registry_has_no_secret_values() -> None:
     assert "BEGIN" not in blob
     for forbidden in ("nV5Q4z", "7255a8ad", "8a226e45"):
         assert forbidden not in blob
-    assert doppler_project_for("ovh-node-1") == "artcb-ovh-node-1"
+    assert doppler_project_for("ovh-node-1") == SHARED_DOPPLER_PROJECT

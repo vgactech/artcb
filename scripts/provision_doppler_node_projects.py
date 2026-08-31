@@ -40,6 +40,14 @@ def _token() -> str:
     )
 
 
+def _token_for_node(node_id: str) -> str:
+    spec = NODES[node_id]
+    return (os.environ.get(spec.doppler_token_env) or "").strip() or _token()
+
+
+RESERVED_SECRET_NAMES = frozenset({"DOPPLER_PROJECT", "DOPPLER_CONFIG", "DOPPLER_ENVIRONMENT", "AWS_CONSOLE_PASSWORD"})
+
+
 def _api(method: str, path: str, body: dict | None = None, token: str | None = None) -> tuple[int, Any]:
     tok = token or _token()
     if not tok:
@@ -130,13 +138,15 @@ def ensure_config(project: str, name: str = "prd") -> dict[str, Any]:
     return {"http": code2, "ok": True, "existed": False, "name": name}
 
 
-def set_secrets(project: str, config: str, secrets: dict[str, str]) -> dict[str, Any]:
+def set_secrets(project: str, config: str, secrets: dict[str, str], token: str | None = None) -> dict[str, Any]:
+    secrets = {k: v for k, v in secrets.items() if k not in RESERVED_SECRET_NAMES and v}
     if not secrets:
-        return {"ok": True, "wrote": 0}
+        return {"ok": True, "wrote": 0, "names": []}
     code, payload = _api(
         "POST",
         "/v3/configs/config/secrets",
         {"project": project, "config": config, "secrets": secrets},
+        token=token,
     )
     return {
         "http": code,
@@ -196,6 +206,50 @@ def copy_allowlist_from_shared(node_id: str) -> dict[str, str]:
     return out
 
 
+def project_reachable(project: str, token: str) -> dict[str, Any]:
+    code, payload = _api("GET", f"/v3/projects/project?project={project}", token=token)
+    configs_code, configs_body = _api("GET", f"/v3/configs?project={project}", token=token)
+    names = []
+    if isinstance(configs_body, dict):
+        names = [c.get("name") for c in (configs_body.get("configs") or []) if c.get("name")]
+    return {
+        "http": code,
+        "ok": code == 200,
+        "configs_http": configs_code,
+        "configs": names,
+    }
+
+
+def bind_existing(spec, token: str) -> dict[str, Any]:
+    """Write allowlisted local secrets into an already-created Doppler project."""
+    reach = project_reachable(spec.doppler_project, token)
+    if not reach["ok"]:
+        return {"ok": False, "reachable": reach, "reason": "project_not_visible_to_token"}
+    config_name = spec.doppler_config
+    if config_name not in (reach.get("configs") or []) and "dev" in (reach.get("configs") or []):
+        config_name = "dev"
+    bundle: dict[str, str] = {}
+    if spec.node_id == "ovh-node-1":
+        bundle.update(copy_allowlist_from_shared(spec.node_id))
+    bundle.update(secrets_from_local(spec.node_id))
+    wrote = set_secrets(spec.doppler_project, config_name, bundle, token=token)
+    names_code, names_body = _api(
+        "GET",
+        f"/v3/configs/config/secrets/names?project={spec.doppler_project}&config={config_name}",
+        token=token,
+    )
+    listed = names_body.get("names") if isinstance(names_body, dict) else []
+    return {
+        "ok": wrote.get("ok", False) or names_code == 200,
+        "reachable": reach,
+        "config": config_name,
+        "secrets_written": {"ok": wrote["ok"], "count": wrote["wrote"], "names": wrote["names"]},
+        "secret_names_http": names_code,
+        "secret_names": listed if isinstance(listed, list) else [],
+        "stripe_present": any(n in {"KEY_API_STRIPE", "BOB_API_KEY"} for n in (listed or [])),
+    }
+
+
 def provision() -> dict[str, Any]:
     ident = token_identity()
     listed_code, existing = list_projects()
@@ -204,47 +258,59 @@ def provision() -> dict[str, Any]:
         "projects_list_http": listed_code,
         "projects_before": existing,
         "created": {},
+        "bound": {},
         "blocked": None,
         "shared_project_kept": SHARED_DOPPLER_PROJECT,
         "registry": public_registry(),
     }
     if ident.get("type") == "service_token" or not ident.get("can_create_projects"):
         results["blocked"] = (
-            "Doppler service token cannot create projects (403). "
-            "Set DOPPLER_PERSONAL_TOKEN (personal/workplace) then re-run."
+            "Doppler service token cannot create NEW projects (403). "
+            "Binding user-created slugs artcb-2 / artcb3 via Cursor service tokens. "
+            "Dedicated artcb-ovh-node-1 still needs DOPPLER_PERSONAL_TOKEN."
         )
-        # Attempt anyway so the 403 is recorded as evidence.
     for spec in NODES.values():
+        node_token = _token_for_node(spec.node_id)
         created = create_project(
             spec.doppler_project,
             f"ARTCB {spec.display_name} ({spec.provider}) — isolated from other real nodes",
         )
         results["created"][spec.node_id] = created
-        if not created["ok"]:
-            continue
-        cfg = ensure_config(spec.doppler_project, spec.doppler_config)
-        created["config"] = cfg
-        if not cfg.get("ok"):
-            # new projects often ship with config "dev"
-            cfg_dev = ensure_config(spec.doppler_project, "dev")
-            created["config_dev"] = cfg_dev
-            config_name = "dev" if cfg_dev.get("ok") else spec.doppler_config
-        else:
-            config_name = spec.doppler_config
-        bundle = {}
-        if spec.node_id == "ovh-node-1":
-            bundle.update(copy_allowlist_from_shared(spec.node_id))
-        bundle.update(secrets_from_local(spec.node_id))
-        wrote = set_secrets(spec.doppler_project, config_name, bundle)
-        created["secrets_written"] = {"ok": wrote["ok"], "count": wrote["wrote"], "names": wrote["names"]}
+        bound = bind_existing(spec, node_token)
+        results["bound"][spec.node_id] = bound
+        if created["ok"]:
+            cfg = ensure_config(spec.doppler_project, spec.doppler_config)
+            created["config"] = cfg
+            config_name = spec.doppler_config if cfg.get("ok") else "dev"
+            bundle = {}
+            if spec.node_id == "ovh-node-1":
+                bundle.update(copy_allowlist_from_shared(spec.node_id))
+            bundle.update(secrets_from_local(spec.node_id))
+            wrote = set_secrets(spec.doppler_project, config_name, bundle)
+            created["secrets_written"] = {"ok": wrote["ok"], "count": wrote["wrote"], "names": wrote["names"]}
     _, after = list_projects()
     results["projects_after"] = after
+    results["isolation"] = {
+        "ovh1_vault": NODES["ovh-node-1"].doppler_project,
+        "ovh2_vault": NODES["ovh-node-2"].doppler_project,
+        "aws3_vault": NODES["aws-node-3"].doppler_project,
+        "ovh2_bound": bool((results["bound"].get("ovh-node-2") or {}).get("ok")),
+        "aws3_bound": bool((results["bound"].get("aws-node-3") or {}).get("ok")),
+        "ovh2_has_stripe": bool((results["bound"].get("ovh-node-2") or {}).get("stripe_present")),
+        "aws3_has_stripe": bool((results["bound"].get("aws-node-3") or {}).get("stripe_present")),
+    }
     return results
 
 
 def main() -> int:
     report = provision()
     print(json.dumps(report, indent=2, sort_keys=True, default=str))
+    bound = report.get("bound") or {}
+    # Success if OVH2 and AWS3 vaults are reachable (the user-created projects).
+    ovh2 = bound.get("ovh-node-2") or {}
+    aws3 = bound.get("aws-node-3") or {}
+    if ovh2.get("ok") and aws3.get("ok") and not ovh2.get("stripe_present") and not aws3.get("stripe_present"):
+        return 0
     created = report.get("created") or {}
     if all(v.get("ok") for v in created.values()) and created:
         return 0

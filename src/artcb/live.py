@@ -26,7 +26,13 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from artcb.node_registry import SHARED_DOPPLER_CONFIG, SHARED_DOPPLER_PROJECT, doppler_project_for
+from artcb.node_registry import (
+    SHARED_DOPPLER_CONFIG,
+    SHARED_DOPPLER_PROJECT,
+    doppler_project_for,
+    doppler_token_env_for,
+    get_node,
+)
 
 logger = logging.getLogger("artcb.live")
 
@@ -113,12 +119,36 @@ def resolve_doppler_project() -> str:
     return DOPPLER_PROJECT
 
 
+def resolve_doppler_token() -> str:
+    """Service token for the selected node vault. Never logs the value."""
+    node_id = (os.environ.get("ARTCB_NODE_ID") or "").strip()
+    if node_id:
+        try:
+            env_name = doppler_token_env_for(node_id)
+            raw = (os.environ.get(env_name) or "").strip()
+            if raw:
+                return raw
+        except KeyError:
+            pass
+    return (os.environ.get("DOPPLER_TOKEN") or "").strip()
+
+
+def resolve_doppler_config() -> str:
+    node_id = (os.environ.get("ARTCB_NODE_ID") or "").strip()
+    if node_id:
+        try:
+            return get_node(node_id).doppler_config
+        except KeyError:
+            pass
+    return os.environ.get("DOPPLER_CONFIG", DOPPLER_CONFIG) or DOPPLER_CONFIG
+
+
 def fetch_doppler_secret(name: str) -> str:
-    token = (os.environ.get("DOPPLER_TOKEN") or "").strip()
+    token = resolve_doppler_token()
     if not token:
         return ""
     project = resolve_doppler_project()
-    config = os.environ.get("DOPPLER_CONFIG", DOPPLER_CONFIG)
+    config = os.environ.get("DOPPLER_CONFIG") or resolve_doppler_config()
     url = (
         "https://api.doppler.com/v3/configs/config/secret"
         f"?project={project}&config={config}&name={name}"
@@ -139,12 +169,13 @@ def fetch_doppler_secret(name: str) -> str:
 
 
 def write_doppler_secrets(secrets: dict[str, str]) -> dict[str, Any]:
-    """Best-effort write. Service tokens are often read-only."""
-    token = (os.environ.get("DOPPLER_TOKEN") or "").strip()
+    """Best-effort write. Never uploads AWS_CONSOLE_PASSWORD."""
+    secrets = {k: v for k, v in secrets.items() if k != "AWS_CONSOLE_PASSWORD" and not k.startswith("DOPPLER_")}
+    token = resolve_doppler_token()
     if not token:
         return {"ok": False, "reason": "DOPPLER_TOKEN absent"}
     project = resolve_doppler_project()
-    config = os.environ.get("DOPPLER_CONFIG", DOPPLER_CONFIG)
+    config = os.environ.get("DOPPLER_CONFIG") or resolve_doppler_config()
     body = json.dumps({"project": project, "config": config, "secrets": secrets}).encode()
     last_reason = "unknown"
     for method in ("POST", "PUT"):

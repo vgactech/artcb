@@ -1,0 +1,14 @@
+---
+description: AWS node artcb 3 — eu-west-3, isolated Doppler artcb3
+alwaysApply: false
+---
+
+# AWS — nœud artcb 3
+
+- Compte `599128160879`, IAM `node_artcb_3_agent`, profil CLI `artcb-node-3`, région **`eu-west-3`** (Paris).
+- Doppler : projet **`artcb3`** (token Cursor `KEY_API_ARTCB_DOPPLER_3`). Jamais Stripe/Bob ici.
+- Mot de passe console : `~/.artcb/nodes/aws-node-3.env` (0600) seulement — pas git, pas Doppler, pas le chat.
+- Probe 2026-08-31 : l’IAM n’a que `IAMUserChangePassword`. `iam:ListAccessKeys` et `ec2:Describe*` = AccessDenied. Ne pas appeler `RunInstances` tant qu’un admin n’a pas élargi les politiques (ou injecté `AWS_ACCESS_KEY_ID`).
+- Scripts : `scripts/provision_aws_ec2.py` (diagnostic, `--yes` pour lancer) ; `scripts/deploy_aws.sh IP BRANCH`.
+- Ne pas toucher au nœud OVH 1 (`152.228.144.34`) sans ordre de déploiement explicite.
+- Préférer AWS CLI + IaC (tags `Name=node-artcb-3`, `artcb-node-id=aws-node-3`). Pas d’em dash dans les noms de ressources.

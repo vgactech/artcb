@@ -1,0 +1,26 @@
+{
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "b0284181b18630ec0975c307d1f5224294f137093736b31a1a80786ecb65b527",
+    "package_count": 45,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-provisional+D-027+D-029+D-030",
+  "finished_at": "2026-08-31T15:49:31Z",
+  "git_branch": "cursor/aws-node-3-doppler-e769",
+  "git_commit_sha": "a71a6d3ab734295016f29b2599a7f8105f9a41bf",
+  "git_status_clean": false,
+  "invented_results": false,
+  "new_aws_machine": false,
+  "new_ovh_machine": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "171-aws-doppler-bind",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim171_aws_doppler.py",
+  "script_sha256": "b3803755fb079e51555aa99afc02c8b5ae526b0ee29272f6275615d808403985",
+  "seed": 171,
+  "simulation_id": "e2e171_aws_doppler_bind",
+  "started_at": "2026-08-31T15:49:20Z",
+  "working_tree_diff_hash": "fd3b98298d916c0deafb7ff8d405983ff3859cb72149d17048ff16ff291f339b"
+}

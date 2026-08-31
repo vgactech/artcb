@@ -1,0 +1,12 @@
+{
+  "aws_ec2_not_launched": true,
+  "doppler_artcb2_bound": true,
+  "doppler_artcb3_bound": true,
+  "live_equals_current_main": false,
+  "live_health": true,
+  "no_stripe_on_node_vaults": true,
+  "origin_main_known": true,
+  "ovh2_has_no_vm": true,
+  "tokenomics_untouched": true,
+  "v01_v07_still_open": true
+}
