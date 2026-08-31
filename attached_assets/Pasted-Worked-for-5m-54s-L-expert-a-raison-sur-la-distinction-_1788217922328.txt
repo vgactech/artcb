@@ -1,0 +1,206 @@
+Worked for 5m 54s
+L’expert a raison sur la distinction la plus importante : pqc.available=true prouve que liboqs est chargée, pas que toutes les signatures critiques sont hybrid AND. Je n’ai pas créé le wallet. OVH1 n’a pas été touché (mesuré : 5b4b24ae…, main, ML-DSA-65).
+Ce qui est démontré vs ce qui ne l’est pas
+Affirmation	Verdict
+Environnement Replit peut compiler du natif	Rapport Replit — pas re-prouvé sur l’URL Autoscale
+ML-DSA-65 détecté par /health FastAPI	Disponibilité seulement
+Plus de fallback Ed25519 seul	Faux jusqu’au 2026-12-31T00:00:00Z (D-032)
+Wallet auto-créé	Non — correct
+503 = bootstrap, pas un 500 masqué	Oui, maintenant explicite
+Git sync sûr	Non en 177 (Architecture B). Durci en 178 (PIN)
+Nœud blockchain validé production	Non
+Sonde Cursor après le rapport Replit : https://artcb--vgac42.replit.app servait encore le shim (phase=replit_shim, git_sha absent, /ready 200 menteur, /chain/verify 404). Donc le commit 3fd7aad « installé » et le health PQC annoncé n’étaient pas ce que l’URL publique servait à cet instant. V-R01 public = FAIL jusqu’à ce que FastAPI remplace le shim.
+V-R01…V-R04 (code + tests, pas le wallet)
+V-R01. release_identity() compare env / .artcb_release / git HEAD et le PIN opérateur. /health peut encore mentir si on forge ARTCB_GIT_SHA. Contre-mesure : secret ARTCB_REPLIT_PIN_SHA (pas le tip flottant GitHub).
+V-R02. Sans liboqs le process démarre encore (D-032). /ready passe en 503. On n’a pas choisi « crash total » : ça casserait l’UI bootstrap et la fenêtre Ed25519. Le health avoue maintenant :
+availability_is_not_enforcement: true
+high_value_hybrid_enforced: false
+ed25519_only_still_accepted: true
+HIGH_VALUE_MESSAGES est documenté, pas branché sur sign/verify.
+V-R03. verify_hybrid() : jambe ML-DSA invalide → rejet (AND réel). Signature ed25519: seule → acceptée (legacy D-032). Donc AND est obligatoire seulement si le payload est déjà hybride.
+V-R04. Aucun seed à create_app() sans init. seed_hex n’est pas dans les logs. Le 503 dit désormais :
+{
+  "status": "bootstrap_required",
+  "wallet_initialized": false,
+  "chain_available": false,
+  "mining_available": false,
+  "reason": "wallet_initialization_required"
+}
+Git : plus de reset --hard origin/$BRANCH. Fetch oui, checkout seulement du SHA épinglé. Le shim /ready est 503 (Autoscale continue de ping / = 200).
+Décision D-039. Tests 177+178 : 15 passed. Commit 4cb2943d4190def4efabf16b12369d91ebad7e8f. PR https://github.com/vgactech/artcb/pull/41
+Prochaine phase — dans cet ordre
+V-R01 public : FastAPI (plus le shim), git_sha = PIN, release_integrity=ok
+Relire les 3 champs enforcement (ne pas conclure « PQC obligatoire »)
+Confirmer le 503 structuré
+Ensuite seulement GO V-R05 (init-wallet explicite)
+Puis V-R06 P2P et V-R07 (algorithmes dans les signatures, pas seulement /health)
+Prompt Replit (pas d’init-node) : docs/PROMPT_REPLIT_AGENT_178.md
+Secret à poser : ARTCB_REPLIT_PIN_SHA=4cb2943d4190def4efabf16b12369d91ebad7e8f
+Pas de certification mainnet. Pas de DV-04 PASS.
+
+
+Verifier ce que replit a fait, je sais que le deployment et en cour , je ne cest pas s’il est déjà finis
+
+Worked for 3m 17s
+Le déploiement n’est pas fini. L’URL publique est encore le shim de démarrage, pas FastAPI.
+Sondes du 31 août 2026, 23:01 → 23:04 UTC sur https://artcb--vgac42.replit.app (trois passages, inchangé) :
+Route	HTTP	Ce que ça veut dire
+/ et /live	200	Processus vivant. Corps : phase=replit_shim — « FastAPI pas encore lié »
+/ready	503	reason=fastapi_not_bound (comportement 178, pas l’ancien shim qui mentait 200)
+/health et /api/v1/health	200	status=starting, git_sha=null, message : ne pas traiter ça comme une preuve PQC
+/api/v1/chain/verify, chain, wallet, pol, /setup/status, P2P	404	Uvicorn n’a pas pris le port 5000
+Donc Autoscale a bien démarré le script 178 (le /ready 503 + le texte honnête du health n’existaient pas avant). Il est encore dans la fenêtre venv / pip / git / compile. Le healthcheck / à 200 peut faire croire à Replit que c’est « up » alors que la chaîne n’est pas là.
+Ce que Replit a vraiment fait sur GitHub
+Un seul commit de l’agent Replit, avant l’audit 178 :
+847c264 (22:29 UTC) — auteur Replit Agent
+Seulement .agents/memory/liboqs-replit-runtime.md + une ligne dans MEMORY.md
+Contenu : le liboqs Nix peut être ABI-incompatible avec liboqs-python ; il faut charger le natif user-space (OQS_INSTALL_PATH / LD_LIBRARY_PATH) avant uvicorn
+Pas de rapports/REPLIT_178_RETOUR.md. Pas d’init-wallet visible. HEAD de la branche reste 4cb2943 (Cursor, 178).
+Lecture
+Question	Réponse mesurée
+Le déploiement Autoscale est-il terminé ?	Non
+Le nouveau script tourne-t-il ?	Oui (shim 178)
+FastAPI / SHA / PQC / bootstrap JSON ?	Pas encore
+Wallet créé ?	Non visible
+OVH1 ?	Inchangé (5b4b24ae, main)
+Si dans quelques minutes /live dit encore replit_shim, uvicorn n’arrive pas à remplacer le shim (pip bloqué, clone PIN, ou port 5000 jamais libéré). À ce moment-là il faudra les lignes logs/startup_*.log step=git_sync → step=uvicorn (sans secrets).
+Je n’ai rien poussé et je n’ai pas créé de wallet. On peut re-sonder dès que Replit affiche « Published » / « Ready ».
+
+
+2026-08-31T23:00:52.171Z [2026-08-31T23:00:52Z] [startup_id=20260831T230052Z_21] [step=public_url_detect] public_url detected from REPLIT_DOMAINS: https://artcb--vgac42.replit.app
+2026-08-31T23:00:52.175Z [2026-08-31T23:00:52Z] [startup_id=20260831T230052Z_21] [step=public_url_detect] STEP end public_url=https://artcb--vgac42.replit.app
+2026-08-31T23:00:52.179Z [2026-08-31T23:00:52Z] [startup_id=20260831T230052Z_21] [step=port_detect] STEP begin
+2026-08-31T23:00:52.192Z [2026-08-31T23:00:52Z] [startup_id=20260831T230052Z_21] [step=git_sync] STEP begin
+2026-08-31T23:00:52.192Z [2026-08-31T23:00:52Z] [startup_id=20260831T230052Z_21] [step=port_detect] STEP end port=5000
+2026-08-31T23:00:52.192Z [2026-08-31T23:00:52Z] [startup_id=20260831T230052Z_21] [step=port_detect] shim already running pid=31
+2026-08-31T23:00:52.335Z [2026-08-31T23:00:52Z] [startup_id=20260831T230052Z_21] [step=git_sync] no .git — cloning pin 4cb2943d4190def4efabf16b12369d91ebad7e8f from https://github.com/vgactech/artcb.git
+2026-08-31T23:00:52.340Z Cloning into '/tmp/artcb-src-21'...
+2026-08-31T23:00:52.399Z healthcheck failed error=healthcheck / returned status 500
+2026-08-31T23:00:52.995Z healthcheck failed error=healthcheck / returned status 500
+2026-08-31T23:00:55.968Z From https://github.com/vgactech/artcb
+2026-08-31T23:00:55.968Z  * branch            4cb2943d4190def4efabf16b12369d91ebad7e8f -> FETCH_HEAD
+2026-08-31T23:01:11.151Z [2026-08-31T23:01:11Z] [startup_id=20260831T230052Z_21] [step=git_sync] clone_pin_ok sha=4cb2943d4190def4efabf16b12369d91ebad7e8f
+2026-08-31T23:01:11.195Z [2026-08-31T23:01:11Z] [startup_id=20260831T230052Z_21] [step=git_sync] release_written sha=4cb2943d4190def4efabf16b12369d91ebad7e8f branch=cursor/replit-sync-ready-16d8
+2026-08-31T23:01:11.199Z [2026-08-31T23:01:11Z] [startup_id=20260831T230052Z_21] [step=git_sync] STEP end sha=4cb2943d4190def4efabf16b12369d91ebad7e8f branch=cursor/replit-sync-ready-16d8 pin=4cb2943d4190def4efabf16b12369d91ebad7e8f
+2026-08-31T23:01:11.203Z [1/6] Création venv Python isolé (NixOS PEP 668)...
+2026-08-31T23:01:11.203Z [2026-08-31T23:01:11Z] [startup_id=20260831T230052Z_21] [step=python_venv] STEP begin
+2026-08-31T23:03:36.668Z [2026-08-31T23:03:36Z] [startup_id=20260831T230052Z_21] [step=python_venv] STEP end venv=/home/runner/venv
+2026-08-31T23:03:37.168Z [2026-08-31T23:03:37Z] [startup_id=20260831T230052Z_21] [step=python_dependencies] STEP begin
+2026-08-31T23:03:37.267Z [2/6] Installation des dépendances Python...
+2026-08-31T23:04:26.111Z Looking in indexes: http://package-firewall.replit.local/pypi/simple/
+2026-08-31T23:04:26.113Z Requirement already satisfied: python-dotenv>=1.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 8)) (1.2.3)
+2026-08-31T23:04:26.113Z Requirement already satisfied: pydantic>=2.7.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 7)) (2.13.5)
+2026-08-31T23:04:26.114Z Requirement already satisfied: fastapi>=0.111.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 9)) (0.141.1)
+2026-08-31T23:04:26.115Z Requirement already satisfied: httpx>=0.27.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 11)) (0.28.1)
+2026-08-31T23:04:26.115Z Requirement already satisfied: uvicorn>=0.30.0 in ./.pythonlibs/lib/python3.11/site-packages (from uvicorn[standard]>=0.30.0->-r requirements.txt (line 10)) (0.52.4)
+2026-08-31T23:04:26.116Z Requirement already satisfied: httpx2>=2.5.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 12)) (2.12.0)
+2026-08-31T23:04:26.116Z Requirement already satisfied: aiofiles>=23.2.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 13)) (25.1.0)
+2026-08-31T23:04:26.117Z Requirement already satisfied: cryptography>=42.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 17)) (50.0.1)
+2026-08-31T23:04:26.117Z Requirement already satisfied: pynacl>=1.5.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 16)) (1.6.2)
+2026-08-31T23:04:26.118Z Requirement already satisfied: litellm>=1.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 35)) (1.98.0)
+2026-08-31T23:04:26.118Z Requirement already satisfied: liboqs-python>=0.14.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 28)) (0.16.0)
+2026-08-31T23:04:26.119Z Requirement already satisfied: pypdf>=4.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 38)) (6.16.2)
+2026-08-31T23:04:26.119Z Requirement already satisfied: python-docx>=1.1.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 39)) (1.2.0)
+2026-08-31T23:04:26.120Z Requirement already satisfied: openpyxl>=3.1.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 40)) (3.1.5)
+2026-08-31T23:04:26.121Z Requirement already satisfied: xlrd>=2.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 41)) (2.0.2)
+2026-08-31T23:04:26.121Z Requirement already satisfied: pyyaml>=6.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 42)) (6.0.3)
+2026-08-31T23:04:26.122Z Requirement already satisfied: beautifulsoup4>=4.12.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 43)) (4.15.0)
+2026-08-31T23:04:26.123Z Requirement already satisfied: Pillow>=10.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 46)) (12.3.0)
+2026-08-31T23:04:26.124Z Requirement already satisfied: pytesseract>=0.3.10 in ./.pythonlibs/lib/python3.11/site-packages (from -r requirements.txt (line 47)) (0.3.13)
+2026-08-31T23:04:26.211Z Requirement already satisfied: httpcore2==2.12.0 in ./.pythonlibs/lib/python3.11/site-packages (from httpx2>=2.5.0->-r requirements.txt (line 12)) (2.12.0)
+2026-08-31T23:04:26.212Z Requirement already satisfied: truststore>=0.10 in ./.pythonlibs/lib/python3.11/site-packages (from httpx2>=2.5.0->-r requirements.txt (line 12)) (0.10.4)
+2026-08-31T23:04:26.226Z Requirement already satisfied: cffi>=2.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from pynacl>=1.5.0->-r requirements.txt (line 16)) (2.1.1)
+2026-08-31T23:04:26.278Z Requirement already satisfied: fastuuid<1.0,>=0.14.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0->-r requirements.txt (line 35)) (0.14.0)
+2026-08-31T23:04:26.968Z Requirement already satisfied: python-slugify in ./.pythonlibs/lib/python3.11/site-packages (from kaggle>=2.2.0->-r requirements.txt (line 58)) (8.0.4)
+2026-08-31T23:04:27.168Z Requirement already satisfied: requests in ./.pythonlibs/lib/python3.11/site-packages (from kaggle>=2.2.0->-r requirements.txt (line 58)) (2.34.2)
+2026-08-31T23:04:27.268Z Requirement already satisfied: tqdm in ./.pythonlibs/lib/python3.11/site-packages (from kaggle>=2.2.0->-r requirements.txt (line 58)) (4.70.0)
+2026-08-31T23:04:27.468Z Requirement already satisfied: urllib3>=1.15.1 in ./.pythonlibs/lib/python3.11/site-packages (from kaggle>=2.2.0->-r requirements.txt (line 58)) (2.7.0)
+2026-08-31T23:04:29.370Z Requirement already satisfied: pluggy<2,>=1.5 in ./.pythonlibs/lib/python3.11/site-packages (from pytest>=8.2.0->-r requirements.txt (line 65)) (1.6.0)
+2026-08-31T23:04:29.370Z Requirement already satisfied: iniconfig>=1.0.1 in ./.pythonlibs/lib/python3.11/site-packages (from pytest>=8.2.0->-r requirements.txt (line 65)) (2.3.0)
+2026-08-31T23:04:29.371Z Requirement already satisfied: pygments>=2.7.2 in ./.pythonlibs/lib/python3.11/site-packages (from pytest>=8.2.0->-r requirements.txt (line 65)) (2.21.0)
+2026-08-31T23:04:30.469Z Requirement already satisfied: coverage>=7.10.6 in ./.pythonlibs/lib/python3.11/site-packages (from coverage[toml]>=7.10.6->pytest-cov>=5.0.0->-r requirements.txt (line 66)) (7.16.0)
+2026-08-31T23:04:32.468Z Requirement already satisfied: httptools>=0.8.0 in ./.pythonlibs/lib/python3.11/site-packages (from uvicorn[standard]>=0.30.0->-r requirements.txt (line 10)) (0.8.0)
+2026-08-31T23:04:32.769Z Requirement already satisfied: uvloop>=0.15.1 in ./.pythonlibs/lib/python3.11/site-packages (from uvicorn[standard]>=0.30.0->-r requirements.txt (line 10)) (0.22.1)
+2026-08-31T23:04:33.267Z Requirement already satisfied: websockets>=13.0 in ./.pythonlibs/lib/python3.11/site-packages (from uvicorn[standard]>=0.30.0->-r requirements.txt (line 10)) (17.1)
+2026-08-31T23:04:33.267Z Requirement already satisfied: watchfiles>=0.20 in ./.pythonlibs/lib/python3.11/site-packages (from uvicorn[standard]>=0.30.0->-r requirements.txt (line 10)) (1.2.0)
+2026-08-31T23:04:34.250Z Requirement already satisfied: aiohappyeyeballs>=2.5.0 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0->-r requirements.txt (line 35)) (2.7.1)
+2026-08-31T23:04:34.251Z Requirement already satisfied: aiosignal>=1.4.0 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0->-r requirements.txt (line 35)) (1.4.0)
+2026-08-31T23:04:34.252Z Requirement already satisfied: attrs>=17.3.0 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0->-r requirements.txt (line 35)) (26.1.0)
+2026-08-31T23:04:34.252Z Requirement already satisfied: frozenlist>=1.1.1 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0->-r requirements.txt (line 35)) (1.8.0)
+2026-08-31T23:04:34.253Z Requirement already satisfied: multidict<7.0,>=4.5 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0->-r requirements.txt (line 35)) (6.7.1)
+2026-08-31T23:04:34.254Z Requirement already satisfied: propcache>=0.2.0 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0->-r requirements.txt (line 35)) (0.5.2)
+2026-08-31T23:04:34.255Z Requirement already satisfied: yarl<2.0,>=1.17.0 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0->-r requirements.txt (line 35)) (1.24.5)
+2026-08-31T23:04:34.277Z Requirement already satisfied: botocore<1.44.0,>=1.43.84 in ./.pythonlibs/lib/python3.11/site-packages (from boto3<2.0,>=1.43.1->litellm>=1.0.0->-r requirements.txt (line 35)) (1.43.84)
+2026-08-31T23:04:34.277Z Requirement already satisfied: jmespath<2.0.0,>=0.7.1 in ./.pythonlibs/lib/python3.11/site-packages (from boto3<2.0,>=1.43.1->litellm>=1.0.0->-r requirements.txt (line 35)) (1.1.0)
+2026-08-31T23:04:34.278Z Requirement already satisfied: s3transfer<0.20.0,>=0.19.0 in ./.pythonlibs/lib/python3.11/site-packages (from boto3<2.0,>=1.43.1->litellm>=1.0.0->-r requirements.txt (line 35)) (0.19.2)
+2026-08-31T23:04:34.282Z Requirement already satisfied: pycparser in ./.pythonlibs/lib/python3.11/site-packages (from cffi>=2.0.0->pynacl>=1.5.0->-r requirements.txt (line 16)) (3.0)
+2026-08-31T23:04:34.320Z Requirement already satisfied: zipp>=3.20 in ./.pythonlibs/lib/python3.11/site-packages (from importlib-metadata<9.0,>=8.0.0->litellm>=1.0.0->-r requirements.txt (line 35)) (4.1.0)
+2026-08-31T23:04:34.330Z Requirement already satisfied: MarkupSafe>=2.0 in ./.pythonlibs/lib/python3.11/site-packages (from jinja2<4.0,>=3.1.6->litellm>=1.0.0->-r requirements.txt (line 35)) (3.0.3)
+2026-08-31T23:04:34.338Z Requirement already satisfied: referencing>=0.28.4 in ./.pythonlibs/lib/python3.11/site-packages (from jsonschema<5.0,>=4.0.0->litellm>=1.0.0->-r requirements.txt (line 35)) (0.37.0)
+2026-08-31T23:04:34.339Z Requirement already satisfied: rpds-py>=0.25.0 in ./.pythonlibs/lib/python3.11/site-packages (from jsonschema<5.0,>=4.0.0->litellm>=1.0.0->-r requirements.txt (line 35)) (2026.6.3)
+2026-08-31T23:04:34.363Z Requirement already satisfied: distro<2,>=1.7.0 in ./.pythonlibs/lib/python3.11/site-packages (from openai<3.0.0,>=2.20.0->litellm>=1.0.0->-r requirements.txt (line 35)) (1.9.0)
+2026-08-31T23:04:43.768Z Requirement already satisfied: filelock>=3.10.0 in ./.pythonlibs/lib/python3.11/site-packages (from huggingface-hub<2.0,>=0.16.4->tokenizers<1.0,>=0.21.0->litellm>=1.0.0->-r requirements.txt (line 35)) (3.32.5)
+2026-08-31T23:04:43.868Z Requirement already satisfied: fsspec>=2023.5.0 in ./.pythonlibs/lib/python3.11/site-packages (from huggingface-hub<2.0,>=0.16.4->tokenizers<1.0,>=0.21.0->litellm>=1.0.0->-r requirements.txt (line 35)) (2026.7.0)
+2026-08-31T23:04:44.168Z Requirement already satisfied: hf-xet<2.0.0,>=1.5.2 in ./.pythonlibs/lib/python3.11/site-packages (from huggingface-hub<2.0,>=0.16.4->tokenizers<1.0,>=0.21.0->litellm>=1.0.0->-r requirements.txt (line 35)) (1.6.0)
+2026-08-31T23:04:46.869Z Requirement already satisfied: mdurl~=0.1 in ./.pythonlibs/lib/python3.11/site-packages (from markdown-it-py>=1.0->jupytext->kaggle>=2.2.0->-r requirements.txt (line 58)) (0.1.2)
+2026-08-31T23:04:53.972Z Requirement already satisfied: fastjsonschema>=2.15 in ./.pythonlibs/lib/python3.11/site-packages (from nbformat->jupytext->kaggle>=2.2.0->-r requirements.txt (line 58)) (2.22.2)
+2026-08-31T23:04:54.368Z Requirement already satisfied: jupyter-core!=5.0.*,>=4.12 in ./.pythonlibs/lib/python3.11/site-packages (from nbformat->jupytext->kaggle>=2.2.0->-r requirements.txt (line 58)) (5.9.1)
+2026-08-31T23:04:54.568Z Requirement already satisfied: traitlets>=5.1 in ./.pythonlibs/lib/python3.11/site-packages (from nbformat->jupytext->kaggle>=2.2.0->-r requirements.txt (line 58)) (5.16.1)
+2026-08-31T23:05:01.771Z Requirement already satisfied: platformdirs>=2.5 in ./.pythonlibs/lib/python3.11/site-packages (from jupyter-core!=5.0.*,>=4.12->nbformat->jupytext->kaggle>=2.2.0->-r requirements.txt (line 58)) (4.11.5)
+2026-08-31T23:05:20.595Z Looking in indexes: http://package-firewall.replit.local/pypi/simple/
+2026-08-31T23:05:20.596Z Requirement already satisfied: litellm>=1.0.0 in ./.pythonlibs/lib/python3.11/site-packages (1.98.0)
+2026-08-31T23:05:20.620Z Requirement already satisfied: fastuuid<1.0,>=0.14.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (0.14.0)
+2026-08-31T23:05:20.621Z Requirement already satisfied: openai<3.0.0,>=2.20.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (2.54.0)
+2026-08-31T23:05:20.621Z Requirement already satisfied: httpx<1.0,>=0.28.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (0.28.1)
+2026-08-31T23:05:20.622Z Requirement already satisfied: python-dotenv<2.0,>=1.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (1.2.3)
+2026-08-31T23:05:20.623Z Requirement already satisfied: tiktoken<1.0,>=0.8.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (0.14.0)
+2026-08-31T23:05:20.623Z Requirement already satisfied: importlib-metadata<9.0,>=8.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (8.9.0)
+2026-08-31T23:05:20.624Z Requirement already satisfied: tokenizers<1.0,>=0.21.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (0.23.1)
+2026-08-31T23:05:20.625Z Requirement already satisfied: jinja2<4.0,>=3.1.6 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (3.1.6)
+2026-08-31T23:05:20.625Z Requirement already satisfied: click<9.0,>=8.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (8.5.0)
+2026-08-31T23:05:20.626Z Requirement already satisfied: aiohttp<4.0,>=3.14.2 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (3.14.3)
+2026-08-31T23:05:20.626Z Requirement already satisfied: pydantic<3.0.0,>=2.10.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (2.13.5)
+2026-08-31T23:05:20.627Z Requirement already satisfied: pydantic-settings<3.0,>=2.14.1 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (2.15.0)
+2026-08-31T23:05:20.628Z Requirement already satisfied: boto3<2.0,>=1.43.1 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (1.43.84)
+2026-08-31T23:05:20.628Z Requirement already satisfied: jsonschema<5.0,>=4.0.0 in ./.pythonlibs/lib/python3.11/site-packages (from litellm>=1.0.0) (4.26.0)
+2026-08-31T23:05:21.167Z Requirement already satisfied: aiohappyeyeballs>=2.5.0 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0) (2.7.1)
+2026-08-31T23:05:21.368Z Requirement already satisfied: attrs>=17.3.0 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0) (26.1.0)
+2026-08-31T23:05:21.568Z Requirement already satisfied: frozenlist>=1.1.1 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0) (1.8.0)
+2026-08-31T23:05:21.768Z Requirement already satisfied: multidict<7.0,>=4.5 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0) (6.7.1)
+2026-08-31T23:05:21.768Z Requirement already satisfied: multidict<7.0,>=4.5 in ./.pythonlibs/lib/python3.11/site-packages (from aiohttp<4.0,>=3.14.2->litellm>=1.0.0) (6.7.1)
+
+
+Worked for 3m 7s
+Le déploiement n’est pas fini, et depuis ~23:06 il n’est plus dans l’état « shim vivant » : l’URL répond 500 partout.
+Ce que ton log prouve (23:00:52 → 23:05:21)
+V-R01 côté Git : réussi. Architecture A a fait exactement ce qu’il fallait.
+no .git — cloning pin 4cb2943d4190def4efabf16b12369d91ebad7e8f
+clone_pin_ok sha=4cb2943d4190def4efabf16b12369d91ebad7e8f
+release_written sha=4cb2943… branch=cursor/replit-sync-ready-16d8
+pin=4cb2943d4190def4efabf16b12369d91ebad7e8f
+Le carton GitHub est le commit 178. startup_id=20260831T230052Z_21. URL https://artcb--vgac42.replit.app. Port 5000. Shim pid=31 déjà là.
+Chronologie du run :
+Heure UTC	Étape	Sens
+23:00:52	url + port + git_sync	Démarrage
+23:00:52	healthcheck / 500 (2 fois)	Autoscale a sonné avant que le shim réponde — course classique, pas un crash PQC
+23:00:52 → 23:01:11	clone du PIN (~19 s)	OK
+23:01:11 → 23:03:36	création venv (~2 min 25)	Froid, normal
+23:03:37 → 23:05:21+	pip install	Toujours en cours dans le texte que tu as collé
+(pas dans le collage)	oqs_patch, Doppler, compile, kill shim, uvicorn	Pas encore visibles
+À la fin du collage, uvicorn n’a pas démarré. Les Requirement already satisfied sont du pip, pas « l’API est prête ».
+Ce que je mesure maintenant (23:06:19 → 23:08:05)
+Moment	/live	Reste
+23:06:09	200 shim	/ready 503 shim ; APIs 500
+23:06:19 → 23:08:05	500 texte Internal Server Error	toutes les routes 500
+Ça veut dire : le shim a quitté le port 5000 (ou le process a sauté), et personne d’écouteable ne le remplace. Ce n’est plus « pip lent avec shim 200 ». C’est la fenêtre kill shim → uvicorn, ou uvicorn qui plante à l’import.
+Point à surveiller dans la suite du log
+Les paquets sont déclarés satisfaits dans .pythonlibs, alors que le script crée $HOME/venv. Si uvicorn est lancé avec ~/venv/bin/python3 et que ce venv est vide, tu auras ModuleNotFoundError juste après step=uvicorn — et l’URL restera 500.
+Cherche ensuite :
+[step=python_dependencies] STEP end
+[step=uvicorn]
+stopping live_shim
+FOREGROUND launching uvicorn
+FOREGROUND end name=uvicorn status=…
+status=0 + /live sans phase=replit_shim + git_sha=4cb2943… → FastAPI est là.
+status≠0 ou traceback No module named fastapi → venv vs .pythonlibs. Envoie ces lignes (pas de secrets).
+OVH1 inchangé (5b4b24ae). Pas de wallet. Le PIN Git est bon ; l’app n’est pas encore servie. Colle la suite après STEP end de python_dependencies dès que tu l’as.
