@@ -127,7 +127,7 @@ Ces questions **ne remplacent pas** le tableau MVP ci-dessus. Elles bloquent tou
 |----|----------|------|
 | Q-E01 | Abroger D-016 (halving 210 000 blocs) comme le demandent 158–159 ? | ✅ D-024 — retiré du chemin live (rapport 161) |
 | Q-E02 | M1 reste 100 % après M2+, ou P(N_A) s’applique aussi à M1 (159 §27) ? | ⏳ Contradiction interne 159 |
-| Q-E03 | H_adult,max = extraction ONU WPP 18+ datée ; gel genesis ou MAJ ? | ⏳ 5,82 Md = estimation seulement |
+| Q-E03 | H_adult,max = extraction ONU WPP 18+ datée ; gel genesis ou MAJ ? | ✅ D-045 — WPP 2024 World 18+ haché `5_763_415_792` (pas de cellule 18+ ONU ; 7/10 de 15–24). Communauté = nouvel extrait, pas d’auto-refresh. |
 | Q-E04 | HBP à H=0 (5 ARTCB) : burn / trésor / bloc interdit ? | ⏳ |
 | Q-E05 | HBP : équiparti (code) vs pondéré Finder W_i (134–156) ? | ⏳ |
 | Q-E06 | Part Job Provider / Worker dans le pool travail ? | ⏳ (30/70 = test, pas règle) |
@@ -147,7 +147,7 @@ Détail et catalogue complet : `rapports/160_audit_croise_simulations_124_a_159_
 | ID | État au 2026-08-28 | Note |
 |----|--------------------|------|
 | Q-E02 | ✅ D-025 | M1 **toujours 100 %** ; P(N_economic) pour M2+ seulement |
-| Q-E03 | ⏳ | Modèle B codé (`demographic.py`) ; WPP 18+ daté **toujours manquant** |
+| Q-E03 | ✅ D-045 | WPP 2024 World 18+ `5_763_415_792` hashed ; modèle B conservé (nouvel extrait = nouveau hash) |
 | Q-E04 | ⏳ partiel | H=0 → HBP 10 % vers humains **présents** ; cas liste vide encore ouvert |
 | Q-E05 | ✅ D-025 | Pondéré si `hbp_scores` ; équiparti = fallback |
 | Q-E06 | ✅ D-025 départ | 50/50 start ; 20–80 % = paramètre non figé |
@@ -167,7 +167,7 @@ Nouvelles questions : Q-k (P(4) exact 48 % ?), Q-retire (délai), Q-fee-oracle, 
 | Q-E10 | ⏳ **partiel ~70 %** | `ProtocolEngine` + mining `build_contributors` + API `/mining/protocol` + identity/WorkID routes. Sans machines enregistrées le minage reste le split PoL héritage. |
 | Q-C-ABI | ✅ **partiel ~95 %** | `artcb_build_canonical_v2` natif ; v1 inchangé ; `hash_version=2` dans le JSON. Fallback mix merkle si `.so` pré-v2. |
 | Q-fee-oracle | ⏳ **probe live, prix ARTCB 0 % listé** | CoinGecko ping/BTC/USDT = liveness. ARTCB unlisted → `live=False`, on n’invente pas un prix. `ARTCB_USD_PRICE` = override opérateur. |
-| Q-E03 | ⏳ | Toujours pas d’extrait ONU WPP 18+ daté. `H_REF=1e6` inchangé. |
+| Q-E03 | ✅ D-045 | Extrait ONU WPP 2024 World 18+ daté et haché. `H_REF=1e6` inchangé (seuil émission, pas Hmax). |
 | Q-HBP-ancres | ⏳ | 4,15e9 / 8,3e9 **provisoires** |
 
 Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economics de cette branche), Q-stripe-gha (secret `KEY_API_STRIPE_ACTION` injecté en GHA — run 33206660774 success / 6 passed ; bash `mode=unknown` avant trim CR/LF ; absent de ce runtime cloud).
@@ -195,7 +195,7 @@ Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economi
 | V-03 | Grace reconnect | 24 h (1 s en sim) | ✅ D-043 |
 | V-04 | Effet d’un retrait | Prochain snapshot | ✅ D-043 |
 | V-05 | Finalité | N=2 confirmations (BFT Q=3 = DV-05) | ✅ D-043 |
-| V-06 | H_adult_max | DemographicReference versionnée, pas gel WPP | ✅ D-043 — Q-E03 dataset daté encore ouvert |
+| V-06 | H_adult_max | DemographicReference versionnée + extrait WPP 2024 18+ D-045 | ✅ D-043 modèle B ; Q-E03 ✅ D-045 |
 | V-07 | HBP | 10→60→20 sur ancres absolues 0 / 4.15e9 / 8.30e9 (`hbp.py`) | ✅ D-043 — pas de réécriture ratio inventée |
 
 ## [2026-08-29T19:52:00Z] Nœud live agent (168)
@@ -219,10 +219,11 @@ GO opérateur : valider soi-même, geler V-01…V-07, ouvrir le vrai livre `artc
 | V-03 | Grâce 24 h live / 1 s sim | `DEFAULT_GRACE_SECONDS` déjà 86400 |
 | V-04 | Retrait = prochain snapshot | Même file que V-02 |
 | V-05 | Finalité économique N=2 | Distinct du BFT settlement DV-05 Q=3 |
-| V-06 | `DemographicReference` modèle B | D-025 ; Q-E03 extrait ONU WPP daté **reste ouvert** |
+| V-06 | `DemographicReference` modèle B + extrait ONU WPP 2024 18+ | D-025 / D-045 ; Q-E03 **fermé** |
 | V-07 | HBP 10→60→20 ancres 0 / 4.15e9 / 8.30e9 | `hbp.py` live ; pas de réécriture ratio non simulée |
 
 Autres locks : D-032 fenêtre Ed25519 jusqu’au 2026-12-31 **inchangée** ; faucet **off** (D-017 tARTCB = testnet) ; `certified_distributed_mainnet` **false** tant que DV-02 C flood/chaos n’est pas joué ; `init_genesis.py` **interdit** live (efface `chain.key`).
 
-Reste pour une **certification** mainnet (≠ identité mainnet en ligne) : DV-02 C flood/partition sur testnet autorisé ; DV-06 packet-loss si on veut le C ; TPM « when available » ; Q-E03 dataset WPP. Replit reste en pause.
+Reste pour une **certification** mainnet (≠ identité mainnet en ligne) : AND de tous les DV PASS après chaos live D-045. TPM « when available » (puce absente sur les 4 VM, binding instance à la place). Replit reste bootstrap sans wallet.
+
 

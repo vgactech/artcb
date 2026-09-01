@@ -55,7 +55,7 @@ def test_https_peer_base_url_not_http_on_443() -> None:
 def test_replit_node_registered_ovh1_untouched() -> None:
     assert NODES["ovh-node-1"].ssh_host == "152.228.144.34"
     r = NODES["replit-node-1"]
-    assert r.health_http == "https://artcb--vgacofficiel.replit.app"
+    assert r.health_http == "https://artcb--vgac42371.replit.app"
     assert "bootstrap" in r.public_notes.lower()
     main = (ROOT / "src" / "api" / "main.py").read_text(encoding="utf-8")
     assert '@app.get("/live")' in main

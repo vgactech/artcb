@@ -116,15 +116,16 @@ NODES: dict[str, NodeSpec] = {
         provider="replit",
         doppler_project="artcb-blockchain",
         doppler_token_env="DOPPLER_TOKEN",
-        health_http="https://artcb--vgacofficiel.replit.app",
-        api_https="https://artcb--vgacofficiel.replit.app",
+        health_http="https://artcb--vgac42371.replit.app",
+        api_https="https://artcb--vgac42371.replit.app",
         ssh_host=None,
         ssh_user="runner",
         public_notes=(
-            "Replit Autoscale https://artcb--vgacofficiel.replit.app (port 5000→80). "
-            "Public facade. Stays bootstrap without wallet / init-node (D-044). "
-            "Does not join artcb-mainnet-1 P2P until it serves 189-mainnet-1. "
-            "Old domain artcb--vgac42.replit.app is retired."
+            "Replit Autoscale https://artcb--vgac42371.replit.app (port 5000→80). "
+            "Public facade. Stays bootstrap without wallet / init-node (D-044/D-045). "
+            "Discovers the four infra nodes via consumed BOOTSTRAP_NODES + "
+            "GET /api/v1/network/nodes (no wallet). Old domains "
+            "artcb--vgacofficiel.replit.app and artcb--vgac42.replit.app are aliases."
         ),
     ),
 }

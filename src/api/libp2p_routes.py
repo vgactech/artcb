@@ -79,20 +79,29 @@ class AnnounceBlockRequest(BaseModel):
 
 @router.get("/status")
 async def libp2p_status(request: Request) -> dict:
-    """Statut complet du nœud libp2p Phase 13."""
-    node = await _get_or_create_node(request)
-    return node.status()
+    """Statut libp2p — n'auto-démarre pas (un visiteur ne doit pas allumer le DHT)."""
+    global _libp2p_node
+    if _libp2p_node is None or not getattr(_libp2p_node, "_running", False):
+        return {
+            "running": False,
+            "autostart": False,
+            "message": "libp2p idle; POST /bootstrap requires operator Bearer",
+        }
+    return {"running": True, **_libp2p_node.status()}
 
 
 @router.get("/peers")
 async def libp2p_peers(request: Request) -> dict:
-    """Tous les pairs connus dans la table Kademlia DHT."""
-    node = await _get_or_create_node(request)
-    peers = node.dht.all_peers()
+    """Pairs Kademlia — lecture seule, pas d'autostart."""
+    global _libp2p_node
+    if _libp2p_node is None or not getattr(_libp2p_node, "_running", False):
+        return {"running": False, "peers": [], "count": 0, "connected": []}
+    peers = _libp2p_node.dht.all_peers()
     return {
+        "running": True,
         "peers": [p.to_dict() for p in peers],
         "count": len(peers),
-        "connected": list(node._connections.keys()),
+        "connected": list(_libp2p_node._connections.keys()),
     }
 
 
@@ -169,12 +178,15 @@ async def libp2p_announce_block(
 
 @router.get("/dht")
 async def libp2p_dht(request: Request) -> dict:
-    """Table Kademlia DHT complète (utile pour debug/dashboard)."""
-    node = await _get_or_create_node(request)
+    """Table Kademlia — lecture seule, pas d'autostart."""
+    global _libp2p_node
+    if _libp2p_node is None or not getattr(_libp2p_node, "_running", False):
+        return {"running": False, "dht": {}, "message": "libp2p idle"}
     return {
-        "own_node_id": node.node_id,
-        "dht": node.dht.to_dict(),
-        "network_id": node.network_id,
+        "running": True,
+        "own_node_id": _libp2p_node.node_id,
+        "dht": _libp2p_node.dht.to_dict(),
+        "network_id": _libp2p_node.network_id,
         "protocol": "Kademlia-ARTCB/1.0",
     }
 

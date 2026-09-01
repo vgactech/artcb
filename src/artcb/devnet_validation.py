@@ -16,7 +16,7 @@ ECONOMIC_V: Final[dict[str, str]] = {
     "V-03": "reconnect grace = 24h live / 1s sim (locked D-043)",
     "V-04": "retirement effect = next snapshot (locked D-043)",
     "V-05": "economic finality N=2 confirmations; settlement BFT is DV-05 Q=3 (locked D-043)",
-    "V-06": "H_adult_max = versioned DemographicReference model B, not a WPP freeze (locked D-043; Q-E03 dataset date still open)",
+    "V-06": "H_adult_max = versioned DemographicReference model B; Q-E03 UN WPP 2024 18+ extract locked D-045 (no auto-refresh)",
     "V-07": "HBP 10→60→20 on existing absolute anchors 0 / 4.15e9 / 8.30e9 (locked D-043; ratio rewrite not invented)",
 }
 ECONOMIC_V_LOCKED: Final[bool] = True
@@ -161,6 +161,21 @@ DECISIONS_190: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-01: identify machines, freeze WPP, chaos on live book, consume seeds.
+DECISIONS_191: Final[dict[str, str]] = {
+    "D-045": (
+        "GO remaining live tests on the current mainnet book (genesis reset later). "
+        "DV-01: honest TPM probe + cloud-instance binding (do not fake a TPM chip). "
+        "Q-E03: freeze UN WPP 2024 World 18+ hashed extract; community updates later, "
+        "no auto-refresh. Consume BOOTSTRAP_NODES at startup so clones and Replit "
+        "detect all live nodes and can announce themselves without a wallet. "
+        "Visitors cannot stop/hijack P2P (mutations Bearer; libp2p GET does not autostart). "
+        "DV-06 packet-loss and DV-02 bounded flood run on the live height-1 book. "
+        "Replit stays bootstrap (no init-node). certified_distributed_mainnet stays "
+        "false unless every DV letter is PASS and the operator says so."
+    ),
+}
+
 
 def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]:
     """Mainnet certification is AND of every locked letter + economics.
@@ -209,5 +224,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_188": DECISIONS_188,
         "decisions_189": DECISIONS_189,
         "decisions_190": DECISIONS_190,
+        "decisions_191": DECISIONS_191,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

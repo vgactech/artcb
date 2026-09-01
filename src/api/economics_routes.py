@@ -280,18 +280,21 @@ def economics_h_adult(request: Request) -> dict:
     engine = _state(request).protocol_engine
     humans = _state(request).human_registry
     count = engine.h_adult() if engine else (humans.verified_adult_count() if humans else 0)
-    from src.artcb.economics.demographic import default_provisional_reference
+    from src.artcb.economics.demographic import HMAX_FROZEN, default_reference
     from src.artcb.economics.identity import ADULT_AGE_YEARS
 
-    ref = default_provisional_reference()
+    ref = default_reference()
     return {
         "h_adult": count,
         "source": "HumanRegistry.verified_adult_count",
         "adult_age_years": ADULT_AGE_YEARS,
-        "hmax_frozen": False,
+        "hmax_frozen": HMAX_FROZEN,
         "demographic_reference": ref.to_dict(),
         "demographic_digest": ref.digest(),
-        "note": "8.3e9 is NOT frozen Hmax; WPP 18+ dated extract still Q-E03",
+        "note": (
+            "Q-E03 locked D-045: UN WPP 2024 World 18+ extract hashed. "
+            "Community may publish a newer DemographicReference; this node does not auto-update."
+        ),
     }
 
 

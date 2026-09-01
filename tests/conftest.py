@@ -30,6 +30,8 @@ def _wallet_passphrase_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> N
     monkeypatch.setenv("ARTCB_DATA_DIR", str(tmp_path))
     monkeypatch.setenv("ARTCB_NODE_WALLET_ADDRESS", TEST_NODE_WALLET_ADDRESS)
     monkeypatch.setenv("ARTCB_ALLOW_LOCAL_PEERS", "1")
+    monkeypatch.setenv("ARTCB_SKIP_SEED_DISCOVERY", "1")
+    monkeypatch.setenv("ARTCB_SKIP_CLOUD_METADATA", "1")
 
 
 @pytest.fixture

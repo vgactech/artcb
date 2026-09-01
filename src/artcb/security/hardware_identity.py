@@ -25,6 +25,7 @@ import logging
 import os
 import platform
 import subprocess
+import urllib.request
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -123,6 +124,83 @@ def _read_machine_id() -> str | None:
 # ---------------------------------------------------------------------------
 # Détection environnement
 # ---------------------------------------------------------------------------
+
+def _read_sys_text(path: str) -> str | None:
+    try:
+        val = Path(path).read_text(encoding="utf-8", errors="replace").strip()
+        return val or None
+    except OSError:
+        return None
+
+
+def tpm_sysfs_facts() -> dict[str, Any]:
+    """Honest TPM presence. Never reports a chip that is not there."""
+    present = Path("/dev/tpm0").exists() or Path("/sys/class/tpm/tpm0").is_dir()
+    rm = Path("/dev/tpmrm0").exists()
+    version = _read_sys_text("/sys/class/tpm/tpm0/tpm_version_major")
+    return {
+        "tpm_device_present": present,
+        "tpm_resource_manager": rm,
+        "tpm_version_major": version,
+    }
+
+
+def _hash_id(value: str | None) -> str | None:
+    if not value:
+        return None
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def _read_imds_instance_id() -> str | None:
+    """Local cloud metadata only (this machine). Never from register-public."""
+    if os.getenv("ARTCB_SKIP_CLOUD_METADATA", "").lower() in {"1", "true", "yes", "on"}:
+        return None
+    try:
+        req = urllib.request.Request(
+            "http://169.254.169.254/latest/meta-data/instance-id",
+            method="GET",
+        )
+        with urllib.request.urlopen(req, timeout=0.4) as resp:
+            val = resp.read().decode("utf-8", errors="replace").strip()
+            return val or None
+    except Exception:
+        return None
+
+
+def cloud_instance_binding() -> dict[str, Any]:
+    """Bind the VM without faking a TPM. Hashes only — no raw UUIDs on the wire."""
+    instance_id = _read_sys_text("/var/lib/cloud/data/instance-id")
+    dmi_uuid = None
+    for path in (
+        "/sys/class/dmi/id/product_uuid",
+        "/sys/devices/virtual/dmi/id/product_uuid",
+    ):
+        dmi_uuid = _read_sys_text(path)
+        if dmi_uuid:
+            break
+    asset = _read_sys_text("/sys/class/dmi/id/board_asset_tag")
+    product = (_read_sys_text("/sys/class/dmi/id/product_name") or "").lower()
+    bios = (_read_sys_text("/sys/class/dmi/id/sys_vendor") or "").lower()
+    if not instance_id:
+        instance_id = _read_imds_instance_id()
+    provider = "unknown"
+    if "amazon" in bios or "ec2" in product or (instance_id or "").startswith("i-"):
+        provider = "aws"
+    elif "ovh" in bios or "openstack" in product or "ovh" in (asset or "").lower():
+        provider = "ovh"
+    elif os.getenv("REPL_ID") or os.getenv("REPLIT_DB_URL"):
+        provider = "replit"
+    binding_raw = "|".join(
+        part for part in (provider, instance_id or "", dmi_uuid or "", asset or "") if part
+    )
+    return {
+        "provider": provider,
+        "instance_id_hash": _hash_id(instance_id),
+        "dmi_product_uuid_hash": _hash_id(dmi_uuid),
+        "board_asset_tag_hash": _hash_id(asset),
+        "binding_hash": _hash_id(binding_raw) if binding_raw else None,
+    }
+
 
 def _detect_env_type() -> str:
     """Détecte l'environnement d'exécution."""
@@ -261,12 +339,14 @@ def collect_device_identity() -> DeviceIdentity:
     platform_system = platform.system()
     env_type = _detect_env_type()
 
-    # Entropie spécifique Replit
     extra_entropy = ""
     if env_type == "replit":
         extra_entropy = os.getenv("REPL_ID", "") + os.getenv("REPL_SLUG", "")
+    cloud = cloud_instance_binding()
+    if cloud.get("binding_hash"):
+        extra_entropy = (extra_entropy + "|" + str(cloud["binding_hash"])).strip("|")
 
-    # TPM (best-effort)
+    tpm_facts = tpm_sysfs_facts()
     tpm_ek_cert_hash, tpm_manufacturer = _read_tpm_ek_cert()
     tpm_available = tpm_ek_cert_hash is not None
 
@@ -279,7 +359,21 @@ def collect_device_identity() -> DeviceIdentity:
         extra_entropy=extra_entropy,
     )
 
-    extra: dict[str, Any] = {}
+    extra: dict[str, Any] = {
+        "tpm_device_present": tpm_facts["tpm_device_present"],
+        "tpm_resource_manager": tpm_facts["tpm_resource_manager"],
+        "tpm_version_major": tpm_facts["tpm_version_major"],
+        "tpm_attestation": (
+            "ek_cert"
+            if tpm_ek_cert_hash
+            else ("device_present_no_ek" if tpm_facts["tpm_device_present"] else "absent")
+        ),
+        "cloud_provider": cloud.get("provider"),
+        "instance_id_hash": cloud.get("instance_id_hash"),
+        "dmi_product_uuid_hash": cloud.get("dmi_product_uuid_hash"),
+        "binding_hash": cloud.get("binding_hash"),
+        "machine_id_hash": _hash_id(machine_id),
+    }
     if env_type == "replit":
         extra["repl_id"] = os.getenv("REPL_ID", "")
         extra["repl_slug"] = os.getenv("REPL_SLUG", "")
@@ -342,3 +436,34 @@ class DeviceIdentityStore:
 
     def get_fingerprint(self) -> str:
         return self.load_or_create().device_fingerprint
+
+
+def public_machine_view(identity: DeviceIdentity | None = None) -> dict[str, Any]:
+    """Public health block. Live TPM sysfs; stored fingerprint; no raw machine-id."""
+    facts = tpm_sysfs_facts()
+    extra = dict(identity.extra) if identity is not None else {}
+    tpm_present = bool(facts["tpm_device_present"])
+    ek = identity.tpm_ek_cert_hash if identity is not None else None
+    attestation = (
+        "ek_cert"
+        if ek
+        else ("device_present_no_ek" if tpm_present else "absent")
+    )
+    prefix = (identity.device_fingerprint[:16] if identity else "")
+    return {
+        "tpm_device_present": tpm_present,
+        "tpm_resource_manager": bool(facts["tpm_resource_manager"]),
+        "tpm_version_major": facts["tpm_version_major"],
+        "tpm_attestation": attestation,
+        "tpm_available": bool(identity.tpm_available) if identity else False,
+        "env_type": identity.env_type if identity else _detect_env_type(),
+        "platform_system": identity.platform_system if identity else platform.system(),
+        "cloud_provider": extra.get("cloud_provider") or cloud_instance_binding().get("provider"),
+        "binding_hash": extra.get("binding_hash"),
+        "machine_id_hash": extra.get("machine_id_hash"),
+        "device_fingerprint_prefix": prefix,
+        "note": (
+            "TPM is a physical chip. Cloud VMs here have none — that is reported "
+            "honestly. Binding is hashed machine-id + cloud instance, not a fake TPM."
+        ),
+    }
