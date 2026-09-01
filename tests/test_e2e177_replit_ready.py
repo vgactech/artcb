@@ -20,6 +20,9 @@ def test_replit_start_always_logs_git_sync_reason() -> None:
     assert "replit_live_shim.py" in body
     assert "install_native_liboqs_replit.sh" in body
     assert "cursor/replit-sync-ready-16d8" in body
+    assert "_python_serves" in body
+    assert "ff_from_pin" in body
+    assert "preflight import src.api.main" in body
 
 
 def test_release_identity_reads_artcb_release(tmp_path: Path, monkeypatch) -> None:

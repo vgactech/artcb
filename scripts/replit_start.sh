@@ -205,6 +205,21 @@ else
     _log "WARN Architecture A: ARTCB_REPLIT_PIN_SHA unset — refusing git reset --hard origin/$ARTCB_REPLIT_BRANCH"
   fi
 fi
+# Fast-forward the named branch if it is a descendant of the PIN.
+# Secret may stay 4cb2943 while 180+ lands on cursor/replit-sync-ready-16d8.
+# Never follows origin/main or an unrelated tip.
+if [ -n "$ARTCB_REPLIT_PIN_SHA" ]; then
+  git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
+  if git -C "$REPL_DIR" rev-parse --verify "origin/$ARTCB_REPLIT_BRANCH" >/dev/null 2>&1; then
+    _TIP="$(git -C "$REPL_DIR" rev-parse "origin/$ARTCB_REPLIT_BRANCH")"
+    if git -C "$REPL_DIR" merge-base --is-ancestor "$ARTCB_REPLIT_PIN_SHA" "$_TIP" 2>/dev/null; then
+      git -C "$REPL_DIR" checkout --detach "$_TIP" || true
+      _log "ff_from_pin ancestor=$ARTCB_REPLIT_PIN_SHA tip=$_TIP"
+    else
+      _log "ff_skipped tip not descendant of pin"
+    fi
+  fi
+fi
 _REL_SHA="$(git -C "$REPL_DIR" rev-parse HEAD 2>/dev/null || true)"
 _REL_BR="$(git -C "$REPL_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$ARTCB_REPLIT_BRANCH")"
 if [ "$_REL_BR" = "HEAD" ]; then
@@ -213,34 +228,70 @@ fi
 _write_release "$_REL_SHA" "$_REL_BR"
 _log "STEP end sha=${_REL_SHA:-NONE} branch=${_REL_BR:-NONE} pin=${ARTCB_REPLIT_PIN_SHA:-UNSET}"
 
-# ── 1. Venv Python isolé (contourne NixOS PEP 668) ───────────────
+# ── 1. Python qui PEUT servir FastAPI (pas un venv vide) ──────────
+# Autoscale log 23:03: venv neuf puis pip « already satisfied in .pythonlibs ».
+# $HOME/venv/bin/python n'a pas fastapi → kill shim → uvicorn crash → 500.
 CURRENT_STEP="python_venv"
 _log "STEP begin"
+_py_site() {
+  local d
+  for d in \
+    "$REPL_DIR/.pythonlibs/lib/python3.11/site-packages" \
+    "$REPL_DIR/.pythonlibs/lib/python3.12/site-packages" \
+    "$HOME/.pythonlibs/lib/python3.11/site-packages" \
+    "$HOME/.pythonlibs/lib/python3.12/site-packages"; do
+    if [ -d "$d" ]; then
+      PYTHONPATH="$d${PYTHONPATH:+:$PYTHONPATH}"
+    fi
+  done
+  export PYTHONPATH="$REPL_DIR${PYTHONPATH:+:$PYTHONPATH}"
+}
+_py_site
+_python_serves() {
+  local py="$1"
+  [ -x "$py" ] || return 1
+  "$py" -c "import fastapi, uvicorn, nacl, pydantic" 2>/dev/null
+}
+PYTHON=""
+PIP=""
 VENV="$HOME/venv"
-if [ ! -f "$VENV/bin/python3" ]; then
-  echo "[1/6] Création venv Python isolé (NixOS PEP 668)..."
-  python3 -m venv "$VENV"
+if _python_serves "$VENV/bin/python3"; then
+  PYTHON="$VENV/bin/python3"
+  PIP="$VENV/bin/pip"
+  _log "using venv python (fastapi import ok)"
+elif _python_serves "$(command -v python3)"; then
+  PYTHON="$(command -v python3)"
+  PIP="$(command -v pip3 || command -v pip || echo "$PYTHON -m pip")"
+  _log "using system python3 + pythonlibs (skip empty venv)"
 else
-  echo "[1/6] Venv existant : $VENV"
+  echo "[1/6] Création venv Python isolé (aucun python n'importe fastapi)..."
+  python3 -m venv --system-site-packages "$VENV" 2>/dev/null || python3 -m venv "$VENV"
+  PYTHON="$VENV/bin/python3"
+  PIP="$VENV/bin/pip"
+  _log "created venv --system-site-packages"
 fi
-export PATH="$VENV/bin:$PATH"
-PIP="$VENV/bin/pip"
-PYTHON="$VENV/bin/python3"
+export PATH="$(dirname "$PYTHON"):$PATH"
 export PIP_USER=false
 export OQS_INSTALL_PATH="${OQS_INSTALL_PATH:-$HOME/_oqs}"
 export LD_LIBRARY_PATH="$OQS_INSTALL_PATH/lib:$OQS_INSTALL_PATH/lib64:${LD_LIBRARY_PATH:-}"
-_log "STEP end venv=$VENV"
+_log "STEP end python=$PYTHON"
 
-# ── 2. Installation des dépendances via venv ──────────────────────
+# ── 2. pip seulement si FastAPI n'est pas importable ──────────────
 CURRENT_STEP="python_dependencies"
 _log "STEP begin"
-echo "[2/6] Installation des dépendances Python..."
-$PIP install --no-user -r requirements.txt \
-    --ignore-requires-python \
-    2>&1
-# Fallback litellm
-if ! $PIP show litellm-ibm-bob &>/dev/null; then
-  $PIP install --no-user "litellm>=1.0.0" 2>&1 || _log "WARN litellm fallback installation failed"
+if _python_serves "$PYTHON"; then
+  echo "[2/6] FastAPI déjà importable — pip skipped"
+  _log "pip skipped fastapi already importable"
+else
+  echo "[2/6] Installation des dépendances Python..."
+  "$PYTHON" -m pip install --no-user -r requirements.txt --ignore-requires-python 2>&1 \
+    || _log "WARN pip requirements failed"
+  "$PYTHON" -m pip install --no-user "litellm>=1.0.0" 2>&1 || _log "WARN litellm fallback installation failed"
+fi
+if ! _python_serves "$PYTHON"; then
+  _log "ERROR python still cannot import fastapi — keeping shim, not launching uvicorn"
+  wait "$SHIM_PID" 2>/dev/null || sleep infinity
+  exit 1
 fi
 _log "STEP end"
 
@@ -493,19 +544,34 @@ if [ -z "${ARTCB_NODE_WALLET_ADDRESS:-}" ]; then
   fi
 fi
 echo "  ✅ Démarrage ARTCB API sur :${ARTCB_PORT} (Replit webview)..."
+_log "preflight import src.api.main"
+if ! "$PYTHON" -c "from src.api.main import app" 2>/tmp/artcb_import.err; then
+  _log "ERROR import src.api.main failed — shim stays on :$ARTCB_PORT"
+  cat /tmp/artcb_import.err >&2 || true
+  wait "$SHIM_PID" 2>/dev/null || sleep infinity
+  exit 1
+fi
 if [ -n "${SHIM_PID:-}" ] && kill -0 "$SHIM_PID" 2>/dev/null; then
   _log "stopping live_shim pid=$SHIM_PID so uvicorn can bind :$ARTCB_PORT"
   kill "$SHIM_PID" 2>/dev/null || true
   wait "$SHIM_PID" 2>/dev/null || true
   sleep 0.4
 fi
-_log "FOREGROUND launching uvicorn port=$ARTCB_PORT public_url=${ARTCB_NODE_PUBLIC_URL:-NONE} sha=${ARTCB_GIT_SHA:-NONE}"
+_log "FOREGROUND launching uvicorn port=$ARTCB_PORT public_url=${ARTCB_NODE_PUBLIC_URL:-NONE} sha=${ARTCB_GIT_SHA:-NONE} python=$PYTHON"
 "$PYTHON" -m uvicorn src.api.main:app \
   --host 0.0.0.0 \
   --port "$ARTCB_PORT" \
   --log-level info &
 UVICORN_PID=$!
 _log "FOREGROUND launched name=uvicorn pid=$UVICORN_PID port=$ARTCB_PORT"
+# If uvicorn dies immediately, bring the shim back so Autoscale is not all-500.
+sleep 1
+if ! kill -0 "$UVICORN_PID" 2>/dev/null; then
+  _log "ERROR uvicorn died immediately — restarting live_shim"
+  python3 "$REPL_DIR/scripts/replit_live_shim.py" &
+  wait $! || true
+  exit 1
+fi
 set +e
 wait "$UVICORN_PID"
 UVICORN_STATUS=$?
