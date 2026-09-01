@@ -44,7 +44,7 @@ def main() -> int:
         simulation_id=SIM_ID,
         seed=194,
         script_path=Path(__file__),
-        extra={"branch_expected": "cursor/ovh4-baremetal-hourly-go-16d8"},
+        extra={"branch_expected": "cursor/ovh4-baremetal-go-3c95"},
     )
     _write(out_dir, "00_manifest.json", manifest)
     _write(out_dir, "10_registry.json", public_registry())
@@ -162,8 +162,8 @@ def main() -> int:
         "install_sh": False,
         "init_genesis": False,
         "note": (
-            "D-049: Eco catalog measured month_only. Existing checkout 258100013. "
-            "This sim never POSTs --order."
+            "D-048 GO checkout 258100013 then D-049: Eco is month_only; "
+            "do not POST a second --order. This sim never POSTs checkout."
         ),
     }
     _write(out_dir, "24_summary.json", summary)
