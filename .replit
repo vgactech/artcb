@@ -5,6 +5,7 @@ modules = ["python-3.11", "nodejs-20", "bash", "web"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["cargo", "libiconv", "libsodium", "libxcrypt", "libyaml", "openssl", "pkg-config", "rustc", "tesseract"]
 
 [env]
 PYTHONPATH = "/home/runner/${REPL_SLUG}"
