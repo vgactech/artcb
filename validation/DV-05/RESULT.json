@@ -1,6 +1,6 @@
 {
-  "at": "20260901T175526Z",
+  "at": "20260901T181738Z",
   "id": "DV-05",
-  "sim": "e2e187_dv04_four_node",
-  "status": "BLOCKED"
+  "sim": "e2e188_dv05_live_bft",
+  "status": "PASS"
 }

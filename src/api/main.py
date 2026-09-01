@@ -277,7 +277,12 @@ def create_app() -> FastAPI:
         from src.artcb.devnet_validation import certification_gate
         _pqc = pqc_available()
         identity = release_identity()
-        gate = certification_gate()
+        try:
+            gate = certification_gate()
+            certified = bool(gate.get("certified_distributed_mainnet"))
+        except Exception as exc:  # noqa: BLE001 — health must stay 200
+            logger.error("certification_gate in /health failed: %s", type(exc).__name__)
+            certified = False
         return {
             "status": "healthy",
             "service": "ARTCB API",
@@ -291,7 +296,7 @@ def create_app() -> FastAPI:
             "protocol_version": PROTOCOL_VERSION,
             "genesis_hash": GENESIS_HASH,
             "pqc": public_health_block(_pqc),
-            "certified_distributed_mainnet": gate["certified_distributed_mainnet"],
+            "certified_distributed_mainnet": certified,
         }
 
     # Serve React frontend (built dist/) at root

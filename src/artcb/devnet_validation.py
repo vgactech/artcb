@@ -143,18 +143,21 @@ def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]
     v = verdicts or {}
     required_pass = ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")
     missing = [k for k in required_pass if v.get(k) != "PASS"]
-    from artcb.consensus_spec import LIVE_BFT_IMPLEMENTED
+    try:
+        from src.artcb.consensus_spec import LIVE_BFT_IMPLEMENTED as live_bft
+    except ModuleNotFoundError:
+        from artcb.consensus_spec import LIVE_BFT_IMPLEMENTED as live_bft
 
     reasons = []
     if missing:
         reasons.append("dv_not_pass:" + ",".join(missing))
-    if not LIVE_BFT_IMPLEMENTED:
+    if not live_bft:
         reasons.append("live_bft_off")
     reasons.append("economic_v_locked=false")
     return {
         "certified_distributed_mainnet": False,
         "economic_v_locked": False,
-        "live_bft_implemented": LIVE_BFT_IMPLEMENTED,
+        "live_bft_implemented": live_bft,
         "dv_not_pass": missing,
         "reason": "; ".join(reasons),
     }
