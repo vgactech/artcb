@@ -112,7 +112,7 @@ NODES: dict[str, NodeSpec] = {
     ),
     "ovh-baremetal-1": NodeSpec(
         node_id="ovh-baremetal-1",
-        display_name="node artcb bare metal 1 (pending OVH3 nic)",
+        display_name="node artcb bare metal 1 (pending — no dedicated IP)",
         provider="ovh-baremetal",
         doppler_project="artcb-baremetal-1",
         doppler_token_env="KEY_API_ARTCB_DOPPLER_BAREMETAL",
@@ -122,15 +122,18 @@ NODES: dict[str, NodeSpec] = {
         ssh_user="ubuntu",
         public_notes=(
             "Fifth TEST hardware node (physical server, not an OpenStack VM). "
-            "Never reuse ovh-node-1 / 152.228.144.34. Not a genesis rewrite. "
-            "Order blocked until a distinct OVH3 nic Application Key exists: "
-            "OVH3_APPLICATION_KEY + OVH3_APPLICATION_SECRET + OVH3_CONSUMER_KEY "
-            "+ OVH3_NIC (must not be vc491276-ovh or xy4589-ovh). "
-            "KEY_API_ARTCB_DOPPLER_3 is the AWS artcb3 vault — not OVH3. "
-            "No Doppler project artcb-3. artcb-baremetal-1 pending "
-            "DOPPLER_PERSONAL_TOKEN. Cheapest measured Eco SKU 2026-09-01: "
-            "KS-B 25skb012 = 9.99 EUR/month (catalog public FR); GRA unavailable. "
-            "Do not order at a loss. Do not spend OVH2/OVH4 0.00 EUR balances."
+            "Never reuse ovh-node-1 / 152.228.144.34. Never destroy OVH4 VM "
+            "91.134.45.8 (node-artcb-ovh-4). Not a genesis rewrite. "
+            "2026-09-01 D-047: GET /dedicated/server on xy4589-ovh = []. "
+            "The ~10 EUR is Public Cloud credit on project "
+            "926bb1d6755e4f2c98ae9db06ef44e4f (credit 263152 = 10.00 EUR; "
+            "free-trial 263153 = 199.84 EUR). ovhAccount prepaid 0.00 EUR "
+            "(xy4589-ovh and vc491276-ovh). Cloud credit cannot pay Eco. "
+            "KS-B 25skb012 = 9.99 EUR/month catalog FR, GRA unavailable. "
+            "Cheapest in-stock Eco = KS-5 24sk50-v1 17.99 EUR > prepaid. "
+            "Do not charge the OVH4 card. Do not order on vc491276-ovh. "
+            "KEY_API_ARTCB_DOPPLER_3 is AWS artcb3, not OVH. IP still empty. "
+            "/dev/tpm0 not probed on a dedicated that was not delivered."
         ),
     ),
     "replit-node-1": NodeSpec(

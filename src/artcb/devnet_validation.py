@@ -178,6 +178,22 @@ DECISIONS_192: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_193: Final[dict[str, str]] = {
+    "D-047": (
+        "The ~10 EUR is Public Cloud credit on nic xy4589-ovh (OVH4), not "
+        "ovhAccount prepaid and not a third OVH3 nic. Measured 2026-09-01: "
+        "GET /me 200 nic xy4589-ovh; GET /me/ovhAccount balance 0.00 EUR; "
+        "GET /dedicated/server [] (no Eco in delivery); GET /cloud/project/"
+        "…/credit 263152 available 10.00 EUR (Credit provisionning) + "
+        "263153 available 199.84 EUR (Free Trial). Cloud credit cannot pay "
+        "Eco dedicated. Do not order on vc491276-ovh. Do not destroy "
+        "91.134.45.8. Eco KS-B 25skb012 9.99 EUR GRA unavailable; cheapest "
+        "in-stock KS-5 24sk50-v1 17.99 EUR > prepaid 0.00. Do not charge "
+        "the OVH4 CREDIT_CARD. ovh-baremetal-1 stays pending without IP. "
+        "certified_distributed_mainnet stays false."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -253,5 +269,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_190": DECISIONS_190,
         "decisions_191": DECISIONS_191,
         "decisions_192": DECISIONS_192,
+        "decisions_193": DECISIONS_193,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

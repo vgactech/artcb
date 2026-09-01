@@ -244,12 +244,206 @@ def quote(*, want_order: bool) -> dict[str, Any]:
     }
 
 
+def _doppler_secrets(token: str, project: str, config: str = "dev") -> tuple[int, dict[str, str]]:
+    if not token:
+        return 0, {}
+    req = Request(
+        "https://api.doppler.com/v3/configs/config/secrets"
+        f"?project={project}&config={config}",
+        headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+    )
+    try:
+        with urlopen(req, timeout=20) as resp:
+            payload = json.loads(resp.read().decode())
+    except HTTPError as exc:
+        return exc.code, {}
+    except (URLError, TimeoutError, OSError, json.JSONDecodeError):
+        return 0, {}
+    secrets: dict[str, str] = {}
+    for name, meta in (payload.get("secrets") or {}).items():
+        raw = ""
+        if isinstance(meta, dict):
+            raw = str(meta.get("computed") or meta.get("raw") or "").strip()
+        elif isinstance(meta, str):
+            raw = meta.strip()
+        if raw:
+            secrets[name] = raw
+    return 200, secrets
+
+
+def measure_named_ovh(creds: dict[str, str], *, source: str) -> dict[str, Any]:
+    """Measure /me + prepaid + Public Cloud credits. Never prints keys."""
+    mapped = {
+        "application_key": creds.get("application_key") or creds.get("OVH_APPLICATION_KEY") or "",
+        "application_secret": creds.get("application_secret") or creds.get("OVH_APPLICATION_SECRET") or "",
+        "consumer_key": creds.get("consumer_key") or creds.get("OVH_CONSUMER_KEY") or "",
+    }
+    me_c, me = _ovh_call("GET", "/me", mapped)
+    nic = me.get("nichandle") if isinstance(me, dict) else None
+    email = me.get("email") if isinstance(me, dict) else None
+    out: dict[str, Any] = {
+        "source": source,
+        "me_http": me_c,
+        "nic": nic,
+        "email": email,
+        "invented": False,
+    }
+    if me_c != 200:
+        if isinstance(me, dict):
+            out["me_error"] = {
+                "class": me.get("class"),
+                "message": me.get("message"),
+                "errorCode": me.get("errorCode"),
+            }
+        out["balance_eur"] = None
+        return out
+    acc_c, accs = _ovh_call("GET", "/me/ovhAccount", mapped)
+    balances: list[dict[str, Any]] = []
+    if isinstance(accs, list):
+        for ident in accs[:6]:
+            _c, body = _ovh_call("GET", f"/me/ovhAccount/{ident}", mapped)
+            if isinstance(body, dict) and isinstance(body.get("balance"), dict):
+                balances.append(
+                    {
+                        "account_redacted": True,
+                        "value": body["balance"].get("value"),
+                        "text": body["balance"].get("text"),
+                        "currency": body["balance"].get("currencyCode"),
+                    }
+                )
+    out["ovhAccount_http"] = acc_c
+    out["balances"] = balances
+    out["balance_eur"] = balances[0]["value"] if balances else None
+    ds_c, ds = _ovh_call("GET", "/dedicated/server", mapped)
+    out["dedicated_http"] = ds_c
+    out["dedicated_count"] = len(ds) if isinstance(ds, list) else None
+    cp_c, projects = _ovh_call("GET", "/cloud/project", mapped)
+    out["cloud_projects_http"] = cp_c
+    cloud_credits: list[dict[str, Any]] = []
+    if isinstance(projects, list):
+        for pid in projects[:4]:
+            ic, ids = _ovh_call("GET", f"/cloud/project/{pid}/credit", mapped)
+            credit_ids = ids if isinstance(ids, list) else []
+            for cid in credit_ids[:8]:
+                hc, body = _ovh_call("GET", f"/cloud/project/{pid}/credit/{cid}", mapped)
+                if not isinstance(body, dict):
+                    continue
+                cloud_credits.append(
+                    {
+                        "project": pid,
+                        "credit_id": cid,
+                        "http": hc,
+                        "description": body.get("description"),
+                        "available_eur": (body.get("available_credit") or {}).get("value")
+                        if isinstance(body.get("available_credit"), dict)
+                        else None,
+                        "total_eur": (body.get("total_credit") or {}).get("value")
+                        if isinstance(body.get("total_credit"), dict)
+                        else None,
+                        "used_eur": (body.get("used_credit") or {}).get("value")
+                        if isinstance(body.get("used_credit"), dict)
+                        else None,
+                        "products": body.get("products"),
+                    }
+                )
+    out["cloud_credits"] = cloud_credits
+    return out
+
+
+def hunt_all_ovh_accounts() -> dict[str, Any]:
+    """Every Doppler/process OVH key set. Does not invent a 10 EUR prepaid."""
+    sources: list[dict[str, Any]] = []
+    token_map = [
+        ("DOPPLER_TOKEN", "artcb-blockchain", "doppler:artcb-blockchain"),
+        ("KEY_API_ARTCB_DOPPLER_2", "artcb-2", "doppler:artcb-2"),
+        ("KEY_API_ARTCB_DOPPLER_4", "artcb-4", "doppler:artcb-4"),
+    ]
+    for env_name, project, label in token_map:
+        token = (os.environ.get(env_name) or "").strip()
+        if not token:
+            sources.append({"source": label, "token_present": False, "me_http": 0, "invented": False})
+            continue
+        code, secrets = _doppler_secrets(token, project)
+        if not secrets.get("OVH_APPLICATION_KEY"):
+            sources.append(
+                {
+                    "source": label,
+                    "token_present": True,
+                    "doppler_http": code,
+                    "ovh_keys_present": False,
+                    "invented": False,
+                }
+            )
+            continue
+        sources.append(measure_named_ovh(secrets, source=label))
+    proc = {
+        "OVH_APPLICATION_KEY": os.environ.get("OVH_APPLICATION_KEY") or "",
+        "OVH_APPLICATION_SECRET": os.environ.get("OVH_APPLICATION_SECRET") or "",
+        "OVH_CONSUMER_KEY": os.environ.get("OVH_CONSUMER_KEY") or "",
+    }
+    if proc["OVH_APPLICATION_KEY"]:
+        sources.append(measure_named_ovh(proc, source="process_env_OVH_*"))
+    node4_env = Path.home() / ".artcb" / "nodes" / "ovh-node-4.env"
+    if node4_env.is_file():
+        parsed: dict[str, str] = {}
+        for line in node4_env.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            parsed[key.strip()] = value.strip().strip('"').strip("'")
+        if parsed.get("OVH_APPLICATION_KEY"):
+            sources.append(measure_named_ovh(parsed, source="local_ovh-node-4.env"))
+    ovh3 = ovh3_creds()
+    sources.append(
+        {
+            "source": "process_env_OVH3_*",
+            "keys_present": bool(ovh3["application_key"] and ovh3["application_secret"] and ovh3["consumer_key"]),
+            "nic_hint": ovh3["nic"] or None,
+            "invented": False,
+        }
+    )
+    return {
+        "sources": sources,
+        "invented_balance": False,
+        "secrets_printed": False,
+        "note": (
+            "Public Cloud credit is not ovhAccount prepaid and cannot pay Eco dedicated."
+        ),
+    }
+
+
+def eco_ksb_stock() -> dict[str, Any]:
+    stock = availability("25skb012")
+    gra = [
+        dc
+        for dc in (stock.get("datacenters") or [])
+        if str(dc.get("datacenter", "")).lower().startswith("gra")
+    ]
+    return {
+        "planCode": "25skb012",
+        "availability": stock,
+        "gra": gra,
+        "in_stock": bool(stock.get("in_stock")),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Quote OVH Eco bare metal. No silent order.")
-    parser.add_argument("--order", action="store_true", help="Attempt order (still blocked without funds/stock/OVH3).")
+    parser.add_argument("--order", action="store_true", help="Attempt order (still blocked without funds/stock).")
+    parser.add_argument("--hunt", action="store_true", help="Measure every known OVH nic (prepaid + cloud credit).")
+    parser.add_argument("--ovh4", action="store_true", help="Quote on nic xy4589-ovh (lists dedicated servers first).")
     parser.add_argument("--json", action="store_true", help="Print JSON only.")
     args = parser.parse_args()
-    result = quote(want_order=args.order)
+    if args.ovh4:
+        from ovh4_baremetal_order import quote_ovh4  # noqa: PLC0415
+
+        result = quote_ovh4(want_order=args.order)
+    else:
+        result = quote(want_order=args.order)
+        if args.hunt:
+            result["hunt"] = hunt_all_ovh_accounts()
+            result["ksb_stock"] = eco_ksb_stock()
     print(json.dumps(result, indent=2, sort_keys=True, default=str))
     return 0
 
