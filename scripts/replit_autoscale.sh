@@ -43,18 +43,21 @@ CURRENT_STEP="python"
 PYTHONPATH="$REPL_DIR"
 for d in \
   "$REPL_DIR/.pythonlibs/lib/python3.11/site-packages" \
-  "$HOME/.pythonlibs/lib/python3.11/site-packages"; do
+  "$REPL_DIR/.pythonlibs/lib/python3.12/site-packages" \
+  "$HOME/.pythonlibs/lib/python3.11/site-packages" \
+  "$HOME/.pythonlibs/lib/python3.12/site-packages"; do
   [ -d "$d" ] && PYTHONPATH="$d:$PYTHONPATH"
 done
 export PYTHONPATH
-PYTHON="$(command -v python3)"
-export OQS_INSTALL_PATH="${OQS_INSTALL_PATH:-$HOME/_oqs}"
-export LD_LIBRARY_PATH="${OQS_INSTALL_PATH}/lib:${OQS_INSTALL_PATH}/lib64:${LD_LIBRARY_PATH:-}"
-if ! "$PYTHON" -c "import fastapi, uvicorn" 2>/dev/null; then
-  _log "ERROR fastapi/uvicorn missing on $PYTHON — shim stays"
+# Replit venv / .pythonlibs before Nix python3. Never `python3 -m venv`.
+# shellcheck source=scripts/replit_pick_python.sh
+. "$REPL_DIR/scripts/replit_pick_python.sh"
+if ! artcb_pick_python; then
   wait "$SHIM_PID" || true
   exit 1
 fi
+export OQS_INSTALL_PATH="${OQS_INSTALL_PATH:-$HOME/_oqs}"
+export LD_LIBRARY_PATH="${OQS_INSTALL_PATH}/lib:${OQS_INSTALL_PATH}/lib64:${LD_LIBRARY_PATH:-}"
 
 CURRENT_STEP="uvicorn"
 if ! "$PYTHON" -c "from src.api.main import app" 2>/tmp/artcb_import.err; then
