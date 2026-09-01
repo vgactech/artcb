@@ -54,6 +54,7 @@ def test_autoscale_sources_picker_and_never_creates_venv() -> None:
     )
     assert "replit_pick_python.sh" in auto
     assert "${HOME}/venv/bin/python3" in pick
+    assert pick.find("${REPL_DIR}/.pythonlibs/bin/python3") < pick.find("${HOME}/venv/bin/python3")
     assert pick.find("${HOME}/venv/bin/python3") < pick.find("command -v python3")
     assert "python3 -m venv" not in live
 
@@ -93,6 +94,19 @@ def test_prefers_pythonlibs_bin_over_nix(tmp_path: Path) -> None:
     _write_py(libs_py, FAKE_OK)
     _write_py(nix_py, FAKE_OK)
     result = _run_pick(home, repl, extra_path=str(home / "nix"))
+    assert result.returncode == 0, result.stderr
+    out = (result.stdout or "").strip().splitlines()[-1]
+    assert out == str(libs_py)
+
+
+def test_prefers_pythonlibs_over_venv(tmp_path: Path) -> None:
+    home = tmp_path / "home"
+    repl = tmp_path / "repl"
+    libs_py = repl / ".pythonlibs" / "bin" / "python3"
+    venv_py = home / "venv" / "bin" / "python3"
+    _write_py(libs_py, FAKE_OK)
+    _write_py(venv_py, FAKE_OK)
+    result = _run_pick(home, repl)
     assert result.returncode == 0, result.stderr
     out = (result.stdout or "").strip().splitlines()[-1]
     assert out == str(libs_py)
