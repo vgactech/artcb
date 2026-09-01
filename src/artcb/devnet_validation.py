@@ -106,6 +106,19 @@ DECISIONS_186: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-01: put OVH1 on the same public book as OVH2/AWS3/OVH4.
+DECISIONS_187: Final[dict[str, str]] = {
+    "D-041": (
+        "GO OVH1 same public book — operator authorized all four nodes. "
+        "OVH1 orphan genesis 8d542e49 (2026-08-29) cannot extend the "
+        "homogeneous chain genesis cc61f710 (2026-08-31); P2P pull is "
+        "not a merge. Adopt the existing 7-block public book from OVH2, "
+        "backup the orphan file, keep wallets/chain.key. DV-04 C PASS "
+        "only after a public TX then one restart with four identical "
+        "last_hash and public_state_digest. Not certified mainnet."
+    ),
+}
+
 
 def public_lock() -> dict[str, Any]:
     return {
@@ -119,5 +132,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_177": DECISIONS_177,
         "decisions_178": DECISIONS_178,
         "decisions_186": DECISIONS_186,
+        "decisions_187": DECISIONS_187,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }
