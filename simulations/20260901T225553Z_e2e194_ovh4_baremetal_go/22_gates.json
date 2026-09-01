@@ -1,0 +1,33 @@
+{
+  "picked": {
+    "datacenter": "rbx",
+    "dcs_fr": [
+      {
+        "dc": "rbx"
+      }
+    ],
+    "planCode": "24sk50-v1",
+    "total_eur": 26.99
+  },
+  "with_go": {
+    "blocked_reason": null,
+    "executed": false,
+    "nic": "xy4589-ovh",
+    "operator_go": true,
+    "requested": true,
+    "would_order": {
+      "datacenter": "rbx",
+      "fqn": "24sk50-v1.ram-32g-ecc-2400.softraid-3x4000sa",
+      "planCode": "24sk50-v1",
+      "price_eur": 26.99,
+      "tender": "preferred_payment_method_CREDIT_CARD"
+    }
+  },
+  "without_go": {
+    "blocked_reason": "prepaid_below_sku",
+    "executed": false,
+    "nic": "xy4589-ovh",
+    "operator_go": false,
+    "requested": true
+  }
+}

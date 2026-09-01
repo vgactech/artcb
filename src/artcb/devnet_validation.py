@@ -194,6 +194,20 @@ DECISIONS_193: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_194: Final[dict[str, str]] = {
+    "D-048": (
+        "Operator GO on nic xy4589-ovh (OVH4) to order one cheapest currently "
+        "available Eco/Kimsufi, including the registered preferred payment "
+        "method (CREDIT_CARD) because Public Cloud credit cannot pay a dedicated. "
+        "Re-read catalog + GET /dedicated/server first; do not double-order. "
+        "Prefer FR datacenter GRA/RBX/SBG. Price the real in-stock FQN "
+        "(base + RAM/disk extras), not the unavailable default 0 EUR disk. "
+        "One checkout; HTTP 400/402 is terminal (no retry loop). Never destroy "
+        "91.134.45.8. No install.sh wipe, no origin/main deploy, no invented "
+        "TPM/IP/balance. certified_distributed_mainnet stays false."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -270,5 +284,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_191": DECISIONS_191,
         "decisions_192": DECISIONS_192,
         "decisions_193": DECISIONS_193,
+        "decisions_194": DECISIONS_194,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

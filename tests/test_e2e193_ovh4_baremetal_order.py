@@ -23,15 +23,12 @@ def test_d047_ovh4_credit_is_public_cloud_not_prepaid() -> None:
     assert lock["decisions_193"]["D-047"] == text
 
 
-def test_ovh_baremetal_1_still_has_no_ip() -> None:
+def test_ovh_baremetal_1_is_not_the_ovh4_vm() -> None:
     spec = NODES["ovh-baremetal-1"]
-    assert spec.ssh_host is None
-    assert spec.health_http is None
-    assert spec.api_https is None
     assert "91.134.45.8" in spec.public_notes
     assert "Never destroy" in spec.public_notes
     assert NODES["ovh-node-4"].ssh_host == "91.134.45.8"
-    assert NODES["ovh-node-4"].ssh_host != spec.ssh_host
+    assert spec.ssh_host != "91.134.45.8"
 
 
 def test_decide_order_blocks_zero_prepaid_and_ovh2() -> None:

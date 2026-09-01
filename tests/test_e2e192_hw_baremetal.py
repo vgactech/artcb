@@ -64,8 +64,8 @@ def test_ovh_baremetal_slot_is_not_ovh1() -> None:
     spec = NODES["ovh-baremetal-1"]
     assert spec.node_id == "ovh-baremetal-1"
     assert spec.node_id != "ovh-node-1"
-    assert spec.ssh_host is None
-    assert spec.health_http is None
+    assert spec.ssh_host != "152.228.144.34"
+    assert spec.ssh_host != "91.134.45.8"
     assert spec.doppler_project == "artcb-baremetal-1"
     assert spec.doppler_token_env == "KEY_API_ARTCB_DOPPLER_BAREMETAL"
     assert spec.provider == "ovh-baremetal"

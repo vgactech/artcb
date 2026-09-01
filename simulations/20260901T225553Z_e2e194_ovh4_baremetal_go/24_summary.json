@@ -1,0 +1,22 @@
+{
+  "certification_gate": {
+    "certified_distributed_mainnet": false,
+    "dv_not_pass": [],
+    "economic_v_locked": true,
+    "live_bft_implemented": true,
+    "operator_certification_go": false,
+    "reason": "operator_certification_go=false"
+  },
+  "decisions_194": {
+    "D-048": "Operator GO on nic xy4589-ovh (OVH4) to order one cheapest currently available Eco/Kimsufi, including the registered preferred payment method (CREDIT_CARD) because Public Cloud credit cannot pay a dedicated. Re-read catalog + GET /dedicated/server first; do not double-order. Prefer FR datacenter GRA/RBX/SBG. Price the real in-stock FQN (base + RAM/disk extras), not the unavailable default 0 EUR disk. One checkout; HTTP 400/402 is terminal (no retry loop). Never destroy 91.134.45.8. No install.sh wipe, no origin/main deploy, no invented TPM/IP/balance. certified_distributed_mainnet stays false."
+  },
+  "failures": [],
+  "init_genesis": false,
+  "install_sh": false,
+  "note": "D-048: operator GO may charge CREDIT_CARD; sim does not POST checkout.",
+  "ovh4_vm_untouched": true,
+  "picked_dc": "rbx",
+  "sim": "e2e194_ovh4_baremetal_go",
+  "with_go_tender": "preferred_payment_method_CREDIT_CARD",
+  "without_go": "prepaid_below_sku"
+}

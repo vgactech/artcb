@@ -1,0 +1,25 @@
+{
+  "branch_expected": "cursor/ovh4-baremetal-go-3c95",
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "194-ovh4-baremetal-go",
+  "finished_at": "2026-09-01T22:55:55Z",
+  "git_branch": "cursor/ovh4-baremetal-go-3c95",
+  "git_commit_sha": "1cc1e5a4783f8a932be2ee1c13a2268ea07d3839",
+  "git_status_clean": false,
+  "invented_results": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim194_ovh4_baremetal_go.py",
+  "script_sha256": "d3f5bdcadcd2476c612c83843ccfa866c79fd872207c3c7959fbbd69f1a34a74",
+  "seed": 194,
+  "simulation_id": "e2e194_ovh4_baremetal_go",
+  "started_at": "2026-09-01T22:55:55Z",
+  "working_tree_diff_hash": "1b48316a308711864f41320a85530603963c4886fa7d0a0bd23721ea16dbca75"
+}

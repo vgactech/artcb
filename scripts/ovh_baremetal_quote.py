@@ -30,7 +30,13 @@ KNOWN_NICS_NOT_OVH3 = frozenset({"vc491276-ovh", "xy4589-ovh"})
 CHEAPEST_HINT = "25skb012"
 
 
-def _ovh_call(method: str, path: str, creds: dict[str, str], body: str = "") -> tuple[int, object]:
+def _ovh_call(
+    method: str,
+    path: str,
+    creds: dict[str, str],
+    body: str = "",
+    timeout: int = 25,
+) -> tuple[int, object]:
     ak = creds.get("application_key") or ""
     as_ = creds.get("application_secret") or ""
     ck = creds.get("consumer_key") or ""
@@ -54,10 +60,13 @@ def _ovh_call(method: str, path: str, creds: dict[str, str], body: str = "") -> 
         },
     )
     try:
-        with urlopen(req, timeout=25) as resp:
-            return resp.status, json.loads(resp.read().decode())
+        with urlopen(req, timeout=timeout) as resp:
+            raw_ok = resp.read().decode()
+            if not raw_ok:
+                return resp.status, {}
+            return resp.status, json.loads(raw_ok)
     except HTTPError as exc:
-        raw = exc.read().decode("utf-8", errors="replace")[:400]
+        raw = exc.read().decode("utf-8", errors="replace")[:800]
         try:
             return exc.code, json.loads(raw)
         except json.JSONDecodeError:
