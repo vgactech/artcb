@@ -225,3 +225,15 @@ def test_ovh4_vm_kept_and_cert_false() -> None:
     assert "Never prints API keys" in body
     assert "CREDIT_CARD" in body
     assert "91.134.45.8" in body
+
+
+def test_rapport_194_documents_month_and_existing_order() -> None:
+    text = (ROOT / "rapports" / "194_ovh4_baremetal_hourly_go_2026-09-01.md").read_text(
+        encoding="utf-8"
+    )
+    assert "258100013" in text
+    assert "intervalUnit=month" in text
+    assert "NON exécuté" in text
+    assert "91.134.45.8" in text
+    assert "ovhAccount" in text
+    assert "10 €" in text or "10 EUR" in text or "10,00" in text
