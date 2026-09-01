@@ -31,6 +31,7 @@ if str(ROOT / "scripts") not in sys.path:
 from ovh_baremetal_quote import (  # noqa: E402
     OVH_BASE,
     _ovh_call,
+    eco_catalog_intervals,
     euro_from_raw,
     public_eco_catalog,
 )
@@ -116,6 +117,7 @@ def _monthly_eur(plan: dict[str, Any]) -> float | None:
         for pr in (plan.get("pricings") or [])
         if isinstance(pr, dict)
         and pr.get("interval") == 1
+        and pr.get("intervalUnit") == "month"
         and "renew" in str(pr.get("capacities") or "")
     ]
     if not monthly:
@@ -682,6 +684,7 @@ def quote_ovh4(*, want_order: bool, operator_go: bool = False) -> dict[str, Any]
         eco_orders = list_recent_eco_orders(creds)
         pays = payment_means_public(creds)
 
+    intervals = eco_catalog_intervals()
     scan = cheapest_available(max_eur=float(prepaid) if isinstance(prepaid, (int, float)) else None)
     sku = scan.get("cheapest_in_stock") if operator_go else scan.get("affordable_in_stock")
     if isinstance(eco_orders, dict) and (eco_orders.get("count") or 0) > 0:
@@ -764,6 +767,17 @@ def quote_ovh4(*, want_order: bool, operator_go: bool = False) -> dict[str, Any]
             "in_stock_count_scanned": scan.get("in_stock_count_scanned"),
         },
         "selected_sku": sku_public(sku if isinstance(sku, dict) else None),
+        "catalog_intervals": {
+            "billing": intervals.get("billing"),
+            "hourly_exists": intervals.get("hourly_exists"),
+            "hourly_plan_count": intervals.get("hourly_plan_count"),
+            "monthly_plan_count": intervals.get("monthly_plan_count"),
+            "renew_interval_units": intervals.get("renew_interval_units"),
+            "plan_count": intervals.get("plan_count"),
+            "samples": intervals.get("samples"),
+            "note": intervals.get("note"),
+            "invented": False,
+        },
         "order": order,
         "ovh4_vm_untouched": True,
         "secrets_printed": False,

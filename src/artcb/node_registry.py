@@ -130,8 +130,10 @@ NODES: dict[str, NodeSpec] = {
             "free-trial 263153 = 199.84 EUR). ovhAccount prepaid 0.00 EUR "
             "(xy4589-ovh and vc491276-ovh). Cloud credit cannot pay Eco. "
             "KS-B 25skb012 = 9.99 EUR/month catalog FR, GRA unavailable. "
-            "Cheapest in-stock Eco = KS-5 24sk50-v1 17.99 EUR > prepaid. "
-            "Do not charge the OVH4 card. Do not order on vc491276-ovh. "
+            "Cheapest in-stock Eco = KS-5 24sk50-v1 17.99 EUR/month (0 hourly Eco SKU). "
+            "2026-09-01 D-049: orderId 258100013 already exists (KS-5 rbx, 1 mois, "
+            "status checking, FRAUD_MANUAL_REVIEW). Do not POST a second --order. "
+            "GET /dedicated/server still []. Do not order on vc491276-ovh. "
             "KEY_API_ARTCB_DOPPLER_3 is AWS artcb3, not OVH. IP still empty. "
             "/dev/tpm0 not probed on a dedicated that was not delivered."
         ),

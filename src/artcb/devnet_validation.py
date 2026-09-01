@@ -206,6 +206,16 @@ DECISIONS_194: Final[dict[str, str]] = {
         "91.134.45.8. No install.sh wipe, no origin/main deploy, no invented "
         "TPM/IP/balance. certified_distributed_mainnet stays false."
     ),
+    "D-049": (
+        "Measured Eco public catalog FR: renew intervalUnit is month on every "
+        "plan (0 hour). Operator 'horaire' is Public Cloud d2-8 consumption "
+        "and/or availability 1H-low, not Eco billing. GET /dedicated/server "
+        "on xy4589-ovh still []. Eco checkout already exists: orderId "
+        "258100013 KS-5 24sk50-v1 rbx, details say '1 mois', status checking, "
+        "followUp FRAUD_MANUAL_REVIEW, 44.98 EUR HT / 53.98 EUR TTC, paymentType "
+        "debtAccount. This agent does not POST --order (no second server). "
+        "VM 91.134.45.8 untouched. No IP invented. certified stays false."
+    ),
 }
 
 DECISIONS_191: Final[dict[str, str]] = {
