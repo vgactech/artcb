@@ -24,27 +24,12 @@ fi
 CURRENT_STEP="git_sync"
 ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-cursor/replit-sync-ready-16d8}"
 ARTCB_REPLIT_REMOTE="${ARTCB_REPLIT_REMOTE:-https://github.com/vgactech/artcb.git}"
-ARTCB_REPLIT_PIN_SHA="${ARTCB_REPLIT_PIN_SHA:-4cb2943d4190def4efabf16b12369d91ebad7e8f}"
-git config --global --add safe.directory "$REPL_DIR" 2>/dev/null || true
-git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
-  || git fetch origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
-if [ ! -d "$REPL_DIR/.git" ]; then
-  git clone --depth 1 --branch "$ARTCB_REPLIT_BRANCH" "$ARTCB_REPLIT_REMOTE" /tmp/artcb-src-$$ \
-    && cp -a /tmp/artcb-src-$$/. "$REPL_DIR/" && rm -rf /tmp/artcb-src-$$ \
-    || _log "WARN clone failed — snapshot files"
-fi
-if git -C "$REPL_DIR" rev-parse --verify "origin/$ARTCB_REPLIT_BRANCH" >/dev/null 2>&1; then
-  _TIP="$(git -C "$REPL_DIR" rev-parse "origin/$ARTCB_REPLIT_BRANCH")"
-  if git -C "$REPL_DIR" merge-base --is-ancestor "$ARTCB_REPLIT_PIN_SHA" "$_TIP" 2>/dev/null \
-    || [ -z "$ARTCB_REPLIT_PIN_SHA" ]; then
-    git -C "$REPL_DIR" checkout --detach "$_TIP" || true
-    _log "checkout tip=$_TIP"
-  else
-    git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_PIN_SHA" 2>/dev/null || true
-    git -C "$REPL_DIR" checkout --detach "$ARTCB_REPLIT_PIN_SHA" || true
-    _log "checkout pin=$ARTCB_REPLIT_PIN_SHA"
-  fi
-fi
+# PIN is a supply-chain check, not a checkout target. Never default to 178:
+# a shallow clone makes merge-base fail and 181 then rewound to 4cb2943.
+ARTCB_REPLIT_PIN_SHA="${ARTCB_REPLIT_PIN_SHA:-}"
+# shellcheck source=scripts/replit_git_sync.sh
+. "$REPL_DIR/scripts/replit_git_sync.sh"
+artcb_replit_git_sync
 _SHA="$(git -C "$REPL_DIR" rev-parse HEAD 2>/dev/null || true)"
 {
   echo "ARTCB_GIT_SHA=$_SHA"
@@ -62,7 +47,21 @@ for d in \
   [ -d "$d" ] && PYTHONPATH="$d:$PYTHONPATH"
 done
 export PYTHONPATH
-PYTHON="$(command -v python3)"
+PYTHON=""
+for _candidate in \
+  "$REPL_DIR/.pythonlibs/bin/python3" \
+  "$HOME/.pythonlibs/bin/python3" \
+  "$HOME/venv/bin/python3" \
+  "$(command -v python3)"; do
+  if [ -x "$_candidate" ] \
+    && "$_candidate" -c "import fastapi, uvicorn" 2>/dev/null; then
+    PYTHON="$_candidate"
+    break
+  fi
+done
+if [ -z "$PYTHON" ]; then
+  PYTHON="$(command -v python3)"
+fi
 export OQS_INSTALL_PATH="${OQS_INSTALL_PATH:-$HOME/_oqs}"
 export LD_LIBRARY_PATH="${OQS_INSTALL_PATH}/lib:${OQS_INSTALL_PATH}/lib64:${LD_LIBRARY_PATH:-}"
 if ! "$PYTHON" -c "import fastapi, uvicorn" 2>/dev/null; then
