@@ -15,7 +15,7 @@ from artcb.crypto_policy import (
     accept_peer_protocol,
     accept_peer_suite,
 )
-from artcb.devnet_validation import DECISIONS_174, DV
+from artcb.devnet_validation import DECISIONS_174, DECISIONS_186, DV
 from artcb.p2p.handshake import (
     CapabilityHistory,
     build_signed_card,
@@ -39,6 +39,8 @@ def test_decisions_174_do_not_overwrite_d033_dv_profile() -> None:
     spec = public_spec()
     assert spec["live_bft_implemented"] is False
     assert LIVE_BFT_IMPLEMENTED is False
+    assert "D-036" in DECISIONS_186["D-040"]
+    assert "cursor/replit-sync-ready-16d8" in DECISIONS_186["D-040"]
 
 
 def test_dv03_protocol_match_and_legacy_reject() -> None:

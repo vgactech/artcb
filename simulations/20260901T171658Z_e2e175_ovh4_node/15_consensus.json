@@ -1,0 +1,9 @@
+{
+  "canonical_tip_sim": "longest valid chain; tie -> lexicographically smaller hash (distributed.py)",
+  "classical_bft_note": "N >= 3F+1 is a literature bound, not ARTCB live consensus",
+  "dv05": "BLOCKED until a live BFT engine exists and DV-04 PASS on 4 nodes",
+  "live_bft_implemented": false,
+  "sim_finality_confirmations": 2,
+  "sim_settlement_quorum": "n//2+1",
+  "three_live_nodes_bft_f": null
+}

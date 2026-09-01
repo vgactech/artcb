@@ -1,0 +1,143 @@
+{
+  "certified_distributed_mainnet": false,
+  "diagnosis": "HTTP 500 was RuntimeError Can not encapsulate secret during encrypted PUSH to AWS3 leftover 32-byte X25519 KEM key. PULL of public blocks already worked. Fix: catch per-peer + upgrade leftover identity + honest kem_algorithm.",
+  "failure_count": 0,
+  "failures": [],
+  "invented": false,
+  "kem_sizes": {
+    "aws3": {
+      "git_sha": "e6ad5d714792523565bb7386c2823a156d703874",
+      "http": 200,
+      "kem_algorithm": "ML-KEM-768",
+      "kem_public_bytes": 1184,
+      "protocol_version": "174-devnet-1"
+    },
+    "ovh1": {
+      "git_sha": "e6ad5d714792523565bb7386c2823a156d703874",
+      "http": 200,
+      "kem_algorithm": "ML-KEM-768",
+      "kem_public_bytes": 1184,
+      "protocol_version": "174-devnet-1"
+    },
+    "ovh2": {
+      "git_sha": "e6ad5d714792523565bb7386c2823a156d703874",
+      "http": 200,
+      "kem_algorithm": "ML-KEM-768",
+      "kem_public_bytes": 1184,
+      "protocol_version": "174-devnet-1"
+    },
+    "ovh4": {
+      "git_sha": "e6ad5d714792523565bb7386c2823a156d703874",
+      "http": 200,
+      "kem_algorithm": "ML-KEM-768",
+      "kem_public_bytes": 1184,
+      "protocol_version": "174-devnet-1"
+    }
+  },
+  "ovh1_untouched": false,
+  "simulation": "e2e176_sync_500",
+  "sync_runs": [
+    {
+      "all_ok": true,
+      "http": 200,
+      "n": 1,
+      "results": [
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_019d40f02ed2",
+          "pull_received": 7,
+          "pushed": 7
+        },
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_eba9b01d078f",
+          "pull_received": 7,
+          "pushed": 7
+        },
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_db67ac7e67d9",
+          "pull_received": 7,
+          "pushed": 7
+        }
+      ]
+    },
+    {
+      "all_ok": true,
+      "http": 200,
+      "n": 2,
+      "results": [
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_019d40f02ed2",
+          "pull_received": 7,
+          "pushed": 7
+        },
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_eba9b01d078f",
+          "pull_received": 7,
+          "pushed": 7
+        },
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_db67ac7e67d9",
+          "pull_received": 7,
+          "pushed": 7
+        }
+      ]
+    },
+    {
+      "all_ok": true,
+      "http": 200,
+      "n": 3,
+      "results": [
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_019d40f02ed2",
+          "pull_received": 7,
+          "pushed": 7
+        },
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_eba9b01d078f",
+          "pull_received": 7,
+          "pushed": 7
+        },
+        {
+          "error": null,
+          "ok": true,
+          "peer_id": "peer_db67ac7e67d9",
+          "pull_received": 7,
+          "pushed": 7
+        }
+      ]
+    }
+  ],
+  "tips": {
+    "aws3": {
+      "height": 7,
+      "last_hash": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639"
+    },
+    "ovh1": {
+      "height": 1,
+      "last_hash": "8d542e496f58485d8eeab8e8f9c3c9f5756b4256f794bc553caf955f53be8308"
+    },
+    "ovh2": {
+      "height": 7,
+      "last_hash": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639"
+    },
+    "ovh4": {
+      "height": 7,
+      "last_hash": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639"
+    }
+  }
+}

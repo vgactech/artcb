@@ -93,8 +93,8 @@ def main() -> int:
     failures = []
     if any(r["http"] == 500 for r in runs):
         failures.append("ovh4_sync_still_500")
-    if sizes["ovh1"].get("git_sha") and not str(sizes["ovh1"]["git_sha"]).startswith("5b4b24ae"):
-        failures.append("ovh1_unexpectedly_redeployed")
+    if sizes["ovh1"].get("git_sha") and str(sizes["ovh1"]["git_sha"]).startswith("5b4b24ae"):
+        failures.append("ovh1_still_legacy_after_d040")
     summary = {
         "simulation": SIM_ID,
         "failures": failures,
@@ -109,7 +109,7 @@ def main() -> int:
         "kem_sizes": sizes,
         "sync_runs": runs,
         "tips": {k: {"height": v.get("height"), "last_hash": v.get("last_hash")} for k, v in tips.items()},
-        "ovh1_untouched": True,
+        "ovh1_untouched": False,
     }
     manifest = collect(
         protocol_version=PROTOCOL_VERSION,
@@ -117,7 +117,7 @@ def main() -> int:
         simulation_id=SIM_ID,
         seed=176,
         script_path=Path(__file__),
-        extra={"ovh1_redeployed": False},
+        extra={"ovh1_redeployed": True, "d040": True},
     )
     (out_dir / "00_manifest.json").write_text(dumps(finish(manifest)), encoding="utf-8")
     (out_dir / "18_summary.json").write_text(dumps(summary), encoding="utf-8")

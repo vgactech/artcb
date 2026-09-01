@@ -239,7 +239,7 @@ def main() -> int:
         simulation_id=SIM_ID,
         seed=175,
         script_path=Path(__file__),
-        extra={"ovh1_redeployed": False, "node4": True, "ovh4_ip": OVH4},
+        extra={"ovh1_redeployed": True, "node4": True, "ovh4_ip": OVH4, "d040": True},
     )
     nodes = {
         "ovh1": probe("ovh-node-1", OVH1),
@@ -258,8 +258,8 @@ def main() -> int:
     for key in ("ovh1", "ovh2", "aws3", "ovh4"):
         if not nodes[key].get("reachable"):
             failures.append(f"{key}_down")
-    if nodes["ovh1"].get("protocol_compatible_with_174"):
-        failures.append("ovh1_unexpectedly_174_fields")
+    if not nodes["ovh1"].get("protocol_compatible_with_174"):
+        failures.append("ovh1_still_legacy_after_d040")
     if nodes["ovh4"].get("bootstrap_mode") is True:
         failures.append("ovh4_still_bootstrap")
     if not nodes["ovh4"].get("protocol_compatible_with_174"):
@@ -277,8 +277,9 @@ def main() -> int:
         "consensus_extracted": public_spec(),
         "nodes": nodes,
         "note": (
-            "Four live machines exist, but OVH1 remains legacy (D-036). "
-            "Homogeneous 174 set is OVH2+AWS3+OVH4 (3). DV-04 FINAL C stays BLOCKED."
+            "D-040: OVH1 is protocol-compatible 174. Homogeneous code tip is "
+            "OVH1+OVH2+AWS3+OVH4. DV-04 FINAL C stays BLOCKED until four "
+            "last_hash values match after a public TX."
         ),
     }
     _write(out_dir, "00_manifest.json", finish(manifest))

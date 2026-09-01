@@ -1,0 +1,15 @@
+{
+  "aws3_after": "391d49838832c26ebf923c1d76afeb204a6eef30eea8feaeff2d60f2d062fd07",
+  "aws3_before": "bff9c3833c3fe95985fe7b51c21efe915bafcf021a981b3f803ce5c78018943d",
+  "aws3_height": 4,
+  "digest_aws3": "335d394332a5ded22c8dac8a03ecf0ee3966bcddd8550ad9e4ae8a19d2e16907",
+  "digest_ovh2": "335d394332a5ded22c8dac8a03ecf0ee3966bcddd8550ad9e4ae8a19d2e16907",
+  "ovh1_untouched": true,
+  "ovh2_after": "391d49838832c26ebf923c1d76afeb204a6eef30eea8feaeff2d60f2d062fd07",
+  "ovh2_before": "bff9c3833c3fe95985fe7b51c21efe915bafcf021a981b3f803ce5c78018943d",
+  "ovh2_height": 4,
+  "store_block_index": 3,
+  "store_http": 200,
+  "sync_http": 200,
+  "tips_equal": true
+}

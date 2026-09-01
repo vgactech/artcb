@@ -95,6 +95,17 @@ DECISIONS_178: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-01: explicit exception — update every OVH node including OVH1.
+DECISIONS_186: Final[dict[str, str]] = {
+    "D-040": (
+        "GO OVH1 174 — explicit exception to D-036. Deploy "
+        "cursor/replit-sync-ready-16d8 (same tip as OVH2/OVH4/AWS3). "
+        "Preserve wallets: git fetch + restart, no install.sh. "
+        "Replit Autoscale paused. DV-04 C still needs identical "
+        "last_hash on four live machines after a public TX."
+    ),
+}
+
 
 def public_lock() -> dict[str, Any]:
     return {
@@ -107,5 +118,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_175": DECISIONS_175,
         "decisions_177": DECISIONS_177,
         "decisions_178": DECISIONS_178,
+        "decisions_186": DECISIONS_186,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

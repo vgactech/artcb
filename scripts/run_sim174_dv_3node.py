@@ -205,7 +205,7 @@ def main() -> int:
         simulation_id=SIM_ID,
         seed=174,
         script_path=Path(__file__),
-        extra={"ovh1_redeployed": False, "node4": False},
+        extra={"ovh1_redeployed": True, "node4": False, "d040": True},
     )
     nodes = {
         "ovh1": probe("ovh-node-1", OVH1),
@@ -226,8 +226,8 @@ def main() -> int:
         failures.append("ovh2_down")
     if not nodes["aws3"].get("reachable"):
         failures.append("aws3_down")
-    if nodes["ovh1"].get("protocol_compatible_with_174"):
-        failures.append("ovh1_unexpectedly_174_fields")
+    if not nodes["ovh1"].get("protocol_compatible_with_174"):
+        failures.append("ovh1_still_legacy_after_d040")
     summary = {
         "simulation": SIM_ID,
         "dir": str(out_dir),
@@ -242,7 +242,7 @@ def main() -> int:
             k: {kk: vv for kk, vv in n.items() if kk != "capability_card"}
             for k, n in nodes.items()
         },
-        "note": "DV-04 FINAL blocked (3/4). PRE-DV-04 is public-block tip equality OVH2/AWS3 only.",
+        "note": "D-040: OVH1 is on 174-devnet-1. PRE-DV-04 is public-block tip equality OVH2/AWS3. DV-04 FINAL still needs 4 identical last_hash.",
     }
     _write(out_dir, "00_manifest.json", finish(manifest))
     _write(out_dir, "10_registry.json", public_registry())

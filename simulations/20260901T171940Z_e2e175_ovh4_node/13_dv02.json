@@ -1,0 +1,35 @@
+{
+  "ovh1_skipped_mutating": true,
+  "ovh2": {
+    "dead_peer_timeout": {
+      "error": "URLError",
+      "expect_fail": true,
+      "http": 0
+    },
+    "invalid_kem": {
+      "expect_4xx": true,
+      "http": 422
+    },
+    "reconnect": {
+      "deleted": 200,
+      "ok": true,
+      "readded": 400
+    }
+  },
+  "ovh4": {
+    "dead_peer_timeout": {
+      "error": "URLError",
+      "expect_fail": true,
+      "http": 0
+    },
+    "invalid_kem": {
+      "expect_4xx": true,
+      "http": 422
+    },
+    "reconnect": {
+      "deleted": 200,
+      "ok": true,
+      "readded": 400
+    }
+  }
+}
