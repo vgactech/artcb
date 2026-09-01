@@ -15,6 +15,11 @@ def test_autoscale_script_never_creates_venv() -> None:
     assert "uvicorn src.api.main:app" in body
     assert "replit_live_shim.py" in body
     assert "replit_git_sync.sh" in body
+    assert "replit_pick_python.sh" in body
+    pick = (ROOT / "scripts" / "replit_pick_python.sh").read_text(encoding="utf-8")
+    assert "python3 -m venv" not in "\n".join(
+        line for line in pick.splitlines() if not line.lstrip().startswith("#")
+    )
     sync = (ROOT / "scripts" / "replit_git_sync.sh").read_text(encoding="utf-8")
     assert "origin/$ARTCB_REPLIT_BRANCH" in sync or 'origin/"$ARTCB_REPLIT_BRANCH"' in sync
 

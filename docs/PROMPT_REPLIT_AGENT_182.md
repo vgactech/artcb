@@ -23,6 +23,8 @@ Secrets à garder : `SESSION_SECRET`, `ARTCB_REPLIT_PIN_SHA`.
 
 `ARTCB_REPLIT_PIN_SHA` = le **SHA complet** du commit 182 sur `cursor/replit-sync-ready-16d8` (message `fix(182): never rewind Autoscale to an old PIN`). Copier depuis GitHub/Cursor. **Pas** `4cb2943…`.
 
+**183 supersède ce PIN** : si le tip de la branche est `fix(183): prefer Replit Python over Nix`, publier ce SHA-là (`docs/PROMPT_REPLIT_AGENT_183.md`).
+
 Puis **Publish / Redeploy** (un Restart ne remplace pas l’image).
 
 ## Logs OK (< ~30 s)
