@@ -101,6 +101,7 @@ def public_eco_catalog() -> dict[str, Any]:
             for pr in (plan.get("pricings") or [])
             if isinstance(pr, dict)
             and pr.get("interval") == 1
+            and pr.get("intervalUnit") == "month"
             and "renew" in str(pr.get("capacities") or "")
         ]
         if not monthly:
@@ -112,6 +113,8 @@ def public_eco_catalog() -> dict[str, Any]:
                 "invoiceName": plan.get("invoiceName"),
                 "price_raw": best.get("price"),
                 "price_eur": euro_from_raw(best.get("price")),
+                "interval": best.get("interval"),
+                "intervalUnit": best.get("intervalUnit"),
             }
         )
     rows.sort(key=lambda r: r.get("price_eur") if r.get("price_eur") is not None else 10**18)
@@ -121,6 +124,85 @@ def public_eco_catalog() -> dict[str, Any]:
         "currency": "EUR",
         "plan_count": len(rows),
         "cheapest": rows[:5],
+        "intervals": eco_catalog_intervals(cat),
+    }
+
+
+def eco_catalog_intervals(cat: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Measure real Eco renew intervals from the catalog. Do not assume hour.
+
+    horaire = intervalUnit hour (each hour). mensuel = intervalUnit month (each month).
+    Availability strings like 1H-low are stock/delivery, not a billing interval.
+    """
+    if cat is None:
+        with urlopen(ECO_CATALOG, timeout=40) as resp:
+            cat = json.loads(resp.read().decode())
+    if not isinstance(cat, dict):
+        return {"ok": False, "invented": False, "error": "catalog_not_object"}
+    unit_counts: dict[str, int] = {}
+    hourly_plans: list[dict[str, Any]] = []
+    monthly_plans: list[dict[str, Any]] = []
+    samples: list[dict[str, Any]] = []
+    want_samples = {"25skb012", "24sk50-v1", "25skc012"}
+    for plan in cat.get("plans") or []:
+        if not isinstance(plan, dict):
+            continue
+        renew_units: set[str] = set()
+        renew_rows: list[dict[str, Any]] = []
+        for pr in plan.get("pricings") or []:
+            if not isinstance(pr, dict):
+                continue
+            if "renew" not in str(pr.get("capacities") or ""):
+                continue
+            unit = str(pr.get("intervalUnit") or "missing")
+            unit_counts[unit] = unit_counts.get(unit, 0) + 1
+            renew_units.add(unit)
+            renew_rows.append(
+                {
+                    "interval": pr.get("interval"),
+                    "intervalUnit": pr.get("intervalUnit"),
+                    "price_eur": euro_from_raw(pr.get("price")),
+                    "description": pr.get("description"),
+                    "pricingMode": pr.get("mode") or pr.get("pricingMode"),
+                }
+            )
+        rec = {
+            "planCode": plan.get("planCode"),
+            "invoiceName": plan.get("invoiceName"),
+            "renew_units": sorted(renew_units),
+        }
+        if "hour" in renew_units:
+            hourly_plans.append(rec)
+        if "month" in renew_units:
+            monthly_plans.append(rec)
+        if plan.get("planCode") in want_samples:
+            samples.append({**rec, "renew": renew_rows})
+    hourly_n = len(hourly_plans)
+    monthly_n = len(monthly_plans)
+    if hourly_n and monthly_n:
+        billing = "mixed_hour_and_month"
+    elif hourly_n:
+        billing = "hour_only"
+    elif monthly_n:
+        billing = "month_only"
+    else:
+        billing = "no_renew_interval"
+    return {
+        "ok": True,
+        "catalog": "eco",
+        "subsidiary": "FR",
+        "plan_count": len(cat.get("plans") or []),
+        "renew_interval_units": unit_counts,
+        "hourly_plan_count": hourly_n,
+        "monthly_plan_count": monthly_n,
+        "hourly_exists": hourly_n > 0,
+        "billing": billing,
+        "samples": samples,
+        "invented": False,
+        "note": (
+            "1H-low on /dedicated/server/datacenter/availabilities is stock, "
+            "not intervalUnit=hour. Public Cloud d2-8 consumption is hourly VM, not Eco."
+        ),
     }
 
 

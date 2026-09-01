@@ -24,7 +24,8 @@ from artcb.crypto_policy import PROTOCOL_VERSION  # noqa: E402
 from artcb.devnet_validation import DECISIONS_194, certification_gate, public_lock  # noqa: E402
 from artcb.node_registry import NODES, public_registry  # noqa: E402
 from artcb.sim_provenance import collect, dumps, finish  # noqa: E402
-from ovh4_baremetal_order import decide_order, pick_cheapest_combo  # noqa: E402
+from ovh_baremetal_quote import eco_catalog_intervals  # noqa: E402
+from ovh4_baremetal_order import decide_order, pick_cheapest_combo, quote_ovh4  # noqa: E402
 
 SIM_ID = "e2e194_ovh4_baremetal_go"
 
@@ -43,7 +44,7 @@ def main() -> int:
         simulation_id=SIM_ID,
         seed=194,
         script_path=Path(__file__),
-        extra={"branch_expected": "cursor/ovh4-baremetal-go-3c95"},
+        extra={"branch_expected": "cursor/ovh4-baremetal-hourly-go-16d8"},
     )
     _write(out_dir, "00_manifest.json", manifest)
     _write(out_dir, "10_registry.json", public_registry())
@@ -81,11 +82,38 @@ def main() -> int:
             {"planCode": "24sk50-v1", "total_eur": 26.99, "dcs_fr": [{"dc": "rbx"}], "datacenter": "rbx"},
         ]
     )
+    fixture_intervals = eco_catalog_intervals(
+        {
+            "plans": [
+                {
+                    "planCode": "25skb012",
+                    "invoiceName": "KS-B",
+                    "pricings": [
+                        {
+                            "interval": 1,
+                            "intervalUnit": "month",
+                            "capacities": ["renew"],
+                            "price": 999000000,
+                            "description": "rental for 1 month",
+                        }
+                    ],
+                }
+            ]
+        }
+    )
+    # Live measure only. want_order=False — never POST checkout from this sim.
+    live = quote_ovh4(want_order=False, operator_go=False)
     _write(
         out_dir,
         "22_gates.json",
-        {"without_go": without_go, "with_go": with_go, "picked": picked},
+        {
+            "without_go": without_go,
+            "with_go": with_go,
+            "picked": picked,
+            "fixture_intervals": fixture_intervals,
+        },
     )
+    _write(out_dir, "23_live_measure.json", live)
 
     gate = certification_gate(
         {letter: "PASS" for letter in ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")}
@@ -107,6 +135,12 @@ def main() -> int:
         failures.append("baremetal_is_vm")
     if gate.get("certified_distributed_mainnet"):
         failures.append("certified_true")
+    if live.get("order", {}).get("executed"):
+        failures.append("live_measure_executed_order")
+    if live.get("nic") not in {None, "xy4589-ovh"}:
+        failures.append("wrong_nic")
+    intervals = live.get("catalog_intervals") or {}
+    existing = live.get("existing_eco_orders") or {}
 
     summary = {
         "sim": SIM_ID,
@@ -114,12 +148,23 @@ def main() -> int:
         "without_go": without_go.get("blocked_reason"),
         "with_go_tender": (with_go.get("would_order") or {}).get("tender"),
         "picked_dc": None if picked is None else picked.get("datacenter"),
+        "live_nic": live.get("nic"),
+        "live_me_http": live.get("me_http"),
+        "live_dedicated_count": (live.get("dedicated_servers") or {}).get("count"),
+        "live_prepaid_eur": live.get("ovhAccount_prepaid_eur"),
+        "live_eco_order_ids": [r.get("orderId") for r in (existing.get("eco_orders") or [])],
+        "live_billing": intervals.get("billing"),
+        "live_hourly_exists": intervals.get("hourly_exists"),
+        "live_order_executed": live.get("order", {}).get("executed"),
         "certification_gate": gate,
         "failures": failures,
         "ovh4_vm_untouched": True,
         "install_sh": False,
         "init_genesis": False,
-        "note": "D-048: operator GO may charge CREDIT_CARD; sim does not POST checkout.",
+        "note": (
+            "D-049: Eco catalog measured month_only. Existing checkout 258100013. "
+            "This sim never POSTs --order."
+        ),
     }
     _write(out_dir, "24_summary.json", summary)
     _write(out_dir, "00_manifest.json", finish(manifest))

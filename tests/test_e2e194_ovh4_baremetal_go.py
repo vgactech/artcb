@@ -22,6 +22,89 @@ def test_d048_operator_go_allows_card_on_ovh4_only() -> None:
     assert lock["decisions_194"]["D-048"] == text
 
 
+def test_d049_hourly_measured_month_only_and_existing_order_stops() -> None:
+    text = DECISIONS_194["D-049"]
+    assert "intervalUnit is month" in text
+    assert "0 hour" in text
+    assert "258100013" in text
+    assert "1 mois" in text
+    assert "does not POST --order" in text
+    assert "91.134.45.8" in text
+    assert public_lock()["decisions_194"]["D-049"] == text
+
+
+def test_eco_catalog_intervals_reads_unit_not_1h_stock() -> None:
+    import sys
+
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from ovh_baremetal_quote import eco_catalog_intervals
+
+    fixture = {
+        "plans": [
+            {
+                "planCode": "25skb012",
+                "invoiceName": "KS-B",
+                "pricings": [
+                    {
+                        "interval": 1,
+                        "intervalUnit": "month",
+                        "capacities": ["renew"],
+                        "price": 999000000,
+                        "description": "rental for 1 month",
+                        "mode": "default",
+                    },
+                    {
+                        "interval": 0,
+                        "intervalUnit": "none",
+                        "capacities": ["installation"],
+                        "price": 999000000,
+                    },
+                ],
+            },
+            {
+                "planCode": "24sk50-v1",
+                "invoiceName": "KS-5",
+                "pricings": [
+                    {
+                        "interval": 1,
+                        "intervalUnit": "month",
+                        "capacities": ["renew"],
+                        "price": 1799000000,
+                        "description": "rental for 1 month",
+                        "mode": "default",
+                    }
+                ],
+            },
+        ]
+    }
+    measured = eco_catalog_intervals(fixture)
+    assert measured["invented"] is False
+    assert measured["hourly_exists"] is False
+    assert measured["hourly_plan_count"] == 0
+    assert measured["monthly_plan_count"] == 2
+    assert measured["billing"] == "month_only"
+    assert measured["renew_interval_units"] == {"month": 2}
+    hour_fixture = {
+        "plans": [
+            {
+                "planCode": "fake-hour",
+                "invoiceName": "fake",
+                "pricings": [
+                    {
+                        "interval": 1,
+                        "intervalUnit": "hour",
+                        "capacities": ["renew"],
+                        "price": 10000000,
+                    }
+                ],
+            }
+        ]
+    }
+    hourly = eco_catalog_intervals(hour_fixture)
+    assert hourly["hourly_exists"] is True
+    assert hourly["billing"] == "hour_only"
+
+
 def test_pick_cheapest_combo_prefers_fr_then_price() -> None:
     import sys
 
@@ -128,6 +211,9 @@ def test_decide_order_go_opens_card_tender_without_executing() -> None:
 def test_ovh4_vm_kept_and_cert_false() -> None:
     assert NODES["ovh-node-4"].ssh_host == "91.134.45.8"
     assert NODES["ovh-baremetal-1"].ssh_host != "91.134.45.8"
+    assert NODES["ovh-baremetal-1"].ssh_host is None
+    assert "258100013" in NODES["ovh-baremetal-1"].public_notes
+    assert "Do not POST a second --order" in NODES["ovh-baremetal-1"].public_notes
     gate = certification_gate(
         {letter: "PASS" for letter in ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")}
     )
@@ -139,3 +225,15 @@ def test_ovh4_vm_kept_and_cert_false() -> None:
     assert "Never prints API keys" in body
     assert "CREDIT_CARD" in body
     assert "91.134.45.8" in body
+
+
+def test_rapport_194_documents_month_and_existing_order() -> None:
+    text = (ROOT / "rapports" / "194_ovh4_baremetal_hourly_go_2026-09-01.md").read_text(
+        encoding="utf-8"
+    )
+    assert "258100013" in text
+    assert "intervalUnit=month" in text
+    assert "NON exécuté" in text
+    assert "91.134.45.8" in text
+    assert "ovhAccount" in text
+    assert "10 €" in text or "10 EUR" in text or "10,00" in text
