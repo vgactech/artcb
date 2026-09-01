@@ -55,10 +55,14 @@ def test_autoscale_never_checkouts_pin_fallback() -> None:
         line for line in (auto + "\n" + sync).splitlines() if not line.lstrip().startswith("#")
     )
     assert "replit_git_sync.sh" in auto
-    assert "fetch --unshallow" in sync
+    assert "fetch --unshallow" not in "\n".join(
+        line for line in sync.splitlines() if not line.lstrip().startswith("#")
+    )
+    assert "fetch --unshallow" not in auto
+    assert "keep_tip" in sync
     assert "merge-base --is-ancestor" in sync
     assert "checkout tip=" in sync
-    assert "keep_tip" in sync
+    assert "ARTCB_FAST_BOOT=1" in auto
     assert 'checkout --detach "$ARTCB_REPLIT_PIN_SHA"' not in live_lines
     assert "python3 -m venv" not in live_lines
 
@@ -128,6 +132,7 @@ def test_shallow_clone_old_pin_keeps_tip_not_pin(tmp_path: Path) -> None:
     assert head_after != pin
     assert f"checkout tip={tip}" in log
     assert f"checkout pin={pin}" not in log
+    assert "unshallow" not in log
     assert (dest / "marker.txt").read_text(encoding="utf-8") == "tip-182\n"
 
 

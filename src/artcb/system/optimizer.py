@@ -203,7 +203,7 @@ def build_optimization_profile(hw: HardwareProfile | None = None) -> Optimizatio
     if hw.memory_total_gb < 4:
         workers = 1
 
-    use_faiss = _faiss_available()
+    use_faiss = False if os.getenv("ARTCB_FAST_BOOT", "").strip() in {"1", "true", "yes"} else _faiss_available()
     use_faiss_gpu = use_faiss and (hw.faiss_gpu_count > 0 or len(hw.gpus) > 0)
 
     chunk = 400

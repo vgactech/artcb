@@ -12,9 +12,17 @@ _log() { printf '[%s] [startup_id=%s] [step=%s] %s\n' "$(date -u +%Y-%m-%dT%H:%M
 trap '_log EXIT status=$?' EXIT
 export ARTCB_PORT="${ARTCB_PORT:-5000}"
 CURRENT_STEP="shim"
+export ARTCB_FAST_BOOT=1
 python3 "$REPL_DIR/scripts/replit_live_shim.py" &
 SHIM_PID=$!
 _log "live_shim pid=$SHIM_PID port=$ARTCB_PORT"
+for _i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
+  if curl -sf "http://127.0.0.1:${ARTCB_PORT}/live" >/dev/null 2>&1; then
+    _log "shim_ready /live=200"
+    break
+  fi
+  sleep 0.1
+done
 
 CURRENT_STEP="public_url"
 if [ -z "${ARTCB_NODE_PUBLIC_URL:-}" ] && [ -n "${REPLIT_DOMAINS:-}" ]; then
