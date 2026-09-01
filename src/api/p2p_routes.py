@@ -18,7 +18,7 @@ from src.artcb.crypto_policy import (
 )
 from src.artcb.p2p.handshake import build_signed_card, load_or_create_handshake_key
 from src.artcb.p2p.node_identity import advertised_base_url
-from src.artcb.p2p.public_url import public_register_url_ok
+from src.artcb.p2p.public_url import is_https_platform_host, public_register_url_ok
 from src.artcb.p2p.sync import P2PSyncError
 from src.artcb.security.hardware_identity import public_machine_view
 from src.api.api_keys_routes import require_operator_write
@@ -126,8 +126,7 @@ def add_peer(
             peer_id=body.peer_id,
             scheme=(
                 "https"
-                if body.port == 443
-                or body.host.lower().endswith((".replit.app", ".repl.co"))
+                if body.port == 443 or is_https_platform_host(body.host)
                 else "http"
             ),
         )
@@ -414,7 +413,7 @@ def gossip_receive(body: dict, request: Request) -> dict:
     entry = body.get("announcement", body)
     host = str(entry.get("host") or "")
     port = int(entry.get("api_port") or 80)
-    scheme = "https" if host.endswith((".replit.app", ".repl.co")) or port == 443 else "http"
+    scheme = "https" if is_https_platform_host(host) or port == 443 else "http"
     url = f"{scheme}://{host}:{port}"
     ok, reason = public_register_url_ok(url)
     if not ok:

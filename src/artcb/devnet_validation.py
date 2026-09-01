@@ -171,8 +171,11 @@ DECISIONS_191: Final[dict[str, str]] = {
         "detect all live nodes and can announce themselves without a wallet. "
         "Visitors cannot stop/hijack P2P (mutations Bearer; libp2p GET does not autostart). "
         "DV-06 packet-loss and DV-02 bounded flood run on the live height-1 book. "
-        "Replit stays bootstrap (no init-node). certified_distributed_mainnet stays "
-        "false unless every DV letter is PASS and the operator says so."
+        "Never bake a Replit account hostname into the protocol: clones detect "
+        "REPLIT_DEV_DOMAIN / ARTCB_NODE_PUBLIC_URL and POST /api/v1/network/announce "
+        "to the four always-on IPs. Replit stays bootstrap (no init-node). "
+        "certified_distributed_mainnet stays false unless every DV letter is PASS "
+        "and the operator says so."
     ),
 }
 

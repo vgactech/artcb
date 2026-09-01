@@ -1,8 +1,12 @@
-"""Allowlist for public P2P registration — SSRF defense (D-044).
+"""Allowlist for public P2P registration — SSRF defense (D-044 / D-045).
 
-Unauthenticated register-public may only target known infrastructure
-hosts. Loopback, link-local, and RFC1918 addresses are rejected unless
+Unauthenticated register-public / announce may only target known-safe hosts.
+Loopback, link-local, and RFC1918 addresses are rejected unless
 ARTCB_ALLOW_LOCAL_PEERS=1 (unit tests).
+
+No Replit account hostname belongs in git. Any clone whose public URL matches
+a platform suffix, a globally-routable IP, or ARTCB_PUBLIC_PEER_HOSTS may
+announce itself to the four always-on seeds.
 """
 
 from __future__ import annotations
@@ -20,9 +24,31 @@ INFRA_IPV4: frozenset[str] = frozenset(
     }
 )
 
+# Host suffixes injected by the hosting platform — never a specific account.
+PUBLIC_PLATFORM_SUFFIXES: tuple[str, ...] = (
+    ".replit.app",
+    ".repl.co",
+    ".replit.dev",
+    ".onrender.com",
+    ".up.railway.app",
+    ".railway.app",
+)
+
 
 def allow_local_peers() -> bool:
     return os.getenv("ARTCB_ALLOW_LOCAL_PEERS", "").lower() in {"1", "true", "yes", "on"}
+
+
+def is_https_platform_host(host: str) -> bool:
+    """True for Replit / Render / Railway public hostnames (any account)."""
+    h = (host or "").lower().rstrip(".")
+    return any(h.endswith(suffix) for suffix in PUBLIC_PLATFORM_SUFFIXES)
+
+
+def extra_public_hosts() -> frozenset[str]:
+    """Optional extra DNS names, comma-separated. For a custom domain on a VPS."""
+    raw = os.getenv("ARTCB_PUBLIC_PEER_HOSTS", "")
+    return frozenset(x.strip().lower().rstrip(".") for x in raw.split(",") if x.strip())
 
 
 def public_register_url_ok(url: str) -> tuple[bool, str]:
@@ -36,8 +62,10 @@ def public_register_url_ok(url: str) -> tuple[bool, str]:
         if allow_local_peers():
             return True, "local_test"
         return False, "loopback_forbidden"
-    if host.endswith(".replit.app") or host.endswith(".repl.co"):
-        return True, "replit_public"
+    if is_https_platform_host(host):
+        return True, "platform_public"
+    if host in extra_public_hosts():
+        return True, "extra_public_host"
     try:
         addr = ipaddress.ip_address(host)
     except ValueError:
@@ -50,4 +78,7 @@ def public_register_url_ok(url: str) -> tuple[bool, str]:
         if allow_local_peers():
             return True, "local_test"
         return False, "private_or_loopback_forbidden"
+    if addr.is_global:
+        # New VPS / extra OVH clone: announce http://PUBLIC_IP:8000
+        return True, "public_ip"
     return False, "host_not_allowlisted"

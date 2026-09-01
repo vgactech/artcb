@@ -112,20 +112,20 @@ NODES: dict[str, NodeSpec] = {
     ),
     "replit-node-1": NodeSpec(
         node_id="replit-node-1",
-        display_name="node artcb replit",
+        display_name="node artcb replit (any account)",
         provider="replit",
         doppler_project="artcb-blockchain",
         doppler_token_env="DOPPLER_TOKEN",
-        health_http="https://artcb--vgac42371.replit.app",
-        api_https="https://artcb--vgac42371.replit.app",
+        health_http=None,
+        api_https=None,
         ssh_host=None,
         ssh_user="runner",
         public_notes=(
-            "Replit Autoscale https://artcb--vgac42371.replit.app (port 5000→80). "
-            "Public facade. Stays bootstrap without wallet / init-node (D-044/D-045). "
-            "Discovers the four infra nodes via consumed BOOTSTRAP_NODES + "
-            "GET /api/v1/network/nodes (no wallet). Old domains "
-            "artcb--vgacofficiel.replit.app and artcb--vgac42.replit.app are aliases."
+            "No hardcoded *.replit.app host. Any Replit Autoscale clone detects "
+            "its public URL from REPLIT_DEV_DOMAIN / REPLIT_DOMAINS / REPL_SLUG "
+            "and announces itself to the four infrastructure seeds. Stays "
+            "bootstrap without wallet / init-node (D-044/D-045) until the "
+            "operator chooses otherwise."
         ),
     ),
 }

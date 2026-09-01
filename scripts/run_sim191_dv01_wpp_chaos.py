@@ -9,6 +9,7 @@ Bounded HTTP flood (not SYN). Replit stays bootstrap (no wallet).
 from __future__ import annotations
 
 import json
+import os
 import ssl
 import subprocess
 import sys
@@ -25,7 +26,6 @@ if str(ROOT) not in sys.path:
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
-from artcb.config import REPLIT_PUBLIC_URL  # noqa: E402
 from artcb.crypto_policy import NETWORK_ID, PROTOCOL_VERSION  # noqa: E402
 from artcb.devnet_validation import DECISIONS_191, certification_gate, public_lock  # noqa: E402
 from artcb.economics.demographic import H_ADULT_MAX, HMAX_FROZEN, default_reference  # noqa: E402
@@ -34,7 +34,13 @@ from artcb.sim_provenance import collect, dumps, finish  # noqa: E402
 
 SIM_ID = "e2e191_dv01_wpp_chaos"
 BRANCH = "cursor/dv01-tpm-wpp-chaos-16d8"
-REPLIT = REPLIT_PUBLIC_URL  # https://artcb--vgac42371.replit.app
+# Optional extra Replit URLs for this run only — never baked into the protocol.
+# Example: ARTCB_REPLIT_PROBE_URLS=https://foo--bar.replit.app
+REPLIT_PROBES = [
+    u.strip().rstrip("/")
+    for u in os.getenv("ARTCB_REPLIT_PROBE_URLS", "").split(",")
+    if u.strip()
+]
 OVH1 = NODES["ovh-node-1"].ssh_host or "152.228.144.34"
 OVH2 = NODES["ovh-node-2"].ssh_host or "151.80.107.29"
 AWS3 = NODES["aws-node-3"].ssh_host or "51.44.222.232"
@@ -286,7 +292,14 @@ def main() -> int:
         },
     )
     before = {n: probe_ip(n, ip) for n, ip in LABELS.items()}
-    replit_before = probe("replit", REPLIT)
+    _, dir_before = _http(f"http://{OVH1}:8000/api/v1/network/nodes", timeout=12)
+    replit_urls = list(REPLIT_PROBES)
+    for item in (dir_before.get("announced") or []):
+        u = (item.get("url") or "").rstrip("/")
+        if u.endswith(".replit.app") or u.endswith(".repl.co"):
+            if u not in replit_urls:
+                replit_urls.append(u)
+    replit_before = {u: probe(f"replit:{u}", u) for u in replit_urls}
     tpm_before = {n: probe_tpm(n) for n in LABELS}
     deploys = {}
     waits = {}
@@ -294,7 +307,12 @@ def main() -> int:
         deploys[name] = deploy_keep_book(name)
         waits[name] = wait_health(LABELS[name])
     after = {n: probe_ip(n, ip) for n, ip in LABELS.items()}
-    replit_after = probe("replit", REPLIT)
+    _, dir_after = _http(f"http://{OVH1}:8000/api/v1/network/nodes", timeout=12)
+    for item in (dir_after.get("announced") or []):
+        u = (item.get("url") or "").rstrip("/")
+        if (u.endswith(".replit.app") or u.endswith(".repl.co")) and u not in replit_urls:
+            replit_urls.append(u)
+    replit_after = {u: probe(f"replit:{u}", u) for u in replit_urls}
     tpm_after = {n: probe_tpm(n) for n in LABELS}
     delay_c, delay_b = _http("http://192.0.2.1:8000/health", timeout=3)
     flood = {name: flood_health(ip, 64) for name, ip in LABELS.items()}
@@ -325,8 +343,11 @@ def main() -> int:
     flood_ok = all(row.get("http_200") == 64 for row in flood.values())
     netem_restored = netem.get("after_200", 0) >= 6
     netem_ran = netem.get("applied", {}).get("returncode") == 0
-    replit_http = replit_after.get("http")
-    replit_bootstrap = bool(replit_after.get("bootstrap_mode")) or replit_http in {0, 404, 502, 503}
+    replit_http_set = {row.get("http") for row in replit_after.values()} if replit_after else set()
+    replit_left_bootstrap = [
+        u for u, row in replit_after.items()
+        if row.get("http") == 200 and not row.get("bootstrap_mode")
+    ]
     libp2p_idle = all(row.get("libp2p_running") in {False, None} for row in after.values())
     v = {
         "DV-01": "PASS" if tpm_none and tpm_not_faked else "FAIL",
@@ -370,10 +391,8 @@ def main() -> int:
         failures.append("netem_not_applied")
     if not netem_restored:
         failures.append("netem_not_restored")
-    if replit_http not in {200, 404, 502, 503, 0}:
-        failures.append(f"replit_unexpected_http_{replit_http}")
-    if replit_http == 200 and not replit_after.get("bootstrap_mode"):
-        failures.append("replit_left_bootstrap")
+    if replit_left_bootstrap:
+        failures.append("replit_left_bootstrap:" + ",".join(replit_left_bootstrap))
     if gate.get("certified_distributed_mainnet"):
         failures.append("certified_true")
     if not libp2p_idle:
@@ -400,12 +419,9 @@ def main() -> int:
         },
         "delay_unroutable": {"http": delay_c, "error": delay_b.get("error")},
         "replit": {
-            "url": REPLIT,
-            "http": replit_http,
-            "bootstrap_mode": replit_after.get("bootstrap_mode"),
-            "git_sha": replit_after.get("git_sha"),
-            "network_id": replit_after.get("network_id"),
-            "seeds": replit_after.get("seeds"),
+            "probed_urls": replit_urls,
+            "http_codes": {u: row.get("http") for u, row in replit_after.items()},
+            "rows": replit_after,
         },
         "h_adult_max": H_ADULT_MAX,
         "hmax_frozen": HMAX_FROZEN,

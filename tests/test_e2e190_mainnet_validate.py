@@ -47,6 +47,12 @@ def test_register_url_rejects_ssrf() -> None:
     ok4, reason4 = public_register_url_ok("https://evil.example.com")
     assert ok4 is False
     assert reason4 == "host_not_allowlisted"
+    ok5, reason5 = public_register_url_ok("https://any-app--anyuser.replit.dev")
+    assert ok5 is True
+    assert reason5 == "platform_public"
+    ok6, reason6 = public_register_url_ok("http://8.8.8.8:8000")
+    assert ok6 is True
+    assert reason6 == "public_ip"
 
 
 def test_pin_ancestor_fast_forward(tmp_path: Path, monkeypatch) -> None:

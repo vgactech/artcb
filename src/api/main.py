@@ -59,14 +59,12 @@ def create_app() -> FastAPI:
         f"https://n1.{ARTCB_DOMAIN}",
         f"https://n2.{ARTCB_DOMAIN}",
         f"https://node.{ARTCB_DOMAIN}",
-        "https://artcb--vgac42.replit.app",
-        "https://artcb--vgacofficiel.replit.app",
-        "https://artcb--vgac42371.replit.app",
         *_extra,
     ]
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_allowed_origins,
+        allow_origin_regex=r"https://.*\.(replit\.app|repl\.co|replit\.dev)",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

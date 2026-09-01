@@ -50,6 +50,24 @@ def _http_json(url: str, timeout: float = 1.5) -> tuple[int, dict[str, Any]]:
         return 0, {"error": type(exc).__name__, "url": url}
 
 
+def _http_post_json(url: str, body: dict[str, Any], timeout: float = 1.5) -> tuple[int, dict[str, Any]]:
+    try:
+        import httpx
+
+        with httpx.Client(timeout=timeout, follow_redirects=True) as client:
+            resp = client.post(url, json=body, headers={"Accept": "application/json"})
+            parsed = resp.json() if resp.content else {}
+            return int(resp.status_code), parsed if isinstance(parsed, dict) else {"raw": parsed}
+    except Exception as exc:  # noqa: BLE001
+        return 0, {"error": type(exc).__name__, "url": url}
+
+
+def own_public_url() -> str:
+    from src.artcb.p2p.node_identity import _detect_fresh_public_url
+
+    return (_detect_fresh_public_url() or "").rstrip("/")
+
+
 class DirectoryStore:
     """Observer directory — no KEM required (Replit bootstrap / git clones)."""
 
@@ -108,6 +126,7 @@ def probe_seed(url: str, timeout: float = 1.5) -> dict[str, Any]:
         "kem_public_key_hex": p2p.get("kem_public_key_hex") if isinstance(p2p, dict) else "",
         "peer_count": p2p.get("peer_count") if isinstance(p2p, dict) else None,
         "directory_count": (net.get("live_online") if isinstance(net, dict) else None),
+        "announced": list(net.get("announced") or []) if isinstance(net, dict) else [],
         "machine": health.get("machine") if isinstance(health, dict) else None,
     }
 
@@ -175,7 +194,7 @@ def seed_known_nodes(peers, identity, data_dir: Path) -> dict[str, Any]:
         report["directory"].append(entry["url"])
     if skip_seed_discovery():
         return report
-    self_url = (getattr(identity, "node_public_url", None) or "").rstrip("/")
+    self_url = (getattr(identity, "node_public_url", None) or own_public_url() or "").rstrip("/")
     for row in probe_all_seeds():
         url = row.get("url") or ""
         if not url or url == self_url:
@@ -193,7 +212,16 @@ def seed_known_nodes(peers, identity, data_dir: Path) -> dict[str, Any]:
             )
         except Exception as exc:  # noqa: BLE001
             report["errors"].append({"url": url, "error": type(exc).__name__})
-            continue
+        for remote in row.get("announced") or []:
+            if not isinstance(remote, dict):
+                continue
+            remote_url = (remote.get("url") or "").rstrip("/")
+            if not remote_url or remote_url == self_url:
+                continue
+            try:
+                store.upsert({**remote, "url": remote_url, "source": "seed_gossip"})
+            except Exception:
+                continue
         kem = (row.get("kem_public_key_hex") or "").strip()
         if peers is None or len(kem) < 64 or set(kem) <= {"0"}:
             continue
@@ -216,14 +244,58 @@ def seed_known_nodes(peers, identity, data_dir: Path) -> dict[str, Any]:
             report["peers_added"].append(peer.peer_id)
         except Exception as exc:  # noqa: BLE001
             report["errors"].append({"url": url, "error": type(exc).__name__})
+    report["announce"] = announce_self_to_seeds(self_url or own_public_url())
     logger.info(
-        "seed_known_nodes directory=%s peers_added=%s errors=%s skipped=%s",
+        "seed_known_nodes directory=%s peers_added=%s errors=%s skipped=%s announced=%s",
         len(report["directory"]),
         len(report["peers_added"]),
         len(report["errors"]),
         report["skipped"],
+        report["announce"].get("ok"),
     )
     return report
+
+
+def announce_self_to_seeds(public_url: str | None = None) -> dict[str, Any]:
+    """Tell the four always-on servers: here I am. Any Replit/VPS clone can call this."""
+    from src.artcb.crypto_policy import NETWORK_ID
+    from src.artcb.p2p.public_url import public_register_url_ok
+
+    url = (public_url or own_public_url()).rstrip("/")
+    result: dict[str, Any] = {"url": url, "ok": [], "errors": []}
+    if skip_seed_discovery():
+        result["skipped"] = True
+        return result
+    if not url or url.startswith("http://localhost"):
+        result["errors"].append("no_public_url")
+        return result
+    ok, reason = public_register_url_ok(url)
+    if not ok:
+        result["errors"].append(reason)
+        return result
+    body = {"node_public_url": url, "node_label": "clone-auto", "network_id": NETWORK_ID}
+
+    def once(seed: str) -> dict[str, Any]:
+        code, payload = _http_post_json(f"{seed}/api/v1/network/announce", body, timeout=1.5)
+        return {"seed": seed, "http": code, "registered": bool((payload or {}).get("registered"))}
+
+    seeds = [s for s in seed_urls() if s.rstrip("/") != url]
+    with ThreadPoolExecutor(max_workers=min(8, max(1, len(seeds)))) as pool:
+        futs = {pool.submit(once, s): s for s in seeds}
+        try:
+            for fut in as_completed(futs, timeout=4.0):
+                try:
+                    row = fut.result()
+                    if row.get("http") == 200 and row.get("registered"):
+                        result["ok"].append(row["seed"])
+                    else:
+                        result["errors"].append(row)
+                except Exception as exc:  # noqa: BLE001
+                    result["errors"].append({"seed": futs[fut], "error": type(exc).__name__})
+        except TimeoutError:
+            result["errors"].append("announce_deadline")
+    logger.info("announce_self_to_seeds url=%s ok=%s errors=%s", url, len(result["ok"]), len(result["errors"]))
+    return result
 
 
 def public_directory_payload(*, live: bool = False, data_dir: Path | None = None) -> dict[str, Any]:

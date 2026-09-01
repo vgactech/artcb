@@ -87,23 +87,32 @@ echo "║         ARTCB Replit — Démarrage complet v5              ║"
 echo "╚══════════════════════════════════════════════════════════╝"
 
 # ── 0b. Injection URL publique Replit AVANT tout le reste ────────
-# Replit injecte REPLIT_DOMAINS = "lvx--supermicro20238.repl.co"
-# (peut contenir plusieurs domaines séparés par des virgules).
-# On injecte ARTCB_NODE_PUBLIC_URL si pas déjà défini par l'opérateur.
-# Cette variable est lue par setup_routes.py::_detect_public_url()
-# et par logging_config.py::_node_suffix().
+# Replit injecte REPLIT_DEV_DOMAIN / REPLIT_DOMAINS selon le compte.
+# Jamais d'hostname en dur : chaque clone (n'importe quel compte) se présente
+# aux 4 serveurs toujours allumés au démarrage.
+_artcb_https_from_host() {
+  local d="$1"
+  d="${d#https://}"
+  d="${d#http://}"
+  d="${d%%/*}"
+  d="${d%%,*}"
+  d="$(echo "$d" | tr -d ' ')"
+  [ -n "$d" ] && echo "https://${d}"
+}
 CURRENT_STEP="public_url_detect"
 _log "STEP begin"
 if [ -z "${ARTCB_NODE_PUBLIC_URL:-}" ]; then
-  # Essai 1 : REPLIT_DOMAINS (format moderne Replit)
-  if [ -n "${REPLIT_DOMAINS:-}" ]; then
-    # Prendre le premier domaine (CSV possible)
-    _FIRST_DOMAIN="$(echo "$REPLIT_DOMAINS" | cut -d',' -f1 | tr -d ' ')"
-    export ARTCB_NODE_PUBLIC_URL="https://${_FIRST_DOMAIN}"
+  if [ -n "${REPLIT_DEV_DOMAIN:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="$(_artcb_https_from_host "$REPLIT_DEV_DOMAIN")"
+    _log "public_url detected from REPLIT_DEV_DOMAIN: $ARTCB_NODE_PUBLIC_URL"
+  elif [ -n "${REPLIT_INTERNAL_APP_DOMAIN:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="$(_artcb_https_from_host "$REPLIT_INTERNAL_APP_DOMAIN")"
+    _log "public_url detected from REPLIT_INTERNAL_APP_DOMAIN: $ARTCB_NODE_PUBLIC_URL"
+  elif [ -n "${REPLIT_DOMAINS:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="$(_artcb_https_from_host "$REPLIT_DOMAINS")"
     _log "public_url detected from REPLIT_DOMAINS: $ARTCB_NODE_PUBLIC_URL"
-  # Essai 2 : REPL_SLUG + REPL_OWNER (ancienne convention)
   elif [ -n "${REPL_SLUG:-}" ] && [ -n "${REPL_OWNER:-}" ]; then
-    export ARTCB_NODE_PUBLIC_URL="https://${REPL_OWNER}--${REPL_SLUG}.repl.co"
+    export ARTCB_NODE_PUBLIC_URL="https://${REPL_SLUG}--${REPL_OWNER}.replit.app"
     _log "public_url detected from REPL_SLUG+REPL_OWNER: $ARTCB_NODE_PUBLIC_URL"
   else
     _log "WARN public_url not detected — ARTCB_NODE_PUBLIC_URL will be empty"

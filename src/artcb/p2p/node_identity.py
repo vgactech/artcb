@@ -97,18 +97,30 @@ def _detect_fresh_public_url() -> str:
     if manual:
         return manual
 
-    # Priorité 2 : Replit — REPLIT_DOMAINS (format moderne, injecté auto)
+    # Priorité 2 : Replit — domaine injecté automatiquement (n'importe quel compte)
+    for env_name in ("REPLIT_DEV_DOMAIN", "REPLIT_INTERNAL_APP_DOMAIN"):
+        domain = os.getenv(env_name, "").strip()
+        if domain:
+            host = domain.split(",")[0].strip()
+            if host.startswith("https://") or host.startswith("http://"):
+                return host.rstrip("/")
+            return f"https://{host}"
+
     replit_domains = os.getenv("REPLIT_DOMAINS", "").strip()
     if replit_domains:
         first = replit_domains.split(",")[0].strip()
         if first:
+            if first.startswith("https://") or first.startswith("http://"):
+                return first.rstrip("/")
             return f"https://{first}"
 
-    # Priorité 3 : Replit ancien format
+    # Priorité 3 : Replit slug + owner.
+    # Autoscale actuel : https://{slug}--{owner}.replit.app
+    # Ancien repl.co : https://{owner}--{slug}.repl.co (conservé en secours)
     slug = os.getenv("REPL_SLUG", "").strip()
     owner = os.getenv("REPL_OWNER", "").strip()
     if slug and owner:
-        return f"https://{owner}--{slug}.repl.co"
+        return f"https://{slug}--{owner}.replit.app"
 
     # Priorité 4 : Render
     render_url = os.getenv("RENDER_EXTERNAL_URL", "").strip()
@@ -323,7 +335,9 @@ def advertised_base_url(public_url: str | None, api_port: int) -> str:
         parsed = urlparse(raw if "://" in raw else f"https://{raw}")
         host = parsed.hostname or ""
         scheme = (parsed.scheme or "").lower()
-        if host.endswith((".replit.app", ".repl.co")):
+        from src.artcb.p2p.public_url import is_https_platform_host
+
+        if is_https_platform_host(host):
             scheme = "https"
         if scheme not in {"http", "https"}:
             scheme = "https" if (parsed.port or 0) == 443 else "http"

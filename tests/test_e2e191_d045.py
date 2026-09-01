@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from artcb.config import REPLIT_PUBLIC_URL, bootstrap_nodes
+from artcb.config import bootstrap_nodes
 from artcb.devnet_validation import DECISIONS_191, ECONOMIC_V, certification_gate
 from artcb.economics.demographic import (
     H_ADULT_MAX,
@@ -49,14 +49,26 @@ def test_tpm_sysfs_does_not_invent_a_chip() -> None:
         assert view["tpm_device_present"] is False
 
 
-def test_bootstrap_nodes_consumed_and_replit_current() -> None:
+def test_bootstrap_nodes_are_the_four_always_on_servers() -> None:
     seeds = bootstrap_nodes()
-    assert "http://152.228.144.34:8000" in seeds
-    assert "http://91.134.45.8:8000" in seeds
-    assert REPLIT_PUBLIC_URL == "https://artcb--vgac42371.replit.app"
-    assert REPLIT_PUBLIC_URL in seeds
+    assert seeds == [
+        "http://152.228.144.34:8000",
+        "http://151.80.107.29:8000",
+        "http://51.44.222.232:8000",
+        "http://91.134.45.8:8000",
+    ]
+    assert all("replit.app" not in s for s in seeds)
     disc = (ROOT / "src" / "artcb" / "p2p" / "seed_discovery.py").read_text(encoding="utf-8")
-    assert "no process consumed" in disc or "no startup path" in disc.lower()
+    assert "announce_self_to_seeds" in disc
+    cfg = (ROOT / "src" / "artcb" / "config.py").read_text(encoding="utf-8")
+    assert "vgac42371" not in cfg
+    assert "vgacofficiel.replit" not in cfg
+    assert "REPLIT_PUBLIC_URL" not in cfg
+    reg = (ROOT / "src" / "artcb" / "node_registry.py").read_text(encoding="utf-8")
+    assert "vgac42371" not in reg
+    main = (ROOT / "src" / "api" / "main.py").read_text(encoding="utf-8")
+    assert "vgac42371" not in main
+    assert "allow_origin_regex" in main
 
 
 def test_visitor_cannot_mutate_or_autostart_p2p(tmp_path: Path, monkeypatch) -> None:
@@ -89,8 +101,20 @@ def test_visitor_cannot_mutate_or_autostart_p2p(tmp_path: Path, monkeypatch) -> 
     body = nodes.json()
     assert body["wallet_required_to_list_nodes"] is False
     assert "ovh-node-1" in body["nodes"]
-    assert any("vgac42371" in u for u in body["seeds"])
-    assert body.get("live_probed") in {False, None} or body.get("live_online") is not None
+    assert all("replit.app" not in (u or "") for u in body["seeds"])
+    ok = client.post(
+        "/api/v1/network/announce",
+        json={
+            "node_public_url": "https://demo-app--someuser.replit.app",
+            "node_label": "clone-test",
+            "network_id": "artcb-mainnet-1",
+        },
+    )
+    assert ok.status_code == 200, ok.text
+    assert ok.json()["registered"] is True
+    listed = client.get("/api/v1/network/nodes")
+    announced = listed.json().get("announced") or []
+    assert any("demo-app--someuser.replit.app" in (n.get("url") or "") for n in announced)
 
 
 def test_bootstrap_directory_without_wallet(tmp_path: Path, monkeypatch) -> None:
@@ -130,12 +154,56 @@ def test_certification_still_and_of_all_dv() -> None:
     assert gate["certified_distributed_mainnet"] is False
 
 
+def test_replit_public_url_comes_from_the_host_not_from_git(monkeypatch) -> None:
+    from artcb.p2p.node_identity import _detect_fresh_public_url
+
+    monkeypatch.delenv("ARTCB_NODE_PUBLIC_URL", raising=False)
+    monkeypatch.delenv("REPLIT_DOMAINS", raising=False)
+    monkeypatch.delenv("REPL_SLUG", raising=False)
+    monkeypatch.delenv("REPL_OWNER", raising=False)
+    monkeypatch.setenv("REPLIT_DEV_DOMAIN", "myapp--alice.replit.app")
+    assert _detect_fresh_public_url() == "https://myapp--alice.replit.app"
+    monkeypatch.setenv("REPLIT_DEV_DOMAIN", "https://other--carol.replit.dev")
+    assert _detect_fresh_public_url() == "https://other--carol.replit.dev"
+    monkeypatch.delenv("REPLIT_DEV_DOMAIN", raising=False)
+    monkeypatch.setenv("REPL_SLUG", "artcb")
+    monkeypatch.setenv("REPL_OWNER", "bob")
+    assert _detect_fresh_public_url() == "https://artcb--bob.replit.app"
+
+
+def test_extra_bootstrap_nodes_are_env_only(monkeypatch) -> None:
+    monkeypatch.setenv("ARTCB_BOOTSTRAP_NODES", "http://203.0.113.50:8000")
+    seeds = bootstrap_nodes()
+    assert seeds[:4] == [
+        "http://152.228.144.34:8000",
+        "http://151.80.107.29:8000",
+        "http://51.44.222.232:8000",
+        "http://91.134.45.8:8000",
+    ]
+    assert "http://203.0.113.50:8000" in seeds
+    assert all("replit.app" not in s for s in seeds)
+
+
+def test_custom_vps_domain_needs_env_allowlist(monkeypatch) -> None:
+    from artcb.p2p.public_url import public_register_url_ok
+
+    monkeypatch.delenv("ARTCB_PUBLIC_PEER_HOSTS", raising=False)
+    ok, reason = public_register_url_ok("https://node.example.com")
+    assert ok is False
+    assert reason == "host_not_allowlisted"
+    monkeypatch.setenv("ARTCB_PUBLIC_PEER_HOSTS", "node.example.com")
+    ok2, reason2 = public_register_url_ok("https://node.example.com")
+    assert ok2 is True
+    assert reason2 == "extra_public_host"
+
+
 def test_sim191_runs_packet_loss_on_live_book() -> None:
     sim = (ROOT / "scripts" / "run_sim191_dv01_wpp_chaos.py").read_text(encoding="utf-8")
     assert "Never invent SHA" in sim
     assert "install.sh" in sim
     assert "init_genesis.py" in sim
     assert "netem" in sim
-    assert "vgac42371" in sim
+    assert "vgac42371" not in sim
+    assert "ARTCB_REPLIT_PROBE_URLS" in sim
     assert "packet_loss" in sim
     assert "init-node" in sim

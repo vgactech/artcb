@@ -27,16 +27,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Well-known HTTP seeds — consumed at process start (D-045). Extra URLs via
-# ARTCB_BOOTSTRAP_NODES (comma-separated). Old Replit host kept as alias.
-REPLIT_PUBLIC_URL = "https://artcb--vgac42371.replit.app"
+# Carnet d'adresses des 4 serveurs toujours allumés (OVH1, OVH2, AWS3, OVH4).
+# Pas d'URL Replit ici : chaque clone Replit / VPS se présente tout seul
+# (ARTCB_NODE_PUBLIC_URL ou variables injectées par l'hébergeur).
+# D'autres seeds : variable d'environnement ARTCB_BOOTSTRAP_NODES (virgules).
 BOOTSTRAP_NODES: list[str] = [
     "http://152.228.144.34:8000",
     "http://151.80.107.29:8000",
     "http://51.44.222.232:8000",
     "http://91.134.45.8:8000",
-    REPLIT_PUBLIC_URL,
-    "https://artcb--vgacofficiel.replit.app",
 ]
 
 
