@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-# Autoscale git_sync: stay on the named branch tip. Never rewind to PIN.
-# Never unshallow: log 20260901T112644Z spent ~17s on fetch --unshallow,
-# Autoscale SIGTERM'd, then started a second copy (restart loop).
+# Autoscale git_sync: stay on the published snapshot. Never rewind to PIN.
 #
-# Depth-1 clone of the branch tip is enough. PIN is a health check, not a
-# checkout target. If merge-base cannot prove ancestry, KEEP THE TIP.
+# Log 20260901T114712Z: clone GitHub at 11:47:14, Autoscale SIGTERM at
+# 11:47:30 (~16s). Then checkout 184 instead of 185. Do not clone unless
+# ARTCB_REPLIT_FORCE_CLONE=1 (Nix workspace pull).
 
 artcb_replit_git_sync() {
   local REPL_DIR="${REPL_DIR:-$(pwd)}"
@@ -14,6 +13,14 @@ artcb_replit_git_sync() {
   local _TIP=""
 
   git config --global --add safe.directory "$REPL_DIR" 2>/dev/null || true
+
+  if [ "${ARTCB_REPLIT_FORCE_CLONE:-}" != "1" ] \
+    && [ -f "$REPL_DIR/scripts/replit_autoscale.sh" ] \
+    && [ ! -d "$REPL_DIR/.git" ]; then
+    _log "keep snapshot no_clone"
+    return 0
+  fi
+
   git -C "$REPL_DIR" fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
     || git fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
 
@@ -33,7 +40,7 @@ artcb_replit_git_sync() {
   _log "checkout tip=$_TIP"
   if [ -n "$ARTCB_REPLIT_PIN_SHA" ]; then
     if git -C "$REPL_DIR" merge-base --is-ancestor "$ARTCB_REPLIT_PIN_SHA" "$_TIP" 2>/dev/null; then
-      : # PIN is ancestor or equal — integrity can be ok if PIN==tip
+      :
     else
       _log "WARN keep_tip ancestry_unknown pin=$ARTCB_REPLIT_PIN_SHA tip=$_TIP"
     fi

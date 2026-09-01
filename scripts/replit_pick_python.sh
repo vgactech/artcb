@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 # Pick a Python that already has FastAPI. Never create a venv.
 #
-# Replit workflow: /home/runner/venv/bin/python3 (packages already there).
-# Autoscale Nix `python3` on PATH often has no fastapi. Prefer Replit
-# interpreters first; fall back to PATH python3 only if it can import.
+# Autoscale log 20260901T114712Z: $HOME/venv import (faiss AVX probes)
+# delayed pick by ~2 minutes. Prefer .pythonlibs first. Time-box imports.
 
 artcb_python_serves() {
   local py="$1"
   [ -n "$py" ] && [ -x "$py" ] || return 1
-  "$py" -c "import fastapi, uvicorn" 2>/dev/null
+  if command -v timeout >/dev/null 2>&1; then
+    timeout 8 "$py" -c "import fastapi, uvicorn" 2>/dev/null
+  else
+    "$py" -c "import fastapi, uvicorn" 2>/dev/null
+  fi
 }
 
 artcb_pick_python() {
@@ -17,9 +20,9 @@ artcb_pick_python() {
   PYTHON=""
   for cand in \
     "${ARTCB_PYTHON:-}" \
-    "${HOME}/venv/bin/python3" \
     "${REPL_DIR}/.pythonlibs/bin/python3" \
     "${HOME}/.pythonlibs/bin/python3" \
+    "${HOME}/venv/bin/python3" \
     "$(command -v python3 2>/dev/null || true)"
   do
     if artcb_python_serves "$cand"; then

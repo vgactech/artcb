@@ -39,6 +39,9 @@ ARTCB_REPLIT_PIN_SHA="${ARTCB_REPLIT_PIN_SHA:-}"
 . "$REPL_DIR/scripts/replit_git_sync.sh"
 artcb_replit_git_sync
 _SHA="$(git -C "$REPL_DIR" rev-parse HEAD 2>/dev/null || true)"
+if [ -z "$_SHA" ]; then
+  _SHA="${ARTCB_REPLIT_PIN_SHA:-}"
+fi
 {
   echo "ARTCB_GIT_SHA=$_SHA"
   echo "ARTCB_GIT_BRANCH=$ARTCB_REPLIT_BRANCH"
