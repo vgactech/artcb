@@ -24,6 +24,7 @@ import json
 import logging
 import os
 import platform
+import secrets
 import subprocess
 import urllib.request
 import uuid
@@ -261,6 +262,60 @@ def tee_facts() -> dict[str, Any]:
     }
 
 
+def nitro_attestation_facts() -> dict[str, Any]:
+    """NitroTPM / NSM only if the device or IMDS Nitro is actually there.
+
+    AWS NitroTPM appears as /dev/tpm0 on a Nitro instance. /dev/nsm is the
+    Nitro Security Module (enclave quotes). Neither is invented from a
+    vendor string alone. No quote is generated here.
+    """
+    tpm = tpm_sysfs_facts()
+    nsm = Path("/dev/nsm").exists()
+    enclaves = Path("/dev/nitro_enclaves").exists()
+    virt = virtualization_facts()
+    vendor = (virt.get("sys_vendor") or "").lower()
+    aws_like = "amazon" in vendor or virt.get("virt_tech") == "amazon"
+    tpm_present = bool(tpm["tpm_device_present"])
+    # NitroTPM claim: chip file present AND chassis looks AWS. Never from AWS name alone.
+    nitro_tpm = bool(tpm_present and aws_like)
+    attestation_available = bool(tpm_present or nsm)
+    return {
+        "nsm_device_present": nsm,
+        "nitro_enclaves_dev": enclaves,
+        "aws_like_chassis": aws_like,
+        "nitro_tpm": nitro_tpm,
+        "attestation_available": attestation_available,
+        "quote": None,
+        "invented": False,
+        "note": (
+            "attestation_available=true only if /dev/tpm0 or /dev/nsm exists. "
+            "NitroTPM is not claimed from the AWS label alone. No quote invented."
+        ),
+    }
+
+
+def attestation_nonce_schema() -> dict[str, Any]:
+    """Structure d'un nonce anti-rejeu pour une quote TPM future. Pas de quote."""
+    return {
+        "nonce_hex": None,
+        "purpose": "future_tpm_quote",
+        "quote": None,
+        "quote_invented": False,
+        "note": (
+            "Nonce anti-rejeu (32 octets hex) pour une quote TPM future. "
+            "Aucune quote n'est fabriquée ici."
+        ),
+    }
+
+
+def new_attestation_nonce() -> dict[str, Any]:
+    """Génère un nonce aléatoire. Ne fabrique pas de quote."""
+    schema = attestation_nonce_schema()
+    schema["nonce_hex"] = secrets.token_hex(32)
+    schema["created_at"] = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return schema
+
+
 def hsm_binding_facts() -> dict[str, Any]:
     """External HSM only if the operator bound one. Env flag, not a guess."""
     raw = (os.getenv("ARTCB_HSM_BINDING") or "").strip()
@@ -342,6 +397,7 @@ def classify_hardware_assurance(
         "hardware_kind": meta["kind"],
         "hardware_assurance_fr": meta["fr"],
         "tpm_kind": tpm_kind,
+        "tpm_type": tpm_kind,  # physical | virtual | absent (alias demandé 196)
         "invented": False,
     }
 
@@ -586,6 +642,7 @@ def collect_device_identity() -> DeviceIdentity:
         "hardware_assurance_level": grade["hardware_assurance_level"],
         "hardware_kind": grade["hardware_kind"],
         "tpm_kind": grade["tpm_kind"],
+        "tpm_type": grade["tpm_type"],
         "chassis_virtual": virt["chassis_virtual"],
         "virt_tech": virt.get("virt_tech"),
         "tee_detected": tee["tee_detected"],
@@ -686,10 +743,13 @@ def public_machine_view(identity: DeviceIdentity | None = None) -> dict[str, Any
         hsm_bound=bool(hsm["hsm_bound"]),
     )
     tools = probe_tpm2_tools()
+    nitro = nitro_attestation_facts()
     note = (
         "Niveaux A–E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. "
         "On n’invente pas NitroTPM/SEV si /dev/tpm0 est absent. "
-        f"Niveau mesuré ici : {grade['hardware_assurance_level']} ({grade['hardware_kind']})."
+        f"Niveau mesuré ici : {grade['hardware_assurance_level']} ({grade['hardware_kind']}). "
+        f"tpm_type={grade['tpm_type']}. "
+        f"attestation_available={nitro['attestation_available']}."
     )
     return {
         "tpm_device_present": tpm_present,
@@ -698,6 +758,12 @@ def public_machine_view(identity: DeviceIdentity | None = None) -> dict[str, Any
         "tpm_attestation": attestation,
         "tpm_available": bool(identity.tpm_available) if identity else False,
         "tpm_kind": grade["tpm_kind"],
+        "tpm_type": grade["tpm_type"],
+        "attestation_available": bool(nitro["attestation_available"]),
+        "nitro_tpm": bool(nitro["nitro_tpm"]),
+        "nsm_device_present": bool(nitro["nsm_device_present"]),
+        "attestation_quote": None,
+        "attestation_nonce": attestation_nonce_schema(),
         "hardware_assurance_level": grade["hardware_assurance_level"],
         "hardware_kind": grade["hardware_kind"],
         "hardware_assurance_fr": grade["hardware_assurance_fr"],

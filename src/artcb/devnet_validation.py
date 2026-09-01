@@ -178,6 +178,20 @@ DECISIONS_192: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_196: Final[dict[str, str]] = {
+    "D-050": (
+        "Hybrid verify AND (D-034 A) is implemented as verify_hybrid_and: "
+        "Ed25519-only refused, ML-DSA-only refused, both legs required. "
+        "verify_hybrid() still accepts Ed25519-only (legacy window D-032 B) — "
+        "high_value_hybrid_enforced stays false until chain/governance/groups "
+        "are wired. Hardware tpm_type=physical|virtual|absent; "
+        "attestation_available only if /dev/tpm0 or /dev/nsm. "
+        "No invented NitroTPM/quote. OVH1 Doppler isolation gap remains "
+        "(shared artcb-blockchain — no new project invented). "
+        "Replit CORS stays a platform regex. certified stays false."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -253,5 +267,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_190": DECISIONS_190,
         "decisions_191": DECISIONS_191,
         "decisions_192": DECISIONS_192,
+        "decisions_196": DECISIONS_196,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

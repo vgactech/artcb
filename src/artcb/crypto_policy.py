@@ -147,7 +147,11 @@ def public_health_block(pqc_available: bool) -> dict[str, Any]:
         "algorithm": PREFERRED_SIG if pqc_available else f"{TEMPORARY_SIG} (fallback)",
         "policy": capabilities(pqc_available),
         "availability_is_not_enforcement": True,
+        # D-034 AND is implemented as verify_hybrid_and. Call sites that still
+        # use verify_hybrid() without require_and=True accept Ed25519-only.
         "high_value_hybrid_enforced": False,
+        "hybrid_and_function": "verify_hybrid_and",
+        "legacy_verify_hybrid_still_accepts_ed25519_only": True,
         "ed25519_only_still_accepted": fallback_still_open(),
         "action_required": (
             None
