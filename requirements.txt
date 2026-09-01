@@ -1,7 +1,9 @@
 # ARTCB — Dépendances Python complètes
-# Mise à jour : 2026-07-31 (rapport 087)
-# Installation : pip install -r requirements.txt
-# TOUTES les dépendances sont ici — pas de `pip install` manuel requis
+# Mise à jour : 2026-09-01 (installation reproductible)
+# Inventaire complet des dépendances. Utiliser `bash install.sh` ou
+# `bash scripts/install_python_dependencies.sh`; le chemin runtime exclut
+# liboqs-python de la compilation critique. ARTCB_INSTALL_PQC=1 l'active
+# séparément avec un timeout borné.
 
 # ─── Noyau API ────────────────────────────────────────────────────────────────
 pydantic>=2.7.0
@@ -19,8 +21,8 @@ cryptography>=50.0.1
 # ATTENTION : ce paquet PyPI COMPILE liboqs depuis les sources — cmake + gcc requis.
 # Si absent → fallback automatique Ed25519/X25519 (mode dégradé, non post-quantique).
 # Pour l'installer :
-#   Sur Replit NixOS  : cmake + gcc disponibles dans replit.nix → ok via replit_start.sh
-#   Sur Docker        : cmake installé dans Dockerfile → ok
+#   Sur Replit NixOS  : installation PQC séparée et optionnelle
+#   Sur Docker        : installation PQC séparée et optionnelle
 #   Sur PC local Linux: sudo apt install cmake gcc libssl-dev && pip install liboqs-python
 #   Sur PC local macOS: brew install cmake openssl && pip install liboqs-python
 # SI l'installation échoue : le nœud démarre quand même, mais les wallets créés

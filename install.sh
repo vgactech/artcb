@@ -6,10 +6,10 @@
 #  Ou sur une installation existante :
 #    bash install.sh
 #
-#  Ce script installe TOUT ce qui est nécessaire :
+#  Ce script installe TOUT ce qui est nécessaire au runtime :
 #    - venv Python isolé
-#    - toutes les dépendances Python (requirements.txt)
-#    - dépendances système nécessaires (cmake/gcc si absents)
+#    - dépendances Python runtime depuis requirements.txt
+#    - liboqs-python en option, avec timeout (jamais dans le chemin critique)
 #    - frontend React (npm install + build)
 #    - bibliothèque native C libartcb_chain.so
 #    - configure .env à partir de .env.example (si absent)
@@ -56,37 +56,18 @@ PIP="$VENV/bin/pip"
 export PATH="$VENV/bin:$PATH"
 export PIP_USER=false
 
-# ── 2. Dépendances Python ─────────────────────────────────────────
+# ── 2. Dépendances Python runtime ─────────────────────────────────
 _step "2/7" "Dépendances Python"
-$PIP install --no-user --upgrade pip --quiet
-# liboqs-python nécessite cmake. Si absent → on installe sans lui d'abord.
-if ! command -v cmake &>/dev/null; then
-  _warn "cmake absent — liboqs-python sera ignoré (PQC non disponible)"
-  _warn "  Pour activer PQC ultérieurement :"
-  _warn "    Ubuntu : sudo apt install cmake gcc libssl-dev && pip install liboqs-python"
-  _warn "    macOS  : brew install cmake openssl && pip install liboqs-python"
-  # Installer sans liboqs-python
-  grep -v '^liboqs-python' requirements.txt > /tmp/requirements_nopqc.txt
-  $PIP install --no-user -r /tmp/requirements_nopqc.txt --quiet
-else
-  $PIP install --no-user -r requirements.txt --quiet 2>&1 || \
-    { _warn "liboqs-python échoué — nouvelle tentative sans PQC"
-      grep -v '^liboqs-python' requirements.txt > /tmp/requirements_nopqc.txt
-      $PIP install --no-user -r /tmp/requirements_nopqc.txt --quiet; }
-fi
+ARTCB_PYTHON="$PYTHON" bash "$REPO_DIR/scripts/install_python_dependencies.sh"
 _ok "Dépendances Python installées"
 
-# ── 3. Dépendances système pour liboqs (si cmake présent) ─────────
+# ── 3. Statut PQC (sans compilation dans le chemin critique) ─────
 _step "3/7" "Vérification PQC (liboqs)"
-if command -v cmake &>/dev/null; then
-  if $PYTHON -c "import ctypes.util; exit(0 if ctypes.util.find_library('oqs') or ctypes.util.find_library('liboqs') else 1)" 2>/dev/null; then
-    _ok "liboqs natif : présent ✅ — ML-DSA-65 + ML-KEM-768 disponibles"
-  else
-    _warn "liboqs natif absent — le nœud démarrera en mode Ed25519 (fallback)"
-    _warn "Pour installer PQC : pip install liboqs-python (peut prendre 3-5 min)"
-  fi
+if "$PYTHON" -c "import ctypes.util; exit(0 if ctypes.util.find_library('oqs') or ctypes.util.find_library('liboqs') else 1)" 2>/dev/null; then
+  _ok "liboqs natif : présent — ML-DSA-65 + ML-KEM-768 potentiellement disponibles"
 else
-  _warn "cmake absent — PQC désactivé (mode Ed25519 fallback)"
+  _warn "liboqs natif absent — fallback Ed25519/X25519 actif"
+  _warn "PQC optionnel borné : ARTCB_INSTALL_PQC=1 ARTCB_PQC_TIMEOUT=300 bash install.sh"
 fi
 
 # ── 4. Frontend React ─────────────────────────────────────────────
@@ -99,7 +80,11 @@ else
   NODE_VER=$(node --version 2>&1)
   _ok "Node.js : $NODE_VER"
   cd "$REPO_DIR/frontend"
-  npm install --silent
+  if [ -f package-lock.json ]; then
+    npm ci --no-audit --no-fund --silent
+  else
+    npm install --no-audit --no-fund --silent
+  fi
   npm run build --silent
   cd "$REPO_DIR"
   _ok "Frontend buildé dans frontend/dist/"
@@ -113,7 +98,8 @@ _step "5/7" "Bibliothèque C libartcb_chain.so"
 # consommait le fichier source) — 26 tests échouaient avec
 # « undefined symbol: artcb_sha256_hex ».
 if command -v cc &>/dev/null || command -v gcc &>/dev/null; then
-  if make -C src/c clean all >/dev/null 2>&1 \
+   if timeout --foreground --signal=TERM --kill-after=10s "${ARTCB_C_BUILD_TIMEOUT:-120}s" \
+      make -C src/c clean all >/dev/null 2>&1 \
      && nm -D src/c/libartcb_chain.so 2>/dev/null | grep -q artcb_sha256_hex; then
     _ok "libartcb_chain.so compilé (symboles artcb_* vérifiés)"
   else
@@ -139,10 +125,11 @@ fi
 # ── 7. Résumé ─────────────────────────────────────────────────────
 _step "7/7" "Résumé"
 echo ""
-echo "  Installation terminée."
+  echo "  Installation terminée (socle runtime installé, PQC optionnel non bloquant)."
 echo ""
 echo "  Pour démarrer le nœud :"
-echo "    bash scripts/replit_start.sh      (Replit)"
+  echo "    bash scripts/verify_installation.sh"
+  echo "    bash scripts/replit_start.sh      (Replit)"
 echo "    source .venv/bin/activate && uvicorn src.api.main:app --host 0.0.0.0 --port 8000   (local)"
 echo ""
 echo "  Première utilisation :"

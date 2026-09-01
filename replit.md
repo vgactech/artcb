@@ -11,12 +11,22 @@ Persistent AI memory system: each thought becomes a signed node in a graph, comp
 
 ## How to run
 
-The workflow `Start application` handles everything:
-1. Creates/reuses a Python venv at `$HOME/venv`
-2. Installs Python deps (`requirements.txt`) with `PIP_USER=false`
-3. Patches oqs.py to prevent blocking auto-installs
-4. Injects Doppler secrets if `DOPPLER_TOKEN_REPLIT` is set
-5. Starts uvicorn on **port 5000** (Replit webview)
+The workflow `Start application` handles the fast boot path:
+1. Keeps the published snapshot and does not clone GitHub during Autoscale boot
+2. Reuses Replit's `.pythonlibs` runtime (never creates a venv in Autoscale)
+3. Starts uvicorn on **port 5000** before optional work
+4. Leaves PQC source compilation disabled by default; the API uses the documented fallback
+
+For a fresh clone or an explicit dependency refresh, run:
+
+```bash
+bash install.sh
+bash scripts/verify_installation.sh
+```
+
+The installer is idempotent. It installs all runtime requirements from the
+single inventory, uses `npm ci` when a lockfile exists, and never creates a
+wallet or calls `POST /setup/init-node`.
 
 The React frontend is pre-built into `frontend/dist/` and served as static files by the FastAPI app at `/`.
 
@@ -51,12 +61,12 @@ The current Replit environment has both secrets configured. Their values must ne
 ## Replit-specific notes
 
 - **pip installs must use `--no-user`** (or `PIP_USER=false`). Replit's global pip.conf sets `user = yes`, which breaks venv installs.
-- **liboqs-python is excluded from `requirements.txt`** on Replit because its cmake build takes >10 minutes. The app automatically falls back to Ed25519/X25519. To enable full post-quantum crypto: `pip install liboqs-python` manually.
+- **liboqs-python remains listed as a protocol dependency but is excluded from the runtime critical path** because its cmake build can take more than 10 minutes. The app automatically falls back to Ed25519/X25519. To attempt PQC without blocking the API: `ARTCB_INSTALL_PQC=1 ARTCB_PQC_TIMEOUT=300 bash install.sh`.
 - **C library paths** (hardcoded in `scripts/replit_start.sh` for fast startup):
   - GCC: `/nix/store/a0d7m3zn9p2dfa1h7ag9h2wzzr2w25sn-gcc-wrapper-14.2.1.20250322/bin/cc`
   - OpenSSL (64-bit): `/nix/store/2cwpdm6fcc53f8jgxmagransrfp0igbl-openssl-3.4.1`
 
 ## User preferences
 
-- Keep `liboqs-python` excluded from `requirements.txt` (use Ed25519 fallback on Replit)
+- Keep `liboqs-python` out of the runtime critical path; keep it in the complete dependency inventory and install it only through the bounded optional path
 - Always pass `--no-user` to pip inside venvs

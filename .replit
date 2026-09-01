@@ -18,6 +18,7 @@ ARTCB_LLM_ENABLED = "false"
 # En mode interactif (dev) : bypass actif pour faciliter les tests
 # En déploiement Autoscale (prod) : doit être false — définir dans les secrets Replit
 ARTCB_ANTI_SYBIL_AI_BYPASS = "false"
+ARTCB_INSTALL_PQC = "0"
 ARTCB_REPLIT_BRANCH = "cursor/replit-sync-ready-16d8"
 ARTCB_NODE_ID = "replit-node-1"
 # Architecture A: set ARTCB_REPLIT_PIN_SHA in Replit Secrets to the

@@ -6,6 +6,15 @@ set -Eeuo pipefail
 PREFIX="${OQS_INSTALL_PATH:-$HOME/_oqs}"
 SRC="${LIBOQS_SRC:-$HOME/src/liboqs}"
 TAG="${LIBOQS_TAG:-0.16.0}"
+PQC_TIMEOUT="${ARTCB_PQC_TIMEOUT:-300}"
+
+run_bounded() {
+  if command -v timeout >/dev/null 2>&1; then
+    timeout --foreground --signal=TERM --kill-after=10s "${PQC_TIMEOUT}s" "$@"
+  else
+    "$@"
+  fi
+}
 
 if [ -f "$PREFIX/lib/liboqs.so" ] || [ -f "$PREFIX/lib64/liboqs.so" ]; then
   echo "liboqs already installed under $PREFIX"
@@ -17,20 +26,20 @@ if ! command -v cmake >/dev/null || ! command -v gcc >/dev/null; then
 fi
 mkdir -p "$(dirname "$SRC")"
 if [ ! -d "$SRC/.git" ]; then
-  git clone --depth 1 --branch "$TAG" https://github.com/open-quantum-safe/liboqs.git "$SRC"
+  run_bounded git clone --depth 1 --branch "$TAG" https://github.com/open-quantum-safe/liboqs.git "$SRC"
 fi
 GEN=Unix\ Makefiles
 if command -v ninja >/dev/null; then
   GEN=Ninja
 fi
-cmake -S "$SRC" -B "$SRC/build" \
+run_bounded cmake -S "$SRC" -B "$SRC/build" \
   -G "$GEN" \
   -DCMAKE_INSTALL_PREFIX="$PREFIX" \
   -DBUILD_SHARED_LIBS=ON \
   -DOQS_DIST_BUILD=OFF \
   -DOQS_MINIMAL_BUILD="SIG_ml_dsa_65;KEM_ml_kem_768" \
   -DOQS_USE_OPENSSL=ON
-cmake --build "$SRC/build" --parallel
-cmake --install "$SRC/build"
+run_bounded cmake --build "$SRC/build" --parallel
+run_bounded cmake --install "$SRC/build"
 echo "installed $PREFIX tag=$TAG"
 ls -l "$PREFIX"/lib/liboqs.so* "$PREFIX"/lib64/liboqs.so* 2>/dev/null || true

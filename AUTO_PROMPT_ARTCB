@@ -1263,3 +1263,20 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Pas de 210k.** Ancres HBP 4.15e9/8.3e9 encore provisoires. Finder/WorkID = modules, pas encore pipeline mining.
 - **Tests :** 554 passed / 20 skipped. Log `logs/20260828_pytest_rapport163.txt`.
 - Rapport : `rapports/163_tokenomics_simu_go162_alignement_2026-08-28.md`
+
+## [2026-09-01T16:00:00Z] Rapport 179 — installation runtime reproductible sans timeout
+
+- Le chemin critique installe le socle API via `scripts/install_python_dependencies.sh`.
+- `liboqs-python` reste dans l'inventaire complet mais sa compilation est séparée,
+  optionnelle et bornée : `ARTCB_INSTALL_PQC=1 ARTCB_PQC_TIMEOUT=300`.
+- Replit Autoscale garde `ARTCB_INSTALL_PQC=0`, le snapshot publié et le port
+  `/live` rapide ; ne jamais cloner GitHub ni lancer `pip install -r
+  requirements.txt` directement au boot.
+- `install.sh` et Docker utilisent le même chemin runtime ; `npm ci` est
+  préféré quand le lockfile frontend existe.
+- `scripts/verify_installation.sh` est la preuve post-clone obligatoire.
+- Un workspace Git modifié est conservé sans checkout destructif.
+- Protocoles conservés : Architecture A, D-032, D-036, V-R01…V-R04, aucun
+  wallet/seed/passphrase/init-node automatique, OVH1 `152.228.144.34` inchangé.
+- Prompt de référence : `docs/PROMPT_REPLIT_AGENT_187.md`.
+- Rapport : `rapports/179_installation_reproductible_replit_ovh_2026-09-01.md`.

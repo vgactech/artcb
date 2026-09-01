@@ -26,8 +26,8 @@ ARTCB résout la perte de contexte des LLM via :
 
 ```bash
 git clone https://github.com/vgactech/artcb.git && cd artcb
-cp .env.example .env   # éditer .env : ARTCB_WALLET_PASSPHRASE et ARTCB_NODE_WALLET_ADDRESS
-pip install -r requirements.txt
+bash install.sh
+bash scripts/verify_installation.sh
 uvicorn src.api.main:app --port 8000 --reload
 cd frontend && npm install && npm run dev
 ```
@@ -88,9 +88,8 @@ cd frontend && npm install && npm run dev
 
 ```bash
 git clone https://github.com/vgactech/artcb.git && cd artcb
-python -m venv venv && source venv/bin/activate
-cp .env.example .env   # renseigner ARTCB_WALLET_PASSPHRASE + ARTCB_NODE_WALLET_ADDRESS
-pip install -r requirements.txt
+bash install.sh
+bash scripts/verify_installation.sh
 uvicorn src.api.main:app --port 8000 --reload
 ```
 
@@ -99,6 +98,17 @@ uvicorn src.api.main:app --port 8000 --reload
 ```bash
 cd frontend && npm install && npm run dev
 ```
+
+`install.sh` installe le socle runtime sans compiler liboqs dans le chemin
+critique. Le mode PQC est optionnel et borné :
+
+```bash
+ARTCB_INSTALL_PQC=1 ARTCB_PQC_TIMEOUT=300 bash install.sh
+```
+
+Un échec ou un timeout PQC laisse l'API opérationnelle avec le fallback
+Ed25519/X25519 documenté par D-032. L'installation ne crée aucun wallet,
+seed ou passphrase et n'appelle jamais `/setup/init-node`.
 
 ---
 

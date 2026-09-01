@@ -35,6 +35,14 @@ artcb_replit_git_sync() {
     return 0
   fi
 
+  # Never overwrite a user's dependency edits or local protocol work. A dirty
+  # workspace is a valid local snapshot; checkout would fail noisily and could
+  # leave release metadata claiming a different source than the running code.
+  if [ -n "$(git -C "$REPL_DIR" status --porcelain --untracked-files=all 2>/dev/null)" ]; then
+    _log "WARN dirty_worktree — keeping snapshot; no checkout"
+    return 0
+  fi
+
   _TIP="$(git -C "$REPL_DIR" rev-parse "origin/$ARTCB_REPLIT_BRANCH")"
   git -C "$REPL_DIR" checkout --detach "$_TIP" || true
   _log "checkout tip=$_TIP"

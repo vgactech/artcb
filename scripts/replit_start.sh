@@ -7,7 +7,7 @@
 #   - Port 8000 vs 5000 Replit webview              → port 5000 (dynamique si occupé)
 #   - libartcb_chain.so absent                      → compilation auto
 #   - git pull AVANT build (v3 corrigé)
-#   - liboqs cmake build EN ARRIÈRE-PLAN (v4)       → démarrage < 30s garanti
+#   - liboqs cmake build optionnel et borné (v6)    → jamais dans le chemin critique
 #   - ARTCB_NODE_WALLET_ADDRESS absent (v5 NEW)     → mode bootstrap, API partielle
 #   - URL publique Replit (v5 NEW)                  → détectée + injectée auto
 #   - Port déjà occupé (v5 NEW)                     → fallback port libre automatique
@@ -290,9 +290,10 @@ if _python_serves "$PYTHON"; then
   _log "pip skipped fastapi already importable"
 else
   echo "[2/6] Installation des dépendances Python..."
-  "$PYTHON" -m pip install --no-user -r requirements.txt --ignore-requires-python 2>&1 \
-    || _log "WARN pip requirements failed"
-  "$PYTHON" -m pip install --no-user "litellm>=1.0.0" 2>&1 || _log "WARN litellm fallback installation failed"
+  if ! ARTCB_PYTHON="$PYTHON" ARTCB_INSTALL_PQC=0 \
+      bash "$REPL_DIR/scripts/install_python_dependencies.sh" 2>&1; then
+    _log "WARN runtime dependency installation failed"
+  fi
 fi
 if ! _python_serves "$PYTHON"; then
   _log "ERROR python still cannot import fastapi — keeping shim, not launching uvicorn"
@@ -411,6 +412,15 @@ _launch_pqc_background() {
   CURRENT_STEP="pqc_background"
   _log "BACKGROUND begin pid=$BASHPID"
 
+  if [ "${ARTCB_INSTALL_PQC:-0}" != "1" ]; then
+    echo "PQC: installation différée — aucune compilation dans le boot par défaut."
+    _log "BACKGROUND end status=0 result=optional_pqc_disabled"
+    return 0
+  fi
+
+  local pqc_timeout="${ARTCB_PQC_TIMEOUT:-300}"
+  _log "PQC optional install enabled timeout=${pqc_timeout}s"
+
   # Test 1 : liboqs natif déjà présent ? (vérification sans importer oqs — évite la
   # compilation automatique bloquante lors du simple import du paquet Python)
   _check_liboqs_native() {
@@ -455,7 +465,8 @@ raise SystemExit(0 if ok else 1)
 
   echo "PQC: cmake trouvé ($(cmake --version | head -1)) — compile native liboqs $LIBOQS_TAG (match liboqs-python 0.16)"
   _log "BACKGROUND cmake_found version=$(cmake --version | head -1)"
-  if bash "$REPL_DIR/scripts/install_native_liboqs_replit.sh"; then
+  if timeout --foreground --signal=TERM --kill-after=10s "${pqc_timeout}s" \
+      bash "$REPL_DIR/scripts/install_native_liboqs_replit.sh"; then
     _log "BACKGROUND native liboqs 0.16 install ok"
   else
     _log "WARN native liboqs compile failed — trying pip wheel (often native 0.13, ML-DSA-65 OFF)"
@@ -463,7 +474,8 @@ raise SystemExit(0 if ok else 1)
 
   # Binding Python (does not replace native 0.16 if OQS_INSTALL_PATH is set)
   echo "PQC: pip install liboqs-python>=0.14 (binding only)..."
-  if $PIP install --no-user --upgrade "liboqs-python>=0.14.0" 2>&1; then
+  if timeout --foreground --signal=TERM --kill-after=10s "${pqc_timeout}s" \
+      $PIP install --no-user --upgrade "liboqs-python>=0.14.0" 2>&1; then
     _log "BACKGROUND pip install returned 0"
   else
     _log "WARN pip install liboqs-python returned non-zero"
@@ -479,7 +491,8 @@ raise SystemExit(0 if ok else 1)
   # Tentative 2 : forcer la recompilation depuis les sources (--no-binary)
   echo "PQC: tentative 2/2 — recompilation depuis les sources (--no-binary)..."
   _log "BACKGROUND attempt2 no_binary"
-  if $PIP install --no-user --upgrade --no-binary liboqs-python "liboqs-python>=0.14.0" 2>&1; then
+  if timeout --foreground --signal=TERM --kill-after=10s "${pqc_timeout}s" \
+      $PIP install --no-user --upgrade --no-binary liboqs-python "liboqs-python>=0.14.0" 2>&1; then
     _log "BACKGROUND pip install --no-binary returned 0"
   else
     _log "WARN pip install --no-binary returned non-zero"

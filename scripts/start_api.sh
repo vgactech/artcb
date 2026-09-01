@@ -12,7 +12,8 @@ echo "=== Démarrage API ARTCB ==="
 if [ ! -d "venv" ]; then
     echo "FAIL venv manquant - création..."
     python3 -m venv venv
-    venv/bin/pip install -q -r requirements.txt
+    ARTCB_PYTHON="$PWD/venv/bin/python3" \
+      ARTCB_INSTALL_PQC=0 bash scripts/install_python_dependencies.sh
     echo "OK venv créé et dépendances installées"
 fi
 

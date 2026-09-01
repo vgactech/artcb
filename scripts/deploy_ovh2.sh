@@ -125,11 +125,9 @@ echo "── Commit déployé : $(git log --oneline -1) sha=$DEPLOYED_SHA"
 printf 'ARTCB_GIT_SHA=%s\nARTCB_GIT_BRANCH=%s\nARTCB_NODE_ID=ovh-node-2\n' "$DEPLOYED_SHA" "$DEPLOYED_BRANCH" > /tmp/artcb_release.env
 sudo cp /tmp/artcb_release.env /etc/artcb/release.env
 sudo chmod 644 /etc/artcb/release.env
-bash scripts/install_native_liboqs.sh
-bash install.sh
-if [ -d .venv ]; then
-  .venv/bin/pip install --upgrade "liboqs-python>=0.14.0" || true
-fi
+ARTCB_PQC_TIMEOUT=300 bash scripts/install_native_liboqs.sh \
+  || echo "WARNING: optional native PQC install failed/timed out; Ed25519 fallback retained"
+ARTCB_INSTALL_PQC=1 ARTCB_PQC_TIMEOUT=300 bash install.sh
 if [ -f /etc/artcb/doppler.env ]; then
   echo "── Secrets via Doppler (token présent dans /etc/artcb/doppler.env)"
   rm -f .env

@@ -8,7 +8,8 @@ LABEL maintainer="ARTCB <vgacofficiel@gmail.com>"
 LABEL description="ARTCB Blockchain — Post-Quantum PoL Node"
 LABEL version="0.3.0"
 
-# Dépendances système pour liboqs (PQC ML-DSA-65 + ML-KEM-768)
+# Outils utiles au build C et à une activation PQC explicite.
+# Le build par défaut n'attend pas une compilation liboqs.
 RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
     ninja-build \
@@ -21,10 +22,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copier requirements en premier (cache Docker layer)
+# Installer le socle runtime via le même chemin que les clones locaux.
+# Le script filtre liboqs-python du chemin critique.
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+COPY scripts/install_python_dependencies.sh ./scripts/install_python_dependencies.sh
+RUN chmod +x scripts/install_python_dependencies.sh && \
+    ARTCB_PYTHON=python ARTCB_INSTALL_PQC=0 \
+    bash scripts/install_python_dependencies.sh
 
 # Copier le code source
 COPY . .

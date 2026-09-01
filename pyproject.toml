@@ -26,7 +26,6 @@ dependencies = [
     "aiofiles>=23.2.0",
     "psutil>=5.9.0",
     "cryptography>=50.0.1",
-    "liboqs-python>=0.14.0",
 ]
 
 [project.optional-dependencies]
@@ -52,6 +51,9 @@ media = [
     "ebooklib>=0.18",
     "beautifulsoup4>=4.12.0",
     "striprtf>=0.0.26",
+]
+pqc = [
+    "liboqs-python>=0.14.0",
 ]
 
 [tool.setuptools.packages.find]
