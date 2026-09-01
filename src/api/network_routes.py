@@ -29,7 +29,7 @@ class AnnounceObserverRequest(BaseModel):
 @router.get("/nodes")
 def list_infrastructure_nodes(
     request: Request,
-    live: bool = Query(default=True, description="Probe well-known seeds (skipped in unit tests)"),
+    live: bool = Query(default=False, description="Outbound seed probe (short timeout; off by default so one hung peer cannot stall the worker)"),
 ) -> dict:
     data_dir = request.app.state.artcb.settings.data_dir
     want_live = bool(live) and not skip_seed_discovery()

@@ -90,6 +90,7 @@ def test_visitor_cannot_mutate_or_autostart_p2p(tmp_path: Path, monkeypatch) -> 
     assert body["wallet_required_to_list_nodes"] is False
     assert "ovh-node-1" in body["nodes"]
     assert any("vgac42371" in u for u in body["seeds"])
+    assert body.get("live_probed") in {False, None} or body.get("live_online") is not None
 
 
 def test_bootstrap_directory_without_wallet(tmp_path: Path, monkeypatch) -> None:

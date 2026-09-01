@@ -154,7 +154,7 @@ def probe(name: str, root: str) -> dict:
     p2p_c, p2p = _http(f"{root}/api/v1/p2p/status")
     _, peers_body = _http(f"{root}/api/v1/p2p/peers")
     _, chain = _http(f"{root}/api/v1/chain/status")
-    net_c, net = _http(f"{root}/api/v1/network/nodes?live=1", timeout=25)
+    net_c, net = _http(f"{root}/api/v1/network/nodes", timeout=12)
     eco_c, eco = _http(f"{root}/api/v1/economics/h-adult")
     del_c, _deleted = _http(f"{root}/api/v1/p2p/peers/peer_probe_unauth", "DELETE")
     sync_c, _sync = _http(f"{root}/api/v1/p2p/sync", "POST")

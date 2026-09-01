@@ -450,6 +450,14 @@ def public_machine_view(identity: DeviceIdentity | None = None) -> dict[str, Any
         else ("device_present_no_ek" if tpm_present else "absent")
     )
     prefix = (identity.device_fingerprint[:16] if identity else "")
+    live_cloud = extra.get("binding_hash") and extra.get("cloud_provider")
+    if not live_cloud:
+        live_cloud = cloud_instance_binding()
+    else:
+        live_cloud = {
+            "provider": extra.get("cloud_provider"),
+            "binding_hash": extra.get("binding_hash"),
+        }
     return {
         "tpm_device_present": tpm_present,
         "tpm_resource_manager": bool(facts["tpm_resource_manager"]),
@@ -458,9 +466,9 @@ def public_machine_view(identity: DeviceIdentity | None = None) -> dict[str, Any
         "tpm_available": bool(identity.tpm_available) if identity else False,
         "env_type": identity.env_type if identity else _detect_env_type(),
         "platform_system": identity.platform_system if identity else platform.system(),
-        "cloud_provider": extra.get("cloud_provider") or cloud_instance_binding().get("provider"),
-        "binding_hash": extra.get("binding_hash"),
-        "machine_id_hash": extra.get("machine_id_hash"),
+        "cloud_provider": extra.get("cloud_provider") or live_cloud.get("provider"),
+        "binding_hash": extra.get("binding_hash") or live_cloud.get("binding_hash"),
+        "machine_id_hash": extra.get("machine_id_hash") or _hash_id(identity.machine_id if identity else None),
         "device_fingerprint_prefix": prefix,
         "note": (
             "TPM is a physical chip. Cloud VMs here have none — that is reported "

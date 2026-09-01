@@ -23,7 +23,6 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
-from urllib.request import Request, urlopen
 
 from src.artcb.config import bootstrap_nodes
 from src.artcb.node_registry import NODES
@@ -39,13 +38,14 @@ def _now() -> str:
     return datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def _http_json(url: str, timeout: float = 2.5) -> tuple[int, dict[str, Any]]:
-    req = Request(url, headers={"Accept": "application/json"}, method="GET")
+def _http_json(url: str, timeout: float = 1.5) -> tuple[int, dict[str, Any]]:
     try:
-        with urlopen(req, timeout=timeout) as resp:  # noqa: S310 — operator seeds only
-            raw = resp.read().decode("utf-8", errors="replace")
-            parsed = json.loads(raw) if raw else {}
-            return int(resp.status), parsed if isinstance(parsed, dict) else {"raw": parsed}
+        import httpx
+
+        with httpx.Client(timeout=timeout, follow_redirects=True) as client:
+            resp = client.get(url, headers={"Accept": "application/json"})
+            parsed = resp.json() if resp.content else {}
+            return int(resp.status_code), parsed if isinstance(parsed, dict) else {"raw": parsed}
     except Exception as exc:  # noqa: BLE001 — discovery must never crash startup
         return 0, {"error": type(exc).__name__, "url": url}
 
@@ -88,7 +88,7 @@ def seed_urls() -> list[str]:
     return bootstrap_nodes()
 
 
-def probe_seed(url: str, timeout: float = 2.5) -> dict[str, Any]:
+def probe_seed(url: str, timeout: float = 1.5) -> dict[str, Any]:
     root = url.rstrip("/")
     health_c, health = _http_json(f"{root}/health", timeout=timeout)
     p2p_c, p2p = _http_json(f"{root}/api/v1/p2p/status", timeout=timeout)
@@ -112,7 +112,7 @@ def probe_seed(url: str, timeout: float = 2.5) -> dict[str, Any]:
     }
 
 
-def probe_all_seeds(*, timeout: float = 2.5) -> list[dict[str, Any]]:
+def probe_all_seeds(*, timeout: float = 1.5) -> list[dict[str, Any]]:
     urls = seed_urls()
     if skip_seed_discovery() or not urls:
         return [
@@ -128,11 +128,17 @@ def probe_all_seeds(*, timeout: float = 2.5) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     with ThreadPoolExecutor(max_workers=min(8, max(1, len(urls)))) as pool:
         futs = {pool.submit(probe_seed, u, timeout): u for u in urls}
-        for fut in as_completed(futs):
-            try:
-                rows.append(fut.result())
-            except Exception as exc:  # noqa: BLE001
-                rows.append({"url": futs[fut], "health_http": 0, "online": False, "error": type(exc).__name__})
+        try:
+            for fut in as_completed(futs, timeout=max(3.0, timeout + 1.0)):
+                try:
+                    rows.append(fut.result())
+                except Exception as exc:  # noqa: BLE001
+                    rows.append({"url": futs[fut], "health_http": 0, "online": False, "error": type(exc).__name__})
+        except TimeoutError:
+            for fut, url in futs.items():
+                if not fut.done():
+                    fut.cancel()
+                    rows.append({"url": url, "health_http": 0, "online": False, "error": "probe_deadline"})
     rows.sort(key=lambda r: r.get("url") or "")
     return rows
 
