@@ -1,6 +1,10 @@
 # PROMPT Replit 181 — UN redeploy, PAS de venv
 
+**Superseded by 182.** Le 181 a bien démarré le shim, puis un clone `--depth 1` a fait échouer `merge-base` et a rewind vers `4cb2943` (178). Voir `docs/PROMPT_REPLIT_AGENT_182.md`.
+
 Le log `20260901T104032Z_20` : **11 min** `Création venv` → Autoscale **TERM** → nouveau start → encore TERM. Le script **178** tournait encore (`4cb2943` exact, pas 180).
+
+**Ne plus** laisser `ARTCB_REPLIT_PIN_SHA=4cb2943…`. Publier 182 et pointer le PIN sur le SHA 182.
 
 **À faire tout de suite :**
 

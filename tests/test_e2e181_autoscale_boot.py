@@ -14,7 +14,9 @@ def test_autoscale_script_never_creates_venv() -> None:
     assert "npm " not in body
     assert "uvicorn src.api.main:app" in body
     assert "replit_live_shim.py" in body
-    assert "origin/$ARTCB_REPLIT_BRANCH" in body or 'origin/"$ARTCB_REPLIT_BRANCH"' in body
+    assert "replit_git_sync.sh" in body
+    sync = (ROOT / "scripts" / "replit_git_sync.sh").read_text(encoding="utf-8")
+    assert "origin/$ARTCB_REPLIT_BRANCH" in sync or 'origin/"$ARTCB_REPLIT_BRANCH"' in sync
 
 
 def test_replit_config_runs_autoscale_script() -> None:
