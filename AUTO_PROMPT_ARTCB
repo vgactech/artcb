@@ -1284,6 +1284,7 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Opérateur **valide D-043** définitivement. Replit **sans wallet / sans init-node**.
 - PIN = ancêtre du tip. Mutations P2P Bearer. `register-public` allowlist SSRF. `GET /api/v1/network/nodes` sans wallet.
 - Flood/partition live **non** joué. Certif false.
-- Sim : `scripts/run_sim190_mainnet_validate.py`. Rapport : `rapports/190_mainnet_validate_d044_2026-09-01.md`
+- Sim `20260901T184857Z_e2e190_mainnet_validate` `failures=[]`. SHA live `fe369bd`. 4 nœuds se voient. Replit bootstrap `99e83b` / `174-devnet-1`. PR #46.
+- Rapport : `rapports/190_mainnet_validate_d044_2026-09-01.md`
 
 

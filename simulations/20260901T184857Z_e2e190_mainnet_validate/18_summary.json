@@ -1,0 +1,303 @@
+{
+  "certification_gate": {
+    "certified_distributed_mainnet": false,
+    "dv_not_pass": [
+      "DV-02",
+      "DV-06"
+    ],
+    "economic_v_locked": true,
+    "live_bft_implemented": true,
+    "reason": "dv_not_pass:DV-02,DV-06"
+  },
+  "certified_distributed_mainnet": false,
+  "concurrent_health": {
+    "aws3": {
+      "codes": [
+        200
+      ],
+      "http_200": 16,
+      "n": 16
+    },
+    "ovh1": {
+      "codes": [
+        200
+      ],
+      "http_200": 16,
+      "n": 16
+    },
+    "ovh2": {
+      "codes": [
+        200
+      ],
+      "http_200": 16,
+      "n": 16
+    },
+    "ovh4": {
+      "codes": [
+        200
+      ],
+      "http_200": 16,
+      "n": 16
+    }
+  },
+  "decisions_190": {
+    "D-044": "GO operator validates D-043 V-01\u2026V-07 and artcb-mainnet-1 genesis. Replit stays bootstrap: no wallet, no init-node. PIN may be an ancestor of the published tip (fast-forward). P2P mutations require operator Bearer; register-public is SSRF-allowlisted. Directory GET /api/v1/network/nodes needs no wallet. DV-02 live flood/partition is still not done on the mainnet book; local+bounded live probes only. certified_distributed_mainnet stays false."
+  },
+  "delay_unroutable": {
+    "error": "URLError",
+    "http": 0
+  },
+  "dir": "/workspace/simulations/20260901T184857Z_e2e190_mainnet_validate",
+  "failure_count": 0,
+  "failures": [],
+  "flood_live_vms": false,
+  "invented": false,
+  "nodes": {
+    "aws3": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "compatible_peers": [
+        "91.134.45.8",
+        "151.80.107.29",
+        "151.80.107.29",
+        "151.80.107.29",
+        "91.134.45.8",
+        "152.228.144.34",
+        "151.80.107.29",
+        "91.134.45.8",
+        "152.228.144.34",
+        "151.80.107.29",
+        "91.134.45.8"
+      ],
+      "genesis_hash": "genesis-artcb-mainnet-1",
+      "git_branch": "cursor/mainnet-validate-190-16d8",
+      "git_sha": "fe369bdf28c160f17169f99dd919ddcc4440dce6",
+      "height": 1,
+      "http": 200,
+      "https": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "name": "aws3",
+      "network_dir_http": 200,
+      "network_id": "artcb-mainnet-1",
+      "p2p_http": 200,
+      "peer_count": 12,
+      "peer_hosts": [
+        "91.134.45.8",
+        "151.80.107.29",
+        "151.80.107.29",
+        "151.80.107.29",
+        "91.134.45.8",
+        "152.228.144.34",
+        "151.80.107.29",
+        "91.134.45.8",
+        "152.228.144.34",
+        "151.80.107.29",
+        "91.134.45.8",
+        "169.254.169.254"
+      ],
+      "protocol_version": "189-mainnet-1",
+      "release_integrity": "ok",
+      "root": "http://51.44.222.232:8000",
+      "ssrf_detail": "register_url_rejected:link_local_or_reserved_forbidden",
+      "ssrf_http": 400,
+      "unauth_delete_http": 401
+    },
+    "ovh1": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "compatible_peers": [
+        "151.80.107.29",
+        "51.44.222.232",
+        "91.134.45.8",
+        "151.80.107.29",
+        "51.44.222.232",
+        "91.134.45.8"
+      ],
+      "genesis_hash": "genesis-artcb-mainnet-1",
+      "git_branch": "cursor/mainnet-validate-190-16d8",
+      "git_sha": "fe369bdf28c160f17169f99dd919ddcc4440dce6",
+      "height": 1,
+      "http": 200,
+      "https": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "name": "ovh1",
+      "network_dir_http": 200,
+      "network_id": "artcb-mainnet-1",
+      "p2p_http": 200,
+      "peer_count": 7,
+      "peer_hosts": [
+        "151.80.107.29",
+        "51.44.222.232",
+        "91.134.45.8",
+        "151.80.107.29",
+        "51.44.222.232",
+        "91.134.45.8",
+        "169.254.169.254"
+      ],
+      "protocol_version": "189-mainnet-1",
+      "release_integrity": "ok",
+      "root": "http://152.228.144.34:8000",
+      "ssrf_detail": "register_url_rejected:link_local_or_reserved_forbidden",
+      "ssrf_http": 400,
+      "unauth_delete_http": 401
+    },
+    "ovh2": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "compatible_peers": [
+        "51.44.222.232",
+        "51.44.222.232",
+        "91.134.45.8",
+        "152.228.144.34",
+        "51.44.222.232",
+        "91.134.45.8",
+        "152.228.144.34",
+        "51.44.222.232",
+        "91.134.45.8"
+      ],
+      "genesis_hash": "genesis-artcb-mainnet-1",
+      "git_branch": "cursor/mainnet-validate-190-16d8",
+      "git_sha": "fe369bdf28c160f17169f99dd919ddcc4440dce6",
+      "height": 1,
+      "http": 200,
+      "https": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "name": "ovh2",
+      "network_dir_http": 200,
+      "network_id": "artcb-mainnet-1",
+      "p2p_http": 200,
+      "peer_count": 10,
+      "peer_hosts": [
+        "51.44.222.232",
+        "51.44.222.232",
+        "91.134.45.8",
+        "152.228.144.34",
+        "51.44.222.232",
+        "91.134.45.8",
+        "152.228.144.34",
+        "51.44.222.232",
+        "91.134.45.8",
+        "169.254.169.254"
+      ],
+      "protocol_version": "189-mainnet-1",
+      "release_integrity": "ok",
+      "root": "http://151.80.107.29:8000",
+      "ssrf_detail": "register_url_rejected:link_local_or_reserved_forbidden",
+      "ssrf_http": 400,
+      "unauth_delete_http": 401
+    },
+    "ovh4": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "compatible_peers": [
+        "151.80.107.29",
+        "151.80.107.29",
+        "51.44.222.232",
+        "152.228.144.34",
+        "151.80.107.29",
+        "51.44.222.232",
+        "152.228.144.34",
+        "151.80.107.29",
+        "51.44.222.232"
+      ],
+      "genesis_hash": "genesis-artcb-mainnet-1",
+      "git_branch": "cursor/mainnet-validate-190-16d8",
+      "git_sha": "fe369bdf28c160f17169f99dd919ddcc4440dce6",
+      "height": 1,
+      "http": 200,
+      "https": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "name": "ovh4",
+      "network_dir_http": 200,
+      "network_id": "artcb-mainnet-1",
+      "p2p_http": 200,
+      "peer_count": 10,
+      "peer_hosts": [
+        "151.80.107.29",
+        "151.80.107.29",
+        "51.44.222.232",
+        "152.228.144.34",
+        "151.80.107.29",
+        "51.44.222.232",
+        "152.228.144.34",
+        "151.80.107.29",
+        "51.44.222.232",
+        "169.254.169.254"
+      ],
+      "protocol_version": "189-mainnet-1",
+      "release_integrity": "ok",
+      "root": "http://91.134.45.8:8000",
+      "ssrf_detail": "register_url_rejected:link_local_or_reserved_forbidden",
+      "ssrf_http": 400,
+      "unauth_delete_http": 401
+    }
+  },
+  "note": "D-044: operator validated D-043. Deploy kept the mainnet book. Replit remains bootstrap without wallet. No live packet flood.",
+  "replit": {
+    "bootstrap_mode": true,
+    "certified_distributed_mainnet": null,
+    "compatible_peers": [],
+    "genesis_hash": "genesis-artcb-v2",
+    "git_branch": "cursor/replit-sync-ready-16d8",
+    "git_sha": "99e83b9996aee66666d2c45107aaae8e78339c6b",
+    "height": null,
+    "http": 200,
+    "last_hash": null,
+    "name": "replit",
+    "network_dir_http": 503,
+    "network_id": "artcb-devnet-1",
+    "p2p_http": 503,
+    "peer_count": null,
+    "peer_hosts": [],
+    "protocol_version": "174-devnet-1",
+    "release_integrity": "ok",
+    "root": "https://artcb--vgacofficiel.replit.app",
+    "ssrf_detail": "Method Not Allowed",
+    "ssrf_http": 405,
+    "unauth_delete_http": 405
+  },
+  "simulation": "e2e190_mainnet_validate",
+  "verdicts": {
+    "DV-01": "PASS",
+    "DV-02": "PARTIAL",
+    "DV-03": "PASS",
+    "DV-04": "PASS",
+    "DV-05": "PASS",
+    "DV-06": "PARTIAL",
+    "DV-07": "PASS"
+  },
+  "visibility": {
+    "aws3": {
+      "compatible_peers": [
+        "151.80.107.29",
+        "152.228.144.34",
+        "91.134.45.8"
+      ],
+      "missing_infra_ips": []
+    },
+    "ovh1": {
+      "compatible_peers": [
+        "151.80.107.29",
+        "51.44.222.232",
+        "91.134.45.8"
+      ],
+      "missing_infra_ips": []
+    },
+    "ovh2": {
+      "compatible_peers": [
+        "152.228.144.34",
+        "51.44.222.232",
+        "91.134.45.8"
+      ],
+      "missing_infra_ips": []
+    },
+    "ovh4": {
+      "compatible_peers": [
+        "151.80.107.29",
+        "152.228.144.34",
+        "51.44.222.232"
+      ],
+      "missing_infra_ips": []
+    }
+  }
+}
