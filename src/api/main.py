@@ -42,6 +42,7 @@ from src.api.symbols_routes import router as symbols_router
 from src.api.websocket import router as ws_router
 from src.api.privacy_routes import router as privacy_router
 from src.api.setup_routes import router as setup_router
+from src.api.network_routes import router as network_router
 
 
 def create_app() -> FastAPI:
@@ -59,6 +60,7 @@ def create_app() -> FastAPI:
         f"https://n2.{ARTCB_DOMAIN}",
         f"https://node.{ARTCB_DOMAIN}",
         "https://artcb--vgac42.replit.app",
+        "https://artcb--vgacofficiel.replit.app",
         *_extra,
     ]
     app.add_middleware(
@@ -73,6 +75,7 @@ def create_app() -> FastAPI:
 
     # Routes /setup/* — toujours montées (état bootstrap ou non)
     app.include_router(setup_router)
+    app.include_router(network_router)
 
     if state.p2p_identity.bootstrap_mode:
         # ── MODE BOOTSTRAP ─────────────────────────────────────────────────
@@ -180,13 +183,14 @@ def create_app() -> FastAPI:
         _BOOTSTRAP_API_PASSTHROUGH = frozenset({
             "api/v1/health",
             "api/v1/chain/verify",   # frontend vérifie ceci au démarrage
+            "api/v1/network/nodes",
         })
 
         @app.get("/{full_path:path}")
         async def bootstrap_catchall(full_path: str):
             # Routes déjà déclarées — FastAPI les intercepte avant ce catchall
             if full_path in ("", "health", "live", "ready", "setup/status", "setup/init-node",
-                             "api/v1/health", "api/v1/chain/verify"):
+                             "api/v1/health", "api/v1/chain/verify", "api/v1/network/nodes"):
                 from fastapi import HTTPException
                 raise HTTPException(status_code=404)
             # Servir le frontend SPA pour les routes non-API

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from src.artcb.crypto.kem import advertised_kem_algorithm
@@ -18,7 +18,9 @@ from src.artcb.crypto_policy import (
 )
 from src.artcb.p2p.handshake import build_signed_card, load_or_create_handshake_key
 from src.artcb.p2p.node_identity import advertised_base_url
+from src.artcb.p2p.public_url import public_register_url_ok
 from src.artcb.p2p.sync import P2PSyncError
+from src.api.api_keys_routes import require_operator_write
 
 logger = logging.getLogger("artcb.api.p2p")
 router = APIRouter(prefix="/api/v1/p2p", tags=["p2p"])
@@ -102,7 +104,11 @@ def list_peers(request: Request) -> dict:
 
 
 @router.post("/peers")
-def add_peer(body: AddPeerRequest, request: Request) -> dict:
+def add_peer(
+    body: AddPeerRequest,
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     mgr = _state(request).p2p_peers
     try:
         peer = mgr.add_peer(
@@ -129,7 +135,11 @@ def add_peer(body: AddPeerRequest, request: Request) -> dict:
 
 
 @router.delete("/peers/{peer_id}")
-def remove_peer(peer_id: str, request: Request) -> dict:
+def remove_peer(
+    peer_id: str,
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     if not _state(request).p2p_peers.remove_peer(peer_id):
         raise HTTPException(status_code=404, detail="Peer not found")
     return {"deleted": peer_id}
@@ -166,6 +176,9 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
     url = body.node_public_url.rstrip("/")
     if not re.match(r"^https?://", url):
         raise HTTPException(status_code=400, detail="node_public_url doit commencer par http:// ou https://")
+    ok_url, url_reason = public_register_url_ok(url)
+    if not ok_url:
+        raise HTTPException(status_code=400, detail=f"register_url_rejected:{url_reason}")
 
     # Vérifier que le réseau correspond
     nid = (body.network_id or "").strip() or NETWORK_ID

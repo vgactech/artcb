@@ -148,6 +148,19 @@ DECISIONS_189: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-01: validate D-043 locks; remaining mainnet tests without Replit wallet.
+DECISIONS_190: Final[dict[str, str]] = {
+    "D-044": (
+        "GO operator validates D-043 V-01…V-07 and artcb-mainnet-1 genesis. "
+        "Replit stays bootstrap: no wallet, no init-node. PIN may be an "
+        "ancestor of the published tip (fast-forward). P2P mutations require "
+        "operator Bearer; register-public is SSRF-allowlisted. Directory "
+        "GET /api/v1/network/nodes needs no wallet. DV-02 live flood/partition "
+        "is still not done on the mainnet book; local+bounded live probes only. "
+        "certified_distributed_mainnet stays false."
+    ),
+}
+
 
 def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]:
     """Mainnet certification is AND of every locked letter + economics.
@@ -195,5 +208,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_187": DECISIONS_187,
         "decisions_188": DECISIONS_188,
         "decisions_189": DECISIONS_189,
+        "decisions_190": DECISIONS_190,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

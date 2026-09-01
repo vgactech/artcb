@@ -28,11 +28,18 @@ def test_p2p_status(client: TestClient) -> None:
     assert body["private_never_synced"] is True
 
 
-def test_add_peer(client: TestClient) -> None:
+def test_add_peer(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ARTCB_API_KEY", "artcb_local_test_operator_key")
     status = client.get("/api/v1/p2p/status").json()
     kem = status["kem_public_key_hex"]
+    denied = client.post(
+        "/api/v1/p2p/peers",
+        json={"host": "127.0.0.1", "port": 8001, "kem_public_key_hex": kem, "label": "test"},
+    )
+    assert denied.status_code == 401
     r = client.post(
         "/api/v1/p2p/peers",
+        headers={"Authorization": "Bearer artcb_local_test_operator_key"},
         json={"host": "127.0.0.1", "port": 8001, "kem_public_key_hex": kem, "label": "test"},
     )
     assert r.status_code == 200, r.text

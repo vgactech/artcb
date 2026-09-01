@@ -10,8 +10,10 @@ PROTOCOLE : La génération d'une API key nécessite d'être authentifié.
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import logging
+import os
 import secrets
 import time
 from pathlib import Path
@@ -154,6 +156,33 @@ def require_scope(scope: str):
             )
         return record
     return _check
+
+
+def require_operator_write(
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> dict:
+    """Force write/admin Bearer for P2P mutations. 401 if missing.
+
+    Accepts api_keys.json records or the node env ARTCB_API_KEY (already on
+    live VMs). Never logs the token.
+    """
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="operator_bearer_required")
+    raw = authorization.removeprefix("Bearer ").strip()
+    if len(raw) < 16:
+        raise HTTPException(status_code=401, detail="operator_bearer_required")
+    env_key = os.getenv("ARTCB_API_KEY", "").strip()
+    if env_key and len(env_key) == len(raw) and hmac.compare_digest(raw, env_key):
+        return {"scopes": ["write", "admin"], "source": "env"}
+    path = _keys_path(request)
+    record = _find_key_record(_load_keys(path), raw)
+    if record is None:
+        raise HTTPException(status_code=401, detail="operator_bearer_required")
+    scopes = record.get("scopes") or []
+    if "write" not in scopes and "admin" not in scopes:
+        raise HTTPException(status_code=403, detail="scope_write_required")
+    return record
 
 
 # --------------------------------------------------------------------------- #

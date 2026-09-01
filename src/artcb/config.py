@@ -30,9 +30,11 @@ load_dotenv()
 # Bootstrap nodes officiels ARTCB — URLs artcb.space (rapport 116)
 # Ces URLs sont stables et indépendantes de l'hébergeur (Replit, OVH, etc.)
 BOOTSTRAP_NODES: list[str] = [
-    "https://n1.artcb.space",   # Nœud N1 → lvx--supermicro20238.replit.app
-    "https://n2.artcb.space",   # Nœud N2 → lvx--supermicro20239.replit.app
-    "https://node.artcb.space", # Point d'entrée principal
+    "http://152.228.144.34:8000",
+    "http://151.80.107.29:8000",
+    "http://51.44.222.232:8000",
+    "http://91.134.45.8:8000",
+    "https://artcb--vgacofficiel.replit.app",
 ]
 
 ARTCB_GITHUB_REPO = "https://github.com/vgac2025/artcb"

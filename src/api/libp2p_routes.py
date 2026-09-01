@@ -17,10 +17,11 @@ import logging
 import os
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from src.artcb.p2p.libp2p_node import LibP2PNode
+from src.api.api_keys_routes import require_operator_write
 
 logger = logging.getLogger("artcb.api.p2p.libp2p")
 router = APIRouter(prefix="/api/v1/p2p/libp2p", tags=["p2p-libp2p"])
@@ -96,7 +97,11 @@ async def libp2p_peers(request: Request) -> dict:
 
 
 @router.post("/connect")
-async def libp2p_connect(body: ConnectRequest, request: Request) -> dict:
+async def libp2p_connect(
+    body: ConnectRequest,
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     """
     Connecte le nœud à un pair TCP distant.
     Retourne les infos du pair si connexion réussie.
@@ -112,7 +117,11 @@ async def libp2p_connect(body: ConnectRequest, request: Request) -> dict:
 
 
 @router.post("/bootstrap")
-async def libp2p_bootstrap(body: BootstrapRequest, request: Request) -> dict:
+async def libp2p_bootstrap(
+    body: BootstrapRequest,
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     """
     Bootstrap Kademlia DHT depuis une liste de seeds.
     Format seeds : ["host:port", ...]
@@ -135,7 +144,11 @@ async def libp2p_bootstrap(body: BootstrapRequest, request: Request) -> dict:
 
 
 @router.post("/announce_block")
-async def libp2p_announce_block(body: AnnounceBlockRequest, request: Request) -> dict:
+async def libp2p_announce_block(
+    body: AnnounceBlockRequest,
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     """
     Diffuse un bloc public à tous les pairs connectés via Gossipsub.
     Le bloc doit avoir visibility="public".
@@ -167,7 +180,7 @@ async def libp2p_dht(request: Request) -> dict:
 
 
 @router.delete("/stop")
-async def libp2p_stop() -> dict:
+async def libp2p_stop(_auth: dict = Depends(require_operator_write)) -> dict:
     """Arrête proprement le nœud libp2p (admin)."""
     global _libp2p_node
     async with _libp2p_lock:

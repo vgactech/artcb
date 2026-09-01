@@ -203,7 +203,7 @@ def test_wallet_create_returns_device_info(client: TestClient):
 def test_p2p_register_public_valid(client: TestClient):
     """POST /api/v1/p2p/register-public enregistre un nœud avec une URL valide."""
     r = client.post("/api/v1/p2p/register-public", json={
-        "node_public_url": "https://test-node.example.com",
+        "node_public_url": "https://artcb--vgacofficiel.replit.app",
         "node_label": "Test Node",
         "device_fingerprint": "a" * 64,
         "github_repository": "testuser/test-repo",

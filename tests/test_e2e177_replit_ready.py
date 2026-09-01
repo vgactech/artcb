@@ -55,8 +55,8 @@ def test_https_peer_base_url_not_http_on_443() -> None:
 def test_replit_node_registered_ovh1_untouched() -> None:
     assert NODES["ovh-node-1"].ssh_host == "152.228.144.34"
     r = NODES["replit-node-1"]
-    assert r.health_http == "https://artcb--vgac42.replit.app"
-    assert "D-036" in r.public_notes
+    assert r.health_http == "https://artcb--vgacofficiel.replit.app"
+    assert "bootstrap" in r.public_notes.lower()
     main = (ROOT / "src" / "api" / "main.py").read_text(encoding="utf-8")
     assert '@app.get("/live")' in main
     assert '@app.get("/api/v1/chain/verify")' in main
@@ -107,3 +107,8 @@ def test_bootstrap_live_and_chain_verify_not_404(tmp_path, monkeypatch) -> None:
     assert body_w["chain_available"] is False
     assert body_w["reason"] == "wallet_initialization_required"
     assert client.get("/api/v1/chain").status_code == 503
+    nodes = client.get("/api/v1/network/nodes")
+    assert nodes.status_code == 200, nodes.text
+    listed = nodes.json()
+    assert listed["wallet_required_for_p2p"] is True
+    assert "ovh-node-1" in listed["nodes"]

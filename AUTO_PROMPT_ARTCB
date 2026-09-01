@@ -1279,3 +1279,11 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - `certified_distributed_mainnet` **false** (DV-02 C flood non fait). Sim `20260901T183347Z_e2e189_mainnet_genesis`. PR #45.
 - Rapport : `rapports/189_mainnet_genesis_v_locked_2026-09-01.md`
 
+## [2026-09-01T18:50:00Z] Rapport 190 — D-044 validation + P2P durci
+
+- Opérateur **valide D-043** définitivement. Replit **sans wallet / sans init-node**.
+- PIN = ancêtre du tip. Mutations P2P Bearer. `register-public` allowlist SSRF. `GET /api/v1/network/nodes` sans wallet.
+- Flood/partition live **non** joué. Certif false.
+- Sim : `scripts/run_sim190_mainnet_validate.py`. Rapport : `rapports/190_mainnet_validate_d044_2026-09-01.md`
+
+
