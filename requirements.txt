@@ -50,7 +50,10 @@ pytesseract>=0.3.10
 
 # ─── Recherche vectorielle & perf ─────────────────────────────────────────────
 faiss-cpu>=1.7.4
-numpy>=1.24.0,<2.0  # Python 3.11 — numpy 2.x requiert Python >=3.12
+# Python 3.11 conserve NumPy 1.x ; Python >=3.12 utilise les wheels NumPy 2.x
+# afin d'éviter une compilation source lors d'un clone sur Replit 3.13.
+numpy>=1.24.0,<2.0; python_version < "3.12"
+numpy>=2.0.0; python_version >= "3.12"
 psutil>=5.9.0
 
 # ─── MCP (Model Context Protocol) — intégration Cursor/Bob/VSCode/JetBrains ───
@@ -73,7 +76,8 @@ cryptography>=50.0.1
 faiss-cpu>=1.7.4
 fastapi>=0.111.0
 httpx>=0.27.0
-numpy>=1.24.0,<2.0
+numpy>=1.24.0,<2.0; python_version < "3.12"
+numpy>=2.0.0; python_version >= "3.12"
 psutil>=5.9.0
 pydantic>=2.7.0
 pynacl>=1.6.2

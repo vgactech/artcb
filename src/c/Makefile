@@ -1,6 +1,8 @@
 CC ?= cc
-CFLAGS ?= -Wall -Wextra -O2 -fPIC
-LDFLAGS ?= -shared -lcrypto
+CFLAGS ?=
+CFLAGS += -Wall -Wextra -O2 -fPIC
+LDFLAGS ?=
+LDLIBS ?= -lcrypto
 
 TARGET = libartcb_chain.so
 SRC = libartcb_chain.c
@@ -10,7 +12,7 @@ SRC = libartcb_chain.c
 all: $(TARGET)
 
 $(TARGET): $(SRC) libartcb_chain.h
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -shared $(SRC) -o $(TARGET) $(LDLIBS)
 
 # ── Replit / NixOS : utiliser le compilateur système avec chemins explicites
 # Le linker Nix (binutils) est incompatible avec certains .so du store.
@@ -29,7 +31,7 @@ replit:
 
 # ── CI : même que all mais avec liboqs optionnel
 ci:
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS) 2>/dev/null || \
+	$(CC) $(CFLAGS) $(LDFLAGS) -shared $(SRC) -o $(TARGET) $(LDLIBS) 2>/dev/null || \
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET) -shared 2>/dev/null || \
 	echo "WARN: libartcb_chain.so non compilé (mode fallback Python)"
 

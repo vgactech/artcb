@@ -53,10 +53,8 @@ _log "release sha=${_SHA:-NONE}"
 CURRENT_STEP="python"
 PYTHONPATH="$REPL_DIR"
 for d in \
-  "$REPL_DIR/.pythonlibs/lib/python3.11/site-packages" \
-  "$REPL_DIR/.pythonlibs/lib/python3.12/site-packages" \
-  "$HOME/.pythonlibs/lib/python3.11/site-packages" \
-  "$HOME/.pythonlibs/lib/python3.12/site-packages"; do
+  "$REPL_DIR"/.pythonlibs/lib/python*/site-packages \
+  "$HOME"/.pythonlibs/lib/python*/site-packages; do
   [ -d "$d" ] && PYTHONPATH="$d:$PYTHONPATH"
 done
 export PYTHONPATH

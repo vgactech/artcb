@@ -1280,3 +1280,23 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
   wallet/seed/passphrase/init-node automatique, OVH1 `152.228.144.34` inchangé.
 - Prompt de référence : `docs/PROMPT_REPLIT_AGENT_187.md`.
 - Rapport : `rapports/179_installation_reproductible_replit_ovh_2026-09-01.md`.
+
+## [2026-09-01T17:02:00Z] Rapport 181 — clone Python 3.13 et compilation C reproductibles
+
+- `requirements.txt` utilise NumPy 1.x pour Python <3.12 et NumPy 2.x pour
+  Python >=3.12 afin d'éviter la compilation source NumPy sur Replit 3.13.
+- `scripts/install_python_dependencies.sh` détecte `python -m pip` puis un
+  `pip3/pip` compatible, et installe dans `.pythonlibs` quand le Python Nix
+  est en PEP 668 ; `liboqs-python` reste optionnel et borné.
+- `scripts/replit_autoscale.sh` découvre les sites `python*/site-packages`
+  par glob ; aucun venv, clone GitHub ou `unshallow` au boot.
+- `src/c/Makefile` conserve les `CFLAGS/LDFLAGS` injectés par Nix, ajoute
+  `-fPIC` et lie `-lcrypto` après les sources ; `make chain` est PASS.
+- Validation : installation runtime PASS, `npm ci` + build frontend PASS,
+  tests ciblés **68/68 PASS**, suite complète **679 PASS / 22 skipped /
+  3 écarts documentés** dans `rapports/181_installation_runtime_clone_2026-09-01.md`.
+- Écarts non masqués : deux tests API supposent un nœud configuré alors que
+  le clone est en bootstrap ; un test P2P suppose liboqs alors que le fallback
+  X25519 est actif. Aucun wallet, seed, passphrase ou `init-node` automatique.
+- Le pin `ARTCB_REPLIT_PIN_SHA` reste dans Replit Secrets ; ne jamais l'ajouter
+  en clair à `.replit`. OVH1 `152.228.144.34` reste inchangé.

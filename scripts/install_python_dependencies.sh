@@ -32,6 +32,26 @@ if [ -z "$PYTHON" ] || [ ! -x "$PYTHON" ]; then
   exit 1
 fi
 
+PIP_COMMAND=()
+if "$PYTHON" -m pip --version >/dev/null 2>&1; then
+  PIP_COMMAND=("$PYTHON" -m pip)
+else
+  for candidate in \
+    "${ARTCB_PIP:-}" \
+    "$(command -v pip3 2>/dev/null || true)" \
+    "$(command -v pip 2>/dev/null || true)"; do
+    if [ -n "$candidate" ] && [ -x "$candidate" ] \
+      && "$candidate" --version 2>/dev/null | grep -q "python $(printf '%s' "$("$PYTHON" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')" )"; then
+      PIP_COMMAND=("$candidate")
+      break
+    fi
+  done
+fi
+if [ "${#PIP_COMMAND[@]}" -eq 0 ]; then
+  echo "ERROR: pip executable not found for $PYTHON" >&2
+  exit 1
+fi
+
 PIP_TIMEOUT="${ARTCB_PIP_TIMEOUT:-180}"
 PIP_NETWORK_TIMEOUT="${ARTCB_PIP_NETWORK_TIMEOUT:-30}"
 PQC_TIMEOUT="${ARTCB_PQC_TIMEOUT:-300}"
@@ -40,9 +60,10 @@ export PIP_USER=false
 PYTHON_USER_SITE="$("$PYTHON" -c 'import site; print(site.getusersitepackages())')"
 PYTHON_PURELIB="$("$PYTHON" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
 PIP_DEST_ARGS=()
-if [[ "$PYTHON_PURELIB" == /nix/store/* ]] && [[ "$PYTHON_USER_SITE" == "$REPO_DIR/.pythonlibs/"* ]]; then
+if [[ "$PYTHON_PURELIB" == /nix/store/* ]] \
+  && [[ "$PYTHON_USER_SITE" != /nix/store/* ]]; then
   # Replit's wrapped Nix Python cannot write /nix/store. Install into the
-  # persistent project site-packages that is already on PYTHONPATH.
+  # persistent user site-packages that is already on PYTHONPATH.
   mkdir -p "$PYTHON_USER_SITE"
   PIP_DEST_ARGS=(--target "$PYTHON_USER_SITE" --upgrade)
   echo "Using Replit user site: $PYTHON_USER_SITE"
@@ -72,8 +93,9 @@ awk '!/^[[:space:]]*liboqs-python([<>=!~]|[[:space:]]|$)/' \
   requirements.txt > "$RUNTIME_REQUIREMENTS"
 
 echo "ARTCB Python runtime: $PYTHON"
+echo "ARTCB pip: ${PIP_COMMAND[*]}"
 echo "Installing runtime dependencies (PQC source build excluded from critical path)..."
-run_bounded "$PIP_TIMEOUT" "$PYTHON" -m pip install \
+run_bounded "$PIP_TIMEOUT" "${PIP_COMMAND[@]}" install \
   "${PIP_DEST_ARGS[@]}" \
   --disable-pip-version-check \
   --retries 3 \
@@ -96,7 +118,7 @@ PY
 
 if [ "${ARTCB_INSTALL_PQC:-0}" = "1" ]; then
   echo "PQC optional install enabled (hard timeout: ${PQC_TIMEOUT}s)..."
-  if run_bounded "$PQC_TIMEOUT" "$PYTHON" -m pip install \
+  if run_bounded "$PQC_TIMEOUT" "${PIP_COMMAND[@]}" install \
       "${PIP_DEST_ARGS[@]}" \
       --disable-pip-version-check \
       --retries 2 \
