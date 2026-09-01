@@ -1263,3 +1263,18 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Pas de 210k.** Ancres HBP 4.15e9/8.3e9 encore provisoires. Finder/WorkID = modules, pas encore pipeline mining.
 - **Tests :** 554 passed / 20 skipped. Log `logs/20260828_pytest_rapport163.txt`.
 - Rapport : `rapports/163_tokenomics_simu_go162_alignement_2026-08-28.md`
+
+## [2026-09-01T18:20:00Z] Rapport 188 — BFT live, pas de mainnet certifié
+
+- **D-042** : prepare/commit live N=4 F=1 Q=3. DV-05 C PASS e2e188 `20260901T181738Z`.
+- **Ne pas** renommer `174-devnet-1`. V-01…V-07 encore provisoires (D-026).
+- `certified_distributed_mainnet=false`. SHA live `7cf8c37`. PR #44.
+- Rapport : `rapports/188_live_bft_dv05_not_mainnet_2026-09-01.md`
+
+## [2026-09-01T18:40:00Z] Rapport 189 — D-043 gel V + artcb-mainnet-1
+
+- **GO** : valider soi-même, geler V-01…V-07 au code sim 167, ouvrir `artcb-mainnet-1` / `189-mainnet-1` / `genesis-artcb-mainnet-1`.
+- Livre de sondes 174 **vidé** (backup `blocks.jsonl.bak-d043-testbook`), wallets/`chain.key` conservés. Faucet 403. Fenêtre Ed25519 inchangée.
+- `certified_distributed_mainnet` **reste false** (DV-02 C flood non fait). Ce n’est **pas** un PASS inventé.
+- Sim : `scripts/run_sim189_mainnet_genesis.py`. Rapport : `rapports/189_mainnet_genesis_v_locked_2026-09-01.md`
+

@@ -207,7 +207,7 @@ def test_p2p_register_public_valid(client: TestClient):
         "node_label": "Test Node",
         "device_fingerprint": "a" * 64,
         "github_repository": "testuser/test-repo",
-        "network_id": "artcb-devnet-1",
+        "network_id": "artcb-mainnet-1",
     })
     assert r.status_code == 200, r.text
     data = r.json()
@@ -220,7 +220,7 @@ def test_p2p_register_public_invalid_url(client: TestClient):
     r = client.post("/api/v1/p2p/register-public", json={
         "node_public_url": "ftp://invalid",
         "device_fingerprint": "b" * 64,
-        "network_id": "artcb-devnet-1",
+        "network_id": "artcb-mainnet-1",
     })
     assert r.status_code == 400
 

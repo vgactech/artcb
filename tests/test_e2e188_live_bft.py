@@ -46,7 +46,7 @@ def test_d042_does_not_invent_mainnet() -> None:
     assert "D-026" in text
     lock = public_lock()
     assert lock["distributed_certified"] is False
-    assert lock["economic_v_locked"] is False
+    assert lock["economic_v_locked"] is True
     gate = certification_gate({"DV-03": "PASS", "DV-04": "PASS"})
     assert gate["certified_distributed_mainnet"] is False
     assert "DV-05" in gate["dv_not_pass"]

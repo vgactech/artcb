@@ -7,6 +7,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 
+from src.artcb.crypto_policy import NETWORK_ID
 from src.artcb.devnet.faucet import FaucetError
 from src.artcb.integrations.gradium import GradiumError, synthesize_speech
 
@@ -30,7 +31,9 @@ def _state(request: Request):
 
 @router.post("/devnet/faucet")
 def devnet_faucet(body: FaucetRequest, request: Request) -> dict:
-    """Distribue tARTCB de test (artcb-devnet)."""
+    """Distribue tARTCB de test. Interdit sur mainnet (D-017 / D-043)."""
+    if not NETWORK_ID.endswith("devnet-1"):
+        raise HTTPException(status_code=403, detail="faucet_disabled_on_mainnet")
     try:
         return request.app.state.artcb.faucet.request(body.address)
     except FaucetError as exc:
@@ -39,7 +42,9 @@ def devnet_faucet(body: FaucetRequest, request: Request) -> dict:
 
 @router.get("/devnet/faucet/status")
 def devnet_faucet_status(request: Request) -> dict:
-    return _state(request).faucet.ledger_summary()
+    summary = _state(request).faucet.ledger_summary()
+    summary["enabled"] = NETWORK_ID.endswith("devnet-1")
+    return summary
 
 
 @router.get("/chain/explorer")
@@ -51,7 +56,7 @@ def chain_explorer(request: Request) -> dict:
     total_rewards = sum(int(b.get("block_reward", 0)) for b in blocks)
     symbol_count = len(state.symbol_registry.export())
     return {
-        "network": "artcb-devnet-1",
+        "network": NETWORK_ID,
         "block_count": len(blocks),
         "public_block_count": len(public_blocks),
         "total_rewards_satoshi": total_rewards,

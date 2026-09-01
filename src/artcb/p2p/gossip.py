@@ -8,10 +8,11 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from src.artcb.crypto_policy import NETWORK_ID
+
 logger = logging.getLogger("artcb.p2p.gossip")
 
 GOSSIP_MAGIC = "0xARTC0001"
-NETWORK_ID = "artcb-devnet-1"
 
 
 class GossipRegistry:

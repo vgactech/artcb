@@ -35,7 +35,7 @@ def test_decisions_174_do_not_overwrite_d033_dv_profile() -> None:
     assert "3 live" in DECISIONS_174["D-035"]
     assert "OVH1" in DECISIONS_174["D-036"]
     assert HYBRID_VERIFY_MODE == "AND"
-    assert PROTOCOL_VERSION == "174-devnet-1"
+    assert PROTOCOL_VERSION == "189-mainnet-1"
     spec = public_spec()
     assert spec["live_bft_implemented"] is True
     assert LIVE_BFT_IMPLEMENTED is True

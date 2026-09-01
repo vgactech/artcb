@@ -36,10 +36,10 @@ from src.artcb.crypto.kem import (
     generate_kem_keypair,
 )
 from src.artcb.crypto.liboqs_runtime import native_liboqs_available
+from src.artcb.crypto_policy import NETWORK_ID
 
 logger = logging.getLogger("artcb.p2p.node_identity")
 
-NETWORK_ID = "artcb-devnet-1"
 DEFAULT_P2P_PORT = int(os.getenv("ARTCB_P2P_PORT", "18444"))
 
 # Fichier local (non committé) où l'adresse wallet est persistée après
@@ -214,6 +214,11 @@ class NodeIdentityStore:
                     len(stored_pub),
                     MLKEM768_PUBLIC_BYTES,
                 )
+            if data.get("network_id") != NETWORK_ID:
+                data["network_id"] = NETWORK_ID
+                self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+                self.path.chmod(0o600)
+                logger.info("node_identity: network_id migrated to %s", NETWORK_ID)
             return NodeIdentity(
                 network_id=data.get("network_id", NETWORK_ID),
                 node_id=data["node_id"],

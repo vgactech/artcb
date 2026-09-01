@@ -48,10 +48,10 @@ def hbp_rate_from_ratio(
     peak_humans: float = HBP_PEAK_HUMANS,
     end_humans: float = HBP_END_HUMANS,
 ) -> float:
-    """V-07 provisional: 10→60→20 on H_verified / H_adult_max.
+    """Optional ratio form of V-07. Live emission uses ``hbp_rate`` (absolute anchors).
 
-    Peak/end ratios are derived from the historical absolute anchors divided
-    by H_adult_max. Not a frozen WPP lock. Live ``hbp_rate`` is unchanged.
+    Peak/end ratios are derived from the locked absolute anchors divided
+    by H_adult_max. Not a WPP freeze. D-043 did not invent a new curve.
     """
     if h_verified < 0:
         raise ValueError(f"h_verified must be >= 0, got {h_verified}")

@@ -19,4 +19,5 @@ genesis `cc61f710` was adopted (D-041). Wallets / `chain.key` kept.
 
 PRE-DV-04 (3-node public tip) does not unlock DV-04 C by itself.
 `certified_distributed_mainnet` stays false even if DV-04 PASS.
-DV-05 stays BLOCKED until a live BFT engine exists.
+DV-05 live BFT exists (e2e188 PASS). D-043 empties the 174 test book
+and opens `artcb-mainnet-1`; wallets / `chain.key` kept.

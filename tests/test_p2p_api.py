@@ -8,6 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.main import create_app
+from artcb.crypto_policy import NETWORK_ID
 
 
 @pytest.fixture
@@ -21,7 +22,7 @@ def test_p2p_status(client: TestClient) -> None:
     r = client.get("/api/v1/p2p/status")
     assert r.status_code == 200, r.text
     body = r.json()
-    assert body["network_id"] == "artcb-devnet-1"
+    assert body["network_id"] == NETWORK_ID == "artcb-mainnet-1"
     assert body["kem_algorithm"] == "ML-KEM-768"
     assert "kem_public_key_hex" in body
     assert body["private_never_synced"] is True

@@ -16,4 +16,5 @@ PASS only after live scenarios on the four VMs:
 - offline node recovers
 
 `certified_distributed_mainnet` stays false until DV-01…DV-07 are all PASS
-and economic V-01…V-07 are locked (D-026). See D-042.
+and economic V-01…V-07 are locked (D-043). See D-042 / D-043. DV-02 C
+flood/chaos is still the remaining certification blocker.

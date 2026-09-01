@@ -1,14 +1,14 @@
 """EconomicStateSnapshot + SettlementID — Simulation 167.
 
-Recommended defaults (PENDING user validation V-01…V-07)::
+Locked D-043 (operator GO — choices = already-running sim 167 code)::
 
     V-01 Snapshot at epoch start (Solution A)
     V-02 Transfer economic effect = next epoch
     V-03 Reconnect grace = 24h (or 1 epoch)
     V-04 Retirement effect = next snapshot
-    V-05 Finality = N confirmations (default 2) — vs quorum, unfrozen
+    V-05 Finality = N confirmations (default 2); settlement BFT is DV-05 Q=3
     V-06 H_adult_max = versioned DemographicReference, not a bare integer
-    V-07 HBP 10→60→20 on ratio H_verified / H_adult_max (anchors provisional)
+    V-07 HBP 10→60→20 on absolute anchors 0 / 4.15e9 / 8.30e9 (live hbp_rate)
 
 Settlement = f(snapshot). Mid-epoch ownership changes do not rewrite P(N).
 """
@@ -27,9 +27,9 @@ from typing import Any
 logger = logging.getLogger("artcb.economics.economic_snapshot")
 
 PROTOCOL_VERSION = "167-distributed-snapshot"
-ECONOMIC_RULES_VERSION = "D-025+V01-V07-provisional"
-DEFAULT_GRACE_SECONDS = 24 * 3600  # V-03 proposed
-DEFAULT_FINALITY_CONFIRMATIONS = 2  # V-05 B
+ECONOMIC_RULES_VERSION = "D-025+V01-V07-locked-D043"
+DEFAULT_GRACE_SECONDS = 24 * 3600  # V-03 locked D-043
+DEFAULT_FINALITY_CONFIRMATIONS = 2  # V-05 locked D-043
 DEFAULT_EPOCH_SECONDS = 600  # TARGET_BLOCK_SECONDS
 
 

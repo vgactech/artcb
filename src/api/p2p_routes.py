@@ -142,7 +142,7 @@ class RegisterPublicNodeRequest(BaseModel):
     device_fingerprint: str = Field(min_length=8, description="SHA-256 du fingerprint appareil")
     github_repository: str | None = Field(default=None, description="Repo GitHub source (ex: vgac2025/lvx)")
     github_actor: str | None = Field(default=None, description="Compte GitHub de l'opérateur")
-    network_id: str = Field(default="artcb-devnet-1", description="Réseau cible")
+    network_id: str = Field(default="", description="Réseau cible")
 
 
 @router.post("/register-public", summary="Auto-enregistrement d'un nœud public (bootstrap)")
@@ -168,10 +168,11 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
         raise HTTPException(status_code=400, detail="node_public_url doit commencer par http:// ou https://")
 
     # Vérifier que le réseau correspond
-    if body.network_id != NETWORK_ID:
+    nid = (body.network_id or "").strip() or NETWORK_ID
+    if nid != NETWORK_ID:
         raise HTTPException(
             status_code=400,
-            detail=f"Réseau inconnu: {body.network_id} — ce nœud est sur {NETWORK_ID}",
+            detail=f"Réseau inconnu: {nid} — ce nœud est sur {NETWORK_ID}",
         )
 
     # Extraire host:port depuis l'URL
@@ -351,7 +352,7 @@ def gossip_announce(request: Request, host: str = "127.0.0.1") -> dict:
         kem_public_key_hex=identity.kem_public_key_hex,
         symbol_count=len(state.symbol_registry.export()),
     )
-    return {"announcement": entry, "network_id": "artcb-devnet-1", "p2p_port": identity.p2p_port}
+    return {"announcement": entry, "network_id": NETWORK_ID, "p2p_port": identity.p2p_port}
 
 
 @router.post("/gossip/receive")

@@ -1,8 +1,8 @@
 """Distributed / operational validations DV-01…DV-07 (distinct from economic V-01…V-07).
 
-Economic V-01…V-07 remain the tokenomics locks in economic_snapshot.py (still
-provisional until a separate GO). This module records the 2026-08-31 user
-choices for live multi-node validation.
+Economic V-01…V-07 locked D-043 (operator GO 2026-09-01) at the values
+already implemented and measured in simulation 167. This module also
+records the 2026-08-31 user choices for live multi-node validation.
 """
 
 from __future__ import annotations
@@ -11,14 +11,15 @@ from typing import Any, Final
 
 # Economic series — DO NOT reuse these letters for identity/P2P/consensus.
 ECONOMIC_V: Final[dict[str, str]] = {
-    "V-01": "Snapshot at epoch start (Solution A) — provisional",
-    "V-02": "Transfer economic effect = next epoch — provisional",
-    "V-03": "Reconnect grace = 24h — provisional",
-    "V-04": "Retirement effect = next snapshot — provisional",
-    "V-05": "Finality = N confirmations (default 2) — provisional",
-    "V-06": "H_adult_max = versioned DemographicReference — provisional",
-    "V-07": "HBP 10→60→20 on H_verified/H_adult_max — provisional",
+    "V-01": "A — Snapshot at epoch start (locked D-043, sim 167)",
+    "V-02": "next epoch — transfer does not rewrite P(N) mid-epoch (locked D-043)",
+    "V-03": "reconnect grace = 24h live / 1s sim (locked D-043)",
+    "V-04": "retirement effect = next snapshot (locked D-043)",
+    "V-05": "economic finality N=2 confirmations; settlement BFT is DV-05 Q=3 (locked D-043)",
+    "V-06": "H_adult_max = versioned DemographicReference model B, not a WPP freeze (locked D-043; Q-E03 dataset date still open)",
+    "V-07": "HBP 10→60→20 on existing absolute anchors 0 / 4.15e9 / 8.30e9 (locked D-043; ratio rewrite not invented)",
 }
+ECONOMIC_V_LOCKED: Final[bool] = True
 
 # Operational series locked 2026-08-31 (user letters).
 DV: Final[dict[str, dict[str, str]]] = {
@@ -133,12 +134,26 @@ DECISIONS_188: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-01: freeze V-01…V-07 as already-running code; open mainnet identity.
+DECISIONS_189: Final[dict[str, str]] = {
+    "D-043": (
+        "GO freeze V-01…V-07 at sim-167 code + open artcb-mainnet-1. "
+        "Choices: V-01 A epoch-start snapshot; V-02/V-04 next epoch; "
+        "V-03 24h grace; V-05 N=2 economic confirmations (BFT Q=3 is DV-05); "
+        "V-06 DemographicReference model B not WPP freeze; V-07 HBP 10→60→20 "
+        "absolute anchors already in hbp.py. New genesis: empty the 174 test "
+        "probe book, keep wallets/chain.key. Faucet off. Ed25519 window "
+        "unchanged until 2026-12-31 (D-032). certified_distributed_mainnet "
+        "stays false while DV-02 C flood/chaos is not done."
+    ),
+}
+
 
 def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]:
     """Mainnet certification is AND of every locked letter + economics.
 
-    A single DV PASS (including DV-04) does not certify. Economics stay
-    provisional until a separate GO after V-01…V-07 (D-026).
+    A single DV PASS does not certify. D-043 locked V-01…V-07; DV-02 C flood
+    still blocks certified_distributed_mainnet.
     """
     v = verdicts or {}
     required_pass = ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")
@@ -153,10 +168,12 @@ def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]
         reasons.append("dv_not_pass:" + ",".join(missing))
     if not live_bft:
         reasons.append("live_bft_off")
-    reasons.append("economic_v_locked=false")
+    if not ECONOMIC_V_LOCKED:
+        reasons.append("economic_v_locked=false")
+    certified = (not missing) and live_bft and ECONOMIC_V_LOCKED
     return {
-        "certified_distributed_mainnet": False,
-        "economic_v_locked": False,
+        "certified_distributed_mainnet": certified,
+        "economic_v_locked": ECONOMIC_V_LOCKED,
         "live_bft_implemented": live_bft,
         "dv_not_pass": missing,
         "reason": "; ".join(reasons),
@@ -166,7 +183,7 @@ def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]
 def public_lock() -> dict[str, Any]:
     return {
         "economic_v_series": ECONOMIC_V,
-        "economic_v_locked": False,
+        "economic_v_locked": ECONOMIC_V_LOCKED,
         "distributed_profile": PROFILE,
         "distributed": DV,
         "distributed_certified": False,
@@ -177,5 +194,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_186": DECISIONS_186,
         "decisions_187": DECISIONS_187,
         "decisions_188": DECISIONS_188,
+        "decisions_189": DECISIONS_189,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

@@ -421,7 +421,7 @@ async def test_make_hello_fields(tmp_path):
     hello = node._make_hello()
     assert hello["type"] == "HELLO"
     assert hello["node_id"] == "hello_test"
-    assert hello["network_id"] == "artcb-devnet-1"
+    assert hello["network_id"] == "artcb-mainnet-1"
     assert hello["protocol"] == "ARTCB-P2P/1.0"
     assert "ts" in hello
     await node.stop()

@@ -190,13 +190,13 @@ Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economi
 
 | ID | Question | Recommandation code | Statut |
 |----|----------|---------------------|--------|
-| V-01 | Instant du snapshot économique | Début d’epoch (Solution A) | ⏳ |
-| V-02 | Effet d’un transfert | Epoch suivant | ⏳ |
-| V-03 | Grace reconnect | 24 h (1 s en sim) | ⏳ |
-| V-04 | Effet d’un retrait | Prochain snapshot | ⏳ |
-| V-05 | Finalité | N=2 confirmations vs quorum | ⏳ |
-| V-06 | H_adult_max | DemographicReference versionnée, pas gel WPP | ⏳ |
-| V-07 | HBP | 10→60→20 sur H/H_adult_max ; live encore ancres absolues | ⏳ |
+| V-01 | Instant du snapshot économique | Début d’epoch (Solution A) | ✅ D-043 |
+| V-02 | Effet d’un transfert | Epoch suivant | ✅ D-043 |
+| V-03 | Grace reconnect | 24 h (1 s en sim) | ✅ D-043 |
+| V-04 | Effet d’un retrait | Prochain snapshot | ✅ D-043 |
+| V-05 | Finalité | N=2 confirmations (BFT Q=3 = DV-05) | ✅ D-043 |
+| V-06 | H_adult_max | DemographicReference versionnée, pas gel WPP | ✅ D-043 — Q-E03 dataset daté encore ouvert |
+| V-07 | HBP | 10→60→20 sur ancres absolues 0 / 4.15e9 / 8.30e9 (`hbp.py`) | ✅ D-043 — pas de réécriture ratio inventée |
 
 ## [2026-08-29T19:52:00Z] Nœud live agent (168)
 
@@ -207,4 +207,22 @@ Nouvelles questions 164 : Q-ovh-deploy (OVH healthy mais **sans** routes economi
 | Q-doppler-nodes | ✅ 171/172 | slugs UI `artcb-2` / `artcb3` bound ; coffre dédié OVH1 toujours non créé |
 | Q-ovh2-vm | ⏳ | Compte `vc491276-ovh` joignable ; **0** instance (validation Public Cloud) |
 | Q-aws3 | ✅ D-031 | IAM admin + access keys Cursor aliases ; EC2 `eu-west-3` |
+
+## [2026-09-01T18:30:00Z] D-043 — V-01…V-07 gelés + identité mainnet
+
+GO opérateur : valider soi-même, geler V-01…V-07, ouvrir le vrai livre `artcb-mainnet-1`.
+
+| ID | Choix figé | Pourquoi (culture, pas une invention) |
+|----|------------|----------------------------------------|
+| V-01 | A — snapshot au début d’epoch | Déjà `EpochCoordinator` + invariants sim 167 |
+| V-02 | Effet transfert = epoch suivant | Un transfert mid-epoch ne réécrit pas P(N) |
+| V-03 | Grâce 24 h live / 1 s sim | `DEFAULT_GRACE_SECONDS` déjà 86400 |
+| V-04 | Retrait = prochain snapshot | Même file que V-02 |
+| V-05 | Finalité économique N=2 | Distinct du BFT settlement DV-05 Q=3 |
+| V-06 | `DemographicReference` modèle B | D-025 ; Q-E03 extrait ONU WPP daté **reste ouvert** |
+| V-07 | HBP 10→60→20 ancres 0 / 4.15e9 / 8.30e9 | `hbp.py` live ; pas de réécriture ratio non simulée |
+
+Autres locks : D-032 fenêtre Ed25519 jusqu’au 2026-12-31 **inchangée** ; faucet **off** (D-017 tARTCB = testnet) ; `certified_distributed_mainnet` **false** tant que DV-02 C flood/chaos n’est pas joué ; `init_genesis.py` **interdit** live (efface `chain.key`).
+
+Reste pour une **certification** mainnet (≠ identité mainnet en ligne) : DV-02 C flood/partition sur testnet autorisé ; DV-06 packet-loss si on veut le C ; TPM « when available » ; Q-E03 dataset WPP. Replit reste en pause.
 
