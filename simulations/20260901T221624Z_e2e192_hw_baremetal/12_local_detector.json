@@ -1,0 +1,47 @@
+{
+  "machine": {
+    "binding_hash": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc",
+    "chassis_virtual": true,
+    "cloud_provider": "unknown",
+    "device_fingerprint_prefix": "",
+    "env_type": "local",
+    "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hash\u00e9s). Pas de puce.",
+    "hardware_assurance_level": "E",
+    "hardware_kind": "software",
+    "hsm_bound": false,
+    "machine_id_hash": null,
+    "note": "Niveaux A\u2013E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. On n\u2019invente pas NitroTPM/SEV si /dev/tpm0 est absent. Niveau mesur\u00e9 ici : E (software).",
+    "pcr0_sha256": null,
+    "platform_system": "Linux",
+    "tee_detected": false,
+    "tee_kind": null,
+    "tpm2_tools_present": false,
+    "tpm_attestation": "absent",
+    "tpm_available": false,
+    "tpm_device_present": false,
+    "tpm_kind": "absent",
+    "tpm_resource_manager": false,
+    "tpm_version_major": null,
+    "virt_tech": "kvm"
+  },
+  "note": "This runner is not a live seed. Do not treat it as OVH1.",
+  "tee": {
+    "nitro_enclaves_dev": false,
+    "sev_dev": false,
+    "sgx_dev": false,
+    "tdx_dev": false,
+    "tee_detected": false,
+    "tee_kind": null
+  },
+  "tpm": {
+    "tpm_device_present": false,
+    "tpm_resource_manager": false,
+    "tpm_version_major": null
+  },
+  "virt": {
+    "chassis_virtual": true,
+    "product_name": null,
+    "sys_vendor": null,
+    "virt_tech": "kvm"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "branch_expected": "cursor/ovh3-baremetal-hw-16d8",
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "192-hw-baremetal",
+  "finished_at": "2026-09-01T22:16:39Z",
+  "git_branch": "cursor/ovh3-baremetal-hw-16d8",
+  "git_commit_sha": "aa557283943e30745591047b8e43812d087824a1",
+  "git_status_clean": true,
+  "invented_results": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim192_hw_baremetal.py",
+  "script_sha256": "8f30edfa3f3b4ff2e627dba2e78e822071755e31b43d30c3bd287fa35b4f1bfa",
+  "seed": 192,
+  "simulation_id": "e2e192_hw_baremetal",
+  "started_at": "2026-09-01T22:16:25Z",
+  "working_tree_diff_hash": "a33c7bed54fb7a24557e37f2164d3855dc1f98ae9de8ef78541dfd2dd9c9ca73"
+}

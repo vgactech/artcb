@@ -4,7 +4,7 @@
 **Certification :** **NOT MAINNET CERTIFIED** (`certified_distributed_mainnet=false`)  
 **Branche :** `cursor/ovh3-baremetal-hw-16d8`  
 **Décision :** D-046  
-**Simu :** `simulations/` e2e192 (après push)
+**Simu :** `simulations/20260901T221624Z_e2e192_hw_baremetal/` `failures=[]`
 
 ## Vocabulaire (première fois)
 
@@ -34,8 +34,8 @@
 | Secrets OVH3 | 45 | **absents** |
 | Catalogue Eco | 55 | KS-B `25skb012` = **9,99 €/mois** (API publique FR) ; GRA **unavailable** |
 | Code A–E + registre | 75 | livré |
-| Tests + rapport | 90 | ce fichier |
-| PR | 100 | branche poussée, certif **false** |
+| Tests + rapport | 90 | pytest 192+191+170+175 **46 passed** ; sim e2e192 `failures=[]` |
+| PR | 100 | branche `cursor/ovh3-baremetal-hw-16d8` poussée ; certif **false** |
 
 ## Matrice LIVE mesurée (2026-09-01 ~22:10Z)
 
@@ -52,6 +52,8 @@ Seeds live = **uniquement** les 4 IP.
 `certified_distributed_mainnet=false` × 4.  
 PQC `ML-DSA-65`. 4 `device_fingerprint_prefix` distincts.  
 SEV / SGX / Nitro enclaves : **absents** × 4. On n’invente pas NitroTPM.
+
+`/health` live n’expose **pas encore** `hardware_assurance_level` (SHA `30a7696` = D-045, **non redéployé**). La classe **E** vient du SSH DMI (`OpenStack Nova` / `Amazon EC2`, `/dev/tpm0` absent). Ce rapport ne déploie pas ce SHA.
 
 ### Replit annoncé (pas dans le carnet git)
 

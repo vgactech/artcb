@@ -1,0 +1,52 @@
+{
+  "book_wiped": false,
+  "certification_gate": {
+    "certified_distributed_mainnet": false,
+    "dv_not_pass": [],
+    "economic_v_locked": true,
+    "live_bft_implemented": true,
+    "operator_certification_go": false,
+    "reason": "operator_certification_go=false"
+  },
+  "decisions_192": {
+    "D-046": "GO hardware-assurance A\u2013E (physical TPM / vTPM / TEE / HSM / software) reported honestly on /health. Do not invent NitroTPM or SEV when /dev/tpm0 is absent. Register ovh-baremetal-1 as a 5th TEST machine (never reuse ovh-node-1). Order the cheapest Eco bare metal only after OVH3 API keys measure a credit >= SKU price and the SKU is in stock. Missing OVH3_APPLICATION_KEY / OVH3_NIC is a hard stop, not a guessed 10 EUR balance. Replit CORS stays a platform regex. certified_distributed_mainnet stays false."
+  },
+  "failures": [],
+  "heights": {
+    "aws3": 1,
+    "ovh1": 1,
+    "ovh2": 1,
+    "ovh4": 1
+  },
+  "init_genesis": false,
+  "init_node": false,
+  "install_sh": false,
+  "last_hashes": {
+    "aws3": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "ovh1": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "ovh2": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "ovh4": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce"
+  },
+  "live_shas": {
+    "aws3": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+    "ovh1": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+    "ovh2": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+    "ovh4": "30a7696a45888133b04e0ff78bbff2a9473c102f"
+  },
+  "note": "D-046: live book kept. TPM not faked. OVH3 not ordered. Four VMs stay level E. ovh-baremetal-1 is a slot, not a rewrite.",
+  "order_executed": false,
+  "ovh3_credit_reason": "missing_ovh3_api_keys",
+  "quote_cheapest": {
+    "invoiceName": "KS-B | Intel Xeon E5-1620v2",
+    "planCode": "25skb012",
+    "price_eur": 9.99,
+    "price_raw": 999000000
+  },
+  "sim": "e2e192_hw_baremetal",
+  "ssh_levels": {
+    "aws3": "E",
+    "ovh1": "E",
+    "ovh2": "E",
+    "ovh4": "E"
+  }
+}

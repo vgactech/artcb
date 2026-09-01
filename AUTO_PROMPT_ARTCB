@@ -1302,6 +1302,6 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Nics connus mesurés : `vc491276-ovh` et `xy4589-ovh` solde ovhAccount **0,00 €**. Cursor `OVH_*` process → 403. OVH1 Doppler → 403.
 - Live 4 nœuds SHA `30a7696` / `189-mainnet-1` / `artcb-mainnet-1` / height 1 hash `b8a7d5ef…bfce` / TPM **absent** / virt OpenStack|amazon / niveau **E**. Audit 174/BFT-absent = **stale**.
 - Registre `ovh-baremetal-1` (pas ovh-node-1). CORS regex inchangée. 169.254 caché à l’API, fichier live non réécrit.
-- `certified_distributed_mainnet=false`. Rapport `rapports/192_ovh3_baremetal_hw_identity_2026-09-01.md`.
+- `certified_distributed_mainnet=false`. Sim `20260901T221624Z_e2e192_hw_baremetal` `failures=[]`. Rapport `rapports/192_ovh3_baremetal_hw_identity_2026-09-01.md`.
 
 

@@ -1,0 +1,209 @@
+{
+  "aws3": {
+    "announced": [
+      "https://artcb--vgac42371.replit.app",
+      "https://artcb--vgacofficiel.replit.app",
+      "http://151.80.107.29:8000",
+      "http://152.228.144.34:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "chain_http": 200,
+    "has_169254_in_api_list": true,
+    "health": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "chassis_virtual": null,
+      "cloud_provider": "aws",
+      "device_fingerprint_prefix": "19d8fde2f7a78d09",
+      "git_branch": "cursor/dv01-tpm-wpp-chaos-16d8",
+      "git_sha": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+      "hardware_assurance_level": null,
+      "hardware_kind": null,
+      "network_id": "artcb-mainnet-1",
+      "protocol_version": "189-mainnet-1",
+      "tee_detected": null,
+      "tpm_device_present": false
+    },
+    "health_http": 200,
+    "height": 1,
+    "ip": "51.44.222.232",
+    "label": "aws3",
+    "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "peer_urls": [
+      "http://91.134.45.8:8000",
+      "http://151.80.107.29:8000",
+      "http://151.80.107.29:8000",
+      "http://151.80.107.29:8000",
+      "http://91.134.45.8:8000",
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://91.134.45.8:8000",
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://91.134.45.8:8000",
+      "http://169.254.169.254:80"
+    ],
+    "peers_http": 200,
+    "seeds": [
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "stale_link_local_hidden": null
+  },
+  "ovh1": {
+    "announced": [
+      "https://artcb--vgac42371.replit.app",
+      "https://artcb--vgacofficiel.replit.app",
+      "http://151.80.107.29:8000",
+      "http://152.228.144.34:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "chain_http": 200,
+    "has_169254_in_api_list": true,
+    "health": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "chassis_virtual": null,
+      "cloud_provider": "ovh",
+      "device_fingerprint_prefix": "a6fce8a864ecee5c",
+      "git_branch": "cursor/dv01-tpm-wpp-chaos-16d8",
+      "git_sha": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+      "hardware_assurance_level": null,
+      "hardware_kind": null,
+      "network_id": "artcb-mainnet-1",
+      "protocol_version": "189-mainnet-1",
+      "tee_detected": null,
+      "tpm_device_present": false
+    },
+    "health_http": 200,
+    "height": 1,
+    "ip": "152.228.144.34",
+    "label": "ovh1",
+    "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "peer_urls": [
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000",
+      "http://169.254.169.254:80"
+    ],
+    "peers_http": 200,
+    "seeds": [
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "stale_link_local_hidden": null
+  },
+  "ovh2": {
+    "announced": [
+      "https://artcb--vgac42371.replit.app",
+      "https://artcb--vgacofficiel.replit.app",
+      "http://151.80.107.29:8000",
+      "http://152.228.144.34:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "chain_http": 200,
+    "has_169254_in_api_list": true,
+    "health": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "chassis_virtual": null,
+      "cloud_provider": "ovh",
+      "device_fingerprint_prefix": "e03586f358a76215",
+      "git_branch": "cursor/dv01-tpm-wpp-chaos-16d8",
+      "git_sha": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+      "hardware_assurance_level": null,
+      "hardware_kind": null,
+      "network_id": "artcb-mainnet-1",
+      "protocol_version": "189-mainnet-1",
+      "tee_detected": null,
+      "tpm_device_present": false
+    },
+    "health_http": 200,
+    "height": 1,
+    "ip": "151.80.107.29",
+    "label": "ovh2",
+    "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "peer_urls": [
+      "http://51.44.222.232:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000",
+      "http://152.228.144.34:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000",
+      "http://152.228.144.34:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000",
+      "http://169.254.169.254:80"
+    ],
+    "peers_http": 200,
+    "seeds": [
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "stale_link_local_hidden": null
+  },
+  "ovh4": {
+    "announced": [
+      "https://artcb--vgac42371.replit.app",
+      "https://artcb--vgacofficiel.replit.app",
+      "http://151.80.107.29:8000",
+      "http://152.228.144.34:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "chain_http": 200,
+    "has_169254_in_api_list": true,
+    "health": {
+      "bootstrap_mode": false,
+      "certified_distributed_mainnet": false,
+      "chassis_virtual": null,
+      "cloud_provider": "ovh",
+      "device_fingerprint_prefix": "224af0ed024f7070",
+      "git_branch": "cursor/dv01-tpm-wpp-chaos-16d8",
+      "git_sha": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+      "hardware_assurance_level": null,
+      "hardware_kind": null,
+      "network_id": "artcb-mainnet-1",
+      "protocol_version": "189-mainnet-1",
+      "tee_detected": null,
+      "tpm_device_present": false
+    },
+    "health_http": 200,
+    "height": 1,
+    "ip": "91.134.45.8",
+    "label": "ovh4",
+    "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "peer_urls": [
+      "http://151.80.107.29:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://169.254.169.254:80"
+    ],
+    "peers_http": 200,
+    "seeds": [
+      "http://152.228.144.34:8000",
+      "http://151.80.107.29:8000",
+      "http://51.44.222.232:8000",
+      "http://91.134.45.8:8000"
+    ],
+    "stale_link_local_hidden": null
+  }
+}
