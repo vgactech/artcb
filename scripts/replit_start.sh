@@ -16,6 +16,12 @@
 set -Eeuo pipefail
 REPL_DIR="$(pwd)"
 
+# Autoscale died in a 11-minute `python3 -m venv` loop (log 20260901T104032Z).
+# Always take the short path unless an operator explicitly wants the full start.
+if [ -z "${ARTCB_FULL_START:-}" ] && [ -f "$REPL_DIR/scripts/replit_autoscale.sh" ]; then
+  exec bash "$REPL_DIR/scripts/replit_autoscale.sh"
+fi
+
 # ── Journal de run : créé avant toute étape de démarrage ──────────
 # stdout/stderr restent visibles dans le workflow tout en étant conservés
 # dans un fichier corrélé à cette tentative.

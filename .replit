@@ -1,4 +1,4 @@
-run = "bash scripts/replit_start.sh"
+run = "bash scripts/replit_autoscale.sh"
 language = "python3"
 entrypoint = "src/api/main.py"
 modules = ["python-3.11", "nodejs-20", "bash", "web"]
@@ -23,8 +23,7 @@ ARTCB_NODE_ID = "replit-node-1"
 # operator-approved commit (full or 12+ hex). Empty = fetch only, no reset --hard.
 
 [deployment]
-# Uses the same validated startup script as the interactive workflow
-run = ["bash", "scripts/replit_start.sh"]
+run = ["bash", "scripts/replit_autoscale.sh"]
 deploymentTarget = "autoscale"
 
 [[ports]]
@@ -73,7 +72,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bash scripts/replit_start.sh"
+args = "bash scripts/replit_autoscale.sh"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
