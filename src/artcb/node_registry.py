@@ -112,7 +112,7 @@ NODES: dict[str, NodeSpec] = {
     ),
     "ovh-baremetal-1": NodeSpec(
         node_id="ovh-baremetal-1",
-        display_name="node artcb bare metal 1 (pending — no dedicated IP)",
+        display_name="node artcb bare metal 1 (order 258100013 — awaiting fraud review, no IP)",
         provider="ovh-baremetal",
         doppler_project="artcb-baremetal-1",
         doppler_token_env="KEY_API_ARTCB_DOPPLER_BAREMETAL",
@@ -130,12 +130,16 @@ NODES: dict[str, NodeSpec] = {
             "free-trial 263153 = 199.84 EUR). ovhAccount prepaid 0.00 EUR "
             "(xy4589-ovh and vc491276-ovh). Cloud credit cannot pay Eco. "
             "KS-B 25skb012 = 9.99 EUR/month catalog FR, GRA unavailable. "
-            "Cheapest in-stock Eco = KS-5 24sk50-v1 17.99 EUR/month (0 hourly Eco SKU). "
-            "2026-09-01 D-049: orderId 258100013 already exists (KS-5 rbx, 1 mois, "
-            "status checking, FRAUD_MANUAL_REVIEW). Do not POST a second --order. "
-            "GET /dedicated/server still []. Do not order on vc491276-ovh. "
-            "KEY_API_ARTCB_DOPPLER_3 is AWS artcb3, not OVH. IP still empty. "
-            "/dev/tpm0 not probed on a dedicated that was not delivered."
+            "2026-09-01 D-048 operator GO checkout HTTP 200 orderId 258100013 "
+            "SKU 24sk50-v1 KS-5 FQN 24sk50-v1.ram-32g-ecc-2400.softraid-3x4000sa "
+            "datacenter rbx, 53.98 EUR TTC / 44.98 EUR HT (mensuel, not hourly). "
+            "paymentType debtAccount; followUp VALIDATING FRAUD_MANUAL_REVIEW; "
+            "GET /me/order/258100013/status=checking. GET /dedicated/server still []. "
+            "2026-09-01 D-049: Do not POST a second --order. "
+            "ssh_host empty until a real dedicated IP exists. /dev/tpm0 not "
+            "probed on a machine not yet listed. Never destroy 91.134.45.8. "
+            "Do not order on vc491276-ovh. KEY_API_ARTCB_DOPPLER_3 is AWS artcb3, "
+            "not OVH. certified_distributed_mainnet stays false."
         ),
     ),
     "replit-node-1": NodeSpec(
