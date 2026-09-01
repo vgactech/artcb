@@ -12,7 +12,8 @@ def test_autoscale_script_never_creates_venv() -> None:
     )
     assert "pip install" not in body
     assert "npm " not in body
-    assert "uvicorn src.api.main:app" in body
+    assert "replit_serve.py" in body
+    assert "ARTCB_SHIM_PID" in body
     assert "replit_live_shim.py" in body
     assert "replit_git_sync.sh" in body
     assert "replit_pick_python.sh" in body

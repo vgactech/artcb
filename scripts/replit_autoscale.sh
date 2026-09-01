@@ -68,14 +68,6 @@ export OQS_INSTALL_PATH="${OQS_INSTALL_PATH:-$HOME/_oqs}"
 export LD_LIBRARY_PATH="${OQS_INSTALL_PATH}/lib:${OQS_INSTALL_PATH}/lib64:${LD_LIBRARY_PATH:-}"
 
 CURRENT_STEP="uvicorn"
-if ! "$PYTHON" -c "from src.api.main import app" 2>/tmp/artcb_import.err; then
-  _log "ERROR import failed"
-  cat /tmp/artcb_import.err >&2 || true
-  wait "$SHIM_PID" || true
-  exit 1
-fi
-kill "$SHIM_PID" 2>/dev/null || true
-wait "$SHIM_PID" 2>/dev/null || true
-sleep 0.2
-_log "launching uvicorn python=$PYTHON sha=$_SHA"
-exec "$PYTHON" -m uvicorn src.api.main:app --host 0.0.0.0 --port "$ARTCB_PORT" --log-level info
+export ARTCB_SHIM_PID="$SHIM_PID"
+_log "launching uvicorn python=$PYTHON sha=$_SHA same-process-import"
+exec "$PYTHON" "$REPL_DIR/scripts/replit_serve.py"
