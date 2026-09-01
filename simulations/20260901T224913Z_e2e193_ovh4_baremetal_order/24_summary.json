@@ -1,0 +1,36 @@
+{
+  "blocked_reason": "no_sku_in_stock_within_prepaid",
+  "certification_gate": {
+    "certified_distributed_mainnet": false,
+    "dv_not_pass": [],
+    "economic_v_locked": true,
+    "live_bft_implemented": true,
+    "operator_certification_go": false,
+    "reason": "operator_certification_go=false"
+  },
+  "cheapest_catalog": {
+    "invoiceName": "KS-B | Intel Xeon E5-1620v2",
+    "planCode": "25skb012",
+    "price_eur": 9.99
+  },
+  "cheapest_in_stock": {
+    "in_stock": true,
+    "invoiceName": "KS-5 | Intel Xeon-E3 1270 v6",
+    "planCode": "24sk50-v1",
+    "price_eur": 17.99
+  },
+  "decisions_193": {
+    "D-047": "The ~10 EUR is Public Cloud credit on nic xy4589-ovh (OVH4), not ovhAccount prepaid and not a third OVH3 nic. Measured 2026-09-01: GET /me 200 nic xy4589-ovh; GET /me/ovhAccount balance 0.00 EUR; GET /dedicated/server [] (no Eco in delivery); GET /cloud/project/\u2026/credit 263152 available 10.00 EUR (Credit provisionning) + 263153 available 199.84 EUR (Free Trial). Cloud credit cannot pay Eco dedicated. Do not order on vc491276-ovh. Do not destroy 91.134.45.8. Eco KS-B 25skb012 9.99 EUR GRA unavailable; cheapest in-stock KS-5 24sk50-v1 17.99 EUR > prepaid 0.00. Do not charge the OVH4 CREDIT_CARD. ovh-baremetal-1 stays pending without IP. certified_distributed_mainnet stays false."
+  },
+  "dedicated_count": 0,
+  "failures": [],
+  "init_genesis": false,
+  "install_sh": false,
+  "me_http": 200,
+  "nic": "xy4589-ovh",
+  "note": "D-047: Public Cloud 10 EUR is not Eco tender. No dedicated ordered.",
+  "order_executed": false,
+  "ovh4_vm_untouched": true,
+  "prepaid_eur": 0,
+  "sim": "e2e193_ovh4_baremetal_order"
+}

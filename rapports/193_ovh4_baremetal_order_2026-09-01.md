@@ -4,6 +4,7 @@
 **Certification :** **NOT MAINNET CERTIFIED** (`certified_distributed_mainnet=false`)  
 **Branche :** `cursor/ovh4-baremetal-order-e867`  
 **Décision :** D-047  
+**Simu :** `simulations/20260901T224913Z_e2e193_ovh4_baremetal_order/` `failures=[]` `order.executed=false`  
 **Nœud live canonique :** `https://152.228.144.34:8443` SHA `30a7696a45888133b04e0ff78bbff2a9473c102f` ≠ `origin/main` `aeb132ae5266cfb9dfdfa8e7eafd49268b726fe5` → **pas de déploiement main**
 
 ## Vocabulaire

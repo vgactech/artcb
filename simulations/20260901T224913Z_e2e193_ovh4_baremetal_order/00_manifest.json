@@ -1,0 +1,25 @@
+{
+  "branch_expected": "cursor/ovh4-baremetal-order-e867",
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "193-ovh4-baremetal-order",
+  "finished_at": "2026-09-01T22:49:31Z",
+  "git_branch": "cursor/ovh4-baremetal-order-e867",
+  "git_commit_sha": "6dad822781ab63860466685abfbea95c672ff3b1",
+  "git_status_clean": true,
+  "invented_results": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim193_ovh4_baremetal_order.py",
+  "script_sha256": "ba3a252d8a3d1b09cee023082cee6f9bdc56d67b7f388bc49950fc53000f3773",
+  "seed": 193,
+  "simulation_id": "e2e193_ovh4_baremetal_order",
+  "started_at": "2026-09-01T22:49:14Z",
+  "working_tree_diff_hash": "a33c7bed54fb7a24557e37f2164d3855dc1f98ae9de8ef78541dfd2dd9c9ca73"
+}

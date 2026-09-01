@@ -1,0 +1,68 @@
+{
+  "certified_distributed_mainnet": false,
+  "creds_present": {
+    "application_key": true,
+    "application_secret": true,
+    "consumer_key": true,
+    "source": "local_ovh-node-4.env"
+  },
+  "dedicated_servers": {
+    "count": 0,
+    "eco_in_delivery": false,
+    "http": 200,
+    "servers": []
+  },
+  "invented_balance": false,
+  "invented_tpm": false,
+  "me_http": 200,
+  "nic": "xy4589-ovh",
+  "nic_expected": "xy4589-ovh",
+  "nic_forbidden": "vc491276-ovh",
+  "order": {
+    "blocked_reason": "no_sku_in_stock_within_prepaid",
+    "executed": false,
+    "nic": "xy4589-ovh",
+    "requested": true
+  },
+  "ovh4_vm_untouched": true,
+  "ovhAccount_balances": [
+    {
+      "account_redacted": true,
+      "currency": "EUR",
+      "http": 200,
+      "text": "0.00 \u20ac",
+      "value": 0
+    }
+  ],
+  "ovhAccount_prepaid_eur": 0,
+  "public_cloud_credits_not_eco_tender": [
+    {
+      "available_eur": 10,
+      "credit_id": 263152,
+      "description": "Credit provisionning",
+      "http": 200
+    },
+    {
+      "available_eur": 199.84,
+      "credit_id": 263153,
+      "description": "Free Trial Offer",
+      "http": 200
+    }
+  ],
+  "secrets_printed": false,
+  "sku_scan": {
+    "affordable_in_stock": null,
+    "cheapest_catalog": {
+      "invoiceName": "KS-B | Intel Xeon E5-1620v2",
+      "planCode": "25skb012",
+      "price_eur": 9.99
+    },
+    "cheapest_in_stock": {
+      "in_stock": true,
+      "invoiceName": "KS-5 | Intel Xeon-E3 1270 v6",
+      "planCode": "24sk50-v1",
+      "price_eur": 17.99
+    }
+  },
+  "vm_keep": "91.134.45.8"
+}
