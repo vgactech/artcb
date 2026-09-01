@@ -133,6 +133,63 @@ def _read_sys_text(path: str) -> str | None:
         return None
 
 
+# Expert levels A–E. Never invent a chip, vTPM, TEE or HSM that is not there.
+# A = physical TPM on a real machine (bare metal). B = virtual TPM on a VM.
+# C = TEE (SEV/SGX/TDX) without a TPM. D = external HSM. E = software hash only.
+HARDWARE_ASSURANCE_LEVELS: dict[str, dict[str, str]] = {
+    "A": {
+        "kind": "physical_tpm",
+        "fr": "TPM physique sur serveur/PC réel (pas une VM).",
+    },
+    "B": {
+        "kind": "virtual_tpm",
+        "fr": "TPM émulé par l’hyperviseur (vTPM / NitroTPM) : /dev/tpm0 existe ET la machine est virtuelle.",
+    },
+    "C": {
+        "kind": "tee",
+        "fr": "Enclave TEE (SEV / SGX / TDX) détectée, sans TPM.",
+    },
+    "D": {
+        "kind": "hsm",
+        "fr": "HSM externe/cloud (OKMS, CloudHSM) — pas de TPM local.",
+    },
+    "E": {
+        "kind": "software",
+        "fr": "Empreinte logicielle (machine-id + instance cloud hashés). Pas de puce.",
+    },
+}
+
+_VIRT_VENDORS = (
+    "qemu",
+    "kvm",
+    "xen",
+    "vmware",
+    "virtualbox",
+    "bochs",
+    "bhyve",
+    "amazon",
+    "amazon ec2",
+    "microsoft corporation",
+    "google",
+    "openstack",
+    "digitalocean",
+)
+_VIRT_PRODUCTS = (
+    "openstack",
+    "nova",
+    "droplet",
+    "hvm domu",
+    "virtual machine",
+    "kvm",
+    "t3.",
+    "t2.",
+    "m6i.",
+    "c6i.",
+    "c5.",
+    "t3a.",
+)
+
+
 def tpm_sysfs_facts() -> dict[str, Any]:
     """Honest TPM presence. Never reports a chip that is not there."""
     present = Path("/dev/tpm0").exists() or Path("/sys/class/tpm/tpm0").is_dir()
@@ -142,6 +199,150 @@ def tpm_sysfs_facts() -> dict[str, Any]:
         "tpm_device_present": present,
         "tpm_resource_manager": rm,
         "tpm_version_major": version,
+    }
+
+
+def virtualization_facts() -> dict[str, Any]:
+    """Is this a VM? systemd-detect-virt + DMI. Never upgrades a VM to bare metal."""
+    vendor = (_read_sys_text("/sys/class/dmi/id/sys_vendor") or "").strip()
+    product = (_read_sys_text("/sys/class/dmi/id/product_name") or "").strip()
+    chassis = _read_sys_text("/sys/class/dmi/id/chassis_type")
+    virt_tech: str | None = None
+    try:
+        out = subprocess.check_output(
+            ["systemd-detect-virt"],
+            timeout=2,
+            stderr=subprocess.DEVNULL,
+        ).decode().strip().lower()
+        if out and out not in {"none"}:
+            virt_tech = out
+    except Exception:
+        virt_tech = None
+    vl = vendor.lower()
+    pl = product.lower()
+    dmi_virtual = any(token in vl for token in _VIRT_VENDORS) or any(
+        token in pl for token in _VIRT_PRODUCTS
+    )
+    # OpenStack / Amazon EC2 are VMs even if vendor string is "OVH" on some images.
+    if "openstack" in pl or "nova" in pl or "amazon ec2" in vl:
+        dmi_virtual = True
+    chassis_virtual = bool(virt_tech) or dmi_virtual
+    return {
+        "chassis_virtual": chassis_virtual,
+        "virt_tech": virt_tech,
+        "sys_vendor": vendor or None,
+        "product_name": product or None,
+        "chassis_type": chassis,
+    }
+
+
+def tee_facts() -> dict[str, Any]:
+    """TEE devices only if the file exists. Never invent SEV / SGX / Nitro."""
+    sev = Path("/dev/sev").exists() or Path("/dev/sev-guest").exists()
+    sgx = Path("/dev/sgx_enclave").exists()
+    tdx = Path("/dev/tdx_guest").exists()
+    nitro = Path("/dev/nitro_enclaves").exists()
+    kind = None
+    if sev:
+        kind = "sev"
+    elif tdx:
+        kind = "tdx"
+    elif sgx:
+        kind = "sgx"
+    elif nitro:
+        kind = "nitro_enclaves"
+    return {
+        "tee_detected": kind is not None,
+        "tee_kind": kind,
+        "sev_dev": sev,
+        "sgx_dev": sgx,
+        "tdx_dev": tdx,
+        "nitro_enclaves_dev": nitro,
+    }
+
+
+def hsm_binding_facts() -> dict[str, Any]:
+    """External HSM only if the operator bound one. Env flag, not a guess."""
+    raw = (os.getenv("ARTCB_HSM_BINDING") or "").strip()
+    bound = raw.lower() in {"1", "true", "yes", "on"} or bool(raw and raw.lower() not in {"0", "false", "no", "off"})
+    kind = None
+    if bound:
+        kind = raw if raw.lower() not in {"1", "true", "yes", "on"} else "configured"
+    return {"hsm_bound": bound, "hsm_kind": kind}
+
+
+def probe_tpm2_tools() -> dict[str, Any]:
+    """tpm2-tools + PCR0 only when /dev/tpm0 exists. Never fake a PCR."""
+    tpm = tpm_sysfs_facts()
+    pcrread = _which("tpm2_pcrread")
+    getek = _which("tpm2_getekcertificate")
+    getcap = _which("tpm2_getcap")
+    out: dict[str, Any] = {
+        "tpm2_pcrread": pcrread,
+        "tpm2_getekcertificate": getek,
+        "tpm2_getcap": getcap,
+        "pcr0_sha256": None,
+        "pcr_probed": False,
+    }
+    if not tpm["tpm_device_present"]:
+        out["note"] = "no /dev/tpm0 — PCR not probed"
+        return out
+    if not pcrread:
+        out["note"] = "tpm2_pcrread absent"
+        return out
+    try:
+        result = subprocess.run(
+            [pcrread, "sha256:0"],
+            timeout=5,
+            capture_output=True,
+            text=True,
+        )
+        out["pcr_probed"] = True
+        if result.returncode == 0:
+            for line in (result.stdout or "").splitlines():
+                hexpart = "".join(ch for ch in line.strip() if ch in "0123456789abcdefABCDEF")
+                if len(hexpart) == 64:
+                    out["pcr0_sha256"] = hexpart.lower()
+                    break
+    except Exception as exc:
+        out["note"] = f"pcr_read_failed:{type(exc).__name__}"
+    return out
+
+
+def _which(name: str) -> str | None:
+    from shutil import which
+
+    return which(name)
+
+
+def classify_hardware_assurance(
+    *,
+    tpm_device_present: bool,
+    chassis_virtual: bool,
+    tee_kind: str | None = None,
+    hsm_bound: bool = False,
+) -> dict[str, Any]:
+    """Map measured facts to A–E. Absent chip ⇒ not A/B. VM + no TPM ⇒ E."""
+    if tpm_device_present and not chassis_virtual:
+        level = "A"
+    elif tpm_device_present and chassis_virtual:
+        level = "B"
+    elif tee_kind:
+        level = "C"
+    elif hsm_bound:
+        level = "D"
+    else:
+        level = "E"
+    meta = HARDWARE_ASSURANCE_LEVELS[level]
+    tpm_kind = "absent"
+    if tpm_device_present:
+        tpm_kind = "virtual" if chassis_virtual else "physical"
+    return {
+        "hardware_assurance_level": level,
+        "hardware_kind": meta["kind"],
+        "hardware_assurance_fr": meta["fr"],
+        "tpm_kind": tpm_kind,
+        "invented": False,
     }
 
 
@@ -359,6 +560,15 @@ def collect_device_identity() -> DeviceIdentity:
         extra_entropy=extra_entropy,
     )
 
+    virt = virtualization_facts()
+    tee = tee_facts()
+    hsm = hsm_binding_facts()
+    grade = classify_hardware_assurance(
+        tpm_device_present=bool(tpm_facts["tpm_device_present"]),
+        chassis_virtual=bool(virt["chassis_virtual"]),
+        tee_kind=tee.get("tee_kind"),
+        hsm_bound=bool(hsm["hsm_bound"]),
+    )
     extra: dict[str, Any] = {
         "tpm_device_present": tpm_facts["tpm_device_present"],
         "tpm_resource_manager": tpm_facts["tpm_resource_manager"],
@@ -373,6 +583,14 @@ def collect_device_identity() -> DeviceIdentity:
         "dmi_product_uuid_hash": cloud.get("dmi_product_uuid_hash"),
         "binding_hash": cloud.get("binding_hash"),
         "machine_id_hash": _hash_id(machine_id),
+        "hardware_assurance_level": grade["hardware_assurance_level"],
+        "hardware_kind": grade["hardware_kind"],
+        "tpm_kind": grade["tpm_kind"],
+        "chassis_virtual": virt["chassis_virtual"],
+        "virt_tech": virt.get("virt_tech"),
+        "tee_detected": tee["tee_detected"],
+        "tee_kind": tee.get("tee_kind"),
+        "hsm_bound": hsm["hsm_bound"],
     }
     if env_type == "replit":
         extra["repl_id"] = os.getenv("REPL_ID", "")
@@ -458,20 +676,43 @@ def public_machine_view(identity: DeviceIdentity | None = None) -> dict[str, Any
             "provider": extra.get("cloud_provider"),
             "binding_hash": extra.get("binding_hash"),
         }
+    virt = virtualization_facts()
+    tee = tee_facts()
+    hsm = hsm_binding_facts()
+    grade = classify_hardware_assurance(
+        tpm_device_present=tpm_present,
+        chassis_virtual=bool(virt["chassis_virtual"]),
+        tee_kind=tee.get("tee_kind"),
+        hsm_bound=bool(hsm["hsm_bound"]),
+    )
+    tools = probe_tpm2_tools()
+    note = (
+        "Niveaux A–E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. "
+        "On n’invente pas NitroTPM/SEV si /dev/tpm0 est absent. "
+        f"Niveau mesuré ici : {grade['hardware_assurance_level']} ({grade['hardware_kind']})."
+    )
     return {
         "tpm_device_present": tpm_present,
         "tpm_resource_manager": bool(facts["tpm_resource_manager"]),
         "tpm_version_major": facts["tpm_version_major"],
         "tpm_attestation": attestation,
         "tpm_available": bool(identity.tpm_available) if identity else False,
+        "tpm_kind": grade["tpm_kind"],
+        "hardware_assurance_level": grade["hardware_assurance_level"],
+        "hardware_kind": grade["hardware_kind"],
+        "hardware_assurance_fr": grade["hardware_assurance_fr"],
+        "chassis_virtual": virt["chassis_virtual"],
+        "virt_tech": virt.get("virt_tech"),
+        "tee_detected": tee["tee_detected"],
+        "tee_kind": tee.get("tee_kind"),
+        "hsm_bound": hsm["hsm_bound"],
+        "tpm2_tools_present": bool(tools.get("tpm2_pcrread") or tools.get("tpm2_getekcertificate")),
+        "pcr0_sha256": tools.get("pcr0_sha256"),
         "env_type": identity.env_type if identity else _detect_env_type(),
         "platform_system": identity.platform_system if identity else platform.system(),
         "cloud_provider": extra.get("cloud_provider") or live_cloud.get("provider"),
         "binding_hash": extra.get("binding_hash") or live_cloud.get("binding_hash"),
         "machine_id_hash": extra.get("machine_id_hash") or _hash_id(identity.machine_id if identity else None),
         "device_fingerprint_prefix": prefix,
-        "note": (
-            "TPM is a physical chip. Cloud VMs here have none — that is reported "
-            "honestly. Binding is hashed machine-id + cloud instance, not a fake TPM."
-        ),
+        "note": note,
     }

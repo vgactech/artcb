@@ -110,6 +110,29 @@ NODES: dict[str, NodeSpec] = {
             "Never reuse OVH1 152.228.144.34 or OVH2 151.80.107.29 credentials."
         ),
     ),
+    "ovh-baremetal-1": NodeSpec(
+        node_id="ovh-baremetal-1",
+        display_name="node artcb bare metal 1 (pending OVH3 nic)",
+        provider="ovh-baremetal",
+        doppler_project="artcb-baremetal-1",
+        doppler_token_env="KEY_API_ARTCB_DOPPLER_BAREMETAL",
+        health_http=None,
+        api_https=None,
+        ssh_host=None,
+        ssh_user="ubuntu",
+        public_notes=(
+            "Fifth TEST hardware node (physical server, not an OpenStack VM). "
+            "Never reuse ovh-node-1 / 152.228.144.34. Not a genesis rewrite. "
+            "Order blocked until a distinct OVH3 nic Application Key exists: "
+            "OVH3_APPLICATION_KEY + OVH3_APPLICATION_SECRET + OVH3_CONSUMER_KEY "
+            "+ OVH3_NIC (must not be vc491276-ovh or xy4589-ovh). "
+            "KEY_API_ARTCB_DOPPLER_3 is the AWS artcb3 vault — not OVH3. "
+            "No Doppler project artcb-3. artcb-baremetal-1 pending "
+            "DOPPLER_PERSONAL_TOKEN. Cheapest measured Eco SKU 2026-09-01: "
+            "KS-B 25skb012 = 9.99 EUR/month (catalog public FR); GRA unavailable. "
+            "Do not order at a loss. Do not spend OVH2/OVH4 0.00 EUR balances."
+        ),
+    ),
     "replit-node-1": NodeSpec(
         node_id="replit-node-1",
         display_name="node artcb replit (any account)",
@@ -193,6 +216,23 @@ NODE_SECRET_ALLOWLIST = {
             "AWS_CLI_PROFILE",
             "AWS_SERVER_IP",
             "AWS_INSTANCE_ID",
+            "ARTCB_API_KEY",
+            "ARTCB_API_URL",
+            "ARTCB_WALLET_PASSPHRASE",
+        }
+    ),
+    "ovh-baremetal-1": frozenset(
+        {
+            "OVH3_APPLICATION_KEY",
+            "OVH3_APPLICATION_SECRET",
+            "OVH3_CONSUMER_KEY",
+            "OVH3_NIC",
+            "OVH_APPLICATION_KEY",
+            "OVH_APPLICATION_SECRET",
+            "OVH_CONSUMER_KEY",
+            "OVH_ENDPOINT",
+            "OVH_NIC",
+            "SSH_PRIVATE_KEY",
             "ARTCB_API_KEY",
             "ARTCB_API_URL",
             "ARTCB_WALLET_PASSPHRASE",

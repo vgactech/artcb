@@ -44,6 +44,9 @@ from src.api.privacy_routes import router as privacy_router
 from src.api.setup_routes import router as setup_router
 from src.api.network_routes import router as network_router
 
+# Any Replit account — never a named Autoscale hostname in git.
+REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
+
 
 def create_app() -> FastAPI:
     app = FastAPI(title="ARTCB API", version="0.3.0")
@@ -64,7 +67,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_allowed_origins,
-        allow_origin_regex=r"https://.*\.(replit\.app|repl\.co|replit\.dev)",
+        allow_origin_regex=REPLIT_CORS_ORIGIN_REGEX,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

@@ -82,3 +82,12 @@ def public_register_url_ok(url: str) -> tuple[bool, str]:
         # New VPS / extra OVH clone: announce http://PUBLIC_IP:8000
         return True, "public_ip"
     return False, "host_not_allowlisted"
+
+
+def peer_host_is_stale_link_local(host: str) -> bool:
+    """True for leftover 169.254.x metadata peers (IMDS), not a live node."""
+    try:
+        addr = ipaddress.ip_address((host or "").split("%")[0])
+    except ValueError:
+        return "169.254." in (host or "")
+    return bool(addr.is_link_local)

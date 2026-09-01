@@ -1295,4 +1295,13 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Sim `20260901T195933Z_e2e191_dv01_wpp_chaos`. PR #47.
 - Rapport : `rapports/191_dv01_wpp_chaos_d045_2026-09-01.md`
 
+## [2026-09-01T22:20:00Z] Rapport 192 — bare metal OVH3 + hardware A–E (mesuré)
+
+- **OVH3** : clés `OVH3_APPLICATION_KEY` / `SECRET` / `CONSUMER_KEY` / `OVH3_NIC` **absentes**. `KEY_API_ARTCB_DOPPLER_3` = Doppler **artcb3 AWS**, pas un nic. Pas de projet `artcb-3`. Crédit « ~10 € » **non lu** (interdit d’inventer).
+- Catalogue public Eco FR : SKU le moins cher **KS-B `25skb012` = 9,99 €/mois** ; GRA **unavailable**. KS-5 17,99 € en 1H-low (au-dessus d’un crédit ~10 €). **Commande NON.**
+- Nics connus mesurés : `vc491276-ovh` et `xy4589-ovh` solde ovhAccount **0,00 €**. Cursor `OVH_*` process → 403. OVH1 Doppler → 403.
+- Live 4 nœuds SHA `30a7696` / `189-mainnet-1` / `artcb-mainnet-1` / height 1 hash `b8a7d5ef…bfce` / TPM **absent** / virt OpenStack|amazon / niveau **E**. Audit 174/BFT-absent = **stale**.
+- Registre `ovh-baremetal-1` (pas ovh-node-1). CORS regex inchangée. 169.254 caché à l’API, fichier live non réécrit.
+- `certified_distributed_mainnet=false`. Rapport `rapports/192_ovh3_baremetal_hw_identity_2026-09-01.md`.
+
 

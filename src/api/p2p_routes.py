@@ -18,7 +18,11 @@ from src.artcb.crypto_policy import (
 )
 from src.artcb.p2p.handshake import build_signed_card, load_or_create_handshake_key
 from src.artcb.p2p.node_identity import advertised_base_url
-from src.artcb.p2p.public_url import is_https_platform_host, public_register_url_ok
+from src.artcb.p2p.public_url import (
+    is_https_platform_host,
+    peer_host_is_stale_link_local,
+    public_register_url_ok,
+)
 from src.artcb.p2p.sync import P2PSyncError
 from src.artcb.security.hardware_identity import public_machine_view
 from src.api.api_keys_routes import require_operator_write
@@ -102,7 +106,17 @@ def p2p_status(request: Request) -> dict:
 @router.get("/peers")
 def list_peers(request: Request) -> dict:
     peers = _state(request).p2p_peers.list_peers()
-    return {"peers": [p.to_dict() for p in peers], "count": len(peers)}
+    hidden = [p for p in peers if peer_host_is_stale_link_local(p.host)]
+    visible = [p for p in peers if not peer_host_is_stale_link_local(p.host)]
+    return {
+        "peers": [p.to_dict() for p in visible],
+        "count": len(visible),
+        "stale_link_local_hidden": len(hidden),
+        "note": (
+            "169.254 metadata peers stay on disk (stale) but are hidden here. "
+            "No live rewrite of peers.json."
+        ),
+    }
 
 
 @router.post("/peers")

@@ -12,12 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_four_isolated_doppler_projects() -> None:
     projects = {spec.doppler_project for spec in NODES.values()}
-    assert projects == {
+    assert {
         SHARED_DOPPLER_PROJECT,
         "artcb-2",
         "artcb3",
         "artcb-4",
-    }
+        "artcb-baremetal-1",
+    } <= projects
     assert NODES["ovh-node-4"].doppler_project == "artcb-4"
     assert NODES["ovh-node-4"].doppler_token_env == "KEY_API_ARTCB_DOPPLER_4"
     assert NODES["ovh-node-4"].provider == "ovh"

@@ -165,6 +165,19 @@ DECISIONS_190: Final[dict[str, str]] = {
 # Certification is not automatic: all DV PASS is necessary, not sufficient.
 OPERATOR_MAINNET_CERTIFICATION_GO: Final[bool] = False
 
+DECISIONS_192: Final[dict[str, str]] = {
+    "D-046": (
+        "GO hardware-assurance A–E (physical TPM / vTPM / TEE / HSM / software) "
+        "reported honestly on /health. Do not invent NitroTPM or SEV when "
+        "/dev/tpm0 is absent. Register ovh-baremetal-1 as a 5th TEST machine "
+        "(never reuse ovh-node-1). Order the cheapest Eco bare metal only after "
+        "OVH3 API keys measure a credit >= SKU price and the SKU is in stock. "
+        "Missing OVH3_APPLICATION_KEY / OVH3_NIC is a hard stop, not a guessed "
+        "10 EUR balance. Replit CORS stays a platform regex. "
+        "certified_distributed_mainnet stays false."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -239,5 +252,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_189": DECISIONS_189,
         "decisions_190": DECISIONS_190,
         "decisions_191": DECISIONS_191,
+        "decisions_192": DECISIONS_192,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }
