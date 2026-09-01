@@ -21,6 +21,9 @@ une installation complète reproductible sur les machines OVH autorisées.
 9. Si le workspace Git est modifié, conserver le snapshot et ne pas effectuer
    de checkout destructif.
 10. Utiliser `npm ci` avec le lockfile frontend et vérifier le build.
+11. Sur le Python Nix Replit marqué PEP 668, installer dans `.pythonlibs`
+    via le script commun, jamais dans `/nix/store` et jamais avec un
+    contournement manuel du firewall.
 
 ## Commandes de référence
 
@@ -44,6 +47,8 @@ bash scripts/deploy_ovh4.sh <IP> <BRANCHE_CONTROLEE>
 - `/ready` = 503 avec `node_identity_missing` tant qu'aucune identité n'est
   configurée.
 - Aucun clone GitHub ni `unshallow` pendant le boot Autoscale.
+- Si le workspace est sale, le log doit dire `dirty_worktree — keeping
+  snapshot; no checkout` et conserver le SHA réellement exécuté.
 - Logs corrélés par `ARTCB_STARTUP_ID`.
 - Vérifier `release_integrity` sans le confondre avec `pqc.available`.
 - Exécuter les tests ciblés et le build frontend avant de déclarer terminé.

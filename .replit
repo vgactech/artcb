@@ -5,7 +5,9 @@ modules = ["python-3.11", "nodejs-20", "bash", "web"]
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "libiconv", "libsodium", "libxcrypt", "libyaml", "openssl", "pkg-config", "rustc", "tesseract"]
+# Runtime API + outils nécessaires aux builds explicites. liboqs n'est pas
+# ajouté ici : sa compilation reste optionnelle et hors du chemin de boot.
+packages = ["bash", "cargo", "cmake", "curl", "gcc", "git", "libiconv", "libsodium", "libxcrypt", "libyaml", "ninja", "openssl", "pkg-config", "rustc", "tesseract"]
 
 [env]
 PYTHONPATH = "/home/runner/${REPL_SLUG}"
@@ -15,14 +17,16 @@ ARTCB_LOG_DIR = "/home/runner/${REPL_SLUG}/logs"
 ARTCB_ENCODE_MODE = "rule-based"
 ARTCB_LLM_ENABLED = "false"
 # ARTCB_ANTI_SYBIL_AI_BYPASS dev=true / prod=false
-# En mode interactif (dev) : bypass actif pour faciliter les tests
-# En déploiement Autoscale (prod) : doit être false — définir dans les secrets Replit
+# En déploiement Autoscale, conserver false.
 ARTCB_ANTI_SYBIL_AI_BYPASS = "false"
+# Ne jamais compiler liboqs dans le chemin critique Autoscale.
 ARTCB_INSTALL_PQC = "0"
+ARTCB_REPLIT_SNAPSHOT_ONLY = "1"
+ARTCB_PQC_TIMEOUT = "300"
 ARTCB_REPLIT_BRANCH = "cursor/replit-sync-ready-16d8"
 ARTCB_NODE_ID = "replit-node-1"
-# Architecture A: set ARTCB_REPLIT_PIN_SHA in Replit Secrets to the
-# operator-approved commit (full or 12+ hex). Empty = fetch only, no reset --hard.
+# Architecture A : fournir ARTCB_REPLIT_PIN_SHA dans Replit Secrets.
+# Ne jamais mettre le SHA ou un secret sensible en clair dans ce fichier.
 
 [deployment]
 run = ["bash", "scripts/replit_autoscale.sh"]
@@ -32,41 +36,8 @@ deploymentTarget = "autoscale"
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 19100
-externalPort = 3000
-
-[[ports]]
-localPort = 19200
-externalPort = 3001
-
-[[ports]]
-localPort = 19201
-externalPort = 3002
-
-[[ports]]
-localPort = 19300
-externalPort = 3003
-
-[[ports]]
-localPort = 19301
-externalPort = 4200
-
-[[ports]]
-localPort = 19400
-externalPort = 5000
-
 [workflows]
-runButton = "Project"
-
-[[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Start application"
+runButton = "Start application"
 
 [[workflows.workflow]]
 name = "Start application"

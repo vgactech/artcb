@@ -21,6 +21,12 @@ artcb_replit_git_sync() {
     return 0
   fi
 
+  if [ "${ARTCB_REPLIT_SNAPSHOT_ONLY:-0}" = "1" ] \
+    && [ "${ARTCB_REPLIT_FORCE_SYNC:-0}" != "1" ]; then
+    _log "keep snapshot snapshot_only"
+    return 0
+  fi
+
   git -C "$REPL_DIR" fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
     || git fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
 

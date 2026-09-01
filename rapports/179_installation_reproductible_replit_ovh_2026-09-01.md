@@ -27,6 +27,9 @@ ensuite sur le port 5000.
 
 - `scripts/install_python_dependencies.sh` installe le socle API sans
   `liboqs-python`, vérifie les imports et applique des timeouts pip.
+- Sur Replit, le Python Nix est PEP 668 « externally managed » : le script
+  détecte ce cas et cible le site persistant `.pythonlibs`, sans tenter
+  d'écrire dans `/nix/store`.
 - `liboqs-python` reste dans l'inventaire complet `requirements.txt`, mais son
   installation est optionnelle et isolée :
   `ARTCB_INSTALL_PQC=1 ARTCB_PQC_TIMEOUT=300`.
@@ -39,6 +42,9 @@ ensuite sur le port 5000.
   API, versions crypto, build frontend et symbole C attendu.
 - Le boot Replit conserve le snapshot et n'installe pas PQC par défaut.
   Le port et `/live` restent disponibles sans attendre CMake.
+- `.replit` ne déclare plus que le port public 5000/80 et un seul workflow ;
+  les ports historiques sont supprimés pour éviter les collisions et les
+  attentes de supervision inutiles.
 - La synchronisation Git refuse maintenant un checkout si le workspace est
   sale ; elle conserve le snapshot et le journalise au lieu de l'écraser.
 - Les compilations natives liboqs Replit/OVH sont bornées par
@@ -113,6 +119,11 @@ D-036.
 - Build frontend TypeScript/Vite : réussi.
 - Après redémarrage : `/live` 200, `/api/v1/health` 200,
   `/ready` 503 attendu sans identité de nœud.
+- Le log de boot 2026-09-01 montre `dirty_worktree — keeping snapshot; no
+  checkout` puis Uvicorn actif sur le SHA local. Le `pin_mismatch` restant
+  doit être résolu après publication en mettant le SHA complet du commit
+  publié dans le secret Replit `ARTCB_REPLIT_PIN_SHA` ; sa valeur ne doit
+  jamais être inscrite dans `.replit`.
 
 ## Action de maintenance
 

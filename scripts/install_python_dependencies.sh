@@ -37,6 +37,19 @@ PIP_NETWORK_TIMEOUT="${ARTCB_PIP_NETWORK_TIMEOUT:-30}"
 PQC_TIMEOUT="${ARTCB_PQC_TIMEOUT:-300}"
 export PIP_USER=false
 
+PYTHON_USER_SITE="$("$PYTHON" -c 'import site; print(site.getusersitepackages())')"
+PYTHON_PURELIB="$("$PYTHON" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
+PIP_DEST_ARGS=()
+if [[ "$PYTHON_PURELIB" == /nix/store/* ]] && [[ "$PYTHON_USER_SITE" == "$REPO_DIR/.pythonlibs/"* ]]; then
+  # Replit's wrapped Nix Python cannot write /nix/store. Install into the
+  # persistent project site-packages that is already on PYTHONPATH.
+  mkdir -p "$PYTHON_USER_SITE"
+  PIP_DEST_ARGS=(--target "$PYTHON_USER_SITE" --upgrade)
+  echo "Using Replit user site: $PYTHON_USER_SITE"
+else
+  PIP_DEST_ARGS=(--no-user)
+fi
+
 run_bounded() {
   local seconds="$1"
   shift
@@ -61,7 +74,7 @@ awk '!/^[[:space:]]*liboqs-python([<>=!~]|[[:space:]]|$)/' \
 echo "ARTCB Python runtime: $PYTHON"
 echo "Installing runtime dependencies (PQC source build excluded from critical path)..."
 run_bounded "$PIP_TIMEOUT" "$PYTHON" -m pip install \
-  --no-user \
+  "${PIP_DEST_ARGS[@]}" \
   --disable-pip-version-check \
   --retries 3 \
   --timeout "$PIP_NETWORK_TIMEOUT" \
@@ -84,7 +97,7 @@ PY
 if [ "${ARTCB_INSTALL_PQC:-0}" = "1" ]; then
   echo "PQC optional install enabled (hard timeout: ${PQC_TIMEOUT}s)..."
   if run_bounded "$PQC_TIMEOUT" "$PYTHON" -m pip install \
-      --no-user \
+      "${PIP_DEST_ARGS[@]}" \
       --disable-pip-version-check \
       --retries 2 \
       --timeout "$PIP_NETWORK_TIMEOUT" \
