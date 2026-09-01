@@ -1,0 +1,30 @@
+{
+  "branch": "cursor/dv01-tpm-wpp-chaos-16d8",
+  "certified_distributed_mainnet": false,
+  "d045": true,
+  "demographic_digest": "8b95a9f46c67150554535e4c5b77c088f76b9d1896c41bc60046e1503487c86c",
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-locked-D043+QE03-D045",
+  "finished_at": "2026-09-01T20:16:25Z",
+  "git_branch": "cursor/dv01-tpm-wpp-chaos-16d8",
+  "git_commit_sha": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+  "git_status_clean": true,
+  "h_adult_max": 5763415792,
+  "hmax_frozen": true,
+  "invented_results": false,
+  "packet_loss": true,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim191_dv01_wpp_chaos.py",
+  "script_sha256": "ca2e4edd1c86b34fc92747c6a446d47695d0e2695a334384ebdc85caa9edb4ae",
+  "seed": 191,
+  "simulation_id": "e2e191_dv01_wpp_chaos",
+  "started_at": "2026-09-01T19:59:34Z",
+  "working_tree_diff_hash": "a33c7bed54fb7a24557e37f2164d3855dc1f98ae9de8ef78541dfd2dd9c9ca73"
+}

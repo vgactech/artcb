@@ -154,6 +154,22 @@ def test_certification_still_and_of_all_dv() -> None:
     assert gate["certified_distributed_mainnet"] is False
 
 
+def test_all_dv_pass_does_not_certify_without_operator_go() -> None:
+    gate = certification_gate(
+        {
+            "DV-01": "PASS",
+            "DV-02": "PASS",
+            "DV-03": "PASS",
+            "DV-04": "PASS",
+            "DV-05": "PASS",
+            "DV-06": "PASS",
+            "DV-07": "PASS",
+        }
+    )
+    assert gate["certified_distributed_mainnet"] is False
+    assert gate["operator_certification_go"] is False
+
+
 def test_replit_public_url_comes_from_the_host_not_from_git(monkeypatch) -> None:
     from artcb.p2p.node_identity import _detect_fresh_public_url
 

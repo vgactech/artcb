@@ -1287,9 +1287,12 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Sim `20260901T184857Z_e2e190_mainnet_validate` `failures=[]`. SHA live `fe369bd`. 4 nœuds se voient. Replit bootstrap `99e83b` / `174-devnet-1`. PR #46.
 - Rapport : `rapports/190_mainnet_validate_d044_2026-09-01.md`
 
-## [2026-09-01T19:30:00Z] Rapport 191 — D-045 TPM / WPP / chaos live / seeds
+## [2026-09-01T20:16:00Z] Rapport 191 — D-045 TPM / WPP / chaos / pas d’URL Replit en dur
 
-- **GO** : tests restants sur le livre mainnet actuel (genèse plus tard). TPM pas inventé. Q-E03 WPP 2024 18+ gelé. `BOOTSTRAP_NODES` consommé. Packet-loss OVH4 + flood HTTP borné. Replit `artcb--vgac42371.replit.app` bootstrap, pas de wallet.
+- **GO** : livre mainnet height-1 conservé. TPM pas inventé (`/dev/tpm0` absent × 4). Q-E03 WPP 2024 18+ = `5_763_415_792` gelé. `BOOTSTRAP_NODES` = **4 IP seulement**. Clones = détectent leur URL + `POST /announce`.
+- Live SHA `30a7696`. Flood 64×4 = 256×200. netem OVH4 25 %/80 ms puis restore. Mesh `missing_infra_ips=[]`. `/health` certified **false**. Verrou `OPERATOR_MAINNET_CERTIFICATION_GO=False`.
+- Autoscale encore `99e83b` / `174-devnet-1` / 503 annuaire — **republish**, ne pas recoller un hostname dans git.
+- Sim `20260901T195933Z_e2e191_dv01_wpp_chaos`. PR #47.
 - Rapport : `rapports/191_dv01_wpp_chaos_d045_2026-09-01.md`
 
 

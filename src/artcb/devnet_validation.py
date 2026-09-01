@@ -162,6 +162,9 @@ DECISIONS_190: Final[dict[str, str]] = {
 }
 
 # Operator 2026-09-01: identify machines, freeze WPP, chaos on live book, consume seeds.
+# Certification is not automatic: all DV PASS is necessary, not sufficient.
+OPERATOR_MAINNET_CERTIFICATION_GO: Final[bool] = False
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -183,8 +186,8 @@ DECISIONS_191: Final[dict[str, str]] = {
 def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]:
     """Mainnet certification is AND of every locked letter + economics.
 
-    A single DV PASS does not certify. D-043 locked V-01…V-07; DV-02 C flood
-    still blocks certified_distributed_mainnet.
+    A single DV PASS does not certify. Feeding every letter as PASS still does
+    not certify until OPERATOR_MAINNET_CERTIFICATION_GO is True (operator says so).
     """
     v = verdicts or {}
     required_pass = ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")
@@ -201,11 +204,19 @@ def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]
         reasons.append("live_bft_off")
     if not ECONOMIC_V_LOCKED:
         reasons.append("economic_v_locked=false")
-    certified = (not missing) and live_bft and ECONOMIC_V_LOCKED
+    if not OPERATOR_MAINNET_CERTIFICATION_GO:
+        reasons.append("operator_certification_go=false")
+    certified = (
+        (not missing)
+        and live_bft
+        and ECONOMIC_V_LOCKED
+        and OPERATOR_MAINNET_CERTIFICATION_GO
+    )
     return {
         "certified_distributed_mainnet": certified,
         "economic_v_locked": ECONOMIC_V_LOCKED,
         "live_bft_implemented": live_bft,
+        "operator_certification_go": OPERATOR_MAINNET_CERTIFICATION_GO,
         "dv_not_pass": missing,
         "reason": "; ".join(reasons),
     }
