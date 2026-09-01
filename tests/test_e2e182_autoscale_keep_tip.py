@@ -63,6 +63,17 @@ def test_autoscale_never_checkouts_pin_fallback() -> None:
     assert "python3 -m venv" not in live_lines
 
 
+def test_autoscale_prefers_replit_pythonlibs_without_creating_venv() -> None:
+    auto = AUTOSCALE.read_text(encoding="utf-8")
+    executable = "\n".join(
+        line for line in auto.splitlines() if not line.lstrip().startswith("#")
+    )
+    assert '"$REPL_DIR/.pythonlibs/bin/python3"' in auto
+    assert '"$HOME/.pythonlibs/bin/python3"' in auto
+    assert '"$HOME/venv/bin/python3"' in auto
+    assert "python3 -m venv" not in executable
+
+
 def test_181_script_would_have_rewound_pin_string_gone() -> None:
     """The deadly 181 else-branch logged checkout pin= and detached the PIN."""
     auto = AUTOSCALE.read_text(encoding="utf-8")

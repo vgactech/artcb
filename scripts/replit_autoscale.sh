@@ -47,7 +47,21 @@ for d in \
   [ -d "$d" ] && PYTHONPATH="$d:$PYTHONPATH"
 done
 export PYTHONPATH
-PYTHON="$(command -v python3)"
+PYTHON=""
+for _candidate in \
+  "$REPL_DIR/.pythonlibs/bin/python3" \
+  "$HOME/.pythonlibs/bin/python3" \
+  "$HOME/venv/bin/python3" \
+  "$(command -v python3)"; do
+  if [ -x "$_candidate" ] \
+    && "$_candidate" -c "import fastapi, uvicorn" 2>/dev/null; then
+    PYTHON="$_candidate"
+    break
+  fi
+done
+if [ -z "$PYTHON" ]; then
+  PYTHON="$(command -v python3)"
+fi
 export OQS_INSTALL_PATH="${OQS_INSTALL_PATH:-$HOME/_oqs}"
 export LD_LIBRARY_PATH="${OQS_INSTALL_PATH}/lib:${OQS_INSTALL_PATH}/lib64:${LD_LIBRARY_PATH:-}"
 if ! "$PYTHON" -c "import fastapi, uvicorn" 2>/dev/null; then
