@@ -1,0 +1,66 @@
+{
+  "fixture_intervals": {
+    "billing": "month_only",
+    "catalog": "eco",
+    "hourly_exists": false,
+    "hourly_plan_count": 0,
+    "invented": false,
+    "monthly_plan_count": 1,
+    "note": "1H-low on /dedicated/server/datacenter/availabilities is stock, not intervalUnit=hour. Public Cloud d2-8 consumption is hourly VM, not Eco.",
+    "ok": true,
+    "plan_count": 1,
+    "renew_interval_units": {
+      "month": 1
+    },
+    "samples": [
+      {
+        "invoiceName": "KS-B",
+        "planCode": "25skb012",
+        "renew": [
+          {
+            "description": "rental for 1 month",
+            "interval": 1,
+            "intervalUnit": "month",
+            "price_eur": 9.99,
+            "pricingMode": null
+          }
+        ],
+        "renew_units": [
+          "month"
+        ]
+      }
+    ],
+    "subsidiary": "FR"
+  },
+  "picked": {
+    "datacenter": "rbx",
+    "dcs_fr": [
+      {
+        "dc": "rbx"
+      }
+    ],
+    "planCode": "24sk50-v1",
+    "total_eur": 26.99
+  },
+  "with_go": {
+    "blocked_reason": null,
+    "executed": false,
+    "nic": "xy4589-ovh",
+    "operator_go": true,
+    "requested": true,
+    "would_order": {
+      "datacenter": "rbx",
+      "fqn": "24sk50-v1.ram-32g-ecc-2400.softraid-3x4000sa",
+      "planCode": "24sk50-v1",
+      "price_eur": 26.99,
+      "tender": "preferred_payment_method_CREDIT_CARD"
+    }
+  },
+  "without_go": {
+    "blocked_reason": "prepaid_below_sku",
+    "executed": false,
+    "nic": "xy4589-ovh",
+    "operator_go": false,
+    "requested": true
+  }
+}

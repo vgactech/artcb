@@ -1,0 +1,92 @@
+{
+  "isolation_rule": "one Doppler project per real node / cloud account",
+  "nodes": {
+    "aws-node-3": {
+      "api_https": "https://51.44.222.232:8443",
+      "display_name": "node artcb 3",
+      "doppler_config": "dev",
+      "doppler_project": "artcb3",
+      "doppler_token_env": "KEY_API_ARTCB_DOPPLER_3",
+      "health_http": "http://51.44.222.232:8000",
+      "notes": "AWS account 599128160879 IAM user node_artcb_3_agent. Doppler project artcb3 (service token Cursor KEY_API_ARTCB_DOPPLER_3). CLI profile artcb-node-3. Region eu-west-3 (Paris). Cursor secret aliases AWS_API_KEY_AGENT_3 / AWS_API_CLI_AGENT_3 map to AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY. IAM 2026-08-31 later session: AdministratorAccess + AmazonEC2FullAccess + IAMFullAccess + IAMUserChangePassword (earlier probe had ChangePassword only). EC2 i-085b74abd1aaf04ee public IP 51.44.222.232 (t3.small fallback from t3.large).",
+      "provider": "aws",
+      "ssh_host": "51.44.222.232",
+      "ssh_user": "ubuntu"
+    },
+    "ovh-baremetal-1": {
+      "api_https": null,
+      "display_name": "node artcb bare metal 1 (order 258100013 \u2014 awaiting fraud review, no IP)",
+      "doppler_config": "dev",
+      "doppler_project": "artcb-baremetal-1",
+      "doppler_token_env": "KEY_API_ARTCB_DOPPLER_BAREMETAL",
+      "health_http": null,
+      "notes": "Fifth TEST hardware node (physical server, not an OpenStack VM). Never reuse ovh-node-1 / 152.228.144.34. Never destroy OVH4 VM 91.134.45.8 (node-artcb-ovh-4). Not a genesis rewrite. 2026-09-01 D-047: GET /dedicated/server on xy4589-ovh = []. The ~10 EUR is Public Cloud credit on project 926bb1d6755e4f2c98ae9db06ef44e4f (credit 263152 = 10.00 EUR; free-trial 263153 = 199.84 EUR). ovhAccount prepaid 0.00 EUR (xy4589-ovh and vc491276-ovh). Cloud credit cannot pay Eco. KS-B 25skb012 = 9.99 EUR/month catalog FR, GRA unavailable. 2026-09-01 D-048 operator GO checkout HTTP 200 orderId 258100013 SKU 24sk50-v1 KS-5 FQN 24sk50-v1.ram-32g-ecc-2400.softraid-3x4000sa datacenter rbx, 53.98 EUR TTC / 44.98 EUR HT (mensuel, not hourly). paymentType debtAccount; followUp VALIDATING FRAUD_MANUAL_REVIEW; GET /me/order/258100013/status=checking. GET /dedicated/server still []. 2026-09-01 D-049: Do not POST a second --order. ssh_host empty until a real dedicated IP exists. /dev/tpm0 not probed on a machine not yet listed. Never destroy 91.134.45.8. Do not order on vc491276-ovh. KEY_API_ARTCB_DOPPLER_3 is AWS artcb3, not OVH. certified_distributed_mainnet stays false.",
+      "provider": "ovh-baremetal",
+      "ssh_host": null,
+      "ssh_user": "ubuntu"
+    },
+    "ovh-node-1": {
+      "api_https": "https://152.228.144.34:8443",
+      "display_name": "node artcb 1",
+      "doppler_config": "dev",
+      "doppler_project": "artcb-blockchain",
+      "doppler_token_env": "DOPPLER_TOKEN",
+      "health_http": "http://152.228.144.34:8000",
+      "notes": "Existing GRA11 live node at 152.228.144.34. Dedicated vault artcb-ovh-node-1 was never created (service token cannot POST /v3/projects). Live token artcb-node-1 stays on shared artcb-blockchain until a personal Doppler token splits OVH-1 keys. SSH key name artcb-cloud-agent-20260819.",
+      "provider": "ovh",
+      "ssh_host": "152.228.144.34",
+      "ssh_user": "ubuntu"
+    },
+    "ovh-node-2": {
+      "api_https": "https://151.80.107.29:8443",
+      "display_name": "node artcb 2",
+      "doppler_config": "dev",
+      "doppler_project": "artcb-2",
+      "doppler_token_env": "KEY_API_ARTCB_DOPPLER_2",
+      "health_http": "http://151.80.107.29:8000",
+      "notes": "OVH nic vc491276-ovh (vgac4237@gmail.com). Public Cloud project 1fc10a3fb27d4511a8c7873cd16243f2. Instance node-artcb-ovh-2 GRA11 d2-8 id 6470522e-1561-4741-9254-5f58b909eeb9 IPv4 151.80.107.29. Doppler artcb-2. SSH key artcb-ovh-node-2.",
+      "provider": "ovh",
+      "ssh_host": "151.80.107.29",
+      "ssh_user": "ubuntu"
+    },
+    "ovh-node-4": {
+      "api_https": "https://91.134.45.8:8443",
+      "display_name": "node artcb 4",
+      "doppler_config": "dev",
+      "doppler_project": "artcb-4",
+      "doppler_token_env": "KEY_API_ARTCB_DOPPLER_4",
+      "health_http": "http://91.134.45.8:8000",
+      "notes": "OVH nic xy4589-ovh (vgac42@gmail.com). Public Cloud project 926bb1d6755e4f2c98ae9db06ef44e4f (description 'node artcb ovh 4'). Instance node-artcb-ovh-4 id 22dc6a47-5b79-4084-82d7-eabb4f5b2680 GRA11 d2-8 IPv4 91.134.45.8. Doppler slug artcb-4 (UI name ARTCB_API_4). SSH key artcb-ovh-node-4. Never reuse OVH1 152.228.144.34 or OVH2 151.80.107.29 credentials.",
+      "provider": "ovh",
+      "ssh_host": "91.134.45.8",
+      "ssh_user": "ubuntu"
+    },
+    "replit-node-1": {
+      "api_https": null,
+      "display_name": "node artcb replit (any account)",
+      "doppler_config": "dev",
+      "doppler_project": "artcb-blockchain",
+      "doppler_token_env": "DOPPLER_TOKEN",
+      "health_http": null,
+      "notes": "No hardcoded *.replit.app host. Any Replit Autoscale clone detects its public URL from REPLIT_DEV_DOMAIN / REPLIT_DOMAINS / REPL_SLUG and announces itself to the four infrastructure seeds. Stays bootstrap without wallet / init-node (D-044/D-045) until the operator chooses otherwise.",
+      "provider": "replit",
+      "ssh_host": null,
+      "ssh_user": "runner"
+    }
+  },
+  "shared_doppler_config": "dev",
+  "shared_doppler_project": "artcb-blockchain",
+  "shared_only_secret_names": [
+    "ALCHEMY_API_KEY",
+    "BOB_API_KEY",
+    "GITHUB_TOKEN",
+    "GRADIUM_API_KEY",
+    "INFURA_PROJECT_SECRET",
+    "KAGGLE_KEY",
+    "KEY_API_STRIPE",
+    "LOOPQA_API_TOKEN",
+    "MANUS_API_KEY",
+    "NGROK_API_KEY",
+    "NGROK_AUTHTOKEN"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "certification_gate": {
+    "certified_distributed_mainnet": false,
+    "dv_not_pass": [],
+    "economic_v_locked": true,
+    "live_bft_implemented": true,
+    "operator_certification_go": false,
+    "reason": "operator_certification_go=false"
+  },
+  "decisions_194": {
+    "D-048": "Operator GO on nic xy4589-ovh (OVH4) to order one cheapest currently available Eco/Kimsufi, including the registered preferred payment method (CREDIT_CARD) because Public Cloud credit cannot pay a dedicated. Re-read catalog + GET /dedicated/server first; do not double-order. Prefer FR datacenter GRA/RBX/SBG. Price the real in-stock FQN (base + RAM/disk extras), not the unavailable default 0 EUR disk. One checkout; HTTP 400/402 is terminal (no retry loop). Never destroy 91.134.45.8. No install.sh wipe, no origin/main deploy, no invented TPM/IP/balance. certified_distributed_mainnet stays false.",
+    "D-049": "Measured Eco public catalog FR: renew intervalUnit is month on every plan (0 hour). Operator 'horaire' is Public Cloud d2-8 consumption and/or availability 1H-low, not Eco billing. GET /dedicated/server on xy4589-ovh still []. Eco checkout already exists: orderId 258100013 KS-5 24sk50-v1 rbx, details say '1 mois', status checking, followUp FRAUD_MANUAL_REVIEW, 44.98 EUR HT / 53.98 EUR TTC, paymentType debtAccount. This agent does not POST --order (no second server). VM 91.134.45.8 untouched. No IP invented. certified stays false."
+  },
+  "failures": [],
+  "init_genesis": false,
+  "install_sh": false,
+  "live_billing": "month_only",
+  "live_dedicated_count": 0,
+  "live_eco_order_ids": [
+    258100013
+  ],
+  "live_hourly_exists": false,
+  "live_me_http": 200,
+  "live_nic": "xy4589-ovh",
+  "live_order_executed": false,
+  "live_prepaid_eur": 0,
+  "note": "D-048 GO checkout 258100013 then D-049: Eco is month_only; do not POST a second --order. This sim never POSTs checkout.",
+  "ovh4_vm_untouched": true,
+  "picked_dc": "rbx",
+  "sim": "e2e194_ovh4_baremetal_go",
+  "with_go_tender": "preferred_payment_method_CREDIT_CARD",
+  "without_go": "prepaid_below_sku"
+}
