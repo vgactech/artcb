@@ -2,5 +2,6 @@
   "at": "20260901T181738Z",
   "id": "DV-05",
   "sim": "e2e188_dv05_live_bft",
-  "status": "PASS"
+  "status": "PASS",
+  "note": "e2e189 did not re-run BFT scenarios; inherited PASS from 188. Scope remains settlement WorkID, not append_block PBFT."
 }

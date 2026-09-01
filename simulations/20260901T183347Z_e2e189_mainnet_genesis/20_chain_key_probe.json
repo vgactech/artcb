@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-01T18:35:30Z",
+  "classification": "PROBE LIVE",
+  "note": "e2e189 flagged chain_key_missing because it looked at data/chain/chain.key. Live path is data/chain.key (ChainManager default). Keys were not wiped; dates predate D-043.",
+  "path": "data/chain.key",
+  "wrong_path_checked_in_sim": "data/chain/chain.key",
+  "nodes": {
+    "ovh1": {"present": true, "bytes": 85, "mtime_utc": "2026-08-19T14:58:00Z"},
+    "ovh2": {"present": true, "bytes": 85, "mtime_utc": "2026-08-31T18:49:00Z"},
+    "aws3": {"present": true, "bytes": 85, "mtime_utc": "2026-08-31T16:23:00Z"},
+    "ovh4": {"present": true, "bytes": 85, "mtime_utc": "2026-08-31T19:53:00Z"}
+  },
+  "backup_174_book": "data/chain/blocks.jsonl.bak-d043-testbook",
+  "backup_bytes": 60400,
+  "live_blocks_jsonl_bytes": 7733,
+  "live_height": 1
+}

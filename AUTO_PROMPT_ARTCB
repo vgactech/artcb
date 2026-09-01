@@ -1274,7 +1274,8 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 ## [2026-09-01T18:40:00Z] Rapport 189 — D-043 gel V + artcb-mainnet-1
 
 - **GO** : valider soi-même, geler V-01…V-07 au code sim 167, ouvrir `artcb-mainnet-1` / `189-mainnet-1` / `genesis-artcb-mainnet-1`.
-- Livre de sondes 174 **vidé** (backup `blocks.jsonl.bak-d043-testbook`), wallets/`chain.key` conservés. Faucet 403. Fenêtre Ed25519 inchangée.
-- `certified_distributed_mainnet` **reste false** (DV-02 C flood non fait). Ce n’est **pas** un PASS inventé.
-- Sim : `scripts/run_sim189_mainnet_genesis.py`. Rapport : `rapports/189_mainnet_genesis_v_locked_2026-09-01.md`
+- Live SHA `ad4687d`. Height **1** hash `b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce` (4 nœuds égaux). Faucet 403. Fenêtre Ed25519 inchangée.
+- Livre 174 backup `blocks.jsonl.bak-d043-testbook`. wallets/`data/chain.key` conservés. `install.sh` / `init_genesis.py` non exécutés.
+- `certified_distributed_mainnet` **false** (DV-02 C flood non fait). Sim `20260901T183347Z_e2e189_mainnet_genesis`. PR #45.
+- Rapport : `rapports/189_mainnet_genesis_v_locked_2026-09-01.md`
 

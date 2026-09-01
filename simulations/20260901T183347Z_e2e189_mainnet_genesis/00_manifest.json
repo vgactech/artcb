@@ -1,0 +1,26 @@
+{
+  "branch": "cursor/mainnet-genesis-d043-16d8",
+  "certified_distributed_mainnet": false,
+  "d043": true,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-locked-D043",
+  "finished_at": "2026-09-01T18:34:55Z",
+  "git_branch": "cursor/mainnet-genesis-d043-16d8",
+  "git_commit_sha": "ad4687d16be55fb82114f38e70687156c0ed4567",
+  "git_status_clean": true,
+  "invented_results": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim189_mainnet_genesis.py",
+  "script_sha256": "be31444a0c9bce707bead81c9950221a2f8ec5f323e16dce19fab1845a62292a",
+  "seed": 189,
+  "simulation_id": "e2e189_mainnet_genesis",
+  "started_at": "2026-09-01T18:33:48Z",
+  "working_tree_diff_hash": "a33c7bed54fb7a24557e37f2164d3855dc1f98ae9de8ef78541dfd2dd9c9ca73"
+}

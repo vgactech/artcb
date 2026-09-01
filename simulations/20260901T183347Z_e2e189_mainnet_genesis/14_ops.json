@@ -1,0 +1,275 @@
+{
+  "STOP_ALL": {
+    "aws3": {
+      "returncode": 0
+    },
+    "ovh1": {
+      "returncode": 0
+    },
+    "ovh2": {
+      "returncode": 0
+    },
+    "ovh4": {
+      "returncode": 0
+    }
+  },
+  "after_restart": {
+    "aws3": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    },
+    "ovh1": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    },
+    "ovh2": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    },
+    "ovh4": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    }
+  },
+  "after_tx": {
+    "aws3": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    },
+    "ovh1": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    },
+    "ovh2": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    },
+    "ovh4": {
+      "height": 1,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "public_state_digest": "99ccbf3d81f5568ab3d5097b318d4a3d3f0639efdb24f9cd71899065e38129bb"
+    }
+  },
+  "before_tx": {
+    "aws3": {
+      "height": 0,
+      "last_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "public_state_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ovh1": {
+      "height": 0,
+      "last_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "public_state_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ovh2": {
+      "height": 0,
+      "last_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "public_state_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ovh4": {
+      "height": 0,
+      "last_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "public_state_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "certified_false": true,
+  "deploys": {
+    "aws3": {
+      "returncode": 0,
+      "stderr_tail": "From https://github.com/vgactech/artcb\n * branch            cursor/mainnet-genesis-d043-16d8 -> FETCH_HEAD\n * [new branch]      cursor/mainnet-genesis-d043-16d8 -> origin/cursor/mainnet-genesis-d043-16d8\nSwitched to a new branch 'cursor/mainnet-genesis-d043-16d8'\n",
+      "stdout_tail": "branch 'cursor/mainnet-genesis-d043-16d8' set up to track 'origin/cursor/mainnet-genesis-d043-16d8'.\nHEAD is now at ad4687d fix(189): keep D-043 backup path literal and honest KEM advertise\ninit_genesis.py not executed\ninstall.sh not executed\nDEPLOYED_SHA=ad4687d16be55fb82114f38e70687156c0ed4567\nDEPLOYED_BRANCH=cursor/mainnet-genesis-d043-16d8\n0 data/chain/blocks.jsonl\n0 data/p2p/incoming_public.jsonl\n0 total\nchain_key=MISSING\n"
+    },
+    "ovh1": {
+      "returncode": 0,
+      "stderr_tail": "From https://github.com/vgactech/artcb\n * branch            cursor/mainnet-genesis-d043-16d8 -> FETCH_HEAD\nSwitched to a new branch 'cursor/mainnet-genesis-d043-16d8'\n",
+      "stdout_tail": "HEAD is now at ad4687d fix(189): keep D-043 backup path literal and honest KEM advertise\ninit_genesis.py not executed\ninstall.sh not executed\nDEPLOYED_SHA=ad4687d16be55fb82114f38e70687156c0ed4567\nDEPLOYED_BRANCH=cursor/mainnet-genesis-d043-16d8\n0 data/chain/blocks.jsonl\n0 data/p2p/incoming_public.jsonl\n0 total\nchain_key=MISSING\n"
+    },
+    "ovh2": {
+      "returncode": 0,
+      "stderr_tail": "From https://github.com/vgactech/artcb\n * branch            cursor/mainnet-genesis-d043-16d8 -> FETCH_HEAD\n * [new branch]      cursor/mainnet-genesis-d043-16d8 -> origin/cursor/mainnet-genesis-d043-16d8\nSwitched to a new branch 'cursor/mainnet-genesis-d043-16d8'\n",
+      "stdout_tail": "branch 'cursor/mainnet-genesis-d043-16d8' set up to track 'origin/cursor/mainnet-genesis-d043-16d8'.\nHEAD is now at ad4687d fix(189): keep D-043 backup path literal and honest KEM advertise\ninit_genesis.py not executed\ninstall.sh not executed\nDEPLOYED_SHA=ad4687d16be55fb82114f38e70687156c0ed4567\nDEPLOYED_BRANCH=cursor/mainnet-genesis-d043-16d8\n0 data/chain/blocks.jsonl\n0 data/p2p/incoming_public.jsonl\n0 total\nchain_key=MISSING\n"
+    },
+    "ovh4": {
+      "returncode": 0,
+      "stderr_tail": "From https://github.com/vgactech/artcb\n * branch            cursor/mainnet-genesis-d043-16d8 -> FETCH_HEAD\n * [new branch]      cursor/mainnet-genesis-d043-16d8 -> origin/cursor/mainnet-genesis-d043-16d8\nSwitched to a new branch 'cursor/mainnet-genesis-d043-16d8'\n",
+      "stdout_tail": "branch 'cursor/mainnet-genesis-d043-16d8' set up to track 'origin/cursor/mainnet-genesis-d043-16d8'.\nHEAD is now at ad4687d fix(189): keep D-043 backup path literal and honest KEM advertise\ninit_genesis.py not executed\ninstall.sh not executed\nDEPLOYED_SHA=ad4687d16be55fb82114f38e70687156c0ed4567\nDEPLOYED_BRANCH=cursor/mainnet-genesis-d043-16d8\n0 data/chain/blocks.jsonl\n0 data/p2p/incoming_public.jsonl\n0 total\nchain_key=MISSING\n"
+    }
+  },
+  "dropped_incompatible_peers": {
+    "aws3": [],
+    "ovh1": [],
+    "ovh2": [],
+    "ovh4": []
+  },
+  "faucet_off": true,
+  "four_equal_after_restart": true,
+  "four_equal_after_tx": true,
+  "genesis_hash_declared": "genesis-artcb-mainnet-1",
+  "health_waits": {
+    "aws3": [
+      {
+        "http": 200,
+        "try": 1
+      }
+    ],
+    "ovh1": [
+      {
+        "http": 0,
+        "try": 1
+      },
+      {
+        "http": 200,
+        "try": 2
+      }
+    ],
+    "ovh2": [
+      {
+        "http": 200,
+        "try": 1
+      }
+    ],
+    "ovh4": [
+      {
+        "http": 200,
+        "try": 1
+      }
+    ]
+  },
+  "init_genesis.py": "not_run",
+  "install_sh": "not_run",
+  "network_id": "artcb-mainnet-1",
+  "protocol_version": "189-mainnet-1",
+  "registrations": {
+    "aws3_ovh1": {
+      "http": 200,
+      "peer_id": "peer_6691f453a1cf",
+      "protocol_compatible": true
+    },
+    "aws3_ovh2": {
+      "http": 200,
+      "peer_id": "peer_1f6a0c92b2af",
+      "protocol_compatible": true
+    },
+    "aws3_ovh4": {
+      "http": 200,
+      "peer_id": "peer_8a4b1f1811bf",
+      "protocol_compatible": true
+    },
+    "ovh1_aws3": {
+      "http": 200,
+      "peer_id": "peer_18ee19fb141a",
+      "protocol_compatible": true
+    },
+    "ovh1_ovh2": {
+      "http": 200,
+      "peer_id": "peer_fcb97fa0d93a",
+      "protocol_compatible": true
+    },
+    "ovh1_ovh4": {
+      "http": 200,
+      "peer_id": "peer_8436e7fd3084",
+      "protocol_compatible": true
+    },
+    "ovh2_aws3": {
+      "http": 200,
+      "peer_id": "peer_c1b219a22800",
+      "protocol_compatible": true
+    },
+    "ovh2_ovh1": {
+      "http": 200,
+      "peer_id": "peer_c30fbdb348f5",
+      "protocol_compatible": true
+    },
+    "ovh2_ovh4": {
+      "http": 200,
+      "peer_id": "peer_188e5e849523",
+      "protocol_compatible": true
+    },
+    "ovh4_aws3": {
+      "http": 200,
+      "peer_id": "peer_880d48e0bc52",
+      "protocol_compatible": true
+    },
+    "ovh4_ovh1": {
+      "http": 200,
+      "peer_id": "peer_b8996b6f4d18",
+      "protocol_compatible": true
+    },
+    "ovh4_ovh2": {
+      "http": 200,
+      "peer_id": "peer_3ec192f22776",
+      "protocol_compatible": true
+    }
+  },
+  "restart_health_wait": [
+    {
+      "http": 0,
+      "try": 1
+    },
+    {
+      "http": 0,
+      "try": 2
+    },
+    {
+      "http": 200,
+      "try": 3
+    }
+  ],
+  "restart_ovh1": {
+    "health_ok": true,
+    "ssh_returncode": 0
+  },
+  "starts": {
+    "aws3": {
+      "returncode": 0,
+      "stderr_tail": ""
+    },
+    "ovh1": {
+      "returncode": 0,
+      "stderr_tail": ""
+    },
+    "ovh2": {
+      "returncode": 0,
+      "stderr_tail": ""
+    },
+    "ovh4": {
+      "returncode": 0,
+      "stderr_tail": ""
+    }
+  },
+  "store_block_index": 0,
+  "store_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+  "store_http": 200,
+  "sync_http": {
+    "aws3": 200,
+    "ovh1": 200,
+    "ovh2": 200,
+    "ovh4": 200
+  },
+  "tpm": {
+    "aws3": {
+      "returncode": 0,
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nTPM2_TOOLS=no\n"
+    },
+    "ovh1": {
+      "returncode": 0,
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nTPM2_TOOLS=no\n"
+    },
+    "ovh2": {
+      "returncode": 0,
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nTPM2_TOOLS=no\n"
+    },
+    "ovh4": {
+      "returncode": 0,
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nTPM2_TOOLS=no\n"
+    }
+  },
+  "tpm_present_any": false
+}

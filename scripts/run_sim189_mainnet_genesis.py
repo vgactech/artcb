@@ -283,7 +283,7 @@ echo "install.sh not executed"
 echo "DEPLOYED_SHA=$SHA"
 echo "DEPLOYED_BRANCH=$BR"
 wc -c "$CHAIN" "$ARCH" 2>/dev/null || true
-test -f data/chain/chain.key && echo "chain_key=present" || echo "chain_key=MISSING"
+test -f data/chain.key && echo "chain_key=present" || echo "chain_key=MISSING"
 """
     return _ssh(name, remote, timeout=240)
 
