@@ -271,10 +271,10 @@ CHAIN=data/chain/blocks.jsonl
 ARCH=data/p2p/incoming_public.jsonl
 mkdir -p data/chain data/p2p
 if [ -f "$CHAIN" ]; then
-  cp -a "$CHAIN" "${CHAIN}.bak-d043-testbook"
+  cp -a "$CHAIN" "data/chain/blocks.jsonl.bak-d043-testbook"
 fi
 if [ -f "$ARCH" ]; then
-  cp -a "$ARCH" "${ARCH}.bak-d043-testbook"
+  cp -a "$ARCH" "data/p2p/incoming_public.jsonl.bak-d043-testbook"
 fi
 : > "$CHAIN"
 : > "$ARCH"

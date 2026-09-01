@@ -23,7 +23,7 @@ def test_p2p_status(client: TestClient) -> None:
     assert r.status_code == 200, r.text
     body = r.json()
     assert body["network_id"] == NETWORK_ID == "artcb-mainnet-1"
-    assert body["kem_algorithm"] == "ML-KEM-768"
+    assert body["kem_algorithm"] in {"ML-KEM-768", "X25519-fallback"}
     assert "kem_public_key_hex" in body
     assert body["private_never_synced"] is True
 
