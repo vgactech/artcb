@@ -235,3 +235,13 @@ def test_compute_max_contributors_uses_real_network():
     # Si aucun bw fourni et classe MOYENNE, on doit avoir un resultat coherent
     result = compute_max_contributors(wallets_active_30d=0, network_class=NETWORK_CLASS_MOYENNE)
     assert MIN_CONTRIBUTORS_ABSOLUTE <= result <= MAX_CONTRIBUTORS_ABSOLUTE
+
+
+def test_fast_boot_skips_bandwidth_sleep(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ARTCB_FAST_BOOT", "1")
+    bw, cls = measure_network_bandwidth(sample_seconds=30.0)
+    assert bw == 100.0
+    assert cls == NETWORK_CLASS_BONNE
+    opt = build_optimization_profile()
+    assert opt.use_faiss is False
+    assert opt.network_class == NETWORK_CLASS_BONNE

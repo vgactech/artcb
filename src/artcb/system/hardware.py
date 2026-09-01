@@ -123,6 +123,8 @@ def _detect_nvidia_gpus() -> list[dict[str, Any]]:
 
 
 def _detect_faiss_gpus() -> int:
+    if os.getenv("ARTCB_FAST_BOOT", "").strip() in {"1", "true", "yes"}:
+        return 0
     try:
         import faiss  # type: ignore
 
@@ -210,6 +212,9 @@ def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
     DOIT installer psutil pour que la mesure reseau soit reelle.
     Pour installer : pip install psutil>=5.9.0 (ou pip install -r requirements.txt)
     """
+    if os.getenv("ARTCB_FAST_BOOT", "").strip() in {"1", "true", "yes"}:
+        logger.debug("Network bandwidth skipped (ARTCB_FAST_BOOT) class=BONNE")
+        return 100.0, NETWORK_CLASS_BONNE
     psutil_ok = False
     try:
         import psutil as _psutil
