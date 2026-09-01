@@ -37,8 +37,8 @@ def test_decisions_174_do_not_overwrite_d033_dv_profile() -> None:
     assert HYBRID_VERIFY_MODE == "AND"
     assert PROTOCOL_VERSION == "174-devnet-1"
     spec = public_spec()
-    assert spec["live_bft_implemented"] is False
-    assert LIVE_BFT_IMPLEMENTED is False
+    assert spec["live_bft_implemented"] is True
+    assert LIVE_BFT_IMPLEMENTED is True
     assert "D-036" in DECISIONS_186["D-040"]
     assert "cursor/replit-sync-ready-16d8" in DECISIONS_186["D-040"]
 

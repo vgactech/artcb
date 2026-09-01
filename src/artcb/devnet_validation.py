@@ -119,6 +119,46 @@ DECISIONS_187: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-01: launch remaining mainnet gates, do not invent certification.
+DECISIONS_188: Final[dict[str, str]] = {
+    "D-042": (
+        "GO remaining mainnet gates — operator asked to launch mainnet now. "
+        "Culture forbids renaming 174-devnet-1 or flipping "
+        "certified_distributed_mainnet. Wire live prepare/commit BFT "
+        "(N=4 F=1 Q=3) from replicated_settlement onto the four VMs. "
+        "DV-05 PASS only after honest/offline/delay/double-proposal/"
+        "divergence. Economic V-01…V-07 stay provisional (D-026). "
+        "Ed25519 window stays until 2026-12-31 (D-032). Test probe "
+        "blocks are not a mainnet genesis. Not certified mainnet."
+    ),
+}
+
+
+def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]:
+    """Mainnet certification is AND of every locked letter + economics.
+
+    A single DV PASS (including DV-04) does not certify. Economics stay
+    provisional until a separate GO after V-01…V-07 (D-026).
+    """
+    v = verdicts or {}
+    required_pass = ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")
+    missing = [k for k in required_pass if v.get(k) != "PASS"]
+    from artcb.consensus_spec import LIVE_BFT_IMPLEMENTED
+
+    reasons = []
+    if missing:
+        reasons.append("dv_not_pass:" + ",".join(missing))
+    if not LIVE_BFT_IMPLEMENTED:
+        reasons.append("live_bft_off")
+    reasons.append("economic_v_locked=false")
+    return {
+        "certified_distributed_mainnet": False,
+        "economic_v_locked": False,
+        "live_bft_implemented": LIVE_BFT_IMPLEMENTED,
+        "dv_not_pass": missing,
+        "reason": "; ".join(reasons),
+    }
+
 
 def public_lock() -> dict[str, Any]:
     return {
@@ -133,5 +173,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_178": DECISIONS_178,
         "decisions_186": DECISIONS_186,
         "decisions_187": DECISIONS_187,
+        "decisions_188": DECISIONS_188,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

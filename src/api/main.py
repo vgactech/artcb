@@ -34,6 +34,7 @@ from src.api.groups_routes import router as groups_router
 from src.api.mining_routes import router as mining_router
 from src.api.notifications_routes import router as notifications_router
 from src.api.p2p_routes import router as p2p_router
+from src.api.consensus_routes import router as consensus_router
 from src.api.libp2p_routes import router as libp2p_router
 from src.api.pool_routes import router as pool_router
 from src.api.routes import router as api_router
@@ -227,6 +228,7 @@ def create_app() -> FastAPI:
     app.include_router(mining_router)
     app.include_router(governance_router)
     app.include_router(p2p_router)
+    app.include_router(consensus_router)
     app.include_router(pool_router)
     app.include_router(notifications_router)
     app.include_router(dashboard_router)
@@ -272,8 +274,10 @@ def create_app() -> FastAPI:
             public_health_block,
         )
         from src.artcb.release import release_identity
+        from src.artcb.devnet_validation import certification_gate
         _pqc = pqc_available()
         identity = release_identity()
+        gate = certification_gate()
         return {
             "status": "healthy",
             "service": "ARTCB API",
@@ -287,6 +291,7 @@ def create_app() -> FastAPI:
             "protocol_version": PROTOCOL_VERSION,
             "genesis_hash": GENESIS_HASH,
             "pqc": public_health_block(_pqc),
+            "certified_distributed_mainnet": gate["certified_distributed_mainnet"],
         }
 
     # Serve React frontend (built dist/) at root

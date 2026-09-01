@@ -22,7 +22,7 @@ def test_d041_adopts_existing_book_not_a_merge() -> None:
     lock = public_lock()
     assert lock["distributed_certified"] is False
     assert lock["decisions_187"]["D-041"] == text
-    assert LIVE_BFT_IMPLEMENTED is False
+    assert LIVE_BFT_IMPLEMENTED is True
 
 
 def test_dv04_spec_counts_ovh1_after_d041() -> None:

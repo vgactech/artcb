@@ -1,7 +1,19 @@
-# DV-05 — consensus (BLOCKED)
+# DV-05 — consensus Byzantine explicite (choix C)
 
-Live API has no BFT engine. Extracted from code:
-- sim settlement quorum n//2+1
-- sim finality N=2 confirmations
-- N>=3F+1 is not implemented live
-See `src/artcb/consensus_spec.py`.
+Live engine: prepare/commit over HTTP between protocol-compatible peers
+(`src/artcb/consensus/live_bft.py`). Bound: **N >= 3F+1**, **Q = 2F+1**.
+Four live machines: **N=4, F=1, Q=3**.
+
+Scope: **settlement WorkID uniqueness**, not PBFT for `append_block`
+(public chain remains longest valid hash).
+
+PASS only after live scenarios on the four VMs:
+
+- honest propose
+- double-proposal (same WorkID, different SettlementID) rejected
+- one node offline, remaining Q still commits
+- unroutable delay/timeout
+- offline node recovers
+
+`certified_distributed_mainnet` stays false until DV-01…DV-07 are all PASS
+and economic V-01…V-07 are locked (D-026). See D-042.

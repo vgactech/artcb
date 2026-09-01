@@ -83,6 +83,7 @@ class AppState:
     work_registry: WorkRegistry | None = None
     protocol_engine: ProtocolEngine | None = None
     stripe_ledger: StripeJobLedger | None = None
+    live_bft: Any = None
     pol_state: dict[str, Any] = field(default_factory=lambda: {
         "pol_score": 0.6,
         "delta_compression": 0.68,
@@ -175,6 +176,9 @@ def build_app_state() -> AppState:
         archive=p2p_archive,
         symbol_sync=symbol_sync,
     )
+    from src.artcb.consensus.live_bft import LiveBftEngine
+
+    live_bft = LiveBftEngine(settings.data_dir, node_id=p2p_identity.node_id)
 
     state = AppState(
         settings=settings,
@@ -211,6 +215,7 @@ def build_app_state() -> AppState:
         work_registry=work_registry,
         protocol_engine=protocol_engine,
         stripe_ledger=stripe_ledger,
+        live_bft=live_bft,
     )
 
     def _run_pool_reasoning(text: str) -> dict[str, Any]:
