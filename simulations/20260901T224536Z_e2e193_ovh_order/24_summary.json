@@ -1,0 +1,31 @@
+{
+  "book_wiped": false,
+  "card_charged": false,
+  "certification_gate": {
+    "certified_distributed_mainnet": false,
+    "dv_not_pass": [],
+    "economic_v_locked": true,
+    "live_bft_implemented": true,
+    "operator_certification_go": false,
+    "reason": "operator_certification_go=false"
+  },
+  "cheapest_eur": 9.99,
+  "cheapest_sku": "25skb012",
+  "checkout_posted": false,
+  "decisions_193": {
+    "D-047": "The ~10 EUR is Public Cloud credit on nic xy4589-ovh (OVH4), not ovhAccount prepaid and not a third OVH3 nic. Measured 2026-09-01: GET /me 200 nic xy4589-ovh; GET /me/ovhAccount balance 0.00 EUR; GET /dedicated/server [] (no Eco in delivery); GET /cloud/project/\u2026/credit 263152 available 10.00 EUR (Credit provisionning) + 263153 available 199.84 EUR (Free Trial). Cloud credit cannot pay Eco dedicated. Do not order on vc491276-ovh. Do not destroy 91.134.45.8. Eco KS-B 25skb012 9.99 EUR GRA unavailable; cheapest in-stock KS-5 24sk50-v1 17.99 EUR > prepaid 0.00. Do not charge the OVH4 CREDIT_CARD. ovh-baremetal-1 stays pending without IP. certified_distributed_mainnet stays false."
+  },
+  "failures": [],
+  "init_genesis": false,
+  "init_node": false,
+  "install_sh": false,
+  "ksb_in_stock": false,
+  "live_git_sha": "30a7696a45888133b04e0ff78bbff2a9473c102f",
+  "live_http": 200,
+  "note": "D-047: ~10 EUR is Public Cloud credit on xy4589-ovh, not prepaid for Eco dedicated. KS-B GRA unavailable. No order.",
+  "order_blocked_reason": "missing_ovh3_api_keys",
+  "order_executed": false,
+  "sim": "e2e193_ovh_order",
+  "xy4589_cloud_credit_263152_eur": 10,
+  "xy4589_prepaid_eur": 0
+}

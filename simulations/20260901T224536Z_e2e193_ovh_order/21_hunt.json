@@ -1,0 +1,155 @@
+{
+  "invented_balance": false,
+  "note": "Public Cloud credit is not ovhAccount prepaid and cannot pay Eco dedicated.",
+  "secrets_printed": false,
+  "sources": [
+    {
+      "balance_eur": null,
+      "email": null,
+      "invented": false,
+      "me_error": {
+        "class": "Client::Forbidden",
+        "errorCode": null,
+        "message": "This credential is not valid"
+      },
+      "me_http": 403,
+      "nic": null,
+      "source": "doppler:artcb-blockchain"
+    },
+    {
+      "balance_eur": 0,
+      "balances": [
+        {
+          "account_redacted": true,
+          "currency": "EUR",
+          "text": "0.00 \u20ac",
+          "value": 0
+        }
+      ],
+      "cloud_credits": [
+        {
+          "available_eur": 199.8,
+          "credit_id": 263140,
+          "description": "Free Trial Offer",
+          "http": 200,
+          "products": null,
+          "project": "1fc10a3fb27d4511a8c7873cd16243f2",
+          "total_eur": 200,
+          "used_eur": 0.2
+        }
+      ],
+      "cloud_projects_http": 200,
+      "dedicated_count": 0,
+      "dedicated_http": 200,
+      "email": "vgac4237@gmail.com",
+      "invented": false,
+      "me_http": 200,
+      "nic": "vc491276-ovh",
+      "ovhAccount_http": 200,
+      "source": "doppler:artcb-2"
+    },
+    {
+      "balance_eur": 0,
+      "balances": [
+        {
+          "account_redacted": true,
+          "currency": "EUR",
+          "text": "0.00 \u20ac",
+          "value": 0
+        }
+      ],
+      "cloud_credits": [
+        {
+          "available_eur": 199.84,
+          "credit_id": 263153,
+          "description": "Free Trial Offer",
+          "http": 200,
+          "products": null,
+          "project": "926bb1d6755e4f2c98ae9db06ef44e4f",
+          "total_eur": 200,
+          "used_eur": 0.16
+        },
+        {
+          "available_eur": 10,
+          "credit_id": 263152,
+          "description": "Credit provisionning",
+          "http": 200,
+          "products": null,
+          "project": "926bb1d6755e4f2c98ae9db06ef44e4f",
+          "total_eur": 10,
+          "used_eur": 0
+        }
+      ],
+      "cloud_projects_http": 200,
+      "dedicated_count": 0,
+      "dedicated_http": 200,
+      "email": "vgac42@gmail.com",
+      "invented": false,
+      "me_http": 200,
+      "nic": "xy4589-ovh",
+      "ovhAccount_http": 200,
+      "source": "doppler:artcb-4"
+    },
+    {
+      "balance_eur": null,
+      "email": null,
+      "invented": false,
+      "me_error": {
+        "class": "Client::Forbidden",
+        "errorCode": null,
+        "message": "This credential does not exist"
+      },
+      "me_http": 403,
+      "nic": null,
+      "source": "process_env_OVH_*"
+    },
+    {
+      "balance_eur": 0,
+      "balances": [
+        {
+          "account_redacted": true,
+          "currency": "EUR",
+          "text": "0.00 \u20ac",
+          "value": 0
+        }
+      ],
+      "cloud_credits": [
+        {
+          "available_eur": 199.84,
+          "credit_id": 263153,
+          "description": "Free Trial Offer",
+          "http": 200,
+          "products": null,
+          "project": "926bb1d6755e4f2c98ae9db06ef44e4f",
+          "total_eur": 200,
+          "used_eur": 0.16
+        },
+        {
+          "available_eur": 10,
+          "credit_id": 263152,
+          "description": "Credit provisionning",
+          "http": 200,
+          "products": null,
+          "project": "926bb1d6755e4f2c98ae9db06ef44e4f",
+          "total_eur": 10,
+          "used_eur": 0
+        }
+      ],
+      "cloud_projects_http": 200,
+      "dedicated_count": 0,
+      "dedicated_http": 200,
+      "email": "vgac42@gmail.com",
+      "invented": false,
+      "me_http": 200,
+      "nic": "xy4589-ovh",
+      "ovhAccount_http": 200,
+      "source": "local_ovh-node-4.env"
+    },
+    {
+      "invented": false,
+      "keys_present": false,
+      "nic_hint": null,
+      "source": "process_env_OVH3_*"
+    }
+  ]
+}

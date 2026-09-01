@@ -4,7 +4,7 @@
 **Certification :** **NOT MAINNET CERTIFIED** (`certified_distributed_mainnet=false`)  
 **Branche :** `cursor/ovh3-baremetal-hw-16d8`  
 **Décision :** D-047  
-**Simu :** `simulations/` `e2e193_ovh_order` (générée par `scripts/run_sim193_ovh_order.py`)
+**Simu :** `simulations/20260901T224536Z_e2e193_ovh_order` `failures=[]`
 
 ## Vocabulaire (chaque terme)
 

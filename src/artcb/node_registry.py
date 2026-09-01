@@ -122,17 +122,18 @@ NODES: dict[str, NodeSpec] = {
         ssh_user="ubuntu",
         public_notes=(
             "Fifth TEST hardware node (physical server, not an OpenStack VM). "
-            "Never reuse ovh-node-1 / 152.228.144.34. Not a genesis rewrite. "
-            "2026-09-01 hunt (D-047): no third OVH3 nic keys. The ~10 EUR is "
-            "Public Cloud credit on xy4589-ovh (OVH4 project node artcb ovh 4): "
-            "credit 263152 available 10.00 EUR (Credit provisionning); "
-            "free-trial 263153 available 199.84 EUR. ovhAccount FR prepaid "
-            "0.00 EUR on xy4589-ovh and vc491276-ovh. Cloud credit cannot pay "
-            "Eco/Kimsufi dedicated. KS-B 25skb012 = 9.99 EUR/month catalog FR; "
-            "GRA availability=unavailable; GET /order/cart/.../checkout HTTP 400 "
-            "'not available in gra'. Do not charge the OVH4 card. "
-            "KEY_API_ARTCB_DOPPLER_3 is AWS artcb3, not OVH. No project artcb-3. "
-            "artcb-baremetal-1 pending DOPPLER_PERSONAL_TOKEN. IP still empty."
+            "Never reuse ovh-node-1 / 152.228.144.34. Never destroy OVH4 VM "
+            "91.134.45.8 (node-artcb-ovh-4). Not a genesis rewrite. "
+            "2026-09-01 D-047: GET /dedicated/server on xy4589-ovh = []. "
+            "The ~10 EUR is Public Cloud credit on project "
+            "926bb1d6755e4f2c98ae9db06ef44e4f (credit 263152 = 10.00 EUR; "
+            "free-trial 263153 = 199.84 EUR). ovhAccount prepaid 0.00 EUR "
+            "(xy4589-ovh and vc491276-ovh). Cloud credit cannot pay Eco. "
+            "KS-B 25skb012 = 9.99 EUR/month catalog FR, GRA unavailable. "
+            "Cheapest in-stock Eco = KS-5 24sk50-v1 17.99 EUR > prepaid. "
+            "Do not charge the OVH4 card. Do not order on vc491276-ovh. "
+            "KEY_API_ARTCB_DOPPLER_3 is AWS artcb3, not OVH. IP still empty. "
+            "/dev/tpm0 not probed on a dedicated that was not delivered."
         ),
     ),
     "replit-node-1": NodeSpec(

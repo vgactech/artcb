@@ -1,0 +1,20 @@
+{
+  "availability": {
+    "datacenters": [
+      {
+        "availability": "unavailable",
+        "datacenter": "gra"
+      }
+    ],
+    "in_stock": false,
+    "planCode": "25skb012"
+  },
+  "gra": [
+    {
+      "availability": "unavailable",
+      "datacenter": "gra"
+    }
+  ],
+  "in_stock": false,
+  "planCode": "25skb012"
+}

@@ -305,7 +305,7 @@ def measure_named_ovh(creds: dict[str, str], *, source: str) -> dict[str, Any]:
             if isinstance(body, dict) and isinstance(body.get("balance"), dict):
                 balances.append(
                     {
-                        "account": ident,
+                        "account_redacted": True,
                         "value": body["balance"].get("value"),
                         "text": body["balance"].get("text"),
                         "currency": body["balance"].get("currencyCode"),
@@ -383,6 +383,17 @@ def hunt_all_ovh_accounts() -> dict[str, Any]:
     }
     if proc["OVH_APPLICATION_KEY"]:
         sources.append(measure_named_ovh(proc, source="process_env_OVH_*"))
+    node4_env = Path.home() / ".artcb" / "nodes" / "ovh-node-4.env"
+    if node4_env.is_file():
+        parsed: dict[str, str] = {}
+        for line in node4_env.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            parsed[key.strip()] = value.strip().strip('"').strip("'")
+        if parsed.get("OVH_APPLICATION_KEY"):
+            sources.append(measure_named_ovh(parsed, source="local_ovh-node-4.env"))
     ovh3 = ovh3_creds()
     sources.append(
         {
