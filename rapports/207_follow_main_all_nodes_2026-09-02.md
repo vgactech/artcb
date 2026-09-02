@@ -75,24 +75,31 @@ cd artcb && bash install.sh
 
 Après une mise à jour de GitHub `main`, le clone **propre** sur `main` avance tout seul. Un clone avec des commits locaux n’est **pas** écrasé.
 
-## 6. Données encore à collecter dans ce tour (après commit)
+## 6. Pose du timer — mesuré 2026-09-02T21:07:09Z
 
-Le JSON `logs/207_follow_main_*.json` doit contenir pour chaque nœud :
+Commande : `PYTHONPATH=src python3 scripts/artcb_sync_official_nodes.py --install`  
+JSON brut : `logs/207_follow_main_20260902T210709Z.json` (pas de secret).
 
-- health HTTP / HTTPS / domaine (code, SHA, branche, certif, PQC)
-- `hostname`, `git rev-parse HEAD`, `wc -l data/chain/blocks.jsonl`
-- `cat /etc/artcb/official_node`
-- `systemctl is-enabled artcb-follow-main.timer`
-- résultat `git ls-remote` (401 ou SHA) — pour prouver le repli tarball
-- sortie d’un run `artcb_follow_main.sh` (`FETCH_METHOD=…`, `DEPLOYED_SHA=…`)
+| Nœud | hostname | scp 4 fichiers | timer | `/etc/artcb/official_node` | `FETCH_METHOD` | `git ls-remote` | `BOOK` lignes | `DEPLOYED_SHA` |
+|------|----------|----------------|-------|----------------------------|----------------|-----------------|---------------|----------------|
+| ovh-node-1 | `artcb-node-1` | rc 0 ×4 | **enabled** (symlink timers.target) | `ovh-node-1` | **origin** | **LS_RC=0** `ad017bca… refs/heads/main` | **1** | `ad017bca05c2e3799c7dcd120ca1797968d499b6` |
+| ovh-node-2 | `node-artcb-ovh-2` | rc 0 ×4 | **enabled** | `ovh-node-2` | **origin** | **LS_RC=0** même SHA | **1** | même |
+| aws-node-3 | `ip-172-31-8-93` | rc 0 ×4 | **enabled** | `aws-node-3` | **origin** | **LS_RC=0** même SHA | **1** | même |
+| ovh-node-4 | `node-artcb-ovh-4` | rc 0 ×4 | **enabled** | `ovh-node-4` | **origin** | **LS_RC=0** même SHA | **1** | même |
 
-Cette section est mise à jour **après** `python3 scripts/artcb_sync_official_nodes.py --install` (keep-book, pas de wipe).
+Health **après** pose (inchangé, pas de restart : SHA identique) : HTTP/HTTPS/domaine **200** ×4, PQC ML-DSA-65, certif **false**.
+
+**401 GitHub :** avec `credential.helper` vide + HTTP/1.1, `git fetch origin` **réussit sur les 4 VM** (y compris OVH2/OVH4). Le repli tarball n’a pas été nécessaire cette fois. `install.sh` / genesis / rescue : non exécutés. `blocks.jsonl` : 1 ligne partout.
+
+pytest `tests/test_e2e207_follow_main.py` : **4 passed**. Smoke clone local : branche `cursor/ovh4-ssh-keepbook-568e` → *no checkout (will not destroy local work)*, exit 0.
+
+GitHub `main` au moment de cette pose : encore `ad017bca…`. Le code follow-main est **déjà sur les disques** (scp) + dans la PR. Dès que `main` GitHub avance, le timer 5 min (ou un run manuel) fait le keep-book tout seul.
 
 ## 7. Interdits respectés
 
 - Pas de rescue.
 - Pas de wipe `blocks.jsonl`.
 - Pas de `certified_distributed_mainnet=true`.
-- Pas de fusion #51.
+- Pas de fusion **PR #51**.
 - Token / PEM non affichés.
 - OVH1 inclus dans l’auto-suivi **sur ordre explicite**.
