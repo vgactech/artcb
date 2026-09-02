@@ -1370,3 +1370,11 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - `high_value_hybrid_enforced=false`. Handshake P2P toujours Ed25519 seule (écart dit).
 - Live SHA `30a7696a45888133b04e0ff78bbff2a9473c102f` ≠ `origin/main` `aeb132ae` ≠ SHA branche. Pas d’`install.sh` / deploy main / init-node. Certif **false**.
 - Tests : 50 passed (198+196+174+178+gouvernance). Rapport : `rapports/198_hybrid_and_call_sites_2026-09-02.md`.
+
+## [2026-09-02T15:00:00Z] Rapport 199 — push `main` + redeploy 4 nœuds keep-book
+
+- **`main`** = branche officielle GitHub. **Redéployer** = remplacer le code sur les 4 VMs existantes, disque/livre conservés.
+- Fusion : `origin/main` + 198 (contient D-045 + HW 196 + AND). Docs 195 + 197 sans secrets. Certif **false**.
+- SHA live **avant** `30a7696a45888133b04e0ff78bbff2a9473c102f` ; **après** `f8118ffea00b1cad5cb3396e29c923b379f6c815` × 4. `last_hash` `b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce` inchangé.
+- AND visible `/health` (`verify_hybrid_and`, `hybrid_and_call_sites_wired=true`). `tpm_type=absent`. Mesh 4 IP. Mutations P2P 401.
+- OVH2/OVH4 : fetch GitHub HTTPS KO → bundle git. Pas d’`install.sh`. Rapport : `rapports/199_main_redeploy_2026-09-02.md`.
