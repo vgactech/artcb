@@ -9,8 +9,11 @@ Il ne doit plus recevoir les clés OVH-2 ni AWS-3.
 | `ovh-node-1` | node artcb 1 | `artcb-blockchain` (coffre dédié `artcb-ovh-node-1` **non créé** — token service `artcb-node-1`) | `DOPPLER_TOKEN` | `152.228.144.34` GRA11 — **existe** |
 | `ovh-node-2` | node artcb 2 | **`artcb-2`** | `KEY_API_ARTCB_DOPPLER_2` | nic `vc491276-ovh` — **aucun** Public Cloud / VPS / IP (validation OVH en cours) |
 | `aws-node-3` | node artcb 3 | **`artcb3`** | `KEY_API_ARTCB_DOPPLER_3` | AWS `599128160879` — `i-085b74abd1aaf04ee` / `51.44.222.232` `eu-west-3` |
+| `ovh-node-4` | node artcb 4 | **`artcb-4`** (UI `ARTCB_API_4`) | `KEY_API_ARTCB_DOPPLER_4` | nic `xy4589-ovh` — GRA11 `91.134.45.8` |
 
 Les slugs 170 (`artcb-ovh-node-2`, `artcb-aws-node-3`) n’existent pas : l’utilisateur a créé `artcb-2` et `artcb3` dans l’UI Doppler. Le registre suit la réalité.
+
+**Nœud 4 — qui fabrique les 2 secrets :** l’agent **ne** peut **pas** coller `KEY_API_ARTCB_DOPPLER_4` ni `SSH_PRIVATE_KEY` dans le chat. Recette clic-par-clic : [`docs/NOEUD_4_LES_2_SECRETS.md`](NOEUD_4_LES_2_SECRETS.md).
 
 ## Création / binding
 
