@@ -18,6 +18,7 @@ export function DashboardLayout() {
   const NAV = [
     { section: "CORE", items: [
       { to: "/", label: t('nav_dashboard'), icon: "▶" },
+      { to: "/register", label: t('nav_register'), icon: "◉" },
       { to: "/memorize", label: t('nav_memorize'), icon: "W" },
       { to: "/graph", label: t('nav_graph'), icon: "◎" },
     ]},
@@ -115,9 +116,14 @@ export function DashboardLayout() {
               </button>
             </span>
           ) : (
+            <>
+            <Link to="/register" className="mc-header-kpi" style={{ color: "var(--mc-gold, #ffd700)", textDecoration: "none" }} title="Inscription biométrie">
+              ◉ {t("nav_register")}
+            </Link>
             <Link to="/wallets" className="mc-header-kpi" style={{ color: "var(--mc-gold, #ffd700)", textDecoration: "none" }} title="Aucun wallet actif — cliquez pour en créer un">
               ◇ Wallet ?
             </Link>
+            </>
           )}
         </div>
         <div className="mc-header-right">

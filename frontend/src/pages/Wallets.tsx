@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   authLogin,
   authLogout,
@@ -283,6 +284,14 @@ export function Wallets() {
   return (
     <div className="mc-page">
       <h1 className="dashboard-title">{t('wallets_title')}</h1>
+
+      <div className="panel bio-wallets-cta">
+        <h2>{t("wallets_bio_title")}</h2>
+        <p className="mc-muted">{t("bio_subtitle")}</p>
+        <Link to="/register" className="primary bio-choice" style={{ display: "inline-block", textDecoration: "none" }}>
+          {t("home_bio_cta_btn")}
+        </Link>
+      </div>
 
       {/* ── Wallet actif affiché en haut — avec bouton déconnexion ── */}
       {actorAddress ? (

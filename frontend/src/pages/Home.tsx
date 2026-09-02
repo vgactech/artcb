@@ -70,15 +70,20 @@ export function Home() {
         <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)", background: "rgba(255,215,0,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
           <div>
             <p style={{ margin: 0, color: "var(--mc-gold, #ffd700)", fontWeight: 700 }}>
-              ◇ Bienvenue sur ARTCB — Commencez par créer votre wallet !
+              {t("home_bio_cta")}
             </p>
             <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--muted)" }}>
-              Un wallet est votre identité sur la blockchain. Il vous permet de signer des blocs et de recevoir des récompenses ARTCB.
+              {t("bio_subtitle")}
             </p>
           </div>
-          <Link to="/wallets" className="primary" style={{ padding: "0.5rem 1.25rem", background: "var(--mc-gold, #ffd700)", color: "#000", fontWeight: 700, borderRadius: 4, textDecoration: "none", flexShrink: 0 }}>
-            Créer mon wallet →
-          </Link>
+          <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+            <Link to="/register" className="primary bio-home-cta" style={{ padding: "0.65rem 1.25rem", background: "var(--mc-gold, #ffd700)", color: "#000", fontWeight: 700, borderRadius: 4, textDecoration: "none", flexShrink: 0 }}>
+              {t("home_bio_cta_btn")}
+            </Link>
+            <Link to="/wallets" className="primary" style={{ padding: "0.5rem 1.25rem", borderRadius: 4, textDecoration: "none", flexShrink: 0 }}>
+              Créer mon wallet →
+            </Link>
+          </div>
         </div>
       )}
 
