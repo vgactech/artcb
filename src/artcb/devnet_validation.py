@@ -239,6 +239,26 @@ DECISIONS_203: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-02: Cursor public keys are not PEM. Recover OVH2 via rescue
+# without wiping the book; persist node SSH private keys in Doppler; keep-book
+# every reachable VM onto origin/main. OVH4 remains blocked without
+# KEY_API_ARTCB_DOPPLER_4. Certification lock unchanged.
+DECISIONS_204: Final[dict[str, str]] = {
+    "D-054": (
+        "GO recover ovh-node-2 SSH by Public Cloud rescue: mount the ~49G "
+        "original ext4 (never the rescue root), append the agent pubkey to "
+        "ubuntu authorized_keys, confirm blocks.jsonl, unrescue. Write "
+        "SSH_PRIVATE_KEY into Doppler artcb-2 and artcb3 (never the chat). "
+        "Keep-book origin/main by git bundle (GitHub HTTPS on the VMs is "
+        "stale). Machine benches must use each VM .venv (system python3 has "
+        "no nacl). Isolated tempdir TPS is not distributed mainnet TPS. "
+        "Official 4-node Cas B stays blocked until ovh-node-4 has "
+        "KEY_API_ARTCB_DOPPLER_4 plus SSH_PRIVATE_KEY. "
+        "OPERATOR_MAINNET_CERTIFICATION_GO stays False. No install.sh, "
+        "no genesis wipe, no 90 TPS as mainnet."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -323,5 +343,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_198": DECISIONS_198,
         "decisions_201": DECISIONS_201,
         "decisions_203": DECISIONS_203,
+        "decisions_204": DECISIONS_204,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

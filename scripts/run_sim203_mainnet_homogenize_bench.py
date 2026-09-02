@@ -336,7 +336,10 @@ print("LOAD", load)
 print("NPROC", os.cpu_count())
 print("FREE_HEAD", mem.splitlines()[1] if mem else "")
 t0 = time.perf_counter()
-subprocess.run(["python3","-m","scripts.bench_artcb_real"], cwd="/home/ubuntu/artcb", check=False)
+py = "/home/ubuntu/artcb/.venv/bin/python"
+if not Path(py).is_file():
+    py = "python3"
+subprocess.run([py, "-m", "scripts.bench_artcb_real"], cwd="/home/ubuntu/artcb", check=False)
 print("BENCH_WALL_S", round(time.perf_counter()-t0, 3))
 logs = sorted(Path("/home/ubuntu/artcb/logs").glob("bench_artcb_*.json"))
 print("BENCH_JSON", str(logs[-1]) if logs else "")

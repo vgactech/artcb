@@ -1,0 +1,78 @@
+{
+  "mesh": {
+    "ovh1": {
+      "ovh1": {
+        "skipped": true
+      },
+      "ovh2": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4116ms\nrtt min/avg/max/mdev = 0.463/0.519/0.596/0.046 ms",
+        "err": ""
+      },
+      "aws3": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4006ms\nrtt min/avg/max/mdev = 5.128/5.177/5.222/0.040 ms",
+        "err": ""
+      },
+      "ovh4": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4118ms\nrtt min/avg/max/mdev = 0.515/0.557/0.606/0.032 ms",
+        "err": ""
+      }
+    },
+    "ovh2": {
+      "ovh1": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4092ms\nrtt min/avg/max/mdev = 0.429/0.493/0.593/0.053 ms",
+        "err": ""
+      },
+      "ovh2": {
+        "skipped": true
+      },
+      "aws3": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4007ms\nrtt min/avg/max/mdev = 5.350/5.411/5.564/0.078 ms",
+        "err": ""
+      },
+      "ovh4": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4093ms\nrtt min/avg/max/mdev = 0.424/0.485/0.537/0.047 ms",
+        "err": ""
+      }
+    },
+    "aws3": {
+      "ovh1": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4005ms\nrtt min/avg/max/mdev = 5.084/5.324/6.150/0.413 ms",
+        "err": ""
+      },
+      "ovh2": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4007ms\nrtt min/avg/max/mdev = 5.333/5.474/5.891/0.209 ms",
+        "err": ""
+      },
+      "aws3": {
+        "skipped": true
+      },
+      "ovh4": {
+        "rc": 0,
+        "out": "5 packets transmitted, 5 received, 0% packet loss, time 4007ms\nrtt min/avg/max/mdev = 5.669/5.684/5.699/0.012 ms",
+        "err": ""
+      }
+    }
+  },
+  "iperf": {
+    "ovh1": {
+      "rc": 0,
+      "out": "no_iperf3"
+    },
+    "ovh2": {
+      "rc": 0,
+      "out": "no_iperf3"
+    },
+    "aws3": {
+      "rc": 0,
+      "out": "no_iperf3"
+    }
+  }
+}

@@ -47,6 +47,7 @@ def test_sim203_keep_book_four_campaigns_never_wipe() -> None:
     assert "campaigns" in sim
     assert "measured_bandwidth_mbps" in sim
     assert "run_machine_bench" in sim
+    assert "/home/ubuntu/artcb/.venv/bin/python" in sim
     assert "ping_mesh" in sim
     assert "OPERATOR_MAINNET_CERTIFICATION_GO" in sim
     assert "rejected_stale_origin" in sim
