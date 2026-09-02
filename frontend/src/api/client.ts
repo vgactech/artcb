@@ -238,6 +238,123 @@ export async function authLogout(sessionToken: string) {
   await api.post("/auth/logout", {}, { headers: { Authorization: `Bearer ${sessionToken}` } });
 }
 
+export type WebAuthnPublicKey = Record<string, unknown>;
+
+export async function webauthnRegisterOptions(name: string, modality: "fingerprint" | "face" | "both", createWallet = true) {
+  const { data } = await api.post("/auth/webauthn/register/options", {
+    name,
+    modality,
+    create_wallet: createWallet,
+  });
+  return data as {
+    publicKey: WebAuthnPublicKey;
+    create_wallet: boolean;
+    raw_biometric_never_stored: boolean;
+    modality: string;
+    next_modality?: string | null;
+  };
+}
+
+export async function webauthnRegisterVerify(
+  name: string,
+  modality: "fingerprint" | "face" | "both",
+  credential: unknown,
+  createWallet = true,
+) {
+  const { data } = await api.post("/auth/webauthn/register/verify", {
+    name,
+    modality,
+    credential,
+    create_wallet: createWallet,
+  });
+  return data as {
+    ok: boolean;
+    session_token: string;
+    wallet_name: string;
+    address: string;
+    expires_in: number;
+    seed_hex?: string;
+    WARNING?: string;
+    wallet_created: boolean;
+    enrolled: string;
+  };
+}
+
+export async function webauthnLoginOptions(name: string, modality?: "fingerprint" | "face") {
+  const { data } = await api.post("/auth/webauthn/login/options", { name, modality });
+  return data as { publicKey: WebAuthnPublicKey };
+}
+
+export async function webauthnLoginVerify(name: string, credential: unknown) {
+  const { data } = await api.post("/auth/webauthn/login/verify", { name, credential });
+  return data as {
+    ok: boolean;
+    session_token: string;
+    wallet_name: string;
+    address: string;
+    expires_in: number;
+    modality?: string;
+  };
+}
+
+export async function webauthnStatus(name: string) {
+  const { data } = await api.get("/auth/webauthn/status", { params: { name } });
+  return data as {
+    wallet_name: string;
+    wallet_exists: boolean;
+    fingerprint_enrolled: boolean;
+    face_webauthn_enrolled: boolean;
+    face_camera_enrolled: boolean;
+    raw_biometric_stored: boolean;
+  };
+}
+
+export async function faceEnrollOptions(name: string, createWallet = true) {
+  const { data } = await api.post("/auth/face/enroll/options", { name, create_wallet: createWallet });
+  return data as { nonce: string; liveness_required: boolean; camera_facing_mode: string };
+}
+
+export async function faceEnrollVerify(body: {
+  name: string;
+  nonce: string;
+  device_secret: string;
+  liveness_ok: boolean;
+  create_wallet?: boolean;
+}) {
+  const { data } = await api.post("/auth/face/enroll/verify", body);
+  return data as {
+    ok: boolean;
+    session_token: string;
+    wallet_name: string;
+    address: string;
+    expires_in: number;
+    seed_hex?: string;
+    WARNING?: string;
+    wallet_created: boolean;
+  };
+}
+
+export async function faceLoginOptions(name: string) {
+  const { data } = await api.post("/auth/face/login/options", { name });
+  return data as { nonce: string };
+}
+
+export async function faceLogin(body: {
+  name: string;
+  nonce: string;
+  device_secret: string;
+  liveness_ok: boolean;
+}) {
+  const { data } = await api.post("/auth/face/login", body);
+  return data as {
+    ok: boolean;
+    session_token: string;
+    wallet_name: string;
+    address: string;
+    expires_in: number;
+  };
+}
+
 export async function fetchBlockDetail(index: number) {
   const { data } = await api.get(`/chain/block/${index}`);
   return data.block as ChainBlock;

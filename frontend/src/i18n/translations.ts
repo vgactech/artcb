@@ -25,6 +25,7 @@ export interface Translations {
   nav_groups: string;
   nav_api_keys: string;
   nav_agent_memory: string;
+  nav_register: string;
   
   // Dashboard
   dashboard_title: string;
@@ -162,6 +163,26 @@ export interface Translations {
   home_view_all: string;
   home_reward_note: string;
   home_ir_live: string;
+  home_bio_cta: string;
+  home_bio_cta_btn: string;
+
+  bio_title: string;
+  bio_subtitle: string;
+  bio_fingerprint: string;
+  bio_face: string;
+  bio_both: string;
+  bio_name_label: string;
+  bio_name_placeholder: string;
+  bio_camera_help: string;
+  bio_webauthn_prompt: string;
+  bio_unsupported: string;
+  bio_login: string;
+  bio_login_fingerprint: string;
+  bio_login_face: string;
+  bio_register_tab: string;
+  bio_raw_never_stored: string;
+  bio_seed_once: string;
+  wallets_bio_title: string;
   
   // Memorize Page
   memorize_title: string;
@@ -315,6 +336,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_groups: 'Groupes',
     nav_api_keys: 'Clés API',
     nav_agent_memory: 'Mémoire IA',
+    nav_register: 'S’inscrire',
     // Dashboard
     dashboard_title: 'Tableau de bord ARTCB',
     dashboard_subtitle: 'Mémoire collective décentralisée',
@@ -443,6 +465,25 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     home_view_all: 'Voir tout →',
     home_reward_note: 'Reward genesis epoch : 1 ARTCB / bloc',
     home_ir_live: 'IR live',
+    home_bio_cta: 'Bienvenue sur ARTCB — inscrivez-vous par biométrie, par visage, ou les deux.',
+    home_bio_cta_btn: 'S’inscrire par biométrie',
+    bio_title: 'Inscription biométrique',
+    bio_subtitle: 'Empreinte sur le capteur du téléphone, reconnaissance faciale (Face ID / caméra) si vous ne pouvez pas utiliser vos mains, ou les deux.',
+    bio_fingerprint: 'Empreinte digitale',
+    bio_face: 'Reconnaissance faciale',
+    bio_both: 'Empreinte + visage',
+    bio_name_label: 'Nom du wallet',
+    bio_name_placeholder: 'votre-nom',
+    bio_camera_help: 'Caméra avant — reconnaissance faciale',
+    bio_webauthn_prompt: 'Confirmez l’empreinte ou Face ID sur l’appareil…',
+    bio_unsupported: 'WebAuthn indisponible — la caméra faciale reste proposée. Passez en HTTPS (www.artcb.me).',
+    bio_login: 'Connexion biométrie',
+    bio_login_fingerprint: 'Se connecter avec l’empreinte',
+    bio_login_face: 'Se connecter avec le visage',
+    bio_register_tab: 'Créer un compte',
+    bio_raw_never_stored: 'Aucune image d’empreinte ou de visage n’est stockée ni écrite dans le livre. Seules des clés publiques WebAuthn (et un secret d’appareil pour la caméra) sont conservées.',
+    bio_seed_once: 'Sauvegardez cette seed maintenant — elle ne sera plus affichée.',
+    wallets_bio_title: 'Inscription sans mot de passe',
     // Memorize Page
     memorize_title: 'Mémoriser',
     memorize_session: 'Session',
@@ -558,7 +599,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_graph: 'Graph', nav_wallets: 'Wallets', nav_mining: 'Mining',
     nav_system: 'System', nav_logs: 'Logs', nav_console: 'Console',
     nav_integrations: 'Integrations', nav_network: 'P2P Network',
-    nav_governance: 'Governance', nav_groups: 'Groups', nav_api_keys: 'API Keys', nav_agent_memory: 'AI Memory',
+    nav_governance: 'Governance', nav_groups: 'Groups', nav_api_keys: 'API Keys', nav_agent_memory: 'AI Memory', nav_register: 'Sign up',
     dashboard_title: 'ARTCB Dashboard', dashboard_subtitle: 'Decentralized Collective Memory',
     dashboard_blocks: 'Blocks', dashboard_pol_score: 'PoL Score', dashboard_graphs: 'Graphs',
     layout_visibility: 'Network', layout_visibility_private: 'PRIVATE',
@@ -609,6 +650,25 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     home_demo_not_found: 'not found', home_activity_heatmap: 'Block activity (heatmap)',
     home_latest_blocks: 'Latest blocks', home_view_all: 'View all →',
     home_reward_note: 'Genesis epoch reward: 1 ARTCB / block', home_ir_live: 'IR live',
+    home_bio_cta: 'Welcome to ARTCB — register with fingerprint, face, or both.',
+    home_bio_cta_btn: 'Sign up with biometrics',
+    bio_title: 'Biometric registration',
+    bio_subtitle: 'Fingerprint on your phone sensor, face unlock if you cannot use your hands, or both.',
+    bio_fingerprint: 'Fingerprint',
+    bio_face: 'Face recognition',
+    bio_both: 'Fingerprint + face',
+    bio_name_label: 'Wallet name',
+    bio_name_placeholder: 'your-name',
+    bio_camera_help: 'Front camera — face recognition',
+    bio_webauthn_prompt: 'Confirm fingerprint or Face ID on the device…',
+    bio_unsupported: 'WebAuthn unavailable — camera face remains offered. Use HTTPS (www.artcb.me).',
+    bio_login: 'Biometric login',
+    bio_login_fingerprint: 'Sign in with fingerprint',
+    bio_login_face: 'Sign in with face',
+    bio_register_tab: 'Create account',
+    bio_raw_never_stored: 'No fingerprint or face image is stored or written on-chain. Only WebAuthn public keys (and a device secret for the camera path) are kept.',
+    bio_seed_once: 'Save this seed now — it will never be shown again.',
+    wallets_bio_title: 'Passwordless registration',
     memorize_title: 'Memorize', memorize_session: 'Session',
     memorize_session_id: 'session_id', memorize_use_llm: 'use_llm',
     memorize_use_pool: 'distributed compute (pool E2E)',

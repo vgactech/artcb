@@ -239,6 +239,20 @@ DECISIONS_203: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_205: Final[dict[str, str]] = {
+    "D-055": (
+        "Start without rescue: SSH for live VMs comes from Doppler "
+        "SSH_PRIVATE_KEY (artcb-2 / artcb3), never from a rescue disk. "
+        "OVH4 keep-book waits for KEY_API_ARTCB_DOPPLER_4 + SSH_PRIVATE_KEY "
+        "in project artcb-4; Cursor ARTCB_OVH_NODE_* are public keys, not PEMs. "
+        "www.artcb.me enrollment is WebAuthn platform authenticator "
+        "(fingerprint / Face ID) plus optional camera face-unlock for "
+        "motor disability. Raw biometric samples are rejected and never "
+        "stored on chain. OPERATOR_MAINNET_CERTIFICATION_GO stays False. "
+        "No install.sh, no genesis wipe, no rescue."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -323,5 +337,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_198": DECISIONS_198,
         "decisions_201": DECISIONS_201,
         "decisions_203": DECISIONS_203,
+        "decisions_205": DECISIONS_205,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }
