@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-09-02T18:22:00Z",
+  "origin_main": "5b18eb88e91771eba6eb73facbbce2052a1b76a6",
+  "certified_distributed_mainnet": false,
+  "operator_certification_go": false,
+  "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+  "height": 1,
+  "nodes": {
+    "ovh1": {"git_sha": "5b18eb88e91771eba6eb73facbbce2052a1b76a6", "git_branch": "main", "ssh": true},
+    "aws3": {"git_sha": "5b18eb88e91771eba6eb73facbbce2052a1b76a6", "git_branch": "main", "ssh": true, "https": "https://n3.artcb.me/health"},
+    "ovh2": {"git_sha": "f28418084d84e00d3d5290ceefb846b30af527de", "git_branch": "cursor/artcb-me-official-16d8", "ssh": false},
+    "ovh4": {"git_sha": "f28418084d84e00d3d5290ceefb846b30af527de", "git_branch": "cursor/artcb-me-official-16d8", "ssh": false}
+  },
+  "historical_90_tps": "lab_2026-08-03_not_distributed_mainnet"
+}
