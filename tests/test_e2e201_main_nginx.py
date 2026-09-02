@@ -22,7 +22,14 @@ SIM = ROOT / "scripts" / "run_sim201_main_nginx.py"
 AWS = ROOT / "scripts" / "provision_aws_ec2.py"
 
 
-def test_d052_lock_and_certified_stays_false() -> None:
+def test_certification_gate_imports_with_repo_root_on_path() -> None:
+    """Live uvicorn is `src.api.main:app` from repo root (no PYTHONPATH=src)."""
+    spec = (ROOT / "src" / "artcb" / "consensus_spec.py").read_text(encoding="utf-8")
+    assert "from src.artcb.economics.economic_snapshot" in spec
+    gate = certification_gate()
+    assert gate["certified_distributed_mainnet"] is False
+    assert "operator_certification_go=false" in gate["reason"]
+    assert gate["live_bft_implemented"] is True
     text = DECISIONS_201["D-052"]
     assert "git_branch=main" in text
     assert "Welcome to nginx" in text

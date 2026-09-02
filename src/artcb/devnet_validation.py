@@ -248,10 +248,15 @@ def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]
     v = verdicts or {}
     required_pass = ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")
     missing = [k for k in required_pass if v.get(k) != "PASS"]
+    live_bft = False
     try:
         from src.artcb.consensus_spec import LIVE_BFT_IMPLEMENTED as live_bft
-    except ModuleNotFoundError:
-        from artcb.consensus_spec import LIVE_BFT_IMPLEMENTED as live_bft
+    except Exception:  # noqa: BLE001 — health must not 500; try src-less import
+        try:
+            from artcb.consensus_spec import LIVE_BFT_IMPLEMENTED as live_bft
+        except Exception:  # noqa: BLE001
+            live_bft = False
+    live_bft = bool(live_bft)
 
     reasons = []
     if missing:

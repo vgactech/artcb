@@ -9,7 +9,10 @@ from __future__ import annotations
 
 from typing import Any, Final
 
-from artcb.economics.economic_snapshot import DEFAULT_FINALITY_CONFIRMATIONS
+try:
+    from src.artcb.economics.economic_snapshot import DEFAULT_FINALITY_CONFIRMATIONS
+except ModuleNotFoundError:
+    from artcb.economics.economic_snapshot import DEFAULT_FINALITY_CONFIRMATIONS
 
 LIVE_BFT_IMPLEMENTED: Final[bool] = True
 
