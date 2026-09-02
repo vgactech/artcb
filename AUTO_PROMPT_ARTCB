@@ -1386,3 +1386,10 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Apex/`n1`/`node`/`www` → `152.228.144.34` ; `n2` → `151.80.107.29` ; `n3` → `51.44.222.232` ; `n4` → `91.134.45.8`. Pas d’AAAA. HTTP:8000 via `artcb.me` **200**. Let’s Encrypt **non** posé (`certbot` absent ; `nginx:80` welcome).
 - Code : `ARTCB_DOMAIN=artcb.me` officiel, `artcb.space` CORS transition. Import live `src.artcb.config` (crash OVH1 `from artcb.config` corrigé). Certif **false**. SHA live `f28418084d84e00d3d5290ceefb846b30af527de` × 4 (`origin/main` docs `3f5c109`). height 1 hash `b8a7d5ef…bfce` inchangé.
 - Push `main` direct (`ManagePullRequest` absent). Rapport : `rapports/200_artcb_me_official_2026-09-02.md`. 199 **non écrasé**.
+
+## [2026-09-02T16:50:00Z] Rapport 201 — `main` × 4 + nginx artcb.me + PIN Replit
+
+- **Pourquoi certified false :** `OPERATOR_MAINNET_CERTIFICATION_GO=false` + `/health` sans verdicts DV. D-052 ne retourne **pas** le verrou. `certification_reason` exposé.
+- **Pourquoi pas `main` sur les VMs :** keep-book 200 sur `cursor/artcb-me-official-16d8` (SHA `f284180`). GO opérateur : checkout `main` keep-book × 4.
+- **Pourquoi Welcome nginx :** `:80` = site default Ubuntu ; API = `:8000`. AWS SG sans 80/443. Vhost proxy + ouverture SG.
+- **PIN Replit :** défaut `ARTCB_REPLIT_BRANCH=main`. `ARTCB_REPLIT_PIN_SHA` = SHA complet `origin/main`. Publish/Redeploy. Rapport : `rapports/201_main_nginx_artcb_me_2026-09-02.md`.

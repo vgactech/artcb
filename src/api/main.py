@@ -48,6 +48,26 @@ from src.api.network_routes import router as network_router
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
 
 
+def public_certification_block() -> dict:
+    """Honest /health lock. Never invents PASS or flips the operator GO."""
+    from src.artcb.devnet_validation import certification_gate
+
+    try:
+        gate = certification_gate()
+    except Exception as exc:  # noqa: BLE001 — health must stay 200
+        logger.error("certification_gate failed: %s", type(exc).__name__)
+        return {
+            "certified_distributed_mainnet": False,
+            "certification_reason": "gate_error",
+            "operator_certification_go": False,
+        }
+    return {
+        "certified_distributed_mainnet": bool(gate.get("certified_distributed_mainnet")),
+        "certification_reason": gate.get("reason") or "",
+        "operator_certification_go": bool(gate.get("operator_certification_go")),
+    }
+
+
 def cors_hosts_for_domain(domain: str) -> list[str]:
     """Apex + labels DNS (n1…n4, node, www) for one public domain."""
     hosts = [domain]
@@ -123,6 +143,7 @@ def create_app() -> FastAPI:
             from src.artcb.p2p.seed_discovery import public_directory_payload
             identity = release_identity()
             pqc_block = public_health_block(_pqc)
+            cert = public_certification_block()
             directory = public_directory_payload(
                 live=False,
                 data_dir=state.settings.data_dir,
@@ -135,6 +156,9 @@ def create_app() -> FastAPI:
                 "git_branch": identity["git_branch"],
                 "release_integrity": identity.get("release_integrity"),
                 "pin_sha": identity.get("pin_sha"),
+                "certified_distributed_mainnet": cert["certified_distributed_mainnet"],
+                "certification_reason": cert["certification_reason"],
+                "operator_certification_go": cert["operator_certification_go"],
                 "bootstrap_mode": True,
                 "network_id": NETWORK_ID,
                 "protocol_version": PROTOCOL_VERSION,
@@ -346,16 +370,10 @@ def create_app() -> FastAPI:
             public_health_block,
         )
         from src.artcb.release import release_identity
-        from src.artcb.devnet_validation import certification_gate
         from src.artcb.security.hardware_identity import public_machine_view
         _pqc = pqc_available()
         identity = release_identity()
-        try:
-            gate = certification_gate()
-            certified = bool(gate.get("certified_distributed_mainnet"))
-        except Exception as exc:  # noqa: BLE001 — health must stay 200
-            logger.error("certification_gate in /health failed: %s", type(exc).__name__)
-            certified = False
+        cert = public_certification_block()
         return {
             "status": "healthy",
             "service": "ARTCB API",
@@ -369,7 +387,9 @@ def create_app() -> FastAPI:
             "protocol_version": PROTOCOL_VERSION,
             "genesis_hash": GENESIS_HASH,
             "pqc": public_health_block(_pqc),
-            "certified_distributed_mainnet": certified,
+            "certified_distributed_mainnet": cert["certified_distributed_mainnet"],
+            "certification_reason": cert["certification_reason"],
+            "operator_certification_go": cert["operator_certification_go"],
             "machine": public_machine_view(state.device_identity),
         }
 

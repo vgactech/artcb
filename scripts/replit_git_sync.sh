@@ -7,7 +7,7 @@
 
 artcb_replit_git_sync() {
   local REPL_DIR="${REPL_DIR:-$(pwd)}"
-  local ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-cursor/replit-sync-ready-16d8}"
+  local ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-main}"
   local ARTCB_REPLIT_REMOTE="${ARTCB_REPLIT_REMOTE:-https://github.com/vgactech/artcb.git}"
   local ARTCB_REPLIT_PIN_SHA="${ARTCB_REPLIT_PIN_SHA:-}"
   local _TIP=""

@@ -205,6 +205,22 @@ DECISIONS_198: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-02: merge artcb.me onto main, kill nginx default, new Replit PIN.
+DECISIONS_201: Final[dict[str, str]] = {
+    "D-052": (
+        "GO merge origin/main and keep-book all four live VMs onto git_branch=main. "
+        "artcb.me DNS already points at the four IPs; the nginx default site on :80 "
+        "is why the domain showed 'Welcome to nginx' — replace it with a reverse "
+        "proxy to 127.0.0.1:8000 (keep :8000 and :8443). Open AWS SG tcp/80+443. "
+        "Let's Encrypt when certbot succeeds; otherwise HTTP:80 still serves ARTCB. "
+        "Replit default branch is main; ARTCB_REPLIT_PIN_SHA is origin/main full SHA "
+        "(ancestor fast-forward OK). CORS keeps artcb.space. "
+        "certified_distributed_mainnet stays false: OPERATOR_MAINNET_CERTIFICATION_GO "
+        "remains False and /health calls certification_gate() without DV verdicts. "
+        "Do not flip the lock. No install.sh, no genesis wipe, no domain order."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -282,5 +298,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_192": DECISIONS_192,
         "decisions_196": DECISIONS_196,
         "decisions_198": DECISIONS_198,
+        "decisions_201": DECISIONS_201,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

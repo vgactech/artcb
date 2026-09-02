@@ -47,7 +47,7 @@ if [ -z "${ARTCB_NODE_PUBLIC_URL:-}" ]; then
 fi
 
 CURRENT_STEP="git_sync"
-ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-cursor/replit-sync-ready-16d8}"
+ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-main}"
 ARTCB_REPLIT_REMOTE="${ARTCB_REPLIT_REMOTE:-https://github.com/vgactech/artcb.git}"
 # PIN is a supply-chain check, not a checkout target. Never default to 178:
 # a shallow clone makes merge-base fail and 181 then rewound to 4cb2943.

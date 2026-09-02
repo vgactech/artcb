@@ -235,45 +235,14 @@ def default_vpc_and_subnet(env: dict[str, str]) -> tuple[str | None, str | None]
     return vpc_id, subnet_id
 
 
-def ensure_security_group(env: dict[str, str], vpc_id: str) -> str | None:
-    code, out, _err = _aws(
-        [
-            "ec2",
-            "describe-security-groups",
-            "--region",
-            REGION,
-            "--filters",
-            f"Name=group-name,Values={SG_NAME}",
-            f"Name=vpc-id,Values={vpc_id}",
-        ],
-        env,
-    )
-    payload = _json(out) if code == 0 else None
-    if isinstance(payload, dict) and payload.get("SecurityGroups"):
-        return payload["SecurityGroups"][0].get("GroupId")
-    ccode, cout, _cerr = _aws(
-        [
-            "ec2",
-            "create-security-group",
-            "--region",
-            REGION,
-            "--group-name",
-            SG_NAME,
-            "--description",
-            "ARTCB aws-node-3 SSH 22 HTTP 8000 TLS 8443",
-            "--vpc-id",
-            vpc_id,
-            "--tag-specifications",
-            "ResourceType=security-group,Tags=[{Key=Name,Value=artcb-aws-node-3-sg},{Key=artcb-node-id,Value=aws-node-3}]",
-        ],
-        env,
-    )
-    created = _json(cout) if ccode == 0 else None
-    sg_id = created.get("GroupId") if isinstance(created, dict) else None
-    if not sg_id:
-        return None
-    for port in (22, 8000, 8443):
-        _aws(
+SG_INGRESS_PORTS = (22, 80, 443, 8000, 8443)
+
+
+def authorize_sg_ports(env: dict[str, str], sg_id: str, ports: tuple[int, ...] = SG_INGRESS_PORTS) -> dict[int, int]:
+    """Idempotent: Duplicate is AWS 400, treated as already-open (rc 0 here)."""
+    results: dict[int, int] = {}
+    for port in ports:
+        code, _out, _err = _aws(
             [
                 "ec2",
                 "authorize-security-group-ingress",
@@ -296,6 +265,51 @@ def ensure_security_group(env: dict[str, str], vpc_id: str) -> str | None:
             ],
             env,
         )
+        results[port] = 0 if code == 0 or "InvalidPermission.Duplicate" in (_err or "") else code
+    return results
+
+
+def ensure_security_group(env: dict[str, str], vpc_id: str) -> str | None:
+    code, out, _err = _aws(
+        [
+            "ec2",
+            "describe-security-groups",
+            "--region",
+            REGION,
+            "--filters",
+            f"Name=group-name,Values={SG_NAME}",
+            f"Name=vpc-id,Values={vpc_id}",
+        ],
+        env,
+    )
+    payload = _json(out) if code == 0 else None
+    if isinstance(payload, dict) and payload.get("SecurityGroups"):
+        sg_id = payload["SecurityGroups"][0].get("GroupId")
+        if sg_id:
+            authorize_sg_ports(env, sg_id)
+        return sg_id
+    ccode, cout, _cerr = _aws(
+        [
+            "ec2",
+            "create-security-group",
+            "--region",
+            REGION,
+            "--group-name",
+            SG_NAME,
+            "--description",
+            "ARTCB aws-node-3 SSH 22 HTTP 80/8000 TLS 443/8443",
+            "--vpc-id",
+            vpc_id,
+            "--tag-specifications",
+            "ResourceType=security-group,Tags=[{Key=Name,Value=artcb-aws-node-3-sg},{Key=artcb-node-id,Value=aws-node-3}]",
+        ],
+        env,
+    )
+    created = _json(cout) if ccode == 0 else None
+    sg_id = created.get("GroupId") if isinstance(created, dict) else None
+    if not sg_id:
+        return None
+    authorize_sg_ports(env, sg_id)
     return sg_id
 
 
@@ -472,7 +486,25 @@ apt-get install -y git curl python3 python3-venv python3-pip build-essential cma
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--yes", action="store_true", help="call RunInstances if EC2 is allowed")
+    parser.add_argument(
+        "--open-http",
+        action="store_true",
+        help="ensure existing SG allows tcp/80 and tcp/443 (no launch)",
+    )
     args = parser.parse_args()
+    if args.open_http:
+        env = _aws_env()
+        vpc_id, _subnet = default_vpc_and_subnet(env)
+        result: dict[str, Any] = {"open_http": True, "vpc_id": vpc_id}
+        if vpc_id:
+            sg_id = ensure_security_group(env, vpc_id)
+            result["security_group_id"] = sg_id
+            result["ok"] = bool(sg_id)
+        else:
+            result["ok"] = False
+            result["reason"] = "no_vpc"
+        print(json.dumps(result, indent=2, sort_keys=True, default=str))
+        return 0 if result.get("ok") else 3
     diag = diagnose()
     if args.yes and diag.get("ec2_allowed"):
         diag = launch(diag)

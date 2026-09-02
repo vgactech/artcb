@@ -144,7 +144,7 @@ _log "STEP end port=$ARTCB_PORT"
 # (supply-chain: a push to the branch would otherwise become live code).
 CURRENT_STEP="git_sync"
 _log "STEP begin"
-ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-${GITHUB_BRANCH:-cursor/replit-sync-ready-16d8}}"
+ARTCB_REPLIT_BRANCH="${ARTCB_REPLIT_BRANCH:-${GITHUB_BRANCH:-main}}"
 ARTCB_REPLIT_REMOTE="${ARTCB_REPLIT_REMOTE:-https://github.com/vgactech/artcb.git}"
 ARTCB_REPLIT_PIN_SHA="${ARTCB_REPLIT_PIN_SHA:-}"
 _write_release() {
