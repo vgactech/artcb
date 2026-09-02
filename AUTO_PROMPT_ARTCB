@@ -1400,3 +1400,11 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Live × 4 mesuré (CPU/RAM/disque/GPU/TPM/assurance E). OVH1 SHA `642b0e1` `main` ; n2/n3/n4 encore `f284180`. height 1 inchangé.
 - 100 Mbps API = fallback trafic faible, **pas** un speedtest. TPS 90 = labo 2026-08-03, **pas** mainnet.
 - Rapport : `rapports/202_benchmark_inventory_live_2026-09-02.md`.
+
+## [2026-09-02T18:20:00Z] Rapport 203 — mainnet opérationnel pour benches (D-053)
+
+- Fusionner l’inventaire 202 + métrologie honnête (`measured` / `estimated` / `fallback` / `bandwidth_source`) dans `origin/main`.
+- Keep-book des nœuds **SSH-joignables** (OVH1 clé Cursor ; AWS3 via Doppler `artcb3` + Instance Connect — les access keys Cursor `AWS_API_*` sont un **autre** jeu, invalide).
+- OVH2 : API OpenStack OK, clé privée absente de Doppler ; rescue n’accepte que la clé `artcb-ovh-node-2`. Snapshot Glance `artcb-ovh2-keepbook-203` créé. Ne pas reinstall. OVH4 : pas de `KEY_API_ARTCB_DOPPLER_4`.
+- `OPERATOR_MAINNET_CERTIFICATION_GO` reste **False**. 90 TPS = labo. Campagnes : machine / WAN / chaîne locale / distribué.
+- Rapport : `rapports/203_mainnet_homogenize_bench_2026-09-02.md`.

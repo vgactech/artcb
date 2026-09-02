@@ -221,6 +221,24 @@ DECISIONS_201: Final[dict[str, str]] = {
     ),
 }
 
+# Operator 2026-09-02: homogenize four live VMs onto origin/main and start
+# official benches on the real book. Certification lock unchanged.
+DECISIONS_203: Final[dict[str, str]] = {
+    "D-053": (
+        "GO merge inventory+metrology onto origin/main and keep-book every "
+        "reachable live VM onto that SHA. Official benches are four separate "
+        "campaigns (machine, WAN mesh, local chain, distributed). "
+        "bandwidth_mbps idle 100 is a fallback, not a speedtest — publish "
+        "measured_bandwidth_mbps / estimated_bandwidth_mbps / "
+        "fallback_bandwidth_mbps / bandwidth_source. /metrics RTT includes "
+        "a voluntary sample sleep. Historical 90 TPS is lab 2026-08-03, not "
+        "distributed mainnet. Do not publish a single magic TPS. "
+        "OPERATOR_MAINNET_CERTIFICATION_GO stays False: operational mainnet "
+        "means the four VMs run origin/main on the live book, not "
+        "certified_distributed_mainnet=true. No install.sh, no genesis wipe."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -304,5 +322,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_196": DECISIONS_196,
         "decisions_198": DECISIONS_198,
         "decisions_201": DECISIONS_201,
+        "decisions_203": DECISIONS_203,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

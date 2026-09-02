@@ -18,6 +18,7 @@ from artcb.system.hardware import (
     detect_hardware,
     live_metrics,
     measure_network_bandwidth,
+    measure_network_bandwidth_report,
     psutil_available,
     NETWORK_CLASS_TRES_FAIBLE,
     NETWORK_CLASS_FAIBLE,
@@ -174,6 +175,32 @@ def test_hardware_profile_includes_network():
     assert "bandwidth_mbps" in d["network"]
     assert "class" in d["network"]
     assert d["network"]["bandwidth_mbps"] >= 0.0
+    assert "measured_bandwidth_mbps" in d["network"]
+    assert "estimated_bandwidth_mbps" in d["network"]
+    assert "fallback_bandwidth_mbps" in d["network"]
+    assert d["network"]["bandwidth_source"] == "not_sampled"
+
+
+def test_bandwidth_report_separates_measured_and_fallback():
+    """Idle sample must not be published as a WAN speedtest (D-053)."""
+    report = measure_network_bandwidth_report(sample_seconds=0.05)
+    assert report["bandwidth_source"] in {
+        "measured",
+        "idle_fallback",
+        "fast_boot",
+        "psutil_missing",
+        "error",
+    }
+    assert "measured_bandwidth_mbps" in report
+    assert "estimated_bandwidth_mbps" in report
+    assert "fallback_bandwidth_mbps" in report
+    live = live_metrics()
+    net = live["network"]
+    assert net["bandwidth_mbps"] == net["measured_bandwidth_mbps"]
+    assert live["metrics_timing"]["network_sample_sleep_seconds"] == 0.5
+    if net["bandwidth_source"] == "idle_fallback":
+        assert net["estimated_bandwidth_mbps"] == 100.0
+        assert net["measured_bandwidth_mbps"] < 10.0
 
 
 # ── Tests compute_max_contributors dynamique ───────────────────────────────

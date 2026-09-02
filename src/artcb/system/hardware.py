@@ -52,9 +52,12 @@ class HardwareProfile:
     gpus: list[dict[str, Any]] = field(default_factory=list)
     faiss_gpu_count: int = 0
     cuda_visible: bool = False
-    # Bande passante reseau mesuree (ajoutee rapport 113)
+    # Bande passante reseau : estimated (optimizer) vs measured (metrology)
     network_bandwidth_mbps: float = 0.0
     network_class: str = NETWORK_CLASS_MOYENNE
+    network_measured_mbps: float = 0.0
+    network_fallback_mbps: float = 100.0
+    network_bandwidth_source: str = "not_sampled"
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -82,8 +85,14 @@ class HardwareProfile:
             "faiss_gpu_count": self.faiss_gpu_count,
             "cuda_visible": self.cuda_visible,
             "network": {
+                # bandwidth_mbps is the optimizer estimate (may be a fallback).
+                # Official benches must read measured_* / bandwidth_source.
                 "bandwidth_mbps": round(self.network_bandwidth_mbps, 2),
                 "class": self.network_class,
+                "measured_bandwidth_mbps": round(self.network_measured_mbps, 2),
+                "estimated_bandwidth_mbps": round(self.network_bandwidth_mbps, 2),
+                "fallback_bandwidth_mbps": round(self.network_fallback_mbps, 2),
+                "bandwidth_source": self.network_bandwidth_source,
             },
         }
 
@@ -190,55 +199,50 @@ def psutil_available() -> bool:
         return False
 
 
-def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
-    """Mesure la bande passante reseau reelle sur sample_seconds secondes.
+def _classify_mbps(mbps: float) -> str:
+    if mbps < 0.5:
+        return NETWORK_CLASS_TRES_FAIBLE
+    if mbps < 5.0:
+        return NETWORK_CLASS_FAIBLE
+    if mbps < 50.0:
+        return NETWORK_CLASS_MOYENNE
+    if mbps < 500.0:
+        return NETWORK_CLASS_BONNE
+    return NETWORK_CLASS_EXCELLENTE
 
-    Retourne (bandwidth_mbps, network_class).
 
-    Classes :
-      TRES_FAIBLE : < 0.5 Mbps  — mobile 2G, satellite, connexion degradee
-      FAIBLE      : < 5 Mbps    — ADSL faible, 3G
-      MOYENNE     : < 50 Mbps   — ADSL, 4G, fibre debutante
-      BONNE       : < 500 Mbps  — fibre standard, 5G
-      EXCELLENTE  : >= 500 Mbps — datacenter, fibre 1G+
+def measure_network_bandwidth_report(sample_seconds: float = 1.0) -> dict[str, Any]:
+    """Honest network sample for official benches (D-053).
 
-    NOTE : mesure le trafic du noeud entier (entrant + sortant), pas seulement P2P.
-    Pour une mesure plus precise, utiliser un ping/throughput vers un pair connu.
-    Cette mesure sert d'estimation pour calibrer max_contributors_per_block.
-
-    DEPENDANCE OBLIGATOIRE : psutil>=5.9.0 (pyproject.toml + requirements.txt).
-    Si psutil n'est pas installe, log un WARNING visible et retourne une valeur
-    conservative (MOYENNE = 50 Mbps). Ce n'est PAS silencieux — l'operateur du noeud
-    DOIT installer psutil pour que la mesure reseau soit reelle.
-    Pour installer : pip install psutil>=5.9.0 (ou pip install -r requirements.txt)
+    Distinguishes:
+      measured_bandwidth_mbps  — bytes observed during the sleep window
+      estimated_bandwidth_mbps — value fed to optimizer (may be a convention)
+      fallback_bandwidth_mbps  — the conventional constant when idle/missing
+      bandwidth_source         — measured | idle_fallback | fast_boot | psutil_missing | error
     """
+    idle_fallback = 100.0
+    missing_fallback = 50.0
+    base = {
+        "sample_sleep_seconds": float(sample_seconds),
+        "bytes_sampled": 0,
+        "measured_bandwidth_mbps": 0.0,
+        "estimated_bandwidth_mbps": missing_fallback,
+        "fallback_bandwidth_mbps": missing_fallback,
+        "bandwidth_source": "error",
+        "class": NETWORK_CLASS_MOYENNE,
+    }
     if os.getenv("ARTCB_FAST_BOOT", "").strip() in {"1", "true", "yes"}:
         logger.debug("Network bandwidth skipped (ARTCB_FAST_BOOT) class=BONNE")
-        return 100.0, NETWORK_CLASS_BONNE
-    psutil_ok = False
+        return {
+            **base,
+            "estimated_bandwidth_mbps": idle_fallback,
+            "fallback_bandwidth_mbps": idle_fallback,
+            "bandwidth_source": "fast_boot",
+            "class": NETWORK_CLASS_BONNE,
+        }
     try:
         import psutil as _psutil
-        psutil_ok = True
-
-        net1 = _psutil.net_io_counters()
-        time.sleep(sample_seconds)
-        net2 = _psutil.net_io_counters()
-
-        # Utiliser le max entre montant et descendant — le goulot est la direction la plus lente
-        bytes_up   = net2.bytes_sent - net1.bytes_sent
-        bytes_down = net2.bytes_recv - net1.bytes_recv
-        total_bytes = max(bytes_up, bytes_down)
-
-        # Convertir en Mbps (bits par seconde / 1 000 000)
-        mbps = (total_bytes * 8) / (sample_seconds * 1_000_000)
-
-        # Si trafic trop faible pour mesurer (< 10 KB/s), supposer connexion au repos
-        # -> utiliser 100 Mbps (BONNE) comme estimation par defaut
-        if total_bytes < 10_000:
-            mbps = 100.0
-
     except ImportError:
-        # psutil ABSENT — WARNING visible, pas silencieux
         logger.warning(
             "AVERTISSEMENT : psutil n'est pas installe. "
             "La mesure de bande passante reseau est DESACTIVEE. "
@@ -246,31 +250,63 @@ def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
             "Pour une mesure reelle : pip install psutil>=5.9.0 "
             "ou : pip install -r requirements.txt"
         )
-        mbps = 50.0
-    except Exception as exc:
-        if psutil_ok:
-            logger.warning(
-                "Mesure bande passante echouee malgre psutil : %s — "
-                "fallback 50 Mbps (MOYENNE). Verifier les droits d'acces reseau.", exc
-            )
+        return {
+            **base,
+            "estimated_bandwidth_mbps": missing_fallback,
+            "fallback_bandwidth_mbps": missing_fallback,
+            "bandwidth_source": "psutil_missing",
+            "class": NETWORK_CLASS_MOYENNE,
+        }
+    try:
+        net1 = _psutil.net_io_counters()
+        time.sleep(sample_seconds)
+        net2 = _psutil.net_io_counters()
+        bytes_up = net2.bytes_sent - net1.bytes_sent
+        bytes_down = net2.bytes_recv - net1.bytes_recv
+        total_bytes = max(bytes_up, bytes_down)
+        measured = (total_bytes * 8) / (sample_seconds * 1_000_000) if sample_seconds > 0 else 0.0
+        if total_bytes < 10_000:
+            estimated = idle_fallback
+            source = "idle_fallback"
+            cls = NETWORK_CLASS_BONNE
         else:
-            logger.debug("Network bandwidth measurement failed: %s", exc)
-        mbps = 50.0
+            estimated = measured
+            source = "measured"
+            cls = _classify_mbps(measured)
+        return {
+            "sample_sleep_seconds": float(sample_seconds),
+            "bytes_sampled": int(total_bytes),
+            "measured_bandwidth_mbps": round(measured, 4),
+            "estimated_bandwidth_mbps": round(estimated, 4),
+            "fallback_bandwidth_mbps": idle_fallback,
+            "bandwidth_source": source,
+            "class": cls,
+        }
+    except Exception as exc:
+        logger.warning(
+            "Mesure bande passante echouee malgre psutil : %s — "
+            "fallback 50 Mbps (MOYENNE). Verifier les droits d'acces reseau.",
+            exc,
+        )
+        return {
+            **base,
+            "estimated_bandwidth_mbps": missing_fallback,
+            "fallback_bandwidth_mbps": missing_fallback,
+            "bandwidth_source": "error",
+            "class": NETWORK_CLASS_MOYENNE,
+        }
 
-    # Classifier
-    if mbps < 0.5:
-        cls = NETWORK_CLASS_TRES_FAIBLE
-    elif mbps < 5.0:
-        cls = NETWORK_CLASS_FAIBLE
-    elif mbps < 50.0:
-        cls = NETWORK_CLASS_MOYENNE
-    elif mbps < 500.0:
-        cls = NETWORK_CLASS_BONNE
-    else:
-        cls = NETWORK_CLASS_EXCELLENTE
 
-    logger.debug("Network bandwidth measured: %.2f Mbps -> class=%s", mbps, cls)
-    return mbps, cls
+def measure_network_bandwidth(sample_seconds: float = 1.0) -> tuple[float, str]:
+    """Optimizer-facing estimate. Not a WAN speedtest.
+
+    Returns (estimated_bandwidth_mbps, network_class). When the node is idle
+    the estimate is a conventional 100 Mbps (idle_fallback). Official benches
+    must call measure_network_bandwidth_report() or read live_metrics() fields
+    measured_bandwidth_mbps / bandwidth_source.
+    """
+    report = measure_network_bandwidth_report(sample_seconds)
+    return float(report["estimated_bandwidth_mbps"]), str(report["class"])
 
 
 def live_metrics() -> dict[str, Any]:
@@ -287,7 +323,7 @@ def live_metrics() -> dict[str, Any]:
     except Exception:
         disk = psutil.disk_usage("/")
     net = psutil.net_io_counters()
-    bw_mbps, bw_class = measure_network_bandwidth(sample_seconds=0.5)
+    report = measure_network_bandwidth_report(sample_seconds=0.5)
 
     return {
         "cpu": {
@@ -308,11 +344,23 @@ def live_metrics() -> dict[str, Any]:
             "percent": disk.percent,
         },
         "network": {
-            "bytes_sent_mb":    round(net.bytes_sent / (1024**2), 2),
-            "bytes_recv_mb":    round(net.bytes_recv / (1024**2), 2),
-            "packets_sent":     net.packets_sent,
-            "packets_recv":     net.packets_recv,
-            "bandwidth_mbps":   round(bw_mbps, 2),
-            "bandwidth_class":  bw_class,
+            "bytes_sent_mb": round(net.bytes_sent / (1024**2), 2),
+            "bytes_recv_mb": round(net.bytes_recv / (1024**2), 2),
+            "packets_sent": net.packets_sent,
+            "packets_recv": net.packets_recv,
+            # Honest metrology (D-053): do not publish idle_fallback as a speedtest.
+            "bandwidth_mbps": report["measured_bandwidth_mbps"],
+            "measured_bandwidth_mbps": report["measured_bandwidth_mbps"],
+            "estimated_bandwidth_mbps": report["estimated_bandwidth_mbps"],
+            "fallback_bandwidth_mbps": report["fallback_bandwidth_mbps"],
+            "bandwidth_source": report["bandwidth_source"],
+            "sample_sleep_seconds": report["sample_sleep_seconds"],
+            "bytes_sampled": report["bytes_sampled"],
+            "bandwidth_class": report["class"],
+        },
+        "metrics_timing": {
+            "cpu_percent_interval_seconds": 0.1,
+            "network_sample_sleep_seconds": report["sample_sleep_seconds"],
+            "note": "/metrics HTTP RTT includes the voluntary network sample sleep; it is not API compute latency.",
         },
     }
