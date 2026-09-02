@@ -6,6 +6,7 @@ from src.artcb.crypto.hybrid import (
     sign_hybrid,
     verify_hybrid,
     verify_hybrid_and,
+    verify_hybrid_and_or_window,
 )
 from src.artcb.crypto.pqc import (
     PQC_SIG_ALGORITHM,
@@ -31,5 +32,6 @@ __all__ = [
     "unpack_keypair",
     "verify_hybrid",
     "verify_hybrid_and",
+    "verify_hybrid_and_or_window",
     "verify_message",
 ]

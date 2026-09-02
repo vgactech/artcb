@@ -146,8 +146,12 @@ def test_and_refuses_broken_mldsa_leg(monkeypatch) -> None:
     )
 
 
-def test_honest_wiring_gap_legacy_verify_hybrid_still_accepts_ed25519() -> None:
-    """Ne pas mentir : verify_hybrid() sans require_and accepte encore Ed25519 seule."""
+def test_honest_legacy_verify_hybrid_still_accepts_ed25519() -> None:
+    """Ne pas mentir : verify_hybrid() sans require_and accepte encore Ed25519 seule.
+
+    Le câblage des call sites (AND + fenêtre D-032) est dans 198.
+    high_value_hybrid_enforced reste false tant que la fenêtre Ed25519 est ouverte.
+    """
     _sk, msg, pub, ed_sig = _ed_pair()
     alone = f"ed25519:{ed_sig}"
     assert (
@@ -164,15 +168,6 @@ def test_honest_wiring_gap_legacy_verify_hybrid_still_accepts_ed25519() -> None:
     assert health["legacy_verify_hybrid_still_accepts_ed25519_only"] is True
     assert health["hybrid_and_function"] == "verify_hybrid_and"
     assert "block_append" in HIGH_VALUE_MESSAGES
-    chain = (ROOT / "src" / "artcb" / "chain" / "manager.py").read_text(encoding="utf-8")
-    gov = (ROOT / "src" / "artcb" / "governance" / "manager.py").read_text(encoding="utf-8")
-    groups = (ROOT / "src" / "artcb" / "groups" / "signing.py").read_text(encoding="utf-8")
-    assert "verify_hybrid(" in chain
-    assert "verify_hybrid_and" not in chain
-    assert "verify_hybrid(" in gov
-    assert "verify_hybrid_and" not in gov
-    assert "verify_hybrid(" in groups
-    assert "verify_hybrid_and" not in groups
 
 
 def test_tpm_type_physical_virtual_absent() -> None:

@@ -192,6 +192,19 @@ DECISIONS_196: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_198: Final[dict[str, str]] = {
+    "D-051": (
+        "Wire verify_hybrid_and at chain/groups/governance via "
+        "verify_hybrid_and_or_window: hybrid envelope requires BOTH legs "
+        "(AND); Ed25519-only remains allowed only while D-032 B is open "
+        "(until 2026-12-31T00:00:00Z). ML-DSA-only refused. Hybrid envelope "
+        "without a PQC public key is refused (AND impossible). "
+        "high_value_hybrid_enforced stays false during the Ed25519 window. "
+        "peer_handshake still verifies Ed25519-only (not in this wiring). "
+        "Replit CORS stays a platform regex. certified stays false."
+    ),
+}
+
 DECISIONS_191: Final[dict[str, str]] = {
     "D-045": (
         "GO remaining live tests on the current mainnet book (genesis reset later). "
@@ -268,5 +281,6 @@ def public_lock() -> dict[str, Any]:
         "decisions_191": DECISIONS_191,
         "decisions_192": DECISIONS_192,
         "decisions_196": DECISIONS_196,
+        "decisions_198": DECISIONS_198,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }

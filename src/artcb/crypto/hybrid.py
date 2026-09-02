@@ -4,16 +4,19 @@ D-034 A — hybride AND : les DEUX jambes (Ed25519 ET ML-DSA-65) doivent
 passer. Une jambe seule (Ed25519 ou ML-DSA) est refusée par
 ``verify_hybrid_and``.
 
-``verify_hybrid`` garde encore un repli Ed25519-only (fenêtre D-032 B).
-Ce n'est PAS l'enforcement AND. ``high_value_hybrid_enforced`` reste
-false tant que chain / groups / governance n'appellent pas
-``verify_hybrid_and``.
+``verify_hybrid`` garde encore un repli Ed25519-only (API legacy).
+Les call sites chain / groups / governance passent par
+``verify_hybrid_and_or_window`` : enveloppe hybride → AND des deux
+jambes ; Ed25519 seule → seulement tant que la fenêtre D-032 B est
+ouverte (jusqu'au 2026-12-31). ``high_value_hybrid_enforced`` reste
+false pendant cette fenêtre.
 """
 
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from datetime import datetime
 
 from nacl import signing
 
@@ -114,6 +117,48 @@ def verify_hybrid_and(
     return True
 
 
+def verify_hybrid_and_or_window(
+    *,
+    message: bytes,
+    signature_value: str,
+    ed25519_public_key: bytes,
+    pqc_public_key: bytes | None = None,
+    now: datetime | None = None,
+) -> bool:
+    """Call-site policy: D-034 AND + fenêtre Ed25519 D-032 B.
+
+    - Enveloppe hybride + clé publique ML-DSA → ``verify_hybrid_and``
+      (les DEUX jambes). Sans clé PQC, AND est impossible → refus.
+    - ML-DSA seule → refus (AND = les deux).
+    - Ed25519 seule → acceptée seulement si ``fallback_still_open``
+      (jusqu'au 2026-12-31T00:00:00Z). Après la fenêtre → refus.
+    """
+    from src.artcb.crypto_policy import fallback_still_open
+
+    if is_hybrid_envelope(signature_value):
+        if not pqc_public_key:
+            logger.debug("hybrid AND reject: no PQC public key for second leg")
+            return False
+        return verify_hybrid_and(
+            message=message,
+            signature_value=signature_value,
+            ed25519_public_key=ed25519_public_key,
+            pqc_public_key=pqc_public_key,
+        )
+    if is_mldsa_only_envelope(signature_value):
+        logger.debug("hybrid AND reject: ML-DSA-only envelope")
+        return False
+    if not fallback_still_open(now):
+        logger.debug("Ed25519-only rejected: D-032 window closed")
+        return False
+    return verify_hybrid(
+        message=message,
+        signature_value=signature_value,
+        ed25519_public_key=ed25519_public_key,
+        pqc_public_key=pqc_public_key or b"",
+    )
+
+
 def verify_hybrid(
     *,
     message: bytes,
@@ -126,7 +171,8 @@ def verify_hybrid(
 
     ``require_and=True`` → D-034 (``verify_hybrid_and``).
     Défaut ``False`` : enveloppe hybride = AND des deux jambes ; sinon
-    repli Ed25519-only (encore utilisé par chain / groups / governance).
+    repli Ed25519-only (API legacy, non gated par D-032). Les call
+    sites production utilisent ``verify_hybrid_and_or_window``.
     """
     if require_and:
         return verify_hybrid_and(

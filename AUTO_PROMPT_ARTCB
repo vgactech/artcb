@@ -1304,4 +1304,26 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Registre `ovh-baremetal-1` (pas ovh-node-1). CORS regex inchangée. 169.254 caché à l’API, fichier live non réécrit.
 - `certified_distributed_mainnet=false`. Sim `20260901T221624Z_e2e192_hw_baremetal` `failures=[]`. Rapport `rapports/192_ovh3_baremetal_hw_identity_2026-09-01.md`.
 
+## [2026-09-01T22:59:00Z] Rapport 195 — matrice live 4 nœuds (annexe, rapport sur autre branche)
+
+- Mesure neuve `/health` × 4 : SHA `30a7696a45888133b04e0ff78bbff2a9473c102f`, branche live `cursor/dv01-tpm-wpp-chaos-16d8`, `189-mainnet-1` / `artcb-mainnet-1`, height **1**, `last_hash` `b8a7d5ef…bfce` identique × 4.
+- TPM `/dev/tpm0` **absent** × 4. `certified_distributed_mainnet=false` × 4. **Aucun** merge certif.
+- Rapport **non écrasé** ici : vit sur `cursor/audit-live-matrix-195-16d8` → `rapports/195_audit_live_matrix_2026-09-01.md`. Cette annexe ne recopie pas la matrice.
+
+## [2026-09-01T23:10:00Z] Rapport 196 — hybride AND (D-034) + `tpm_type` honnête
+
+- `verify_hybrid_and` : Ed25519 seule refusée, ML-DSA seule refusée, hybride OK accepté. Câblage chain/groups/governance encore `verify_hybrid` (`high_value_hybrid_enforced=false`).
+- `tpm_type` + `attestation_available` : vrais seulement si `/dev/tpm0` ou `/dev/nsm`. CORS regex plateforme, **pas** d’URL Replit compte en dur.
+- Live SHA `30a7696` ≠ `origin/main` `aeb132ae`. Pas d’`install.sh` / deploy main. Certif **false**.
+- Rapport : `rapports/196_hybrid_and_hw_2026-09-01.md` (cette lignée). Branche d’origine `cursor/hybrid-and-hw-196-16d8`.
+
+## [2026-09-02T14:10:00Z] Email login IONOS artcb.space — non trouvé
+
+- **GO** : oublier checkout OVH / bare metal ; retrouver l’email de connexion IONOS pour `artcb.space`.
+- **Résultat :** aucune clé `IONOS_EMAIL` / `IONOS_LOGIN` / `IONOS_USER` dans le dépôt, `~/.artcb/**/*.env`, Doppler (`artcb-blockchain`, `artcb-2`, `artcb3`, `artcb-4` config `dev`) ni secrets Cursor `IONOS_*`.
+- `IONOS_API_KEY` / `IONOS_PASSWORD` : **absents** (pas « présent »). Placeholder repo : `.env.example` `IONOS_API_KEY` + `config.py` `ionos_api_key` (rapport 116, fichier 116 jamais commité).
+- DNS public : registrar **IONOS SE** ; NS `ui-dns.*` ; SPF `_spf-eu.ionos.com` ; MX `mx0{0,1}.ionos.fr` ; WHOIS registrant **REDACTED** / proxy `dataprivacyprotected@ionos.de` (pas un login). Pays FR, département 75.
+- Live bootstrap : SHA `30a7696a45888133b04e0ff78bbff2a9473c102f` ≠ `origin/main` `aeb132ae5266cfb9dfdfa8e7eafd49268b726fe5`. Token non imprimé. Certif **false**. Pas de commande OVH.
+- Rapport : `rapports/197_ionos_login_hint_2026-09-02.md`
+
 
