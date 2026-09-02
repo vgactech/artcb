@@ -51,6 +51,11 @@ def test_frontend_register_route_and_webauthn_client() -> None:
     assert "bio_fingerprint" in page
     assert "bio_face" in page
     assert "bio_both" in page
+    assert "Camera first" in page or "setCameraOn(true)" in page
+    assert 'choice === "face"' in page
+    face_block = page.split('choice === "face"')[1].split("} else {")[0]
+    assert "setCameraOn(true)" in face_block
+    assert "runWebauthnRegister" not in face_block
     assert "webauthn/register" in client
     assert "face/enroll" in client
     routes = ROOT / "src" / "api" / "webauthn_routes.py"

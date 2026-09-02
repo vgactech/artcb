@@ -129,19 +129,20 @@ export function RegisterBiometric() {
     setInfo(null);
     setSeed(null);
     try {
-      if (choice === "fingerprint" || choice === "both") {
+      if (choice === "fingerprint") {
         await runWebauthnRegister("fingerprint", true);
-        setInfo("Empreinte enregistrée via le capteur de l'appareil.");
-      }
-      if (choice === "face" || choice === "both") {
-        try {
-          await runWebauthnRegister("face", choice === "face");
-          setInfo((prev) => (prev ? prev + " Reconnaissance faciale (Face ID / déverrouillage visage) ajoutée." : "Reconnaissance faciale enregistrée."));
-        } catch {
-          setCameraIntent("enroll");
-          setCameraOn(true);
-          setInfo("Pas de Face ID sur cet appareil — la caméra sert de reconnaissance faciale (accessibilité).");
-        }
+        setInfo("Empreinte enregistrée via le capteur de l'appareil (WebAuthn).");
+      } else if (choice === "face") {
+        // Camera first. WebAuthn "face" is the same OS sensor as fingerprint
+        // (Android/iOS cannot open the selfie camera via navigator.credentials).
+        setCameraIntent("enroll");
+        setCameraOn(true);
+        setInfo("Caméra avant : placez votre visage dans le cadre. Aucune photo n'est envoyée.");
+      } else {
+        await runWebauthnRegister("fingerprint", true);
+        setCameraIntent("enroll");
+        setCameraOn(true);
+        setInfo("Empreinte enregistrée. Caméra avant pour le visage — aucune photo n'est envoyée.");
       }
     } catch (err) {
       const ax = err as { response?: { data?: { detail?: string } } };
@@ -166,15 +167,19 @@ export function RegisterBiometric() {
         persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
         setInfo("Connecté par empreinte.");
       } else {
-        try {
+        const st = await webauthnStatus(name.trim()).catch(() => null);
+        const hasCamera = Boolean(st?.face_camera_enrolled || loadFaceSecret(name.trim()));
+        if (hasCamera) {
+          setCameraIntent("login");
+          setCameraOn(true);
+          setInfo("Caméra avant : placez votre visage dans le cadre.");
+        } else {
+          // Existing enrollments created via OS sensor (same as fingerprint).
           const begin = await webauthnLoginOptions(name.trim(), "face");
           const cred = await getPlatformCredential(begin.publicKey);
           const done = await webauthnLoginVerify(name.trim(), serializeCredential(cred));
           persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
-          setInfo("Connecté par reconnaissance faciale.");
-        } catch {
-          setCameraIntent("login");
-          setCameraOn(true);
+          setInfo("Connecté par le capteur de l'appareil (Face ID / empreinte OS). La caméra s'ouvre pour les nouveaux comptes visage.");
         }
       }
     } catch (err) {
