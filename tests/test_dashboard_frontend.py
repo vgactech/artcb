@@ -9,6 +9,7 @@ import pytest
 FRONTEND = Path("frontend/src")
 ROUTES = [
     ("Home", "pages/Home.tsx"),
+    ("RegisterBiometric", "pages/RegisterBiometric.tsx"),
     ("Memorize", "pages/Memorize.tsx"),
     ("GraphPage", "pages/GraphPage.tsx"),
     ("ChainPage", "pages/ChainPage.tsx"),

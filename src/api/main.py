@@ -20,6 +20,7 @@ logger = logging.getLogger("artcb.api")
 
 from src.api.api_keys_routes import router as api_keys_router
 from src.api.auth_routes import router as auth_router
+from src.api.webauthn_routes import router as webauthn_router
 from src.api.ai_routes import router_ai, router_chain_ext, router_webhooks
 from src.api.security_routes import router_security
 from src.api.pol_phase11_routes import router as pol_phase11_router
@@ -53,7 +54,9 @@ def public_certification_block() -> dict:
     from src.artcb.devnet_validation import certification_gate
 
     try:
-        gate = certification_gate()
+        from src.artcb.devnet_validation import load_dv_verdicts
+
+        gate = certification_gate(load_dv_verdicts())
     except Exception as exc:  # noqa: BLE001 — health must stay 200
         logger.error("certification_gate failed: %s", type(exc).__name__)
         return {
@@ -65,6 +68,7 @@ def public_certification_block() -> dict:
         "certified_distributed_mainnet": bool(gate.get("certified_distributed_mainnet")),
         "certification_reason": gate.get("reason") or "",
         "operator_certification_go": bool(gate.get("operator_certification_go")),
+        "dv_not_pass": list(gate.get("dv_not_pass") or []),
     }
 
 
@@ -315,6 +319,7 @@ def create_app() -> FastAPI:
 
     # ── MODE NORMAL — toutes les routes ────────────────────────────────────
     app.include_router(auth_router)
+    app.include_router(webauthn_router)
     app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)

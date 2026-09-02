@@ -262,4 +262,5 @@
 | T-E37 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | nic `vc491276-ovh` ; 0 instance | [x] | me=200 projects=[] |
 | T-E38 | `pytest tests/test_e2e206_ovh4_keepbook.py` | SSH sans rescue ; pub `artcb-ovh-node-4-20260902` ; keep-book SHA `ad017bca` ; pas de certif | [x] | 2026-09-02 |
 | T-E39 | `pytest tests/test_e2e207_follow_main.py` | 4 nœuds officiels + clones suivent `origin/main` ; timer ; pas de wipe ; PR #51 hors main | [x] | 2026-09-02 4 passed ; timer enabled ×4 ; FETCH_METHOD=origin ; BOOK=1 |
+| T-E40 | `pytest tests/test_e2e205_no_rescue_biometric.py tests/test_e2e208_biometric_cert_gate.py` | WebAuthn D-055 ; gate lit RESULT.json ; GO false tant que DV-02/06 PARTIAL | [ ] | 2026-09-02 |
 

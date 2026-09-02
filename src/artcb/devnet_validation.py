@@ -7,6 +7,8 @@ records the 2026-08-31 user choices for live multi-node validation.
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any, Final
 
 # Economic series — DO NOT reuse these letters for identity/P2P/consensus.
@@ -221,6 +223,18 @@ DECISIONS_201: Final[dict[str, str]] = {
     ),
 }
 
+DECISIONS_205: Final[dict[str, str]] = {
+    "D-055": (
+        "www.artcb.me enrollment is WebAuthn platform authenticator "
+        "(fingerprint / Face ID) plus optional camera face-unlock for "
+        "motor disability. Raw biometric samples are rejected and never "
+        "stored on chain. SSH for live VMs is Doppler PEM, never rescue. "
+        "OPERATOR_MAINNET_CERTIFICATION_GO stays False until DV-01…07 are "
+        "all PASS on the live book AND the operator GO is explicit. "
+        "No install.sh, no genesis wipe, no rescue."
+    ),
+}
+
 # Operator 2026-09-02: homogenize four live VMs onto origin/main and start
 # official benches on the real book. Certification lock unchanged.
 DECISIONS_203: Final[dict[str, str]] = {
@@ -323,5 +337,24 @@ def public_lock() -> dict[str, Any]:
         "decisions_198": DECISIONS_198,
         "decisions_201": DECISIONS_201,
         "decisions_203": DECISIONS_203,
+        "decisions_205": DECISIONS_205,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }
+
+
+def load_dv_verdicts() -> dict[str, str]:
+    """Read validation/DV-*/RESULT.json. Missing file = not PASS."""
+    root = Path(__file__).resolve().parents[2]
+    out: dict[str, str] = {}
+    for letter in ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07"):
+        path = root / "validation" / letter / "RESULT.json"
+        if not path.is_file():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        status = str(payload.get("status") or "")
+        if status:
+            out[letter] = status
+    return out

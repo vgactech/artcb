@@ -39,6 +39,26 @@ _challenges: dict[str, float] = {}   # nonce_hex → expires_at
 _sessions: dict[str, dict] = {}       # token_hash → {wallet_name, address, created_at, expires_at}
 
 
+def issue_session(*, wallet_name: str, address: str) -> dict:
+    """Create a sess_ token (password login, WebAuthn, or face-unlock)."""
+    raw_token = "sess_" + secrets.token_hex(32)
+    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
+    now = time.time()
+    record = {
+        "wallet_name": wallet_name,
+        "address": address,
+        "created_at": now,
+        "expires_at": now + _SESSION_TTL,
+    }
+    _sessions[token_hash] = record
+    return {
+        "session_token": raw_token,
+        "wallet_name": wallet_name,
+        "address": address,
+        "expires_in": _SESSION_TTL,
+    }
+
+
 # --------------------------------------------------------------------------- #
 #  Schémas Pydantic
 # --------------------------------------------------------------------------- #
@@ -132,26 +152,10 @@ def login(body: LoginRequest, request: Request) -> dict:
     signing_key = _signing.SigningKey(seed)
     address = _addr(signing_key)
 
-    # Créer un token de session
-    raw_token = "sess_" + secrets.token_hex(32)
-    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
-    now = time.time()
-    record = {
-        "wallet_name": body.name,
-        "address": address,
-        "created_at": now,
-        "expires_at": now + _SESSION_TTL,
-    }
-    _sessions[token_hash] = record
-
     logger.info("Login successful: wallet=%s address=%s", body.name, address)
-    return {
-        "session_token": raw_token,
-        "wallet_name": body.name,
-        "address": address,
-        "expires_in": _SESSION_TTL,
-        "message": "Connecté. Utilisez session_token dans Authorization: Bearer <token>",
-    }
+    issued = issue_session(wallet_name=body.name, address=address)
+    issued["message"] = "Connecté. Utilisez session_token dans Authorization: Bearer <token>"
+    return issued
 
 
 @router.get("/challenge", summary="Obtenir un nonce pour l'authentification par signature")
@@ -222,24 +226,8 @@ def verify_signature(body: VerifyRequest, request: Request) -> dict:
     # Challenge utilisé : le supprimer (usage unique)
     del _challenges[body.challenge]
 
-    # Créer session
-    raw_token = "sess_" + secrets.token_hex(32)
-    token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
-    now = time.time()
-    _sessions[token_hash] = {
-        "wallet_name": wallet_name,
-        "address": body.address,
-        "created_at": now,
-        "expires_at": now + _SESSION_TTL,
-    }
-
     logger.info("Verify OK: address=%s wallet=%s", body.address[:16], wallet_name)
-    return {
-        "session_token": raw_token,
-        "wallet_name": wallet_name,
-        "address": body.address,
-        "expires_in": _SESSION_TTL,
-    }
+    return issue_session(wallet_name=wallet_name, address=body.address)
 
 
 @router.post("/logout", summary="Déconnecter la session courante")
