@@ -53,7 +53,7 @@ Livre public **identique × 4** : height **1**, `last_hash` `b8a7d5ef50052790a0a
 | disque used % | 9.1 | 7.6 | 13.5 | 7.6 |
 | CPU live % | 2.4 | 0.0 | 0.0 | 0.0 |
 | pool workers | 3 | 3 | 1 | 3 |
-| chunk_chars | 400 | 400 | 200 | 200→200 wait 200 AWS, 400 OVH |
+| chunk_chars | 400 | 400 | 200 | 400 |
 | max_contributors | 10 | 10 | 10 | 10 |
 | FAISS GPU | false | false | false | false |
 | `/health` RTT | 200 ms | 188 ms | 190 ms | 183 ms |
