@@ -31,7 +31,7 @@ from artcb.node_registry import NODES, public_registry  # noqa: E402
 from artcb.sim_provenance import collect, dumps  # noqa: E402
 
 SIM_ID = "e2e200_artcb_me_official"
-BRANCH = "cursor/artcb-me-official-16d8"
+BRANCH = "main"
 OVH1 = NODES["ovh-node-1"].ssh_host or "152.228.144.34"
 OVH2 = NODES["ovh-node-2"].ssh_host or "151.80.107.29"
 AWS3 = NODES["aws-node-3"].ssh_host or "51.44.222.232"

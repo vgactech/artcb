@@ -15,7 +15,7 @@ import ipaddress
 import os
 from urllib.parse import urlparse
 
-from artcb.config import ARTCB_DOMAIN, ARTCB_DOMAIN_LEGACY
+from src.artcb.config import ARTCB_DOMAIN, ARTCB_DOMAIN_LEGACY
 
 INFRA_IPV4: frozenset[str] = frozenset(
     {
