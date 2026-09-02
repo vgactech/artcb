@@ -1,0 +1,48 @@
+{
+  "branch": "main",
+  "campaigns": [
+    "machine",
+    "wan_mesh",
+    "local_chain",
+    "distributed"
+  ],
+  "certified": false,
+  "gate_certified": false,
+  "historical_90_tps_is_lab_not_mainnet": true,
+  "homogeneous_sha": false,
+  "keep_book": true,
+  "last_hashes": [
+    "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce"
+  ],
+  "live_branches": [
+    "cursor/artcb-me-official-16d8",
+    "main"
+  ],
+  "live_shas": [
+    "f28418084d84e00d3d5290ceefb846b30af527de",
+    "f8118ffea00b1cad5cb3396e29c923b379f6c815"
+  ],
+  "local_sha": "5b18eb88e91771eba6eb73facbbce2052a1b76a6",
+  "methods": {
+    "aws3": "git_fetch_origin",
+    "ovh1": "git_fetch_origin",
+    "ovh2": "git_bundle",
+    "ovh4": "skipped_no_ssh_key"
+  },
+  "network_id": "artcb-mainnet-1",
+  "ok": true,
+  "operator_certification_go": false,
+  "reachable": [
+    "ovh1",
+    "ovh2",
+    "aws3",
+    "ovh4"
+  ],
+  "secrets_printed": false,
+  "ssh_keys_present": {
+    "aws3": true,
+    "ovh1": true,
+    "ovh2": true,
+    "ovh4": false
+  }
+}

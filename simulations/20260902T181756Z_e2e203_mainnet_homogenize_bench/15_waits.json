@@ -1,0 +1,50 @@
+{
+  "aws3": [
+    {
+      "http": 0,
+      "rtt_ms": 84.5,
+      "try": 1
+    },
+    {
+      "http": 0,
+      "rtt_ms": 84.3,
+      "try": 2
+    },
+    {
+      "http": 200,
+      "rtt_ms": 353.2,
+      "try": 3
+    }
+  ],
+  "ovh1": [
+    {
+      "http": 0,
+      "rtt_ms": 84.1,
+      "try": 1
+    },
+    {
+      "http": 0,
+      "rtt_ms": 83.1,
+      "try": 2
+    },
+    {
+      "http": 200,
+      "rtt_ms": 473.0,
+      "try": 3
+    }
+  ],
+  "ovh2": [
+    {
+      "http": 200,
+      "rtt_ms": 190.6,
+      "try": 1
+    }
+  ],
+  "ovh4": [
+    {
+      "http": 0,
+      "skipped": true,
+      "try": 0
+    }
+  ]
+}

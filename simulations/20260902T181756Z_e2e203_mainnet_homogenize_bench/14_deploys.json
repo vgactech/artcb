@@ -1,0 +1,40 @@
+{
+  "aws3": {
+    "method": "git_fetch_origin",
+    "name": "aws3",
+    "returncode": 0,
+    "stderr": "fatal: could not read Username for 'https://github.com': No such device or address\nfatal: expected flush after ref listing\nSwitched to and reset branch 'main'\n",
+    "stdout": "branch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at f8118ff fix(199): keep SNAPSHOT_ONLY without shallow fetch --depth 1\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=f8118ffea00b1cad5cb3396e29c923b379f6c815\nDEPLOYED_BRANCH=main\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh1": {
+    "method": "git_fetch_origin",
+    "name": "ovh1",
+    "returncode": 0,
+    "stderr": "fatal: could not read Username for 'https://github.com': No such device or address\nfatal: expected flush after ref listing\nReset branch 'main'\n",
+    "stdout": "branch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at f8118ffe fix(199): keep SNAPSHOT_ONLY without shallow fetch --depth 1\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=f8118ffea00b1cad5cb3396e29c923b379f6c815\nDEPLOYED_BRANCH=main\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh2": {
+    "method": "git_bundle",
+    "name": "ovh2",
+    "origin_attempt": {
+      "returncode": 255,
+      "stderr": "ubuntu@151.80.107.29: Permission denied (publickey).\n",
+      "stdout_tail": ""
+    },
+    "returncode": 255,
+    "scp": {
+      "name": "ovh2",
+      "returncode": 255,
+      "stderr": "ubuntu@151.80.107.29: Permission denied (publickey).\nscp: Connection closed\n"
+    },
+    "stderr": "ubuntu@151.80.107.29: Permission denied (publickey).\n",
+    "stdout": ""
+  },
+  "ovh4": {
+    "method": "skipped_no_ssh_key",
+    "name": "ovh4",
+    "returncode": 2,
+    "stderr": "missing_ssh_key",
+    "stdout": ""
+  }
+}

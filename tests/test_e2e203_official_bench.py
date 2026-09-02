@@ -49,6 +49,8 @@ def test_sim203_keep_book_four_campaigns_never_wipe() -> None:
     assert "run_machine_bench" in sim
     assert "ping_mesh" in sim
     assert "OPERATOR_MAINNET_CERTIFICATION_GO" in sim
+    assert "rejected_stale_origin" in sim
+    assert "could not read Username" in sim
     assert "measure_network_bandwidth_report" in hw
     assert "idle_fallback" in hw
     assert "sample_sleep_seconds" in hw

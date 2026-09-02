@@ -46,9 +46,65 @@ Ce rapport ne publie **pas** de TPS mainnet. Le 90 TPS de `logs/bench_artcb_2026
 
 Script : `scripts/run_sim203_mainnet_homogenize_bench.py`.
 
-## 5. Live après keep-book (à compléter par la sim 203)
+## 5. Live mesuré après keep-book bundle `5b18eb88` (2026-09-02T18:21Z)
 
-Voir `simulations/*_e2e203_mainnet_homogenize_bench/17_summary.json`.
+Livre public **identique × 4** : height **1**, `last_hash` `b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce`, `chain_valid=true`. Certif **false**.
+
+| | OVH1 | AWS3 | OVH2 | OVH4 |
+|--|------|------|------|------|
+| SHA | **`5b18eb88` main** | **`5b18eb88` main** | `f284180` feature | `f284180` feature |
+| HTTPS domaine | https://artcb.me/health 200 | https://n3.artcb.me/health 200 | n2 :80 nginx 404 (pas keep-book) | n4 :80 nginx 404 |
+| RAM Go | 7.57 | 1.86 | 7.57 | 7.57 |
+| workers / chunk | 3 / 400 | 1 / 200 | 3 / 400 | 3 / 400 |
+| `bandwidth_source` | **idle_fallback** | **idle_fallback** | champ absent (SHA ancien) | absent |
+| measured_mbps | 0.0 | 0.0 | n/a | n/a |
+| estimated_mbps | 100.0 (convention) | 100.0 | n/a | n/a |
+| `/health` RTT | 204 ms | 184 ms | 186 ms | 178 ms |
+| `/metrics` RTT | 772 ms (dont sleep 0.5 s) | 772 ms | 771 ms | 766 ms |
+
+Premier `git fetch origin` sans credentials GitHub a **rétrolavé** OVH1/AWS3 vers `f8118ff` (origin/main stale local). Corrigé par **bundle** obligatoire si fetch échoue. `run_sim203` refuse désormais un SHA ≠ HEAD.
+
+### Campagne 1 — machine (venv `.venv`, tempdir, **pas** le livre live)
+
+Anti-Sybil burst du vieux script a crashé (intervalle 60 s). PQC + append sans sécu **OK** :
+
+| Opération n=50 sauf mention | OVH1 avg ms | AWS3 avg ms | Labo 2026-08-03 avg ms |
+|-----------------------------|-------------|-------------|-------------------------|
+| ML-DSA-65 keygen | 45.96 | 26.85 | 0.140 |
+| ML-DSA-65 sign 296 B | 47.86 | 32.43 | 0.279 |
+| ML-DSA-65 verify | 44.64 | 28.62 | 0.121 |
+| ML-KEM-768 gen | 40.29 | 29.45 | 0.062 |
+| encapsulate | 40.23 | 25.01 | 0.067 |
+| decapsulate | 38.61 | 29.91 | 0.063 |
+| append_block() sécu OFF n=30 | 44.16 | 33.12 | 2.587 |
+| verify() chaîne n=20 | 5.85 | 3.85 | 4.475 |
+
+Le labo 0.14 ms n’est **pas** comparable (autre machine / autre binaire). Ces chiffres live sont la baseline machine officielle **partielle** (OVH1+AWS3).
+
+### Campagne 2 — WAN ping (ICMP AWS ouvert cette session)
+
+| src → dst | RTT avg |
+|-----------|---------|
+| OVH1 → OVH2 | 0.52 ms |
+| OVH1 → OVH4 | 0.61 ms |
+| OVH1 → AWS3 | 5.19 ms |
+| AWS3 → OVH1 | 5.21 ms |
+| AWS3 → OVH2 | 5.62 ms |
+| AWS3 → OVH4 | 5.78 ms |
+
+Pas d’iperf3 encore. `bandwidth_mbps=100` n’est **pas** un débit WAN.
+
+### Campagnes 3–4
+
+Chaîne locale isolée : append sans sécu ci-dessus. **Distribué sous charge : non mesuré** (SHA n2/n4 hétérogènes).
+
+## 6. Ce qu’il reste pour un bench 4 nœuds
+
+1. Mettre `SSH_PRIVATE_KEY` (PEM) dans Doppler **artcb-2** et **artcb-4** (ou `KEY_API_ARTCB_DOPPLER_4` + clés OVH4). Snapshot Glance OVH2 `artcb-ovh2-keepbook-203` déjà créé.
+2. Keep-book bundle `5b18eb88` (ou plus récent `main`) sur n2/n4.
+3. Relancer `scripts/run_sim203_mainnet_homogenize_bench.py`.
+4. iperf3 mesh. Puis seulement campagne 4 (TPS distribué P50/P95/P99).
+
 
 ## Interdits
 

@@ -1,0 +1,33 @@
+{
+  "branch": "main",
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "47eeeedff403589924f8ba80c1c43341e7a699ee90c1d9525d9023886c9a8529",
+    "package_count": 73,
+    "requirements_txt_hash": "2e790a3058b6f76554fb068f844218d659296c056f6c68e996d80cd99c2641a4",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-locked-D043",
+  "git_branch": "cursor/bench-inventory-live-ebd4",
+  "git_commit_sha": "5b18eb88e91771eba6eb73facbbce2052a1b76a6",
+  "git_status_clean": false,
+  "invented_results": false,
+  "keep_book": true,
+  "local_sha": "5b18eb88e91771eba6eb73facbbce2052a1b76a6",
+  "operator_certification_go": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim203_mainnet_homogenize_bench.py",
+  "script_sha256": "b6e08c9e33e048e37aa5047b85e50e48599aef47383ef3d3a0a2c03a847152a2",
+  "seed": 203,
+  "simulation_id": "e2e203_mainnet_homogenize_bench",
+  "ssh_keys_present": {
+    "aws3": true,
+    "ovh1": true,
+    "ovh2": true,
+    "ovh4": false
+  },
+  "started_at": "2026-09-02T18:17:57Z",
+  "working_tree_diff_hash": "49a5b7884610ea09e87c5c2decf9bdef4f90fa051c658530c1c12bb80f93f061"
+}

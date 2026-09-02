@@ -199,12 +199,19 @@ sudo systemctl restart artcb
 """
 
 
-def deploy_keep_book(name: str, bundle: Path) -> dict:
+def deploy_keep_book(name: str, bundle: Path, want_sha: str) -> dict:
     if not _ssh_key_ready(name):
         ping = _ssh(name, "true")
         return {"name": name, "method": "skipped_no_ssh_key", **ping}
     first = _ssh(name, _remote_keep_book_from_origin(), timeout=240)
-    if first.get("returncode") == 0 and "DEPLOYED_SHA=" in (first.get("stdout") or ""):
+    out = first.get("stdout") or ""
+    err = first.get("stderr") or ""
+    fetch_ok = (
+        first.get("returncode") == 0
+        and f"DEPLOYED_SHA={want_sha}" in out
+        and "could not read Username" not in err
+    )
+    if fetch_ok:
         return {"name": name, "method": "git_fetch_origin", **first}
     scp = _scp(name, bundle, "/tmp/artcb-me-203.bundle")
     second = _ssh(name, _remote_keep_book_from_bundle(), timeout=240)
@@ -214,7 +221,8 @@ def deploy_keep_book(name: str, bundle: Path) -> dict:
         "origin_attempt": {
             "returncode": first.get("returncode"),
             "stderr": first.get("stderr"),
-            "stdout_tail": (first.get("stdout") or "")[-400:],
+            "stdout_tail": out[-400:],
+            "rejected_stale_origin": not fetch_ok,
         },
         "scp": scp,
         **second,
@@ -395,7 +403,7 @@ def main() -> int:
     waits = {}
     nginx = {}
     for name in LABELS:
-        deploys[name] = deploy_keep_book(name, bundle)
+        deploys[name] = deploy_keep_book(name, bundle, local_sha)
         if deploys[name].get("method") not in {"skipped_no_ssh_key"}:
             waits[name] = wait_health(LABELS[name])
             nginx[name] = enable_nginx(name)

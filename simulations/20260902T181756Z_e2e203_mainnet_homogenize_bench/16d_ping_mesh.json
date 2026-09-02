@@ -1,0 +1,88 @@
+{
+  "aws3": {
+    "aws3": {
+      "skipped": true
+    },
+    "ovh1": {
+      "name": "aws3",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "5 packets transmitted, 5 received, 0% packet loss, time 4005ms\nrtt min/avg/max/mdev = 5.111/5.135/5.172/0.022 ms\n"
+    },
+    "ovh2": {
+      "name": "aws3",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "5 packets transmitted, 5 received, 0% packet loss, time 4006ms\nrtt min/avg/max/mdev = 5.301/5.466/5.922/0.231 ms\n"
+    },
+    "ovh4": {
+      "name": "aws3",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "5 packets transmitted, 5 received, 0% packet loss, time 4007ms\nrtt min/avg/max/mdev = 5.565/5.614/5.670/0.033 ms\n"
+    }
+  },
+  "ovh1": {
+    "aws3": {
+      "name": "ovh1",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "8 packets transmitted, 0 received, 100% packet loss, time 7175ms\n\n"
+    },
+    "ovh1": {
+      "skipped": true
+    },
+    "ovh2": {
+      "name": "ovh1",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "5 packets transmitted, 5 received, 0% packet loss, time 4094ms\nrtt min/avg/max/mdev = 0.433/0.512/0.585/0.055 ms\n"
+    },
+    "ovh4": {
+      "name": "ovh1",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "5 packets transmitted, 5 received, 0% packet loss, time 4115ms\nrtt min/avg/max/mdev = 0.463/0.525/0.591/0.040 ms\n"
+    }
+  },
+  "ovh2": {
+    "aws3": {
+      "name": "ovh2",
+      "returncode": 255,
+      "stderr": "ubuntu@151.80.107.29: Permission denied (publickey).\n",
+      "stdout": ""
+    },
+    "ovh1": {
+      "name": "ovh2",
+      "returncode": 255,
+      "stderr": "ubuntu@151.80.107.29: Permission denied (publickey).\n",
+      "stdout": ""
+    },
+    "ovh2": {
+      "skipped": true
+    },
+    "ovh4": {
+      "name": "ovh2",
+      "returncode": 255,
+      "stderr": "ubuntu@151.80.107.29: Permission denied (publickey).\n",
+      "stdout": ""
+    }
+  },
+  "ovh4": {
+    "aws3": {
+      "reason": "missing_ssh_key",
+      "skipped": true
+    },
+    "ovh1": {
+      "reason": "missing_ssh_key",
+      "skipped": true
+    },
+    "ovh2": {
+      "reason": "missing_ssh_key",
+      "skipped": true
+    },
+    "ovh4": {
+      "skipped": true
+    }
+  }
+}

@@ -82,29 +82,34 @@ with tempfile.TemporaryDirectory() as tmpdir:
     results.append(bench("verify() chaîne complète", lambda: chain.verify(), rounds=20))
     print(f"  Longueur chaîne test : {nb_blocks} blocs")
 
-# ── ChainManager avec sécurité ────────────────────────────────────────────────
+# ── ChainManager avec sécurité (tempdir isolé — pas le livre live) ──────────
 print("\n=== ChainManager ARTCB (sécurité ON — Anti-Sybil + Slashing) ===")
-with tempfile.TemporaryDirectory() as tmpdir2:
-    blocks2 = Path(tmpdir2) / "chain.jsonl"
-    key2    = Path(tmpdir2) / "chain.key"
-    chain2  = ChainManager(blocks_path=blocks2, key_path=key2, enable_security=True)
+print("  Isolated tempdir only. Does not append to live blocks.jsonl.")
+os.environ.setdefault("ARTCB_MIN_BLOCK_INTERVAL_SEC", "0")
+try:
+    with tempfile.TemporaryDirectory() as tmpdir2:
+        blocks2 = Path(tmpdir2) / "chain.jsonl"
+        key2    = Path(tmpdir2) / "chain.key"
+        chain2  = ChainManager(blocks_path=blocks2, key_path=key2, enable_security=True)
 
-    contributors = [
-        {"address": "artcb1test0001aaaa", "pol_score": 0.8, "role": "miner"},
-        {"address": "artcb1test0002bbbb", "pol_score": 0.6, "role": "contributor"},
-    ]
-    # Warm-up (pol_score ≥ 0.6 requis par Anti-Sybil)
-    chain2.append_block(graph_id="w0", graph_root="root0", pol_score=0.75,
-                        contributors=contributors, source="ai:bench")
+        contributors = [
+            {"address": "artcb1test0001aaaa", "pol_score": 0.8, "role": "miner"},
+            {"address": "artcb1test0002bbbb", "pol_score": 0.6, "role": "contributor"},
+        ]
+        chain2.append_block(graph_id="w0", graph_root="root0", pol_score=0.75,
+                            contributors=contributors, source="ai:bench")
 
-    results.append(bench("append_block() + Anti-Sybil (2 contributors)",
-                         lambda: chain2.append_block(
-                             graph_id=f"s_{time.time_ns()}",
-                             graph_root="secured_root_ab",
-                             pol_score=0.8,
-                             contributors=contributors,
-                             source="ai:bench",
-                         ), rounds=20))
+        results.append(bench("append_block() + Anti-Sybil (2 contributors)",
+                             lambda: chain2.append_block(
+                                 graph_id=f"s_{time.time_ns()}",
+                                 graph_root="secured_root_ab",
+                                 pol_score=0.8,
+                                 contributors=contributors,
+                                 source="ai:bench",
+                             ), rounds=20))
+except Exception as exc:  # noqa: BLE001 — official machine campaign must still write JSON
+    print(f"  SKIP anti-sybil burst: {type(exc).__name__}: {exc}")
+    results.append({"label": "append_block() + Anti-Sybil (2 contributors)", "skipped": True, "error": type(exc).__name__})
 
 # ── Wallet ──────────────────────────────────────────────────────────────────
 print("\n=== Wallet ARTCB (création + hybrid keypair) ===")
@@ -126,8 +131,14 @@ with tempfile.TemporaryDirectory() as tmpdir_tps:
     elapsed = time.perf_counter() - t_start
     tps_blocks = N_BLOCKS / elapsed
     print(f"  {N_BLOCKS} blocs créés en {elapsed*1000:.1f}ms → {tps_blocks:.0f} blocs/s")
-    results.append({"label": f"TPS blocs ({N_BLOCKS} appends)", "tps": round(tps_blocks,1),
-                    "elapsed_ms": round(elapsed*1000,1), "n_blocks": N_BLOCKS})
+    results.append({
+        "label": f"TPS isolated tempdir ({N_BLOCKS} appends, security OFF)",
+        "tps": round(tps_blocks, 1),
+        "elapsed_ms": round(elapsed * 1000, 1),
+        "n_blocks": N_BLOCKS,
+        "not_distributed_mainnet": True,
+        "not_wan": True,
+    })
 
 # ── Résumé JSON ──────────────────────────────────────────────────────────────
 ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -140,6 +151,7 @@ out = {
     "kem_native": kem_available,
     "results": results,
     "tps_blocks": round(tps_blocks, 1),
+    "tps_is_isolated_tempdir_not_distributed_mainnet": True,
 }
 os.makedirs("logs", exist_ok=True)
 fname = f"logs/bench_artcb_{ts}.json"
