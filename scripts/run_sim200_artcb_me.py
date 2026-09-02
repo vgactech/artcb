@@ -9,6 +9,7 @@ OVH2/OVH4 GitHub HTTPS often fails: git bundle fallback (same SHA).
 from __future__ import annotations
 
 import json
+import os
 import ssl
 import subprocess
 import sys
@@ -31,7 +32,7 @@ from artcb.node_registry import NODES, public_registry  # noqa: E402
 from artcb.sim_provenance import collect, dumps  # noqa: E402
 
 SIM_ID = "e2e200_artcb_me_official"
-BRANCH = "main"
+BRANCH = "cursor/artcb-me-official-16d8"
 OVH1 = NODES["ovh-node-1"].ssh_host or "152.228.144.34"
 OVH2 = NODES["ovh-node-2"].ssh_host or "151.80.107.29"
 AWS3 = NODES["aws-node-3"].ssh_host or "51.44.222.232"
@@ -152,7 +153,8 @@ def _remote_keep_book_from_bundle() -> str:
 set -euo pipefail
 cd /home/ubuntu/artcb
 git fetch /tmp/artcb-me-200.bundle HEAD
-git checkout -B {BRANCH} FETCH_HEAD
+git reset --hard HEAD
+git checkout -f -B {BRANCH} FETCH_HEAD
 git reset --hard FETCH_HEAD
 SHA=$(git rev-parse HEAD)
 BR=$(git rev-parse --abbrev-ref HEAD)
@@ -220,7 +222,7 @@ def probe(name: str, ip: str) -> dict:
 
 def make_bundle() -> tuple[Path, str]:
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-    path = Path("/tmp/artcb-me-200.bundle")
+    path = Path(f"/tmp/artcb-me-200-{os.getpid()}-{sha[:12]}.bundle")
     subprocess.run(
         ["git", "bundle", "create", str(path), "HEAD"],
         cwd=ROOT,

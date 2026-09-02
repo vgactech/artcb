@@ -151,7 +151,7 @@ def test_public_url_imports_src_artcb_for_live_uvicorn() -> None:
 
 def test_sim200_keep_book_never_orders_or_wipes() -> None:
     sim = (ROOT / "scripts" / "run_sim200_artcb_me.py").read_text(encoding="utf-8")
-    assert 'BRANCH = "main"' in sim
+    assert 'BRANCH = "cursor/artcb-me-official-16d8"' in sim
     assert "install.sh not executed" in sim
     assert "init_genesis.py not executed" in sim
     assert "init-node not executed" in sim
