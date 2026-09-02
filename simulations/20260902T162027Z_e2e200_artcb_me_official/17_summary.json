@@ -1,0 +1,36 @@
+{
+  "branch": "main",
+  "certified": false,
+  "gate_certified": false,
+  "http_200": {
+    "aws3": 200,
+    "ovh1": 200,
+    "ovh2": 200,
+    "ovh4": 200
+  },
+  "https_200": {
+    "aws3": 200,
+    "ovh1": 200,
+    "ovh2": 200,
+    "ovh4": 200
+  },
+  "keep_book": true,
+  "last_hashes": [
+    "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce"
+  ],
+  "live_shas": [
+    "6b003f5eae645823c28a2b3fa2ea8ad7d0add697",
+    "8fd3a4559575c324c293c8d56a23097f27e38a56"
+  ],
+  "local_sha": "8fd3a4559575c324c293c8d56a23097f27e38a56",
+  "methods": {
+    "aws3": "git_bundle",
+    "ovh1": "git_bundle",
+    "ovh2": "git_fetch_origin",
+    "ovh4": "git_bundle"
+  },
+  "network_id": "artcb-mainnet-1",
+  "ok": true,
+  "order_attempted": false,
+  "secrets_printed": false
+}

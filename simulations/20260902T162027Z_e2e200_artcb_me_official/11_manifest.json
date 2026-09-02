@@ -1,0 +1,37 @@
+{
+  "branch": "main",
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "1ba703489a524f69a5d39d7cb4fde550269c4054a6cb472f5536e8ce6db1b18e",
+    "package_count": 64,
+    "requirements_txt_hash": "2e790a3058b6f76554fb068f844218d659296c056f6c68e996d80cd99c2641a4",
+    "source": "pip_freeze"
+  },
+  "dns_a": {
+    "": "152.228.144.34",
+    "n1": "152.228.144.34",
+    "n2": "151.80.107.29",
+    "n3": "51.44.222.232",
+    "n4": "91.134.45.8",
+    "node": "152.228.144.34"
+  },
+  "domain": "artcb.me",
+  "economic_rules_version": "D-025+V01-V07-locked-D043",
+  "git_branch": "cursor/artcb-me-official-16d8",
+  "git_commit_sha": "8fd3a4559575c324c293c8d56a23097f27e38a56",
+  "git_status_clean": false,
+  "invented_results": false,
+  "keep_book": true,
+  "legacy_cors": "artcb.space",
+  "local_sha": "8fd3a4559575c324c293c8d56a23097f27e38a56",
+  "order_attempted": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim200_artcb_me.py",
+  "script_sha256": "a6230e6c46d22d7e946b8a0cee3c7826e15cb74c97e23aa7672cb442a3d1e859",
+  "seed": 200,
+  "simulation_id": "e2e200_artcb_me_official",
+  "started_at": "2026-09-02T16:20:28Z",
+  "working_tree_diff_hash": "0290d58559ff3dcd37845883a0c42313002595e1808a1b80a95210d63f61a55f"
+}

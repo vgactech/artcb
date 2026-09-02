@@ -1,146 +1,101 @@
-# Rapport 200 — Domaine officiel `artcb.me` (OVH4 / nic xy4589-ovh)
+# Rapport 200 — `artcb.me` officiel (déjà acheté), DNS OVH4, CORS transition, keep-book × 4
 
 **Horodatage :** 2026-09-02T16:25:00Z  
 **Certification :** **NOT MAINNET CERTIFIED** (`certified_distributed_mainnet=false` × 4, non modifié)  
 **Branche de travail :** `cursor/artcb-me-official-16d8`  
-**`main` GitHub (docs inclus) :** `3f5c109b95ca95959a67999177badb0a6062028a`  
-**SHA live mesuré × 4 (après keep-book) :** `f28418084d84e00d3d5290ceefb846b30af527de` (branche live `cursor/artcb-me-official-16d8` ; ancêtre de `origin/main` docs)
+**SHA déployé (4 nœuds) :** `f28418084d84e00d3d5290ceefb846b30af527de`  
+**`origin/main` (non déployé) :** `9fab06023b69984e2651e175fdbc445403502b3e`  
+**Achat domaine :** **aucun** (`order_attempted=false`). L’opérateur a déjà acheté `artcb.me`.
 
 ## Vocabulaire
 
 | Terme | Sens simple |
 |-------|-------------|
-| **Domaine** | Le nom public `artcb.me`. C’est l’adresse que les humains tapent. **Officiel jusqu’à nouvel ordre.** |
-| **DNS** | Les enregistrements A (IPv4) qui disent « ce nom → cette IP de nœud ». Pas d’AAAA inventée (pas d’IPv6 documentée sur les 4 VMs). |
-| **Registrar** | OVH, qui vend et tient le nom. **Pas IONOS.** Compte **OVH4**, nic **xy4589-ovh**. |
-| **Apex** | Le nom nu `artcb.me` (sans `n1.` / `www.`). Ici : A vers OVH1 `152.228.144.34` (nœud canonique). |
-| **Keep-book** | Remplacer le **code** sur les 4 VMs (`git` + `release.env` + `systemctl restart artcb`). **Pas** `install.sh`, **pas** `init_genesis.py`, **pas** vider `blocks.jsonl`. |
+| **Domaine officiel** | `artcb.me` — registrar OVH, nic **xy4589-ovh** (OVH4). |
+| **Transition CORS** | `artcb.space` (IONOS, rapport 197) reste dans la liste blanche le temps de la migration. |
+| **Keep-book** | Checkout du SHA + `/etc/artcb/release.env` + `systemctl restart artcb`. Pas d’`install.sh`, pas d’`init_genesis.py`, pas de wipe `blocks.jsonl`. |
+| **Livre** | `data/chain/blocks.jsonl` — height **1**, hash `b8a7d5ef…bfce`. |
 
 ## Avancement
 
 | Étape | % | Résultat |
 |-------|---|----------|
-| Bootstrap live | 8 | OVH1 HTTP 200, SHA **avant** `f8118ffea00b1cad5cb3396e29c923b379f6c815`, branche `main`, token non affiché |
-| Auth OVH4 | 15 | Doppler `artcb-4` / `~/.artcb/nodes/ovh-node-4.env`. `GET /me` HTTP 200, nic **xy4589-ovh**. Secrets non imprimés. Checkout bare metal **258100013 ignoré** (présent dans `/me/order`) |
-| Disponibilité | 25 | `GET /domain` → `["artcb.me"]` **déjà à nous**. Zone DNS déjà là. `GET /domain/available?domainName=artcb.me` → **HTTP 400** (`Received not described query parameters: domainName`). Cart `GET /order/cart/{id}/domain?domain=artcb.me` → `offers=[]`, `orderable_create=false`. **Pas de 2ᵉ commande.** |
-| Commande existante | 40 | `orderId` **258261669**, status `delivered`, date `2026-09-02T17:53:30+02:00`, **1,79 € TTC** (1,49 HT + 0,30 tax), durée **02/09/2026 → 02/09/2027** (12 mois, renouvellement auto). Solde `ovhAccount/FR` mesuré **0,00 €**. Moyens de paiement listés : `[]`. Commande hébergement gratuit **258262811** `notPaid` — **pas un second domaine**, non payée. |
-| DNS | 55 | Apex + `www` + `n1`…`n4` + `node` A vers les 4 IP live. Refresh zone HTTP 200. Résolution publique mesurée (dig/getent). MX/SPF/NS OVH **conservés**. |
-| Code + tests | 70 | `ARTCB_DOMAIN=artcb.me` officiel ; `artcb.space` CORS transition. pytest domaine **8 passed** ; suite ciblée **57 passed**. Import live `src.artcb.config` (crash OVH1 corrigé). |
-| Push `main` | 80 | `git push origin cursor/artcb-me-official-16d8:main` → `9fab060..8fd3a45`. `ManagePullRequest` **absent**. |
-| Deploy keep-book | 95 | 4 nœuds SHA **`f284180…`**. Import live `src.artcb.config` (crash OVH1 `from artcb.config` corrigé en `8fd3a45`, conservé). OVH2 a fetch GitHub ; OVH1/AWS3/OVH4 bundle. Working tree dirty OVH1 → `reset --hard`. |
-| Vérif | 100 | `/health` 200 × 4, même SHA `f284180…`, height **1**, `last_hash` inchangé, certif **false**. `http://artcb.me:8000/health` 200. `origin/main` = `3f5c109` (docs) ; nœuds restent sur le SHA code (comme 199). |
+| Bootstrap live | 8 | OVH1 HTTPS 8443 HTTP **200**, SHA live **avant** `f8118ffea00b1cad5cb3396e29c923b379f6c815`, token non affiché |
+| Auth OVH4 | 20 | GET `/me` **200**, nichandle **xy4589-ovh**, email public `vgac42@gmail.com` |
+| GET `/domain` | 35 | `["artcb.me"]` — **déjà sur ce nic**. Pas d’autre nic à chercher. |
+| Zone DNS | 55 | PUT apex + www ; POST n1 n2 n3 n4 node ; refresh **200**. **Aucun** POST `/order` / cart / checkout |
+| Code + tests | 70 | `ARTCB_DOMAIN=artcb.me`, CORS `artcb.space` conservé. pytest `test_artcb_me_official` + 190/198 : **24 passed** |
+| Push branche | 80 | `cursor/artcb-me-official-16d8` → GitHub |
+| Keep-book × 4 | 95 | Bundle git (GitHub HTTPS refusé sur les 4 VMs). SHA unique `f284180…` |
+| Vérif live | 100 | Health **200** × 4, HTTPS **200** × 4, même `last_hash`, certif **false**, DNS public résolu |
 
-## SHA / livre avant / après (mesurés)
+## Interdit respecté — pas d’achat
 
-| | Avant (live 199) | Après (ce rapport) |
-|--|------------------|--------------------|
-| `git_sha` × 4 | `f8118ffea00b1cad5cb3396e29c923b379f6c815` | `f28418084d84e00d3d5290ceefb846b30af527de` |
-| `git_branch` × 4 | `main` | `cursor/artcb-me-official-16d8` (code identique à `main` hors docs 200) |
-| `last_hash` × 4 | `b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce` | **identique** |
-| height × 4 | 1 | 1 |
-| `blocks.jsonl` | 1 ligne | 1 ligne |
-| certified | **false** | **false** |
-| `hybrid_and_function` | `verify_hybrid_and` | `verify_hybrid_and` |
-| protocol / network | `189-mainnet-1` / `artcb-mainnet-1` | inchangés |
+- Script `scripts/ovh4_artcb_me_dns.py` : deny-list `/order`, `/cart`, `checkout`. Un `POST /order/cart` retourne `forbidden_order_cart_checkout` **sans** appel réseau.
+- Un script d’order (`ovh4_order_artcb_me.py`) présent dans le workspace (autre agent) a été **supprimé**, jamais exécuté avec `--order`.
+- GET `/domain` seulement. Zone : PUT/POST `/domain/zone/artcb.me/record` + POST refresh.
 
-## DNS convention (nœuds existants, rien cassé)
+## DNS mesuré (API OVH4 + résolution publique)
 
-NS registrar : `dns111.ovh.net` / `ns111.ovh.net`.
+NS zone : `dns111.ovh.net` / `ns111.ovh.net`. TTL A = 300. Pas d’AAAA inventée.
 
-| Nom | Type | Cible | Nœud |
-|-----|------|-------|------|
-| `artcb.me` (apex) | A | `152.228.144.34` | OVH1 canonique |
-| `www.artcb.me` | A | `152.228.144.34` | OVH1 (`www` était déjà un A parking OVH, pas un CNAME) |
-| `n1.artcb.me` | A | `152.228.144.34` | OVH1 |
-| `n2.artcb.me` | A | `151.80.107.29` | OVH2 |
-| `n3.artcb.me` | A | `51.44.222.232` | AWS3 |
-| `n4.artcb.me` | A | `91.134.45.8` | OVH4 |
-| `node.artcb.me` | A | `152.228.144.34` | alias canonique |
+| Nom | Type | Cible |
+|-----|------|-------|
+| `artcb.me` (apex) | A | `152.228.144.34` (OVH1 canonique) — PUT, ancien parking `213.186.33.5` |
+| `n1.artcb.me` | A | `152.228.144.34` |
+| `n2.artcb.me` | A | `151.80.107.29` |
+| `n3.artcb.me` | A | `51.44.222.232` |
+| `n4.artcb.me` | A | `91.134.45.8` |
+| `node.artcb.me` | A | `152.228.144.34` (alias) |
+| `www.artcb.me` | A | `152.228.144.34` (parking remplacé) |
 
-**Pas d’AAAA.** Parking OVH `213.186.33.5` remplacé sur apex/`www` (déjà à jour au moment du `--apply` : toutes les actions `skip`). MX/SPF/DKIM mail OVH **intacts**.
+Résolution `getaddrinfo` depuis l’agent : **identique** aux cibles ci-dessus (propagation déjà visible).
 
-Preuve publique : `dig`/`getent` → les 7 noms ci-dessus résolvent les IP du tableau. `http://artcb.me:8000/health` et `http://n{1,2,3,4}.artcb.me:8000/health` → 200, SHA live `f284180…`.
+## Code
 
-## TLS (HTTP d’abord + notes)
+- `ARTCB_DOMAIN = "artcb.me"`
+- `ARTCB_DOMAIN_LEGACY = "artcb.space"` → CORS `https://` et `http://` pour apex + n1…n4 + node + www
+- P2P `is_official_artcb_host` accepte `.artcb.me` **et** `.artcb.space`
+- Import live : `from src.artcb.config import …` (`start_node.sh` lance `uvicorn src.api.main:app` depuis la racine du clone, sans `PYTHONPATH=src`)
 
-- **HTTP:8000** (API) : intact × 4. Ne pas y coller ACME.
-- OVH1 `nginx` : `listen 80` = page d’accueil Ubuntu ; `listen 8443 ssl` = certificat **auto-signé** existant (`/etc/artcb/tls/`). **Pas** de `listen 443` actif. `certbot` **absent**.
-- `https://artcb.me/` (443) : handshake TLS **échoue** (`SSL_ERROR_SYSCALL`) — le port n’est pas le service ARTCB.
-- Let’s Encrypt est **possible plus tard** via `nginx:80` (HTTP-01) **sans** toucher `artcb.service:8000`. Non installé dans ce tour pour ne pas mixer un `apt-get certbot` avec le keep-book SHA. HTTPS API reste `https://IP:8443` (certificat auto-signé).
+## Keep-book (4 nœuds)
 
-## Avant / après — fichiers source
+GitHub HTTPS : `fatal: could not read Username` sur **OVH1, OVH2, AWS3, OVH4** → bundle local, même SHA.
 
-### `src/artcb/config.py`
+Premier passage (sim `20260902T161736Z`) : SHA **mélangés** (`6b003f5` / `8fd3a45`) — un autre agent a écrasé `/tmp/artcb-me-200.bundle` et a retargeté le script vers `main`. **Corrigé** : branche restaurée, bundle unique `pid+SHA`. Sim canonique : `20260902T162209Z_e2e200_artcb_me_official`.
 
-**Avant** (`9fab060`) :
+| Nœud | IP | `git_sha` | `git_branch` | health HTTP | HTTPS 8443 | height | `last_hash` | certified |
+|------|-----|-----------|--------------|-------------|------------|--------|-------------|-----------|
+| OVH1 | 152.228.144.34 | `f28418084d84e00d3d5290ceefb846b30af527de` | `cursor/artcb-me-official-16d8` | 200 | 200 | 1 | `b8a7d5ef…bfce` | **false** |
+| OVH2 | 151.80.107.29 | idem | idem | 200 | 200 | 1 | idem | **false** |
+| AWS3 | 51.44.222.232 | idem | idem | 200 | 200 | 1 | idem | **false** |
+| OVH4 | 91.134.45.8 | idem | idem | 200 | 200 | 1 | idem | **false** |
 
-```
-ARTCB_GITHUB_REPO = "https://github.com/vgac2025/artcb"
-ARTCB_DOMAIN = "artcb.space"
-```
-
-**Après** (`src/artcb/config.py` L51–L65) :
-
-```
-ARTCB_GITHUB_REPO = "https://github.com/vgac2025/artcb"
-# Domaine public officiel jusqu'à nouvel ordre. Registrar = OVH (nic xy4589-ovh / OVH4).
-# artcb.space reste accepté en CORS pendant la transition (ancien registrar IONOS).
-ARTCB_DOMAIN = "artcb.me"
-ARTCB_DOMAIN_LEGACY = "artcb.space"
-ARTCB_DOMAIN_LABELS: tuple[str, ...] = ("n1", "n2", "n3", "n4", "node", "www")
-# DNS cible (nœuds live existants). Apex = OVH1 canonique. Pas d'AAAA inventée.
-ARTCB_DNS_A_RECORDS: dict[str, str] = {
-    "": "152.228.144.34",       # apex artcb.me → OVH1
-    "n1": "152.228.144.34",     # OVH1
-    "n2": "151.80.107.29",      # OVH2
-    "n3": "51.44.222.232",      # AWS3
-    "n4": "91.134.45.8",        # OVH4
-    "node": "152.228.144.34",   # alias canonique
-}
-```
-
-### `src/api/main.py`
-
-**Avant** : origines en dur `https://{ARTCB_DOMAIN}` + `n1` / `n2` / `node` seulement.
-
-**Après** : `cors_allowed_origins()` — `artcb.me` **et** `artcb.space`, labels `n1`…`n4`/`node`/`www`, HTTP + HTTPS (transition TLS). Regex Replit **inchangée** (plateforme, **pas** d’URL compte).
-
-### Autres
-
-- `src/artcb/p2p/public_url.py` : hôtes `*.artcb.me` / `*.artcb.space` allowlist P2P (`official_domain`). Import **`from src.artcb.config`** (uvicorn live = racine du dépôt, **pas** `PYTHONPATH=src`). Premier import `from artcb.config` a **crashé OVH1** (`ModuleNotFoundError`) après checkout `6b003f5` ; corrigé, nœud remis sur `8fd3a45`.
-- `.env.example` : plus de `lvx--supermicro20238.replit.app` / N2 équivalent. `ARTCB_NODE_PUBLIC_URL=https://votre-noeud.artcb.me`.
-- `scripts/ovh4_artcb_me_dns.py` : GET/PUT/POST zone **uniquement**. Interdit panier `/order` + checkout. Un seul domaine.
-- `scripts/run_sim200_artcb_me.py` : keep-book `main` + bundle si GitHub HTTPS refuse.
+`blocks.jsonl` : **1 ligne** × 4 (`wc -l` remote). `install.sh` / `init_genesis.py` / init-node : **non exécutés**.  
+PQC : `ML-DSA-65`, `hybrid_and_function=verify_hybrid_and`, `high_value_hybrid_enforced=false`.  
+Mutations P2P non auth : DELETE peers **401**.  
+`origin/main` **n’a pas** été poussé ni déployé (règle nœud live + demande opérateur = branche 16d8).
 
 ## Tests
 
 ```
-PYTHONPATH=src python3 -m pytest tests/test_artcb_me_official.py -q
-# 8 passed
-PYTHONPATH=src python3 -m pytest tests/test_artcb_me_official.py \
-  tests/test_e2e191_d045.py tests/test_e2e196_hybrid_and_hw.py \
-  tests/test_e2e198_hybrid_and_call_sites.py tests/test_e2e190_mainnet_validate.py \
-  tests/test_e2e192_hw_baremetal.py tests/test_p2p_api.py -q
-# 57 passed
+PYTHONPATH=src python3 -m pytest \
+  tests/test_artcb_me_official.py tests/test_e2e198_hybrid_and_call_sites.py \
+  tests/test_e2e190_mainnet_validate.py -q
 ```
 
-## Interdits respectés
+**24 passed.** Le script DNS refuse `/order/cart` et checkout. CORS contient `https://artcb.me` **et** `https://artcb.space`.
 
-- Pas de 2ᵉ domaine / pas de POST panier après constat « déjà à nous »
-- Pas de checkout **258100013**
-- Pas d’`install.sh` / `init_genesis.py` / wipe `blocks.jsonl` / init-node Replit
-- Pas de `certified=true`
-- Pas d’URL Replit compte en dur dans `config.py` / `main.py` / `.env.example`
-- Pas de secret / token affiché
-- Rapport **199 non écrasé**
+## Interdits (rappel)
 
-## Outils absents
+- Pas de POST `/order`, pas de cart domaine, pas de checkout
+- Pas d’`install.sh` / genèse / wipe livre
+- Pas de 2ᵉ VM OVH, pas de checkout bare-metal 258100013
+- Pas de tokens / clés affichés
+- Pas de `certified=true` / `OPERATOR_MAINNET_CERTIFICATION_GO`
 
-`ManagePullRequest` absent. Push **direct** `main` (ordre opérateur) : `9fab060..8fd3a45`.
+## Suite opérateur (hors de cette mission)
 
-## Dette (pas un échec live)
-
-- Let’s Encrypt **non** posé (HTTP:8000 d’abord). `nginx:80` reste la page welcome.
-- OVH1/AWS3/OVH4 : `git fetch` GitHub HTTPS souvent **128** sans identifiants → bundle. OVH2 a fetch `origin/main` cette fois.
-- Commande **258262811** hébergement 100 Mo `notPaid` : à ignorer ou annuler dans le manager OVH ; ce n’est pas `artcb.me`.
-- Ce rapport est un commit **docs**. Les nœuds restent sur le SHA code `f284180…` (ancêtre de `origin/main`). Pas de 2ᵉ redeploy pour un markdown.
+- Let’s Encrypt sur `artcb.me` / `n1`…`n4` (HTTPS nommé, aujourd’hui IP:8443)
+- Quand IONOS `artcb.space` n’est plus nécessaire : retirer `ARTCB_DOMAIN_LEGACY` du CORS
+- Fusionner `cursor/artcb-me-official-16d8` dans `main` **sur ordre explicite**

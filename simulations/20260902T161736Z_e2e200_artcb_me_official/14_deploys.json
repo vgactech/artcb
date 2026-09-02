@@ -1,0 +1,70 @@
+{
+  "aws3": {
+    "method": "git_bundle",
+    "name": "aws3",
+    "origin_attempt": {
+      "returncode": 128,
+      "stderr": "fatal: could not read Username for 'https://github.com': No such device or address\nfatal: expected flush after ref listing\n",
+      "stdout_tail": ""
+    },
+    "returncode": 0,
+    "scp": {
+      "name": "aws3",
+      "returncode": 0,
+      "stderr": ""
+    },
+    "stderr": "From /tmp/artcb-me-200.bundle\n * branch            HEAD       -> FETCH_HEAD\nSwitched to a new branch 'cursor/artcb-me-official-16d8'\n",
+    "stdout": "HEAD is now at 8fd3a45 fix(200): import src.artcb.config so live uvicorn can boot\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=8fd3a4559575c324c293c8d56a23097f27e38a56\nBUNDLE_FALLBACK=1\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh1": {
+    "method": "git_bundle",
+    "name": "ovh1",
+    "origin_attempt": {
+      "returncode": 128,
+      "stderr": "fatal: could not read Username for 'https://github.com': No such device or address\nfatal: expected flush after ref listing\n",
+      "stdout_tail": ""
+    },
+    "returncode": 0,
+    "scp": {
+      "name": "ovh1",
+      "returncode": 0,
+      "stderr": ""
+    },
+    "stderr": "From /tmp/artcb-me-200.bundle\n * branch            HEAD       -> FETCH_HEAD\nSwitched to a new branch 'cursor/artcb-me-official-16d8'\n",
+    "stdout": "HEAD is now at 6b003f5 feat(200): artcb.me official domain, DNS-only OVH4, CORS keeps artcb.space\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=6b003f5eae645823c28a2b3fa2ea8ad7d0add697\nBUNDLE_FALLBACK=1\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh2": {
+    "method": "git_bundle",
+    "name": "ovh2",
+    "origin_attempt": {
+      "returncode": 128,
+      "stderr": "fatal: could not read Username for 'https://github.com': No such device or address\nfatal: expected flush after ref listing\n",
+      "stdout_tail": ""
+    },
+    "returncode": 0,
+    "scp": {
+      "name": "ovh2",
+      "returncode": 0,
+      "stderr": ""
+    },
+    "stderr": "From /tmp/artcb-me-200.bundle\n * branch            HEAD       -> FETCH_HEAD\nSwitched to a new branch 'cursor/artcb-me-official-16d8'\n",
+    "stdout": "HEAD is now at 6b003f5 feat(200): artcb.me official domain, DNS-only OVH4, CORS keeps artcb.space\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=6b003f5eae645823c28a2b3fa2ea8ad7d0add697\nBUNDLE_FALLBACK=1\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh4": {
+    "method": "git_bundle",
+    "name": "ovh4",
+    "origin_attempt": {
+      "returncode": 128,
+      "stderr": "fatal: could not read Username for 'https://github.com': No such device or address\nfatal: expected flush after ref listing\n",
+      "stdout_tail": ""
+    },
+    "returncode": 0,
+    "scp": {
+      "name": "ovh4",
+      "returncode": 0,
+      "stderr": ""
+    },
+    "stderr": "From /tmp/artcb-me-200.bundle\n * branch            HEAD       -> FETCH_HEAD\nSwitched to a new branch 'cursor/artcb-me-official-16d8'\n",
+    "stdout": "HEAD is now at 8fd3a45 fix(200): import src.artcb.config so live uvicorn can boot\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=8fd3a4559575c324c293c8d56a23097f27e38a56\nBUNDLE_FALLBACK=1\n1 data/chain/blocks.jsonl\n"
+  }
+}
