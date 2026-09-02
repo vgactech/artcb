@@ -103,3 +103,21 @@ GitHub `main` au moment de cette pose : encore `ad017bca…`. Le code follow-mai
 - Pas de fusion **PR #51**.
 - Token / PEM non affichés.
 - OVH1 inclus dans l’auto-suivi **sur ordre explicite**.
+
+## 8. Preuve : `main` a bougé → les 4 nœuds ont suivi
+
+`git push origin HEAD:main` : `ad017bca…` → **`04cccb5dcd39cc5897579487b3680dbccbfd7008`**.  
+PR **#54 MERGED** 2026-09-02T21:09:31Z.
+
+Run `artcb_follow_main.sh` (le même binaire que le timer 5 min) sur les 4 VM :
+
+| Nœud | avant | `FETCH_METHOD` | après HEAD | restart | BOOK | timer | `/health` |
+|------|-------|----------------|------------|---------|------|-------|-----------|
+| ovh-node-1 | `ad017bca…` | origin | **`04cccb5dcd39cc5897579487b3680dbccbfd7008`** | oui | 1 | enabled | 200 HTTP + HTTPS + `artcb.me` |
+| ovh-node-2 | `ad017bca…` | origin | **même** | oui | 1 | enabled | 200 + `n2.artcb.me` |
+| aws-node-3 | `ad017bca…` | origin | **même** | oui | 1 | enabled | 200 + `n3.artcb.me` |
+| ovh-node-4 | `ad017bca…` | origin | **même** | oui | 1 | enabled | 200 + `n4.artcb.me` |
+
+Certif toujours **false**. PQC ML-DSA-65. JSON : `logs/207_follow_main_after_merge.json`.
+
+À partir d’ici, **plus besoin de le répéter** : un push sur GitHub `main` suffit. Le timer (5 min) ou `bash scripts/artcb_follow_main.sh` aligne le code. Un nouveau clone + `install.sh` installe le même suivi (ff-only).

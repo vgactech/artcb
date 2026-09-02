@@ -71,6 +71,7 @@ def test_follow_main_does_not_certify_and_rapport_has_live_sha() -> None:
     report = (ROOT / "rapports" / "207_follow_main_all_nodes_2026-09-02.md").read_text(encoding="utf-8")
     assert "NOT MAINNET CERTIFIED" in report
     assert "ad017bca05c2e3799c7dcd120ca1797968d499b6" in report
+    assert "04cccb5dcd39cc5897579487b3680dbccbfd7008" in report
     assert "152.228.144.34" in report
     assert "151.80.107.29" in report
     assert "51.44.222.232" in report
