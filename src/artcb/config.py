@@ -27,13 +27,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Bootstrap nodes officiels ARTCB — URLs artcb.space (rapport 116)
-# Ces URLs sont stables et indépendantes de l'hébergeur (Replit, OVH, etc.)
+# Carnet d'adresses des 4 serveurs toujours allumés (OVH1, OVH2, AWS3, OVH4).
+# Pas d'URL Replit ici : chaque clone Replit / VPS se présente tout seul
+# (ARTCB_NODE_PUBLIC_URL ou variables injectées par l'hébergeur).
+# D'autres seeds : variable d'environnement ARTCB_BOOTSTRAP_NODES (virgules).
 BOOTSTRAP_NODES: list[str] = [
-    "https://n1.artcb.space",   # Nœud N1 → lvx--supermicro20238.replit.app
-    "https://n2.artcb.space",   # Nœud N2 → lvx--supermicro20239.replit.app
-    "https://node.artcb.space", # Point d'entrée principal
+    "http://152.228.144.34:8000",
+    "http://151.80.107.29:8000",
+    "http://51.44.222.232:8000",
+    "http://91.134.45.8:8000",
 ]
+
+
+def bootstrap_nodes() -> list[str]:
+    extra = [x.strip().rstrip("/") for x in os.getenv("ARTCB_BOOTSTRAP_NODES", "").split(",") if x.strip()]
+    seen: list[str] = []
+    for url in [*BOOTSTRAP_NODES, *extra]:
+        cleaned = url.rstrip("/")
+        if cleaned and cleaned not in seen:
+            seen.append(cleaned)
+    return seen
 
 ARTCB_GITHUB_REPO = "https://github.com/vgac2025/artcb"
 ARTCB_DOMAIN = "artcb.space"

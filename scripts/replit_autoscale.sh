@@ -25,8 +25,25 @@ for _i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
 done
 
 CURRENT_STEP="public_url"
-if [ -z "${ARTCB_NODE_PUBLIC_URL:-}" ] && [ -n "${REPLIT_DOMAINS:-}" ]; then
-  export ARTCB_NODE_PUBLIC_URL="https://$(echo "$REPLIT_DOMAINS" | cut -d',' -f1 | tr -d ' ')"
+_artcb_https_from_host() {
+  local d="$1"
+  d="${d#https://}"
+  d="${d#http://}"
+  d="${d%%/*}"
+  d="${d%%,*}"
+  d="$(echo "$d" | tr -d ' ')"
+  [ -n "$d" ] && echo "https://${d}"
+}
+if [ -z "${ARTCB_NODE_PUBLIC_URL:-}" ]; then
+  if [ -n "${REPLIT_DEV_DOMAIN:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="$(_artcb_https_from_host "$REPLIT_DEV_DOMAIN")"
+  elif [ -n "${REPLIT_INTERNAL_APP_DOMAIN:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="$(_artcb_https_from_host "$REPLIT_INTERNAL_APP_DOMAIN")"
+  elif [ -n "${REPLIT_DOMAINS:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="$(_artcb_https_from_host "$REPLIT_DOMAINS")"
+  elif [ -n "${REPL_SLUG:-}" ] && [ -n "${REPL_OWNER:-}" ]; then
+    export ARTCB_NODE_PUBLIC_URL="https://${REPL_SLUG}--${REPL_OWNER}.replit.app"
+  fi
 fi
 
 CURRENT_STEP="git_sync"

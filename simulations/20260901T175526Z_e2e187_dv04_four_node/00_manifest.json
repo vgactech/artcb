@@ -1,0 +1,27 @@
+{
+  "certified_distributed_mainnet": false,
+  "d040": true,
+  "d041": true,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V-provisional+D-032..D-041",
+  "finished_at": "2026-09-01T17:56:00Z",
+  "four_node_book": true,
+  "git_branch": "cursor/ovh1-same-book-16d8",
+  "git_commit_sha": "fb2bfcb14b45f047e8718db19001ffdd97d8c205",
+  "git_status_clean": true,
+  "invented_results": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "174-devnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim187_dv04_four_node.py",
+  "script_sha256": "a749a62be45f68e4c432ea67e360dcbb06872d09845a2297ae86b4eef78e65d1",
+  "seed": 187,
+  "simulation_id": "e2e187_dv04_four_node",
+  "started_at": "2026-09-01T17:55:27Z",
+  "working_tree_diff_hash": "a33c7bed54fb7a24557e37f2164d3855dc1f98ae9de8ef78541dfd2dd9c9ca73"
+}

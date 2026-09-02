@@ -1,8 +1,9 @@
-"""Official artcb-devnet-1 cryptographic policy (D-032).
+"""Official ARTCB cryptographic policy (D-032 + D-043 mainnet).
 
 User lock 2026-08-31: Option B primary (ML-DSA-65 preferred, Ed25519
-temporarily allowed). Option C hybrid signatures are used whenever ML-DSA-65
-is available on the signer. Economic V-01…V-07 are unchanged.
+temporarily allowed until 2026-12-31). Hybrid AND whenever ML-DSA-65
+is available. D-043: live network_id is artcb-mainnet-1 (not a rename of
+the 174-devnet-1 test book).
 """
 
 from __future__ import annotations
@@ -10,15 +11,15 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any, Final
 
-NETWORK_ID: Final[str] = "artcb-devnet-1"
-PROTOCOL_VERSION: Final[str] = "174-devnet-1"
-# Declared network genesis identifier (creator_rights.json), not a live block hash.
-GENESIS_HASH: Final[str] = "genesis-artcb-v2"
+NETWORK_ID: Final[str] = "artcb-mainnet-1"
+PROTOCOL_VERSION: Final[str] = "189-mainnet-1"
+# Declared network genesis identifier, not a live block hash.
+GENESIS_HASH: Final[str] = "genesis-artcb-mainnet-1"
 PREFERRED_SIG: Final[str] = "ML-DSA-65"
 TEMPORARY_SIG: Final[str] = "Ed25519"
 HYBRID_SIG: Final[str] = "hybrid:ed25519+ML-DSA-65"
 POLICY_ID: Final[str] = "B-preferred-pqc"
-POLICY_VERSION: Final[str] = "174-devnet-crypto-b"
+POLICY_VERSION: Final[str] = "189-mainnet-crypto-b"
 # Temporary Ed25519-only compatibility window (UTC). After this instant, B
 # becomes A (ML-DSA-65 required) unless a later decision extends it.
 ED25519_ONLY_UNTIL: Final[str] = "2026-12-31T00:00:00Z"
@@ -146,7 +147,14 @@ def public_health_block(pqc_available: bool) -> dict[str, Any]:
         "algorithm": PREFERRED_SIG if pqc_available else f"{TEMPORARY_SIG} (fallback)",
         "policy": capabilities(pqc_available),
         "availability_is_not_enforcement": True,
+        # D-034 AND is wired at chain/groups/governance via
+        # verify_hybrid_and_or_window → verify_hybrid_and for hybrid
+        # envelopes. Ed25519-only still accepted while D-032 B is open,
+        # so high-value messages are NOT required to be hybrid yet.
         "high_value_hybrid_enforced": False,
+        "hybrid_and_function": "verify_hybrid_and",
+        "hybrid_and_call_sites_wired": True,
+        "legacy_verify_hybrid_still_accepts_ed25519_only": True,
         "ed25519_only_still_accepted": fallback_still_open(),
         "action_required": (
             None

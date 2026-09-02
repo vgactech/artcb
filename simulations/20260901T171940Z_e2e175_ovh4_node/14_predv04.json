@@ -1,0 +1,65 @@
+{
+  "after_hashes": {
+    "aws3": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639",
+    "ovh1": "8d542e496f58485d8eeab8e8f9c3c9f5756b4256f794bc553caf955f53be8308",
+    "ovh2": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639",
+    "ovh4": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639"
+  },
+  "before_hashes": {
+    "aws3": "c482e0bcf89970a4a1c23e4625c47c6bf96345ea94886484d32cf89b5a2f55ec",
+    "ovh1": "8d542e496f58485d8eeab8e8f9c3c9f5756b4256f794bc553caf955f53be8308",
+    "ovh2": "c482e0bcf89970a4a1c23e4625c47c6bf96345ea94886484d32cf89b5a2f55ec",
+    "ovh4": "12a47b0e973d4aa149a285d82801bade0f4537a710ad5bba61ebc9495f0f24cd"
+  },
+  "digests": {
+    "aws3": "e4f522da9821bbd1c123be747585e121c6db984e5f836a9c4f011f19a60ff8fc",
+    "ovh2": "e4f522da9821bbd1c123be747585e121c6db984e5f836a9c4f011f19a60ff8fc",
+    "ovh4": "e4f522da9821bbd1c123be747585e121c6db984e5f836a9c4f011f19a60ff8fc"
+  },
+  "heights": {
+    "aws3": 7,
+    "ovh1": 1,
+    "ovh2": 7,
+    "ovh4": 7
+  },
+  "ovh1_untouched": true,
+  "registrations": {
+    "aws3_ovh2": {
+      "http": 200,
+      "peer_id": "peer_5e7e5e672b05",
+      "status": null
+    },
+    "aws3_ovh4": {
+      "http": 200,
+      "peer_id": "peer_0ab5e97a59c7",
+      "status": null
+    },
+    "ovh2_aws3": {
+      "http": 200,
+      "peer_id": "peer_dc1574b4fb9f",
+      "status": null
+    },
+    "ovh2_ovh4": {
+      "http": 200,
+      "peer_id": "peer_0deb8a25fafb",
+      "status": null
+    },
+    "ovh4_aws3": {
+      "http": 200,
+      "peer_id": "peer_db67ac7e67d9",
+      "status": null
+    },
+    "ovh4_ovh2": {
+      "http": 200,
+      "peer_id": "peer_eba9b01d078f",
+      "status": null
+    }
+  },
+  "store_block_index": 6,
+  "store_http": 200,
+  "sync_http": {
+    "aws3": 200,
+    "ovh4": 200
+  },
+  "tips_equal_homogeneous": true
+}

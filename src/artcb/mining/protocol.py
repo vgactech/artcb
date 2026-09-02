@@ -284,7 +284,7 @@ class ProtocolEngine:
             "source": "HumanRegistry.verified_adult_count",
             "adult_age_years": 18,
             "demographic_ref": self.demographic.to_dict(),
-            "hmax_frozen": False,
+            "hmax_frozen": True,
         }
 
         issued_so_far = self.chain._issued_so_far_satoshi()

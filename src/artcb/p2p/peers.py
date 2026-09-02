@@ -34,7 +34,9 @@ class PeerRecord:
     def base_url(self) -> str:
         scheme = (self.scheme or "http").lower()
         host = (self.host or "").lower()
-        if host.endswith((".replit.app", ".repl.co")) or self.port == 443:
+        from src.artcb.p2p.public_url import is_https_platform_host
+
+        if is_https_platform_host(host) or self.port == 443:
             scheme = "https"
         if scheme not in {"http", "https"}:
             scheme = "https" if self.port == 443 else "http"

@@ -1,0 +1,10 @@
+{
+  "DV-01": "PENDING",
+  "DV-02": "PARTIAL",
+  "DV-03": "PASS",
+  "DV-04": "BLOCKED",
+  "DV-05": "BLOCKED",
+  "DV-06": "PARTIAL",
+  "DV-07": "PARTIAL",
+  "PRE-DV-04": "PASS"
+}

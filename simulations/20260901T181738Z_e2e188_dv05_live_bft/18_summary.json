@@ -1,0 +1,208 @@
+{
+  "certification_gate": {
+    "certified_distributed_mainnet": false,
+    "dv_not_pass": [
+      "DV-01",
+      "DV-02",
+      "DV-06",
+      "DV-07"
+    ],
+    "economic_v_locked": false,
+    "live_bft_implemented": true,
+    "reason": "dv_not_pass:DV-01,DV-02,DV-06,DV-07; economic_v_locked=false"
+  },
+  "certified_distributed_mainnet": false,
+  "consensus_extracted": {
+    "canonical_tip_sim": "longest valid chain; tie -> lexicographically smaller hash (distributed.py)",
+    "classical_bft_note": "N >= 3F+1, Q = 2F+1 (live prepare/commit 188)",
+    "dv05": "LIVE engine exists; PASS only after honest/offline/delay/double-proposal/divergence on 4 nodes",
+    "four_live_nodes_bft_f": 1,
+    "four_live_nodes_bft_q": 3,
+    "live_bft_implemented": true,
+    "not_block_append_bft": true,
+    "scope": "settlement_prepare_commit",
+    "sim_finality_confirmations": 2,
+    "sim_settlement_quorum": "n//2+1",
+    "three_live_nodes_bft_f": null
+  },
+  "decisions_188": {
+    "D-042": "GO remaining mainnet gates \u2014 operator asked to launch mainnet now. Culture forbids renaming 174-devnet-1 or flipping certified_distributed_mainnet. Wire live prepare/commit BFT (N=4 F=1 Q=3) from replicated_settlement onto the four VMs. DV-05 PASS only after honest/offline/delay/double-proposal/divergence. Economic V-01\u2026V-07 stay provisional (D-026). Ed25519 window stays until 2026-12-31 (D-032). Test probe blocks are not a mainnet genesis. Not certified mainnet."
+  },
+  "dir": "/workspace/simulations/20260901T181738Z_e2e188_dv05_live_bft",
+  "failure_count": 0,
+  "failures": [],
+  "invented": false,
+  "note": "D-042: live prepare/commit BFT on 4 VMs. Not a mainnet rename. certified_distributed_mainnet false until DV-01\u202607 PASS and V lock.",
+  "scenarios": {
+    "checks": {
+      "delay_timeout": true,
+      "double_rejected": true,
+      "honest_ok": true,
+      "offline_quorum": true,
+      "ovh4_recovered": true
+    },
+    "delay_unroutable": {
+      "error": "URLError",
+      "expect_fail": true,
+      "http": 0
+    },
+    "double_proposal": {
+      "http": 200,
+      "ok": false,
+      "reason": "no_majority"
+    },
+    "engine_up": true,
+    "honest": {
+      "http": 200,
+      "n": 4,
+      "ok": true,
+      "prepared": 4,
+      "q": 3
+    },
+    "offline": {
+      "http": 200,
+      "ok": true,
+      "prepared": 3,
+      "reason": null
+    },
+    "ovh4_down_wait": [
+      {
+        "http": 0,
+        "try": 1
+      }
+    ],
+    "ovh4_start": {
+      "returncode": 0,
+      "stderr_len": 0,
+      "stdout_len": 0
+    },
+    "ovh4_stop": {
+      "returncode": 0,
+      "stderr_len": 0,
+      "stdout_len": 0
+    },
+    "ovh4_up_wait": [
+      {
+        "http": 0,
+        "try": 1
+      },
+      {
+        "http": 0,
+        "try": 2
+      },
+      {
+        "http": 500,
+        "try": 3
+      },
+      {
+        "http": 500,
+        "try": 4
+      },
+      {
+        "http": 500,
+        "try": 5
+      },
+      {
+        "http": 500,
+        "try": 6
+      },
+      {
+        "http": 500,
+        "try": 7
+      },
+      {
+        "http": 500,
+        "try": 8
+      },
+      {
+        "http": 500,
+        "try": 9
+      },
+      {
+        "http": 500,
+        "try": 10
+      },
+      {
+        "http": 500,
+        "try": 11
+      },
+      {
+        "http": 500,
+        "try": 12
+      },
+      {
+        "http": 500,
+        "try": 13
+      },
+      {
+        "http": 500,
+        "try": 14
+      },
+      {
+        "http": 500,
+        "try": 15
+      },
+      {
+        "http": 500,
+        "try": 16
+      },
+      {
+        "http": 500,
+        "try": 17
+      },
+      {
+        "http": 500,
+        "try": 18
+      },
+      {
+        "http": 500,
+        "try": 19
+      },
+      {
+        "http": 500,
+        "try": 20
+      }
+    ],
+    "recover_status_http": 200,
+    "statuses": {
+      "aws3": {
+        "bft_capable": true,
+        "f": 1,
+        "http": 200,
+        "n": 4,
+        "q": 3
+      },
+      "ovh1": {
+        "bft_capable": true,
+        "f": 1,
+        "http": 200,
+        "n": 4,
+        "q": 3
+      },
+      "ovh2": {
+        "bft_capable": true,
+        "f": 1,
+        "http": 200,
+        "n": 4,
+        "q": 3
+      },
+      "ovh4": {
+        "bft_capable": true,
+        "f": 1,
+        "http": 200,
+        "n": 4,
+        "q": 3
+      }
+    }
+  },
+  "simulation": "e2e188_dv05_live_bft",
+  "verdicts": {
+    "DV-01": "PENDING",
+    "DV-02": "PARTIAL",
+    "DV-03": "PASS",
+    "DV-04": "PASS",
+    "DV-05": "PASS",
+    "DV-06": "PARTIAL",
+    "DV-07": "PARTIAL"
+  }
+}

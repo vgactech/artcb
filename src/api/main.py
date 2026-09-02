@@ -34,6 +34,7 @@ from src.api.groups_routes import router as groups_router
 from src.api.mining_routes import router as mining_router
 from src.api.notifications_routes import router as notifications_router
 from src.api.p2p_routes import router as p2p_router
+from src.api.consensus_routes import router as consensus_router
 from src.api.libp2p_routes import router as libp2p_router
 from src.api.pool_routes import router as pool_router
 from src.api.routes import router as api_router
@@ -41,6 +42,10 @@ from src.api.symbols_routes import router as symbols_router
 from src.api.websocket import router as ws_router
 from src.api.privacy_routes import router as privacy_router
 from src.api.setup_routes import router as setup_router
+from src.api.network_routes import router as network_router
+
+# Any Replit account — never a named Autoscale hostname in git.
+REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
 
 
 def create_app() -> FastAPI:
@@ -57,12 +62,12 @@ def create_app() -> FastAPI:
         f"https://n1.{ARTCB_DOMAIN}",
         f"https://n2.{ARTCB_DOMAIN}",
         f"https://node.{ARTCB_DOMAIN}",
-        "https://artcb--vgac42.replit.app",
         *_extra,
     ]
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_allowed_origins,
+        allow_origin_regex=REPLIT_CORS_ORIGIN_REGEX,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -72,6 +77,7 @@ def create_app() -> FastAPI:
 
     # Routes /setup/* — toujours montées (état bootstrap ou non)
     app.include_router(setup_router)
+    app.include_router(network_router)
 
     if state.p2p_identity.bootstrap_mode:
         # ── MODE BOOTSTRAP ─────────────────────────────────────────────────
@@ -93,8 +99,14 @@ def create_app() -> FastAPI:
             )
             from src.artcb.release import release_identity
             _pqc = pqc_available()
+            from src.artcb.security.hardware_identity import public_machine_view
+            from src.artcb.p2p.seed_discovery import public_directory_payload
             identity = release_identity()
             pqc_block = public_health_block(_pqc)
+            directory = public_directory_payload(
+                live=False,
+                data_dir=state.settings.data_dir,
+            )
             return {
                 "status": "bootstrap",
                 "service": "ARTCB API",
@@ -107,9 +119,12 @@ def create_app() -> FastAPI:
                 "network_id": NETWORK_ID,
                 "protocol_version": PROTOCOL_VERSION,
                 "genesis_hash": GENESIS_HASH,
+                "machine": public_machine_view(state.device_identity),
+                "seeds": directory.get("seeds"),
                 "message": (
                     "Nœud non configuré. "
-                    "Appelez POST /setup/init-node avec {node_name, password} pour initialiser."
+                    "Appelez POST /setup/init-node avec {node_name, password} pour initialiser. "
+                    "L'annuaire GET /api/v1/network/nodes fonctionne sans wallet."
                 ),
                 "setup_url": "/setup/init-node",
                 "pqc": pqc_block,
@@ -175,17 +190,55 @@ def create_app() -> FastAPI:
         if os.path.isdir(_dist_assets):
             app.mount("/assets", StaticFiles(directory=_dist_assets), name="bootstrap-assets")
 
+        @app.get("/api/v1/p2p/status")
+        async def p2p_status_bootstrap():
+            from src.artcb.crypto_policy import GENESIS_HASH, NETWORK_ID, PROTOCOL_VERSION
+            from src.artcb.p2p.seed_discovery import public_directory_payload
+            from src.artcb.security.hardware_identity import public_machine_view
+
+            directory = public_directory_payload(live=False, data_dir=state.settings.data_dir)
+            return {
+                "bootstrap_mode": True,
+                "wallet_initialized": False,
+                "network_id": NETWORK_ID,
+                "protocol_version": PROTOCOL_VERSION,
+                "genesis_hash": GENESIS_HASH,
+                "kem_public_key_hex": "",
+                "peer_count": 0,
+                "machine": public_machine_view(state.device_identity),
+                "seeds": directory.get("seeds"),
+                "announced": directory.get("announced"),
+                "message": "Observer directory only — init-node required for full P2P.",
+            }
+
+        @app.get("/api/v1/p2p/peers")
+        async def p2p_peers_bootstrap():
+            from src.artcb.p2p.seed_discovery import public_directory_payload
+
+            directory = public_directory_payload(live=False, data_dir=state.settings.data_dir)
+            return {
+                "bootstrap_mode": True,
+                "peers": [],
+                "count": 0,
+                "seeds": directory.get("seeds"),
+                "announced": directory.get("announced"),
+            }
+
         # Routes API accessibles pendant le bootstrap (réponse explicite, pas 503 générique)
         _BOOTSTRAP_API_PASSTHROUGH = frozenset({
             "api/v1/health",
-            "api/v1/chain/verify",   # frontend vérifie ceci au démarrage
+            "api/v1/chain/verify",
+            "api/v1/network/nodes",
+            "api/v1/p2p/status",
+            "api/v1/p2p/peers",
         })
 
         @app.get("/{full_path:path}")
         async def bootstrap_catchall(full_path: str):
             # Routes déjà déclarées — FastAPI les intercepte avant ce catchall
             if full_path in ("", "health", "live", "ready", "setup/status", "setup/init-node",
-                             "api/v1/health", "api/v1/chain/verify"):
+                             "api/v1/health", "api/v1/chain/verify", "api/v1/network/nodes",
+                             "api/v1/p2p/status", "api/v1/p2p/peers"):
                 from fastapi import HTTPException
                 raise HTTPException(status_code=404)
             # Servir le frontend SPA pour les routes non-API
@@ -227,6 +280,7 @@ def create_app() -> FastAPI:
     app.include_router(mining_router)
     app.include_router(governance_router)
     app.include_router(p2p_router)
+    app.include_router(consensus_router)
     app.include_router(pool_router)
     app.include_router(notifications_router)
     app.include_router(dashboard_router)
@@ -272,8 +326,16 @@ def create_app() -> FastAPI:
             public_health_block,
         )
         from src.artcb.release import release_identity
+        from src.artcb.devnet_validation import certification_gate
+        from src.artcb.security.hardware_identity import public_machine_view
         _pqc = pqc_available()
         identity = release_identity()
+        try:
+            gate = certification_gate()
+            certified = bool(gate.get("certified_distributed_mainnet"))
+        except Exception as exc:  # noqa: BLE001 — health must stay 200
+            logger.error("certification_gate in /health failed: %s", type(exc).__name__)
+            certified = False
         return {
             "status": "healthy",
             "service": "ARTCB API",
@@ -287,6 +349,8 @@ def create_app() -> FastAPI:
             "protocol_version": PROTOCOL_VERSION,
             "genesis_hash": GENESIS_HASH,
             "pqc": public_health_block(_pqc),
+            "certified_distributed_mainnet": certified,
+            "machine": public_machine_view(state.device_identity),
         }
 
     # Serve React frontend (built dist/) at root

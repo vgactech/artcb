@@ -1,0 +1,25 @@
+{
+  "certified_distributed_mainnet": false,
+  "d042": true,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V-provisional+D-032..D-042",
+  "finished_at": "2026-09-01T18:18:51Z",
+  "git_branch": "cursor/live-bft-dv05-16d8",
+  "git_commit_sha": "df14d84a0932fa516f1bdf830038388b93a62b99",
+  "git_status_clean": false,
+  "invented_results": false,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "188-live-bft-prepare-commit",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim188_dv05_live_bft.py",
+  "script_sha256": "fd4ce0699c717bd67b4219c8b7b8027b3466ffca4cf8f30bb7447d328a9bccce",
+  "seed": 188,
+  "simulation_id": "e2e188_dv05_live_bft",
+  "started_at": "2026-09-01T18:17:39Z",
+  "working_tree_diff_hash": "c90f6d505c449fab3727358d58ec7a6d342b55ef6266925e483491e93a4f8600"
+}

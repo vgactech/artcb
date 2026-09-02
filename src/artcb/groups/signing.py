@@ -5,10 +5,7 @@ from __future__ import annotations
 import logging
 from datetime import UTC, datetime
 
-from nacl.exceptions import BadSignatureError
-from nacl.signing import VerifyKey
-
-from src.artcb.crypto.hybrid import verify_hybrid
+from src.artcb.crypto.hybrid import verify_hybrid_and_or_window
 from src.artcb.wallet.address import address_from_public_key_bytes, verify_address
 
 logger = logging.getLogger("artcb.groups.signing")
@@ -40,21 +37,16 @@ def verify_join_signature(
             logger.debug("Address mismatch: claimed=%s derived=%s", address[:12], derived[:12])
             return False
 
-        if signature_hex.startswith("hybrid:"):
-            if not pqc_public_key_hex:
-                logger.debug("Hybrid signature requires pqc_public_key_hex")
-                return False
-            return verify_hybrid(
-                message=message,
-                signature_value=signature_hex,
-                ed25519_public_key=ed_pubkey,
-                pqc_public_key=bytes.fromhex(pqc_public_key_hex),
-            )
-
-        verify_key = VerifyKey(ed_pubkey)
-        verify_key.verify(message, bytes.fromhex(signature_hex))
+        pqc_pub = bytes.fromhex(pqc_public_key_hex) if pqc_public_key_hex else None
+        if not verify_hybrid_and_or_window(
+            message=message,
+            signature_value=signature_hex,
+            ed25519_public_key=ed_pubkey,
+            pqc_public_key=pqc_pub,
+        ):
+            return False
         return True
-    except (BadSignatureError, ValueError) as exc:
+    except ValueError as exc:
         logger.debug("Signature verification failed: %s", exc)
         return False
 

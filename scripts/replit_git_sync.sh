@@ -27,8 +27,18 @@ artcb_replit_git_sync() {
     return 0
   fi
 
-  git -C "$REPL_DIR" fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
-    || git fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
+  if [ -d "$REPL_DIR/.git" ]; then
+    if git -C "$REPL_DIR" rev-parse --is-shallow-repository 2>/dev/null | grep -qx true; then
+      git -C "$REPL_DIR" fetch --unshallow origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
+        || git -C "$REPL_DIR" fetch --update-shallow origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
+        || true
+    else
+      git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
+    fi
+  else
+    git fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
+  fi
+
 
   if [ ! -d "$REPL_DIR/.git" ]; then
     git clone --depth 1 --branch "$ARTCB_REPLIT_BRANCH" "$ARTCB_REPLIT_REMOTE" /tmp/artcb-src-$$ \
@@ -56,7 +66,7 @@ artcb_replit_git_sync() {
     if git -C "$REPL_DIR" merge-base --is-ancestor "$ARTCB_REPLIT_PIN_SHA" "$_TIP" 2>/dev/null; then
       :
     else
-      _log "WARN keep_tip ancestry_unknown pin=$ARTCB_REPLIT_PIN_SHA tip=$_TIP"
+      _log "WARN keep_tip ancestry_unknown pin_set=1"
     fi
   fi
 }

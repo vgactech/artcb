@@ -42,6 +42,10 @@ class CreatorKeyRotationRequest(BaseModel):
             "Message signe : f'{old_address}:{new_address}:{timestamp_ISO8601Z}'"
         ),
     )
+    pqc_public_key_hex: str | None = Field(
+        default=None,
+        description="Clé publique ML-DSA-65 requise si signature hybrid: (AND des deux jambes).",
+    )
 
 
 class UserKeyRotationRequest(BaseModel):
@@ -55,6 +59,10 @@ class UserKeyRotationRequest(BaseModel):
             "Format : 'ed25519:HEX' ou 'hybrid:ed25519:HEX|mldsa65:HEX'. "
             "Message signe : f'{old_address}:{new_address}:{timestamp_ISO8601Z}'"
         ),
+    )
+    pqc_public_key_hex: str | None = Field(
+        default=None,
+        description="Clé publique ML-DSA-65 requise si signature hybrid: (AND des deux jambes).",
     )
 
 
@@ -149,6 +157,7 @@ def creator_key_rotation(body: CreatorKeyRotationRequest, request: Request) -> d
             new_address=body.new_address,
             signature_hex=body.signature_hex,
             blocks_path=state.chain.blocks_path if hasattr(state, "chain") else None,
+            pqc_public_key_hex=body.pqc_public_key_hex,
         )
         logger.warning(
             "API CREATOR KEY ROTATION: %s... -> %s... sig=%s",
@@ -179,6 +188,7 @@ def user_key_rotation(body: UserKeyRotationRequest, request: Request) -> dict:
             new_address=body.new_address,
             signature_hex=body.signature_hex,
             blocks_path=state.chain.blocks_path if hasattr(state, "chain") else None,
+            pqc_public_key_hex=body.pqc_public_key_hex,
         )
         logger.info(
             "API USER KEY ROTATION: %s... -> %s... sig=%s",

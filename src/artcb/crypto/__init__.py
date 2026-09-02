@@ -1,7 +1,13 @@
 """ARTCB cryptographic primitives."""
 
 from src.artcb.crypto.hashing import dual_hash_hex, sha3_256_hex, sha256_hex
-from src.artcb.crypto.hybrid import HybridSignature, sign_hybrid, verify_hybrid
+from src.artcb.crypto.hybrid import (
+    HybridSignature,
+    sign_hybrid,
+    verify_hybrid,
+    verify_hybrid_and,
+    verify_hybrid_and_or_window,
+)
 from src.artcb.crypto.pqc import (
     PQC_SIG_ALGORITHM,
     generate_keypair,
@@ -25,5 +31,7 @@ __all__ = [
     "sign_message",
     "unpack_keypair",
     "verify_hybrid",
+    "verify_hybrid_and",
+    "verify_hybrid_and_or_window",
     "verify_message",
 ]

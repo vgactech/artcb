@@ -8,7 +8,7 @@ Topology (audit §31)::
     D  controlled adversarial (double-settle, partition)
 
 Canonical tip: longest valid chain; tie → lexicographically smaller tip hash.
-Finality V-05 B: N confirmations (default 2). Pending user lock.
+Finality V-05: N confirmations (default 2), locked D-043. Settlement BFT is DV-05.
 """
 
 from __future__ import annotations

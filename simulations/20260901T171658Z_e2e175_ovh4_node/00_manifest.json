@@ -1,0 +1,27 @@
+{
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V-provisional+D-032..D-037",
+  "finished_at": "2026-09-01T17:17:17Z",
+  "git_branch": "cursor/replit-sync-ready-16d8",
+  "git_commit_sha": "e6ad5d714792523565bb7386c2823a156d703874",
+  "git_status_clean": false,
+  "invented_results": false,
+  "node4": true,
+  "ovh1_redeployed": false,
+  "ovh4_ip": "91.134.45.8",
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "174-devnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim175_ovh4_node.py",
+  "script_sha256": "8ec55cf7c6ee6331037ee852416e9c5dc92c40fd7f4c1a7335c208aee366b8b1",
+  "seed": 175,
+  "simulation_id": "e2e175_ovh4_node",
+  "started_at": "2026-09-01T17:16:59Z",
+  "working_tree_diff_hash": "11b189d1efc331b714fc534d2960e202eb3d704f289410cee005cef1f6300c78"
+}

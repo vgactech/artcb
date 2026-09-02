@@ -1,9 +1,22 @@
-"""Hybrid classical + post-quantum signatures."""
+"""Hybrid classical + post-quantum signatures.
+
+D-034 A — hybride AND : les DEUX jambes (Ed25519 ET ML-DSA-65) doivent
+passer. Une jambe seule (Ed25519 ou ML-DSA) est refusée par
+``verify_hybrid_and``.
+
+``verify_hybrid`` garde encore un repli Ed25519-only (API legacy).
+Les call sites chain / groups / governance passent par
+``verify_hybrid_and_or_window`` : enveloppe hybride → AND des deux
+jambes ; Ed25519 seule → seulement tant que la fenêtre D-032 B est
+ouverte (jusqu'au 2026-12-31). ``high_value_hybrid_enforced`` reste
+false pendant cette fenêtre.
+"""
 
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from datetime import datetime
 
 from nacl import signing
 
@@ -13,6 +26,7 @@ logger = logging.getLogger("artcb.crypto.hybrid")
 
 HYBRID_PREFIX = "hybrid:"
 ED25519_PREFIX = "ed25519:"
+MLDSA65_PREFIX = "mldsa65:"
 
 
 @dataclass(frozen=True)
@@ -47,25 +61,134 @@ def sign_hybrid(
     return HybridSignature(ed25519_hex=ed_sig, mldsa_hex=pqc_sig).serialize()
 
 
-def verify_hybrid(
+def is_hybrid_envelope(signature_value: str) -> bool:
+    return HybridSignature.parse(signature_value) is not None
+
+
+def is_ed25519_only_envelope(signature_value: str) -> bool:
+    """Ed25519 seule : préfixe ed25519: ou hex brut, sans enveloppe hybride."""
+    if is_hybrid_envelope(signature_value) or signature_value.startswith(MLDSA65_PREFIX):
+        return False
+    return bool(signature_value)
+
+
+def is_mldsa_only_envelope(signature_value: str) -> bool:
+    """ML-DSA seule : préfixe mldsa65: sans enveloppe hybrid:ed25519:…|mldsa65:…"""
+    if is_hybrid_envelope(signature_value):
+        return False
+    return signature_value.startswith(MLDSA65_PREFIX)
+
+
+def verify_hybrid_and(
     *,
     message: bytes,
     signature_value: str,
     ed25519_public_key: bytes,
     pqc_public_key: bytes,
 ) -> bool:
+    """D-034 A: les deux jambes doivent passer. Une jambe seule → refus.
+
+    N'accepte pas Ed25519-only, ni ML-DSA-only, ni une enveloppe hybride
+    dont une jambe est cassée ou absente.
+    """
+    parsed = HybridSignature.parse(signature_value)
+    if parsed is None:
+        logger.debug("hybrid AND reject: not a hybrid envelope")
+        return False
+    if not parsed.ed25519_hex or not parsed.mldsa_hex:
+        logger.debug("hybrid AND reject: empty leg")
+        return False
+    try:
+        verify_key = signing.VerifyKey(ed25519_public_key)
+        verify_key.verify(message, bytes.fromhex(parsed.ed25519_hex))
+    except Exception as exc:
+        logger.debug("hybrid AND Ed25519 leg failed: %s", exc)
+        return False
+    try:
+        mldsa_ok = verify_message(
+            message, bytes.fromhex(parsed.mldsa_hex), pqc_public_key
+        )
+    except Exception as exc:
+        logger.debug("hybrid AND ML-DSA leg failed: %s", exc)
+        return False
+    if not mldsa_ok:
+        logger.debug("hybrid AND ML-DSA leg invalid")
+        return False
+    return True
+
+
+def verify_hybrid_and_or_window(
+    *,
+    message: bytes,
+    signature_value: str,
+    ed25519_public_key: bytes,
+    pqc_public_key: bytes | None = None,
+    now: datetime | None = None,
+) -> bool:
+    """Call-site policy: D-034 AND + fenêtre Ed25519 D-032 B.
+
+    - Enveloppe hybride + clé publique ML-DSA → ``verify_hybrid_and``
+      (les DEUX jambes). Sans clé PQC, AND est impossible → refus.
+    - ML-DSA seule → refus (AND = les deux).
+    - Ed25519 seule → acceptée seulement si ``fallback_still_open``
+      (jusqu'au 2026-12-31T00:00:00Z). Après la fenêtre → refus.
+    """
+    from src.artcb.crypto_policy import fallback_still_open
+
+    if is_hybrid_envelope(signature_value):
+        if not pqc_public_key:
+            logger.debug("hybrid AND reject: no PQC public key for second leg")
+            return False
+        return verify_hybrid_and(
+            message=message,
+            signature_value=signature_value,
+            ed25519_public_key=ed25519_public_key,
+            pqc_public_key=pqc_public_key,
+        )
+    if is_mldsa_only_envelope(signature_value):
+        logger.debug("hybrid AND reject: ML-DSA-only envelope")
+        return False
+    if not fallback_still_open(now):
+        logger.debug("Ed25519-only rejected: D-032 window closed")
+        return False
+    return verify_hybrid(
+        message=message,
+        signature_value=signature_value,
+        ed25519_public_key=ed25519_public_key,
+        pqc_public_key=pqc_public_key or b"",
+    )
+
+
+def verify_hybrid(
+    *,
+    message: bytes,
+    signature_value: str,
+    ed25519_public_key: bytes,
+    pqc_public_key: bytes,
+    require_and: bool = False,
+) -> bool:
+    """Vérifie une signature.
+
+    ``require_and=True`` → D-034 (``verify_hybrid_and``).
+    Défaut ``False`` : enveloppe hybride = AND des deux jambes ; sinon
+    repli Ed25519-only (API legacy, non gated par D-032). Les call
+    sites production utilisent ``verify_hybrid_and_or_window``.
+    """
+    if require_and:
+        return verify_hybrid_and(
+            message=message,
+            signature_value=signature_value,
+            ed25519_public_key=ed25519_public_key,
+            pqc_public_key=pqc_public_key,
+        )
     parsed = HybridSignature.parse(signature_value)
     if parsed:
-        try:
-            verify_key = signing.VerifyKey(ed25519_public_key)
-            verify_key.verify(message, bytes.fromhex(parsed.ed25519_hex))
-            if not verify_message(message, bytes.fromhex(parsed.mldsa_hex), pqc_public_key):
-                logger.debug("ML-DSA leg of hybrid signature invalid")
-                return False
-            return True
-        except Exception as exc:
-            logger.debug("Hybrid verify failed: %s", exc)
-            return False
+        return verify_hybrid_and(
+            message=message,
+            signature_value=signature_value,
+            ed25519_public_key=ed25519_public_key,
+            pqc_public_key=pqc_public_key,
+        )
 
     # Legacy ed25519-only: "ed25519:hex" or raw hex with VerifyKey
     sig_hex = signature_value[len(ED25519_PREFIX):] if signature_value.startswith(ED25519_PREFIX) else signature_value

@@ -1,0 +1,162 @@
+{
+  "checks": {
+    "delay_timeout": true,
+    "double_rejected": true,
+    "honest_ok": true,
+    "offline_quorum": true,
+    "ovh4_recovered": true
+  },
+  "delay_unroutable": {
+    "error": "URLError",
+    "expect_fail": true,
+    "http": 0
+  },
+  "double_proposal": {
+    "http": 200,
+    "ok": false,
+    "reason": "no_majority"
+  },
+  "engine_up": true,
+  "honest": {
+    "http": 200,
+    "n": 4,
+    "ok": true,
+    "prepared": 4,
+    "q": 3
+  },
+  "offline": {
+    "http": 200,
+    "ok": true,
+    "prepared": 3,
+    "reason": null
+  },
+  "ovh4_down_wait": [
+    {
+      "http": 0,
+      "try": 1
+    }
+  ],
+  "ovh4_start": {
+    "returncode": 0,
+    "stderr_len": 0,
+    "stdout_len": 0
+  },
+  "ovh4_stop": {
+    "returncode": 0,
+    "stderr_len": 0,
+    "stdout_len": 0
+  },
+  "ovh4_up_wait": [
+    {
+      "http": 0,
+      "try": 1
+    },
+    {
+      "http": 0,
+      "try": 2
+    },
+    {
+      "http": 500,
+      "try": 3
+    },
+    {
+      "http": 500,
+      "try": 4
+    },
+    {
+      "http": 500,
+      "try": 5
+    },
+    {
+      "http": 500,
+      "try": 6
+    },
+    {
+      "http": 500,
+      "try": 7
+    },
+    {
+      "http": 500,
+      "try": 8
+    },
+    {
+      "http": 500,
+      "try": 9
+    },
+    {
+      "http": 500,
+      "try": 10
+    },
+    {
+      "http": 500,
+      "try": 11
+    },
+    {
+      "http": 500,
+      "try": 12
+    },
+    {
+      "http": 500,
+      "try": 13
+    },
+    {
+      "http": 500,
+      "try": 14
+    },
+    {
+      "http": 500,
+      "try": 15
+    },
+    {
+      "http": 500,
+      "try": 16
+    },
+    {
+      "http": 500,
+      "try": 17
+    },
+    {
+      "http": 500,
+      "try": 18
+    },
+    {
+      "http": 500,
+      "try": 19
+    },
+    {
+      "http": 500,
+      "try": 20
+    }
+  ],
+  "recover_status_http": 200,
+  "statuses": {
+    "aws3": {
+      "bft_capable": true,
+      "f": 1,
+      "http": 200,
+      "n": 4,
+      "q": 3
+    },
+    "ovh1": {
+      "bft_capable": true,
+      "f": 1,
+      "http": 200,
+      "n": 4,
+      "q": 3
+    },
+    "ovh2": {
+      "bft_capable": true,
+      "f": 1,
+      "http": 200,
+      "n": 4,
+      "q": 3
+    },
+    "ovh4": {
+      "bft_capable": true,
+      "f": 1,
+      "http": 200,
+      "n": 4,
+      "q": 3
+    }
+  }
+}

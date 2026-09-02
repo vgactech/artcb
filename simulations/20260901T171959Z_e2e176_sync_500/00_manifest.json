@@ -1,0 +1,26 @@
+{
+  "certified_distributed_mainnet": false,
+  "d040": true,
+  "dependency_lock": {
+    "hash": "41202a22c1330b99eb216151124db9e3ed651c206a7590ef2772f0a70764eff0",
+    "package_count": 63,
+    "requirements_txt_hash": "ea5545f07d01d83d69eab7e85db16b4342a9ac804f1c904b948f7580fe242856",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V-provisional+D-032..D-037",
+  "finished_at": "2026-09-01T17:20:06Z",
+  "git_branch": "cursor/replit-sync-ready-16d8",
+  "git_commit_sha": "e6ad5d714792523565bb7386c2823a156d703874",
+  "git_status_clean": false,
+  "invented_results": false,
+  "ovh1_redeployed": true,
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "174-devnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim176_sync_500.py",
+  "script_sha256": "e0ebe6f4319a39bedb8b23a5af19ae792f20ec6a855dece31d2414ac22513477",
+  "seed": 176,
+  "simulation_id": "e2e176_sync_500",
+  "started_at": "2026-09-01T17:20:06Z",
+  "working_tree_diff_hash": "fcb040ff69a0e8570826b61e512edf8064a3beceb2587de4fa0514b0c654b5e3"
+}

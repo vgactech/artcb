@@ -1,0 +1,54 @@
+{
+  "after": {
+    "aws3": {
+      "name": "aws3",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=b12cbede613276c15cdfc940c589f8ecc043dc9bd319a56acfb67d9034959886\nDMI_UUID_HASH=f35e73d2fe406572ff33373a54ce171d39c67ba0d4c48484deb1a36d1f2639f5\nSYS_VENDOR=Amazon EC2\nPRODUCT=t3.small\nCLOUD_IID=i-085b74abd1aaf04ee\nTPM2_TOOLS=no\n"
+    },
+    "ovh1": {
+      "name": "ovh1",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=0a32cd9a99b1eec2a1218b0e25712bee639f7ca889b7bd5b7592c4f494ced2b1\nDMI_UUID_HASH=85cd74110e5aadf6d74ca35e33ab12bf6c37d08a9ea54e300f0538dbb41e18ef\nSYS_VENDOR=OpenStack Foundation\nPRODUCT=OpenStack Nova\nCLOUD_IID=f2642e42-323c-4621-b0e8-a82ffb20f184\nTPM2_TOOLS=no\n"
+    },
+    "ovh2": {
+      "name": "ovh2",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=39e58a652bcd34e90e5cc49450433b249fab10f807eb03bf54374b1053840731\nDMI_UUID_HASH=1d82300b4ecd45f656d25a7dcf871b174cd94d4c830489bac025929a807de9da\nSYS_VENDOR=OpenStack Foundation\nPRODUCT=OpenStack Nova\nCLOUD_IID=6470522e-1561-4741-9254-5f58b909eeb9\nTPM2_TOOLS=no\n"
+    },
+    "ovh4": {
+      "name": "ovh4",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=5778f20ac402824c486485e4a77e09ef3a5e82cc03bbf7630caa1478c34a2a77\nDMI_UUID_HASH=19137dd5fa0860abdda77a728b9169e40f88298bb53daf981a3c9f7998406fd4\nSYS_VENDOR=OpenStack Foundation\nPRODUCT=OpenStack Nova\nCLOUD_IID=22dc6a47-5b79-4084-82d7-eabb4f5b2680\nTPM2_TOOLS=no\n"
+    }
+  },
+  "before": {
+    "aws3": {
+      "name": "aws3",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=b12cbede613276c15cdfc940c589f8ecc043dc9bd319a56acfb67d9034959886\nDMI_UUID_HASH=f35e73d2fe406572ff33373a54ce171d39c67ba0d4c48484deb1a36d1f2639f5\nSYS_VENDOR=Amazon EC2\nPRODUCT=t3.small\nCLOUD_IID=i-085b74abd1aaf04ee\nTPM2_TOOLS=no\n"
+    },
+    "ovh1": {
+      "name": "ovh1",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=0a32cd9a99b1eec2a1218b0e25712bee639f7ca889b7bd5b7592c4f494ced2b1\nDMI_UUID_HASH=85cd74110e5aadf6d74ca35e33ab12bf6c37d08a9ea54e300f0538dbb41e18ef\nSYS_VENDOR=OpenStack Foundation\nPRODUCT=OpenStack Nova\nCLOUD_IID=f2642e42-323c-4621-b0e8-a82ffb20f184\nTPM2_TOOLS=no\n"
+    },
+    "ovh2": {
+      "name": "ovh2",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=39e58a652bcd34e90e5cc49450433b249fab10f807eb03bf54374b1053840731\nDMI_UUID_HASH=1d82300b4ecd45f656d25a7dcf871b174cd94d4c830489bac025929a807de9da\nSYS_VENDOR=OpenStack Foundation\nPRODUCT=OpenStack Nova\nCLOUD_IID=6470522e-1561-4741-9254-5f58b909eeb9\nTPM2_TOOLS=no\n"
+    },
+    "ovh4": {
+      "name": "ovh4",
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "TPM_DEV=no\nTPMRM=no\nTPM_SYS=none\nMACHINE_ID_HASH=5778f20ac402824c486485e4a77e09ef3a5e82cc03bbf7630caa1478c34a2a77\nDMI_UUID_HASH=19137dd5fa0860abdda77a728b9169e40f88298bb53daf981a3c9f7998406fd4\nSYS_VENDOR=OpenStack Foundation\nPRODUCT=OpenStack Nova\nCLOUD_IID=22dc6a47-5b79-4084-82d7-eabb4f5b2680\nTPM2_TOOLS=no\n"
+    }
+  }
+}

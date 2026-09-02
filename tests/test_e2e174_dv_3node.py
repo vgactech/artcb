@@ -15,7 +15,7 @@ from artcb.crypto_policy import (
     accept_peer_protocol,
     accept_peer_suite,
 )
-from artcb.devnet_validation import DECISIONS_174, DV
+from artcb.devnet_validation import DECISIONS_174, DECISIONS_186, DV
 from artcb.p2p.handshake import (
     CapabilityHistory,
     build_signed_card,
@@ -35,10 +35,12 @@ def test_decisions_174_do_not_overwrite_d033_dv_profile() -> None:
     assert "3 live" in DECISIONS_174["D-035"]
     assert "OVH1" in DECISIONS_174["D-036"]
     assert HYBRID_VERIFY_MODE == "AND"
-    assert PROTOCOL_VERSION == "174-devnet-1"
+    assert PROTOCOL_VERSION == "189-mainnet-1"
     spec = public_spec()
-    assert spec["live_bft_implemented"] is False
-    assert LIVE_BFT_IMPLEMENTED is False
+    assert spec["live_bft_implemented"] is True
+    assert LIVE_BFT_IMPLEMENTED is True
+    assert "D-036" in DECISIONS_186["D-040"]
+    assert "cursor/replit-sync-ready-16d8" in DECISIONS_186["D-040"]
 
 
 def test_dv03_protocol_match_and_legacy_reject() -> None:

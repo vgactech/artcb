@@ -74,6 +74,9 @@ def test_identity_store_upgrades_32byte_key_when_liboqs_present(tmp_path: Path) 
         encoding="utf-8",
     )
     ident = store.load_or_create(api_port=8000)
+    from artcb.crypto_policy import NETWORK_ID
+
+    assert ident.network_id == NETWORK_ID
     if native_liboqs_available():
         assert len(bytes.fromhex(ident.kem_public_key_hex)) == 1184
     else:

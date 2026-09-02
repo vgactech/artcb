@@ -1,0 +1,65 @@
+{
+  "after_hashes": {
+    "aws3": "12a47b0e973d4aa149a285d82801bade0f4537a710ad5bba61ebc9495f0f24cd",
+    "ovh1": "8d542e496f58485d8eeab8e8f9c3c9f5756b4256f794bc553caf955f53be8308",
+    "ovh2": "12a47b0e973d4aa149a285d82801bade0f4537a710ad5bba61ebc9495f0f24cd",
+    "ovh4": "12a47b0e973d4aa149a285d82801bade0f4537a710ad5bba61ebc9495f0f24cd"
+  },
+  "before_hashes": {
+    "aws3": "391d49838832c26ebf923c1d76afeb204a6eef30eea8feaeff2d60f2d062fd07",
+    "ovh1": "8d542e496f58485d8eeab8e8f9c3c9f5756b4256f794bc553caf955f53be8308",
+    "ovh2": "391d49838832c26ebf923c1d76afeb204a6eef30eea8feaeff2d60f2d062fd07",
+    "ovh4": "bff9c3833c3fe95985fe7b51c21efe915bafcf021a981b3f803ce5c78018943d"
+  },
+  "digests": {
+    "aws3": "924420d91713dd56fd5981a35b414d83514c78d5f31aebf86af280de74ee3573",
+    "ovh2": "924420d91713dd56fd5981a35b414d83514c78d5f31aebf86af280de74ee3573",
+    "ovh4": "924420d91713dd56fd5981a35b414d83514c78d5f31aebf86af280de74ee3573"
+  },
+  "heights": {
+    "aws3": 5,
+    "ovh1": 1,
+    "ovh2": 5,
+    "ovh4": 5
+  },
+  "ovh1_untouched": true,
+  "registrations": {
+    "aws3_ovh2": {
+      "http": 200,
+      "peer_id": "peer_5e7e5e672b05",
+      "status": null
+    },
+    "aws3_ovh4": {
+      "http": 200,
+      "peer_id": "peer_0ab5e97a59c7",
+      "status": null
+    },
+    "ovh2_aws3": {
+      "http": 200,
+      "peer_id": "peer_dc1574b4fb9f",
+      "status": null
+    },
+    "ovh2_ovh4": {
+      "http": 200,
+      "peer_id": "peer_0deb8a25fafb",
+      "status": null
+    },
+    "ovh4_aws3": {
+      "http": 200,
+      "peer_id": "peer_db67ac7e67d9",
+      "status": null
+    },
+    "ovh4_ovh2": {
+      "http": 200,
+      "peer_id": "peer_eba9b01d078f",
+      "status": null
+    }
+  },
+  "store_block_index": 4,
+  "store_http": 200,
+  "sync_http": {
+    "aws3": 200,
+    "ovh4": 200
+  },
+  "tips_equal_homogeneous": true
+}

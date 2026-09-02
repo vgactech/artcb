@@ -1,0 +1,86 @@
+{
+  "availability": {
+    "datacenters": [
+      {
+        "availability": "unavailable",
+        "datacenter": "gra"
+      }
+    ],
+    "in_stock": false,
+    "planCode": "25skb012"
+  },
+  "can_pay_cheapest": false,
+  "catalog": {
+    "catalog": "eco",
+    "cheapest": [
+      {
+        "invoiceName": "KS-B | Intel Xeon E5-1620v2",
+        "planCode": "25skb012",
+        "price_eur": 9.99,
+        "price_raw": 999000000
+      },
+      {
+        "invoiceName": "KS-C | Intel Xeon E5-1650v2",
+        "planCode": "25skc012",
+        "price_eur": 11.99,
+        "price_raw": 1199000000
+      },
+      {
+        "invoiceName": "KS-4 | Intel Xeon-E3 1230 v6",
+        "planCode": "24sk40-v1",
+        "price_eur": 16.99,
+        "price_raw": 1699000000
+      },
+      {
+        "invoiceName": "KS-4 | Intel Xeon-E3 1230 v6",
+        "planCode": "24sk40-v1-sgp",
+        "price_eur": 16.99,
+        "price_raw": 1699000000
+      },
+      {
+        "invoiceName": "KS-4 | Intel Xeon-E3 1230 v6",
+        "planCode": "24sk40-v1-syd",
+        "price_eur": 16.99,
+        "price_raw": 1699000000
+      }
+    ],
+    "currency": "EUR",
+    "plan_count": 99,
+    "subsidiary": "FR"
+  },
+  "invented_balance": false,
+  "order": {
+    "blocked_reason": null,
+    "executed": false,
+    "requested": false
+  },
+  "ovh3_credit": {
+    "balance_eur": null,
+    "invented": false,
+    "needed": [
+      "OVH3_APPLICATION_KEY",
+      "OVH3_APPLICATION_SECRET",
+      "OVH3_CONSUMER_KEY",
+      "OVH3_NIC"
+    ],
+    "not_ovh3": {
+      "KEY_API_ARTCB_DOPPLER_3": "Doppler project artcb3 = AWS node, not an OVH nic",
+      "OVH_* Cursor env": "currently the OVH4 nic xy4589-ovh (or stale 403)"
+    },
+    "ok": false,
+    "reason": "missing_ovh3_api_keys",
+    "vars_present": {
+      "OVH3_APPLICATION_KEY": false,
+      "OVH3_APPLICATION_SECRET": false,
+      "OVH3_CONSUMER_KEY": false,
+      "OVH3_NIC": false
+    }
+  },
+  "secrets_printed": false,
+  "selected": {
+    "invoiceName": "KS-B | Intel Xeon E5-1620v2",
+    "planCode": "25skb012",
+    "price_eur": 9.99,
+    "price_raw": 999000000
+  }
+}

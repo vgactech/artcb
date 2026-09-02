@@ -1,0 +1,112 @@
+{
+  "after_200": 8,
+  "after_restore": [
+    {
+      "http": 200,
+      "try": 1
+    },
+    {
+      "http": 200,
+      "try": 2
+    },
+    {
+      "http": 200,
+      "try": 3
+    },
+    {
+      "http": 200,
+      "try": 4
+    },
+    {
+      "http": 200,
+      "try": 5
+    },
+    {
+      "http": 200,
+      "try": 6
+    },
+    {
+      "http": 200,
+      "try": 7
+    },
+    {
+      "http": 200,
+      "try": 8
+    }
+  ],
+  "applied": {
+    "returncode": 0,
+    "stdout": "IFACE=ens3\nqdisc netem 8001: root refcnt 2 limit 1000 delay 80ms loss 25%\n"
+  },
+  "during": [
+    {
+      "error": null,
+      "http": 200,
+      "try": 1
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 2
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 3
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 4
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 5
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 6
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 7
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 8
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 9
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 10
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 11
+    },
+    {
+      "error": null,
+      "http": 200,
+      "try": 12
+    },
+    {
+      "count": 1,
+      "pull_ovh1_public_blocks": 200
+    }
+  ],
+  "during_200": 12,
+  "restored": {
+    "returncode": 0,
+    "stdout": "RESTORED_IFACE=ens3\nqdisc fq_codel 0: root refcnt 2 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 \n"
+  }
+}

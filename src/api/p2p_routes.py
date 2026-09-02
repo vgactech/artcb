@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 
-from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from src.artcb.crypto.kem import advertised_kem_algorithm
@@ -18,7 +18,14 @@ from src.artcb.crypto_policy import (
 )
 from src.artcb.p2p.handshake import build_signed_card, load_or_create_handshake_key
 from src.artcb.p2p.node_identity import advertised_base_url
+from src.artcb.p2p.public_url import (
+    is_https_platform_host,
+    peer_host_is_stale_link_local,
+    public_register_url_ok,
+)
 from src.artcb.p2p.sync import P2PSyncError
+from src.artcb.security.hardware_identity import public_machine_view
+from src.api.api_keys_routes import require_operator_write
 
 logger = logging.getLogger("artcb.api.p2p")
 router = APIRouter(prefix="/api/v1/p2p", tags=["p2p"])
@@ -91,6 +98,7 @@ def p2p_status(request: Request) -> dict:
         "last_hash": state.chain.last_hash(),
         "node_public_url": identity.node_public_url,
         "advertised_base_url": advertised_base_url(identity.node_public_url, identity.api_port),
+        "machine": public_machine_view(state.device_identity),
         "message": "Calcul local par défaut — pool opt-in E2E ML-KEM ; sync P2P = blocs publics chiffrés",
     }
 
@@ -98,11 +106,25 @@ def p2p_status(request: Request) -> dict:
 @router.get("/peers")
 def list_peers(request: Request) -> dict:
     peers = _state(request).p2p_peers.list_peers()
-    return {"peers": [p.to_dict() for p in peers], "count": len(peers)}
+    hidden = [p for p in peers if peer_host_is_stale_link_local(p.host)]
+    visible = [p for p in peers if not peer_host_is_stale_link_local(p.host)]
+    return {
+        "peers": [p.to_dict() for p in visible],
+        "count": len(visible),
+        "stale_link_local_hidden": len(hidden),
+        "note": (
+            "169.254 metadata peers stay on disk (stale) but are hidden here. "
+            "No live rewrite of peers.json."
+        ),
+    }
 
 
 @router.post("/peers")
-def add_peer(body: AddPeerRequest, request: Request) -> dict:
+def add_peer(
+    body: AddPeerRequest,
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     mgr = _state(request).p2p_peers
     try:
         peer = mgr.add_peer(
@@ -118,8 +140,7 @@ def add_peer(body: AddPeerRequest, request: Request) -> dict:
             peer_id=body.peer_id,
             scheme=(
                 "https"
-                if body.port == 443
-                or body.host.lower().endswith((".replit.app", ".repl.co"))
+                if body.port == 443 or is_https_platform_host(body.host)
                 else "http"
             ),
         )
@@ -129,7 +150,11 @@ def add_peer(body: AddPeerRequest, request: Request) -> dict:
 
 
 @router.delete("/peers/{peer_id}")
-def remove_peer(peer_id: str, request: Request) -> dict:
+def remove_peer(
+    peer_id: str,
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     if not _state(request).p2p_peers.remove_peer(peer_id):
         raise HTTPException(status_code=404, detail="Peer not found")
     return {"deleted": peer_id}
@@ -142,7 +167,7 @@ class RegisterPublicNodeRequest(BaseModel):
     device_fingerprint: str = Field(min_length=8, description="SHA-256 du fingerprint appareil")
     github_repository: str | None = Field(default=None, description="Repo GitHub source (ex: vgac2025/lvx)")
     github_actor: str | None = Field(default=None, description="Compte GitHub de l'opérateur")
-    network_id: str = Field(default="artcb-devnet-1", description="Réseau cible")
+    network_id: str = Field(default="", description="Réseau cible")
 
 
 @router.post("/register-public", summary="Auto-enregistrement d'un nœud public (bootstrap)")
@@ -166,12 +191,16 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
     url = body.node_public_url.rstrip("/")
     if not re.match(r"^https?://", url):
         raise HTTPException(status_code=400, detail="node_public_url doit commencer par http:// ou https://")
+    ok_url, url_reason = public_register_url_ok(url)
+    if not ok_url:
+        raise HTTPException(status_code=400, detail=f"register_url_rejected:{url_reason}")
 
     # Vérifier que le réseau correspond
-    if body.network_id != NETWORK_ID:
+    nid = (body.network_id or "").strip() or NETWORK_ID
+    if nid != NETWORK_ID:
         raise HTTPException(
             status_code=400,
-            detail=f"Réseau inconnu: {body.network_id} — ce nœud est sur {NETWORK_ID}",
+            detail=f"Réseau inconnu: {nid} — ce nœud est sur {NETWORK_ID}",
         )
 
     # Extraire host:port depuis l'URL
@@ -192,13 +221,15 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
     remote_pv = ""
     remote_gh = ""
     remote_card = None
+    remote_bootstrap = False
     try:
         import httpx
         with httpx.Client(timeout=5.0) as client:
             r = client.get(f"{url}/api/v1/p2p/status")
             r.raise_for_status()
             payload = r.json()
-            kem_public_hex = payload.get("kem_public_key_hex", "")
+            remote_bootstrap = bool(payload.get("bootstrap_mode"))
+            kem_public_hex = payload.get("kem_public_key_hex", "") or ""
             remote_suite = payload.get("crypto_suite") or ""
             remote_nid = payload.get("network_id") or ""
             remote_pv = payload.get("protocol_version") or ""
@@ -207,9 +238,29 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
                 remote_card = payload.get("capability_card")
     except Exception as exc:
         logger.info("Could not fetch KEM key from %s: %s", url, exc)
-        kem_public_hex = "00" * 32  # placeholder si le nœud n'est pas encore joignable
+        kem_public_hex = ""
 
-    # Enregistrer le pair
+    from src.artcb.p2p.seed_discovery import DirectoryStore
+    DirectoryStore(state.settings.data_dir).upsert(
+        {
+            "url": url,
+            "label": body.node_label,
+            "source": "register-public",
+            "device_fingerprint_prefix": body.device_fingerprint[:16],
+            "bootstrap_mode": remote_bootstrap,
+        }
+    )
+    placeholder = (not kem_public_hex) or set(kem_public_hex) <= {"0"} or remote_bootstrap
+    if placeholder:
+        return {
+            "registered": True,
+            "observer": True,
+            "peer_id": peer_id,
+            "message": f"Observateur {peer_id} enregistré (pas de KEM — bootstrap ou clone)",
+            "network_id": nid,
+        }
+
+    # Enregistrer le pair P2P seulement si une vraie clé KEM est là
     try:
         peer = state.p2p_peers.add_peer(
             host=host,
@@ -230,10 +281,11 @@ def register_public_node(body: RegisterPublicNodeRequest, request: Request) -> d
         )
         return {
             "registered": True,
+            "observer": False,
             "peer_id": peer_id,
             "message": f"Nœud {peer_id} enregistré sur le réseau ARTCB",
             "peer": peer.to_dict(),
-            "network_id": body.network_id,
+            "network_id": nid,
         }
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
@@ -275,7 +327,11 @@ def receive_encrypted_blocks(body: ReceiveBlocksRequest, request: Request) -> di
 
 
 @router.post("/sync")
-def sync_all(request: Request, from_index: int = Query(0, ge=0)) -> dict:
+def sync_all(
+    request: Request,
+    from_index: int = Query(0, ge=0),
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     """Pull + optional encrypted push for every peer.
 
     Per-peer crypto/push failures are recorded in ``results`` (HTTP 200).
@@ -291,7 +347,12 @@ def sync_all(request: Request, from_index: int = Query(0, ge=0)) -> dict:
 
 
 @router.post("/sync/{peer_id}")
-def sync_peer(peer_id: str, request: Request, from_index: int = Query(0, ge=0)) -> dict:
+def sync_peer(
+    peer_id: str,
+    request: Request,
+    from_index: int = Query(0, ge=0),
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     state = _state(request)
     peer = state.p2p_peers.get_peer(peer_id)
     if not peer:
@@ -322,7 +383,10 @@ def receive_symbols(body: dict, request: Request) -> dict:
 
 
 @router.post("/symbols/sync")
-def sync_symbols(request: Request) -> dict:
+def sync_symbols(
+    request: Request,
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     results = _state(request).symbol_sync.sync_all_peers()
     return {"results": results}
 
@@ -333,7 +397,11 @@ def gossip_announcements(request: Request) -> dict:
 
 
 @router.post("/gossip/announce")
-def gossip_announce(request: Request, host: str = "127.0.0.1") -> dict:
+def gossip_announce(
+    request: Request,
+    host: str = "127.0.0.1",
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
     """Annonce ce nœud sur le réseau gossip.
     Le paramètre ``host`` peut être passé en query string pour exposer
     l'adresse publique réelle (ex: IP OVH, domaine ngrok…) plutôt que
@@ -351,11 +419,18 @@ def gossip_announce(request: Request, host: str = "127.0.0.1") -> dict:
         kem_public_key_hex=identity.kem_public_key_hex,
         symbol_count=len(state.symbol_registry.export()),
     )
-    return {"announcement": entry, "network_id": "artcb-devnet-1", "p2p_port": identity.p2p_port}
+    return {"announcement": entry, "network_id": NETWORK_ID, "p2p_port": identity.p2p_port}
 
 
 @router.post("/gossip/receive")
 def gossip_receive(body: dict, request: Request) -> dict:
     entry = body.get("announcement", body)
-    ok = _state(request).gossip.merge_remote_announcement(entry)
-    return {"merged": ok}
+    host = str(entry.get("host") or "")
+    port = int(entry.get("api_port") or 80)
+    scheme = "https" if is_https_platform_host(host) or port == 443 else "http"
+    url = f"{scheme}://{host}:{port}"
+    ok, reason = public_register_url_ok(url)
+    if not ok:
+        raise HTTPException(status_code=400, detail=f"gossip_host_rejected:{reason}")
+    merged = _state(request).gossip.merge_remote_announcement(entry)
+    return {"merged": merged}

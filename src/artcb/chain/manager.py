@@ -13,7 +13,7 @@ from nacl import encoding, signing
 from src.artcb.chain import ffi
 from src.artcb.config import load_settings
 from src.artcb.crypto.hashing import sha3_256_hex
-from src.artcb.crypto.hybrid import sign_hybrid, verify_hybrid
+from src.artcb.crypto.hybrid import sign_hybrid, verify_hybrid_and_or_window
 from src.artcb.crypto.pqc import (
     PQC_SIG_ALGORITHM,
     generate_keypair,
@@ -216,11 +216,11 @@ class ChainManager:
 
     def verify_block_signature(self, block_hash: str, signature: str) -> bool:
         message = block_hash.encode("utf-8")
-        return verify_hybrid(
+        return verify_hybrid_and_or_window(
             message=message,
             signature_value=signature,
             ed25519_public_key=self._signing_key.verify_key.encode(),
-            pqc_public_key=self._pqc_public_key or b"",
+            pqc_public_key=self._pqc_public_key,
         )
 
     def list_blocks(

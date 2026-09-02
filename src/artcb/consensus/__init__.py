@@ -1,0 +1,1 @@
+"""Live BFT package — prepare/commit quorum (DV-05)."""

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -29,6 +30,7 @@ from src.artcb.memory.vector_store import VectorStore
 from src.artcb.notifications.manager import NotificationManager
 from src.artcb.p2p.gossip import GossipRegistry
 from src.artcb.p2p.node_identity import NodeIdentityStore
+from src.artcb.p2p.seed_discovery import seed_known_nodes
 from src.artcb.security.hardware_identity import DeviceIdentity, DeviceIdentityStore
 from src.artcb.security.wallet_device_binding import WalletDeviceBindingStore
 from src.artcb.p2p.peers import PeerManager
@@ -45,6 +47,8 @@ from src.artcb.system.optimizer import (
     apply_optimization_profile,
     build_optimization_profile,
 )
+
+logger = logging.getLogger("artcb.api.deps")
 
 
 @dataclass
@@ -83,6 +87,7 @@ class AppState:
     work_registry: WorkRegistry | None = None
     protocol_engine: ProtocolEngine | None = None
     stripe_ledger: StripeJobLedger | None = None
+    live_bft: Any = None
     pol_state: dict[str, Any] = field(default_factory=lambda: {
         "pol_score": 0.6,
         "delta_compression": 0.68,
@@ -175,6 +180,9 @@ def build_app_state() -> AppState:
         archive=p2p_archive,
         symbol_sync=symbol_sync,
     )
+    from src.artcb.consensus.live_bft import LiveBftEngine
+
+    live_bft = LiveBftEngine(settings.data_dir, node_id=p2p_identity.node_id)
 
     state = AppState(
         settings=settings,
@@ -211,6 +219,7 @@ def build_app_state() -> AppState:
         work_registry=work_registry,
         protocol_engine=protocol_engine,
         stripe_ledger=stripe_ledger,
+        live_bft=live_bft,
     )
 
     def _run_pool_reasoning(text: str) -> dict[str, Any]:
@@ -277,4 +286,8 @@ def build_app_state() -> AppState:
 
     for graph in graphs.load_all():
         state.register_graph(graph)
+    try:
+        seed_known_nodes(p2p_peers, p2p_identity, settings.data_dir)
+    except Exception as exc:  # noqa: BLE001 — discovery must never block API start
+        logger.warning("seed_known_nodes failed: %s", type(exc).__name__)
     return state

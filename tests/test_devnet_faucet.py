@@ -39,24 +39,28 @@ def test_faucet_api(client: TestClient) -> None:
     assert w.status_code == 200
     address = w.json()["address"]
     r = client.post("/api/v1/devnet/faucet", json={"address": address})
-    assert r.status_code == 200
-    assert r.json()["amount_satoshi"] > 0
+    assert r.status_code == 403
+    assert r.json()["detail"] == "faucet_disabled_on_mainnet"
+    status = client.get("/api/v1/devnet/faucet/status")
+    assert status.status_code == 200
+    assert status.json()["enabled"] is False
 
 
 def test_wallet_balance_includes_faucet(client: TestClient) -> None:
     w = client.post("/api/v1/wallet/create", json={"name": "bal_wallet", "password": "test_pwd_123"})
     address = w.json()["address"]
-    client.post("/api/v1/devnet/faucet", json={"address": address})
+    denied = client.post("/api/v1/devnet/faucet", json={"address": address})
+    assert denied.status_code == 403
     bal = client.get(f"/api/v1/wallet/balance/{address}")
     assert bal.status_code == 200
-    assert bal.json()["faucet_satoshi"] > 0
+    assert int(bal.json().get("faucet_satoshi") or 0) == 0
 
 
 def test_chain_explorer(client: TestClient) -> None:
     r = client.get("/api/v1/chain/explorer")
     assert r.status_code == 200
     body = r.json()
-    assert body["network"] == "artcb-devnet-1"
+    assert body["network"] == "artcb-mainnet-1"
     assert "block_count" in body
 
 

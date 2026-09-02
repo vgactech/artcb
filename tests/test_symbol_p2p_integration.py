@@ -68,9 +68,15 @@ def test_p2p_symbols_endpoints(client: TestClient) -> None:
     assert "symbols" in r.json()
 
 
-def test_gossip_announce(client: TestClient) -> None:
+def test_gossip_announce(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ARTCB_API_KEY", "artcb_local_test_operator_key")
     r = client.post("/api/v1/p2p/gossip/announce")
-    assert r.status_code == 200
-    assert r.json()["announcement"]["node_id"]
+    assert r.status_code == 401
+    r2 = client.post(
+        "/api/v1/p2p/gossip/announce",
+        headers={"Authorization": "Bearer artcb_local_test_operator_key"},
+    )
+    assert r2.status_code == 200
+    assert r2.json()["announcement"]["node_id"]
     listed = client.get("/api/v1/p2p/gossip/announcements")
     assert listed.json()["announcements"]

@@ -1,0 +1,82 @@
+{
+  "aws3": {
+    "facts": {
+      "hostname": "ip-172-31-8-93",
+      "product_name": "t3.small",
+      "sev": false,
+      "sgx": false,
+      "sys_vendor": "Amazon EC2",
+      "tpm0": false
+    },
+    "grade": {
+      "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hash\u00e9s). Pas de puce.",
+      "hardware_assurance_level": "E",
+      "hardware_kind": "software",
+      "invented": false,
+      "tpm_kind": "absent"
+    },
+    "ssh": {
+      "returncode": 0
+    }
+  },
+  "ovh1": {
+    "facts": {
+      "hostname": "artcb-node-1",
+      "product_name": "OpenStack Nova",
+      "sev": false,
+      "sgx": false,
+      "sys_vendor": "OpenStack Foundation",
+      "tpm0": false
+    },
+    "grade": {
+      "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hash\u00e9s). Pas de puce.",
+      "hardware_assurance_level": "E",
+      "hardware_kind": "software",
+      "invented": false,
+      "tpm_kind": "absent"
+    },
+    "ssh": {
+      "returncode": 0
+    }
+  },
+  "ovh2": {
+    "facts": {
+      "hostname": "node-artcb-ovh-2",
+      "product_name": "OpenStack Nova",
+      "sev": false,
+      "sgx": false,
+      "sys_vendor": "OpenStack Foundation",
+      "tpm0": false
+    },
+    "grade": {
+      "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hash\u00e9s). Pas de puce.",
+      "hardware_assurance_level": "E",
+      "hardware_kind": "software",
+      "invented": false,
+      "tpm_kind": "absent"
+    },
+    "ssh": {
+      "returncode": 0
+    }
+  },
+  "ovh4": {
+    "facts": {
+      "hostname": "node-artcb-ovh-4",
+      "product_name": "OpenStack Nova",
+      "sev": false,
+      "sgx": false,
+      "sys_vendor": "OpenStack Foundation",
+      "tpm0": false
+    },
+    "grade": {
+      "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hash\u00e9s). Pas de puce.",
+      "hardware_assurance_level": "E",
+      "hardware_kind": "software",
+      "invented": false,
+      "tpm_kind": "absent"
+    },
+    "ssh": {
+      "returncode": 0
+    }
+  }
+}

@@ -1300,3 +1300,73 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
   X25519 est actif. Aucun wallet, seed, passphrase ou `init-node` automatique.
 - Le pin `ARTCB_REPLIT_PIN_SHA` reste dans Replit Secrets ; ne jamais l'ajouter
   en clair à `.replit`. OVH1 `152.228.144.34` reste inchangé.
+
+## [2026-09-01T18:20:00Z] Rapport 188 — BFT live, pas de mainnet certifié
+
+- **D-042** : prepare/commit live N=4 F=1 Q=3. DV-05 C PASS e2e188 `20260901T181738Z`.
+- **Ne pas** renommer `174-devnet-1`. V-01…V-07 encore provisoires (D-026).
+- `certified_distributed_mainnet=false`. SHA live `7cf8c37`. PR #44.
+- Rapport : `rapports/188_live_bft_dv05_not_mainnet_2026-09-01.md`
+
+## [2026-09-01T18:40:00Z] Rapport 189 — D-043 gel V + artcb-mainnet-1
+
+- **GO** : valider soi-même, geler V-01…V-07 au code sim 167, ouvrir `artcb-mainnet-1` / `189-mainnet-1` / `genesis-artcb-mainnet-1`.
+- Live SHA `ad4687d`. Height **1** hash `b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce` (4 nœuds égaux). Faucet 403. Fenêtre Ed25519 inchangée.
+- Livre 174 backup `blocks.jsonl.bak-d043-testbook`. wallets/`data/chain.key` conservés. `install.sh` / `init_genesis.py` non exécutés.
+- `certified_distributed_mainnet` **false** (DV-02 C flood non fait). Sim `20260901T183347Z_e2e189_mainnet_genesis`. PR #45.
+- Rapport : `rapports/189_mainnet_genesis_v_locked_2026-09-01.md`
+
+## [2026-09-01T18:50:00Z] Rapport 190 — D-044 validation + P2P durci
+
+- Opérateur **valide D-043** définitivement. Replit **sans wallet / sans init-node**.
+- PIN = ancêtre du tip. Mutations P2P Bearer. `register-public` allowlist SSRF. `GET /api/v1/network/nodes` sans wallet.
+- Flood/partition live **non** joué. Certif false.
+- Sim `20260901T184857Z_e2e190_mainnet_validate` `failures=[]`. SHA live `fe369bd`. 4 nœuds se voient. Replit bootstrap `99e83b` / `174-devnet-1`. PR #46.
+- Rapport : `rapports/190_mainnet_validate_d044_2026-09-01.md`
+
+## [2026-09-01T20:16:00Z] Rapport 191 — D-045 TPM / WPP / chaos / pas d’URL Replit en dur
+
+- **GO** : livre mainnet height-1 conservé. TPM pas inventé (`/dev/tpm0` absent × 4). Q-E03 WPP 2024 18+ = `5_763_415_792` gelé. `BOOTSTRAP_NODES` = **4 IP seulement**. Clones = détectent leur URL + `POST /announce`.
+- Live SHA `30a7696`. Flood 64×4 = 256×200. netem OVH4 25 %/80 ms puis restore. Mesh `missing_infra_ips=[]`. `/health` certified **false**. Verrou `OPERATOR_MAINNET_CERTIFICATION_GO=False`.
+- Autoscale encore `99e83b` / `174-devnet-1` / 503 annuaire — **republish**, ne pas recoller un hostname dans git.
+- Sim `20260901T195933Z_e2e191_dv01_wpp_chaos`. PR #47.
+- Rapport : `rapports/191_dv01_wpp_chaos_d045_2026-09-01.md`
+
+## [2026-09-01T22:20:00Z] Rapport 192 — bare metal OVH3 + hardware A–E (mesuré)
+
+- **OVH3** : clés `OVH3_APPLICATION_KEY` / `SECRET` / `CONSUMER_KEY` / `OVH3_NIC` **absentes**. `KEY_API_ARTCB_DOPPLER_3` = Doppler **artcb3 AWS**, pas un nic. Pas de projet `artcb-3`. Crédit « ~10 € » **non lu** (interdit d’inventer).
+- Catalogue public Eco FR : SKU le moins cher **KS-B `25skb012` = 9,99 €/mois** ; GRA **unavailable**. KS-5 17,99 € en 1H-low (au-dessus d’un crédit ~10 €). **Commande NON.**
+- Nics connus mesurés : `vc491276-ovh` et `xy4589-ovh` solde ovhAccount **0,00 €**. Cursor `OVH_*` process → 403. OVH1 Doppler → 403.
+- Live 4 nœuds SHA `30a7696` / `189-mainnet-1` / `artcb-mainnet-1` / height 1 hash `b8a7d5ef…bfce` / TPM **absent** / virt OpenStack|amazon / niveau **E**. Audit 174/BFT-absent = **stale**.
+- Registre `ovh-baremetal-1` (pas ovh-node-1). CORS regex inchangée. 169.254 caché à l’API, fichier live non réécrit.
+- `certified_distributed_mainnet=false`. Sim `20260901T221624Z_e2e192_hw_baremetal` `failures=[]`. Rapport `rapports/192_ovh3_baremetal_hw_identity_2026-09-01.md`.
+
+## [2026-09-01T22:59:00Z] Rapport 195 — matrice live 4 nœuds (annexe, rapport sur autre branche)
+
+- Mesure neuve `/health` × 4 : SHA `30a7696a45888133b04e0ff78bbff2a9473c102f`, branche live `cursor/dv01-tpm-wpp-chaos-16d8`, `189-mainnet-1` / `artcb-mainnet-1`, height **1**, `last_hash` `b8a7d5ef…bfce` identique × 4.
+- TPM `/dev/tpm0` **absent** × 4. `certified_distributed_mainnet=false` × 4. **Aucun** merge certif.
+- Rapport **non écrasé** ici : vit sur `cursor/audit-live-matrix-195-16d8` → `rapports/195_audit_live_matrix_2026-09-01.md`. Cette annexe ne recopie pas la matrice.
+
+## [2026-09-01T23:10:00Z] Rapport 196 — hybride AND (D-034) + `tpm_type` honnête
+
+- `verify_hybrid_and` : Ed25519 seule refusée, ML-DSA seule refusée, hybride OK accepté. Câblage chain/groups/governance encore `verify_hybrid` (`high_value_hybrid_enforced=false`).
+- `tpm_type` + `attestation_available` : vrais seulement si `/dev/tpm0` ou `/dev/nsm`. CORS regex plateforme, **pas** d’URL Replit compte en dur.
+- Live SHA `30a7696` ≠ `origin/main` `aeb132ae`. Pas d’`install.sh` / deploy main. Certif **false**.
+- Rapport : `rapports/196_hybrid_and_hw_2026-09-01.md` (cette lignée). Branche d’origine `cursor/hybrid-and-hw-196-16d8`.
+
+## [2026-09-02T14:10:00Z] Email login IONOS artcb.space — non trouvé
+
+- **GO** : oublier checkout OVH / bare metal ; retrouver l’email de connexion IONOS pour `artcb.space`.
+- **Résultat :** aucune clé `IONOS_EMAIL` / `IONOS_LOGIN` / `IONOS_USER` dans le dépôt, `~/.artcb/**/*.env`, Doppler (`artcb-blockchain`, `artcb-2`, `artcb3`, `artcb-4` config `dev`) ni secrets Cursor `IONOS_*`.
+- `IONOS_API_KEY` / `IONOS_PASSWORD` : **absents** (pas « présent »). Placeholder repo : `.env.example` `IONOS_API_KEY` + `config.py` `ionos_api_key` (rapport 116, fichier 116 jamais commité).
+- DNS public : registrar **IONOS SE** ; NS `ui-dns.*` ; SPF `_spf-eu.ionos.com` ; MX `mx0{0,1}.ionos.fr` ; WHOIS registrant **REDACTED** / proxy `dataprivacyprotected@ionos.de` (pas un login). Pays FR, département 75.
+- Live bootstrap : SHA `30a7696a45888133b04e0ff78bbff2a9473c102f` ≠ `origin/main` `aeb132ae5266cfb9dfdfa8e7eafd49268b726fe5`. Token non imprimé. Certif **false**. Pas de commande OVH.
+- Rapport : `rapports/197_ionos_login_hint_2026-09-02.md`
+
+## [2026-09-02T14:20:00Z] Rapport 198 — câblage AND aux call sites (fenêtre D-032 conservée)
+
+- **AND** = les **DEUX** signatures. `verify_hybrid_and_or_window` aux call sites chain / groups / governance.
+- Ed25519 seule encore OK jusqu’au 2026-12-31. ML-DSA seule refusée. Hybride sans clé PQC refusée.
+- `high_value_hybrid_enforced=false`. Handshake P2P toujours Ed25519 seule (écart dit).
+- Live SHA `30a7696a45888133b04e0ff78bbff2a9473c102f` ≠ `origin/main` `aeb132ae` ≠ SHA branche. Pas d’`install.sh` / deploy main / init-node. Certif **false**.
+- Tests : 50 passed (198+196+174+178+gouvernance). Rapport : `rapports/198_hybrid_and_call_sites_2026-09-02.md`.

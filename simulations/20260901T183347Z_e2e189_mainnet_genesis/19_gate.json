@@ -1,0 +1,10 @@
+{
+  "certified_distributed_mainnet": false,
+  "dv_not_pass": [
+    "DV-02",
+    "DV-06"
+  ],
+  "economic_v_locked": true,
+  "live_bft_implemented": true,
+  "reason": "dv_not_pass:DV-02,DV-06"
+}

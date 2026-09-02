@@ -36,10 +36,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Callable, Coroutine
 
+from src.artcb.crypto_policy import NETWORK_ID as POLICY_NETWORK_ID
+
 logger = logging.getLogger("artcb.p2p.libp2p")
 
 # ── Constantes réseau ──────────────────────────────────────────────────────────
-NETWORK_ID = "artcb-devnet-1"
+NETWORK_ID = POLICY_NETWORK_ID
 PROTOCOL_VERSION = "ARTCB-P2P/1.0"
 KADEMLIA_K = 20               # taille bucket Kademlia
 KADEMLIA_ALPHA = 3            # parallélisme lookup

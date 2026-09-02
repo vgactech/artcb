@@ -43,7 +43,7 @@ def test_release_identity_reads_artcb_release(tmp_path: Path, monkeypatch) -> No
 def test_https_peer_base_url_not_http_on_443() -> None:
     p = PeerRecord(
         peer_id="replit",
-        host="artcb--vgac42.replit.app",
+        host="demo-app--someuser.replit.app",
         port=443,
         kem_public_key_hex="ab" * 32,
         scheme="https",
@@ -55,8 +55,8 @@ def test_https_peer_base_url_not_http_on_443() -> None:
 def test_replit_node_registered_ovh1_untouched() -> None:
     assert NODES["ovh-node-1"].ssh_host == "152.228.144.34"
     r = NODES["replit-node-1"]
-    assert r.health_http == "https://artcb--vgac42.replit.app"
-    assert "D-036" in r.public_notes
+    assert r.health_http is None
+    assert "hardcoded" in r.public_notes.lower() or "any replit" in r.public_notes.lower()
     main = (ROOT / "src" / "api" / "main.py").read_text(encoding="utf-8")
     assert '@app.get("/live")' in main
     assert '@app.get("/api/v1/chain/verify")' in main
@@ -72,11 +72,11 @@ def test_pqc_warning_does_not_say_package_absent_when_binding_installed() -> Non
 def test_advertised_base_url_replit_is_https() -> None:
     from artcb.p2p.node_identity import advertised_base_url
 
-    url = advertised_base_url("https://artcb--vgac42.replit.app", 5000)
+    url = advertised_base_url("https://demo-app--someuser.replit.app", 5000)
     assert url.startswith("https://")
-    assert "artcb--vgac42.replit.app" in url
-    assert "http://artcb--vgac42.replit.app:443" not in url
-    forced = advertised_base_url("http://artcb--vgac42.replit.app:443", 5000)
+    assert "demo-app--someuser.replit.app" in url
+    assert "http://demo-app--someuser.replit.app:443" not in url
+    forced = advertised_base_url("http://demo-app--someuser.replit.app:443", 5000)
     assert forced.startswith("https://")
 
 
@@ -107,3 +107,8 @@ def test_bootstrap_live_and_chain_verify_not_404(tmp_path, monkeypatch) -> None:
     assert body_w["chain_available"] is False
     assert body_w["reason"] == "wallet_initialization_required"
     assert client.get("/api/v1/chain").status_code == 503
+    nodes = client.get("/api/v1/network/nodes")
+    assert nodes.status_code == 200, nodes.text
+    listed = nodes.json()
+    assert listed["wallet_required_for_p2p"] is True
+    assert "ovh-node-1" in listed["nodes"]

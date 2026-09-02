@@ -18,7 +18,7 @@ ROTATION DE CLE — BLOC SPECIAL SIGNE HYBRIDE (rapport 114 — 2026-08-04) :
   - Le bloc est PUBLIC, horodate, signe avec la signature hybride Ed25519+ML-DSA-65
     si les cles PQC sont fournies, ou Ed25519 seul sinon (fallback retro-compatible)
   - Format standard blockchain : "hybrid:ed25519:HEX|mldsa65:HEX" ou "ed25519:HEX"
-  - Meme standard que chain/manager.py (sign_hybrid / verify_hybrid)
+  - Meme standard que chain/manager.py (sign_hybrid / verify_hybrid_and_or_window)
   - creator_rights.json est mis a jour + le module recharge l'adresse en memoire
 
 ACCES AU COMPTE APRES ROTATION UTILISATEUR :
@@ -29,10 +29,10 @@ ACCES AU COMPTE APRES ROTATION UTILISATEUR :
   - Aucune donnee n'est perdue — la blockchain est immuable par conception
 
 STANDARD HYBRIDE PQC — PARTOUT DANS CE MODULE :
-  - Toute signature suit le standard hybrid.py (sign_hybrid / verify_hybrid)
-  - Ed25519 seul : "ed25519:HEX"  (fallback si liboqs pas installe)
-  - Hybride complet : "hybrid:ed25519:HEX|mldsa65:HEX"  (standard production)
-  - verify_hybrid() accepte les deux formats — 100% retro-compatible
+  - Toute signature suit le standard hybrid.py (sign_hybrid / verify_hybrid_and_or_window)
+  - Ed25519 seul : "ed25519:HEX"  (fenêtre D-032 B jusqu'au 2026-12-31)
+  - Hybride complet : "hybrid:ed25519:HEX|mldsa65:HEX"  (AND des DEUX jambes)
+  - Enveloppe hybride sans clé publique ML-DSA → refus (AND impossible)
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Literal
 
-from src.artcb.crypto.hybrid import sign_hybrid, verify_hybrid
+from src.artcb.crypto.hybrid import sign_hybrid, verify_hybrid_and_or_window
 from src.artcb.crypto.pqc import pqc_enabled
 from src.artcb.tokenomics import IMMUTABLE_CREATOR_VOTE_WEIGHT_MULTIPLIER
 
@@ -352,6 +352,7 @@ class GovernanceManager:
         new_address: str,
         signature_hex: str,
         blocks_path: Path | None = None,
+        pqc_public_key_hex: str | None = None,
     ) -> dict:
         """Rotation de cle createur — inscrit un BLOC SPECIAL signe dans la chaine.
 
@@ -395,6 +396,7 @@ class GovernanceManager:
             new_address:    Nouvelle adresse createur (wallet valide)
             signature_hex:  Signature hybride obligatoire de l'ancienne cle
             blocks_path:    Chemin vers blocks.jsonl pour inscrire le bloc special
+            pqc_public_key_hex: Clé publique ML-DSA requise si enveloppe hybrid:
 
         Returns:
             dict : enregistrement complet du bloc special (a stocker + logguer)
@@ -424,9 +426,9 @@ class GovernanceManager:
 
         now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # ── Verification de signature hybride Ed25519+ML-DSA-65 ───────────────
-        # Standard blockchain ARTCB : "hybrid:ed25519:HEX|mldsa65:HEX" ou "ed25519:HEX"
-        # Meme format que chain/manager.py — verify_hybrid() accepte les deux formats.
+        # ── Vérification AND (D-034) + fenêtre Ed25519 (D-032 B) ─────────────
+        # Enveloppe hybride → les DEUX jambes. Sans clé PQC, AND impossible.
+        # Ed25519 seule → seulement jusqu'au 2026-12-31.
         sig_status = "sig_failed"
         try:
             from nacl import encoding as nacl_encoding, signing as nacl_signing
@@ -435,12 +437,12 @@ class GovernanceManager:
                 old_address, encoder=nacl_encoding.Base64Encoder
             ).encode()
             message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
-            # verify_hybrid accepte "hybrid:..." ET "ed25519:..." ET hex brut
-            ok = verify_hybrid(
+            pqc_pub = bytes.fromhex(pqc_public_key_hex) if pqc_public_key_hex else None
+            ok = verify_hybrid_and_or_window(
                 message=message,
                 signature_value=signature_hex,
                 ed25519_public_key=raw_pubkey,
-                pqc_public_key=b"",  # PQC leg optionnel — Ed25519 seul suffit
+                pqc_public_key=pqc_pub,
             )
             sig_status = "verified" if ok else "sig_failed"
             if ok:
@@ -554,6 +556,7 @@ class GovernanceManager:
         new_address: str,
         signature_hex: str,
         blocks_path: Path | None = None,
+        pqc_public_key_hex: str | None = None,
     ) -> dict:
         """Rotation de cle pour TOUT utilisateur — meme securite que le createur.
 
@@ -582,6 +585,7 @@ class GovernanceManager:
             new_address:    Nouvelle adresse wallet
             signature_hex:  Signature hybride obligatoire de l'ancienne cle
             blocks_path:    Chemin vers blocks.jsonl pour inscrire le bloc special
+            pqc_public_key_hex: Clé publique ML-DSA requise si enveloppe hybrid:
 
         Returns:
             dict : enregistrement complet du bloc special
@@ -600,9 +604,7 @@ class GovernanceManager:
 
         now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # ── Verification de signature hybride Ed25519+ML-DSA-65 ───────────────
-        # Standard blockchain ARTCB : "hybrid:ed25519:HEX|mldsa65:HEX" ou "ed25519:HEX"
-        # Meme format que creator_key_rotation et chain/manager.py.
+        # ── Vérification AND (D-034) + fenêtre Ed25519 (D-032 B) ─────────────
         sig_status = "sig_failed"
         try:
             from nacl import encoding as nacl_encoding, signing as nacl_signing
@@ -610,11 +612,12 @@ class GovernanceManager:
                 old_address, encoder=nacl_encoding.Base64Encoder
             ).encode()
             message = f"{old_address}:{new_address}:{now_str}".encode("utf-8")
-            ok = verify_hybrid(
+            pqc_pub = bytes.fromhex(pqc_public_key_hex) if pqc_public_key_hex else None
+            ok = verify_hybrid_and_or_window(
                 message=message,
                 signature_value=signature_hex,
                 ed25519_public_key=raw_pubkey,
-                pqc_public_key=b"",
+                pqc_public_key=pqc_pub,
             )
             sig_status = "verified" if ok else "sig_failed"
             if ok:

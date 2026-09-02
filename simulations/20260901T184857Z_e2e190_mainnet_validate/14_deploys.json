@@ -1,0 +1,18 @@
+{
+  "aws3": {
+    "returncode": 0,
+    "stdout_tail": "branch 'cursor/mainnet-validate-190-16d8' set up to track 'origin/cursor/mainnet-validate-190-16d8'.\nHEAD is now at fe369bd feat(190): D-044 validate mainnet, lock P2P mutations, PIN ancestor\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=fe369bdf28c160f17169f99dd919ddcc4440dce6\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh1": {
+    "returncode": 0,
+    "stdout_tail": "HEAD is now at fe369bd feat(190): D-044 validate mainnet, lock P2P mutations, PIN ancestor\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=fe369bdf28c160f17169f99dd919ddcc4440dce6\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh2": {
+    "returncode": 0,
+    "stdout_tail": "branch 'cursor/mainnet-validate-190-16d8' set up to track 'origin/cursor/mainnet-validate-190-16d8'.\nHEAD is now at fe369bd feat(190): D-044 validate mainnet, lock P2P mutations, PIN ancestor\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=fe369bdf28c160f17169f99dd919ddcc4440dce6\n1 data/chain/blocks.jsonl\n"
+  },
+  "ovh4": {
+    "returncode": 0,
+    "stdout_tail": "branch 'cursor/mainnet-validate-190-16d8' set up to track 'origin/cursor/mainnet-validate-190-16d8'.\nHEAD is now at fe369bd feat(190): D-044 validate mainnet, lock P2P mutations, PIN ancestor\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nblocks.jsonl not emptied\nDEPLOYED_SHA=fe369bdf28c160f17169f99dd919ddcc4440dce6\n1 data/chain/blocks.jsonl\n"
+  }
+}

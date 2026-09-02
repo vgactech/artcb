@@ -1,0 +1,216 @@
+{
+  "after_restart": {
+    "aws3": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    },
+    "ovh1": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    },
+    "ovh2": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    },
+    "ovh4": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    }
+  },
+  "after_tx": {
+    "aws3": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    },
+    "ovh1": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    },
+    "ovh2": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    },
+    "ovh4": {
+      "height": 8,
+      "last_hash": "a749b3b7d9f9fd0bc0146959df94f4d10597003d4bf72820fd1b036ac5b543d1",
+      "public_state_digest": "cd65c004f876cf9c3580453a081f4517753a8c8bb6be553883cb3ea4ea33ba7d"
+    }
+  },
+  "before": {
+    "aws3": {
+      "height": 7,
+      "last_hash": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639",
+      "public_state_digest": "e4f522da9821bbd1c123be747585e121c6db984e5f836a9c4f011f19a60ff8fc"
+    },
+    "ovh1": {
+      "height": 7,
+      "last_hash": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639",
+      "public_state_digest": "e4f522da9821bbd1c123be747585e121c6db984e5f836a9c4f011f19a60ff8fc"
+    },
+    "ovh2": {
+      "height": 7,
+      "last_hash": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639",
+      "public_state_digest": "e4f522da9821bbd1c123be747585e121c6db984e5f836a9c4f011f19a60ff8fc"
+    },
+    "ovh4": {
+      "height": 7,
+      "last_hash": "b51643632c5e595fa4e6e56d7173385a8901666ca73f0eefc9c7610031137639",
+      "public_state_digest": "e4f522da9821bbd1c123be747585e121c6db984e5f836a9c4f011f19a60ff8fc"
+    }
+  },
+  "dropped_incompatible_peers": {
+    "aws3": [
+      {
+        "deleted_http": 200,
+        "host": "152.228.144.34",
+        "peer_id": "peer_3b4923725f13"
+      },
+      {
+        "deleted_http": 200,
+        "host": "152.228.144.34",
+        "peer_id": "peer_264db8039f5b"
+      }
+    ],
+    "ovh1": [
+      {
+        "deleted_http": 200,
+        "host": "51.44.222.232",
+        "peer_id": "peer_e807b362f1d0"
+      },
+      {
+        "deleted_http": 200,
+        "host": "51.44.222.232",
+        "peer_id": "peer_56ce6540f5d9"
+      },
+      {
+        "deleted_http": 200,
+        "host": "151.80.107.29",
+        "peer_id": "peer_c29571631c12"
+      }
+    ],
+    "ovh2": [
+      {
+        "deleted_http": 200,
+        "host": "152.228.144.34",
+        "peer_id": "peer_b0204e4f5f7f"
+      }
+    ],
+    "ovh4": []
+  },
+  "four_equal_after_restart": true,
+  "four_equal_after_tx": true,
+  "genesis_hash_expected": "genesis-artcb-v2",
+  "registrations": {
+    "aws3_ovh1": {
+      "http": 200,
+      "peer_id": "peer_fd4d1a49f6f6",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "aws3_ovh2": {
+      "http": 200,
+      "peer_id": "peer_0db8bf804f1d",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "aws3_ovh4": {
+      "http": 200,
+      "peer_id": "peer_642c2e70ee21",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh1_aws3": {
+      "http": 200,
+      "peer_id": "peer_c535cb3ee617",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh1_ovh2": {
+      "http": 200,
+      "peer_id": "peer_5e5c4e44e9b3",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh1_ovh4": {
+      "http": 200,
+      "peer_id": "peer_035c1818c664",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh2_aws3": {
+      "http": 200,
+      "peer_id": "peer_8263ea3f63c1",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh2_ovh1": {
+      "http": 200,
+      "peer_id": "peer_09055ff27970",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh2_ovh4": {
+      "http": 200,
+      "peer_id": "peer_edcaf3e4481d",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh4_aws3": {
+      "http": 200,
+      "peer_id": "peer_a6e328173eef",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh4_ovh1": {
+      "http": 200,
+      "peer_id": "peer_117d3a579bc2",
+      "protocol_compatible": true,
+      "status": null
+    },
+    "ovh4_ovh2": {
+      "http": 200,
+      "peer_id": "peer_ccbed2247cbf",
+      "protocol_compatible": true,
+      "status": null
+    }
+  },
+  "restart_health_wait": [
+    {
+      "http": 0,
+      "try": 1
+    },
+    {
+      "http": 0,
+      "try": 2
+    },
+    {
+      "http": 200,
+      "try": 3
+    }
+  ],
+  "restart_ovh1": {
+    "health_ok": true,
+    "ssh_returncode": 0
+  },
+  "store_block_index": 7,
+  "store_http": 200,
+  "sync_http": {
+    "aws3": 200,
+    "ovh1": 200,
+    "ovh2": 200,
+    "ovh4": 200
+  },
+  "sync_ok_peers": {
+    "aws3": true,
+    "ovh1": true,
+    "ovh2": true,
+    "ovh4": true
+  }
+}
