@@ -260,4 +260,5 @@
 | T-E35 | `bash scripts/deploy_aws.sh IP BRANCH` | health HTTP 8000 + HTTPS 8443 ; OVH1 inchangé | [x] | SHA AWS `0d3d432` ; OVH1 `5b4b24ae` |
 | T-E36 | OVH1 + AWS3 health simultanés | 2/4 compute ; OVH2 = 0 VM | [x] | sim `20260831T162428Z` failures=[] P2P 200/200 |
 | T-E37 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | nic `vc491276-ovh` ; 0 instance | [x] | me=200 projects=[] |
+| T-E38 | `pytest tests/test_e2e206_ovh4_keepbook.py` | SSH sans rescue ; pub `artcb-ovh-node-4-20260902` ; keep-book SHA `ad017bca` ; pas de certif | [x] | 2026-09-02 |
 
