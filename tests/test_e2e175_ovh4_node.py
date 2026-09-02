@@ -48,6 +48,22 @@ def test_d037_does_not_overwrite_d033_or_d034() -> None:
     assert "5b4b24ae" in DECISIONS_175["D-037"]
 
 
+def test_ovh4_operator_howto_exists_and_does_not_ask_user_to_invent_secrets() -> None:
+    howto = (ROOT / "docs" / "NOEUD_4_LES_2_SECRETS.md").read_text(encoding="utf-8")
+    assert "KEY_API_ARTCB_DOPPLER_4" in howto
+    assert "SSH_PRIVATE_KEY" in howto
+    assert "dashboard.doppler.com" in howto
+    assert "KEY_API_ARTCB_DOPPLER_2" in howto
+    assert "Ne le colle pas dans ce chat" in howto
+    assert "Ne la fabrique pas" in howto
+    assert "ARTCB_OVH_NODE_4" in howto
+    notes = NODES["ovh-node-4"].public_notes
+    assert "docs/NOEUD_4_LES_2_SECRETS.md" in notes
+    rule = (ROOT / ".cursor" / "rules" / "ovh-node-4.mdc").read_text(encoding="utf-8")
+    assert "KEY_API_ARTCB_DOPPLER_4" in rule
+    assert "jamais le chat" in rule.lower() or "Jamais git, jamais le chat" in rule
+
+
 def test_deploy_ovh4_refuses_ovh1_and_ovh2() -> None:
     body = (ROOT / "scripts" / "deploy_ovh4.sh").read_text(encoding="utf-8")
     assert "Refusing to deploy OVH4 script onto OVH1" in body

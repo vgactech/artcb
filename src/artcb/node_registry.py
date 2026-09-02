@@ -107,7 +107,9 @@ NODES: dict[str, NodeSpec] = {
             "Instance node-artcb-ovh-4 id 22dc6a47-5b79-4084-82d7-eabb4f5b2680 "
             "GRA11 d2-8 IPv4 91.134.45.8. Doppler slug artcb-4 "
             "(UI name ARTCB_API_4). SSH key artcb-ovh-node-4. "
-            "Never reuse OVH1 152.228.144.34 or OVH2 151.80.107.29 credentials."
+            "Never reuse OVH1 152.228.144.34 or OVH2 151.80.107.29 credentials. "
+            "Operator howto (who creates KEY_API_ARTCB_DOPPLER_4 vs SSH_PRIVATE_KEY): "
+            "docs/NOEUD_4_LES_2_SECRETS.md."
         ),
     ),
     "ovh-baremetal-1": NodeSpec(

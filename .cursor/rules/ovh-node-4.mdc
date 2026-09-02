@@ -1,0 +1,23 @@
+---
+description: OVH node artcb 4 — GRA11, isolated Doppler artcb-4. Explain secrets; never ask the user to invent them.
+alwaysApply: false
+---
+
+# OVH — nœud artcb 4
+
+- nic `xy4589-ovh` (`vgac42@gmail.com`). Public Cloud `926bb1d6755e4f2c98ae9db06ef44e4f`. Instance `node-artcb-ovh-4` id `22dc6a47-5b79-4084-82d7-eabb4f5b2680` GRA11 d2-8 IPv4 **`91.134.45.8`**.
+- Doppler : projet **`artcb-4`** (UI `ARTCB_API_4`). Token Cursor **`KEY_API_ARTCB_DOPPLER_4`**. Jamais Stripe/Bob/GitHub ici. Jamais les `OVH_*` du process Cursor (nœud 1).
+- Guide utilisateur **simple** : `docs/NOEUD_4_LES_2_SECRETS.md`.
+
+## Ce que l’agent ne doit plus faire
+
+- Ne **pas** demander à l’utilisateur de « coller `KEY_API_ARTCB_DOPPLER_4` » comme si l’agent allait lui fournir la valeur. C’est un **service token Doppler** (`dp.st.…`) que **lui** crée : projet `artcb-4` / config `dev` / onglet **Access** / **Generate** / Write access. Puis il le met dans **Cursor Secrets**, au même endroit que `KEY_API_ARTCB_DOPPLER_2` et `_3`.
+- Ne **pas** demander `SSH_PRIVATE_KEY` dans le chat. Ce n’est **pas** le secret Cursor `ARTCB_OVH_NODE_4` (clé **publique** `ssh-ed25519`, déjà dans `deploy/artcb_ovh_node_4.pub`). Si le PEM n’est pas dans Doppler `artcb-4`, l’agent le **génère** et l’écrit dans Doppler après avoir le token Cursor. Jamais git, jamais le chat.
+- Ne **pas** mélanger avec un pavé wallet / MetaMask / `blocks.jsonl` quand la tâche est l’accès nœud 4.
+- Ne **pas** déployer `main` sur OVH1 `:34` sans ordre explicite. Pas de rescue OVH4.
+
+## Accès
+
+- Scripts : `scripts/provision_ovh4_instance.py`, `scripts/deploy_ovh4.sh`. Staging `~/.artcb/nodes/ovh-node-4.env` mode 0600.
+- Health `http://91.134.45.8:8000` ; API `https://91.134.45.8:8443`. SSH `ubuntu@91.134.45.8`.
+- Console Public Cloud (secours, sans rescue) : `https://www.ovh.com/manager/public-cloud/#/pci/projects/926bb1d6755e4f2c98ae9db06ef44e4f/instances`
