@@ -113,8 +113,12 @@ except Exception as exc:  # noqa: BLE001 — official machine campaign must stil
 
 # ── Wallet ──────────────────────────────────────────────────────────────────
 print("\n=== Wallet ARTCB (création + hybrid keypair) ===")
-wm = WalletManager()
-results.append(bench("WalletManager.create_wallet()", lambda: wm.create_wallet(name=f"bench_{time.time_ns()}"), rounds=20))
+try:
+    wm = WalletManager()
+    results.append(bench("WalletManager.create_wallet()", lambda: wm.create_wallet(name=f"bench_{time.time_ns()}"), rounds=20))
+except Exception as exc:  # noqa: BLE001
+    print(f"  SKIP wallet: {type(exc).__name__}: {exc}")
+    results.append({"label": "WalletManager.create_wallet()", "skipped": True, "error": type(exc).__name__})
 
 # ── TPS simulation ──────────────────────────────────────────────────────────
 print("\n=== TPS simulation ARTCB ===")
