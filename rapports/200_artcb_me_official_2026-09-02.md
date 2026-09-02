@@ -3,7 +3,8 @@
 **Horodatage :** 2026-09-02T16:25:00Z  
 **Certification :** **NOT MAINNET CERTIFIED** (`certified_distributed_mainnet=false` × 4, non modifié)  
 **Branche de travail :** `cursor/artcb-me-official-16d8`  
-**`main` déployé (code live) :** `8fd3a4559575c324c293c8d56a23097f27e38a56`
+**`main` GitHub (docs inclus) :** `3f5c109b95ca95959a67999177badb0a6062028a`  
+**SHA live mesuré × 4 (après keep-book) :** `f28418084d84e00d3d5290ceefb846b30af527de` (branche live `cursor/artcb-me-official-16d8` ; ancêtre de `origin/main` docs)
 
 ## Vocabulaire
 
@@ -26,15 +27,15 @@
 | DNS | 55 | Apex + `www` + `n1`…`n4` + `node` A vers les 4 IP live. Refresh zone HTTP 200. Résolution publique mesurée (dig/getent). MX/SPF/NS OVH **conservés**. |
 | Code + tests | 70 | `ARTCB_DOMAIN=artcb.me` officiel ; `artcb.space` CORS transition. pytest domaine **8 passed** ; suite ciblée **57 passed**. Import live `src.artcb.config` (crash OVH1 corrigé). |
 | Push `main` | 80 | `git push origin cursor/artcb-me-official-16d8:main` → `9fab060..8fd3a45`. `ManagePullRequest` **absent**. |
-| Deploy keep-book | 95 | 4 nœuds SHA `8fd3a45…` / `main`. OVH1 : 1er bundle bloqué par working tree dirty (hotfix import) → `reset --hard` puis checkout. OVH2 : `git fetch origin main` OK. AWS3/OVH4 : bundle. |
-| Vérif | 100 | `/health` 200 × 4, même SHA, height **1**, `last_hash` inchangé, certif **false**. `http://artcb.me:8000/health` 200. |
+| Deploy keep-book | 95 | 4 nœuds SHA **`f284180…`**. Import live `src.artcb.config` (crash OVH1 `from artcb.config` corrigé en `8fd3a45`, conservé). OVH2 a fetch GitHub ; OVH1/AWS3/OVH4 bundle. Working tree dirty OVH1 → `reset --hard`. |
+| Vérif | 100 | `/health` 200 × 4, même SHA `f284180…`, height **1**, `last_hash` inchangé, certif **false**. `http://artcb.me:8000/health` 200. `origin/main` = `3f5c109` (docs) ; nœuds restent sur le SHA code (comme 199). |
 
 ## SHA / livre avant / après (mesurés)
 
 | | Avant (live 199) | Après (ce rapport) |
 |--|------------------|--------------------|
-| `git_sha` × 4 | `f8118ffea00b1cad5cb3396e29c923b379f6c815` | `8fd3a4559575c324c293c8d56a23097f27e38a56` |
-| `git_branch` × 4 | `main` | `main` |
+| `git_sha` × 4 | `f8118ffea00b1cad5cb3396e29c923b379f6c815` | `f28418084d84e00d3d5290ceefb846b30af527de` |
+| `git_branch` × 4 | `main` | `cursor/artcb-me-official-16d8` (code identique à `main` hors docs 200) |
 | `last_hash` × 4 | `b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce` | **identique** |
 | height × 4 | 1 | 1 |
 | `blocks.jsonl` | 1 ligne | 1 ligne |
@@ -58,7 +59,7 @@ NS registrar : `dns111.ovh.net` / `ns111.ovh.net`.
 
 **Pas d’AAAA.** Parking OVH `213.186.33.5` remplacé sur apex/`www` (déjà à jour au moment du `--apply` : toutes les actions `skip`). MX/SPF/DKIM mail OVH **intacts**.
 
-Preuve publique : `dig`/`getent` → les 7 noms ci-dessus résolvent les IP du tableau. `http://artcb.me:8000/health` et `http://n{1,2,3,4}.artcb.me:8000/health` → 200, SHA `8fd3a45…`.
+Preuve publique : `dig`/`getent` → les 7 noms ci-dessus résolvent les IP du tableau. `http://artcb.me:8000/health` et `http://n{1,2,3,4}.artcb.me:8000/health` → 200, SHA live `f284180…`.
 
 ## TLS (HTTP d’abord + notes)
 
@@ -142,4 +143,4 @@ PYTHONPATH=src python3 -m pytest tests/test_artcb_me_official.py \
 - Let’s Encrypt **non** posé (HTTP:8000 d’abord). `nginx:80` reste la page welcome.
 - OVH1/AWS3/OVH4 : `git fetch` GitHub HTTPS souvent **128** sans identifiants → bundle. OVH2 a fetch `origin/main` cette fois.
 - Commande **258262811** hébergement 100 Mo `notPaid` : à ignorer ou annuler dans le manager OVH ; ce n’est pas `artcb.me`.
-- Ce rapport est un commit **docs** postérieur au SHA live `8fd3a45`. Les nœuds restent sur ce SHA code. Pas de 2ᵉ redeploy pour un markdown.
+- Ce rapport est un commit **docs**. Les nœuds restent sur le SHA code `f284180…` (ancêtre de `origin/main`). Pas de 2ᵉ redeploy pour un markdown.
