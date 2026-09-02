@@ -54,7 +54,7 @@ class InitNodeRequest(BaseModel):
     public_url: str = Field(
         default="",
         description=(
-            "URL publique de ce nœud (ex: https://n1.artcb.space). "
+            "URL publique de ce nœud (ex: https://n1.artcb.me). "
             "Laissez vide pour détection automatique (Replit)."
         ),
     )

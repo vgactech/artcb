@@ -11,8 +11,8 @@ fichiers de log distincts et ne se pileront pas mutuellement lors d'un
 commit/push.
 
 Exemples :
-  N1 → logs/20260808_artcb_startup_n1.artcb.space.json
-  N2 → logs/20260808_artcb_startup_n2.artcb.space.json
+  N1 → logs/20260808_artcb_startup_n1.artcb.me.json
+  N2 → logs/20260808_artcb_startup_n2.artcb.me.json
   Dev local → logs/20260808_artcb_startup_artcb1abc123.json
 """
 
@@ -40,7 +40,7 @@ def _node_suffix() -> str:
         return wallet[-12:]
     url = os.getenv("ARTCB_NODE_PUBLIC_URL", "").strip()
     if url:
-        # "https://n1.artcb.space" → "n1.artcb.space"
+        # "https://n1.artcb.me" → "n1.artcb.me"
         return url.split("//", 1)[-1].rstrip("/").split("/")[0]
     return socket.gethostname()
 

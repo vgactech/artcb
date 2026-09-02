@@ -15,6 +15,8 @@ import ipaddress
 import os
 from urllib.parse import urlparse
 
+from artcb.config import ARTCB_DOMAIN, ARTCB_DOMAIN_LEGACY
+
 INFRA_IPV4: frozenset[str] = frozenset(
     {
         "152.228.144.34",
@@ -45,6 +47,15 @@ def is_https_platform_host(host: str) -> bool:
     return any(h.endswith(suffix) for suffix in PUBLIC_PLATFORM_SUFFIXES)
 
 
+def is_official_artcb_host(host: str) -> bool:
+    """True for artcb.me (official) and artcb.space (legacy transition)."""
+    h = (host or "").lower().rstrip(".")
+    for domain in (ARTCB_DOMAIN, ARTCB_DOMAIN_LEGACY):
+        if h == domain or h.endswith("." + domain):
+            return True
+    return False
+
+
 def extra_public_hosts() -> frozenset[str]:
     """Optional extra DNS names, comma-separated. For a custom domain on a VPS."""
     raw = os.getenv("ARTCB_PUBLIC_PEER_HOSTS", "")
@@ -64,6 +75,8 @@ def public_register_url_ok(url: str) -> tuple[bool, str]:
         return False, "loopback_forbidden"
     if is_https_platform_host(host):
         return True, "platform_public"
+    if is_official_artcb_host(host):
+        return True, "official_domain"
     if host in extra_public_hosts():
         return True, "extra_public_host"
     try:

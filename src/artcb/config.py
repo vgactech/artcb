@@ -49,7 +49,20 @@ def bootstrap_nodes() -> list[str]:
     return seen
 
 ARTCB_GITHUB_REPO = "https://github.com/vgac2025/artcb"
-ARTCB_DOMAIN = "artcb.space"
+# Domaine public officiel jusqu'à nouvel ordre. Registrar = OVH (nic xy4589-ovh / OVH4).
+# artcb.space reste accepté en CORS pendant la transition (ancien registrar IONOS).
+ARTCB_DOMAIN = "artcb.me"
+ARTCB_DOMAIN_LEGACY = "artcb.space"
+ARTCB_DOMAIN_LABELS: tuple[str, ...] = ("n1", "n2", "n3", "n4", "node", "www")
+# DNS cible (nœuds live existants). Apex = OVH1 canonique. Pas d'AAAA inventée.
+ARTCB_DNS_A_RECORDS: dict[str, str] = {
+    "": "152.228.144.34",       # apex artcb.me → OVH1
+    "n1": "152.228.144.34",     # OVH1
+    "n2": "151.80.107.29",      # OVH2
+    "n3": "51.44.222.232",      # AWS3
+    "n4": "91.134.45.8",        # OVH4
+    "node": "152.228.144.34",   # alias canonique
+}
 
 
 @dataclass(frozen=True)

@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 
-from src.artcb.config import ARTCB_DOMAIN
+from src.artcb.config import ARTCB_DOMAIN, ARTCB_DOMAIN_LABELS, ARTCB_DOMAIN_LEGACY
 from src.artcb.logging_config import setup_logging
 
 # Configure the root logger before importing routers and application state.
@@ -48,22 +48,42 @@ from src.api.network_routes import router as network_router
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
 
 
+def cors_hosts_for_domain(domain: str) -> list[str]:
+    """Apex + labels DNS (n1…n4, node, www) for one public domain."""
+    hosts = [domain]
+    for label in ARTCB_DOMAIN_LABELS:
+        hosts.append(f"{label}.{domain}")
+    return hosts
+
+
+def cors_allowed_origins() -> list[str]:
+    """Whitelist: localhost + official artcb.me + legacy artcb.space (transition).
+
+    HTTP origins are included until Let's Encrypt is on the VMs; HTTP:8000
+    must keep working. Extra origins: ARTCB_CORS_ORIGINS (comma-separated).
+    """
+    extra = [o.strip() for o in os.getenv("ARTCB_CORS_ORIGINS", "").split(",") if o.strip()]
+    origins = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://localhost:8000",
+    ]
+    for domain in (ARTCB_DOMAIN, ARTCB_DOMAIN_LEGACY):
+        for host in cors_hosts_for_domain(domain):
+            origins.append(f"https://{host}")
+            origins.append(f"http://{host}")
+    for item in extra:
+        if item not in origins:
+            origins.append(item)
+    return origins
+
+
 def create_app() -> FastAPI:
     app = FastAPI(title="ARTCB API", version="0.3.0")
     # CORS : allow_origins=["*"] + allow_credentials=True est un anti-pattern
     # (la spec CORS interdit * avec credentials → Starlette reflète l'Origin).
-    # On construit une liste blanche : domaines ARTCB + env var optionnelle ARTCB_CORS_ORIGINS.
-    _extra = [o.strip() for o in os.getenv("ARTCB_CORS_ORIGINS", "").split(",") if o.strip()]
-    _allowed_origins = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "http://localhost:8000",
-        f"https://{ARTCB_DOMAIN}",
-        f"https://n1.{ARTCB_DOMAIN}",
-        f"https://n2.{ARTCB_DOMAIN}",
-        f"https://node.{ARTCB_DOMAIN}",
-        *_extra,
-    ]
+    # Liste blanche : artcb.me officiel + artcb.space transition + ARTCB_CORS_ORIGINS.
+    _allowed_origins = cors_allowed_origins()
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_allowed_origins,
