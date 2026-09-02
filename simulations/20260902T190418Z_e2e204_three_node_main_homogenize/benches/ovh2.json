@@ -1,0 +1,97 @@
+{
+  "timestamp": "20260902T190214Z",
+  "python": "3.12.3",
+  "platform": "linux",
+  "pqc_algo": "ML-DSA-65",
+  "kem_algo": "ML-KEM-768",
+  "kem_native": true,
+  "results": [
+    {
+      "label": "ML-DSA-65 generate_keypair()",
+      "avg_ms": 49.207,
+      "med_ms": 47.746,
+      "min_ms": 36.313,
+      "max_ms": 69.102,
+      "rounds": 50
+    },
+    {
+      "label": "ML-DSA-65 sign_message(296B)",
+      "avg_ms": 51.395,
+      "med_ms": 48.025,
+      "min_ms": 36.939,
+      "max_ms": 76.917,
+      "rounds": 50
+    },
+    {
+      "label": "ML-DSA-65 verify_message(296B)",
+      "avg_ms": 48.0,
+      "med_ms": 47.423,
+      "min_ms": 37.817,
+      "max_ms": 68.11,
+      "rounds": 50
+    },
+    {
+      "label": "KEM generate_kem_keypair()",
+      "avg_ms": 46.455,
+      "med_ms": 45.292,
+      "min_ms": 36.313,
+      "max_ms": 62.157,
+      "rounds": 50
+    },
+    {
+      "label": "KEM encapsulate()",
+      "avg_ms": 51.576,
+      "med_ms": 49.536,
+      "min_ms": 39.007,
+      "max_ms": 94.762,
+      "rounds": 50
+    },
+    {
+      "label": "KEM decapsulate()",
+      "avg_ms": 50.288,
+      "med_ms": 47.891,
+      "min_ms": 37.378,
+      "max_ms": 85.585,
+      "rounds": 50
+    },
+    {
+      "label": "append_block() sans s\u00e9curit\u00e9",
+      "avg_ms": 56.455,
+      "med_ms": 53.131,
+      "min_ms": 42.622,
+      "max_ms": 82.329,
+      "rounds": 30
+    },
+    {
+      "label": "verify() cha\u00eene compl\u00e8te",
+      "avg_ms": 6.141,
+      "med_ms": 6.162,
+      "min_ms": 5.943,
+      "max_ms": 6.384,
+      "rounds": 20
+    },
+    {
+      "label": "append_block() + Anti-Sybil (2 contributors)",
+      "avg_ms": 148.794,
+      "med_ms": 146.292,
+      "min_ms": 139.951,
+      "max_ms": 187.43,
+      "rounds": 20
+    },
+    {
+      "label": "WalletManager.create_wallet()",
+      "skipped": true,
+      "error": "WalletEncryptionError"
+    },
+    {
+      "label": "TPS isolated tempdir (200 appends, security OFF)",
+      "tps": 15.7,
+      "elapsed_ms": 12699.9,
+      "n_blocks": 200,
+      "not_distributed_mainnet": true,
+      "not_wan": true
+    }
+  ],
+  "tps_blocks": 15.7,
+  "tps_is_isolated_tempdir_not_distributed_mainnet": true
+}

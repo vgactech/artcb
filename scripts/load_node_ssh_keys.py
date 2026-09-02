@@ -2,7 +2,8 @@
 """Write per-node SSH private keys to ~/.ssh (mode 600). Never prints key material.
 
 Sources, in order, for each dest:
-  1. Cursor/env OVH_SSH_PRIVATE_KEY (OVH1 only)
+  1. Cursor/env OVH_SSH_PRIVATE_KEY (OVH1 only). Cursor ARTCB_OVH_NODE_*
+     values are public keys, not PEM — they cannot be written as private keys.
   2. Doppler SSH_PRIVATE_KEY of that node's project
 """
 

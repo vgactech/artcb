@@ -1,0 +1,154 @@
+{
+  "aws3": {
+    "chain": {
+      "chain_valid": true,
+      "height": 1,
+      "http": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "rtt_ms": 170.7
+    },
+    "health": {
+      "certification_reason": "dv_not_pass:DV-01,DV-02,DV-03,DV-04,DV-05,DV-06,DV-07; operator_certification_go=false",
+      "certified_distributed_mainnet": false,
+      "git_branch": "main",
+      "git_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+      "http": 200,
+      "rtt_ms": 189.9
+    },
+    "https_domain": {
+      "git_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+      "http": 200,
+      "rtt_ms": 358.1,
+      "url": "https://n3.artcb.me/health"
+    },
+    "ip": "51.44.222.232",
+    "metrics": {
+      "bandwidth_source": "idle_fallback",
+      "estimated_bandwidth_mbps": 100.0,
+      "fallback_bandwidth_mbps": 100.0,
+      "http": 200,
+      "measured_bandwidth_mbps": 0.0,
+      "metrics_timing": {
+        "cpu_percent_interval_seconds": 0.1,
+        "network_sample_sleep_seconds": 0.5,
+        "note": "/metrics HTTP RTT includes the voluntary network sample sleep; it is not API compute latency."
+      },
+      "rtt_ms": 773.2
+    },
+    "name": "aws3",
+    "ssh_key": true
+  },
+  "ovh1": {
+    "chain": {
+      "chain_valid": true,
+      "height": 1,
+      "http": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "rtt_ms": 168.5
+    },
+    "health": {
+      "certification_reason": "dv_not_pass:DV-01,DV-02,DV-03,DV-04,DV-05,DV-06,DV-07; operator_certification_go=false",
+      "certified_distributed_mainnet": false,
+      "git_branch": "main",
+      "git_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+      "http": 200,
+      "rtt_ms": 217.1
+    },
+    "https_domain": {
+      "git_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+      "http": 200,
+      "rtt_ms": 363.6,
+      "url": "https://artcb.me/health"
+    },
+    "ip": "152.228.144.34",
+    "metrics": {
+      "bandwidth_source": "idle_fallback",
+      "estimated_bandwidth_mbps": 100.0,
+      "fallback_bandwidth_mbps": 100.0,
+      "http": 200,
+      "measured_bandwidth_mbps": 0.0,
+      "metrics_timing": {
+        "cpu_percent_interval_seconds": 0.1,
+        "network_sample_sleep_seconds": 0.5,
+        "note": "/metrics HTTP RTT includes the voluntary network sample sleep; it is not API compute latency."
+      },
+      "rtt_ms": 777.0
+    },
+    "name": "ovh1",
+    "ssh_key": true
+  },
+  "ovh2": {
+    "chain": {
+      "chain_valid": true,
+      "height": 1,
+      "http": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "rtt_ms": 171.0
+    },
+    "health": {
+      "certification_reason": "dv_not_pass:DV-01,DV-02,DV-03,DV-04,DV-05,DV-06,DV-07; operator_certification_go=false",
+      "certified_distributed_mainnet": false,
+      "git_branch": "main",
+      "git_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+      "http": 200,
+      "rtt_ms": 204.9
+    },
+    "https_domain": {
+      "git_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+      "http": 200,
+      "rtt_ms": 371.0,
+      "url": "https://n2.artcb.me/health"
+    },
+    "ip": "151.80.107.29",
+    "metrics": {
+      "bandwidth_source": "idle_fallback",
+      "estimated_bandwidth_mbps": 100.0,
+      "fallback_bandwidth_mbps": 100.0,
+      "http": 200,
+      "measured_bandwidth_mbps": 0.0,
+      "metrics_timing": {
+        "cpu_percent_interval_seconds": 0.1,
+        "network_sample_sleep_seconds": 0.5,
+        "note": "/metrics HTTP RTT includes the voluntary network sample sleep; it is not API compute latency."
+      },
+      "rtt_ms": 771.9
+    },
+    "name": "ovh2",
+    "ssh_key": true
+  },
+  "ovh4": {
+    "chain": {
+      "chain_valid": true,
+      "height": 1,
+      "http": 200,
+      "last_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "rtt_ms": 166.5
+    },
+    "health": {
+      "certification_reason": null,
+      "certified_distributed_mainnet": false,
+      "git_branch": "cursor/artcb-me-official-16d8",
+      "git_sha": "f28418084d84e00d3d5290ceefb846b30af527de",
+      "http": 200,
+      "rtt_ms": 183.5
+    },
+    "https_domain": {
+      "git_sha": null,
+      "http": 0,
+      "rtt_ms": 166.1,
+      "url": "https://n4.artcb.me/health"
+    },
+    "ip": "91.134.45.8",
+    "metrics": {
+      "bandwidth_source": null,
+      "estimated_bandwidth_mbps": null,
+      "fallback_bandwidth_mbps": null,
+      "http": 200,
+      "measured_bandwidth_mbps": null,
+      "metrics_timing": null,
+      "rtt_ms": 764.7
+    },
+    "name": "ovh4",
+    "ssh_key": true
+  }
+}

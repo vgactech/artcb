@@ -1,0 +1,35 @@
+{
+  "cas_b_official_distributed_bench": false,
+  "certified": false,
+  "gate_certified": false,
+  "historical_90_tps_is_lab_not_mainnet": true,
+  "homogeneous_four": false,
+  "inject_script": "scripts/inject_ovh2_ssh_via_rescue.py",
+  "isolated_tempdir_tps_is_not_distributed_mainnet": true,
+  "keep_book": true,
+  "last_hashes": [
+    "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce"
+  ],
+  "live_shas": [
+    "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+    "f28418084d84e00d3d5290ceefb846b30af527de"
+  ],
+  "local_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+  "network_id": "artcb-mainnet-1",
+  "ok": true,
+  "operator_certification_go": false,
+  "origin_main": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+  "ovh4_blocked_without_doppler_4": true,
+  "reachable": [
+    "ovh1",
+    "ovh2",
+    "aws3",
+    "ovh4"
+  ],
+  "same_sha_as_origin_main": [
+    "ovh1",
+    "ovh2",
+    "aws3"
+  ],
+  "secrets_printed": false
+}

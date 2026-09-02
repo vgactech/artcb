@@ -1,0 +1,33 @@
+{
+  "certified_distributed_mainnet": false,
+  "dependency_lock": {
+    "hash": "76d3624ec55beabea66b13330472a575505a04cc83be5923a416e734e9a8e73b",
+    "package_count": 56,
+    "requirements_txt_hash": "2e790a3058b6f76554fb068f844218d659296c056f6c68e996d80cd99c2641a4",
+    "source": "pip_freeze"
+  },
+  "economic_rules_version": "D-025+V01-V07-locked-D054",
+  "git_branch": "cursor/mainnet-homogenize-bench-8ba4",
+  "git_commit_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+  "git_status_clean": false,
+  "invented_results": false,
+  "keep_book": true,
+  "local_sha": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+  "operator_certification_go": false,
+  "origin_main": "ad017bca05c2e3799c7dcd120ca1797968d499b6",
+  "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+  "protocol_version": "189-mainnet-1",
+  "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+  "script_path": "/workspace/scripts/run_sim204_three_node_main_homogenize.py",
+  "script_sha256": "4040f008eee51e67cb4a33c4844382c936d1fe45f021e815da8504f8f837dcba",
+  "seed": 204,
+  "simulation_id": "e2e204_three_node_main_homogenize",
+  "ssh_keys_present": {
+    "aws3": true,
+    "ovh1": true,
+    "ovh2": true,
+    "ovh4": true
+  },
+  "started_at": "2026-09-02T19:04:19Z",
+  "working_tree_diff_hash": "1a38a18de620af2d3050b55ff2247049228d8ccc42eccd563d834bc6ca77754c"
+}
