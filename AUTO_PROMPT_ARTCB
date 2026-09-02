@@ -1326,4 +1326,12 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Live bootstrap : SHA `30a7696a45888133b04e0ff78bbff2a9473c102f` ≠ `origin/main` `aeb132ae5266cfb9dfdfa8e7eafd49268b726fe5`. Token non imprimé. Certif **false**. Pas de commande OVH.
 - Rapport : `rapports/197_ionos_login_hint_2026-09-02.md`
 
+## [2026-09-02T14:20:00Z] Rapport 198 — câblage AND aux call sites (fenêtre D-032 conservée)
+
+- **AND** = les **DEUX** signatures. `verify_hybrid_and_or_window` aux call sites chain / groups / governance.
+- Ed25519 seule encore OK jusqu’au 2026-12-31. ML-DSA seule refusée. Hybride sans clé PQC refusée.
+- `high_value_hybrid_enforced=false`. Handshake P2P toujours Ed25519 seule (écart dit).
+- Live SHA `30a7696a45888133b04e0ff78bbff2a9473c102f` ≠ `origin/main` `aeb132ae` ≠ SHA branche. Pas d’`install.sh` / deploy main / init-node. Certif **false**.
+- Tests : 50 passed (198+196+174+178+gouvernance). Rapport : `rapports/198_hybrid_and_call_sites_2026-09-02.md`.
+
 
