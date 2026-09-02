@@ -127,10 +127,10 @@ set -euo pipefail
 cd /home/ubuntu/artcb
 git fetch origin {BRANCH}
 if git show-ref --verify --quiet refs/remotes/origin/{BRANCH}; then
-  git checkout -B {BRANCH} origin/{BRANCH}
+  git checkout -f -B {BRANCH} origin/{BRANCH}
   git reset --hard origin/{BRANCH}
 else
-  git checkout -B {BRANCH} FETCH_HEAD
+  git checkout -f -B {BRANCH} FETCH_HEAD
   git reset --hard FETCH_HEAD
 fi
 SHA=$(git rev-parse HEAD)
