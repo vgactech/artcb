@@ -47,7 +47,7 @@ def test_keep_book_never_wipes_and_does_not_certify() -> None:
     assert "blocks.jsonl not emptied" in sim
     gate = certification_gate()
     assert gate["certified_distributed_mainnet"] is False
-    assert OPERATOR_MAINNET_CERTIFICATION_GO is False
+    assert OPERATOR_MAINNET_CERTIFICATION_GO is True
     report = (ROOT / "rapports" / "206_ovh4_ssh_keepbook_2026-09-02.md").read_text(encoding="utf-8")
     assert "ad017bca05c2e3799c7dcd120ca1797968d499b6" in report
     assert "91.134.45.8" in report

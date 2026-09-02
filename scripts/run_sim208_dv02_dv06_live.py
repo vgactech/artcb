@@ -93,13 +93,13 @@ def flood(ip: str, n: int = 64) -> dict:
 
 
 def unauth_locks(ip: str) -> dict:
-    d, _ = _http(f"http://{ip}:8000/api/v1/p2p/peers/x", method="DELETE")
+    d, _ = _http(f"http://{ip}:8000/api/v1/p2p/peers/peer_probe_unauth", method="DELETE")
     s, _ = _http(f"http://{ip}:8000/api/v1/p2p/sync", method="POST", body={})
-    g, _ = _http(f"http://{ip}:8000/api/v1/p2p/gossip", method="POST", body={})
+    g, _ = _http(f"http://{ip}:8000/api/v1/p2p/gossip/announce", method="POST", body={})
     ssrf, _ = _http(
-        f"http://{ip}:8000/api/v1/network/register-public",
+        f"http://{ip}:8000/api/v1/network/announce",
         method="POST",
-        body={"url": "http://169.254.169.254/"},
+        body={"node_public_url": "http://169.254.169.254/latest", "network_id": "artcb-mainnet-1"},
     )
     return {"delete": d, "sync": s, "gossip": g, "ssrf": ssrf}
 

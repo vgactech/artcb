@@ -163,9 +163,21 @@ DECISIONS_190: Final[dict[str, str]] = {
     ),
 }
 
-# Operator 2026-09-01: identify machines, freeze WPP, chaos on live book, consume seeds.
-# Certification is not automatic: all DV PASS is necessary, not sufficient.
-OPERATOR_MAINNET_CERTIFICATION_GO: Final[bool] = False
+# Operator 2026-09-02: all DV-01…07 PASS on the live book (sim 208 for DV-02/06).
+# GO is explicit — flipping the badge without those PASS would have been a lie.
+OPERATOR_MAINNET_CERTIFICATION_GO: Final[bool] = True
+
+DECISIONS_208: Final[dict[str, str]] = {
+    "D-056": (
+        "GO certify after measured DV-02 + DV-06 PASS on the four live VMs "
+        "(bounded HTTP flood 64×4 all 200; unauth delete/sync/gossip 401; "
+        "SSRF announce 400; tc netem 25%/80ms on OVH4 restored). "
+        "DV-01/03/04/05/07 already PASS. Economic V locked. Live BFT on. "
+        "OPERATOR_MAINNET_CERTIFICATION_GO=True so /health can read True. "
+        "Scope unchanged: DV-05 is settlement WorkID, not PBFT append_block. "
+        "No SYN flood, no rescue, no genesis wipe."
+    ),
+}
 
 DECISIONS_192: Final[dict[str, str]] = {
     "D-046": (
@@ -338,6 +350,7 @@ def public_lock() -> dict[str, Any]:
         "decisions_201": DECISIONS_201,
         "decisions_203": DECISIONS_203,
         "decisions_205": DECISIONS_205,
+        "decisions_208": DECISIONS_208,
         "note": "Choosing DV letters is the validation protocol, not a PASS.",
     }
 

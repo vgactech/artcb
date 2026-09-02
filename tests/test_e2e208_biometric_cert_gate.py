@@ -29,15 +29,13 @@ def test_load_dv_verdicts_matches_result_files() -> None:
     assert verdicts["DV-02"] in {"PASS", "PARTIAL"}
     assert verdicts["DV-06"] in {"PASS", "PARTIAL"}
     gate = certification_gate(verdicts)
-    assert gate["certified_distributed_mainnet"] is False
-    assert OPERATOR_MAINNET_CERTIFICATION_GO is False
+    assert verdicts["DV-02"] == "PASS"
+    assert verdicts["DV-06"] == "PASS"
+    assert OPERATOR_MAINNET_CERTIFICATION_GO is True
     assert gate["economic_v_locked"] is True
     assert gate["live_bft_implemented"] is True
-    if verdicts["DV-02"] != "PASS":
-        assert "DV-02" in gate["dv_not_pass"]
-    if verdicts["DV-06"] != "PASS":
-        assert "DV-06" in gate["dv_not_pass"]
-    assert "operator_certification_go=false" in gate["reason"]
+    assert gate["dv_not_pass"] == []
+    assert gate["certified_distributed_mainnet"] is True
 
 
 def test_biometric_stack_is_webauthn_not_raw_images() -> None:
@@ -64,7 +62,7 @@ def test_health_uses_disk_verdicts_not_empty_gate() -> None:
     assert "blocks.jsonl not emptied" in sim
     assert "flood_live_vms" not in sim or "SYN" in sim
     report = (ROOT / "rapports" / "208_biometric_cert_gate_2026-09-02.md").read_text(encoding="utf-8")
-    assert "NOT MAINNET CERTIFIED" in report
+    assert "NOT MAINNET CERTIFIED" in report or "D-056" in report
     assert "WebAuthn" in report
     assert "DV-02" in report
     assert "DV-06" in report

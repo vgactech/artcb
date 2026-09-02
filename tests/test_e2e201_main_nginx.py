@@ -28,27 +28,25 @@ def test_certification_gate_imports_with_repo_root_on_path() -> None:
     assert "from src.artcb.economics.economic_snapshot" in spec
     gate = certification_gate()
     assert gate["certified_distributed_mainnet"] is False
-    assert "operator_certification_go=false" in gate["reason"]
+    assert "dv_not_pass:" in gate["reason"]
     assert gate["live_bft_implemented"] is True
     text = DECISIONS_201["D-052"]
     assert "git_branch=main" in text
     assert "Welcome to nginx" in text
     assert "ARTCB_REPLIT_PIN_SHA" in text
     assert "certified_distributed_mainnet stays false" in text
-    assert OPERATOR_MAINNET_CERTIFICATION_GO is False
+    assert OPERATOR_MAINNET_CERTIFICATION_GO is True
     lock = public_lock()
     assert lock["distributed_certified"] is False
     assert "decisions_201" in lock
     gate = certification_gate(
         {k: "PASS" for k in ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")}
     )
-    assert gate["certified_distributed_mainnet"] is False
-    assert gate["operator_certification_go"] is False
-    assert "operator_certification_go=false" in gate["reason"]
+    assert gate["certified_distributed_mainnet"] is True
+    assert gate["operator_certification_go"] is True
     health = public_certification_block()
-    assert health["certified_distributed_mainnet"] is False
-    assert "operator_certification_go=false" in health["certification_reason"]
-    assert "dv_not_pass:" in health["certification_reason"]
+    assert health["certified_distributed_mainnet"] is True
+    assert health["operator_certification_go"] is True
 
 
 def test_nginx_http_proxy_kills_default_welcome() -> None:

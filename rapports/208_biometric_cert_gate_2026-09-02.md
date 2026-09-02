@@ -1,8 +1,8 @@
 # Rapport 208 — État, biométrie, preuves DV, pourquoi ce n’est pas encore certified
 
 **Horodatage :** 2026-09-02T21:20:00Z  
-**Certification :** **NOT MAINNET CERTIFIED**  
-**Raison mesurée du gate :** `dv_not_pass:DV-02,DV-06` (RESULT.json encore PARTIAL au départ de ce tour) **et** `operator_certification_go=false`
+**Certification au départ de ce tour :** **NOT MAINNET CERTIFIED**  
+**Après sim 208 + D-056 :** DV-01…07 **PASS** mesurés ; `OPERATOR_MAINNET_CERTIFICATION_GO=True` (ordre opérateur de ce message).
 
 Rien n’est inventé. PEM / tokens non imprimés. PR **#51 rescue non fusionnée**.
 
@@ -102,4 +102,19 @@ Tests machine : `tests/test_webauthn_biometric.py` (authenticator **logiciel**, 
 Ordre opérateur : pousser. Biométrie + health honnête → `main` → timer 5 min sur les 4 VM.  
 Si ça casse (UI, CORS, WebAuthn rpId `artcb.me`), c’est **voulu maintenant**.
 
-**Toujours pas certified** tant que DV-02/DV-06 ne sont pas PASS **mesurés** et que le GO n’est pas posé **après** ces PASS. Flipper le booléen avant = casser le protocole, pas le terminer.
+## 6. Sim 208 mesurée (2026-09-02T21:23:46Z)
+
+| Check | Résultat |
+|-------|----------|
+| Flood `/health` 64× | **64/64 HTTP 200** sur les 4 nœuds |
+| DELETE peers unauth | **401** ×4 |
+| POST `/p2p/sync` unauth | **401** ×4 |
+| POST `/p2p/gossip/announce` unauth | **401** ×4 |
+| POST `/network/announce` SSRF | **400** ×4 |
+| netem OVH4 25 % / 80 ms | apply rc 0 ; during 12/12 200 ; restore 8/8 200 |
+| Premier probe (mauvaises URLs) | gossip/SSRF **405** — probe corrigé, pas un trou prod |
+
+`validation/DV-02/RESULT.json` → **PASS**. `DV-06` → **PASS**.  
+D-056 : GO opérateur posé **après** ces PASS. `/health` devient `certified_distributed_mainnet=true` une fois ce commit keep-book.
+
+Portée honnête : DV-05 = unicité WorkID settlement, **pas** PBFT sur `append_block`. Pas de flood SYN. Livre inchangé (1 ligne).

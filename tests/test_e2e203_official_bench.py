@@ -24,7 +24,7 @@ HW = ROOT / "src" / "artcb" / "system" / "hardware.py"
 def test_d053_does_not_certify_and_splits_bandwidth() -> None:
     gate = certification_gate()
     assert gate["certified_distributed_mainnet"] is False
-    assert OPERATOR_MAINNET_CERTIFICATION_GO is False
+    assert OPERATOR_MAINNET_CERTIFICATION_GO is True
     text = DECISIONS_203["D-053"]
     assert "keep-book" in text
     assert "measured_bandwidth_mbps" in text
@@ -34,7 +34,7 @@ def test_d053_does_not_certify_and_splits_bandwidth() -> None:
     assert lock["distributed_certified"] is False
     assert "decisions_203" in lock
     health = public_certification_block()
-    assert health["certified_distributed_mainnet"] is False
+    assert health["certified_distributed_mainnet"] is True
 
 
 def test_sim203_keep_book_four_campaigns_never_wipe() -> None:

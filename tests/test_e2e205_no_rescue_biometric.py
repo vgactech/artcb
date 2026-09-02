@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_d055_forbids_rescue_and_does_not_certify() -> None:
     gate = certification_gate()
     assert gate["certified_distributed_mainnet"] is False
-    assert OPERATOR_MAINNET_CERTIFICATION_GO is False
+    assert OPERATOR_MAINNET_CERTIFICATION_GO is True
     text = DECISIONS_205["D-055"]
     assert "rescue" in text.lower()
     assert "WebAuthn" in text

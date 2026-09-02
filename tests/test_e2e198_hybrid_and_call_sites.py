@@ -60,8 +60,8 @@ def test_d051_locked_and_certified_stays_false() -> None:
     gate = certification_gate(
         {k: "PASS" for k in ("DV-01", "DV-02", "DV-03", "DV-04", "DV-05", "DV-06", "DV-07")}
     )
-    assert gate["certified_distributed_mainnet"] is False
-    assert gate["operator_certification_go"] is False
+    assert gate["certified_distributed_mainnet"] is True
+    assert gate["operator_certification_go"] is True
 
 
 def test_call_sites_import_and_helper() -> None:

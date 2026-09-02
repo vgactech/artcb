@@ -1,6 +1,7 @@
 {
-  "at": "20260901T183347Z",
+  "at": "20260902T212437Z",
   "id": "DV-02",
-  "sim": "e2e189_mainnet_genesis",
-  "status": "PARTIAL"
+  "sim": "e2e208_dv02_dv06_live",
+  "status": "PASS",
+  "note": "bounded HTTP flood 64\u00d74 + unauth 401 + SSRF 400; not SYN"
 }

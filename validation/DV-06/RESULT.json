@@ -1,6 +1,7 @@
 {
-  "at": "20260901T183347Z",
+  "at": "20260902T212437Z",
   "id": "DV-06",
-  "sim": "e2e189_mainnet_genesis",
-  "status": "PARTIAL"
+  "sim": "e2e208_dv02_dv06_live",
+  "status": "PASS",
+  "note": "tc netem 25%/80ms on OVH4 then restore; not chaos C"
 }
