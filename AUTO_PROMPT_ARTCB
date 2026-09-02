@@ -1393,3 +1393,10 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **Pourquoi pas `main` sur les VMs :** keep-book 200 sur `cursor/artcb-me-official-16d8` (SHA `f284180`). GO opérateur : checkout `main` keep-book × 4.
 - **Pourquoi Welcome nginx :** `:80` = site default Ubuntu ; API = `:8000`. AWS SG sans 80/443. Vhost proxy + ouverture SG.
 - **PIN Replit :** défaut `ARTCB_REPLIT_BRANCH=main`. `ARTCB_REPLIT_PIN_SHA` = SHA complet `origin/main`. Publish/Redeploy. Rapport : `rapports/201_main_nginx_artcb_me_2026-09-02.md`.
+
+## [2026-09-02T16:57:00Z] Rapport 202 — inventaire bench officiel (tests + hardware live)
+
+- Endpoints : `/health.machine`, `/api/v1/metrics`, `/system/hardware`, `/system/optimization`.
+- Live × 4 mesuré (CPU/RAM/disque/GPU/TPM/assurance E). OVH1 SHA `642b0e1` `main` ; n2/n3/n4 encore `f284180`. height 1 inchangé.
+- 100 Mbps API = fallback trafic faible, **pas** un speedtest. TPS 90 = labo 2026-08-03, **pas** mainnet.
+- Rapport : `rapports/202_benchmark_inventory_live_2026-09-02.md`.
