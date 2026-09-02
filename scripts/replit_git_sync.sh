@@ -35,8 +35,6 @@ artcb_replit_git_sync() {
     else
       git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
     fi
-  else
-    git fetch --depth 1 origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true
   fi
 
 
