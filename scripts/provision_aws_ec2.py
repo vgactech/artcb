@@ -55,8 +55,12 @@ def _aws_env() -> dict[str, str]:
         if val and not env.get(key):
             env[key] = val
     _apply_cursor_aliases(env)
+    has_keys = bool(env.get("AWS_ACCESS_KEY_ID") and env.get("AWS_SECRET_ACCESS_KEY"))
+    if has_keys:
+        env.pop("AWS_PROFILE", None)
     env.setdefault("AWS_DEFAULT_REGION", local.get("AWS_DEFAULT_REGION") or REGION)
-    env.setdefault("AWS_PROFILE", local.get("AWS_CLI_PROFILE") or PROFILE)
+    if not has_keys:
+        env.setdefault("AWS_PROFILE", local.get("AWS_CLI_PROFILE") or PROFILE)
     return env
 
 

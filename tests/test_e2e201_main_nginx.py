@@ -77,6 +77,7 @@ def test_sim201_keep_book_main_never_orders_or_wipes_or_certifies() -> None:
     assert "80, 443, 8000, 8443" in aws or "22, 80, 443, 8000, 8443" in aws
     assert "--open-http" in aws
     assert "InvalidPermission.Duplicate" in aws
+    assert 'env.pop("AWS_PROFILE"' in aws
 
 
 def test_replit_default_branch_is_main() -> None:
