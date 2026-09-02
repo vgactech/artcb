@@ -32,6 +32,22 @@ class NodeSpec:
     public_notes: str = ""
 
 
+# The four infrastructure VMs that must follow GitHub origin/main automatically.
+OFFICIAL_COMPUTE_NODE_IDS: tuple[str, ...] = (
+    "ovh-node-1",
+    "ovh-node-2",
+    "aws-node-3",
+    "ovh-node-4",
+)
+
+# Public HTTPS health (nginx + Let's Encrypt). IP :8000 remains the compute probe.
+PUBLIC_HEALTH_URLS: dict[str, str] = {
+    "ovh-node-1": "https://artcb.me/health",
+    "ovh-node-2": "https://n2.artcb.me/health",
+    "aws-node-3": "https://n3.artcb.me/health",
+    "ovh-node-4": "https://n4.artcb.me/health",
+}
+
 # Public map — no secrets.
 NODES: dict[str, NodeSpec] = {
     "ovh-node-1": NodeSpec(

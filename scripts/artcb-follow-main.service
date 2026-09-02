@@ -1,0 +1,14 @@
+[Unit]
+Description=ARTCB follow origin/main (keep-book, one shot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=ubuntu
+WorkingDirectory=/home/ubuntu/artcb
+Environment=ARTCB_FOLLOW_MODE=official
+Environment=GIT_TERMINAL_PROMPT=0
+ExecStart=/home/ubuntu/artcb/scripts/artcb_follow_main.sh
+Nice=10
+# Never wipe the book; the script itself refuses install.sh / genesis / rescue.

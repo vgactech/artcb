@@ -13,6 +13,7 @@
 #    - frontend React (npm install + build)
 #    - bibliothèque native C libartcb_chain.so
 #    - configure .env à partir de .env.example (si absent)
+#    - installe le suivi automatique de GitHub origin/main (timer / cron)
 #    - NE démarre PAS le serveur — utilisez `bash scripts/replit_start.sh`
 #      ou `uvicorn src.api.main:app --port 8000` après
 # ══════════════════════════════════════════════════════════════════
@@ -34,7 +35,7 @@ echo "╚═══════════════════════�
 echo ""
 
 # ── 1. Python ─────────────────────────────────────────────────────
-_step "1/7" "Environnement Python"
+_step "1/8" "Environnement Python"
 if ! command -v python3 &>/dev/null; then
   _err "python3 introuvable. Installez-le avant de relancer."
   _err "  Ubuntu/Debian : sudo apt install python3 python3-venv"
@@ -57,12 +58,12 @@ export PATH="$VENV/bin:$PATH"
 export PIP_USER=false
 
 # ── 2. Dépendances Python runtime ─────────────────────────────────
-_step "2/7" "Dépendances Python"
+_step "2/8" "Dépendances Python"
 ARTCB_PYTHON="$PYTHON" bash "$REPO_DIR/scripts/install_python_dependencies.sh"
 _ok "Dépendances Python installées"
 
 # ── 3. Statut PQC (sans compilation dans le chemin critique) ─────
-_step "3/7" "Vérification PQC (liboqs)"
+_step "3/8" "Vérification PQC (liboqs)"
 if "$PYTHON" -c "import ctypes.util; exit(0 if ctypes.util.find_library('oqs') or ctypes.util.find_library('liboqs') else 1)" 2>/dev/null; then
   _ok "liboqs natif : présent — ML-DSA-65 + ML-KEM-768 potentiellement disponibles"
 else
@@ -71,7 +72,7 @@ else
 fi
 
 # ── 4. Frontend React ─────────────────────────────────────────────
-_step "4/7" "Frontend React (npm)"
+_step "4/8" "Frontend React (npm)"
 if ! command -v node &>/dev/null || ! command -v npm &>/dev/null; then
   _warn "node/npm introuvables — frontend ne sera pas buildé"
   _warn "  Ubuntu : sudo apt install nodejs npm"
@@ -91,7 +92,7 @@ else
 fi
 
 # ── 5. Bibliothèque C native ──────────────────────────────────────
-_step "5/7" "Bibliothèque C libartcb_chain.so"
+_step "5/8" "Bibliothèque C libartcb_chain.so"
 # NB : toujours recompiler via le Makefile C (source de vérité).
 # L'ancienne commande cc inline avec -I"$(pkg-config --cflags ...)" produisait
 # une .so SANS symboles quand pkg-config renvoyait une chaîne vide (le -I nu
@@ -111,7 +112,7 @@ else
 fi
 
 # ── 6. Configuration .env ─────────────────────────────────────────
-_step "6/7" "Configuration .env"
+_step "6/8" "Configuration .env"
 if [ ! -f ".env" ]; then
   cp .env.example .env
   _ok ".env créé depuis .env.example"
@@ -122,8 +123,14 @@ else
   _ok ".env existant conservé"
 fi
 
-# ── 7. Résumé ─────────────────────────────────────────────────────
-_step "7/7" "Résumé"
+# ── 7. Suivi automatique de origin/main ───────────────────────────
+_step "7/8" "Suivi automatique de GitHub origin/main"
+bash "$REPO_DIR/scripts/install_follow_main.sh" || _warn "install_follow_main.sh non bloquant"
+_ok "Un clone sur main propre recevra les mises à jour (ff-only)"
+_ok "Un nœud officiel reset --hard keep-book (livre / .env / .venv intacts)"
+
+# ── 8. Résumé ─────────────────────────────────────────────────────
+_step "8/8" "Résumé"
 echo ""
   echo "  Installation terminée (socle runtime installé, PQC optionnel non bloquant)."
 echo ""
@@ -138,5 +145,6 @@ echo "    2. Le nœud démarre en mode bootstrap"
 echo "    3. POST /setup/init-node {node_name, password} → sauvegarder seed_hex"
 echo "    4. Redémarrer → toutes les routes sont actives"
 echo ""
+echo "  Mises à jour : bash scripts/artcb_follow_main.sh   (ou le timer installé ci-dessus)"
 echo "  Statut PQC : GET /health → pqc.available"
 echo ""

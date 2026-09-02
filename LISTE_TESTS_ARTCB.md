@@ -261,4 +261,5 @@
 | T-E36 | OVH1 + AWS3 health simultanés | 2/4 compute ; OVH2 = 0 VM | [x] | sim `20260831T162428Z` failures=[] P2P 200/200 |
 | T-E37 | `python3 scripts/ovh_api_inventory.py ovh-node-2` | nic `vc491276-ovh` ; 0 instance | [x] | me=200 projects=[] |
 | T-E38 | `pytest tests/test_e2e206_ovh4_keepbook.py` | SSH sans rescue ; pub `artcb-ovh-node-4-20260902` ; keep-book SHA `ad017bca` ; pas de certif | [x] | 2026-09-02 |
+| T-E39 | `pytest tests/test_e2e207_follow_main.py` | 4 nœuds officiels + clones suivent `origin/main` ; timer ; pas de wipe ; #51 hors main | [ ] | 2026-09-02 |
 
