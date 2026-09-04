@@ -27,11 +27,14 @@ import uuid
 from pathlib import Path
 from typing import Annotated
 
+from urllib.parse import urlparse
+
 import httpx
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from src.api.api_keys_routes import verify_api_key, require_scope
+from src.artcb.privacy import egress
 
 logger = logging.getLogger("artcb.api.ai")
 
@@ -142,14 +145,29 @@ def _save_webhooks(path: Path, hooks: list[dict]) -> None:
 
 
 def _fire_webhooks(request: Request, event: str, payload: dict) -> None:
-    """Déclenche tous les webhooks actifs pour un événement donné (fire-and-forget)."""
+    """Déclenche tous les webhooks actifs pour un événement donné (fire-and-forget).
+
+    Egress policy (rapport 211 Phase 2-3) : la destination est re-vérifiée contre
+    l'allowlist SSRF à chaque envoi, et le payload passe par check_payload() —
+    un secret dans un champ nommé est retiré, un PEM bloque l'envoi.
+    """
     path = _webhooks_path(request)
     hooks = _load_webhooks(path)
     active = [h for h in hooks if h.get("active", True) and event in h.get("events", [event])]
     if not active:
         return
-    body = {"event": event, "timestamp": time.time(), "payload": payload}
+    decision = egress.check_payload({"event": event, "payload": payload})
+    if decision.outcome == egress.OUTCOME_BLOCK:
+        egress.record(decision, recipient="*", channel="webhook")
+        logger.warning("Webhook %s blocked by egress policy (private key material)", event)
+        return
+    body = {**decision.payload, "timestamp": time.time()}
     for hook in active:
+        ok, reason = egress.webhook_url_ok(hook["url"])
+        if not ok:
+            logger.warning("Webhook %s skipped: %s (%s)", hook.get("hook_id"), reason, hook["url"])
+            continue
+        egress.record(decision, recipient=urlparse(hook["url"]).hostname or "?", channel="webhook")
         try:
             httpx.post(hook["url"], json=body, timeout=5.0)
             logger.debug("Webhook fired: %s → %s", event, hook["url"])
@@ -924,6 +942,10 @@ def register_webhook(
     Enregistre une URL à appeler à chaque événement blockchain.
     Cursor/Bob peut s'abonner pour être notifié en temps réel de chaque nouveau bloc.
     """
+    ok, reason = egress.webhook_url_ok(body.url)
+    if not ok:
+        raise HTTPException(status_code=400, detail=f"webhook_url_rejected:{reason}")
+
     path = _webhooks_path(request)
     hooks = _load_webhooks(path)
 

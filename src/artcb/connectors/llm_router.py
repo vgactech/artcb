@@ -8,6 +8,7 @@ import logging
 import httpx
 
 from src.artcb.connectors.manager import ConnectorRecord
+from src.artcb.privacy import egress
 
 logger = logging.getLogger("artcb.connectors.llm_router")
 
@@ -23,6 +24,15 @@ class LLMRouter:
         api_key: str,
     ) -> list[dict[str, str]] | None:
         numbered = "\n".join(f"{i}: {s}" for i, s in enumerate(sentences))
+        # Egress policy (rapport 211 Phase 3): credentials never leave the node
+        # inside a prompt. The provider only sees the redacted text.
+        numbered, findings = egress.redact_text(numbered)
+        if findings:
+            logger.info(
+                "egress channel=llm_prompt recipient=%s findings=%s",
+                record.provider,
+                sorted({f.label for f in findings}),
+            )
         prompt = (
             "Classify each sentence for an IR knowledge graph. "
             "Return ONLY a JSON array of objects with keys: index (int), type (one of "

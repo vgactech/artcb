@@ -19,6 +19,11 @@ Fallback :
     Si TenSEAL n'est pas installé, le module fonctionne en mode
     simulé (chiffrement XOR + bruit gaussien) pour les tests.
     Pour la production : pip install tenseal
+
+Deuxième couche (rapport 211, distincte de HE) :
+    `egress` — politique déterministe sur les octets sortants d'un nœud
+    (webhooks, prompts connecteurs LLM). Redact par défaut, block si PEM.
+    Ne remplace pas HE ; ne touche pas au consensus ni aux mémos gravés.
 """
 
 from .homomorphic import HEContext, HomomorphicProcessor, HECipherVector
