@@ -264,4 +264,5 @@
 | T-E39 | `pytest tests/test_e2e207_follow_main.py` | 4 nœuds officiels + clones suivent `origin/main` ; timer ; pas de wipe ; PR #51 hors main | [x] | 2026-09-02 4 passed ; timer enabled ×4 ; FETCH_METHOD=origin ; BOOK=1 |
 | T-E40 | `pytest tests/test_e2e205_no_rescue_biometric.py tests/test_e2e208_biometric_cert_gate.py tests/test_webauthn_biometric.py` | WebAuthn D-055 ; gate lit RESULT.json ; D-056 GO après DV-02/06 PASS live | [x] | 2026-09-02 42 related passed |
 | T-E41 | `pytest tests/test_e2e205_no_rescue_biometric.py` (camera-first) | bouton Visage = `setCameraOn(true)` sans WebAuthn platform | [x] | 2026-09-02 27 passed |
+| T-E42 | `pytest tests/test_e2e215_egress_wallet_list_audit.py` | egress secrets (webhooks, LLM), SSRF webhooks, `/wallet/list` projection, 401 uniforme + journal, assurance biométrie + audit, README D-024/D-025 | [x] | 2026-09-04 14 passed ; régression 147 passed / 12 fail **préexistants** (wallet_rewards ×6, sdk ×4, e2e169 suite-order ×2) — rapport 215 §3 |
 
