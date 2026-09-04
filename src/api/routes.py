@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import uuid
 
 from fastapi import APIRouter, HTTPException, Query, Request
@@ -550,14 +551,53 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
 
 
+# Fields an anonymous caller may see (rapport 210 §9.6). Everything else in the
+# wallet metadata (auth_methods, public keys ~4 KB, key format) needs a Bearer.
+WALLET_LIST_PUBLIC_FIELDS = frozenset(
+    {"name", "address", "address_v2", "hybrid", "created_at", "has_key_file"}
+)
+
+
+def _bearer_present(request: Request) -> bool:
+    """True when a session (sess_) or API key (artcb_) Bearer is on the request.
+
+    Validity is checked by the dedicated dependencies; here we only decide
+    whether to return the full metadata or the public projection.
+    """
+    from src.api.api_keys_routes import verify_api_key
+    from src.api.auth_routes import require_session
+
+    authorization = request.headers.get("authorization")
+    if not authorization:
+        return False
+    try:
+        if authorization.startswith("Bearer sess_"):
+            require_session(request, authorization)
+            return True
+        return verify_api_key(request, authorization) is not None
+    except HTTPException:
+        return False
+
+
 @router.get("/wallet/list")
 def wallet_list(request: Request) -> dict:
-    """List all wallets."""
+    """List wallets.
+
+    Anonymous: public projection only (name, address, hybrid, created_at,
+    has_key_file). With a valid Bearer: full metadata. Set
+    ARTCB_WALLET_LIST_PUBLIC=0 to require a Bearer for any listing.
+    """
     from src.artcb.wallet.manager import WalletManager
 
-    wallet_mgr = WalletManager()
-    wallets = wallet_mgr.list_wallets()
-    return {"wallets": wallets, "count": len(wallets)}
+    authenticated = _bearer_present(request)
+    public_allowed = os.getenv("ARTCB_WALLET_LIST_PUBLIC", "1").strip().lower() not in {"0", "false", "no"}
+    if not authenticated and not public_allowed:
+        raise HTTPException(status_code=401, detail="wallet_list_requires_bearer")
+
+    wallets = WalletManager().list_wallets()
+    if not authenticated:
+        wallets = [{k: v for k, v in w.items() if k in WALLET_LIST_PUBLIC_FIELDS} for w in wallets]
+    return {"wallets": wallets, "count": len(wallets), "projection": "full" if authenticated else "public"}
 
 
 @router.post("/wallet/balance")

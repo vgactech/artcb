@@ -63,6 +63,22 @@ def issue_session(*, wallet_name: str, address: str) -> dict:
 #  Schémas Pydantic
 # --------------------------------------------------------------------------- #
 
+# Same text for every failure so the response does not reveal whether the wallet
+# exists. The hint matters: biometric wallets are sealed with a random vault
+# password that was never shown, so /auth/login can never succeed for them
+# (rapport 210 §9.4). They must use /register (empreinte / visage).
+LOGIN_FAILED_DETAIL = (
+    "Identifiants invalides. Wallet créé par empreinte ou visage ? "
+    "Utilisez la connexion biométrique (/register), pas le mot de passe."
+)
+
+
+def _log_login_failure(wallet_name: str, reason: str, request: Request) -> None:
+    """Audit line for 401s: wallet name + reason, never the password (rapport 210 §9.8-E)."""
+    client = request.client.host if request.client else "?"
+    logger.warning("Login failed wallet=%s reason=%s client=%s", wallet_name, reason, client)
+
+
 class LoginRequest(BaseModel):
     name: str = Field(min_length=1, description="Nom du wallet / identifiant")
     password: str = Field(min_length=1, description="Mot de passe du compte")
@@ -129,7 +145,8 @@ def login(body: LoginRequest, request: Request) -> dict:
     wm = WalletManager()
     key_path = wm.wallet_dir / f"{body.name}.key"
     if not key_path.exists():
-        raise HTTPException(status_code=401, detail="Identifiants invalides")
+        _log_login_failure(body.name, "wallet_unknown", request)
+        raise HTTPException(status_code=401, detail=LOGIN_FAILED_DETAIL)
 
     try:
         raw = key_path.read_bytes()
@@ -139,11 +156,13 @@ def login(body: LoginRequest, request: Request) -> dict:
         except Exception:
             seed = None
         if seed is None:
-            raise HTTPException(status_code=401, detail="Identifiants invalides")
+            _log_login_failure(body.name, "password_mismatch", request)
+            raise HTTPException(status_code=401, detail=LOGIN_FAILED_DETAIL)
     except HTTPException:
         raise
     except Exception:
-        raise HTTPException(status_code=401, detail="Identifiants invalides")
+        _log_login_failure(body.name, "key_unreadable", request)
+        raise HTTPException(status_code=401, detail=LOGIN_FAILED_DETAIL)
 
     # Reconstruire l'adresse depuis la seed déjà déchiffrée
     # (pas besoin de rappeler load_wallet qui re-déchiffrerait avec la passphrase serveur)
