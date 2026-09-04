@@ -239,9 +239,12 @@ def test_frontend_wording_is_presence_not_recognition() -> None:
 
 def test_readme_follows_d024_d025_not_halving() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "210 000" not in readme
-    assert "Halving fixe" not in readme
-    assert "D-024" in readme and "D-025" in readme
+    # The exact rows rapport 214 flagged as contradicting D-024 / D-025.
+    assert "| Halving fixe |" not in readme
+    assert "| Récompense initiale | 1 ARTCB / bloc |" not in readme
+    assert "| Fondateurs | 5 wallets × 210 000 ARTCB |" not in readme
+    assert "Supply, halving, PoL" not in readme
+    assert "D-024" in readme and "D-025" in readme and "PROTOCOL_SOURCE_OF_TRUTH" in readme
     assert (ROOT / "docs" / "PROTOCOL_SOURCE_OF_TRUTH.md").is_file()
     groups = (ROOT / "GROUPES_RESEAUX_ARTCB.md").read_text(encoding="utf-8")
     assert "OBSOL" in groups.upper()
