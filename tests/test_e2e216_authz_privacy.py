@@ -191,6 +191,7 @@ def test_actor_address_is_not_proof(client: TestClient) -> None:
     group = client.post(
         "/api/v1/groups",
         json={"name": "Org", "founder_address": founder["address"]},
+        headers=_login(client, "founder"),
     ).json()
     enc = client.post("/api/v1/encode", json={"text": "Bloc groupe."})
     spoof = client.post(
@@ -227,10 +228,12 @@ def test_a3_grant_to_c3_sub2_document_x_not_y_not_c2(client: TestClient) -> None
     group_a = client.post(
         "/api/v1/groups",
         json={"name": "Groupe A", "founder_address": a3["address"]},
+        headers=h_a3,
     ).json()
     group_c = client.post(
         "/api/v1/groups",
         json={"name": "Groupe C", "founder_address": c3["address"]},
+        headers=h_c3,
     ).json()
     client.post(
         f"/api/v1/groups/{group_c['group_id']}/members",

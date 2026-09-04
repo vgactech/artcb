@@ -10,7 +10,8 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 from src.artcb.authz.actions import ALL_ACTIONS, READ
-from src.artcb.authz.models import ResourceRef
+from src.artcb.authz.domains import P2P_SYNCS_PRIVATE_BLOCKS, REPLICATION_MATRIX
+from src.artcb.authz.models import Principal, ResourceRef
 
 router = APIRouter(prefix="/api/v1/authz", tags=["authz"])
 
@@ -65,8 +66,86 @@ def create_org(body: CreateOrgRequest, request: Request) -> dict:
 
 @router.get("/orgs")
 def list_orgs(request: Request) -> dict:
+    """Public projection: existence + hash. Not the private domain body."""
     orgs = _gate(request).genesis.list_orgs()
-    return {"orgs": [o.to_dict() for o in orgs], "count": len(orgs)}
+    return {"orgs": [o.public_view() for o in orgs], "count": len(orgs)}
+
+
+@router.get("/commitments")
+def list_commitments(request: Request) -> dict:
+    """Hashes only — what every consensus node may know."""
+    rows = _gate(request).genesis.commitments.list_all()
+    leaked = [r for r in rows if r.get("contains_private_data")]
+    return {
+        "commitments": rows,
+        "count": len(rows),
+        "contains_private_data": False,
+        "leaked_private_rows": len(leaked),
+    }
+
+
+@router.get("/replication")
+def replication_matrix() -> dict:
+    return {
+        "p2p_syncs_private_blocks": P2P_SYNCS_PRIVATE_BLOCKS,
+        "matrix": REPLICATION_MATRIX,
+        "note": "GLOBAL GENESIS is full on every node. ORG/GROUP bodies stay in the domain store. Only content_hash is a public commitment.",
+    }
+
+
+class CanIRequest(BaseModel):
+    action: str = Field(default=READ)
+    resource: ResourceBody
+    agent_id: str | None = None
+
+
+@router.post("/can-i")
+def can_i(body: CanIRequest, request: Request) -> dict:
+    """Agent/human asks its effective right before starting work."""
+    gate = _gate(request)
+    principal = gate.resolve(request)
+    if body.agent_id:
+        if not principal.address:
+            raise HTTPException(status_code=401, detail="agent_requires_human_session")
+        principal = Principal(
+            address=principal.address,
+            wallet_name=principal.wallet_name,
+            kind="agent",
+            agent_id=body.agent_id,
+            parent_address=principal.address,
+            source=principal.source,
+        )
+    resource = ResourceRef.from_dict(body.resource.model_dump())
+    if resource.graph_id:
+        resource = _merge_indexed(gate, resource)
+    elif resource.resource_id:
+        indexed = gate.index.as_resource_id(resource.resource_id)
+        if indexed:
+            resource = ResourceRef(
+                visibility=resource.visibility or indexed.visibility,
+                owner_address=resource.owner_address or indexed.owner_address,
+                organization_id=resource.organization_id or indexed.organization_id,
+                group_id=resource.group_id or indexed.group_id,
+                subgroup_id=resource.subgroup_id or indexed.subgroup_id,
+                resource_id=resource.resource_id,
+                graph_id=resource.graph_id or indexed.graph_id,
+                block_index=resource.block_index if resource.block_index is not None else indexed.block_index,
+            )
+    decision = gate.decide(principal, body.action, resource)
+    return {
+        "effect": decision.effect,
+        "allowed": decision.allowed,
+        "reason": decision.reason,
+        "policy_version": decision.policy_version,
+        "matched_tx_ids": decision.matched_tx_ids,
+        "principal": principal.subject_id(),
+        "proof": {
+            "issuer": "ARTCB_AUTHZ",
+            "delegation": principal.kind == "agent",
+            "parent": principal.parent_address,
+            "policy_version": decision.policy_version,
+        },
+    }
 
 
 @router.post("/grants")

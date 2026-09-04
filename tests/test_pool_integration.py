@@ -68,7 +68,13 @@ def test_pool_run_local_public(client: TestClient) -> None:
 
 def test_pool_run_local_group(client: TestClient) -> None:
     w = _wallet(client, "founder_wallet")
-    g = client.post("/api/v1/groups", json={"name": "Pool Group", "founder_address": w["address"]})
+    login = client.post("/api/v1/auth/login", json={"name": "founder_wallet", "password": "test_pwd_123"})
+    assert login.status_code == 200, login.text
+    g = client.post(
+        "/api/v1/groups",
+        json={"name": "Pool Group", "founder_address": w["address"]},
+        headers={"Authorization": f"Bearer {login.json()['session_token']}"},
+    )
     assert g.status_code == 200, g.text
     group_id = g.json()["group_id"]
     text = (

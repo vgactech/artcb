@@ -6,6 +6,7 @@ Consensus does not decide who may read Document X.
 """
 
 from src.artcb.authz.actions import ALL_ACTIONS, READ
+from src.artcb.authz.domains import REPLICATION_MATRIX, canonical_hash
 from src.artcb.authz.engine import AuthorizationEngine
 from src.artcb.authz.gate import AuthzGate
 from src.artcb.authz.models import Decision, PolicyTx, Principal, ResourceRef
@@ -13,10 +14,12 @@ from src.artcb.authz.models import Decision, PolicyTx, Principal, ResourceRef
 __all__ = [
     "ALL_ACTIONS",
     "READ",
+    "REPLICATION_MATRIX",
     "AuthorizationEngine",
     "AuthzGate",
     "Decision",
     "PolicyTx",
     "Principal",
     "ResourceRef",
+    "canonical_hash",
 ]

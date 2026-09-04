@@ -23,11 +23,12 @@ router = APIRouter(prefix="/api/v1/groups", tags=["groups"])
 
 class CreateGroupRequest(BaseModel):
     name: str = Field(min_length=1, max_length=128)
-    founder_address: str = Field(min_length=8)
+    founder_address: str | None = Field(default=None, min_length=8)
+    organization_id: str | None = None
 
 
 class ActorRequest(BaseModel):
-    actor_address: str = Field(min_length=8)
+    actor_address: str | None = None
 
 
 class InviteMemberRequest(ActorRequest):
@@ -76,6 +77,18 @@ def _join_requests(request: Request) -> JoinRequestManager:
     return _state(request).join_requests
 
 
+def _require_actor(request: Request, claimed: str | None = None) -> str:
+    """Identity from session / API key / wallet — never from the JSON body alone."""
+    from src.artcb.authz.identity import resolve_principal
+
+    principal = resolve_principal(request)
+    if not principal.address:
+        raise HTTPException(status_code=401, detail="authentication_required")
+    if claimed and claimed != principal.address:
+        raise HTTPException(status_code=403, detail="actor_address_mismatch")
+    return principal.address
+
+
 def _group_http_error(exc: GroupError) -> HTTPException:
     if isinstance(exc, FounderImmutableError):
         logger.debug("FOUNDER_IMMUTABLE blocked: %s", exc)
@@ -87,10 +100,23 @@ def _group_http_error(exc: GroupError) -> HTTPException:
 
 @router.post("")
 def create_group(body: CreateGroupRequest, request: Request) -> dict:
+    founder = _require_actor(request, body.founder_address)
     mgr = _groups(request)
-    group = mgr.create_group(body.name, body.founder_address)
+    group = mgr.create_group(body.name, founder, organization_id=body.organization_id)
+    _state(request).authz.genesis.create_group_genesis(
+        group_id=group.group_id,
+        name=group.name,
+        founder_address=founder,
+        parent_org=body.organization_id,
+        parent_group_id=None,
+    )
     logger.debug("Group created id=%s join_code=%s", group.group_id, group.join_code)
-    return group.to_dict()
+    out = group.to_dict()
+    genesis = _state(request).authz.genesis.get_group_genesis(group.group_id)
+    if genesis:
+        out["genesis_hash"] = genesis.content_hash
+        out["genesis_projection"] = "hash_only_on_global_commitments"
+    return out
 
 
 @router.get("")
@@ -182,20 +208,25 @@ def sign_join_with_wallet(body: WalletJoinRequest, request: Request) -> dict:
 
 @router.post("/{group_id}/subgroups")
 def create_subgroup(group_id: str, body: CreateSubgroupRequest, request: Request) -> dict:
-    from src.artcb.authz.identity import resolve_principal
-
-    principal = resolve_principal(request)
-    actor = principal.address or body.actor_address
-    if principal.address and body.actor_address and body.actor_address != principal.address:
-        raise HTTPException(status_code=403, detail="actor_address_mismatch")
-    if not actor:
-        raise HTTPException(status_code=401, detail="authentication_required")
+    actor = _require_actor(request, body.actor_address)
     mgr = _groups(request)
     try:
         group = mgr.create_subgroup(group_id, body.name, actor)
     except GroupError as exc:
         raise _group_http_error(exc) from exc
-    return group.to_dict()
+    parent = mgr.get_group(group_id)
+    _state(request).authz.genesis.create_group_genesis(
+        group_id=group.group_id,
+        name=group.name,
+        founder_address=actor,
+        parent_org=parent.organization_id if parent else None,
+        parent_group_id=group_id,
+    )
+    out = group.to_dict()
+    genesis = _state(request).authz.genesis.get_group_genesis(group.group_id)
+    if genesis:
+        out["genesis_hash"] = genesis.content_hash
+    return out
 
 
 @router.get("/{group_id}")
@@ -223,12 +254,13 @@ def get_group(group_id: str, request: Request) -> dict:
 def list_join_requests(
     group_id: str,
     request: Request,
-    actor_address: str = Query(..., min_length=8),
+    actor_address: str | None = Query(default=None, min_length=8),
     status: str | None = Query(None),
 ) -> dict:
+    actor = _require_actor(request, actor_address)
     jr = _join_requests(request)
     try:
-        items = jr.list_requests(group_id, actor_address, status)  # type: ignore[arg-type]
+        items = jr.list_requests(group_id, actor, status)  # type: ignore[arg-type]
         return {"requests": [r.to_dict() for r in items], "count": len(items)}
     except GroupError as exc:
         raise _group_http_error(exc) from exc
@@ -241,9 +273,10 @@ def approve_join_request(
     body: ActorRequest,
     request: Request,
 ) -> dict:
+    actor = _require_actor(request, body.actor_address)
     jr = _join_requests(request)
     try:
-        return jr.approve_request(group_id, body.actor_address, request_id)
+        return jr.approve_request(group_id, actor, request_id)
     except GroupError as exc:
         raise _group_http_error(exc) from exc
 
@@ -255,9 +288,10 @@ def reject_join_request(
     body: ActorRequest,
     request: Request,
 ) -> dict:
+    actor = _require_actor(request, body.actor_address)
     jr = _join_requests(request)
     try:
-        req = jr.reject_request(group_id, body.actor_address, request_id)
+        req = jr.reject_request(group_id, actor, request_id)
         return req.to_dict()
     except GroupError as exc:
         raise _group_http_error(exc) from exc
@@ -266,9 +300,10 @@ def reject_join_request(
 @router.post("/{group_id}/members")
 def invite_member_direct_deprecated(group_id: str, body: InviteMemberRequest, request: Request) -> dict:
     """Désactivé par défaut — utiliser join-request. DEBUG: ARTCB_DEBUG_DIRECT_MEMBER=true"""
+    actor = _require_actor(request, body.actor_address)
     mgr = _groups(request)
     try:
-        group = mgr.add_member(group_id, body.actor_address, body.address, body.role)  # type: ignore[arg-type]
+        group = mgr.add_member(group_id, actor, body.address, body.role)  # type: ignore[arg-type]
     except GroupError as exc:
         raise _group_http_error(exc) from exc
     return group.to_dict()
@@ -281,11 +316,12 @@ def set_member_role(
     body: SetRoleRequest,
     request: Request,
 ) -> dict:
+    actor = _require_actor(request, body.actor_address)
     mgr = _groups(request)
     try:
         group = mgr.set_member_role(
             group_id,
-            body.actor_address,
+            actor,
             target_address,
             body.role,  # type: ignore[arg-type]
         )
@@ -299,11 +335,12 @@ def remove_member(
     group_id: str,
     target_address: str,
     request: Request,
-    actor_address: str = Query(..., min_length=8),
+    actor_address: str | None = Query(default=None, min_length=8),
 ) -> dict:
+    actor = _require_actor(request, actor_address)
     mgr = _groups(request)
     try:
-        group = mgr.remove_member(group_id, actor_address, target_address)
+        group = mgr.remove_member(group_id, actor, target_address)
     except GroupError as exc:
         raise _group_http_error(exc) from exc
     return group.to_dict()
@@ -311,9 +348,10 @@ def remove_member(
 
 @router.post("/{group_id}/dissolve")
 def dissolve_group(group_id: str, body: DissolveGroupRequest, request: Request) -> dict:
+    actor = _require_actor(request, body.actor_address)
     mgr = _groups(request)
     try:
-        group = mgr.dissolve_group(group_id, body.actor_address, body.confirm)
+        group = mgr.dissolve_group(group_id, actor, body.confirm)
     except GroupError as exc:
         raise _group_http_error(exc) from exc
     return group.to_dict()
