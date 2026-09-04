@@ -3,6 +3,12 @@
 Fingerprint / Face ID = platform authenticator (WebAuthn).
 Camera face (motor disability, no OS face unlock) = liveness + device secret.
 Raw biometric images are rejected and never stored.
+
+Honest scope (rapport 214 §Priorité 1): the camera path is a *local face
+presence check* bound to a device secret. It is NOT a proof that the account
+holder is a unique living human. ASSURANCE_LEVELS below is what each method
+actually demonstrates; every enrollment / login transition is written to the
+audit log (`artcb.api.webauthn.audit`) so a divergence audit can replay it.
 """
 
 from __future__ import annotations
@@ -43,10 +49,45 @@ from src.artcb.security.webauthn_store import (
 )
 
 logger = logging.getLogger("artcb.api.webauthn")
+audit = logging.getLogger("artcb.api.webauthn.audit")
 router = APIRouter(prefix="/api/v1/auth", tags=["auth-biometric"])
 
 _face_challenges: dict[str, dict[str, Any]] = {}
 _FACE_TTL = 300
+
+# What each method proves. Level numbers follow rapport 214 (0-3). None of the
+# methods available today reaches level 3 (unique human, independently verified).
+ASSURANCE_LEVELS: dict[str, dict[str, Any]] = {
+    "password": {
+        "level": 0,
+        "proves": "knowledge of the wallet password on this node",
+        "does_not_prove": "human presence, uniqueness",
+    },
+    "webauthn_fingerprint": {
+        "level": 2,
+        "proves": "possession of the enrolled device + OS user verification",
+        "does_not_prove": "that the person is a unique human worldwide",
+    },
+    "webauthn_face": {
+        "level": 2,
+        "proves": "possession of the enrolled device + OS user verification (same sensor path as fingerprint)",
+        "does_not_prove": "camera-based liveness, uniqueness",
+    },
+    "face_camera": {
+        "level": 1,
+        "proves": "local face presence in frame + possession of the device secret",
+        "does_not_prove": "identity, liveness against photo/video/mask, uniqueness",
+    },
+}
+
+FACE_CAMERA_LABEL = "Vérification de présence faciale locale"
+
+
+def _audit(event: str, *, wallet: str, request: Request | None = None, **fields: Any) -> None:
+    """One line per transition. Never a secret, never an image, never a hash of them."""
+    client = request.client.host if request is not None and request.client else "?"
+    extra = " ".join(f"{k}={v}" for k, v in fields.items())
+    audit.info("biometric event=%s wallet=%s client=%s %s", event, wallet, client, extra)
 
 Modality = Literal["fingerprint", "face", "both"]
 
@@ -180,6 +221,7 @@ def _mark_auth_methods(name: str, method: str) -> None:
 def webauthn_status(name: str) -> dict[str, Any]:
     creds = credentials_for_wallet(name)
     face = find_face(name)
+    methods = sorted({f"webauthn_{c.get('modality')}" for c in creds} | ({"face_camera"} if face else set()))
     return {
         "wallet_name": name,
         "wallet_exists": _wallet_exists(name),
@@ -191,6 +233,9 @@ def webauthn_status(name: str) -> dict[str, Any]:
         "face_webauthn_enrolled": any(c.get("modality") == MODALITY_FACE for c in creds),
         "face_camera_enrolled": bool(face),
         "raw_biometric_stored": False,
+        "assurance": {m: ASSURANCE_LEVELS[m] for m in methods if m in ASSURANCE_LEVELS},
+        "max_assurance_level": max((ASSURANCE_LEVELS[m]["level"] for m in methods if m in ASSURANCE_LEVELS), default=None),
+        "unique_human_proven": False,
     }
 
 
@@ -240,10 +285,20 @@ def webauthn_register_verify(body: RegisterFinishBody, request: Request) -> dict
             origins=origins,
         )
     except (KeyError, ValueError, WebAuthnError) as exc:
+        _audit("webauthn_register_failed", wallet=body.name, request=request, reason=str(exc) or "invalid")
         raise HTTPException(status_code=400, detail=str(exc) if str(exc) else "webauthn_register_failed") from exc
 
     wallet = _create_wallet_if_needed(body.name, create=body.create_wallet)
     modality = body.modality if body.modality != "both" else pending.get("modality") or MODALITY_FINGERPRINT
+    _audit(
+        "webauthn_register_ok",
+        wallet=body.name,
+        request=request,
+        modality=modality,
+        wallet_created=wallet["created"],
+        level=ASSURANCE_LEVELS[f"webauthn_{modality}"]["level"],
+        existing_credentials=len(credentials_for_wallet(body.name)),
+    )
     save_credential(
         {
             "credential_id": verified["credential_id"],
@@ -298,6 +353,7 @@ def webauthn_login_verify(body: LoginFinishBody, request: Request) -> dict[str, 
     cred_id = body.credential.id
     stored = find_credential(cred_id)
     if not stored or stored.get("wallet_name") != body.name:
+        _audit("webauthn_login_failed", wallet=body.name, request=request, reason="credential_unknown")
         raise HTTPException(status_code=401, detail="credential_unknown")
     try:
         client_json = b64u_decode(body.credential.response["clientDataJSON"])
@@ -320,8 +376,10 @@ def webauthn_login_verify(body: LoginFinishBody, request: Request) -> dict[str, 
             previous_sign_count=int(stored.get("sign_count") or 0),
         )
     except (KeyError, ValueError, WebAuthnError) as exc:
+        _audit("webauthn_login_failed", wallet=body.name, request=request, reason=str(exc) or "invalid")
         raise HTTPException(status_code=401, detail=str(exc) if str(exc) else "webauthn_login_failed") from exc
     update_sign_count(cred_id, sign_count)
+    _audit("webauthn_login_ok", wallet=body.name, request=request, modality=stored.get("modality"), sign_count=sign_count)
     session = issue_session(wallet_name=body.name, address=str(stored.get("address") or ""))
     session["ok"] = True
     session["modality"] = stored.get("modality")
@@ -343,22 +401,28 @@ def face_enroll_options(body: FaceBeginBody) -> dict[str, Any]:
         "liveness_required": True,
         "camera_facing_mode": "user",
         "raw_biometric_never_stored": True,
+        "assurance": ASSURANCE_LEVELS["face_camera"],
+        "label": FACE_CAMERA_LABEL,
         "instructions": (
             "Placez votre visage dans le cadre. Aucune photo n'est envoyée au serveur. "
-            "Après la liveness, un secret d'appareil est lié au wallet."
+            "Vérification de présence faciale locale, puis un secret d'appareil est lié au wallet. "
+            "Ceci ne prouve pas une identité humaine unique."
         ),
     }
 
 
 @router.post("/face/enroll/verify")
-def face_enroll_verify(body: FaceFinishBody) -> dict[str, Any]:
+def face_enroll_verify(body: FaceFinishBody, request: Request) -> dict[str, Any]:
     _reject_raw_image(body)
     rec = _face_challenges.pop(body.nonce, None)
     if not rec or rec.get("wallet_name") != body.name or rec.get("kind") != "enroll":
+        _audit("face_enroll_failed", wallet=body.name, request=request, reason="face_challenge_invalid")
         raise HTTPException(status_code=400, detail="face_challenge_invalid")
     if time.time() > rec["expires_at"]:
+        _audit("face_enroll_failed", wallet=body.name, request=request, reason="face_challenge_expired")
         raise HTTPException(status_code=400, detail="face_challenge_expired")
     if not body.liveness_ok:
+        _audit("face_enroll_failed", wallet=body.name, request=request, reason="face_liveness_required")
         raise HTTPException(status_code=400, detail="face_liveness_required")
     wallet = _create_wallet_if_needed(body.name, create=body.create_wallet)
     secret_hash = hashlib.sha256(body.device_secret.encode("utf-8")).hexdigest()
@@ -371,10 +435,21 @@ def face_enroll_verify(body: FaceFinishBody) -> dict[str, Any]:
         }
     )
     _mark_auth_methods(body.name, "face_camera")
+    _audit(
+        "face_enroll_ok",
+        wallet=body.name,
+        request=request,
+        wallet_created=wallet["created"],
+        level=ASSURANCE_LEVELS["face_camera"]["level"],
+        unique_human_proven=False,
+    )
     session = issue_session(wallet_name=body.name, address=str(wallet["address"]))
     out: dict[str, Any] = {
         "ok": True,
         "enrolled": "face_camera",
+        "label": FACE_CAMERA_LABEL,
+        "assurance": ASSURANCE_LEVELS["face_camera"],
+        "unique_human_proven": False,
         "raw_biometric_stored": False,
         **session,
         "wallet_created": wallet["created"],
@@ -388,24 +463,33 @@ def face_enroll_verify(body: FaceFinishBody) -> dict[str, Any]:
 
 
 @router.post("/face/login")
-def face_login(body: FaceFinishBody) -> dict[str, Any]:
+def face_login(body: FaceFinishBody, request: Request) -> dict[str, Any]:
     _reject_raw_image(body)
     rec = _face_challenges.pop(body.nonce, None)
     if not rec or rec.get("wallet_name") != body.name:
+        _audit("face_login_failed", wallet=body.name, request=request, reason="face_challenge_invalid")
         raise HTTPException(status_code=400, detail="face_challenge_invalid")
     if time.time() > rec["expires_at"]:
+        _audit("face_login_failed", wallet=body.name, request=request, reason="face_challenge_expired")
         raise HTTPException(status_code=400, detail="face_challenge_expired")
     if not body.liveness_ok:
+        _audit("face_login_failed", wallet=body.name, request=request, reason="face_liveness_required")
         raise HTTPException(status_code=401, detail="face_liveness_required")
     stored = find_face(body.name)
     if not stored:
+        _audit("face_login_failed", wallet=body.name, request=request, reason="face_not_enrolled")
         raise HTTPException(status_code=404, detail="face_not_enrolled")
     digest = hashlib.sha256(body.device_secret.encode("utf-8")).hexdigest()
     if digest != stored.get("secret_hash"):
+        _audit("face_login_failed", wallet=body.name, request=request, reason="face_unlock_invalid")
         raise HTTPException(status_code=401, detail="face_unlock_invalid")
+    _audit("face_login_ok", wallet=body.name, request=request, level=ASSURANCE_LEVELS["face_camera"]["level"])
     session = issue_session(wallet_name=body.name, address=str(stored.get("address") or ""))
     session["ok"] = True
     session["modality"] = "face_camera"
+    session["label"] = FACE_CAMERA_LABEL
+    session["assurance"] = ASSURANCE_LEVELS["face_camera"]
+    session["unique_human_proven"] = False
     session["raw_biometric_stored"] = False
     return session
 

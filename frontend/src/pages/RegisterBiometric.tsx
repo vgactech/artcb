@@ -82,7 +82,7 @@ export function RegisterBiometric() {
         saveFaceSecret(name.trim(), secret);
         persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
         if (done.seed_hex) setSeed(done.seed_hex);
-        setInfo("Reconnaissance faciale (caméra) enregistrée. Aucune photo n'a été stockée.");
+        setInfo("Présence faciale locale enregistrée (caméra). Aucune photo n'a été stockée. Ceci déverrouille le wallet sur cet appareil ; ce n'est pas une preuve d'identité unique.");
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -108,7 +108,7 @@ export function RegisterBiometric() {
           liveness_ok: true,
         });
         persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
-        setInfo("Connecté par reconnaissance faciale.");
+        setInfo("Connecté par présence faciale locale (caméra).");
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
