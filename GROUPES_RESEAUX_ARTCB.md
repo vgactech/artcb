@@ -1,7 +1,15 @@
 # Groupes & Réseaux ARTCB — Spécification v1.1
 
+> **OBSOLÈTE — document historique (2026-07-07).** Les réponses « Non — pas de modèle
+> groupe en backend » ci-dessous décrivaient l’état de juillet 2026. Depuis,
+> `src/api/groups_routes.py` et `src/api/privacy_routes.py` existent. Ce fichier
+> n’est **pas** une source de vérité (rapport 214 : « l’ancien audit est maintenant
+> insuffisant »). L’audit de confidentialité réelle des groupes (filtrage `visibility`,
+> chiffrement, P2P) est ouvert dans `rapports/215_*` §4. Hiérarchie des sources :
+> `docs/PROTOCOL_SOURCE_OF_TRUTH.md`.
+
 **Horodatage :** 2026-07-07T05:00:00Z  
-**Statut :** **EN ATTENTE VALIDATION** — règles fondateur/admin ajoutées  
+**Statut :** **OBSOLÈTE** — conservé pour l’historique des règles fondateur/admin  
 **Audit code :** `rapports/046_audit_code_total_groupes_fondateur_admin.md` (73 fichiers, ~8497 lignes)
 
 ---

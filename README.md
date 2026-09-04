@@ -163,14 +163,17 @@ python3 -m pytest tests/ --tb=short # avec détail erreurs
 
 ## Tokenomics
 
-| Paramètre | Valeur |
+Source de vérité : `DECISIONS_UTILISATEUR_ARTCB` (D-014, D-024, D-025) puis `TOKENOMICS_ARTCB` §4 / §14, puis le code (`src/artcb/tokenomics.py`, `emission.py`). Ce tableau ne fait que les refléter — voir `docs/PROTOCOL_SOURCE_OF_TRUTH.md`.
+
+| Paramètre | Valeur (D-024 / D-025) |
 |-----------|--------|
-| Supply max | 21 000 000 ARTCB |
-| Récompense initiale | 1 ARTCB / bloc |
-| Halving fixe | tous les 105 000 blocs |
-| Halving dynamique | selon velocity IA (anti-inflation) |
-| Seuil bloc | PoL ≥ 0.60 |
-| Fondateurs | 5 wallets × 210 000 ARTCB |
+| Supply max | 21 000 000 ARTCB (D-014, `IMMUTABLE_MAX_SUPPLY_ARTCB`) |
+| Émission par bloc | `min(R(H) × Δt / 600 s, remaining_21M)` — R(H) décroît avec la population humaine vérifiée H |
+| Halving | **Aucun.** Le palier 210 000 blocs est retiré (D-024) ; `velocity` est une métrique, pas un halving |
+| Seuil bloc | PoL ≥ 0.60 (`IMMUTABLE_POL_THRESHOLD`) |
+| Partage | HBP 10 % → 60 % → 20 % ; M1 = 100 % permanent, OwnerDecay sur machines supplémentaires (D-025) |
+| Frais | → `UniversalDividendVault`, jamais vers le supply restant (D-025) |
+| Fondateurs | Pas d’allocation fixe « 5 × 210 000 » dans le chemin actif ; créateur bootstrap 100 % puis H0 = 100 (D-025) |
 
 ---
 
@@ -192,7 +195,9 @@ python3 -m pytest tests/ --tb=short # avec détail erreurs
 |---------|-------------|
 | [CAHIER_DES_CHARGES_ARTCB](CAHIER_DES_CHARGES_ARTCB) | Spécification complète |
 | [PROTOCOLE_ARTCB](PROTOCOLE_ARTCB) | Règles de développement |
-| [TOKENOMICS_ARTCB](TOKENOMICS_ARTCB) | Supply, halving, PoL |
+| [DECISIONS_UTILISATEUR_ARTCB](DECISIONS_UTILISATEUR_ARTCB) | Décisions D-0xx — source de vérité protocolaire |
+| [docs/PROTOCOL_SOURCE_OF_TRUTH.md](docs/PROTOCOL_SOURCE_OF_TRUTH.md) | Hiérarchie décision → spec → code → tests → live |
+| [TOKENOMICS_ARTCB](TOKENOMICS_ARTCB) | Supply 21 M, émission R(H) géopopulation, HBP, PoL |
 | [ROADMAP_GENERAL_ARTCB](ROADMAP_GENERAL_ARTCB) | Phases 0–11 |
 | [API_REFERENCE_ARTCB.md](API_REFERENCE_ARTCB.md) | 93 endpoints documentés |
 | [FAQ_NON_EXPERTS_ARTCB.md](FAQ_NON_EXPERTS_ARTCB.md) | Questions non-techniques |
@@ -212,7 +217,7 @@ python3 -m pytest tests/ --tb=short # avec détail erreurs
 - [x] Phase 7 : Pipeline minage apprentissage
 - [x] Phase 8 : P2P ML-KEM + gouvernance + Anti-Sybil
 - [x] Phase 9 : Pool E2E + CLI + API complet
-- [x] Phase 10 : Tokenomics halving dynamique (21M / 3.4B users)
+- [x] Phase 10 : Tokenomics 21 M — émission géopopulation R(H), sans halving (D-024 / D-025)
 - [x] Phase 11 : IR v0.2 smart contracts + PoL NFT + PoL Transfer
 - [ ] Phase 12 : libp2p natif
 - [ ] Phase 13 : Wikipedia connector
