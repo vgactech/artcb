@@ -11,6 +11,7 @@ from src.artcb.authz.engine import AuthorizationEngine
 from src.artcb.authz.genesis import GenesisStore
 from src.artcb.authz.identity import resolve_principal
 from src.artcb.authz.models import Decision, Principal, ResourceRef
+from src.artcb.authz.registry import DomainRegistry
 from src.artcb.authz.store import PolicyStore, ResourceIndex
 
 
@@ -28,6 +29,7 @@ class AuthzGate:
         self.policies = PolicyStore(root / "policies.jsonl")
         self.index = ResourceIndex(root / "resources.jsonl")
         self.genesis = GenesisStore(root / "orgs.json")
+        self.domains = DomainRegistry(root / "domains.json")
         self.groups = groups
         self.chain = chain
         self.engine = AuthorizationEngine(groups=groups, policies=self.policies.load())

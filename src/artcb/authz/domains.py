@@ -20,7 +20,7 @@ import hashlib
 import json
 from typing import Any, Literal
 
-DomainKind = Literal["global", "org", "group", "user", "resource"]
+DomainKind = Literal["global", "org", "group", "user", "resource", "domain"]
 ReplicationClass = Literal[
     "all_consensus_nodes",
     "org_domain_nodes",
@@ -78,6 +78,18 @@ REPLICATION_MATRIX: dict[str, dict[str, str]] = {
         "replication": "owner_only",
         "content": "identity_keys_mandates_resources",
         "cest_a_dire": "Un utilisateur n'a pas un Genesis blockchain par document.",
+    },
+    "DOMAIN_MANIFEST": {
+        "layer": "global",
+        "replication": "all_consensus_nodes",
+        "content": "id+founder+genesis_hash+authorized_nodes",
+        "cest_a_dire": "Le réseau peut connaître l'identité du domaine et qui l'héberge, pas le corps Genesis.",
+    },
+    "DOMAIN_BODY": {
+        "layer": "org",
+        "replication": "org_domain_nodes",
+        "content": "genesis_body_on_authorized_hosts",
+        "cest_a_dire": "Un nœud héberge le domaine. Il ne le possède pas. La copie n'est pas automatique sur les 4 nœuds officiels.",
     },
 }
 

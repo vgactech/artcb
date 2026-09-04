@@ -10,6 +10,7 @@ from src.artcb.authz.domains import REPLICATION_MATRIX, canonical_hash
 from src.artcb.authz.engine import AuthorizationEngine
 from src.artcb.authz.gate import AuthzGate
 from src.artcb.authz.models import Decision, PolicyTx, Principal, ResourceRef
+from src.artcb.authz.registry import DomainManifest, DomainRegistry
 
 __all__ = [
     "ALL_ACTIONS",
@@ -18,6 +19,8 @@ __all__ = [
     "AuthorizationEngine",
     "AuthzGate",
     "Decision",
+    "DomainManifest",
+    "DomainRegistry",
     "PolicyTx",
     "Principal",
     "ResourceRef",

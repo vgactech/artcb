@@ -96,9 +96,87 @@ export interface GroupData {
   members: Array<{ address: string; role: string; joined_at: string }>;
 }
 
+function sessionHeaders(): Record<string, string> {
+  const token = typeof localStorage !== "undefined" ? localStorage.getItem("artcb_session_token") : null;
+  if (!token) return {};
+  return { Authorization: `Bearer ${token}` };
+}
+
 export async function createGroup(name: string, founderAddress: string) {
-  const { data } = await api.post("/groups", { name, founder_address: founderAddress });
+  const { data } = await api.post(
+    "/groups",
+    { name, founder_address: founderAddress },
+    { headers: sessionHeaders() },
+  );
   return data as GroupData;
+}
+
+export type DomainManifestView = {
+  domain_id: string;
+  domain_type: string;
+  subject_id: string;
+  founder_address: string;
+  genesis_hash: string;
+  hosting_node_id: string;
+  authorized_nodes: string[];
+  storage_mode: string;
+  recovery_enabled: boolean;
+  min_replicas: number;
+  node_owns_domain: boolean;
+  body_replicated: boolean;
+  commitment_anchored_on_chain: boolean;
+  projection: string;
+};
+
+export type OrgCreated = {
+  organization_id: string;
+  name: string;
+  founder_address: string;
+  content_hash: string;
+  domain: DomainManifestView;
+  ownership: {
+    founder_address: string;
+    hosting_node_id: string;
+    node_owns_domain: boolean;
+    cest_a_dire: string;
+  };
+};
+
+export async function createOrganization(
+  name: string,
+  storageMode = "artcb_managed",
+  authorizedNodes: string[] = [],
+) {
+  const { data } = await api.post(
+    "/authz/orgs",
+    { name, storage_mode: storageMode, authorized_nodes: authorizedNodes },
+    { headers: sessionHeaders() },
+  );
+  return data as OrgCreated;
+}
+
+export async function fetchDomains() {
+  const { data } = await api.get("/authz/domains");
+  return data as { domains: DomainManifestView[]; count: number; node_owns_domain: boolean };
+}
+
+export async function locateDomain(domainId: string) {
+  const { data } = await api.get(`/authz/domains/${domainId}/locate`);
+  return data as DomainManifestView & { hosted_here: boolean; this_node: string; route: string };
+}
+
+export async function exportDomain(domainId: string) {
+  const { data } = await api.post(`/authz/domains/${domainId}/export`, {}, { headers: sessionHeaders() });
+  return data as Record<string, unknown>;
+}
+
+export async function importDomain(bundle: Record<string, unknown>) {
+  const { data } = await api.post(
+    "/authz/domains/import",
+    { bundle },
+    { headers: sessionHeaders() },
+  );
+  return data as { imported: boolean; domain: DomainManifestView };
 }
 
 export async function fetchGroupsForAddress(address: string) {

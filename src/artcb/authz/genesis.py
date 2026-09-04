@@ -227,3 +227,50 @@ class GenesisStore:
             if row.get("group_id") == group_id:
                 return GroupGenesis.from_dict(row)
         return None
+
+    def import_org(self, data: dict[str, Any]) -> OrgGenesis:
+        """Install an ORG Genesis body after hash verification. Does not own it."""
+        from src.artcb.authz.registry import verify_genesis_hash
+
+        org = OrgGenesis.from_dict(data)
+        org.content_hash = verify_genesis_hash(org.to_dict(), data.get("content_hash") or "")
+        if self.get_org(org.organization_id):
+            raise ValueError("org_already_exists")
+        rows = self._read_all(self.path)
+        rows.append(org.to_dict())
+        self._write_all(self.path, rows)
+        self.commitments.append(
+            public_commitment(
+                kind="org",
+                domain_id=org.organization_id,
+                content_hash=org.content_hash,
+                parent_id="ARTCB",
+                issuer=org.founder_address,
+                issued_at=org.created_at,
+            )
+        )
+        return org
+
+    def import_group_genesis(self, data: dict[str, Any]) -> GroupGenesis:
+        from src.artcb.authz.registry import verify_genesis_hash
+
+        genesis = GroupGenesis.from_dict(data)
+        genesis.content_hash = verify_genesis_hash(
+            genesis.to_dict(), data.get("content_hash") or ""
+        )
+        if self.get_group_genesis(genesis.group_id):
+            raise ValueError("group_already_exists")
+        rows = self._read_all(self.groups_path)
+        rows.append(genesis.to_dict())
+        self._write_all(self.groups_path, rows)
+        self.commitments.append(
+            public_commitment(
+                kind="group",
+                domain_id=genesis.group_id,
+                content_hash=genesis.content_hash,
+                parent_id=genesis.parent_org or genesis.parent_group_id or "ARTCB",
+                issuer=genesis.founder_address,
+                issued_at=genesis.created_at,
+            )
+        )
+        return genesis

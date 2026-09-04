@@ -103,19 +103,32 @@ def create_group(body: CreateGroupRequest, request: Request) -> dict:
     founder = _require_actor(request, body.founder_address)
     mgr = _groups(request)
     group = mgr.create_group(body.name, founder, organization_id=body.organization_id)
-    _state(request).authz.genesis.create_group_genesis(
+    genesis = _state(request).authz.genesis.create_group_genesis(
         group_id=group.group_id,
         name=group.name,
         founder_address=founder,
         parent_org=body.organization_id,
         parent_group_id=None,
     )
+    from src.api.authz_routes import _register_domain
+
+    manifest = _register_domain(
+        request,
+        domain_type="group",
+        subject_id=group.group_id,
+        founder_address=founder,
+        genesis_hash=genesis.content_hash,
+        parent_id=body.organization_id or "ARTCB",
+    )
     logger.debug("Group created id=%s join_code=%s", group.group_id, group.join_code)
     out = group.to_dict()
-    genesis = _state(request).authz.genesis.get_group_genesis(group.group_id)
-    if genesis:
-        out["genesis_hash"] = genesis.content_hash
-        out["genesis_projection"] = "hash_only_on_global_commitments"
+    out["genesis_hash"] = genesis.content_hash
+    out["genesis_projection"] = "hash_only_on_global_commitments"
+    out["domain"] = manifest.public_view()
+    out["ownership"] = {
+        "founder_address": founder,
+        "node_owns_domain": False,
+    }
     return out
 
 

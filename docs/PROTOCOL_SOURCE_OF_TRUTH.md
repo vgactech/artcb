@@ -50,3 +50,7 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   `unique_human_proven=false`).
 - Autorisation (rapport 216) : le moteur `src/artcb/authz/` est du **rang 3**
   (code). Ce n’est pas une D-0xx. Consensus ≠ autorisation.
+- Domaines (rapports 217-218) : `REPLICATION_MATRIX` + `DomainRegistry` sont du
+  **rang 3**. Un nœud **héberge** un domaine ; le fondateur le **possède**.
+  `commitment_anchored_on_chain=false` jusqu’à un `append_block` public (P-217-2).
+  Ce n’est pas une D-0xx.

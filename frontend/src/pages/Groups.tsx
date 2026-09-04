@@ -3,13 +3,18 @@ import { Link } from "react-router-dom";
 import {
   approveJoinRequest,
   createGroup,
+  createOrganization,
+  exportDomain,
+  fetchDomains,
   fetchGroupsForAddress,
   fetchJoinRequests,
   fetchWallets,
+  importDomain,
+  locateDomain,
   promoteGroupMember,
   rejectJoinRequest,
 } from "../api/client";
-import type { GroupData } from "../api/client";
+import type { DomainManifestView, GroupData, OrgCreated } from "../api/client";
 import { useDashboard } from "../context/DashboardContext";
 import { useTranslation } from "../i18n/useTranslation";
 
@@ -25,6 +30,14 @@ export function Groups() {
   >([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [orgName, setOrgName] = useState("");
+  const [storageMode, setStorageMode] = useState("artcb_managed");
+  const [selectedNodes, setSelectedNodes] = useState("");
+  const [lastOrg, setLastOrg] = useState<OrgCreated | null>(null);
+  const [domains, setDomains] = useState<DomainManifestView[]>([]);
+  const [importText, setImportText] = useState("");
+  const [exportText, setExportText] = useState("");
+  const [locateText, setLocateText] = useState("");
 
   const loadGroups = async (address: string) => {
     if (!address) return;
@@ -51,13 +64,85 @@ export function Groups() {
       .catch(() => setWallets([]));
   }, [actorAddress, setActorAddress]);
 
+  const loadDomains = async () => {
+    try {
+      const data = await fetchDomains();
+      setDomains(data.domains);
+    } catch {
+      setDomains([]);
+    }
+  };
+
   useEffect(() => {
     if (actorAddress) loadGroups(actorAddress).catch(() => setGroups([]));
+    loadDomains();
   }, [actorAddress]);
 
   useEffect(() => {
     if (selectedGroup) loadPending(selectedGroup.group_id);
   }, [selectedGroup, actorAddress]);
+
+  const handleCreateOrg = async () => {
+    if (!orgName.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const extra = selectedNodes
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const org = await createOrganization(orgName.trim(), storageMode, extra);
+      setLastOrg(org);
+      setOrgName("");
+      await loadDomains();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExport = async (domainId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const bundle = await exportDomain(domainId);
+      setExportText(JSON.stringify(bundle, null, 2));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importText.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const bundle = JSON.parse(importText) as Record<string, unknown>;
+      await importDomain(bundle);
+      setImportText("");
+      await loadDomains();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLocate = async (domainId: string) => {
+    try {
+      const loc = await locateDomain(domainId);
+      setLocateText(
+        loc.hosted_here
+          ? `Hébergé ici (${loc.this_node}). Le nœud n'est pas propriétaire.`
+          : `Pas hébergé ici. Hôtes autorisés : ${loc.authorized_nodes.join(", ")}`,
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
 
   const handleCreate = async () => {
     if (!newName.trim() || !actorAddress) return;
@@ -158,6 +243,92 @@ export function Groups() {
             Créez un wallet sur <Link to="/wallets">Wallets</Link>.
           </p>
         )}
+      </div>
+
+      <div className="panel">
+        <h2>Créer une organisation</h2>
+        <p className="mc-muted">
+          Vous n&apos;avez pas besoin d&apos;installer un nœud. Le serveur auquel vous êtes
+          connecté <strong>héberge</strong> le Genesis. Votre wallet en reste le{" "}
+          <strong>propriétaire</strong>.
+        </p>
+        <div className="toolbar">
+          <input
+            value={orgName}
+            onChange={(e) => setOrgName(e.target.value)}
+            placeholder="Nom de l'organisation"
+          />
+          <select
+            value={storageMode}
+            onChange={(e) => setStorageMode(e.target.value)}
+            aria-label="Mode de stockage du domaine"
+          >
+            <option value="artcb_managed">Hébergé par ARTCB</option>
+            <option value="selected_nodes">Choisir des nœuds</option>
+            <option value="personal">Mon serveur (plus tard)</option>
+            <option value="hybrid">Hybride</option>
+          </select>
+          <button className="primary" onClick={handleCreateOrg} disabled={loading || !actorAddress}>
+            Créer l&apos;organisation
+          </button>
+        </div>
+        {(storageMode === "selected_nodes" || storageMode === "hybrid") && (
+          <input
+            value={selectedNodes}
+            onChange={(e) => setSelectedNodes(e.target.value)}
+            placeholder="Nœuds autorisés (ids séparés par des virgules)"
+            style={{ marginTop: "0.5rem", width: "100%" }}
+          />
+        )}
+        {lastOrg && (
+          <div className="panel mc-slot" style={{ marginTop: "1rem" }}>
+            <p>
+              Organisation <strong>{lastOrg.name}</strong> — le nœud n&apos;est pas propriétaire.
+            </p>
+            <p className="mc-mono">ORG {lastOrg.organization_id}</p>
+            <p className="mc-mono">DOMAIN {lastOrg.domain.domain_id}</p>
+            <p className="mc-mono">HASH {lastOrg.content_hash.slice(0, 16)}…</p>
+            <p className="mc-muted">{lastOrg.ownership.cest_a_dire}</p>
+          </div>
+        )}
+      </div>
+
+      <div className="panel">
+        <h2>Domaines ({domains.length})</h2>
+        <p className="mc-muted">
+          Identité publique : fondateur + hash. Le corps Genesis reste sur le nœud hôte.
+          Ancrage chaîne globale : pas encore (journal local).
+        </p>
+        {locateText && <p className="mc-muted">{locateText}</p>}
+        <ul className="mc-checklist-list">
+          {domains.map((d) => (
+            <li key={d.domain_id}>
+              <strong>{d.domain_type}</strong> {d.subject_id} · {d.storage_mode}
+              <button type="button" onClick={() => handleLocate(d.domain_id)} disabled={loading}>
+                Localiser
+              </button>
+              {d.founder_address === actorAddress && (
+                <button type="button" onClick={() => handleExport(d.domain_id)} disabled={loading}>
+                  Exporter
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+        {exportText && (
+          <textarea readOnly value={exportText} rows={8} style={{ width: "100%" }} />
+        )}
+        <h3>Importer un domaine (signature fondateur via session)</h3>
+        <textarea
+          value={importText}
+          onChange={(e) => setImportText(e.target.value)}
+          placeholder="Coller le JSON d'export"
+          rows={6}
+          style={{ width: "100%" }}
+        />
+        <button type="button" onClick={handleImport} disabled={loading || !actorAddress}>
+          Importer
+        </button>
       </div>
 
       <div className="panel mc-groups-panel">
