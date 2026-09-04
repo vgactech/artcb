@@ -10,6 +10,8 @@ from fastapi.testclient import TestClient
 from api.main import create_app
 from artcb.wallet.manager import WalletManager
 
+TEST_PASSWORD = "monMotDePasse42!"
+
 
 @pytest.fixture
 def wallets(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict:
@@ -18,16 +20,22 @@ def wallets(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict:
     monkeypatch.delenv("ARTCB_DEBUG_DIRECT_MEMBER", raising=False)
     wm = WalletManager()
     return {
-        "founder": wm.create_wallet(name="founder"),
-        "admin": wm.create_wallet(name="admin"),
-        "member": wm.create_wallet(name="member"),
-        "other": wm.create_wallet(name="other"),
+        "founder": wm.create_wallet(name="founder", user_password=TEST_PASSWORD),
+        "admin": wm.create_wallet(name="admin", user_password=TEST_PASSWORD),
+        "member": wm.create_wallet(name="member", user_password=TEST_PASSWORD),
+        "other": wm.create_wallet(name="other", user_password=TEST_PASSWORD),
     }
 
 
 @pytest.fixture
 def client(wallets: dict) -> TestClient:
     return TestClient(create_app())
+
+
+def _auth(client: TestClient, name: str) -> dict:
+    r = client.post("/api/v1/auth/login", json={"name": name, "password": TEST_PASSWORD})
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['session_token']}"}
 
 
 def _create_group(client: TestClient, founder_address: str, name: str = "Projet LVX") -> dict:
@@ -39,7 +47,7 @@ def _create_group(client: TestClient, founder_address: str, name: str = "Projet 
 def _join_request(client: TestClient, join_code: str, wallet_name: str) -> dict:
     r = client.post(
         "/api/v1/groups/join-requests/sign-with-wallet",
-        json={"join_code": join_code, "wallet_name": wallet_name},
+        json={"join_code": join_code, "wallet_name": wallet_name, "wallet_password": TEST_PASSWORD},
     )
     assert r.status_code == 200, r.text
     return r.json()["request"]
@@ -95,7 +103,7 @@ def test_join_request_flow(client: TestClient, wallets: dict) -> None:
 
     _approve(client, group["group_id"], wallets["founder"].address, req["request_id"])
 
-    listed = client.get("/api/v1/groups", params={"address": wallets["member"].address})
+    listed = client.get("/api/v1/groups", headers=_auth(client, "member"))
     assert listed.json()["count"] == 1
 
 
@@ -171,7 +179,7 @@ def test_reject_join_request(client: TestClient, wallets: dict) -> None:
     assert r.status_code == 200
     assert r.json()["status"] == "rejected"
 
-    listed = client.get("/api/v1/groups", params={"address": wallets["member"].address})
+    listed = client.get("/api/v1/groups", headers=_auth(client, "member"))
     assert listed.json()["count"] == 0
 
 
@@ -190,7 +198,20 @@ def test_store_group_visibility_and_chain_filter(client: TestClient, wallets: di
             "actor_address": wallets["other"].address,
         },
     )
-    assert r_bad.status_code == 403
+    assert r_bad.status_code == 401
+
+    r_spoof = client.post(
+        "/api/v1/store",
+        json={
+            "graph_id": graph_id,
+            "visibility": "group",
+            "group_id": group["group_id"],
+            "actor_address": wallets["founder"].address,
+            "wallet_name": "other",
+            "wallet_password": TEST_PASSWORD,
+        },
+    )
+    assert r_spoof.status_code == 403
 
     r_ok = client.post(
         "/api/v1/store",
@@ -198,11 +219,18 @@ def test_store_group_visibility_and_chain_filter(client: TestClient, wallets: di
             "graph_id": graph_id,
             "visibility": "group",
             "group_id": group["group_id"],
-            "actor_address": wallets["founder"].address,
+            "wallet_name": "founder",
+            "wallet_password": TEST_PASSWORD,
         },
     )
     assert r_ok.status_code == 200
     assert r_ok.json()["group_id"] == group["group_id"]
 
-    chain_group = client.get("/api/v1/chain", params={"group_id": group["group_id"]})
+    anon = client.get("/api/v1/chain", params={"group_id": group["group_id"]})
+    assert anon.json()["count"] == 0
+    chain_group = client.get(
+        "/api/v1/chain",
+        params={"group_id": group["group_id"]},
+        headers=_auth(client, "founder"),
+    )
     assert chain_group.json()["count"] == 1

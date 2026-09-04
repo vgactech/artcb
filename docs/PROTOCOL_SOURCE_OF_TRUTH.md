@@ -48,3 +48,5 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
 - Biométrie : le libellé « reconnaissance faciale » remplacé par « vérification de
   présence faciale locale » ; niveaux d’assurance exposés par l’API (`assurance`,
   `unique_human_proven=false`).
+- Autorisation (rapport 216) : le moteur `src/artcb/authz/` est du **rang 3**
+  (code). Ce n’est pas une D-0xx. Consensus ≠ autorisation.

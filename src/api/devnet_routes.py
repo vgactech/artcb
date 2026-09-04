@@ -53,6 +53,8 @@ def chain_explorer(request: Request) -> dict:
     state = _state(request)
     blocks = state.chain.list_blocks_legacy()
     public_blocks = [b for b in blocks if b.get("visibility") == "public"]
+    principal = state.authz.resolve(request)
+    visible = state.authz.filter_blocks(principal, blocks, "READ")
     total_rewards = sum(int(b.get("block_reward", 0)) for b in blocks)
     symbol_count = len(state.symbol_registry.export())
     return {
@@ -61,7 +63,7 @@ def chain_explorer(request: Request) -> dict:
         "public_block_count": len(public_blocks),
         "total_rewards_satoshi": total_rewards,
         "symbol_registry_count": symbol_count,
-        "latest_blocks": blocks[-10:],
+        "latest_blocks": visible[-10:],
         "verify": state.chain.verify(),
     }
 

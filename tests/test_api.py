@@ -70,7 +70,7 @@ def test_store_and_chain(client: TestClient) -> None:
         json={"text": "Nous avons décidé d'utiliser FastAPI pour le backend."},
     )
     graph_id = enc.json()["graph_id"]
-    store = client.post("/api/v1/store", json={"graph_id": graph_id})
+    store = client.post("/api/v1/store", json={"graph_id": graph_id, "visibility": "public"})
     assert store.status_code == 200
     chain = client.get("/api/v1/chain")
     assert chain.json()["count"] == 1

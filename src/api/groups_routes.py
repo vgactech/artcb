@@ -39,6 +39,11 @@ class SetRoleRequest(ActorRequest):
     role: str
 
 
+class CreateSubgroupRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=128)
+    actor_address: str | None = None
+
+
 class DissolveGroupRequest(ActorRequest):
     confirm: str
 
@@ -91,10 +96,19 @@ def create_group(body: CreateGroupRequest, request: Request) -> dict:
 @router.get("")
 def list_groups(
     request: Request,
-    address: str = Query(..., min_length=8, description="Wallet address du membre"),
+    address: str | None = Query(default=None, min_length=8, description="Ignoré si session : on utilise l'identité réelle"),
 ) -> dict:
+    """Liste les groupes du principal authentifié — jamais ceux d'une autre adresse."""
+    from src.artcb.authz.identity import resolve_principal
+
+    principal = resolve_principal(request)
+    target = principal.address
+    if not target:
+        raise HTTPException(status_code=401, detail="authentication_required")
+    if address and address != target:
+        raise HTTPException(status_code=403, detail="address_mismatch")
     mgr = _groups(request)
-    groups = mgr.list_groups_for_address(address)
+    groups = mgr.list_groups_for_address(target)
     return {"groups": [g.to_dict() for g in groups], "count": len(groups)}
 
 
@@ -166,13 +180,43 @@ def sign_join_with_wallet(body: WalletJoinRequest, request: Request) -> dict:
     return {"request": req.to_dict(), "message": "Join request submitted — awaiting admin approval"}
 
 
+@router.post("/{group_id}/subgroups")
+def create_subgroup(group_id: str, body: CreateSubgroupRequest, request: Request) -> dict:
+    from src.artcb.authz.identity import resolve_principal
+
+    principal = resolve_principal(request)
+    actor = principal.address or body.actor_address
+    if principal.address and body.actor_address and body.actor_address != principal.address:
+        raise HTTPException(status_code=403, detail="actor_address_mismatch")
+    if not actor:
+        raise HTTPException(status_code=401, detail="authentication_required")
+    mgr = _groups(request)
+    try:
+        group = mgr.create_subgroup(group_id, body.name, actor)
+    except GroupError as exc:
+        raise _group_http_error(exc) from exc
+    return group.to_dict()
+
+
 @router.get("/{group_id}")
 def get_group(group_id: str, request: Request) -> dict:
+    from src.artcb.authz.identity import resolve_principal
+
     mgr = _groups(request)
     group = mgr.get_group(group_id)
     if not group or group.dissolved:
         raise HTTPException(status_code=404, detail="group not found")
-    return group.to_dict()
+    principal = resolve_principal(request)
+    if principal.address and mgr.is_member(group_id, principal.address):
+        return group.to_dict()
+    return {
+        "group_id": group.group_id,
+        "name": group.name,
+        "dissolved": group.dissolved,
+        "member_count": len(group.members),
+        "parent_group_id": group.parent_group_id,
+        "projection": "public",
+    }
 
 
 @router.get("/{group_id}/join-requests")

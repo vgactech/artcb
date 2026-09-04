@@ -14,6 +14,8 @@ from src.artcb.ir.encoder import IREncoder
 from src.artcb.ir.llm_encoder import LLMEncoder
 from src.artcb.ir.models import sha256_text
 from src.artcb.rtleg.events import RTLEGEvent
+from src.artcb.authz.actions import READ
+from src.artcb.authz.models import Principal
 
 logger = logging.getLogger("artcb.api.routes")
 router = APIRouter(prefix="/api/v1")
@@ -44,6 +46,9 @@ class StoreRequest(BaseModel):
     actor_address: str | None = None
     wallet_name: str | None = Field(default=None, description="Wallet pour signature minage raisonnement")
     wallet_password: str | None = Field(default=None, description="Mot de passe du wallet")
+    resource_id: str | None = Field(default=None, description="Identifiant de ressource ACL (document), hors consensus")
+    subgroup_id: str | None = Field(default=None, description="Sous-groupe ACL, hors consensus")
+    organization_id: str | None = Field(default=None, description="Organisation ACL, hors consensus")
 
 
 class IrLearnRequest(BaseModel):
@@ -66,6 +71,10 @@ class AgentRunRequest(BaseModel):
 
 def _state(request: Request):
     return request.app.state.artcb
+
+
+def _authz(request: Request):
+    return _state(request).authz
 
 
 @router.get("/demo/wailly-excerpt")
@@ -157,6 +166,7 @@ def decode(body: DecodeRequest, request: Request) -> dict:
     graph = state.get_graph(body.graph_id)
     if not graph:
         raise HTTPException(status_code=404, detail="graph not found")
+    _authz(request).assert_graph(request, body.graph_id, READ)
     metrics = state.decoder.decode_with_metrics(graph)
     return {
         "original_text": metrics["text"],
@@ -171,6 +181,7 @@ def get_graph(graph_id: str, request: Request) -> dict:
     graph = state.get_graph(graph_id)
     if not graph:
         raise HTTPException(status_code=404, detail="graph not found")
+    _authz(request).assert_graph(request, graph_id, READ)
     return graph.to_canonical_dict()
 
 
@@ -203,6 +214,7 @@ def get_node(
         graph = state.get_graph(graph_id)
         if not graph:
             raise HTTPException(status_code=404, detail="graph not found")
+        _authz(request).assert_graph(request, graph_id, READ)
         for node in graph.nodes:
             if node.id == node_id:
                 return node.model_dump()
@@ -210,6 +222,7 @@ def get_node(
 
     if node_id in state.node_index:
         gid, _ = state.node_index[node_id]
+        _authz(request).assert_graph(request, gid, READ)
         graph = state.get_graph(gid)
         if graph:
             for node in graph.nodes:
@@ -221,8 +234,16 @@ def get_node(
 @router.post("/search")
 def search(body: SearchRequest, request: Request) -> dict:
     state = _state(request)
+    principal = _authz(request).resolve(request)
     results = state.vectors.search(body.query, graph_id=body.graph_id, top_k=body.top_k)
-    return {"query": body.query, "results": results, "count": len(results)}
+    allowed = []
+    for row in results:
+        gid = row.get("graph_id")
+        if not gid:
+            continue
+        if _authz(request).decide(principal, READ, _authz(request).resource_for_graph(gid)).allowed:
+            allowed.append(row)
+    return {"query": body.query, "results": allowed, "count": len(allowed)}
 
 
 @router.post("/store")
@@ -250,13 +271,40 @@ async def store(body: StoreRequest, request: Request) -> dict:
         raise HTTPException(status_code=422, detail="visibility must be private, group, or public")
 
     group_id: str | None = None
+    principal = _authz(request).resolve(request)
+    wallet = None
+    if body.wallet_name:
+        from src.artcb.wallet.manager import WalletManager
+
+        try:
+            wallet = WalletManager().load_wallet(name=body.wallet_name, user_password=body.wallet_password)
+        except Exception as exc:
+            raise HTTPException(status_code=404, detail=f"wallet not found or wrong password: {body.wallet_name}") from exc
+        if principal.address and principal.address != wallet.address:
+            raise HTTPException(status_code=403, detail="actor_address_mismatch")
+        principal = Principal(
+            address=wallet.address,
+            wallet_name=body.wallet_name,
+            kind="human",
+            source="wallet",
+        )
+
+    if body.actor_address and principal.address and body.actor_address != principal.address:
+        raise HTTPException(status_code=403, detail="actor_address_mismatch")
+
+    actor = principal.address
     if body.visibility == "group":
         if not body.group_id:
             raise HTTPException(status_code=422, detail="group_id required for visibility=group")
-        if not body.actor_address:
-            raise HTTPException(status_code=422, detail="actor_address required for visibility=group")
-        if not state.groups.is_member(body.group_id, body.actor_address):
+        if not actor:
+            raise HTTPException(
+                status_code=401,
+                detail="authentication_required_for_group_store",
+            )
+        if not state.groups.is_member(body.group_id, actor):
             raise HTTPException(status_code=403, detail="not a group member")
+        if body.subgroup_id and not state.groups.is_member(body.subgroup_id, actor):
+            raise HTTPException(status_code=403, detail="not a subgroup member")
         group_id = body.group_id
 
     result = state.dual.critic.validate(graph)
@@ -270,30 +318,16 @@ async def store(body: StoreRequest, request: Request) -> dict:
 
     graph_root = sha256_text(graph.checksum).replace("sha256:", "")
 
-    contributors = None
-    actor = body.actor_address
-    wallet = None
-    if body.wallet_name:
-        from src.artcb.wallet.manager import WalletManager
-
-        try:
-            wallet = WalletManager().load_wallet(name=body.wallet_name, user_password=body.wallet_password)
-            actor = actor or wallet.address
-        except Exception as exc:
-            raise HTTPException(status_code=404, detail=f"wallet not found or wrong password: {body.wallet_name}") from exc
-
-    # SÉCURITÉ : Si actor_address fourni sans wallet_name, le reward est attribué
-    # SANS vérification cryptographique (aucune signature de l'actor_address).
-    # Cela est acceptable en phase dev/test (un seul serveur, wallets locaux connus).
-    # En production multi-nœuds, utiliser wallet_name pour une attribution signée.
-    # Un avertissement est loggé pour traçabilité.
+    # Identity for rewards: session / API key / decrypted wallet. The JSON
+    # field actor_address is never treated as proof (rapport 216 P0-2).
     if actor and not wallet:
         logger.warning(
-            "POST /store: actor_address=%s sans wallet_name — attribution non signée "
-            "(acceptable dev, non recommandé production multi-nœuds)",
-            actor[:16] if actor else "None",
+            "POST /store: actor=%s without wallet signature — reward unsigned "
+            "(session/API key identity is enough for ACL; mining signature still recommended)",
+            actor[:16],
         )
 
+    contributors = None
     if actor:
         from src.artcb.mining.pipeline import build_contributors
 
@@ -353,6 +387,17 @@ async def store(body: StoreRequest, request: Request) -> dict:
     except Exception as exc:
         logger.warning("Notification broadcast failed (non bloquant): %s", exc)
 
+    state.authz.index.record(
+        graph_id=graph.graph_id,
+        visibility=block.visibility,
+        owner_address=actor,
+        group_id=group_id,
+        subgroup_id=body.subgroup_id,
+        resource_id=body.resource_id,
+        organization_id=body.organization_id,
+        block_index=block.index,
+    )
+
     return {
         "block_index": block.index,
         "hash": block.hash,
@@ -363,6 +408,8 @@ async def store(body: StoreRequest, request: Request) -> dict:
         "graph_id": graph.graph_id,
         "visibility": block.visibility,
         "group_id": block.group_id,
+        "resource_id": body.resource_id,
+        "subgroup_id": body.subgroup_id,
     }
 
 
@@ -373,7 +420,9 @@ def chain_list(
     group_id: str | None = Query(None),
 ) -> dict:
     state = _state(request)
+    principal = _authz(request).resolve(request)
     blocks = state.chain.list_blocks(visibility=visibility, group_id=group_id)
+    blocks = _authz(request).filter_blocks(principal, blocks, READ)
     return {"blocks": blocks, "count": len(blocks)}
 
 
@@ -383,6 +432,7 @@ def chain_block_detail(block_index: int, request: Request) -> dict:
     blocks = state.chain._read_all_blocks()
     for block in blocks:
         if block.get("index") == block_index:
+            _authz(request).assert_block(request, block, READ)
             return {"block": block}
     raise HTTPException(status_code=404, detail="block not found")
 
@@ -418,7 +468,9 @@ def chain_blocks(
 ) -> dict:
     """Liste des blocs de la chaine — alias de GET /chain."""
     state = _state(request)
+    principal = _authz(request).resolve(request)
     blocks = state.chain.list_blocks(visibility=visibility, group_id=group_id)
+    blocks = _authz(request).filter_blocks(principal, blocks, READ)
     return {"blocks": blocks, "count": len(blocks)}
 
 

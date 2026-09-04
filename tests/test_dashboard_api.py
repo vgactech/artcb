@@ -63,7 +63,7 @@ def test_chain_block_detail(client: TestClient) -> None:
     text = "Bloc detail test phrase."
     enc = client.post("/api/v1/encode", json={"text": text})
     graph_id = enc.json()["graph_id"]
-    store = client.post("/api/v1/store", json={"graph_id": graph_id})
+    store = client.post("/api/v1/store", json={"graph_id": graph_id, "visibility": "public"})
     assert store.status_code == 200
     idx = store.json()["block_index"]
     r = client.get(f"/api/v1/chain/block/{idx}")

@@ -42,6 +42,7 @@ from src.api.routes import router as api_router
 from src.api.symbols_routes import router as symbols_router
 from src.api.websocket import router as ws_router
 from src.api.privacy_routes import router as privacy_router
+from src.api.authz_routes import router as authz_router
 from src.api.setup_routes import router as setup_router
 from src.api.network_routes import router as network_router
 
@@ -325,6 +326,7 @@ def create_app() -> FastAPI:
     app.include_router(devnet_router)
     app.include_router(symbols_router)
     app.include_router(groups_router)
+    app.include_router(authz_router)
     app.include_router(connectors_router)
     app.include_router(mining_router)
     app.include_router(governance_router)

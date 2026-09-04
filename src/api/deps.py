@@ -21,6 +21,7 @@ from src.artcb.payments.stripe_jobs import StripeJobLedger
 from src.artcb.governance.manager import GovernanceManager
 from src.artcb.groups.join_requests import JoinRequestManager
 from src.artcb.groups.manager import GroupManager
+from src.artcb.authz.gate import AuthzGate
 from src.artcb.ir.decoder import IRDecoder
 from src.artcb.ir.encoder import IREncoder
 from src.artcb.ir.models import IRGraph
@@ -64,6 +65,7 @@ class AppState:
     chain: ChainManager
     groups: GroupManager
     join_requests: JoinRequestManager
+    authz: AuthzGate
     governance: GovernanceManager
     connectors: ConnectorManager
     notifications: NotificationManager
@@ -164,6 +166,7 @@ def build_app_state() -> AppState:
         machine_registry=machine_registry,
         work_registry=work_registry,
     )
+    authz = AuthzGate(data_dir=settings.data_dir, groups=groups, chain=chain)
     protocol_engine = ProtocolEngine(
         settings.data_dir,
         chain=chain,
@@ -196,6 +199,7 @@ def build_app_state() -> AppState:
         chain=chain,
         groups=groups,
         join_requests=JoinRequestManager(groups_dir, groups),
+        authz=authz,
         governance=governance,
         connectors=connectors,
         notifications=notifications,

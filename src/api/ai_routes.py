@@ -593,6 +593,16 @@ def chain_search(
                 entry["block"] = block_by_graph[gid]
             results.append(entry)
 
+        principal = state.authz.resolve(request)
+        authorized = []
+        for r in results:
+            gid = r.get("graph_id", "")
+            if not gid:
+                continue
+            if state.authz.decide(principal, "READ", state.authz.resource_for_graph(gid)).allowed:
+                authorized.append(r)
+        results = authorized
+
         # Filtrer par visibilité si demandé
         if visibility != "all":
             results = [
@@ -637,6 +647,9 @@ def chain_export(
         all_blocks = state.chain.list_blocks()
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    principal = state.authz.resolve(request)
+    all_blocks = state.authz.filter_blocks(principal, all_blocks, "READ")
 
     if visibility != "all":
         all_blocks = [b for b in all_blocks if b.get("visibility") == visibility]
@@ -1026,7 +1039,10 @@ def ai_memory(
     state = _state(request)
     memos = []
     try:
+        principal = state.authz.resolve(request)
         for b in reversed(state.chain.list_blocks()):
+            if not state.authz.allow_block(principal, b, "READ"):
+                continue
             ps = b.get("public_symbols") or {}
             src = ps.get("learning_source", "")
             gid = b.get("graph_id", "")
@@ -1272,6 +1288,8 @@ def ai_memo_read(
 
     if target is None:
         raise HTTPException(status_code=404, detail=f"Bloc #{block_index} introuvable")
+
+    state.authz.assert_block(request, target, "READ")
 
     ps = target.get("public_symbols") or {}
     gid = target.get("graph_id", "")

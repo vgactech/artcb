@@ -56,6 +56,8 @@ class Group:
     join_code: str = ""
     dissolved: bool = False
     members: list[GroupMember] = field(default_factory=list)
+    parent_group_id: str | None = None
+    organization_id: str | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -66,6 +68,8 @@ class Group:
             "join_code": self.join_code,
             "dissolved": self.dissolved,
             "members": [m.to_dict() for m in self.members],
+            "parent_group_id": self.parent_group_id,
+            "organization_id": self.organization_id,
         }
 
 
@@ -90,7 +94,14 @@ class GroupManager:
             f.write(json.dumps(entry) + "\n")
         logger.debug("Group audit: %s", entry)
 
-    def create_group(self, name: str, founder_address: str) -> Group:
+    def create_group(
+        self,
+        name: str,
+        founder_address: str,
+        *,
+        parent_group_id: str | None = None,
+        organization_id: str | None = None,
+    ) -> Group:
         group_id = f"g_{uuid.uuid4().hex[:12]}"
         now = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         join_code = generate_join_code()
@@ -103,9 +114,27 @@ class GroupManager:
             members=[
                 GroupMember(address=founder_address, role="founder", joined_at=now),
             ],
+            parent_group_id=parent_group_id,
+            organization_id=organization_id,
         )
         self._save(group)
         self._audit("group_created", group_id, founder_address, name)
+        return group
+
+    def create_subgroup(self, parent_group_id: str, name: str, actor: str) -> Group:
+        parent = self.get_group(parent_group_id)
+        if not parent or parent.dissolved:
+            raise GroupError("Parent group not found")
+        role = self._role_of(parent, actor)
+        if role not in ("founder", "admin"):
+            raise ForbiddenGroupAction("Only founder or admin can create a subgroup")
+        group = self.create_group(
+            name,
+            actor,
+            parent_group_id=parent_group_id,
+            organization_id=parent.organization_id,
+        )
+        self._audit("subgroup_created", group.group_id, actor, parent_group_id)
         return group
 
     def get_group(self, group_id: str) -> Group | None:
@@ -122,6 +151,8 @@ class GroupManager:
             join_code=data.get("join_code", ""),
             dissolved=data.get("dissolved", False),
             members=members,
+            parent_group_id=data.get("parent_group_id"),
+            organization_id=data.get("organization_id"),
         )
 
     def _save(self, group: Group) -> None:
