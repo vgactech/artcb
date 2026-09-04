@@ -111,11 +111,11 @@ C’est-à-dire : Agent-A3-01 peut demander `CAN_I(READ, doc-x)` **avant** de d�
 
 | Règle | Décidée | Simulée | Codée | Testée | Live |
 |---|---|---|---|---|---|
-| 4 Genesis distincts | proposition 217 | audit collé | `domains.py` `genesis.py` | T-E44 | après follow-main |
-| Hash public, corps privé | proposition 217 | | `CommitmentLog` | T-E44 | après |
-| P2P ≠ privé | déjà code | | `p2p/sync.py` | T-E44 | déjà live (public only) |
-| Mutations groupes authentifiées | proposition 217 | 216 P-216-3 | `_require_actor` | T-E44 + groups | après |
-| CAN_I agent | 213 + 217 | | `/authz/can-i` | T-E44 | après |
+| 4 Genesis distincts | proposition 217 | audit collé | `domains.py` `genesis.py` | T-E44 | `8ff5ba5` ×4 |
+| Hash public, corps privé | proposition 217 | | `CommitmentLog` | T-E44 | `GET /authz/commitments` ×4 `contains_private_data=false` |
+| P2P ≠ privé | déjà code | | `p2p/sync.py` | T-E44 | live `p2p_all_public=true` ×4 |
+| Mutations groupes authentifiées | proposition 217 | 216 P-216-3 | `_require_actor` | T-E44 + groups | live `POST /groups` anonyme = 401 ×4 |
+| CAN_I agent | 213 + 217 | | `/authz/can-i` | T-E44 | code live (endpoint monté) |
 | Chiffrement au repos | **non** | 211 | non | — | non |
 
 ---
@@ -128,3 +128,20 @@ C’est-à-dire : Agent-A3-01 peut demander `CAN_I(READ, doc-x)` **avant** de d�
 - **P-217-4** Signature cryptographique du fichier Genesis (Ed25519/ML-DSA) : l’identité vient de la session, le hash est déterministe, le fichier n’est pas encore un objet signé autonome.
 
 Je ne dis **pas** : « ORG A est un shard privé répliqué seulement chez A ». Je dis : « le protocole **distingue** maintenant existence (hash) et contenu (domaine), et le P2P ne transporte toujours que le public. »
+
+---
+
+## 6. Live mesuré (2026-09-04, après follow-main)
+
+`origin/main` = `8ff5ba5e512d71a34385803a3d60618c2bd5ac89`.
+
+| Nœud | IP | `/health.git_sha` | certified | `/authz/replication` p2p privé | `GET /chain` anonyme | `POST /groups` anonyme | P2P public only |
+|---|---|---|---|---|---|---|---|
+| ovh-node-1 | 152.228.144.34 | `8ff5ba5` | true | false | 1 bloc, visibility=`public` | 401 | oui |
+| ovh-node-2 | 151.80.107.29 | `8ff5ba5` | true | false | 1 bloc, `public` | 401 | oui |
+| aws-node-3 | 51.44.222.232 | `8ff5ba5` | true | false | 1 bloc, `public` | 401 | oui |
+| ovh-node-4 | 91.134.45.8 | `8ff5ba5` | true | false | 1 bloc, `public` | 401 | oui |
+
+OVH1 HTTPS `:8443` = 200, même SHA.
+
+C’est-à-dire : un client sans session, sur n’importe lequel des 4 nœuds, **ne voit plus** que le public. Créer un groupe sans se connecter est refusé. Le P2P ne liste que des blocs `public`. La certification n’a pas été retouchée.
