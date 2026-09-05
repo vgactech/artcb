@@ -117,7 +117,7 @@ def probe_node(node_id: str) -> dict:
 def _ssh_create_wallet(name: str, password: str) -> dict:
     """Create a throwaway wallet on OVH1 disk. Never print seed/password."""
     remote = (
-        "cd /home/ubuntu/artcb && .venv/bin/python -c "
+        "cd /home/ubuntu/artcb && PYTHONPATH=src .venv/bin/python -c "
         f"\"from artcb.wallet.manager import WalletManager; "
         f"w=WalletManager().create_wallet(name={name!r}, user_password={password!r}); "
         f"print(w.address)\""
@@ -148,7 +148,7 @@ def _ssh_create_wallet(name: str, password: str) -> dict:
 
 def human_flow() -> dict:
     stamp = datetime.now(UTC).strftime("%H%M%S")
-    password = f"Live220-{stamp}-x!"
+    password = f"Live220{stamp}x"
     aline = _ssh_create_wallet(f"aline220_{stamp}", password)
     bob = _ssh_create_wallet(f"bob220_{stamp}", password)
     out: dict = {
