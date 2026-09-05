@@ -48,6 +48,7 @@ class OrgAuthority:
     status: str = "active"
     successor_id: str | None = None
     unique_human_proven: bool = False
+    pending_tx_id: str | None = None
     created_at: str = ""
     updated_at: str = ""
 
@@ -209,6 +210,10 @@ class GovernanceStore:
         if not new_controller or new_controller == getattr(principal, "address", None):
             raise GovernanceError("invalid_new_controller")
         auth = self.require_human_controller(principal, subject_id)
+        if auth.pending_tx_id:
+            existing = self.get_transfer(auth.pending_tx_id)
+            if existing and existing.status == "proposed":
+                raise GovernanceError("transfer_already_proposed")
         legal_after = new_controller if reason == "SALE" else auth.legal_owner
         tx = ControlTransfer(
             tx_id=f"xfer_{uuid.uuid4().hex[:16]}",
@@ -225,6 +230,9 @@ class GovernanceStore:
             revoke_old=revoke_old,
             assurance_source=getattr(principal, "source", "session") or "session",
         )
+        auth.pending_tx_id = tx.tx_id
+        auth.updated_at = tx.proposed_at
+        self._upsert(auth)
         self._append_transfer(tx)
         return tx
 
@@ -241,6 +249,9 @@ class GovernanceStore:
             raise GovernanceForbidden("controller_mismatch")
         tx.status = "cancelled"
         tx.finalized_at = _now_iso()
+        auth.pending_tx_id = None
+        auth.updated_at = tx.finalized_at
+        self._upsert(auth)
         self._append_transfer(tx)
         return tx
 
@@ -259,6 +270,11 @@ class GovernanceStore:
         tx.status = "declined"
         tx.accepted_at = _now_iso()
         tx.finalized_at = tx.accepted_at
+        auth = self.get(tx.subject_id)
+        if auth:
+            auth.pending_tx_id = None
+            auth.updated_at = tx.finalized_at
+            self._upsert(auth)
         self._append_transfer(tx)
         return tx
 
@@ -277,9 +293,12 @@ class GovernanceStore:
         auth = self.get(tx.subject_id)
         if auth is None:
             raise GovernanceError("authority_not_found")
+        if auth.controller_address != tx.old_controller:
+            raise GovernanceError("controller_changed_since_propose")
         auth.controller_address = tx.new_controller
         if tx.reason == "SALE":
             auth.legal_owner = tx.legal_owner_after
+        auth.pending_tx_id = None
         auth.updated_at = _now_iso()
         self._upsert(auth)
         tx.status = "finalized"

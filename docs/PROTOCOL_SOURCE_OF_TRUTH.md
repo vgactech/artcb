@@ -54,3 +54,6 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   **rang 3**. Un nœud **héberge** un domaine ; le fondateur le **possède**.
   Un `append_block` public `reward=0` ancre le hash (rapport 220 / P-218-2).
   Contrôleur ≠ fondateur historique. Ce n’est pas une D-0xx.
+  Rapport 221 : ces blocs **étendent le tip** des pairs (convergence). Les
+  adresses de transfert ne sont plus dans le bloc public. Contact officiel
+  `official@artcb.space`.

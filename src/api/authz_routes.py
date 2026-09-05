@@ -220,7 +220,24 @@ def _anchor_domain(request: Request, *, kind: str, domain_id: str, content_hash:
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"anchor_failed:{type(exc).__name__}") from exc
     _gate(request).domains.mark_anchored(domain_id)
+    _announce_public_tip(request)
     return summary
+
+
+def _announce_public_tip(request: Request) -> dict[str, Any]:
+    """Best-effort push/pull so official peers can extend the same public tip."""
+    sync = getattr(_state(request), "p2p_sync", None)
+    if sync is None:
+        return {"announced": False, "reason": "no_p2p_sync"}
+    try:
+        results = sync.sync_all_peers()
+        return {
+            "announced": True,
+            "peer_count": len(results),
+            "ok_peers": sum(1 for row in results if row.get("ok")),
+        }
+    except Exception as exc:  # noqa: BLE001 — creating an ORG must not fail because a peer is down
+        return {"announced": False, "reason": type(exc).__name__}
 
 
 @router.post("/orgs")
@@ -245,8 +262,10 @@ def create_org(body: CreateOrgRequest, request: Request) -> dict:
     )
     host = _host_node(request)
     authority = gate.governance.get(org.organization_id)
+    org_out = org.to_dict()
+    org_out.pop("commitment_salt", None)
     return {
-        **org.to_dict(),
+        **org_out,
         "domain": manifest.public_view(),
         "authority": authority.public_view() if authority else None,
         "actor_certification": _actor_cert(principal),
@@ -590,6 +609,7 @@ def accept_control_transfer(body: TransferAcceptRequest, request: Request) -> di
         transfer_block = anchor_control_transfer(_state(request).chain, tx=tx)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"transfer_anchor_failed:{type(exc).__name__}") from exc
+    _announce_public_tip(request)
     return {
         **tx.to_dict(),
         "authority": authority.public_view() if authority else None,

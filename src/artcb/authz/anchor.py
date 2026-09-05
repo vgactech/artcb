@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from src.artcb.authz.domains import public_commitment
+from src.artcb.authz.domains import authority_binding, public_commitment
 
 logger = logging.getLogger("artcb.authz.anchor")
 
@@ -42,7 +42,7 @@ def commitment_public_symbols(
         "domain_id": str(row["domain_id"]),
         "content_hash": str(row["content_hash"]),
         "parent_id": str(row.get("parent_id") or ""),
-        "issuer": str(row["issuer"]),
+        "issuer": authority_binding(str(row["issuer"])),
         "issued_at": str(row["issued_at"]),
         "contains_private_data": "false",
         "unique_human_proven": "false",
@@ -88,16 +88,20 @@ TRANSFER_EVENT = "ORG_CONTROL_TRANSFER"
 
 
 def transfer_public_symbols(tx) -> dict[str, str]:
-    """Public audit of a finalized control transfer. No Genesis, no members."""
+    """Public audit of a finalized control transfer.
+
+    Wallet addresses stay in the authorized domain. The public block
+    carries bindings (hashes), the reason code, and the permanent ORG_ID.
+    """
     symbols = {
         "artcb_event": TRANSFER_EVENT,
         "subject_type": str(tx.subject_type),
         "subject_id": str(tx.subject_id),
         "domain_id": str(tx.domain_id),
         "reason": str(tx.reason),
-        "old_controller": str(tx.old_controller),
-        "new_controller": str(tx.new_controller),
-        "legal_owner_after": str(tx.legal_owner_after),
+        "old_authority_hash": authority_binding(tx.old_controller),
+        "new_authority_hash": authority_binding(tx.new_controller),
+        "legal_owner_hash": authority_binding(tx.legal_owner_after),
         "org_id_unchanged": "true",
         "contains_private_data": "false",
         "unique_human_proven": "false",

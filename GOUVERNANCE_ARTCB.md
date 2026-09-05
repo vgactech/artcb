@@ -1,7 +1,7 @@
 # GOUVERNANCE ARTCB — Qui décide quoi ?
 
 **Titulaire :** ARTCB (Société)  
-**Contact officiel :** contact@artcb.io  
+**Contact officiel :** official@artcb.space  
 **Horodatage :** 2026-07-08T22:00:00Z  
 **Statut :** Règles actées par le représentant ARTCB
 
@@ -66,7 +66,7 @@ ARTCB (vous) pouvez à **n’importe quel moment** :
 | Paramètre | Valeur proposée (modifiable par ARTCB) |
 |-----------|-------------------------------------------|
 | Période de vote | **14 jours** après publication d’une mise à jour majeure |
-| Annonce | Changelog + email `contact@artcb.io` + note dans l’app |
+| Annonce | Changelog + email `official@artcb.space` + note dans l’app |
 | Id de proposition | `GOV-YYYY-MM-DD-NNN` (ex. `GOV-2026-07-08-001`) |
 
 ### 3.4 État technique du vote (honnêteté)
@@ -200,8 +200,9 @@ flowchart TD
 |------|----------|
 | 2026-07-08 | Licences ARTCB (propriétaire + BSL) |
 | 2026-07-08 | Gouvernance : modification libre ARTCB + engagement rollback si majorité rejette |
-| 2026-07-08 | Contact : contact@artcb.io |
+| 2026-07-08 | Contact historique : contact@artcb.io |
+| 2026-09-05 | Contact officiel : official@artcb.space |
 
 ---
 
-**© 2026 ARTCB — contact@artcb.io**
+**© 2026 ARTCB — official@artcb.space**

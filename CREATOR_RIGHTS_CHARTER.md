@@ -3,7 +3,7 @@
 **Version :** 1.0  
 **Date :** 2026-08-04  
 **Statut :** Document fondateur — gravé dans le genesis block (index 0)  
-**Contact :** contact@artcb.io
+**Contact :** official@artcb.space
 
 ---
 
@@ -131,8 +131,8 @@ GET /api/v1/chain/genesis
 
 Toutes les décisions importantes du Créateur sont annoncées publiquement :
 - Dans le CHANGELOG du dépôt GitHub
-- Via l'email contact@artcb.io
+- Via l'email official@artcb.space
 - Dans les propositions de gouvernance `GOV-*`
 
-**© 2026 ARTCB — contact@artcb.io**  
+**© 2026 ARTCB — official@artcb.space**  
 *Ce document est public et commité sur GitHub. Il fait partie du protocole ARTCB.*

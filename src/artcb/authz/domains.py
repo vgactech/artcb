@@ -112,12 +112,32 @@ REPLICATION_MATRIX: dict[str, dict[str, str]] = {
 }
 
 P2P_SYNCS_PRIVATE_BLOCKS = False
+CONVERGING_PUBLIC_EVENTS = frozenset({"DOMAIN_COMMITMENT", "ORG_CONTROL_TRANSFER"})
 
 
 def canonical_hash(payload: dict[str, Any]) -> str:
-    """SHA-256 of a stable JSON encoding — the only thing the global chain needs."""
+    """SHA-256 of a stable JSON encoding — the only thing the global chain needs.
+
+    If the constitution includes ``commitment_salt`` (local, never public),
+    a dictionary guess of name+founder cannot recover the hash.
+    Hash is not encryption.
+    """
     blob = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     return hashlib.sha256(blob.encode("utf-8")).hexdigest()
+
+
+def authority_binding(address: str) -> str:
+    """Public binding of a controller. Not the wallet address itself."""
+    return hashlib.sha256(f"artcb_authority_v1:{address}".encode("utf-8")).hexdigest()
+
+
+def is_converging_public_event(block: dict[str, Any]) -> bool:
+    if block.get("visibility") != "public":
+        return False
+    event = (block.get("public_symbols") or {}).get("artcb_event")
+    if event not in CONVERGING_PUBLIC_EVENTS:
+        return False
+    return block.get("block_reward") in (0, 0.0, None)
 
 
 def public_commitment(

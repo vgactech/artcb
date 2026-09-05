@@ -1,7 +1,7 @@
 # LICENCE ARTCB — Politique ARTCB (privé / groupe / public)
 
 **Titulaire :** ARTCB (Société)  
-**Contact :** contact@artcb.io  
+**Contact :** official@artcb.space  
 **Horodatage :** 2026-07-08T22:00:00Z  
 **Décision :** ordre utilisateur — , passage licences fermées  
 **Autorité licence :** **ARTCB uniquement**, par décision écrite  
@@ -48,7 +48,7 @@ Seul le volet **réseau public** a une licence plus permissive (BSL) pour consul
 | ARTCB modifie le code | **À tout moment**, sans vote préalable |
 | Engagement rollback | Si **majorité des utilisateurs votants** **rejette** une mise à jour **majeure**, ARTCB **corrige** (revient en arrière ou publie un correctif) |
 | Vote automatique | **Pas encore codé** — règle actée dans `GOUVERNANCE_ARTCB.md` |
-| Contact | contact@artcb.io |
+| Contact | official@artcb.space |
 
 Les utilisateurs :
 - gardent le contrôle de **leurs données** (wallet, clés privées) ;
@@ -101,4 +101,4 @@ Tant qu'aucun fichier `LICENSE-PUBLIC-SSPL.md` n'est publié, **BSL seul** régi
 
 ---
 
-**© 2026 ARTCB — contact@artcb.io**
+**© 2026 ARTCB — official@artcb.space**

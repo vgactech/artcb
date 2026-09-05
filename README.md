@@ -235,12 +235,13 @@ Source de vérité : `DECISIONS_UTILISATEUR_ARTCB` (D-014, D-024, D-025) puis `T
 | Dépôt (défaut) | [LICENSE](LICENSE) |
 
 Politique complète : [LICENCE_ARTCB.md](LICENCE_ARTCB.md)  
-Contact : contact@artcb.io
+Contact officiel : official@artcb.space
 
 ---
 
 ## Liens
 
+- Contact : official@artcb.space
 - Dépôt : https://github.com/vgactech/artcb
-- API Docs : http://localhost:8000/docs
-- Frontend : http://localhost:5173
+- API Docs (local) : http://localhost:8000/docs
+- Frontend (local) : http://localhost:5173

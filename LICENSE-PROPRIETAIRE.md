@@ -49,7 +49,7 @@ Jusqu'à **décision écrite contraire** du représentant légal de artcb.
 
 ## 5. Contact
 
-artcb — contact@artcb.io
+artcb — official@artcb.space
 
 ---
 

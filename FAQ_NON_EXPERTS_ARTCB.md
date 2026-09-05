@@ -317,7 +317,7 @@ Les **données** restent contrôlées par chaque détenteur de wallet.
 **Gouvernance :**
 - Code : **ARTCB** modifie à tout moment — voir `GOUVERNANCE_ARTCB.md`
 - Rollback si **majorité rejette** une mise à jour majeure (vote à implémenter)
-- Contact : contact@artcb.io
+- Contact : official@artcb.space
 
 ---
 

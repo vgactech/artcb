@@ -8,6 +8,7 @@ whole network. See domains.py for the replication matrix.
 from __future__ import annotations
 
 import json
+import secrets
 import uuid
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
@@ -43,6 +44,7 @@ class OrgGenesis:
     forbidden_delegations: list[str] = field(default_factory=lambda: ["ADMIN_ORG"])
     content_hash: str = ""
     domain_kind: str = "org"
+    commitment_salt: str = ""
 
     def constitution_payload(self) -> dict[str, Any]:
         data = asdict(self)
@@ -89,6 +91,7 @@ class GroupGenesis:
     forbidden_delegations: list[str] = field(default_factory=lambda: ["ADMIN_ORG"])
     content_hash: str = ""
     domain_kind: str = "group"
+    commitment_salt: str = ""
 
     def constitution_payload(self) -> dict[str, Any]:
         data = asdict(self)
@@ -162,6 +165,7 @@ class GenesisStore:
             created_at=_now_iso(),
             governance_root=founder_address,
             membership_root=founder_address,
+            commitment_salt=secrets.token_hex(32),
         )
         org.content_hash = canonical_hash(org.constitution_payload())
         rows = self._read_all(self.path)
@@ -205,6 +209,7 @@ class GenesisStore:
             parent_org=parent_org,
             parent_group_id=parent_group_id,
             membership_root=founder_address,
+            commitment_salt=secrets.token_hex(32),
         )
         genesis.content_hash = canonical_hash(genesis.constitution_payload())
         rows = self._read_all(self.groups_path)

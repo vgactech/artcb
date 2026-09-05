@@ -16,6 +16,7 @@ from src.artcb.p2p.node_identity import NodeIdentity
 from src.artcb.p2p.peers import PeerManager, PeerRecord
 from src.artcb.p2p.public_archive import PublicBlockArchive
 from src.artcb.p2p.symbol_sync import SymbolSyncService
+from src.artcb.authz.domains import is_converging_public_event
 
 logger = logging.getLogger("artcb.p2p.sync")
 
@@ -70,13 +71,16 @@ class P2PSyncService:
         if self.archive:
             stored = self.archive.store_blocks(valid, from_node_id=from_node_id)
         extended = 0
-        if extend_tip:
-            for block in valid:
-                try:
-                    if self.chain.import_extending_public_block(block):
-                        extended += 1
-                except Exception as exc:
-                    logger.debug("public block did not extend local tip: %s", exc)
+        ordered = sorted(valid, key=lambda row: int(row.get("index") or 0))
+        for block in ordered:
+            should_extend = extend_tip or is_converging_public_event(block)
+            if not should_extend:
+                continue
+            try:
+                if self.chain.import_extending_public_block(block):
+                    extended += 1
+            except Exception as exc:
+                logger.debug("public block did not extend local tip: %s", exc)
         if self.symbol_sync:
             self.symbol_sync.extract_from_blocks(valid, from_node_id=from_node_id)
         return stored + extended
