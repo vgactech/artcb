@@ -60,6 +60,37 @@ API / frontend **locaux** : `http://localhost:8000/docs` et `http://localhost:51
 
 ---
 
-## 5. Live
+## 5. Live (mesuré 2026-09-05T13:36:14Z, pas inventé)
 
-Rempli après push `main` + follow-main + `scripts/run_live221_commitment_convergence.py`.
+`origin/main` au moment du parcours = `32a378d32a991b48829b0c86e2728b3436c48cdc`.  
+JSON brut versionné : `rapports/evidence/221_live_20260905T133614Z.json` (aucun token).
+
+### Avant le parcours 221
+
+| Nœud | SHA | certified | blocs | tip (préfixe) |
+|---|---|---|---|---|
+| OVH1 | `32a378d` | true | 3 | `93eab711…` (déjà +2 blocs 220) |
+| OVH2 / AWS3 / OVH4 | `32a378d` | true | 1 | `b8a7d5ef…` (même genesis, pas encore le tip 220) |
+
+### Après create + SALE + annonce P2P depuis OVH1
+
+| Nœud | blocs | `DOMAIN_COMMITMENT` | `ORG_CONTROL_TRANSFER` | `last_hash` | `public_state_digest` |
+|---|---|---|---|---|---|
+| OVH1 | 5 | 2 | 2 | `273500247292233c…` | `b5f93d3f420f03dc…` |
+| OVH2 | 5 | 2 | 2 | **identique** | **identique** |
+| AWS3 | 5 | 2 | 2 | **identique** | **identique** |
+| OVH4 | 5 | 2 | 2 | **identique** | **identique** |
+
+`four_same_last_hash=true`. `four_same_digest=true`. `certified=true` ×4. Keep-book (OVH1 est passé de 3 à 5 lignes, les autres de 1 à 5 par **import de tip**, pas un wipe).
+
+Parcours humain HTTPS `:8443` : create 200, sel absent de la réponse HTTP, propose 200, accept 200.
+
+### Nuances mesurées (ne pas les cacher)
+
+1. **Blocs 220 historiques** (index 1–2) portent encore `old_controller` / `issuer` en clair. Ils ont aussi convergé. Les blocs **221** (index 3–4) n’ont **pas** `artcb1` dans les symboles : bindings seulement.
+2. `POST /p2p/sync` opérateur : **200** sur OVH1 (6/7 pairs OK). **401** sur OVH2/AWS3/OVH4 — clé nœud 1 isolée (D-029). La convergence s’est faite par **push depuis OVH1**, pas par sync opérateur croisé.
+3. Second propose Aline→Aline = **422** `invalid_new_controller` (le script a réutilisé la même adresse). T-E47 E (Aline→Carol après SALE) reste **403** en test local.
+4. OVH1 n’a **pas** été arrêté (scénario B simulé localement seulement).
+5. Multisig / timelock / preuve RCS : toujours non.
+
+**V-01 :** démontré sur ce parcours — 4/4 même tip public après un commitment + un transfert.
