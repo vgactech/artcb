@@ -1408,3 +1408,18 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - OVH2 : API OpenStack OK, clé privée absente de Doppler ; rescue n’accepte que la clé `artcb-ovh-node-2`. Snapshot Glance `artcb-ovh2-keepbook-203` créé. Ne pas reinstall. OVH4 : pas de `KEY_API_ARTCB_DOPPLER_4`.
 - `OPERATOR_MAINNET_CERTIFICATION_GO` reste **False**. 90 TPS = labo. Campagnes : machine / WAN / chaîne locale / distribué.
 - Rapport : `rapports/203_mainnet_homogenize_bench_2026-09-02.md`.
+
+## [2026-09-05T22:49:17Z] Rapport 059 — Nœud réel MacBook Air + PQC macOS + auto-dev
+
+- **MacBook Air C02PX0DHGFWK = nœud #5 réseau ARTCB mainnet** (après OVH1/OVH2/AWS3/OVH4)
+- **Wallet nœud :** `artcb1hk6qyqqxywmfkuu2ad2ams9xnf667j7l49cl5h` (hybrid Ed25519+ML-DSA-65)
+- **address_v2 :** `artcb21muh90q8yufdk58fdysq6a2gx8u0pugqgrg02wj`
+- **liboqs_runtime.py :** ajouter `.dylib` pour macOS — `Path.home()/_oqs/lib/liboqs.dylib`
+- **test_sdk.py :** toujours `_clear_api_key_env(monkeypatch)` pour isoler de Doppler (ARTCB_API_KEY injecté)
+- **D-056 (2026-09-02) :** `OPERATOR_MAINNET_CERTIFICATION_GO=True` — tests doivent asserter `True` (pas False)
+- **replit_git_sync.sh :** utiliser `--update-shallow` (pas `--unshallow` destructif)
+- **5 blocs PoL auto-développement** minés par Bob agent sur chaîne locale
+- **Doppler token Bob :** `DOPPLER_TOKEN_REDACTED` (ne pas committer)
+- **Avancement global : 96% MVP** | Tests : 804+/843 PASS sur USER_MACHINE
+- **Rapport :** `rapports/059_node_reel_macbookair_fixes_pqc_mining_20260905.md`
+

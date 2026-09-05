@@ -29,8 +29,9 @@ artcb_replit_git_sync() {
 
   if [ -d "$REPL_DIR/.git" ]; then
     if git -C "$REPL_DIR" rev-parse --is-shallow-repository 2>/dev/null | grep -qx true; then
-      git -C "$REPL_DIR" fetch --unshallow origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
-        || git -C "$REPL_DIR" fetch --update-shallow origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
+      # Prefer --update-shallow (non-destructive) over --unshallow (rewrites history)
+      git -C "$REPL_DIR" fetch --update-shallow origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
+        || git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null \
         || true
     else
       git -C "$REPL_DIR" fetch origin "$ARTCB_REPLIT_BRANCH" 2>/dev/null || true

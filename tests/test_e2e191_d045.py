@@ -154,7 +154,12 @@ def test_certification_still_and_of_all_dv() -> None:
     assert gate["certified_distributed_mainnet"] is False
 
 
-def test_all_dv_pass_does_not_certify_without_operator_go() -> None:
+def test_all_dv_pass_certifies_when_operator_go_is_true() -> None:
+    """D-056 (2026-09-02) : OPERATOR_MAINNET_CERTIFICATION_GO est True depuis que
+    le créateur a validé tous les DV-01…07 sur les 4 nœuds live.
+    Quand tous les DV sont PASS + GO=True + ECONOMIC_V_LOCKED=True, la
+    certification doit être True — c'est le comportement attendu.
+    """
     gate = certification_gate(
         {
             "DV-01": "PASS",
@@ -166,8 +171,9 @@ def test_all_dv_pass_does_not_certify_without_operator_go() -> None:
             "DV-07": "PASS",
         }
     )
-    assert gate["certified_distributed_mainnet"] is False
-    assert gate["operator_certification_go"] is False
+    # OPERATOR_MAINNET_CERTIFICATION_GO=True depuis D-056 — certification attendue
+    assert gate["operator_certification_go"] is True
+    assert gate["certified_distributed_mainnet"] is True
 
 
 def test_replit_public_url_comes_from_the_host_not_from_git(monkeypatch) -> None:

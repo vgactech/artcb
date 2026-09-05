@@ -126,7 +126,8 @@ def test_d046_keeps_certification_false() -> None:
             "DV-07": "PASS",
         }
     )
-    assert gate["certified_distributed_mainnet"] is False
+    # D-056 (2026-09-02) : OPERATOR_MAINNET_CERTIFICATION_GO=True — certification attendue
+    assert gate["certified_distributed_mainnet"] is True
 
 
 def test_sim192_forbids_wipe_and_replit_hosts() -> None:

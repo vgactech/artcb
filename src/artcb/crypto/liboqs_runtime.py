@@ -18,6 +18,9 @@ def native_liboqs_available() -> bool:
     This function deliberately never imports ``oqs``. A false result means the
     application should use its documented fallback and leave PQC installation
     to an explicit/background provisioning step.
+
+    Supports Linux (.so), macOS (.dylib) and the default liboqs-python install
+    path ~/._oqs (created automatically by the Python binding on first import).
     """
 
     if ctypes.util.find_library("oqs") or ctypes.util.find_library("liboqs"):
@@ -25,9 +28,14 @@ def native_liboqs_available() -> bool:
 
     install_root = Path(os.getenv("OQS_INSTALL_PATH", str(Path.home() / "_oqs")))
     candidates = (
+        # Linux
         install_root / "lib" / "liboqs.so",
         install_root / "lib64" / "liboqs.so",
         install_root / "lib" / "liboqs.so.0",
         install_root / "lib64" / "liboqs.so.0",
+        # macOS (liboqs-python installe dans ~/_oqs par défaut)
+        install_root / "lib" / "liboqs.dylib",
+        install_root / "lib64" / "liboqs.dylib",
+        Path.home() / "_oqs" / "lib" / "liboqs.dylib",
     )
     return any(path.is_file() for path in candidates)

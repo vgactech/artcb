@@ -39,60 +39,84 @@ def sdk():
 
 # ── Tests instanciation ───────────────────────────────────────────────────────
 
+def _clear_api_key_env(monkeypatch) -> None:
+    """Supprime les clés API de l'environnement pour isoler les tests SDK.
+
+    Doppler injecte ARTCB_API_KEY et ARTCB_NODE_API_KEY dans l'env, ce qui
+    déclenche la vérification de sécurité HTTP pour les URLs non-locales.
+    Les tests d'instanciation du SDK testent la logique URL, pas la sécurité
+    réseau — on retire donc les clés pour éviter le faux positif.
+    """
+    monkeypatch.delenv("ARTCB_API_KEY", raising=False)
+    monkeypatch.delenv("ARTCB_NODE_API_KEY", raising=False)
+    monkeypatch.delenv("ARTCB_ALLOW_INSECURE_HTTP", raising=False)
+
+
 class TestArtcbClientInit:
 
     def test_default_base_url(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         monkeypatch.delenv("ARTCB_API_URL", raising=False)
         monkeypatch.delenv("ARTCB_NODE_URL", raising=False)
         c = ArtcbClient()
         assert c.base_url == "http://localhost:8000"
 
     def test_env_base_url(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         monkeypatch.setenv("ARTCB_API_URL", "http://152.228.144.34:8000")
         c = ArtcbClient()
         assert c.base_url == "http://152.228.144.34:8000"
 
-    def test_custom_base_url(self):
+    def test_custom_base_url(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient("http://myhost:9999")
         assert c.base_url == "http://myhost:9999"
 
-    def test_trailing_slash_stripped(self):
+    def test_trailing_slash_stripped(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient("http://myhost:9999/")
         assert c.base_url == "http://myhost:9999"
 
-    def test_api_key_stored(self):
+    def test_api_key_stored(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient(api_key="artcb_abc123")
         assert c.api_key == "artcb_abc123"
 
-    def test_no_api_key(self):
+    def test_no_api_key(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient()
         # Sans env var, api_key peut être None
         assert c.api_key is None or isinstance(c.api_key, str)
 
-    def test_repr(self):
+    def test_repr(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient(api_key="artcb_x")
         assert "ArtcbClient" in repr(c)
         assert "authenticated=True" in repr(c)
 
-    def test_repr_not_authenticated(self):
+    def test_repr_not_authenticated(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient()
         # api_key peut venir de l'env
         r = repr(c)
         assert "ArtcbClient" in r
 
-    def test_headers_with_key(self):
+    def test_headers_with_key(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient(api_key="artcb_test")
         h = c._headers()
         assert h["Authorization"] == "Bearer artcb_test"
         assert h["Content-Type"] == "application/json"
 
-    def test_headers_without_key(self):
+    def test_headers_without_key(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         c = ArtcbClient()
         c.api_key = None
         h = c._headers()
         assert "Authorization" not in h
 
-    def test_context_manager(self):
+    def test_context_manager(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         with ArtcbClient() as c:
             assert isinstance(c, ArtcbClient)
 
@@ -246,7 +270,8 @@ class TestArtcbErrors:
 
 class TestConnectFactory:
 
-    def test_connect_success(self):
+    def test_connect_success(self, monkeypatch):
+        _clear_api_key_env(monkeypatch)
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = {"status": "healthy"}
