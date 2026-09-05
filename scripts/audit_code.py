@@ -58,7 +58,8 @@ hc_patterns = [
     ("artcb_test_token_", "token de test hardcodé"),
     ("\"test_key\"", "clé de test en dur"),
     ("'test_key'", "clé de test en dur"),
-    ("contact@artcb.io", "email hardcodé dans code"),
+    ("contact@artcb.io", "ancien email officiel hardcodé dans code"),
+    ("official@artcb.space", "email officiel hardcodé dans code"),
     ("vgac42@gmail.com", "email hardcodé dans code"),
     ("51.255.22.253", "IP serveur OVH hardcodée"),
 ]
