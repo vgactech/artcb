@@ -1,0 +1,145 @@
+{
+  "stamp": "20260905T134527Z",
+  "scenario": "V-01-B_ovh1_stopped_others_keep_tip",
+  "before": {
+    "ovh-node-1": {
+      "node_id": "ovh-node-1",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "ovh-node-2": {
+      "node_id": "ovh-node-2",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "aws-node-3": {
+      "node_id": "aws-node-3",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "ovh-node-4": {
+      "node_id": "ovh-node-4",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    }
+  },
+  "stop": {
+    "returncode": 0,
+    "active": true
+  },
+  "ovh1_during": {
+    "health_http": 0,
+    "reachable": false
+  },
+  "others_during": {
+    "ovh-node-2": {
+      "node_id": "ovh-node-2",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "aws-node-3": {
+      "node_id": "aws-node-3",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "ovh-node-4": {
+      "node_id": "ovh-node-4",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    }
+  },
+  "start_returncode": 0,
+  "ovh1_recovered": {
+    "node_id": "ovh-node-1",
+    "health_http": 200,
+    "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+    "certified": true,
+    "status_http": 200,
+    "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+    "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+    "public_blocks_local": 5
+  },
+  "after": {
+    "ovh-node-1": {
+      "node_id": "ovh-node-1",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "ovh-node-2": {
+      "node_id": "ovh-node-2",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "aws-node-3": {
+      "node_id": "aws-node-3",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    },
+    "ovh-node-4": {
+      "node_id": "ovh-node-4",
+      "health_http": 200,
+      "git_sha": "e68563e8ea4b0fd402a145749d9f959b44e31acf",
+      "certified": true,
+      "status_http": 200,
+      "last_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "public_state_digest": "b5f93d3f420f03dc1fd6d12d01ad072197c83309e24a94e41228d4dced261bba",
+      "public_blocks_local": 5
+    }
+  },
+  "four_same_before": true,
+  "others_kept_tip_while_ovh1_down": true,
+  "ovh1_book_restored": true,
+  "certified_others_during": true,
+  "ovh1_wiped": false,
+  "token_printed": false
+}

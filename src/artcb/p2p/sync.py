@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Literal
 
 import httpx
 
@@ -20,9 +21,60 @@ from src.artcb.authz.domains import is_converging_public_event
 
 logger = logging.getLogger("artcb.p2p.sync")
 
+ImportAction = Literal["reject", "archive_only", "append", "duplicate"]
+
+
+@dataclass(frozen=True)
+class ImportDecision:
+    """Same verdict for receive and pull. One block → one action."""
+
+    action: ImportAction
+    reason: str
+
 
 class P2PSyncError(Exception):
     """P2P sync failed."""
+
+
+def decide_public_import(
+    block: dict[str, Any],
+    *,
+    local_len: int,
+    local_tip: str,
+    local_hashes: set[str],
+    structure_ok: bool,
+) -> ImportDecision:
+    """Deterministic import rule. receive and pull must call this same function.
+
+    Order: visibility → structure/hash → duplicate → converging event
+    → index → prev_hash → append.
+    Arbitrary public reward=0 blocks do not get tip-extend privilege.
+    """
+    if block.get("visibility") != "public":
+        return ImportDecision("reject", "not_public")
+    if not structure_ok:
+        return ImportDecision("reject", "hash_mismatch")
+    block_hash = str(block.get("hash") or "")
+    if block_hash and block_hash in local_hashes:
+        return ImportDecision("duplicate", "already_on_chain")
+    if not is_converging_public_event(block):
+        return ImportDecision("archive_only", "not_converging_event")
+    symbols = block.get("public_symbols") or {}
+    if symbols.get("artcb_event") == "DOMAIN_COMMITMENT":
+        if symbols.get("content_hash") and str(symbols.get("content_hash")) != str(block.get("graph_root") or ""):
+            return ImportDecision("reject", "symbols_not_bound_to_hash")
+        expected_gid = f"commit:{symbols.get('kind')}:{symbols.get('domain_id')}"
+        if block.get("graph_id") and str(block.get("graph_id")) != expected_gid:
+            return ImportDecision("reject", "symbols_not_bound_to_hash")
+    try:
+        index = int(block.get("index", -1))
+    except (TypeError, ValueError):
+        return ImportDecision("reject", "bad_index")
+    if index != local_len:
+        return ImportDecision("reject", "wrong_index")
+    if str(block.get("prev_hash") or "") != local_tip:
+        return ImportDecision("reject", "wrong_prev_hash")
+    return ImportDecision("append", "extends_tip")
 
 
 class P2PSyncService:
@@ -45,6 +97,7 @@ class P2PSyncService:
         self.identity = identity
         self.archive = archive or PublicBlockArchive(chain.blocks_path.parent.parent)
         self.symbol_sync = symbol_sync
+        self.last_import_decisions: list[ImportDecision] = []
 
     def get_public_blocks(self, *, from_index: int = 0) -> list[dict[str, Any]]:
         blocks = self.chain.list_blocks(visibility="public")
@@ -57,32 +110,41 @@ class P2PSyncService:
         from_node_id: str = "unknown",
         extend_tip: bool = False,
     ) -> int:
-        """Archive blocs publics reçus — vérifie hash structure (signature nœud distant)."""
-        valid: list[dict[str, Any]] = []
-        for block in blocks:
-            if block.get("visibility") != "public":
-                logger.warning("Rejected non-public block index=%s in P2P sync", block.get("index"))
-                continue
-            if not self.verify_block_structure(block):
-                logger.warning("Rejected invalid public block structure index=%s", block.get("index"))
-                continue
-            valid.append(block)
-        stored = 0
-        if self.archive:
-            stored = self.archive.store_blocks(valid, from_node_id=from_node_id)
+        """Same decision for receive and pull. ``extend_tip`` is ignored (rapport 222)."""
+        _ = extend_tip
+        decisions: list[ImportDecision] = []
+        to_archive: list[dict[str, Any]] = []
         extended = 0
-        ordered = sorted(valid, key=lambda row: int(row.get("index") or 0))
+        ordered = sorted(blocks, key=lambda row: int(row.get("index") or 0) if str(row.get("index") or "").isdigit() or isinstance(row.get("index"), int) else 0)
         for block in ordered:
-            should_extend = extend_tip or is_converging_public_event(block)
-            if not should_extend:
+            local = self.chain._read_all_blocks()
+            local_hashes = {str(row.get("hash") or "") for row in local}
+            decision = decide_public_import(
+                block,
+                local_len=len(local),
+                local_tip=self.chain.last_hash(),
+                local_hashes=local_hashes,
+                structure_ok=self.verify_block_structure(block) if block.get("visibility") == "public" else False,
+            )
+            decisions.append(decision)
+            if decision.action == "reject":
+                logger.warning("P2P import reject index=%s reason=%s", block.get("index"), decision.reason)
                 continue
-            try:
-                if self.chain.import_extending_public_block(block):
-                    extended += 1
-            except Exception as exc:
-                logger.debug("public block did not extend local tip: %s", exc)
-        if self.symbol_sync:
-            self.symbol_sync.extract_from_blocks(valid, from_node_id=from_node_id)
+            if decision.action == "duplicate":
+                continue
+            to_archive.append(block)
+            if decision.action == "append":
+                try:
+                    if self.chain.import_extending_public_block(block):
+                        extended += 1
+                except Exception as exc:
+                    logger.debug("public block did not extend local tip: %s", exc)
+        stored = 0
+        if self.archive and to_archive:
+            stored = self.archive.store_blocks(to_archive, from_node_id=from_node_id)
+        if self.symbol_sync and to_archive:
+            self.symbol_sync.extract_from_blocks(to_archive, from_node_id=from_node_id)
+        self.last_import_decisions = decisions
         return stored + extended
 
     @staticmethod
@@ -165,7 +227,6 @@ class P2PSyncService:
             imported = self.import_public_blocks(
                 blocks,
                 from_node_id=peer.peer_id,
-                extend_tip=bool(getattr(peer, "protocol_compatible", False)),
             )
             self.peers.update_peer_status(
                 peer.peer_id,

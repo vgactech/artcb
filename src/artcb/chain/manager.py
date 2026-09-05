@@ -272,6 +272,9 @@ class ChainManager:
         """
         if block.get("visibility") != "public":
             return False
+        existing = self._read_all_blocks()
+        if any(str(row.get("hash") or "") == str(block.get("hash") or "") for row in existing):
+            return False
         try:
             eco = None
             version = int(block.get("hash_version") or HASH_VERSION_V1)

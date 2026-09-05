@@ -57,3 +57,5 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   Rapport 221 : ces blocs **étendent le tip** des pairs (convergence). Les
   adresses de transfert ne sont plus dans le bloc public. Contact officiel
   `official@artcb.space`.
+  Rapport 222 : `decide_public_import()` unique (receive = pull). V-01 n'est
+  pas une certification Byzantine.
