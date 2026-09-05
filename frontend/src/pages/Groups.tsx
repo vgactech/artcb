@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import {
   approveJoinRequest,
   createGroup,
+  acceptTransfer,
+  cancelTransfer,
   createOrganization,
   exportDomain,
   fetchDomains,
@@ -11,6 +13,8 @@ import {
   fetchWallets,
   importDomain,
   locateDomain,
+  proposeGroupTransfer,
+  proposeOrgTransfer,
   promoteGroupMember,
   rejectJoinRequest,
 } from "../api/client";
@@ -38,6 +42,11 @@ export function Groups() {
   const [importText, setImportText] = useState("");
   const [exportText, setExportText] = useState("");
   const [locateText, setLocateText] = useState("");
+  const [transferTo, setTransferTo] = useState("");
+  const [transferReason, setTransferReason] = useState("DIRECTOR_CHANGE");
+  const [pendingTx, setPendingTx] = useState("");
+  const [groupTransferTo, setGroupTransferTo] = useState("");
+  const [groupPendingTx, setGroupPendingTx] = useState("");
 
   const loadGroups = async (address: string) => {
     if (!address) return;
@@ -141,6 +150,76 @@ export function Groups() {
       );
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
+    }
+  };
+
+  const handleProposeTransfer = async () => {
+    if (!lastOrg || !transferTo.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const tx = await proposeOrgTransfer(lastOrg.organization_id, transferTo.trim(), transferReason);
+      setPendingTx(tx.tx_id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptTransfer = async () => {
+    if (!pendingTx) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await acceptTransfer(pendingTx);
+      setPendingTx("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelTransfer = async () => {
+    if (!pendingTx) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await cancelTransfer(pendingTx);
+      setPendingTx("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProposeGroupTransfer = async () => {
+    if (!selectedGroup || !groupTransferTo.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const tx = await proposeGroupTransfer(selectedGroup.group_id, groupTransferTo.trim(), "DIRECTOR_CHANGE");
+      setGroupPendingTx(tx.tx_id);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAcceptGroupTransfer = async () => {
+    if (!groupPendingTx) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await acceptTransfer(groupPendingTx);
+      setGroupPendingTx("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -288,7 +367,45 @@ export function Groups() {
             <p className="mc-mono">ORG {lastOrg.organization_id}</p>
             <p className="mc-mono">DOMAIN {lastOrg.domain.domain_id}</p>
             <p className="mc-mono">HASH {lastOrg.content_hash.slice(0, 16)}…</p>
+            {lastOrg.authority && (
+              <p className="mc-muted">
+                Contrôleur {lastOrg.authority.controller_address.slice(0, 16)}… · propriétaire{" "}
+                {lastOrg.authority.legal_owner.slice(0, 16)}… · fondateur historique{" "}
+                {lastOrg.authority.founder_address.slice(0, 16)}…
+              </p>
+            )}
             <p className="mc-muted">{lastOrg.ownership.cest_a_dire}</p>
+            <h3>Transférer l&apos;autorité (pas le Genesis)</h3>
+            <p className="mc-muted">
+              Même règle qu&apos;un utilisateur : session humaine. L&apos;ORG_ID ne change pas.
+              Une ORG n&apos;est pas un humain unique prouvé.
+            </p>
+            <select value={transferReason} onChange={(e) => setTransferReason(e.target.value)}>
+              <option value="DIRECTOR_CHANGE">Changement de directeur</option>
+              <option value="SALE">Vente (change aussi le propriétaire juridique)</option>
+              <option value="SUCCESSION">Succession</option>
+              <option value="KEY_ROTATION">Rotation de clé</option>
+            </select>
+            <input
+              value={transferTo}
+              onChange={(e) => setTransferTo(e.target.value)}
+              placeholder="Adresse du nouveau contrôleur"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            />
+            <button type="button" onClick={handleProposeTransfer} disabled={loading}>
+              Proposer le transfert
+            </button>
+            {pendingTx && (
+              <div>
+                <p className="mc-mono">tx {pendingTx}</p>
+                <button type="button" onClick={handleAcceptTransfer} disabled={loading}>
+                  Accepter (session du nouveau contrôleur)
+                </button>
+                <button type="button" onClick={handleCancelTransfer} disabled={loading}>
+                  Annuler (contrôleur actuel)
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -297,7 +414,7 @@ export function Groups() {
         <h2>Domaines ({domains.length})</h2>
         <p className="mc-muted">
           Identité publique : fondateur + hash. Le corps Genesis reste sur le nœud hôte.
-          Ancrage chaîne globale : pas encore (journal local).
+          Le hash est ancré en bloc public reward=0. L&apos;export est réservé au contrôleur actuel, pas au fondateur historique.
         </p>
         {locateText && <p className="mc-muted">{locateText}</p>}
         <ul className="mc-checklist-list">
@@ -307,9 +424,9 @@ export function Groups() {
               <button type="button" onClick={() => handleLocate(d.domain_id)} disabled={loading}>
                 Localiser
               </button>
-              {d.founder_address === actorAddress && (
+              {actorAddress && (
                 <button type="button" onClick={() => handleExport(d.domain_id)} disabled={loading}>
-                  Exporter
+                  Exporter (contrôleur)
                 </button>
               )}
             </li>
@@ -398,6 +515,30 @@ export function Groups() {
               </ul>
             </div>
           )}
+
+          <div className="panel mc-slot" style={{ marginBottom: "1rem" }}>
+            <h3>Transférer le groupe (pas l&apos;ORG parente)</h3>
+            <p className="mc-muted">
+              Session humaine obligatoire. Le parent_id et l&apos;ORG_ID restent.
+            </p>
+            <input
+              value={groupTransferTo}
+              onChange={(e) => setGroupTransferTo(e.target.value)}
+              placeholder="Adresse du nouveau contrôleur du groupe"
+              style={{ width: "100%" }}
+            />
+            <button type="button" onClick={handleProposeGroupTransfer} disabled={loading}>
+              Proposer le transfert du groupe
+            </button>
+            {groupPendingTx && (
+              <div>
+                <p className="mc-mono">tx {groupPendingTx}</p>
+                <button type="button" onClick={handleAcceptGroupTransfer} disabled={loading}>
+                  Accepter (nouveau contrôleur)
+                </button>
+              </div>
+            )}
+          </div>
 
           {selectedGroup.members.map((m) => (
             <div key={m.address} className="mc-player-row">

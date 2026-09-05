@@ -35,6 +35,8 @@ def resolve_principal(request: Request, *, required: bool = False) -> Principal:
 
         record = require_session(request, authorization)
         address = record.get("address") or None
+        assurance = record.get("assurance") if isinstance(record.get("assurance"), dict) else None
+        unique_human = bool(record.get("unique_human_proven"))
         if agent_id:
             if not address:
                 raise HTTPException(status_code=401, detail="agent_requires_human_session")
@@ -45,12 +47,16 @@ def resolve_principal(request: Request, *, required: bool = False) -> Principal:
                 agent_id=agent_id,
                 parent_address=address,
                 source="session",
+                unique_human_proven=False,
+                assurance=assurance,
             )
         return Principal(
             address=address,
             wallet_name=record.get("wallet_name"),
             kind="human",
             source="session",
+            unique_human_proven=unique_human,
+            assurance=assurance,
         )
 
     if raw.startswith("artcb_"):

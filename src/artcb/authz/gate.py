@@ -11,6 +11,7 @@ from src.artcb.authz.engine import AuthorizationEngine
 from src.artcb.authz.genesis import GenesisStore
 from src.artcb.authz.identity import resolve_principal
 from src.artcb.authz.models import Decision, Principal, ResourceRef
+from src.artcb.authz.governance import GovernanceStore
 from src.artcb.authz.registry import DomainRegistry
 from src.artcb.authz.store import PolicyStore, ResourceIndex
 
@@ -30,6 +31,7 @@ class AuthzGate:
         self.index = ResourceIndex(root / "resources.jsonl")
         self.genesis = GenesisStore(root / "orgs.json")
         self.domains = DomainRegistry(root / "domains.json")
+        self.governance = GovernanceStore(root / "governance.json")
         self.groups = groups
         self.chain = chain
         self.engine = AuthorizationEngine(groups=groups, policies=self.policies.load())
@@ -101,14 +103,26 @@ class AuthzGate:
             return principal
         raise HTTPException(status_code=404, detail="block not found")
 
+    def _is_subject_controller(self, address: str | None, resource: ResourceRef) -> bool:
+        if not address:
+            return False
+        for sid in (resource.organization_id, resource.group_id, resource.subgroup_id):
+            if sid and self.governance.is_controller(address, sid):
+                return True
+        return False
+
     def can_issue_grant(self, principal: Principal, resource: ResourceRef) -> Decision:
         owner = resource.owner_address and principal.address == resource.owner_address
         if owner:
             return Decision("ALLOW", "resource_owner")
+        if self._is_subject_controller(principal.address, resource):
+            return Decision("ALLOW", "org_or_group_controller")
         return self.decide(principal, GRANT, resource)
 
     def can_revoke(self, principal: Principal, resource: ResourceRef) -> Decision:
         owner = resource.owner_address and principal.address == resource.owner_address
         if owner:
             return Decision("ALLOW", "resource_owner")
+        if self._is_subject_controller(principal.address, resource):
+            return Decision("ALLOW", "org_or_group_controller")
         return self.decide(principal, REVOKE, resource)

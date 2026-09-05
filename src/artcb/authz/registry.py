@@ -72,7 +72,6 @@ class DomainManifest:
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
         data["node_owns_domain"] = False
-        data["commitment_anchored_on_chain"] = False
         return data
 
     def public_view(self) -> dict[str, Any]:
@@ -93,7 +92,7 @@ class DomainManifest:
             "created_at": self.created_at,
             "node_owns_domain": False,
             "body_replicated": self.body_replicated,
-            "commitment_anchored_on_chain": False,
+            "commitment_anchored_on_chain": self.commitment_anchored_on_chain,
             "projection": "domain_manifest_public",
             "contains_private_data": False,
         }
@@ -103,7 +102,6 @@ class DomainManifest:
         known = {f.name for f in cls.__dataclass_fields__.values()}  # type: ignore[attr-defined]
         payload = {k: v for k, v in data.items() if k in known}
         payload["node_owns_domain"] = False
-        payload["commitment_anchored_on_chain"] = False
         return cls(**payload)
 
 
@@ -241,11 +239,11 @@ class DomainRegistry:
         )
         return self._upsert(manifest)
 
-    def add_replica(self, domain_id: str, node_id: str, founder_address: str) -> DomainManifest:
+    def add_replica(self, domain_id: str, node_id: str, founder_address: str | None = None) -> DomainManifest:
         manifest = self.get(domain_id)
         if manifest is None:
             raise DomainError("domain_not_found")
-        if manifest.founder_address != founder_address:
+        if founder_address and manifest.founder_address != founder_address:
             raise DomainForbidden("founder_mismatch")
         if node_id not in manifest.authorized_nodes:
             manifest.authorized_nodes.append(node_id)
@@ -260,6 +258,13 @@ class DomainRegistry:
         manifest.hosting_node_id = hosting_node_id
         manifest.body_replicated = len(manifest.authorized_nodes) > 1
         manifest.version += 1
+        return self._upsert(manifest)
+
+    def mark_anchored(self, domain_id: str) -> DomainManifest | None:
+        manifest = self.get(domain_id)
+        if manifest is None:
+            return None
+        manifest.commitment_anchored_on_chain = True
         return self._upsert(manifest)
 
     def locate(

@@ -69,6 +69,8 @@ class Principal:
     agent_id: str | None = None
     parent_address: str | None = None
     source: str = "anonymous"  # session | api_key | wallet | anonymous | operator
+    unique_human_proven: bool = False
+    assurance: dict | None = None
 
     @property
     def is_anonymous(self) -> bool:

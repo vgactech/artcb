@@ -101,6 +101,10 @@ def _group_http_error(exc: GroupError) -> HTTPException:
 @router.post("")
 def create_group(body: CreateGroupRequest, request: Request) -> dict:
     founder = _require_actor(request, body.founder_address)
+    from src.artcb.authz.identity import resolve_principal
+
+    if resolve_principal(request).kind == "agent":
+        raise HTTPException(status_code=403, detail="agent_cannot_admin_org_or_group")
     mgr = _groups(request)
     group = mgr.create_group(body.name, founder, organization_id=body.organization_id)
     genesis = _state(request).authz.genesis.create_group_genesis(
@@ -119,6 +123,7 @@ def create_group(body: CreateGroupRequest, request: Request) -> dict:
         founder_address=founder,
         genesis_hash=genesis.content_hash,
         parent_id=body.organization_id or "ARTCB",
+        governance_type="group",
     )
     logger.debug("Group created id=%s join_code=%s", group.group_id, group.join_code)
     out = group.to_dict()
@@ -222,23 +227,43 @@ def sign_join_with_wallet(body: WalletJoinRequest, request: Request) -> dict:
 @router.post("/{group_id}/subgroups")
 def create_subgroup(group_id: str, body: CreateSubgroupRequest, request: Request) -> dict:
     actor = _require_actor(request, body.actor_address)
+    from src.artcb.authz.identity import resolve_principal
+
+    if resolve_principal(request).kind == "agent":
+        raise HTTPException(status_code=403, detail="agent_cannot_admin_org_or_group")
     mgr = _groups(request)
     try:
         group = mgr.create_subgroup(group_id, body.name, actor)
     except GroupError as exc:
         raise _group_http_error(exc) from exc
     parent = mgr.get_group(group_id)
-    _state(request).authz.genesis.create_group_genesis(
+    genesis = _state(request).authz.genesis.create_group_genesis(
         group_id=group.group_id,
         name=group.name,
         founder_address=actor,
         parent_org=parent.organization_id if parent else None,
         parent_group_id=group_id,
     )
+    from src.api.authz_routes import _register_domain
+
+    manifest = _register_domain(
+        request,
+        domain_type="group",
+        subject_id=group.group_id,
+        founder_address=actor,
+        genesis_hash=genesis.content_hash,
+        parent_id=group_id,
+        governance_type="subgroup",
+    )
     out = group.to_dict()
-    genesis = _state(request).authz.genesis.get_group_genesis(group.group_id)
-    if genesis:
-        out["genesis_hash"] = genesis.content_hash
+    out["genesis_hash"] = genesis.content_hash
+    out["domain"] = manifest.public_view()
+    out["ownership"] = {
+        "founder_address": actor,
+        "node_owns_domain": False,
+        "parent_group_id": group_id,
+        "transfers_parent_org": False,
+    }
     return out
 
 

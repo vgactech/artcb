@@ -52,5 +52,5 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   (code). Ce n’est pas une D-0xx. Consensus ≠ autorisation.
 - Domaines (rapports 217-218) : `REPLICATION_MATRIX` + `DomainRegistry` sont du
   **rang 3**. Un nœud **héberge** un domaine ; le fondateur le **possède**.
-  `commitment_anchored_on_chain=false` jusqu’à un `append_block` public (P-217-2).
-  Ce n’est pas une D-0xx.
+  Un `append_block` public `reward=0` ancre le hash (rapport 220 / P-218-2).
+  Contrôleur ≠ fondateur historique. Ce n’est pas une D-0xx.

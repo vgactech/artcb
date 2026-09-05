@@ -68,7 +68,7 @@ def test_alice_creates_org_without_being_a_node(tmp_path: Path, monkeypatch: pyt
     assert body["domain"]["domain_id"].startswith("domain_")
     assert body["domain"]["storage_mode"] == "artcb_managed"
     assert body["domain"]["authorized_nodes"] == ["node-paris"]
-    assert body["domain"]["commitment_anchored_on_chain"] is False
+    assert body["domain"]["commitment_anchored_on_chain"] is True
     assert body["founder_address"] != body["ownership"]["hosting_node_id"]
 
 
@@ -185,7 +185,7 @@ def test_body_stays_on_creating_node_until_import(
     assert imported.json()["imported"] is True
     assert imported.json()["ownership"]["node_owns_domain"] is False
     assert imported.json()["ownership"]["hosting_node_id"] == "node-b"
-    assert imported.json()["commitment_anchored_on_chain"] is False
+    assert imported.json()["commitment_anchored_on_chain"] is True
 
     orgs_b = client_b.get("/api/v1/authz/orgs").json()["orgs"]
     assert orgs_b[0]["content_hash"] == org_hash

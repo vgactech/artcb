@@ -91,6 +91,24 @@ REPLICATION_MATRIX: dict[str, dict[str, str]] = {
         "content": "genesis_body_on_authorized_hosts",
         "cest_a_dire": "Un nœud héberge le domaine. Il ne le possède pas. La copie n'est pas automatique sur les 4 nœuds officiels.",
     },
+    "DOMAIN_COMMITMENT_BLOCK": {
+        "layer": "global",
+        "replication": "all_consensus_nodes",
+        "content": "public_block_kind+id+hash_only",
+        "cest_a_dire": "Le hash du domaine est un bloc public visibility=public, reward=0. Jamais le corps, les membres ou un document.",
+    },
+    "ORG_AUTHORITY": {
+        "layer": "org",
+        "replication": "org_domain_nodes",
+        "content": "legal_owner+controller_not_genesis",
+        "cest_a_dire": "Le Genesis reste immuable. LEGAL_OWNER et AUTHORIZED_CONTROLLER évoluent par transfert signé.",
+    },
+    "ORG_CONTROL_TRANSFER": {
+        "layer": "global",
+        "replication": "all_consensus_nodes",
+        "content": "tx+subject+reason+old_new_controller_no_body",
+        "cest_a_dire": "Le réseau peut auditer qui a cédé le contrôle. Jamais le Genesis, les membres ou un document.",
+    },
 }
 
 P2P_SYNCS_PRIVATE_BLOCKS = False

@@ -285,7 +285,14 @@ def test_a3_grant_to_c3_sub2_document_x_not_y_not_c2(client: TestClient) -> None
     assert client.get(f"/api/v1/graph/{stored_x['graph_id']}", headers=h_a3).status_code == 404
     assert client.get(f"/api/v1/graph/{stored_y['graph_id']}", headers=h_a3).status_code == 404
     assert client.get(f"/api/v1/graph/{stored_c2['graph_id']}", headers=h_a3).status_code == 404
-    assert client.get("/api/v1/chain", headers=h_a3).json()["count"] == 0
+    visible = client.get("/api/v1/chain", headers=h_a3).json()["blocks"]
+    private_docs = [
+        b
+        for b in visible
+        if (b.get("public_symbols") or {}).get("artcb_event")
+        not in {"DOMAIN_COMMITMENT", "ORG_CONTROL_TRANSFER"}
+    ]
+    assert private_docs == []
 
     grant = client.post(
         "/api/v1/authz/grants",

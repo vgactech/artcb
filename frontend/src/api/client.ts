@@ -134,8 +134,16 @@ export type OrgCreated = {
   founder_address: string;
   content_hash: string;
   domain: DomainManifestView;
+  authority?: {
+    controller_address: string;
+    legal_owner: string;
+    founder_address: string;
+    unique_human_proven: boolean;
+  };
   ownership: {
     founder_address: string;
+    controller_address?: string;
+    legal_owner?: string;
     hosting_node_id: string;
     node_owns_domain: boolean;
     cest_a_dire: string;
@@ -168,6 +176,69 @@ export async function locateDomain(domainId: string) {
 export async function exportDomain(domainId: string) {
   const { data } = await api.post(`/authz/domains/${domainId}/export`, {}, { headers: sessionHeaders() });
   return data as Record<string, unknown>;
+}
+
+export async function proposeOrgTransfer(
+  organizationId: string,
+  newController: string,
+  reason = "DIRECTOR_CHANGE",
+) {
+  const { data } = await api.post(
+    `/authz/orgs/${organizationId}/transfer`,
+    { new_controller: newController, reason },
+    { headers: sessionHeaders() },
+  );
+  return data as { tx_id: string; status: string; org_id_unchanged: boolean };
+}
+
+export async function acceptTransfer(txId: string) {
+  const { data } = await api.post(
+    "/authz/transfers/accept",
+    { tx_id: txId },
+    { headers: sessionHeaders() },
+  );
+  return data as { status: string; authority: Record<string, unknown> };
+}
+
+export async function fetchOrgAuthority(organizationId: string) {
+  const { data } = await api.get(`/authz/orgs/${organizationId}/authority`);
+  return data as {
+    controller_address: string;
+    legal_owner: string;
+    founder_address: string;
+    unique_human_proven: boolean;
+  };
+}
+
+export async function proposeGroupTransfer(
+  groupId: string,
+  newController: string,
+  reason = "DIRECTOR_CHANGE",
+) {
+  const { data } = await api.post(
+    `/authz/groups/${groupId}/transfer`,
+    { new_controller: newController, reason },
+    { headers: sessionHeaders() },
+  );
+  return data as { tx_id: string; status: string; parent_unchanged: boolean };
+}
+
+export async function cancelTransfer(txId: string) {
+  const { data } = await api.post(
+    "/authz/transfers/cancel",
+    { tx_id: txId },
+    { headers: sessionHeaders() },
+  );
+  return data as { status: string };
+}
+
+export async function declineTransfer(txId: string) {
+  const { data } = await api.post(
+    "/authz/transfers/decline",
+    { tx_id: txId },
+    { headers: sessionHeaders() },
+  );
+  return data as { status: string };
 }
 
 export async function importDomain(bundle: Record<string, unknown>) {

@@ -19,6 +19,12 @@ from src.artcb.authz.domains import (
     REPLICATION_MATRIX,
     public_commitment,
 )
+from src.artcb.authz.anchor import (
+    anchor_control_transfer,
+    anchor_public_commitment,
+    commitment_public_symbols,
+)
+from src.artcb.authz.governance import GovernanceError, GovernanceForbidden, TRANSFER_REASONS
 from src.artcb.authz.models import Principal, ResourceRef
 from src.artcb.authz.registry import (
     DomainError,
@@ -80,6 +86,16 @@ class ImportDomainRequest(BaseModel):
     bundle: dict[str, Any]
 
 
+class TransferProposeRequest(BaseModel):
+    new_controller: str = Field(min_length=8)
+    reason: str = Field(default="DIRECTOR_CHANGE")
+    revoke_old: bool = True
+
+
+class TransferAcceptRequest(BaseModel):
+    tx_id: str = Field(min_length=4)
+
+
 def _host_node(request: Request) -> str:
     env = os.getenv("ARTCB_NODE_ID", "").strip()
     if env:
@@ -100,6 +116,7 @@ def _register_domain(
     storage_mode: str = "artcb_managed",
     authorized_nodes: list[str] | None = None,
     parent_id: str | None = None,
+    governance_type: str | None = None,
 ):
     gate = _gate(request)
     try:
@@ -129,7 +146,23 @@ def _register_domain(
                 issued_at=manifest.created_at,
             )
         )
-    return manifest
+    gate.governance.initialize(
+        subject_type=governance_type or ("group" if domain_type == "group" else domain_type),
+        subject_id=subject_id,
+        domain_id=manifest.domain_id,
+        founder_address=founder_address,
+        parent_id=parent_id,
+    )
+    _anchor_domain(
+        request,
+        kind="org" if domain_type == "organization" else "group",
+        domain_id=manifest.domain_id,
+        content_hash=genesis_hash,
+        parent_id=parent_id,
+        issuer=founder_address,
+        issued_at=manifest.created_at,
+    )
+    return gate.domains.get(manifest.domain_id) or manifest
 
 
 def _hosted_here(gate, manifest) -> bool:
@@ -146,6 +179,50 @@ def _genesis_body(gate, manifest) -> dict[str, Any] | None:
     return genesis.to_dict() if genesis else None
 
 
+def _actor_cert(principal: Principal) -> dict[str, Any]:
+    return {
+        "source": principal.source,
+        "kind": principal.kind,
+        "unique_human_proven": False,
+        "assurance": principal.assurance or {"level": "session_or_api_key"},
+        "cest_a_dire": "Même règle qu'un utilisateur : session humaine, pas le JSON. Une ORG n'est pas un humain unique prouvé.",
+    }
+
+
+def _require_human(principal: Principal) -> None:
+    if principal.kind == "agent":
+        raise HTTPException(status_code=403, detail="agent_cannot_admin_org_or_group")
+    if not principal.address:
+        raise HTTPException(status_code=401, detail="authentication_required")
+
+
+def _assert_controller(gate, principal: Principal, subject_id: str) -> None:
+    _require_human(principal)
+    if not gate.governance.is_controller(principal.address, subject_id):
+        # Backward compatible: brand-new orgs before governance init.
+        manifest = gate.domains.get_by_subject(subject_id)
+        if manifest and principal.address == manifest.founder_address and gate.governance.get(subject_id) is None:
+            return
+        raise HTTPException(status_code=403, detail="controller_mismatch")
+
+
+def _anchor_domain(request: Request, *, kind: str, domain_id: str, content_hash: str, parent_id: str | None, issuer: str, issued_at: str) -> dict[str, Any]:
+    symbols = commitment_public_symbols(
+        kind=kind,
+        domain_id=domain_id,
+        content_hash=content_hash,
+        parent_id=parent_id,
+        issuer=issuer,
+        issued_at=issued_at,
+    )
+    try:
+        summary = anchor_public_commitment(_state(request).chain, symbols=symbols)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"anchor_failed:{type(exc).__name__}") from exc
+    _gate(request).domains.mark_anchored(domain_id)
+    return summary
+
+
 @router.post("/orgs")
 def create_org(body: CreateOrgRequest, request: Request) -> dict:
     gate = _gate(request)
@@ -154,6 +231,7 @@ def create_org(body: CreateOrgRequest, request: Request) -> dict:
         raise HTTPException(status_code=401, detail="authentication_required")
     if body.storage_mode not in STORAGE_MODES:
         raise HTTPException(status_code=422, detail="unknown_storage_mode")
+    _require_human(principal)
     org = gate.genesis.create_org(body.name, principal.address)
     manifest = _register_domain(
         request,
@@ -166,14 +244,20 @@ def create_org(body: CreateOrgRequest, request: Request) -> dict:
         parent_id="ARTCB",
     )
     host = _host_node(request)
+    authority = gate.governance.get(org.organization_id)
     return {
         **org.to_dict(),
         "domain": manifest.public_view(),
+        "authority": authority.public_view() if authority else None,
+        "actor_certification": _actor_cert(principal),
         "ownership": {
             "founder_address": org.founder_address,
+            "controller_address": authority.controller_address if authority else org.founder_address,
+            "legal_owner": authority.legal_owner if authority else org.founder_address,
             "hosting_node_id": host,
             "node_owns_domain": False,
-            "cest_a_dire": "Le nœud héberge le corps du Genesis. Le fondateur possède le domaine.",
+            "commitment_anchored_on_chain": manifest.commitment_anchored_on_chain,
+            "cest_a_dire": "Le nœud héberge. Le contrôleur humain possède l'autorité. Le Genesis ne change pas.",
         },
     }
 
@@ -218,7 +302,7 @@ def list_domains(request: Request) -> dict:
         "count": len(manifests),
         "node_owns_domain": False,
         "contains_private_data": False,
-        "commitment_anchored_on_chain": False,
+        "commitment_anchored_on_chain": any(m.commitment_anchored_on_chain for m in manifests),
     }
 
 
@@ -254,8 +338,7 @@ def get_domain_body(domain_id: str, request: Request) -> dict:
     manifest = gate.domains.get(domain_id)
     if manifest is None:
         raise HTTPException(status_code=404, detail="domain_not_found")
-    if principal.address != manifest.founder_address:
-        raise HTTPException(status_code=403, detail="founder_mismatch")
+    _assert_controller(gate, principal, manifest.subject_id)
     if not _hosted_here(gate, manifest):
         raise HTTPException(
             status_code=409,
@@ -284,8 +367,7 @@ def export_domain(domain_id: str, request: Request) -> dict:
     manifest = gate.domains.get(domain_id)
     if manifest is None:
         raise HTTPException(status_code=404, detail="domain_not_found")
-    if principal.address != manifest.founder_address:
-        raise HTTPException(status_code=403, detail="founder_mismatch")
+    _assert_controller(gate, principal, manifest.subject_id)
     if not _hosted_here(gate, manifest):
         raise HTTPException(status_code=409, detail="domain_not_hosted_here")
     body = _genesis_body(gate, manifest)
@@ -319,8 +401,14 @@ def import_domain(body: ImportDomainRequest, request: Request) -> dict:
     except DomainError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     manifest_data = bundle.get("manifest") or {}
-    if principal.address != manifest_data.get("founder_address"):
-        raise HTTPException(status_code=403, detail="founder_mismatch")
+    subject_claim = manifest_data.get("subject_id")
+    auth = gate.governance.get(subject_claim) if subject_claim else None
+    allowed = {
+        manifest_data.get("founder_address"),
+        auth.controller_address if auth else None,
+    }
+    if principal.address not in allowed:
+        raise HTTPException(status_code=403, detail="controller_mismatch")
     genesis_body = bundle.get("genesis_body") or {}
     domain_type = manifest_data.get("domain_type")
     try:
@@ -351,6 +439,23 @@ def import_domain(body: ImportDomainRequest, request: Request) -> dict:
         manifest = gate.domains.record_import(incoming, _host_node(request))
     if manifest.genesis_hash != genesis_hash:
         raise HTTPException(status_code=422, detail="genesis_hash_mismatch")
+    gate.governance.initialize(
+        subject_type=domain_type if domain_type != "organization" else "organization",
+        subject_id=subject_id,
+        domain_id=manifest.domain_id,
+        founder_address=manifest.founder_address,
+        parent_id=parent_id,
+    )
+    _anchor_domain(
+        request,
+        kind="org" if domain_type == "organization" else "group",
+        domain_id=manifest.domain_id,
+        content_hash=genesis_hash,
+        parent_id=parent_id,
+        issuer=principal.address,
+        issued_at=manifest.created_at,
+    )
+    manifest = gate.domains.get(manifest.domain_id) or manifest
     return {
         "imported": True,
         "subject_id": subject_id,
@@ -361,7 +466,7 @@ def import_domain(body: ImportDomainRequest, request: Request) -> dict:
             "node_owns_domain": False,
         },
         "parent_id": parent_id,
-        "commitment_anchored_on_chain": False,
+        "commitment_anchored_on_chain": manifest.commitment_anchored_on_chain,
     }
 
 
@@ -371,8 +476,12 @@ def add_domain_replica(domain_id: str, body: AddReplicaRequest, request: Request
     principal = gate.resolve(request, required=True)
     if not principal.address:
         raise HTTPException(status_code=401, detail="authentication_required")
+    manifest = gate.domains.get(domain_id)
+    if manifest is None:
+        raise HTTPException(status_code=404, detail="domain_not_found")
+    _assert_controller(gate, principal, manifest.subject_id)
     try:
-        manifest = gate.domains.add_replica(domain_id, body.node_id, principal.address)
+        manifest = gate.domains.add_replica(domain_id, body.node_id)
     except DomainForbidden as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except DomainError as exc:
@@ -382,6 +491,165 @@ def add_domain_replica(domain_id: str, body: AddReplicaRequest, request: Request
         "body_copied": False,
         "cest_a_dire": "Le nœud est autorisé à héberger. Le corps n'a pas été copié automatiquement.",
     }
+
+
+@router.post("/transfers/propose")
+def propose_control_transfer(body: TransferProposeRequest, request: Request) -> dict:
+    gate = _gate(request)
+    principal = gate.resolve(request, required=True)
+    subject_id = request.query_params.get("subject_id") or ""
+    if not subject_id:
+        raise HTTPException(status_code=422, detail="subject_id_required")
+    try:
+        tx = gate.governance.propose_transfer(
+            principal=principal,
+            subject_id=subject_id,
+            new_controller=body.new_controller,
+            reason=body.reason,
+            revoke_old=body.revoke_old,
+        )
+    except GovernanceForbidden as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except GovernanceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {
+        **tx.to_dict(),
+        "actor_certification": _actor_cert(principal),
+        "cest_a_dire": "Le Genesis et l'ORG_ID restent. Seule l'autorité active change après acceptation.",
+    }
+
+
+class TransferProposeWithSubject(TransferProposeRequest):
+    subject_id: str = Field(min_length=4)
+
+
+@router.post("/orgs/{organization_id}/transfer")
+def propose_org_transfer(organization_id: str, body: TransferProposeRequest, request: Request) -> dict:
+    gate = _gate(request)
+    principal = gate.resolve(request, required=True)
+    try:
+        tx = gate.governance.propose_transfer(
+            principal=principal,
+            subject_id=organization_id,
+            new_controller=body.new_controller,
+            reason=body.reason,
+            revoke_old=body.revoke_old,
+        )
+    except GovernanceForbidden as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except GovernanceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {**tx.to_dict(), "actor_certification": _actor_cert(principal)}
+
+
+@router.post("/groups/{group_id}/transfer")
+def propose_group_transfer(group_id: str, body: TransferProposeRequest, request: Request) -> dict:
+    gate = _gate(request)
+    principal = gate.resolve(request, required=True)
+    auth = gate.governance.get(group_id)
+    if auth and auth.subject_type == "subgroup":
+        parent = auth.parent_id
+        if parent:
+            org_auth = gate.governance.get(parent)
+            if org_auth and org_auth.subject_type == "organization":
+                pass
+    try:
+        tx = gate.governance.propose_transfer(
+            principal=principal,
+            subject_id=group_id,
+            new_controller=body.new_controller,
+            reason=body.reason,
+            revoke_old=body.revoke_old,
+        )
+    except GovernanceForbidden as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except GovernanceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {
+        **tx.to_dict(),
+        "parent_unchanged": True,
+        "actor_certification": _actor_cert(principal),
+        "cest_a_dire": "Transférer un groupe ne transfère pas l'ORG parente.",
+    }
+
+
+@router.post("/transfers/accept")
+def accept_control_transfer(body: TransferAcceptRequest, request: Request) -> dict:
+    gate = _gate(request)
+    principal = gate.resolve(request, required=True)
+    try:
+        tx = gate.governance.accept_transfer(principal=principal, tx_id=body.tx_id)
+    except GovernanceForbidden as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except GovernanceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    revoked = _revoke_stale_controller_access(gate, tx)
+    authority = gate.governance.get(tx.subject_id)
+    transfer_block = None
+    try:
+        transfer_block = anchor_control_transfer(_state(request).chain, tx=tx)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"transfer_anchor_failed:{type(exc).__name__}") from exc
+    return {
+        **tx.to_dict(),
+        "authority": authority.public_view() if authority else None,
+        "actor_certification": _actor_cert(principal),
+        "org_id_unchanged": True,
+        "revoked_stale_grants": revoked,
+        "public_audit": transfer_block,
+        "cest_a_dire": "L'ORG_ID et le Genesis restent. L'ancien contrôleur et ses agents perdent l'admin. Le réseau voit le hash du transfert, pas le corps.",
+    }
+
+
+@router.post("/transfers/cancel")
+def cancel_control_transfer(body: TransferAcceptRequest, request: Request) -> dict:
+    gate = _gate(request)
+    principal = gate.resolve(request, required=True)
+    try:
+        tx = gate.governance.cancel_transfer(principal=principal, tx_id=body.tx_id)
+    except GovernanceForbidden as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except GovernanceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {**tx.to_dict(), "actor_certification": _actor_cert(principal)}
+
+
+@router.post("/transfers/decline")
+def decline_control_transfer(body: TransferAcceptRequest, request: Request) -> dict:
+    gate = _gate(request)
+    principal = gate.resolve(request, required=True)
+    try:
+        tx = gate.governance.decline_transfer(principal=principal, tx_id=body.tx_id)
+    except GovernanceForbidden as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    except GovernanceError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {**tx.to_dict(), "actor_certification": _actor_cert(principal)}
+
+
+@router.get("/transfers")
+def list_control_transfers(
+    request: Request,
+    subject_id: str | None = Query(default=None),
+) -> dict:
+    rows = _gate(request).governance.list_transfers(subject_id)
+    latest: dict[str, dict[str, Any]] = {}
+    for tx in rows:
+        latest[tx.tx_id] = tx.to_dict()
+    return {
+        "transfers": list(latest.values()),
+        "count": len(latest),
+        "contains_private_data": False,
+        "unique_human_proven": False,
+    }
+
+
+@router.get("/orgs/{organization_id}/authority")
+def get_org_authority(organization_id: str, request: Request) -> dict:
+    auth = _gate(request).governance.get(organization_id)
+    if auth is None:
+        raise HTTPException(status_code=404, detail="authority_not_found")
+    return auth.public_view()
 
 
 class CanIRequest(BaseModel):
@@ -564,9 +832,41 @@ def _merge_indexed(gate, resource: ResourceRef) -> ResourceRef:
     )
 
 
+def _resource_matches_subject(resource, subject_id: str) -> bool:
+    return subject_id in {
+        resource.organization_id,
+        resource.group_id,
+        resource.subgroup_id,
+    }
+
+
+def _revoke_stale_controller_access(gate, tx) -> list[str]:
+    """219 §31.13/14: revoke old controller + their agents on this subject."""
+    if not getattr(tx, "revoke_old", True):
+        return []
+    revoked: list[str] = []
+    old = tx.old_controller
+    for pol in list(gate.policies.load()):
+        if not pol.active or pol.op != "GRANT":
+            continue
+        if not _resource_matches_subject(pol.resource, tx.subject_id):
+            continue
+        agent_of_old = pol.subject_kind == "agent" and pol.parent_subject == old
+        held_by_old = pol.subject == old
+        if not (agent_of_old or held_by_old):
+            continue
+        gate.policies.revoke(target_tx_id=pol.tx_id, issuer=tx.new_controller)
+        revoked.append(pol.tx_id)
+    if revoked:
+        gate.reload()
+    return revoked
+
+
 def _group_admin(gate, address: str | None, resource: ResourceRef) -> bool:
     if not address:
         return False
+    if gate._is_subject_controller(address, resource):
+        return True
     for gid in (resource.subgroup_id, resource.group_id):
         if not gid:
             continue
@@ -574,6 +874,13 @@ def _group_admin(gate, address: str | None, resource: ResourceRef) -> bool:
         if not group or group.dissolved:
             continue
         for member in group.members:
-            if member.address == address and member.role in ("founder", "admin"):
+            # Historical founder role is not enough after a control transfer.
+            if member.address == address and member.role == "admin":
+                return True
+            if (
+                member.address == address
+                and member.role == "founder"
+                and gate.governance.is_controller(address, gid)
+            ):
                 return True
     return False
