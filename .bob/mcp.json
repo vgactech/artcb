@@ -1,13 +1,17 @@
 {
   "mcpServers": {
     "artcb-blockchain": {
-      "command": "python",
-      "args": ["-m", "src.artcb.mcp.server"],
+      "command": "doppler",
+      "args": ["run", "--", "python", "-m", "src.artcb.mcp.server"],
       "env": {
-        "ARTCB_API_URL": "http://localhost:8000",
-        "PYTHONPATH": "${workspaceFolder}"
+        "PYTHONPATH": "/Users/deyi/.bob/playground"
       },
-      "description": "ARTCB Blockchain — mémoire IA immuable post-quantique (PoL + ML-DSA-65)"
+      "description": "ARTCB Blockchain — mémoire IA immuable post-quantique (PoL + ML-DSA-65). Secrets injectés via Doppler."
+    },
+    "doppler": {
+      "command": "npx",
+      "args": ["-y", "@dopplerhq/mcp-server"],
+      "description": "Doppler secrets manager — accès aux secrets du projet artcb-blockchain/dev. Token via: doppler configure set token <dp.st.dev...>"
     }
   }
 }
