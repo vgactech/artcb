@@ -249,6 +249,62 @@ def verify_signature(body: VerifyRequest, request: Request) -> dict:
     return issue_session(wallet_name=wallet_name, address=body.address)
 
 
+@router.get("/me", summary="Identité de la session courante (user, pas opérateur)")
+def auth_me(
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> dict:
+    """Who is calling: human session, agent under session, or nobody.
+
+    Operator ``artcb_`` keys are not a user. Use ``/api/v1/api-keys/me`` for those.
+    """
+    agent_id = (request.headers.get("x-artcb-agent-id") or "").strip() or None
+    if not authorization or not authorization.startswith("Bearer "):
+        return {
+            "authenticated": False,
+            "kind": "anonymous",
+            "address": None,
+            "wallet_name": None,
+            "agent_id": agent_id,
+            "is_user": False,
+            "is_operator": False,
+        }
+    raw = authorization.removeprefix("Bearer ").strip()
+    if raw.startswith("sess_"):
+        record = require_session(request, authorization)
+        kind = "agent" if agent_id else "human"
+        return {
+            "authenticated": True,
+            "kind": kind,
+            "address": record.get("address"),
+            "wallet_name": record.get("wallet_name"),
+            "agent_id": agent_id,
+            "parent_address": record.get("address") if kind == "agent" else None,
+            "is_user": True,
+            "is_operator": False,
+            "unique_human_proven": bool(record.get("unique_human_proven")),
+            "expires_at": record.get("expires_at"),
+        }
+    if raw.startswith("artcb_"):
+        return {
+            "authenticated": True,
+            "kind": "operator_or_api_key",
+            "address": None,
+            "wallet_name": None,
+            "agent_id": agent_id,
+            "is_user": False,
+            "is_operator": True,
+            "hint": "Bearer artcb_ n'est pas une session humaine. POST /auth/login.",
+        }
+    return {
+        "authenticated": False,
+        "kind": "unrecognized",
+        "address": None,
+        "is_user": False,
+        "is_operator": False,
+    }
+
+
 @router.post("/logout", summary="Déconnecter la session courante")
 def logout(
     authorization: Annotated[str | None, Header()] = None,

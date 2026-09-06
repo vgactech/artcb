@@ -4,7 +4,7 @@
       "command": "doppler",
       "args": ["run", "--", "python", "-m", "src.artcb.mcp.server"],
       "env": {
-        "PYTHONPATH": "/Users/deyi/.bob/playground"
+        "PYTHONPATH": "${workspaceFolder}"
       },
       "description": "ARTCB Blockchain — mémoire IA immuable post-quantique (PoL + ML-DSA-65). Secrets injectés via Doppler."
     },

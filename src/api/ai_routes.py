@@ -33,7 +33,7 @@ import httpx
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
-from src.api.api_keys_routes import verify_api_key, require_scope
+from src.api.api_keys_routes import verify_api_key, require_scope, require_write_actor
 from src.artcb.privacy import egress
 
 logger = logging.getLogger("artcb.api.ai")
@@ -307,7 +307,7 @@ class MemoRequest(BaseModel):
 def ai_memo(
     body: MemoRequest,
     request: Request,
-    key_record: Annotated[dict | None, Depends(require_scope("write"))] = None,
+    key_record: Annotated[dict | None, Depends(require_write_actor)] = None,
 ) -> dict:
     """
     Grave une observation structurée de l'agent IA dans un bloc PoL immuable.
@@ -316,11 +316,16 @@ def ai_memo(
     puis encodé en graphe IR → validé PoL → signé → bloc gravé.
 
     Chaque memo est récupérable via GET /api/v1/chain/search?q=<terme>.
+    Une session ``sess_`` identifie le user ; ``X-ARTCB-Agent-Id`` marque l'agent.
     """
     state = _state(request)
 
     # Construire un texte structuré pour l'encodage IR
-    agent_id = key_record["label"] if key_record else "agent_anonymous"
+    agent_id = (
+        (key_record or {}).get("agent_id")
+        or (key_record or {}).get("label")
+        or "agent_anonymous"
+    )
 
     # P0-3 — utiliser le wallet auto si aucun wallet explicite fourni
     if not body.wallet_name and key_record and key_record.get("auto_wallet"):
@@ -358,7 +363,7 @@ def ai_memo(
     from src.artcb.ir.models import sha256_text
     graph_root = sha256_text(graph.checksum).replace("sha256:", "")
 
-    # Wallet
+    # Wallet — session address is enough to attribute the memo to a real user
     actor = None
     wallet = None
     if body.wallet_name:
@@ -368,6 +373,8 @@ def ai_memo(
             actor = wallet.address
         except Exception:
             pass
+    if actor is None and key_record and key_record.get("address"):
+        actor = key_record.get("address")
 
     # Construire les contributors
     contributors = None
@@ -391,6 +398,7 @@ def ai_memo(
         "session_id": body.session_id,
         "tags": ",".join(body.tags),
         "memo_type": body.memo_type,
+        "principal_kind": str((key_record or {}).get("kind") or "anonymous"),
     }
     # P1-1 — lien parent→enfant (bug→fix)
     if body.parent_block_index is not None:
@@ -431,6 +439,9 @@ def ai_memo(
         "pol_score": 0.75,
         "memo_type": body.memo_type,
         "agent_id": agent_id,
+        "actor_address": actor,
+        "principal_kind": (key_record or {}).get("kind") or "anonymous",
+        "visibility": body.visibility,
         "node_count": len(graph.nodes),
         "message": f"Observation gravée en bloc #{block.index} — immuable ML-DSA-65",
     }
@@ -455,7 +466,7 @@ class ThinkRequest(BaseModel):
 def ai_think(
     body: ThinkRequest,
     request: Request,
-    key_record: Annotated[dict | None, Depends(require_scope("write"))] = None,
+    key_record: Annotated[dict | None, Depends(require_write_actor)] = None,
 ) -> dict:
     """
     L'agent IA soumet une question/problème → ARTCB lance le pipeline

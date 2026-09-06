@@ -1408,3 +1408,22 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - OVH2 : API OpenStack OK, clé privée absente de Doppler ; rescue n’accepte que la clé `artcb-ovh-node-2`. Snapshot Glance `artcb-ovh2-keepbook-203` créé. Ne pas reinstall. OVH4 : pas de `KEY_API_ARTCB_DOPPLER_4`.
 - `OPERATOR_MAINNET_CERTIFICATION_GO` reste **False**. 90 TPS = labo. Campagnes : machine / WAN / chaîne locale / distribué.
 - Rapport : `rapports/203_mainnet_homogenize_bench_2026-09-02.md`.
+
+## [2026-09-06T21:20:00Z] Rapports 223–232 (rang 6) + user auto-dev 233
+
+- Depuis `8a751e8` (222) le distant n'a poussé **aucun** correctif de tip : seulement
+  058/Bob MCP + transcripts `rapports/rapports/223`…`232`.
+- **223–226** : gouvernance ORG (déjà 220) ; L ≠ droits fondateur ; L producteur **non live**.
+- **227–229** : V-01-B = keep-book sur `e68563e` ≠ code 222/`8a751e8` ≠ main docs `8d76a23`.
+  Receive=pull **décision** oui, **transport** non. 96,4 % ≠ certification.
+  PYTHONPATH Bob `/Users/deyi/.bob/playground` → `${workspaceFolder}` (233).
+- **230–232** : validité ≠ utilité ; PoUC ; KCG. **Ne pas coder.** Formaliser d'abord.
+- **233** : ARTCB comme user auto-dev réel.
+  - Opérateur `artcb_` ≠ humain `sess_` ≠ agent (`sess_` + `X-ARTCB-Agent-Id`).
+  - `GET /api/v1/auth/me` ; `require_write_actor` sur `/ai/memo` et `/ai/think`.
+  - MCP : `artcb_whoami` / `artcb_login` / `artcb_autodev_record` ; payload `content=`.
+  - Mémos **private**. Pas d'ORG par l'agent (403). Pas de tip public.
+  - T-E49 `tests/test_e2e233_autodev_user.py`. Script `scripts/artcb_autodev_user.py`.
+- Interdit inchangé : wipe, D-0xx sans GO, certif, V-01-B producteur sans GO, clé OVH1
+  vers Doppler 2/3/4, inventer SHA/solde/Settlement.
+- Contact : `official@artcb.space`. Halving retiré du prompt MCP (D-024).
