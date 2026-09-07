@@ -123,7 +123,7 @@ test_e2e247_go_k_concept_memory
 test_e2e248_go_m_node_reputation
 ```
 
-Lot B+D+E après correctif : GO-B 5 passed ; GO-D 4 passed + 4 skipped (ML-KEM) ; GO-E 22 passed. Ce n’est **pas** la suite complète 897.
+Lot B+D+E après correctif : GO-B 5 passed ; GO-D 3 passed + 5 skipped (ML-KEM) ; GO-E 22 passed. Ce n’est **pas** la suite complète 897.
 
 ---
 
