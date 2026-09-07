@@ -19,6 +19,7 @@ if str(ROOT / "src") not in sys.path:
 
 from artcb.live import (  # noqa: E402
     apply_key_to_environ,
+    compact_memory_snapshot,
     fetch_doppler_secret,
     http_json,
     pull_remote_agent_env,
@@ -57,6 +58,20 @@ def main() -> int:
         me_code, me = http_json("GET", f"{url}/api/v1/api-keys/me", api_key=key)
     econ_code, econ = http_json("GET", f"{url}/api/v1/economics/params")
     proto_code, proto = http_json("GET", f"{url}/api/v1/mining/protocol/status")
+    chain_code, chain = http_json("GET", f"{url}/api/v1/chain/status")
+    mem_code, memory = (0, {})
+    kcg_code, kcg_stats = (0, {})
+    ctx_code, context = (0, {})
+    if key:
+        mem_code, memory = http_json("GET", f"{url}/api/v1/ai/memory?limit=5", api_key=key)
+        kcg_code, kcg_stats = http_json("GET", f"{url}/api/v1/kcg/stats", api_key=key)
+        ctx_code, context = http_json("GET", f"{url}/api/v1/ai/context?limit=3", api_key=key)
+    memory_snap = compact_memory_snapshot(
+        chain=chain if isinstance(chain, dict) else {},
+        memory=memory if isinstance(memory, dict) else {},
+        kcg_stats=kcg_stats if isinstance(kcg_stats, dict) else {},
+        context=context if isinstance(context, dict) else {},
+    )
 
     status = {
         "ok": health_code == 200,
@@ -73,6 +88,11 @@ def main() -> int:
         "economics_http": econ_code,
         "protocol_http": proto_code,
         "h_adult": proto.get("h_adult") if isinstance(proto, dict) else None,
+        "chain_http": chain_code,
+        "ai_memory_http": mem_code,
+        "kcg_http": kcg_code,
+        "ai_context_http": ctx_code,
+        **memory_snap,
         "token_printed": False,
     }
     write_bootstrap_stamp(
@@ -83,6 +103,7 @@ def main() -> int:
             "node_identity": health.get("service") if isinstance(health, dict) else None,
             "api_key_id": me.get("key_id") if isinstance(me, dict) else None,
             "scopes": me.get("scopes") if isinstance(me, dict) else None,
+            **memory_snap,
         }
     )
     print(json.dumps(status, indent=2))

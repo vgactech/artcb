@@ -286,6 +286,38 @@ def assert_live_transport(url: str, *, sending_bearer: bool) -> None:
         raise LiveSecurityError(f"ARTCB_LIVE_REQUIRED forbids localhost URL {url}")
 
 
+def compact_memory_snapshot(
+    *,
+    chain: dict[str, Any] | None = None,
+    memory: dict[str, Any] | None = None,
+    kcg_stats: dict[str, Any] | None = None,
+    context: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Compact live-memory fields for bootstrap JSON. Never includes tokens."""
+    chain = chain if isinstance(chain, dict) else {}
+    memory = memory if isinstance(memory, dict) else {}
+    kcg_stats = kcg_stats if isinstance(kcg_stats, dict) else {}
+    context = context if isinstance(context, dict) else {}
+    memos = memory.get("memos") if isinstance(memory.get("memos"), list) else []
+    last = memos[0] if memos and isinstance(memos[0], dict) else {}
+    prompt = context.get("prompt_ready") if isinstance(context.get("prompt_ready"), str) else ""
+    return {
+        "chain_height": chain.get("height"),
+        "last_hash": chain.get("last_hash"),
+        "last_index": chain.get("last_index"),
+        "chain_valid": chain.get("chain_valid"),
+        "ai_memory_count": memory.get("count"),
+        "last_memo_index": last.get("block_index"),
+        "last_memo_type": last.get("memo_type"),
+        "last_memo_graph_id": last.get("graph_id"),
+        "kcg_knowledge_count": kcg_stats.get("knowledge_count"),
+        "kcg_consults": kcg_stats.get("total_consults"),
+        "kcg_uses": kcg_stats.get("total_uses"),
+        "ai_context_memos": context.get("total_ai_memos"),
+        "ai_context_prompt_head": prompt[:240],
+    }
+
+
 def write_bootstrap_stamp(payload: dict[str, Any]) -> Path:
     dest = Path.home() / ".artcb" / "bootstrap_ok.json"
     dest.parent.mkdir(mode=0o700, exist_ok=True)

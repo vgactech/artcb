@@ -8,8 +8,10 @@ alwaysApply: true
 Au **début de chaque tâche**, avant d’inventer un état de chaîne :
 
 1. Exécuter `PYTHONPATH=src python3 scripts/artcb_live_bootstrap.py`
-2. Lire le JSON (jamais une clé `artcb_…`)
-3. Utiliser `ARTCB_API_URL` + `ARTCB_API_KEY` déjà exportés pour tout appel réel
+2. Lire le JSON (jamais une clé `artcb_…`) — y compris `chain_height`, `last_hash`, `ai_memory_count`, `kcg_knowledge_count`
+3. Si `ai_memory_count` > 0 : `GET /api/v1/ai/memo/{last_memo_index}` + `GET /api/v1/ai/context` **avant** de reconstruire depuis le chat
+4. Utiliser `ARTCB_API_URL` + `ARTCB_API_KEY` déjà exportés pour tout appel réel
+5. Connaissance nouvelle d’agent : `POST /api/v1/ai/memo` (pas un `/store` « write N ») puis `POST /kcg/publish`
 
 Nœud live **actuel** (compute) : health `http://152.228.144.34:8000` ; Bearer `https://152.228.144.34:8443`. SSH `ubuntu@152.228.144.34` = **ovh-node-1**.
 

@@ -1506,3 +1506,13 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - `/store` 500 sur retry ; `/ir/learn` 422 throttle 60 s (41.9 s). GO-E produce off.
 - Contact : `official@artcb.space`. Pas de D-0xx.
 
+## [2026-09-07T20:51:00Z] Rapport 248 — boucle mémoire live (pas le chat)
+
+- Avant : `/ai/memory` = 0, KCG = 0, search D-024 = faux positif « Rapport 247 ».
+- `POST /ai/memo` lesson public → bloc **8** `623d6e7875e5ab24ffc12d2d7978aa0485ab77aa63070217f0438144df93a69a`
+  graph `ai_memo_05a709e390c3`. KCG `K_0b844c034302754d` consult+use.
+- Après : memory=1, context « 9 blocs / 1 mémo », search « continuite » score 1.0, `/ai/memo/8` relit le texte.
+- Bootstrap + règle : lire `ai_memory_count` / `GET /ai/memo/{index}` avant de reconstruire.
+- Pairs 2/3/4 restent `27350024`. SHA live encore `c1d8027` jusqu’au follow-main.
+- Contact : `official@artcb.space`. Pas de D-0xx.
+

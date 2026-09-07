@@ -79,3 +79,7 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
 - Rapport 247 : livre écrit. OVH1 height 8 tip `f646c510…` (idx 5–7
   `cbff6e66` / `a9e411c3` / `f646c510`). Pairs 2/3/4 restent `27350024`
   (import 222). Wipe non. GO-E produce off. SHA `c1d8027` = `origin/main`.
+- Rapport 248 : `/ai/memo` + KCG utilisés en live. Avant = 0 mémo / 0 K.
+  Bloc 8 `623d6e78…` `ai_memo_05a709e390c3` `K_0b844c03`. Bootstrap lit
+  désormais `/ai/memory` + `/kcg/stats`. Search MVP = SequenceMatcher
+  (faux positifs). KCG local, pas répliqué. Pas de D-0xx.
