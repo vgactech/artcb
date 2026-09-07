@@ -272,4 +272,5 @@
 | T-E47 | `pytest tests/test_e2e221_commitment_convergence.py tests/test_e2e220_org_governance.py tests/test_e2e176_sync_500.py` | Convergence tip public DOMAIN_COMMITMENT/ORG_CONTROL_TRANSFER ; sel anti-dictionnaire ; transfert sans adresses nues ; un seul propose pending | [x] | 2026-09-05 53 passed / 1 skipped local ; live `32a378d` ×4 certified ; 4/4 `last_hash=27350024…` digest identique |
 | T-E48 | `pytest tests/test_e2e222_tip_resilience.py` | Import P2P déterministe (receive=pull) ; G duplicate / H prev_hash / I index / J hash / K event / M fork local | [x] | 2026-09-05 17 passed ; V-01-B live e68563e OVH1 stop, 2/3/4 gardent `27350024…` |
 | T-E49 | `pytest tests/test_e2e233_autodev_user.py tests/test_mcp_server.py` | User auto-dev : sess_ + agent ; opérateur ≠ user ; agent 403 ORG ; mémo privé attribué à l'adresse ; MCP content= | [x] | 2026-09-06 |
+| T-E50 | `pytest tests/test_e2e236_org_node_roles.py tests/test_e2e218_domain_registry.py` | HOST ≠ REPLICA ≠ CONSENSUS ; liste authorized_nodes ≠ certificat ; add_replica ne copie pas le BODY ; TRANSFER_OWNERSHIP humain | [x] | 2026-09-07 |
 

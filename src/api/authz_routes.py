@@ -80,6 +80,16 @@ class CreateOrgRequest(BaseModel):
 
 class AddReplicaRequest(BaseModel):
     node_id: str = Field(min_length=1, max_length=128)
+    role: str = Field(default="HOST_ONLY")
+
+
+class IssueNodeCertRequest(BaseModel):
+    node_id: str = Field(min_length=1, max_length=128)
+    node_public_key_hex: str = Field(min_length=16, max_length=128)
+    role: str = Field(default="HOST_ONLY")
+    valid_until: str | None = None
+    wallet_password: str = Field(min_length=8)
+    node_possession_proof: str | None = None
 
 
 class ImportDomainRequest(BaseModel):
@@ -500,16 +510,98 @@ def add_domain_replica(domain_id: str, body: AddReplicaRequest, request: Request
         raise HTTPException(status_code=404, detail="domain_not_found")
     _assert_controller(gate, principal, manifest.subject_id)
     try:
-        manifest = gate.domains.add_replica(domain_id, body.node_id)
+        manifest = gate.domains.add_replica(domain_id, body.node_id, role=body.role)
     except DomainForbidden as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except DomainError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     return {
         "domain": manifest.public_view(),
         "body_copied": False,
-        "cest_a_dire": "Le nœud est autorisé à héberger. Le corps n'a pas été copié automatiquement.",
+        "declared_role": (body.role or "HOST_ONLY").upper(),
+        "certified": False,
+        "cest_a_dire": (
+            "Le nœud est autorisé à héberger. Le corps n'a pas été copié. "
+            "authorized_nodes n'est pas un certificat. CONSENSUS exige POST /node-certificates."
+        ),
     }
+
+
+@router.post("/domains/{domain_id}/node-certificates")
+def issue_domain_node_certificate(domain_id: str, body: IssueNodeCertRequest, request: Request) -> dict:
+    from src.artcb.authz.node_cert import (
+        NodeCertError,
+        issue_node_certificate,
+        verify_node_possession,
+    )
+    from src.artcb.wallet.manager import WalletManager
+
+    gate = _gate(request)
+    principal = gate.resolve(request, required=True)
+    if not principal.address:
+        raise HTTPException(status_code=401, detail="authentication_required")
+    manifest = gate.domains.get(domain_id)
+    if manifest is None:
+        raise HTTPException(status_code=404, detail="domain_not_found")
+    _assert_controller(gate, principal, manifest.subject_id)
+    wallet_name = principal.wallet_name or ""
+    if not wallet_name:
+        raise HTTPException(status_code=401, detail="wallet_name_required")
+    try:
+        wallet = WalletManager().load_wallet(name=wallet_name, user_password=body.wallet_password)
+    except Exception:
+        raise HTTPException(status_code=401, detail="wallet_unlock_failed") from None
+    if wallet.address != principal.address:
+        raise HTTPException(status_code=403, detail="wallet_address_mismatch")
+    cert = issue_node_certificate(
+        wallet.signing_key,
+        domain_id=manifest.domain_id,
+        node_id=body.node_id,
+        node_public_key_hex=body.node_public_key_hex,
+        role=body.role,
+        founder_address=manifest.founder_address,
+        genesis_hash=manifest.genesis_hash,
+        valid_until=body.valid_until,
+    )
+    if body.node_possession_proof:
+        try:
+            verify_node_possession(cert, body.node_possession_proof)
+        except NodeCertError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+    try:
+        manifest = gate.domains.store_node_certificate(domain_id, cert)
+    except NodeCertError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except DomainError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {
+        "certified": True,
+        "certificate": {
+            "node_id": cert["node_id"],
+            "role": cert["role"],
+            "capabilities": cert["capabilities"],
+            "payload_hash": cert["payload_hash"],
+            "list_entry_is_not_proof": True,
+        },
+        "domain": manifest.public_view(),
+        "body_copied": False,
+        "cest_a_dire": "Le fondateur a signé ce nœud et ce rôle. Ce n'est pas une copie du Genesis BODY.",
+    }
+
+
+@router.get("/domains/{domain_id}/nodes/{node_id}")
+def domain_node_authorization(domain_id: str, node_id: str, request: Request) -> dict:
+    gate = _gate(request)
+    manifest = gate.domains.get(domain_id)
+    if manifest is None:
+        raise HTTPException(status_code=404, detail="domain_not_found")
+    hosted = _hosted_here(gate, manifest) and node_id == _host_node(request)
+    try:
+        return gate.domains.node_authorization(domain_id, node_id, body_present=hosted)
+    except DomainError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @router.post("/transfers/propose")
