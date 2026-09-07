@@ -1491,3 +1491,9 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Pas de push `main`, pas de SSH restart, pas de packet ConceptID inter-nœuds (pas de route).
 - Contact : `official@artcb.space`.
 
+## [2026-09-07T19:55:00Z] Codex PR #59 — slogan pull + totaux GO-D + matrice 244
+
+- Status P2P : header KEM ≠ confidentialité ; fallback clair + `encrypt_error` dit.
+- 244 : GO-D = **3 passed / 5 skipped** (plus de 4/4). Matrice protocole ajoutée §9.
+- Pas de D-0xx. Live inchangé `2696f2e`.
+
