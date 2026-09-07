@@ -17,6 +17,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -30,6 +31,12 @@ NODES = {
 SKIP_GET_PREFIXES = (
     "/setup/init-node",
 )
+# These never return (SSE / long-poll) or require params.
+SKIP_GET_EXACT = {
+    "/api/v1/ai/events",
+    "/api/v1/ai/ingest/file",
+    "/api/v1/chain/search",
+}
 CTX = ssl._create_unverified_context()
 
 
@@ -37,7 +44,7 @@ def _key() -> str:
     return (os.environ.get("ARTCB_API_KEY") or "").strip()
 
 
-def hit(url: str, *, method: str = "GET", body: dict | None = None, auth: bool = False, timeout: int = 20) -> dict:
+def hit(url: str, *, method: str = "GET", body: dict | None = None, auth: bool = False, timeout: int = 8) -> dict:
     headers = {"Accept": "application/json"}
     if auth:
         key = _key()
@@ -124,6 +131,8 @@ def openapi_gets(base: str) -> list[str]:
             continue
         if any(path.startswith(p) for p in SKIP_GET_PREFIXES):
             continue
+        if path in SKIP_GET_EXACT:
+            continue
         paths.append(path)
     return sorted(set(paths))
 
@@ -151,14 +160,22 @@ def main() -> int:
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     payload: dict = {"stamp": stamp, "nodes": {}, "memo": None, "concepts": None, "token_printed": False}
     for nid, base in NODES.items():
+        print(f"PROBE {nid}", flush=True)
         gets = openapi_gets(base)
-        rows = [hit(f"{base}{p}") for p in gets]
-        rows.append(hit(f"{base}/api/v1/chain/block/0"))
-        rows.append(hit(f"{base}/api/v1/chain/block/4"))
-        rows.append(hit(f"{base}/api/v1/chain/block/1073"))
-        rows.append(hit(f"{base}/api/v1/chain/search?q=continuite"))
-        rows.append(hit(f"{base}/api/v1/ai/ingest/file?path=src/artcb/chain/manager.py"))
-        rows.append(hit(f"{base}/api/v1/p2p/replica/blocks"))
+        targets = [f"{base}{p}" for p in gets]
+        targets += [
+            f"{base}/api/v1/chain/block/0",
+            f"{base}/api/v1/chain/block/4",
+            f"{base}/api/v1/chain/block/1073",
+            f"{base}/api/v1/chain/search?q=continuite",
+            f"{base}/api/v1/ai/ingest/file?path=src/artcb/chain/manager.py",
+            f"{base}/api/v1/p2p/replica/blocks",
+        ]
+        rows: list[dict] = []
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            futs = [pool.submit(hit, url) for url in targets]
+            for fut in as_completed(futs):
+                rows.append(fut.result())
         extra = [
             hit(f"{base}/api/v1/encode", method="POST", body={"text": "Le livre public doit se propager."}),
             hit(
@@ -167,15 +184,17 @@ def main() -> int:
                 body={"query": "propagation publique", "top_k": 3},
             ),
         ]
+        all_rows = rows + extra
         payload["nodes"][nid] = {
             "base": base,
             "get_paths": len(gets),
-            "summary": summarize(rows + extra),
+            "summary": summarize(all_rows),
             "chain": hit(f"{base}/api/v1/chain/status"),
             "health": hit(f"{base}/health"),
-            "fails": [r for r in rows + extra if not r.get("ok")][:40],
-            "slowest": sorted(rows + extra, key=lambda r: int(r.get("dur_ns") or 0), reverse=True)[:8],
+            "fails": [r for r in all_rows if not r.get("ok")][:40],
+            "slowest": sorted(all_rows, key=lambda r: int(r.get("dur_ns") or 0), reverse=True)[:8],
         }
+        print(f"DONE {nid} {payload['nodes'][nid]['summary']}", flush=True)
     if ROOT.joinpath("src").is_dir():
         sys.path.insert(0, str(ROOT / "src"))
         try:
