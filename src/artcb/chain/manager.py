@@ -272,6 +272,9 @@ class ChainManager:
         ``require_public=True`` is the anonymous P2P importer.
         Official replica calls this with ``require_public=False``.
         """
+        from src.artcb.trace.ns import now_mono_ns
+
+        t_import = now_mono_ns()
         if require_public and block.get("visibility") != "public":
             return False
         existing = self._read_all_blocks()
@@ -313,6 +316,21 @@ class ChainManager:
             block.get("visibility"),
             str(block.get("hash") or "")[:16],
         )
+        try:
+            from src.artcb.trace.ns import emit, now_mono_ns
+
+            emit(
+                self.blocks_path.parent.parent,
+                {
+                    "kind": "chain_import",
+                    "index": block.get("index"),
+                    "visibility": block.get("visibility"),
+                    "dur_ns": now_mono_ns() - t_import,
+                    "ok": True,
+                },
+            )
+        except Exception:
+            pass
         return True
 
     def import_extending_public_block(self, block: dict) -> bool:
@@ -335,6 +353,9 @@ class ChainManager:
         verified_humans: float | None = None,
         h_adult: float | None = None,
     ) -> ChainBlock:
+        from src.artcb.trace.ns import emit, now_mono_ns
+
+        t_append = now_mono_ns()
         all_blocks = self._read_all_blocks()
         index = len(all_blocks)
         timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -517,6 +538,20 @@ class ChainManager:
             "Appended block index=%d hash=%s sha3=%s reward=%d contributors=%d hybrid=%s",
             index, block_hash, hash_sha3[:16], block_reward, len(final_contributors), self.is_hybrid,
         )
+        try:
+            emit(
+                self.blocks_path.parent.parent,
+                {
+                    "kind": "chain_append",
+                    "index": index,
+                    "visibility": visibility,
+                    "source": source,
+                    "dur_ns": now_mono_ns() - t_append,
+                    "ok": True,
+                },
+            )
+        except Exception:
+            pass
         return block
 
     def _issued_so_far_satoshi(self) -> int:

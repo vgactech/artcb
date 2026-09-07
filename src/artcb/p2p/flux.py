@@ -25,7 +25,11 @@ def now_iso() -> str:
 
 
 def append_flux(data_dir: Path, row: dict[str, Any]) -> dict[str, Any]:
-    record = {"ts": now_iso(), **row}
+    import time
+
+    record = {"ts": now_iso(), "ts_ns": time.time_ns(), **row}
+    if isinstance(row.get("rtt_ms"), (int, float)) and "rtt_ns" not in record:
+        record["rtt_ns"] = int(float(row["rtt_ms"]) * 1_000_000)
     path = flux_path(data_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:

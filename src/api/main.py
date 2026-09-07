@@ -121,6 +121,49 @@ def create_app() -> FastAPI:
     state = build_app_state()
     app.state.artcb = state
 
+    @app.middleware("http")
+    async def nanosecond_http_trace(request, call_next):
+        """Every request, including the book routes. Latency is the measurement."""
+        from src.artcb.trace.ns import emit, now_mono_ns
+
+        t0 = now_mono_ns()
+        status = 0
+        ok = False
+        try:
+            response = await call_next(request)
+            status = int(response.status_code)
+            ok = status < 500
+            dur = now_mono_ns() - t0
+            response.headers["X-ARTCB-Trace-Ns"] = str(dur)
+            data_dir = getattr(getattr(request.app.state, "artcb", None), "settings", None)
+            emit(
+                getattr(data_dir, "data_dir", None),
+                {
+                    "kind": "http",
+                    "method": request.method,
+                    "path": request.url.path,
+                    "dur_ns": dur,
+                    "http": status,
+                    "ok": ok,
+                },
+            )
+            return response
+        except Exception:
+            dur = now_mono_ns() - t0
+            data_dir = getattr(getattr(request.app.state, "artcb", None), "settings", None)
+            emit(
+                getattr(data_dir, "data_dir", None),
+                {
+                    "kind": "http",
+                    "method": request.method,
+                    "path": request.url.path,
+                    "dur_ns": dur,
+                    "http": status or 500,
+                    "ok": False,
+                },
+            )
+            raise
+
     # Routes /setup/* — toujours montées (état bootstrap ou non)
     app.include_router(setup_router)
     app.include_router(network_router)
@@ -347,6 +390,9 @@ def create_app() -> FastAPI:
     app.include_router(libp2p_router)
     app.include_router(privacy_router)
     app.include_router(kcg_router)  # GO-F : KCG events CONSULT/USE
+    from src.api.trace_routes import router as trace_router
+
+    app.include_router(trace_router)
     logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
 
     @app.get("/live")
