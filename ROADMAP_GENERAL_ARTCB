@@ -383,6 +383,21 @@
 
 ---
 
+## Phase 15 — GOs Réseau + IR Binaire (2026-09-07 →)
+
+> **Référence :** `rapports/240_go_b_d_i_implementation_20260907.md`
+
+| Jalon | Livrable | Critère | Statut | Priorité |
+|-------|----------|---------|--------|---------|
+| GO-B | Pull P2P chiffré ML-KEM-768 + `from_node_id` lié clé | `X-ARTCB-KEM-Public-Key` header + déchiffrement + rétrocompat | [x] ✅ rapport 239+240 | P0 |
+| GO-D | Réplication privée auto BODY ORG | `BodyReplicationService` + canonical_hash + chmod 0600 | [x] ✅ rapport 240 | P0 |
+| GO-I | IR binaire natif + zstd | `src/artcb/ir/binary.py` — magic ARCB + json/gzip/msgpack/zstd | [x] ✅ rapport 240 | P1 |
+| GO-E | V-01-B producteur live failover | `ProducerMonitor` + élection XOR déterministe + grace period | [x] ✅ rapport 241 | P1 |
+| GO-K | ConceptID natif + mémoire binaire cross-session | `ir/concept.py` + `memory/concept_store.py` + `memory/agent_channel.py` — §28/§29/§30/§31 rapport 238 | [x] ✅ rapport 242 | P1 |
+| GO-M | À définir (après GO-E) | Nouvelle fonctionnalité — spec en attente | [ ] ⏳ | P2 |
+
+---
+
 ## Phase 6 — Extensions (P1/P2 — post-hackathon) ✅
 
 - [x] Connecteurs IA utilisateur (OpenAI, Claude, Bob, Google AI, Manus) — v1.3+

@@ -300,10 +300,54 @@ def get_public_blocks(
     request: Request,
     from_index: int = Query(0, ge=0),
 ) -> dict:
-    """Liste blocs publics locaux — endpoint pull devnet."""
+    """Liste blocs publics locaux — endpoint pull P2P.
+
+    GO-B 2026-09-07 : si le header X-ARTCB-KEM-Public-Key est présent,
+    la réponse est chiffrée ML-KEM-768 + AES-256-GCM (même mécanique que le push).
+    Le from_node_id est lié à la clé KEM du demandeur (pas auto-déclaré).
+
+    Sans header → réponse en clair (rétrocompatibilité devnet).
+    Avec header  → réponse chiffrée : {"envelope": {...}, "encrypted": true}
+    """
+    from src.artcb.crypto.kem import encrypt_payload, KEMError, MLKEM768_PUBLIC_BYTES
+    import json as _json
+
     sync = _state(request).p2p_sync
     blocks = sync.get_public_blocks(from_index=from_index)
-    return {"blocks": blocks, "count": len(blocks), "from_index": from_index}
+
+    requester_kem_hex = request.headers.get("X-ARTCB-KEM-Public-Key", "").strip()
+    requester_node_id = request.headers.get("X-ARTCB-Node-Id", "unknown").strip()
+
+    if not requester_kem_hex:
+        # Rétrocompatibilité : pull en clair (devnet / anciens nœuds)
+        logger.debug("P2P pull GET /blocks/public en clair (pas de X-ARTCB-KEM-Public-Key)")
+        return {"blocks": blocks, "count": len(blocks), "from_index": from_index, "encrypted": False}
+
+    # GO-B : chiffrer la réponse avec la clé KEM du demandeur
+    try:
+        peer_pk = bytes.fromhex(requester_kem_hex)
+        if len(peer_pk) != MLKEM768_PUBLIC_BYTES:
+            raise ValueError(f"KEM public key invalide : {len(peer_pk)} bytes (attendu {MLKEM768_PUBLIC_BYTES})")
+        state = _state(request)
+        payload = _json.dumps({
+            "blocks": blocks,
+            "network_id": state.p2p_sync.identity.network_id,
+            "from_node_id": state.p2p_sync.identity.node_id,
+            "from_kem_public_key_hex": state.p2p_sync.identity.kem_public_key_hex,
+        }, ensure_ascii=False).encode("utf-8")
+        envelope = encrypt_payload(payload, peer_pk)
+        # Lier from_node_id au demandeur (vérifiable via sa clé KEM)
+        envelope["from_node_id"] = state.p2p_sync.identity.node_id
+        envelope["requester_node_id"] = requester_node_id
+        envelope["requester_kem_sha256"] = __import__("hashlib").sha256(peer_pk).hexdigest()[:16]
+        logger.info(
+            "P2P pull GET /blocks/public chiffré ML-KEM → requester_node=%s blocks=%d",
+            requester_node_id[:20], len(blocks),
+        )
+        return {"envelope": envelope, "encrypted": True, "count": len(blocks), "from_index": from_index}
+    except (KEMError, ValueError, Exception) as exc:
+        logger.warning("P2P pull chiffrement échoué (%s) — fallback en clair", exc)
+        return {"blocks": blocks, "count": len(blocks), "from_index": from_index, "encrypted": False, "encrypt_error": str(exc)[:80]}
 
 
 @router.get("/blocks/incoming")

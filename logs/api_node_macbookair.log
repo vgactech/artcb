@@ -261,3 +261,5 @@ liboqs-python faulthandler is disabled
 2026-09-07T11:49:43 [DEBUG] artcb.chain.manager: Appended block index=5 hash=01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884 sha3=667d390f2310f4d0 reward=75000000 contributors=1 hybrid=True
 2026-09-07T11:49:43 [INFO] artcb.api.ai: AI memo gravé: bloc #5 graph=ai_memo_9344bad6d8b0 agent=bob_agent_235
 2026-09-07T11:49:43 [INFO] uvicorn.access: 127.0.0.1:51359 - "POST /api/v1/ai/memo HTTP/1.1" 200
+2026-09-07T19:53:52 [DEBUG] artcb.release: release identity sha=31a80b579f7d branch=main integrity=ok pin_set=False
+2026-09-07T19:53:52 [INFO] uvicorn.access: 127.0.0.1:53999 - "GET /health HTTP/1.1" 200

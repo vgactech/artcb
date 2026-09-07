@@ -217,23 +217,58 @@ class P2PSyncService:
             raise P2PSyncError(str(exc)) from exc
 
     def pull_from_peer(self, peer: PeerRecord, *, from_index: int = 0) -> dict[str, Any]:
-        """Demande les blocs publics au pair (GET clair pour liste, puis import local)."""
+        """Demande les blocs publics au pair.
+
+        GO-B 2026-09-07 : envoie X-ARTCB-KEM-Public-Key + X-ARTCB-Node-Id.
+        Si la réponse est chiffrée ({"envelope": ...}) → déchiffrement local.
+        Si le pair est ancien (réponse en clair) → import direct (rétrocompat).
+        from_node_id est lié à la clé KEM déclarée du pair, pas auto-déclaré.
+        """
         url = f"{peer.base_url}/api/v1/p2p/blocks/public"
+        headers = {
+            "X-ARTCB-KEM-Public-Key": self.identity.kem_public_key_hex,
+            "X-ARTCB-Node-Id": self.identity.node_id,
+        }
         try:
             with httpx.Client(timeout=30.0) as client:
-                r = client.get(url, params={"from_index": from_index})
+                r = client.get(url, params={"from_index": from_index}, headers=headers)
                 r.raise_for_status()
-                blocks = r.json().get("blocks", [])
-            imported = self.import_public_blocks(
-                blocks,
-                from_node_id=peer.peer_id,
-            )
+                resp = r.json()
+
+            encrypted = resp.get("encrypted", False)
+            if encrypted and "envelope" in resp:
+                # GO-B : déchiffrement de la réponse pull
+                try:
+                    payload = self.decrypt_envelope(resp["envelope"])
+                    blocks = payload.get("blocks", [])
+                    # from_node_id lié à la clé KEM du pair (vérifiable)
+                    from_node = resp["envelope"].get("from_node_id", peer.peer_id)
+                    logger.info("P2P pull chiffré de %s : %d blocs", peer.peer_id, len(blocks))
+                except Exception as exc:  # noqa: BLE001 — crypto errors vary (InvalidTag, KEMError, …)
+                    logger.error("P2P pull decrypt from %s failed: %s", peer.peer_id, exc)
+                    self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
+                    raise P2PSyncError(f"pull_decrypt_failed:{type(exc).__name__}") from exc
+            else:
+                # Rétrocompatibilité : ancien pair sans chiffrement pull
+                blocks = resp.get("blocks", [])
+                from_node = peer.peer_id
+                if blocks:
+                    logger.debug("P2P pull en clair de %s (ancien pair) : %d blocs", peer.peer_id, len(blocks))
+
+            imported = self.import_public_blocks(blocks, from_node_id=from_node)
             self.peers.update_peer_status(
                 peer.peer_id,
                 last_sync_ok=True,
                 blocks_received_delta=imported,
             )
-            return {"peer_id": peer.peer_id, "received": len(blocks), "imported": imported}
+            return {
+                "peer_id": peer.peer_id,
+                "received": len(blocks),
+                "imported": imported,
+                "encrypted": encrypted,
+            }
+        except P2PSyncError:
+            raise
         except Exception as exc:
             logger.error("P2P pull from %s failed: %s", peer.peer_id, exc)
             self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
