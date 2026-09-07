@@ -109,6 +109,12 @@ REPLICATION_MATRIX: dict[str, dict[str, str]] = {
         "content": "tx+subject+reason+old_new_controller_no_body",
         "cest_a_dire": "Le réseau peut auditer qui a cédé le contrôle. Jamais le Genesis, les membres ou un document.",
     },
+    "NODE_AUTHORIZATION_CERT": {
+        "layer": "org",
+        "replication": "org_domain_nodes",
+        "content": "domain_id+node_id+node_pubkey+role+founder_sig",
+        "cest_a_dire": "authorized_nodes est une liste. Le certificat signé par le fondateur est la preuve. HOST ≠ REPLICA ≠ CONSENSUS. TRANSFER_OWNERSHIP reste humain.",
+    },
 }
 
 P2P_SYNCS_PRIVATE_BLOCKS = False

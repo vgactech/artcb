@@ -63,3 +63,7 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   Un agent Cursor/Bob n'est un user que sous `sess_` + `X-ARTCB-Agent-Id`.
   Les mémos auto-dev sont `visibility=private`. Pas de D-0xx. PoUC/KCG
   (rapports 230–232) restent rang 6 — ne pas coder.
+  Rapport 236 : `authorized_nodes` = déclaration. Certificat nœud signé
+  fondateur = preuve. HOST_ONLY ≠ REPLICA ≠ CONSENSUS. TRANSFER_OWNERSHIP
+  reste humain. Réplication privée automatique et consensus ORG **non
+  certifiés**. 857 passed / 9 skipped ≠ maturité protocolaire 97 %.

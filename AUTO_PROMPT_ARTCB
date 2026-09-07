@@ -1441,3 +1441,16 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - SHA actuel main : `7e313d5`.
 - Prochaine étape autorisée sans GO : configurer `ARTCB_NODE_PUBLIC_URL` sur OVH4+AWS3 (Doppler).
   Nécessitent GO : V-01-B producteur, PoUC/KCG, deploy OVH1.
+
+## [2026-09-07T10:15:00Z] Rapport 236 — HOST ≠ CONSENSUS + certificat nœud
+
+- GO opérateur : formaliser la règle oubliée du CDC (hôte ≠ réplique ≠ consensus).
+- `authorized_nodes[]` = déclaration. Certificat Ed25519 fondateur + possession
+  de la clé nœud = preuve. `add_replica` reste intent (`body_copied=false`).
+- Rôles : HOST_ONLY / REPLICA / CONSENSUS / GOVERNANCE.
+  TRANSFER_OWNERSHIP **jamais** un nœud (société d'hébergement ≠ propriétaire ORG).
+- T-E50. **Pas** une blockchain privée ORG certifiée. **Pas** V-01-B producteur live.
+- 5/5 nœuds convergents (234) ≠ remplacement du producteur.
+- 857 passed / 9 skipped / 0 failed (235) = suite verte, pas 97 % protocole.
+- PoUC/KCG toujours rang 6, non codés.
+

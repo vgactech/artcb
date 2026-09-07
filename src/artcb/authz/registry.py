@@ -68,6 +68,8 @@ class DomainManifest:
     body_replicated: bool = False
     commitment_anchored_on_chain: bool = False
     node_owns_domain: bool = False
+    declared_node_roles: dict[str, str] = field(default_factory=dict)
+    node_certificates: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         data = asdict(self)
@@ -93,6 +95,16 @@ class DomainManifest:
             "node_owns_domain": False,
             "body_replicated": self.body_replicated,
             "commitment_anchored_on_chain": self.commitment_anchored_on_chain,
+            "declared_node_roles": dict(self.declared_node_roles),
+            "certified_nodes": [
+                {
+                    "node_id": row.get("node_id"),
+                    "role": row.get("role"),
+                    "payload_hash": row.get("payload_hash"),
+                }
+                for row in self.node_certificates
+                if isinstance(row, dict)
+            ],
             "projection": "domain_manifest_public",
             "contains_private_data": False,
         }
@@ -236,19 +248,54 @@ class DomainRegistry:
             min_replicas=min_replicas,
             created_at=_now_iso(),
             body_replicated=False,
+            declared_node_roles={n: "HOST_ONLY" for n in nodes if n},
         )
         return self._upsert(manifest)
 
-    def add_replica(self, domain_id: str, node_id: str, founder_address: str | None = None) -> DomainManifest:
+    def add_replica(
+        self,
+        domain_id: str,
+        node_id: str,
+        founder_address: str | None = None,
+        *,
+        role: str = "HOST_ONLY",
+    ) -> DomainManifest:
+        from src.artcb.authz.node_roles import ROLE_HOST_ONLY, capabilities_for
+
         manifest = self.get(domain_id)
         if manifest is None:
             raise DomainError("domain_not_found")
         if founder_address and manifest.founder_address != founder_address:
             raise DomainForbidden("founder_mismatch")
+        capabilities_for(role or ROLE_HOST_ONLY)
         if node_id not in manifest.authorized_nodes:
             manifest.authorized_nodes.append(node_id)
+        manifest.declared_node_roles[node_id] = (role or ROLE_HOST_ONLY).upper()
         # Listing a node is intent. It does not copy the private body.
+        # A declared CONSENSUS role without a certificate still cannot produce.
         manifest.body_replicated = False
+        manifest.version += 1
+        return self._upsert(manifest)
+
+    def store_node_certificate(self, domain_id: str, cert: dict[str, Any]) -> DomainManifest:
+        from src.artcb.authz.node_cert import verify_node_certificate
+
+        manifest = self.get(domain_id)
+        if manifest is None:
+            raise DomainError("domain_not_found")
+        payload = verify_node_certificate(
+            cert,
+            expected_domain_id=manifest.domain_id,
+            expected_genesis_hash=manifest.genesis_hash,
+            expected_founder_address=manifest.founder_address,
+        )
+        node_id = str(payload["node_id"])
+        if node_id not in manifest.authorized_nodes:
+            manifest.authorized_nodes.append(node_id)
+        manifest.declared_node_roles[node_id] = str(payload["role"])
+        kept = [row for row in manifest.node_certificates if row.get("node_id") != node_id]
+        kept.append(cert)
+        manifest.node_certificates = kept
         manifest.version += 1
         return self._upsert(manifest)
 
@@ -289,3 +336,42 @@ class DomainRegistry:
                 else "Ce nœud ne possède pas le corps. Le fondateur peut exporter depuis un hôte puis importer ici."
             ),
         }
+
+    def node_authorization(self, domain_id: str, node_id: str, *, body_present: bool = False) -> dict[str, Any]:
+        from src.artcb.authz.node_cert import NodeAuthorization, cert_allows, verify_node_certificate
+        from src.artcb.authz.node_roles import CAP_CHANGE_GOVERNANCE, CAP_HOST, CAP_PRODUCE, CAP_REPLICATE, CAP_VALIDATE
+
+        manifest = self.get(domain_id)
+        if manifest is None:
+            raise DomainError("domain_not_found")
+        listed = node_id in manifest.authorized_nodes
+        declared = manifest.declared_node_roles.get(node_id, "HOST_ONLY" if listed else "")
+        cert = next((row for row in manifest.node_certificates if row.get("node_id") == node_id), None)
+        certified = False
+        certified_role = ""
+        if cert:
+            try:
+                payload = verify_node_certificate(
+                    cert,
+                    expected_domain_id=manifest.domain_id,
+                    expected_genesis_hash=manifest.genesis_hash,
+                    expected_founder_address=manifest.founder_address,
+                )
+                certified = True
+                certified_role = str(payload.get("role") or "")
+            except Exception:
+                certified = False
+        view = NodeAuthorization(
+            node_id=node_id,
+            listed=listed,
+            declared_role=declared,
+            certified=certified,
+            certified_role=certified_role,
+            can_host=listed,
+            can_replicate=certified and cert_allows(cert or {}, CAP_REPLICATE),
+            can_produce=certified and cert_allows(cert or {}, CAP_PRODUCE),
+            can_validate=certified and cert_allows(cert or {}, CAP_VALIDATE),
+            can_change_governance=certified and cert_allows(cert or {}, CAP_CHANGE_GOVERNANCE),
+            body_present=body_present,
+        )
+        return view.to_dict()
