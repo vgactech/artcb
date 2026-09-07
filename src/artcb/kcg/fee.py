@@ -9,7 +9,9 @@ Principe :
   - Le consultant paie le producteur en ARTCB (satoshi)
   - Le transfert est enregistré dans le ledger ARTCB (pas une nouvelle émission)
   - Le plafond 21M ARTCB est respecté
-  - Si le consultant n'a pas les fonds → CONSULT refusé (pas de crédit)
+  - Découvert ARTCB : un wallet peut passer en négatif jusqu'à sa limite autorisée.
+    La dette est remboursée automatiquement dès réception de tokens (auto_repay).
+    C'est une dette enregistrée, pas du mint.
   - Taux configurables par variable d'env ou Doppler (jamais gelés en dur)
 
 GO-G invariant :
