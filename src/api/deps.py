@@ -40,6 +40,7 @@ from src.artcb.p2p.symbol_archive import PublicSymbolArchive
 from src.artcb.p2p.symbol_sync import SymbolSyncService
 from src.artcb.p2p.sync import P2PSyncService
 from src.artcb.p2p.producer_runtime import ProducerFailoverRuntime
+from src.artcb.p2p.node_reputation import ReputationEngine, ReputationLedger
 from src.artcb.pol.scorer import PolScorer
 from src.artcb.pool.service import PoolService
 from src.artcb.rtleg.timeline import RTLEGTimeline
@@ -92,6 +93,8 @@ class AppState:
     stripe_ledger: StripeJobLedger | None = None
     live_bft: Any = None
     producer_failover: ProducerFailoverRuntime | None = None
+    reputation_ledger: ReputationLedger | None = None
+    reputation_engine: ReputationEngine | None = None
     pol_state: dict[str, Any] = field(default_factory=lambda: {
         "pol_score": 0.6,
         # delta_compression est mesuré dynamiquement lors du minage, pas une heuristique fixe.
@@ -230,7 +233,11 @@ def build_app_state() -> AppState:
         stripe_ledger=stripe_ledger,
         live_bft=live_bft,
         producer_failover=ProducerFailoverRuntime(p2p_identity.node_id),
+        reputation_ledger=None,
+        reputation_engine=None,
     )
+    state.reputation_ledger = ReputationLedger(settings.data_dir)
+    state.reputation_engine = ReputationEngine(state.reputation_ledger)
 
     def _run_pool_reasoning(text: str) -> dict[str, Any]:
         from src.artcb.ir.models import sha256_text

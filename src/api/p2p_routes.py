@@ -114,6 +114,23 @@ def p2p_status(request: Request) -> dict:
     }
 
 
+@router.get("/reputation")
+def p2p_reputation(request: Request) -> dict:
+    """Vue humaine JSON du ledger binaire GO-M. Le stockage reste ``index.bin``."""
+    state = _state(request)
+    ledger = getattr(state, "reputation_ledger", None)
+    if ledger is None:
+        return {"nodes": [], "count": 0, "storage": "absent", "format": "json_human_only"}
+    nodes = [rec.to_dict() for rec in ledger.all_records()]
+    return {
+        "nodes": nodes,
+        "count": len(nodes),
+        "storage": "p2p/reputation/index.bin",
+        "format": "json_human_only",
+        "binary_record_bytes": 80,
+    }
+
+
 @router.get("/peers")
 def list_peers(request: Request) -> dict:
     peers = _state(request).p2p_peers.list_peers()

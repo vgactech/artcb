@@ -74,3 +74,5 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   V-01-B producteur **non** exécuté. Pull anonyme toujours clair.
 - Rapport 245 : mot `GO` → câblage `ProducerFailoverRuntime` (défauts off,
   `append_implemented=false`). Pas une D-0xx. Pas d'append live.
+- Rapport 246 : brief Bob (1c2b873 / GO-M 21/23 / pas de push) contredit par
+  live `2696f2e` ×4. GO-M 23/23. ROADMAP Phase 15 à jour. Pas de redeploy.

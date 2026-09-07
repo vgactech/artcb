@@ -50,3 +50,14 @@ def test_public_blocks_endpoint(client: TestClient) -> None:
     r = client.get("/api/v1/p2p/blocks/public")
     assert r.status_code == 200
     assert "blocks" in r.json()
+
+
+def test_p2p_reputation_human_json(client: TestClient) -> None:
+    r = client.get("/api/v1/p2p/reputation")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["format"] == "json_human_only"
+    assert body["storage"] == "p2p/reputation/index.bin"
+    assert body["binary_record_bytes"] == 80
+    assert body["count"] == 0
+    assert body["nodes"] == []

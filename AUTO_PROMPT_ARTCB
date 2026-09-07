@@ -1483,3 +1483,11 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Pas de SSH, pas de nouveau bloc. Live toujours `2696f2e` jusqu'au prochain deploy.
 - Tests `test_e2e249_go_e_runtime.py`. Rapport 245.
 
+## [2026-09-07T19:50:00Z] Rapport 246 — brief Bob fermé sans redeploy
+
+- Brief Bob (SHA `1c2b873`, GO-M 21/23, pas de push) **périmé**. Live+main = `2696f2e`.
+  GO-M retest **23 passed**. Lot GO 243–249 : 98 passed / 7 skipped.
+- ROADMAP Phase 15 GO-M coché. `GET /p2p/reputation` JSON humain (pas live : 404).
+- Pas de push `main`, pas de SSH restart, pas de packet ConceptID inter-nœuds (pas de route).
+- Contact : `official@artcb.space`.
+

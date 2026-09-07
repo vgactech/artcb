@@ -394,7 +394,7 @@
 | GO-I | IR binaire natif + zstd | `src/artcb/ir/binary.py` — magic ARCB + json/gzip/msgpack/zstd | [x] ✅ rapport 240 | P1 |
 | GO-E | V-01-B producteur live failover | `ProducerMonitor` + élection XOR déterministe + grace period | [x] ✅ rapport 241 | P1 |
 | GO-K | ConceptID natif + mémoire binaire cross-session | `ir/concept.py` + `memory/concept_store.py` + `memory/agent_channel.py` — §28/§29/§30/§31 rapport 238 | [x] ✅ rapport 242 | P1 |
-| GO-M | À définir (après GO-E) | Nouvelle fonctionnalité — spec en attente | [ ] ⏳ | P2 |
+| GO-M | Réputation nœuds P2P (80 B + index.bin) | `node_reputation.py` + GET `/p2p/reputation` (JSON humain) ; 23 tests verts | [x] ✅ rapports 243+246 | P2 |
 
 ---
 
