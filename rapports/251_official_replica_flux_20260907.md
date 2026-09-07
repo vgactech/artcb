@@ -60,15 +60,46 @@ Le flux réel est celui du `replica/run` §4.
 
 ---
 
-## 4. Live (à remplir après follow-main ×4 + replica/run)
+## 4. Live (mesuré 2026-09-07T21:39:25Z → 21:54:25Z)
 
-SHA `origin/main` / `/health` : *(mesuré)*  
-OVH1 height / tip : *(mesuré)*  
-OVH2 / AWS3 / OVH4 avant : *(mesuré)*  
-OVH2 / AWS3 / OVH4 après : *(mesuré)*  
-Flux summary (`GET /p2p/flux`) : *(mesuré)*  
-Graphes présents sur les 3 répliques : *(mesuré)*  
-idx 0–4 inchangés (`b8a7d5ef` … `27350024`) : *(mesuré)*
+`origin/main` = `/health` ×4 = **`c32aee46c5a9f79375d17e810a75b2ac3225bb16`**.  
+follow-main keep-book ×4. Livre OVH1 resté **1074** lignes. Pas de wipe.
+
+| Nœud | Avant | Après | tip après | `chain_valid` | graphes | `repo_index` | KCG |
+|---|---|---|---|---|---|---|---|
+| OVH1 `152.228.144.34` | 1074 / `3d1231cd…` | **1074** / `3d1231cde101b70f77f852f3b7db698a0b8d8558fa6b747e51189450659c3acf` | idem | true | 1073 | 3539 | 2 |
+| OVH2 `151.80.107.29` | **5** / `27350024…` | **1074** / même tip | même | true | 1082 (9 anciens + 1073) | 3539 | 2 |
+| AWS3 `51.44.222.232` | **5** / `27350024…` | **1074** / même tip | même | true | 1073 | 3539 | 2 |
+| OVH4 `91.134.45.8` | **5** / `27350024…` | **1074** / même tip | même | true | 1073 | 3539 | 2 |
+
+idx 0–4 identiques sur les 4 disques : `b8a7d5ef…` `5c952df6…` `93eab711…` `5e4dbb40…` `27350024…`.  
+Visibilité : **717 public / 357 private**. Dernier bloc 1073 = **private** (c’est pour ça que le P2P public seul ne pouvait pas porter le tip).
+
+`GET /ai/ingest/catalog` sur OVH2 / AWS3 / OVH4 : **3539** (reread après replica fichiers).
+
+### Flux réel — `GET /p2p/flux` OVH1 (570 lignes, **0 erreur**)
+
+Ingest 1065 : **0** octet inter-nœud (pas d’envoi). Ce flux est **celui-ci**.
+
+Blocs (1069 nouveaux / pair, index 5→1073, chunks de 20 + 1 `nothing_to_send`) :
+
+| Pair | chunks ok | octets fil | encrypt_ms moy | http_ms moy | rtt_ms min / moy / max |
+|---|---|---|---|---|---|
+| OVH2 `151.80.107.29` | 55 / 0 err | 16 623 668 | 49.25 | 2674.52 | 414.53 / **2723.77** / 5311.61 |
+| AWS3 `51.44.222.232` | 55 / 0 err | 16 623 668 | 44.93 | 1691.19 | 293.20 / **1736.12** / 4738.01 |
+| OVH4 `91.134.45.8` | 55 / 0 err | 16 623 668 | 49.21 | 1744.62 | 317.57 / **1793.83** / 3413.44 |
+
+Fichiers (1076 objets / pair = 1073 graphes + index + 2 KCG) :
+
+| Pair | chunks ok | octets fil | encrypt_ms moy | http_ms moy | rtt_ms min / moy / max |
+|---|---|---|---|---|---|
+| OVH2 | 135 / 0 err | 84 263 273 | 43.85 | 143.19 | 147.65 / **187.04** / 295.75 |
+| AWS3 | 135 / 0 err | 84 263 273 | 43.98 | 168.17 | 173.12 / **212.15** / 307.54 |
+| OVH4 | 135 / 0 err | 84 263 273 | 50.52 | 153.19 | 157.22 / **203.71** / 323.29 |
+
+Total fil mesuré : **302 660 823** octets. Blocs ~5 min 40 s (21:39:25Z–21:45:05Z). Fichiers ensuite (dernier chunk 21:54:25Z). nginx `:8443` a renvoyé 504 à 60 s — le handler uvicorn a **continué**. Déclencher via `POST /p2p/replica/run` (bearer) depuis OVH1, source IP officielle vers `:8000`.
+
+Anonyme `GET /p2p/replica/blocks` depuis l’agent cloud : **403** `official_replica_peers_only`. `private_never_synced` reste true pour le P2P public.
 
 ---
 
