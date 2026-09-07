@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field
@@ -87,6 +88,8 @@ def p2p_status(request: Request) -> dict:
         "public_blocks_local": public_count,
         "public_blocks_incoming": incoming_count,
         "private_never_synced": True,
+        "anonymous_p2p_public_only": True,
+        "official_replica_full_book": True,
         "pool_e2e_available": True,
         "pool_crypto": "ML-KEM-768",
         "protocol_version": PROTOCOL_VERSION,
@@ -494,6 +497,138 @@ def gossip_announce(
         symbol_count=len(state.symbol_registry.export()),
     )
     return {"announcement": entry, "network_id": NETWORK_ID, "p2p_port": identity.p2p_port}
+
+
+def _require_official_replica_peer(request: Request) -> str:
+    from src.artcb.p2p.official_replica import replica_peer_allowed, request_peer_host
+
+    host = request_peer_host(request)
+    if not replica_peer_allowed(host):
+        raise HTTPException(status_code=403, detail="official_replica_peers_only")
+    return host
+
+
+@router.get("/flux")
+def p2p_flux(request: Request, limit: int = Query(200, ge=1, le=2000)) -> dict:
+    """Real push/pull/replica timings. Empty until a real inter-node send runs."""
+    from src.artcb.p2p.flux import list_flux, summarize_flux
+
+    state = _state(request)
+    rows = list_flux(state.settings.data_dir, limit=limit)
+    return {
+        "rows": rows,
+        "summary": summarize_flux(rows),
+        "path": "data/p2p/flux.jsonl",
+        "ingest_1065_had_no_inter_node_flux": True,
+    }
+
+
+@router.get("/replica/blocks")
+def replica_blocks(
+    request: Request,
+    from_index: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=80),
+) -> dict:
+    """Full-book slice for official compute IPv4s only. Not anonymous P2P."""
+    _require_official_replica_peer(request)
+    from src.artcb.p2p.official_replica import list_replica_blocks
+
+    sync = _state(request).p2p_sync
+    blocks = list_replica_blocks(sync, from_index=from_index, limit=limit)
+    return {
+        "kind": "official_replica",
+        "blocks": blocks,
+        "count": len(blocks),
+        "from_index": from_index,
+        "height": len(sync.chain._read_all_blocks()),
+        "last_hash": sync.chain.last_hash(),
+    }
+
+
+@router.post("/replica/push")
+def replica_push(body: ReceiveBlocksRequest, request: Request) -> dict:
+    """Receive an encrypted official-replica chunk (any visibility)."""
+    host = _require_official_replica_peer(request)
+    from src.artcb.p2p.flux import append_flux
+    from src.artcb.p2p.official_replica import import_replica_blocks
+
+    sync = _state(request).p2p_sync
+    t0 = time.perf_counter()
+    try:
+        payload = sync.decrypt_envelope(body.envelope)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"replica_decrypt_failed:{type(exc).__name__}") from exc
+    if payload.get("kind") != "official_replica":
+        raise HTTPException(status_code=400, detail="not_official_replica")
+    blocks = payload.get("blocks") or []
+    if not isinstance(blocks, list):
+        raise HTTPException(status_code=400, detail="bad_replica_blocks")
+    height_before = len(sync.chain._read_all_blocks())
+    result = import_replica_blocks(sync, blocks)
+    append_flux(
+        sync.chain.blocks_path.parent.parent,
+        {
+            "kind": "official_replica_blocks",
+            "direction": "receive",
+            "peer": body.envelope.get("from_node_id", "unknown"),
+            "host": host,
+            "chunk": f"{payload.get('from_index')}-{payload.get('to_index')}",
+            "pushed": len(blocks),
+            "imported": result.get("imported"),
+            "http_ms": round((time.perf_counter() - t0) * 1000, 2),
+            "height_before": height_before,
+            "height_after": result.get("height"),
+            "ok": not result.get("rejected"),
+        },
+    )
+    return {**result, "encrypted": True, "from_host": host}
+
+
+@router.post("/replica/files")
+def replica_files(body: ReceiveBlocksRequest, request: Request) -> dict:
+    """Receive encrypted graphs / KCG / ingest index for official peers."""
+    host = _require_official_replica_peer(request)
+    from src.artcb.p2p.flux import append_flux
+    from src.artcb.p2p.official_replica import write_replica_files
+
+    sync = _state(request).p2p_sync
+    t0 = time.perf_counter()
+    try:
+        payload = sync.decrypt_envelope(body.envelope)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"replica_decrypt_failed:{type(exc).__name__}") from exc
+    if payload.get("kind") != "official_replica_files":
+        raise HTTPException(status_code=400, detail="not_official_replica_files")
+    files = payload.get("files") or []
+    if not isinstance(files, list):
+        raise HTTPException(status_code=400, detail="bad_replica_files")
+    result = write_replica_files(sync.chain.blocks_path.parent.parent, files)
+    append_flux(
+        sync.chain.blocks_path.parent.parent,
+        {
+            "kind": "official_replica_files",
+            "direction": "receive",
+            "peer": body.envelope.get("from_node_id", "unknown"),
+            "host": host,
+            "pushed": len(files),
+            "imported": result.get("written"),
+            "http_ms": round((time.perf_counter() - t0) * 1000, 2),
+            "ok": result.get("rejected", 1) == 0,
+        },
+    )
+    return {**result, "encrypted": True, "from_host": host}
+
+
+@router.post("/replica/run")
+def replica_run(
+    request: Request,
+    include_files: bool = Query(True),
+    _auth: dict = Depends(require_operator_write),
+) -> dict:
+    """Operator: push the local book to the other official compute nodes."""
+    from src.artcb.p2p.official_replica import run_official_replica
+
+    return run_official_replica(_state(request).p2p_sync, include_files=include_files)
 
 
 @router.post("/gossip/receive")

@@ -40,6 +40,15 @@ OFFICIAL_COMPUTE_NODE_IDS: tuple[str, ...] = (
     "ovh-node-4",
 )
 
+# Compute IPv4s — official replica of the full book is allowed only among these.
+OFFICIAL_COMPUTE_IPV4: tuple[str, ...] = (
+    "152.228.144.34",
+    "151.80.107.29",
+    "51.44.222.232",
+    "91.134.45.8",
+)
+OFFICIAL_COMPUTE_HTTP_PORT = 8000
+
 # Public HTTPS health (nginx + Let's Encrypt). IP :8000 remains the compute probe.
 PUBLIC_HEALTH_URLS: dict[str, str] = {
     "ovh-node-1": "https://artcb.me/health",
@@ -329,3 +338,19 @@ def secret_belongs_on_node(node_id: str, name: str) -> bool:
 
 def secret_must_stay_shared(name: str) -> bool:
     return name in SHARED_ONLY_SECRETS
+
+
+def official_host_for(node_id: str) -> str | None:
+    spec = NODES.get(node_id)
+    return spec.ssh_host if spec is not None else None
+
+
+def is_official_compute_ipv4(host: str) -> bool:
+    raw = (host or "").strip().lower()
+    if raw.startswith("[") and raw.endswith("]"):
+        raw = raw[1:-1]
+    if "%" in raw:
+        raw = raw.split("%", 1)[0]
+    if raw.count(":") == 1 and raw.rsplit(":", 1)[-1].isdigit():
+        raw = raw.rsplit(":", 1)[0]
+    return raw in OFFICIAL_COMPUTE_IPV4

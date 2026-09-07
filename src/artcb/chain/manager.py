@@ -264,13 +264,15 @@ class ChainManager:
         material = "|".join(hashes).encode("utf-8")
         return hashlib.sha256(material).hexdigest()
 
-    def import_extending_public_block(self, block: dict) -> bool:
-        """Append a remote public block if it extends the local tip (PRE-DV-04).
+    def import_extending_block(self, block: dict, *, require_public: bool = False) -> bool:
+        """Append a remote block if it extends the local tip.
 
         Hash structure is verified. The producer signature uses the remote
         chain key and is not checked against this node's key.
+        ``require_public=True`` is the anonymous P2P importer.
+        Official replica calls this with ``require_public=False``.
         """
-        if block.get("visibility") != "public":
+        if require_public and block.get("visibility") != "public":
             return False
         existing = self._read_all_blocks()
         if any(str(row.get("hash") or "") == str(block.get("hash") or "") for row in existing):
@@ -305,8 +307,17 @@ class ChainManager:
         line = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
-        logger.info("Imported extending public block index=%s hash=%s", block.get("index"), str(block.get("hash") or "")[:16])
+        logger.info(
+            "Imported extending block index=%s vis=%s hash=%s",
+            block.get("index"),
+            block.get("visibility"),
+            str(block.get("hash") or "")[:16],
+        )
         return True
+
+    def import_extending_public_block(self, block: dict) -> bool:
+        """Anonymous P2P: only visibility=public may extend the tip."""
+        return self.import_extending_block(block, require_public=True)
 
     def append_block(
         self,

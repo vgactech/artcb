@@ -1,10 +1,15 @@
-"""Synchronisation P2P — blocs publics uniquement (jamais private en clair)."""
+"""Synchronisation P2P — blocs publics uniquement (jamais private en clair).
+
+Official replica of the full book lives in ``official_replica.py``.
+"""
 
 from __future__ import annotations
 
 import json
 import logging
+import time
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Literal
 
 import httpx
@@ -46,9 +51,14 @@ def decide_public_import(
 ) -> ImportDecision:
     """Deterministic import rule. receive and pull must call this same function.
 
-    Order: visibility → structure/hash → duplicate → converging event
-    → index → prev_hash → append.
-    Arbitrary public reward=0 blocks do not get tip-extend privilege.
+    Order: visibility → structure/hash → duplicate → DOMAIN_COMMITMENT
+    binding (when present) → index → prev_hash → append.
+
+    A public block that extends the tip (correct index + prev_hash + hash)
+    is appended. That is the point of visibility=public. Forks stay off
+    the tip (wrong_index / wrong_prev_hash). Mixed public/private chains
+    still cannot be rebuilt from public-only pull — official replica
+    copies the full book among the four compute IPv4s.
     """
     if block.get("visibility") != "public":
         return ImportDecision("reject", "not_public")
@@ -57,15 +67,14 @@ def decide_public_import(
     block_hash = str(block.get("hash") or "")
     if block_hash and block_hash in local_hashes:
         return ImportDecision("duplicate", "already_on_chain")
-    if not is_converging_public_event(block):
-        return ImportDecision("archive_only", "not_converging_event")
-    symbols = block.get("public_symbols") or {}
-    if symbols.get("artcb_event") == "DOMAIN_COMMITMENT":
-        if symbols.get("content_hash") and str(symbols.get("content_hash")) != str(block.get("graph_root") or ""):
-            return ImportDecision("reject", "symbols_not_bound_to_hash")
-        expected_gid = f"commit:{symbols.get('kind')}:{symbols.get('domain_id')}"
-        if block.get("graph_id") and str(block.get("graph_id")) != expected_gid:
-            return ImportDecision("reject", "symbols_not_bound_to_hash")
+    if is_converging_public_event(block):
+        symbols = block.get("public_symbols") or {}
+        if symbols.get("artcb_event") == "DOMAIN_COMMITMENT":
+            if symbols.get("content_hash") and str(symbols.get("content_hash")) != str(block.get("graph_root") or ""):
+                return ImportDecision("reject", "symbols_not_bound_to_hash")
+            expected_gid = f"commit:{symbols.get('kind')}:{symbols.get('domain_id')}"
+            if block.get("graph_id") and str(block.get("graph_id")) != expected_gid:
+                return ImportDecision("reject", "symbols_not_bound_to_hash")
     try:
         index = int(block.get("index", -1))
     except (TypeError, ValueError):
@@ -188,33 +197,86 @@ class P2PSyncService:
         return json.loads(plaintext.decode("utf-8"))
 
     def push_to_peer(self, peer: PeerRecord, *, from_index: int = 0) -> dict[str, Any]:
+        from src.artcb.p2p.flux import append_flux
+
         blocks = self.get_public_blocks(from_index=from_index)
+        data_dir = Path(self.chain.blocks_path).parent.parent
         if not blocks:
             return {"peer_id": peer.peer_id, "pushed": 0, "message": "Aucun bloc public à envoyer"}
-        try:
-            envelope = self.build_encrypted_envelope(blocks, peer)
-        except (KEMError, ValueError, RuntimeError) as exc:
-            logger.error("P2P push envelope to %s failed: %s", peer.peer_id, type(exc).__name__)
-            self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
-            raise P2PSyncError(f"push_encrypt_failed:{type(exc).__name__}") from exc
-        url = f"{peer.base_url}/api/v1/p2p/blocks/receive"
-        try:
-            with httpx.Client(timeout=30.0) as client:
-                r = client.post(url, json={"envelope": envelope})
-                r.raise_for_status()
-                data = r.json()
-            self.peers.update_peer_status(peer.peer_id, last_sync_ok=True, blocks_received_delta=0)
-            return {
-                "peer_id": peer.peer_id,
-                "pushed": len(blocks),
-                "imported_remote": data.get("imported", 0),
-                "encrypted": True,
-                "kem": "ML-KEM-768",
-            }
-        except Exception as exc:
-            logger.error("P2P push to %s failed: %s", peer.peer_id, exc)
-            self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
-            raise P2PSyncError(str(exc)) from exc
+        chunk = 40
+        imported_remote = 0
+        last: dict[str, Any] = {}
+        for offset in range(0, len(blocks), chunk):
+            batch = blocks[offset : offset + chunk]
+            t0 = time.perf_counter()
+            try:
+                envelope = self.build_encrypted_envelope(batch, peer)
+            except (KEMError, ValueError, RuntimeError) as exc:
+                logger.error("P2P push envelope to %s failed: %s", peer.peer_id, type(exc).__name__)
+                self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
+                append_flux(
+                    data_dir,
+                    {
+                        "kind": "public_push",
+                        "direction": "push",
+                        "peer": peer.peer_id,
+                        "host": peer.host,
+                        "ok": False,
+                        "error": f"push_encrypt_failed:{type(exc).__name__}",
+                    },
+                )
+                raise P2PSyncError(f"push_encrypt_failed:{type(exc).__name__}") from exc
+            encrypt_ms = round((time.perf_counter() - t0) * 1000, 2)
+            url = f"{peer.base_url}/api/v1/p2p/blocks/receive"
+            t_http = time.perf_counter()
+            try:
+                with httpx.Client(timeout=120.0) as client:
+                    r = client.post(url, json={"envelope": envelope})
+                    r.raise_for_status()
+                    data = r.json()
+                http_ms = round((time.perf_counter() - t_http) * 1000, 2)
+                imported_remote += int(data.get("imported") or 0)
+                last = data
+                append_flux(
+                    data_dir,
+                    {
+                        "kind": "public_push",
+                        "direction": "push",
+                        "peer": peer.peer_id,
+                        "host": peer.host,
+                        "chunk": f"{batch[0].get('index')}-{batch[-1].get('index')}",
+                        "pushed": len(batch),
+                        "imported": data.get("imported", 0),
+                        "encrypt_ms": encrypt_ms,
+                        "http_ms": http_ms,
+                        "rtt_ms": round(encrypt_ms + http_ms, 2),
+                        "ok": True,
+                    },
+                )
+            except Exception as exc:
+                logger.error("P2P push to %s failed: %s", peer.peer_id, exc)
+                self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
+                append_flux(
+                    data_dir,
+                    {
+                        "kind": "public_push",
+                        "direction": "push",
+                        "peer": peer.peer_id,
+                        "host": peer.host,
+                        "ok": False,
+                        "error": type(exc).__name__,
+                    },
+                )
+                raise P2PSyncError(str(exc)) from exc
+        self.peers.update_peer_status(peer.peer_id, last_sync_ok=True, blocks_received_delta=0)
+        return {
+            "peer_id": peer.peer_id,
+            "pushed": len(blocks),
+            "imported_remote": imported_remote,
+            "encrypted": True,
+            "kem": "ML-KEM-768",
+            "last_remote": last,
+        }
 
     def pull_from_peer(self, peer: PeerRecord, *, from_index: int = 0) -> dict[str, Any]:
         """Demande les blocs publics au pair.
@@ -224,16 +286,21 @@ class P2PSyncService:
         Si le pair est ancien (réponse en clair) → import direct (rétrocompat).
         from_node_id est lié à la clé KEM déclarée du pair, pas auto-déclaré.
         """
+        from src.artcb.p2p.flux import append_flux
+
         url = f"{peer.base_url}/api/v1/p2p/blocks/public"
         headers = {
             "X-ARTCB-KEM-Public-Key": self.identity.kem_public_key_hex,
             "X-ARTCB-Node-Id": self.identity.node_id,
         }
+        data_dir = Path(self.chain.blocks_path).parent.parent
+        t0 = time.perf_counter()
         try:
-            with httpx.Client(timeout=30.0) as client:
+            with httpx.Client(timeout=120.0) as client:
                 r = client.get(url, params={"from_index": from_index}, headers=headers)
                 r.raise_for_status()
                 resp = r.json()
+            http_ms = round((time.perf_counter() - t0) * 1000, 2)
 
             encrypted = resp.get("encrypted", False)
             if encrypted and "envelope" in resp:
@@ -261,17 +328,55 @@ class P2PSyncService:
                 last_sync_ok=True,
                 blocks_received_delta=imported,
             )
+            append_flux(
+                data_dir,
+                {
+                    "kind": "public_pull",
+                    "direction": "pull",
+                    "peer": peer.peer_id,
+                    "host": peer.host,
+                    "pushed": len(blocks),
+                    "imported": imported,
+                    "http_ms": http_ms,
+                    "rtt_ms": http_ms,
+                    "encrypted": encrypted,
+                    "ok": True,
+                },
+            )
             return {
                 "peer_id": peer.peer_id,
                 "received": len(blocks),
                 "imported": imported,
                 "encrypted": encrypted,
+                "http_ms": http_ms,
             }
-        except P2PSyncError:
+        except P2PSyncError as exc:
+            append_flux(
+                data_dir,
+                {
+                    "kind": "public_pull",
+                    "direction": "pull",
+                    "peer": peer.peer_id,
+                    "host": peer.host,
+                    "ok": False,
+                    "error": str(exc)[:200],
+                },
+            )
             raise
         except Exception as exc:
             logger.error("P2P pull from %s failed: %s", peer.peer_id, exc)
             self.peers.update_peer_status(peer.peer_id, last_sync_ok=False)
+            append_flux(
+                data_dir,
+                {
+                    "kind": "public_pull",
+                    "direction": "pull",
+                    "peer": peer.peer_id,
+                    "host": peer.host,
+                    "ok": False,
+                    "error": type(exc).__name__,
+                },
+            )
             raise P2PSyncError(str(exc)) from exc
 
     def sync_all_peers(self, *, from_index: int = 0) -> list[dict[str, Any]]:

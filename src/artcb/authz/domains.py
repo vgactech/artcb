@@ -117,7 +117,11 @@ REPLICATION_MATRIX: dict[str, dict[str, str]] = {
     },
 }
 
+# Anonymous / untrusted P2P still never receives visibility≠public.
+# The four official compute IPv4s use a separate official_replica path
+# that copies the full book (public + private + graphs) so height converges.
 P2P_SYNCS_PRIVATE_BLOCKS = False
+OFFICIAL_REPLICA_SYNCS_FULL_BOOK = True
 CONVERGING_PUBLIC_EVENTS = frozenset({"DOMAIN_COMMITMENT", "ORG_CONTROL_TRANSFER"})
 
 

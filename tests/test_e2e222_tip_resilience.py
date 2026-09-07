@@ -141,20 +141,23 @@ def test_j_forged_hash_rejected(tmp_path: Path) -> None:
     assert svc.last_import_decisions[-1].reason == "hash_mismatch"
 
 
-def test_k_arbitrary_event_does_not_extend_tip(tmp_path: Path) -> None:
+def test_k_arbitrary_public_extends_tip(tmp_path: Path) -> None:
+    """visibility=public that extends the tip is appended — that is the point of public."""
     chain_a, chain_b, _ = _pair(tmp_path)
-    legit = _commitment(chain_a, "domain_k")
-    fake = dict(legit)
-    fake["public_symbols"] = {
-        **(legit.get("public_symbols") or {}),
-        "artcb_event": "I_AM_A_MINER_NOW",
-    }
+    chain_a.append_block(
+        graph_id="memo_public",
+        graph_root="root_pub",
+        pol_score=0.5,
+        visibility="public",
+        block_reward=0,
+        source="ai:memo",
+    )
+    block = chain_a._read_all_blocks()[-1]
     svc = _svc(chain_b, tmp_path / "b")
-    before = chain_b.last_hash()
-    svc.import_public_blocks([fake], from_node_id="evil")
-    assert chain_b.last_hash() == before
-    assert svc.last_import_decisions[-1].action == "archive_only"
-    assert svc.last_import_decisions[-1].reason == "not_converging_event"
+    svc.import_public_blocks([block], from_node_id="ovh1")
+    assert chain_b.last_hash() == chain_a.last_hash()
+    assert svc.last_import_decisions[-1].action == "append"
+    assert svc.last_import_decisions[-1].reason == "extends_tip"
 
 
 def test_m_concurrent_producers_do_not_silently_merge(tmp_path: Path) -> None:

@@ -315,8 +315,9 @@ def list_commitments(request: Request) -> dict:
 def replication_matrix() -> dict:
     return {
         "p2p_syncs_private_blocks": P2P_SYNCS_PRIVATE_BLOCKS,
+        "official_replica_syncs_full_book": True,
         "matrix": REPLICATION_MATRIX,
-        "note": "GLOBAL GENESIS is full on every node. ORG/GROUP bodies stay in the domain store. Only content_hash is a public commitment. A node hosts a domain; it does not own it.",
+        "note": "Anonymous P2P is public-only. The four official compute IPv4s replica the full book (any visibility + graphs). ORG/GROUP bodies stay in the domain store. A node hosts a domain; it does not own it.",
         "node_owns_domain": False,
     }
 
