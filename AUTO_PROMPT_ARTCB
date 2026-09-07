@@ -1441,3 +1441,28 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - SHA actuel main : `7e313d5`.
 - Prochaine étape autorisée sans GO : configurer `ARTCB_NODE_PUBLIC_URL` sur OVH4+AWS3 (Doppler).
   Nécessitent GO : V-01-B producteur, PoUC/KCG, deploy OVH1.
+
+## [2026-09-07T14:30:00Z] Rapport 237 — rang 6 : Reasoning Fee + cadastre 220–236 + lettres GO
+
+- `origin/main` live 4 officiels = `b71089ac5b4dd723e955bf05082a81f4d7cff484`.
+  Tip `27350024…` / digest `b5f93d3f…` / height 5. 5ᵉ nœud local non remesuré ici.
+- Rang 6 : **ne pas coder** tant que la feuille de vote §57 n'a pas de lettre.
+  Lettres prix §44 A–E ≠ lettres **GO-A…GO-N**. Pas de D-0xx depuis 237.
+- Fichiers : wallet/PQC = AES-256-GCM. BODY/`orgs.json`/`blocks.jsonl`/IR = **clair**.
+  Pull `GET /p2p/blocks/public` **clair** (push ML-KEM). Hash ≠ chiffrement.
+- IR = JSON v0.1 + gzip-6, **pas** binaire PoL. Formule encoder souvent **négative**
+  (expansion 3×–28×). gzip du texte ~2× sur spec. Heuristique 0,69 et doc 0,68 = faux.
+- 236 = PR #57 ouverte, pas live. 857 passed / **9 skipped** / 0 fail ≠ 0 anomalie.
+  `certified=true` ≠ BFT ≠ V-01-B producteur.
+- Fichier : `237 rapport chat et simulation.md` (+ copie `rapports/rapports/`).
+  Contact : `official@artcb.space`.
+
+## [2026-09-07T14:25:00Z] Rapport 238 — 237 figé ; KEM P2P clair ; lettres GO ici
+
+- **Ne pas réécrire 237** (déjà sur `main` `b71089a`). Cadastre + lettres déplacés
+  vers `238 rapport chat et simulation.md` (+ `rapports/rapports/`).
+- Codex PR #58 : `NodeIdentityStore._save` écrit `kem_secret_key_hex` en JSON
+  clair (`data/p2p/node_identity.json`, chmod 0600 seulement). Ce n'est **pas**
+  le blob wallet AES-GCM. GO-A élargi à cet artefact. Pas de D-0xx. Pas de code.
+- Live inchangé : 4 officiels `b71089a`, tip `27350024…`, digest `b5f93d3f…`.
+  Contact : `official@artcb.space`.
