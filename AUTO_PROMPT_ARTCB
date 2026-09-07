@@ -1476,3 +1476,10 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - OVH1 `node_id` placeholder ; advertised localhost sur 2/3/4. `certified=true` ≠ BFT.
 - Contact : `official@artcb.space`. Pas de D-0xx. Pas de V-01-B producteur.
 
+## [2026-09-07T19:40:00Z] Rapport 245 — GO mot seul : câble E, n'append pas
+
+- Mot `GO` ≠ D-0xx ≠ produce live. `ProducerFailoverRuntime` dans AppState.
+  LIVE/PRODUCE défaut false. `maybe_produce` toujours `appended=false`.
+- Pas de SSH, pas de nouveau bloc. Live toujours `2696f2e` jusqu'au prochain deploy.
+- Tests `test_e2e249_go_e_runtime.py`. Rapport 245.
+

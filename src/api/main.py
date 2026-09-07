@@ -400,6 +400,11 @@ def create_app() -> FastAPI:
             "certification_reason": cert["certification_reason"],
             "operator_certification_go": cert["operator_certification_go"],
             "machine": public_machine_view(state.device_identity),
+            "producer_failover_live": bool(
+                getattr(state, "producer_failover", None)
+                and state.producer_failover.live
+            ),
+            "producer_failover_will_append": False,
         }
 
     # Serve React frontend (built dist/) at root

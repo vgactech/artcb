@@ -99,6 +99,11 @@ def p2p_status(request: Request) -> dict:
         "node_public_url": identity.node_public_url,
         "advertised_base_url": advertised_base_url(identity.node_public_url, identity.api_port),
         "machine": public_machine_view(state.device_identity),
+        "producer_failover": (
+            state.producer_failover.status()
+            if getattr(state, "producer_failover", None) is not None
+            else {"wired": False, "will_append_blocks": False}
+        ),
         # GO-N + GO-B : GET sans header KEM = clair (mesuré live).
         # GET avec X-ARTCB-KEM-Public-Key = enveloppe ML-KEM (pairs à jour).
         "message": (

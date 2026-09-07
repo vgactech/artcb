@@ -72,3 +72,5 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   **GO-K/M 238 ≠ GO-K/M 242–243** (lettres réutilisées). Rapport 244 :
   4 officiels déjà sur `2696f2e` ; `ProducerMonitor` **non** branché API ;
   V-01-B producteur **non** exécuté. Pull anonyme toujours clair.
+- Rapport 245 : mot `GO` → câblage `ProducerFailoverRuntime` (défauts off,
+  `append_implemented=false`). Pas une D-0xx. Pas d'append live.
