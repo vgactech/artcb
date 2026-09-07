@@ -158,6 +158,65 @@ def require_scope(scope: str):
     return _check
 
 
+def require_write_actor(
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> dict | None:
+    """Human session, agent-under-session, personal API key, or operator key.
+
+    ``sess_`` is a real user. ``artcb_`` is a key (wallet-bound or operator).
+    Missing auth stays anonymous (None) so existing public memo tests keep working.
+    Never treat the node operator key as a human address.
+    """
+    if not authorization:
+        return None
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Format Bearer requis")
+    raw = authorization.removeprefix("Bearer ").strip()
+    agent_id = (request.headers.get("x-artcb-agent-id") or "").strip() or None
+    if raw.startswith("sess_"):
+        record = _require_session(request, authorization)
+        kind = "agent" if agent_id else "human"
+        return {
+            "source": "session",
+            "kind": kind,
+            "label": agent_id or record.get("wallet_name") or "human",
+            "wallet_name": record.get("wallet_name"),
+            "address": record.get("address"),
+            "parent_address": record.get("address") if kind == "agent" else None,
+            "agent_id": agent_id,
+            "scopes": ["read", "write"],
+            "auto_wallet": record.get("wallet_name"),
+        }
+    if not raw.startswith("artcb_"):
+        raise HTTPException(status_code=401, detail="unrecognized_bearer")
+    path = _keys_path(request)
+    record = _find_key_record(_load_keys(path), raw)
+    if record is not None:
+        if "write" not in record.get("scopes", []) and "admin" not in record.get("scopes", []):
+            raise HTTPException(status_code=403, detail="scope_write_required")
+        out = dict(record)
+        out.setdefault("source", "api_key")
+        out.setdefault("kind", "human" if record.get("owner_address") else "operator")
+        out.setdefault("address", record.get("owner_address"))
+        if agent_id:
+            out["kind"] = "agent"
+            out["agent_id"] = agent_id
+            out["label"] = agent_id
+        return out
+    env_key = os.getenv("ARTCB_API_KEY", "").strip()
+    if env_key and len(env_key) == len(raw) and hmac.compare_digest(raw, env_key):
+        return {
+            "source": "operator",
+            "kind": "operator",
+            "label": agent_id or "operator",
+            "scopes": ["read", "write", "mining"],
+            "address": None,
+            "agent_id": agent_id,
+        }
+    raise HTTPException(status_code=401, detail="Token invalide ou expiré")
+
+
 def require_operator_write(
     request: Request,
     authorization: Annotated[str | None, Header()] = None,

@@ -59,3 +59,7 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   `official@artcb.space`.
   Rapport 222 : `decide_public_import()` unique (receive = pull). V-01 n'est
   pas une certification Byzantine.
+- Auto-dev (rapport 233) : clé opérateur `artcb_` ≠ session humaine `sess_`.
+  Un agent Cursor/Bob n'est un user que sous `sess_` + `X-ARTCB-Agent-Id`.
+  Les mémos auto-dev sont `visibility=private`. Pas de D-0xx. PoUC/KCG
+  (rapports 230–232) restent rang 6 — ne pas coder.

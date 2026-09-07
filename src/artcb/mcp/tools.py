@@ -1,13 +1,16 @@
 """Définition et exécution des outils MCP ARTCB.
 
-7 outils enregistrés :
-    artcb_memo          — graver une pensée dans la blockchain
-    artcb_think         — IA raisonne + grave le résultat
-    artcb_search        — recherche sémantique dans les blocs
-    artcb_mine          — pipeline minage complet (texte → IR → bloc)
-    artcb_chain_verify  — vérifier l'intégrité de la chaîne
+10 outils :
+    artcb_whoami         — session humaine / agent / opérateur
+    artcb_login          — POST /auth/login → sess_ (jamais imprimé)
+    artcb_autodev_record — mémo privé attribué au user + agent
+    artcb_memo           — graver une pensée (content=, session si présente)
+    artcb_think          — IA raisonne + grave le résultat
+    artcb_search         — recherche sémantique dans les blocs
+    artcb_mine           — pipeline minage (privé par défaut)
+    artcb_chain_verify   — vérifier l'intégrité de la chaîne
     artcb_wallet_balance — solde d'un wallet ARTCB
-    artcb_bridge_import — importer une transaction d'une blockchain externe
+    artcb_bridge_import  — importer une transaction externe
 """
 
 from __future__ import annotations
@@ -27,6 +30,50 @@ logger = logging.getLogger("artcb.mcp.tools")
 # ---------------------------------------------------------------------------
 
 TOOLS: list[dict[str, Any]] = [
+    {
+        "name": "artcb_whoami",
+        "description": (
+            "Identité ARTCB de cet agent. Une session sess_ = user réel. "
+            "Une clé artcb_ = opérateur/infrastructure, pas un humain. "
+            "Un agent n'existe que sous X-ARTCB-Agent-Id + session humaine."
+        ),
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "artcb_login",
+        "description": (
+            "Ouvre une session humaine (POST /auth/login). "
+            "Nom + mot de passe viennent de ARTCB_WALLET_NAME / ARTCB_AUTODEV_PASSWORD "
+            "ou des arguments. Le token n'est jamais renvoyé en clair."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "Nom du wallet"},
+                "password": {"type": "string", "description": "Mot de passe (sinon env)"},
+            },
+        },
+    },
+    {
+        "name": "artcb_autodev_record",
+        "description": (
+            "Enregistre un événement de développement comme USER + AGENT. "
+            "Toujours visibility=private sauf ARTCB_AUTODEV_ALLOW_PUBLIC=1. "
+            "Ce n'est pas un commitment public, ni un transfert d'autorité."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "content": {"type": "string", "description": "Texte à graver"},
+                "memo_type": {
+                    "type": "string",
+                    "enum": ["decision", "observation", "bug", "fix", "analysis", "qa_result"],
+                    "default": "decision",
+                },
+            },
+            "required": ["content"],
+        },
+    },
     {
         "name": "artcb_memo",
         "description": (
@@ -149,11 +196,23 @@ TOOLS: list[dict[str, Any]] = [
 # Exécution des outils
 # ---------------------------------------------------------------------------
 
-def _auth_headers() -> dict[str, str]:
+_SESSION_TOKEN: str | None = None
+
+
+def _auth_headers(*, as_user: bool = False) -> dict[str, str]:
+    """Session first (real user), then operator key. Never log the token."""
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
-    token = (os.environ.get("ARTCB_API_KEY") or os.environ.get("ARTCB_NODE_API_KEY") or "").strip()
+    session = (
+        _SESSION_TOKEN
+        or (os.environ.get("ARTCB_SESSION_TOKEN") or "").strip()
+    )
+    operator = (os.environ.get("ARTCB_API_KEY") or os.environ.get("ARTCB_NODE_API_KEY") or "").strip()
+    token = session if session else ("" if as_user else operator)
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    agent = (os.environ.get("ARTCB_AGENT_ID") or "cursor-autodev").strip()
+    if session or as_user:
+        headers["X-ARTCB-Agent-Id"] = agent
     return headers
 
 
@@ -191,7 +250,13 @@ def _text_content(text: str) -> list[dict[str, str]]:
 def execute_tool(name: str, arguments: dict[str, Any], *, api_url: str) -> list[dict[str, Any]]:
     """Exécute un outil MCP et retourne le contenu MCP."""
     try:
-        if name == "artcb_memo":
+        if name == "artcb_whoami":
+            return _tool_whoami(api_url)
+        elif name == "artcb_login":
+            return _tool_login(arguments, api_url)
+        elif name == "artcb_autodev_record":
+            return _tool_autodev_record(arguments, api_url)
+        elif name == "artcb_memo":
             return _tool_memo(arguments, api_url)
         elif name == "artcb_think":
             return _tool_think(arguments, api_url)
@@ -212,11 +277,69 @@ def execute_tool(name: str, arguments: dict[str, Any], *, api_url: str) -> list[
         return _text_content(f"Erreur outil {name} : {exc}")
 
 
-def _tool_memo(args: dict, api_url: str) -> list[dict]:
+def _tool_whoami(api_url: str) -> list[dict]:
+    try:
+        resp = _api_get(f"{api_url}/api/v1/auth/me")
+    except Exception as exc:
+        return _text_content(f"whoami indisponible : {exc}")
+    kind = resp.get("kind")
+    is_user = resp.get("is_user")
+    address = resp.get("address") or "—"
+    return _text_content(
+        f"kind={kind} is_user={is_user} is_operator={resp.get('is_operator')} "
+        f"wallet={resp.get('wallet_name') or '—'} address={address} "
+        f"agent_id={resp.get('agent_id') or '—'}\n"
+        "Opérateur (artcb_) ≠ user. Agent = session humaine + X-ARTCB-Agent-Id."
+    )
+
+
+def _tool_login(args: dict, api_url: str) -> list[dict]:
+    global _SESSION_TOKEN
+    name = args.get("name") or os.environ.get("ARTCB_WALLET_NAME") or os.environ.get("ARTCB_AUTODEV_WALLET") or "artcb-autodev"
+    password = args.get("password") or os.environ.get("ARTCB_AUTODEV_PASSWORD") or os.environ.get("ARTCB_WALLET_PASSWORD") or ""
+    if not password:
+        return _text_content("login refusé : ARTCB_AUTODEV_PASSWORD manquant")
+    resp = _api_post(f"{api_url}/api/v1/auth/login", {"name": name, "password": password})
+    token = resp.get("session_token") or ""
+    if not token.startswith("sess_"):
+        return _text_content("login refusé : pas de session")
+    _SESSION_TOKEN = token
+    os.environ["ARTCB_SESSION_TOKEN"] = token
+    return _text_content(
+        f"Connecté wallet={resp.get('wallet_name')} address={resp.get('address')} "
+        "token_printed=false kind=human+agent"
+    )
+
+
+def _tool_autodev_record(args: dict, api_url: str) -> list[dict]:
+    if os.environ.get("ARTCB_AUTODEV_ALLOW_PUBLIC") != "1":
+        visibility = "private"
+    else:
+        visibility = "private"
     resp = _api_post(f"{api_url}/api/v1/ai/memo", {
-        "text": args["text"],
+        "content": args["content"],
+        "memo_type": args.get("memo_type", "decision"),
+        "visibility": visibility,
+        "session_id": os.environ.get("ARTCB_AGENT_ID") or "cursor-autodev",
+        "inject_context": False,
+    })
+    return _text_content(
+        f"autodev gravé bloc=#{resp.get('block_index')} "
+        f"kind={resp.get('principal_kind')} "
+        f"actor={resp.get('actor_address') or '—'} "
+        f"visibility={resp.get('visibility', visibility)}"
+    )
+
+
+def _tool_memo(args: dict, api_url: str) -> list[dict]:
+    visibility = args.get("visibility", "private")
+    if visibility == "public" and os.environ.get("ARTCB_AUTODEV_ALLOW_PUBLIC") != "1":
+        visibility = "private"
+    resp = _api_post(f"{api_url}/api/v1/ai/memo", {
+        "content": args.get("content") or args.get("text") or "",
         "memo_type": args.get("memo_type", "observation"),
-        "visibility": args.get("visibility", "private"),
+        "visibility": visibility,
+        "inject_context": False,
     })
     block_index = resp.get("block_index", "?")
     pol_score = resp.get("pol_score", "?")

@@ -44,8 +44,19 @@ from src.artcb.mcp.prompts import PROMPTS
 
 def _mock_api_post(url: str, data: dict) -> dict:
     """Simule les réponses de l'API ARTCB pour les tests."""
+    if "/auth/login" in url:
+        return {"session_token": "sess_test", "wallet_name": data.get("name"), "address": "artcb1autodevtest"}
     if "/ai/memo" in url:
-        return {"block_index": 600, "pol_score": 0.75, "block_hash": "abc123def456", "message": "Gravé en bloc #600"}
+        assert "content" in data or "text" not in data or data.get("content")
+        return {
+            "block_index": 600,
+            "pol_score": 0.75,
+            "block_hash": "abc123def456",
+            "message": "Gravé en bloc #600",
+            "principal_kind": "agent",
+            "actor_address": "artcb1autodevtest",
+            "visibility": data.get("visibility", "private"),
+        }
     elif "/ai/think" in url:
         return {"answer": "Réponse IA test", "block_index": 601, "pol_score": 0.70}
     elif "/mining/pipeline" in url:
@@ -57,6 +68,16 @@ def _mock_api_post(url: str, data: dict) -> dict:
 
 def _mock_api_get(url: str):
     """Simule les réponses GET de l'API ARTCB."""
+    if "/auth/me" in url:
+        return {
+            "authenticated": True,
+            "kind": "agent",
+            "is_user": True,
+            "is_operator": False,
+            "wallet_name": "artcb-autodev",
+            "address": "artcb1autodevtest",
+            "agent_id": "cursor-autodev",
+        }
     if "/chain/verify" in url:
         return {"valid": True, "block_count": 525, "pqc_algorithm": "ML-DSA-65", "hybrid_signatures": True}
     elif "/wallet/balance/" in url:
@@ -120,8 +141,11 @@ class TestMCPToolsList:
         srv = ArtcbMCPServer()
         resp = srv.handle({"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})
         tools = resp["result"]["tools"]
-        assert len(tools) == 7
+        assert len(tools) == 10
         names = {t["name"] for t in tools}
+        assert "artcb_whoami" in names
+        assert "artcb_login" in names
+        assert "artcb_autodev_record" in names
         assert "artcb_memo" in names
         assert "artcb_think" in names
         assert "artcb_search" in names
@@ -211,6 +235,27 @@ class TestMCPToolsCall:
                               {"chain": "ethereum", "tx_hash": "0xabc123"},
                               api_url="http://test:8000")
         assert "ETHEREUM" in result[0]["text"] or "bridge" in result[0]["text"].lower()
+
+    @patch("src.artcb.mcp.tools._api_get", side_effect=_mock_api_get)
+    def test_tool_whoami(self, mock_get):
+        result = execute_tool("artcb_whoami", {}, api_url="http://test:8000")
+        assert "is_user=True" in result[0]["text"] or "is_user=true" in result[0]["text"].lower()
+
+    @patch("src.artcb.mcp.tools._api_post", side_effect=_mock_api_post)
+    def test_tool_login(self, mock_post, monkeypatch):
+        monkeypatch.setenv("ARTCB_AUTODEV_PASSWORD", "monMotDePasse42!")
+        result = execute_tool("artcb_login", {"name": "artcb-autodev"}, api_url="http://test:8000")
+        assert "token_printed=false" in result[0]["text"]
+        assert "artcb1autodevtest" in result[0]["text"]
+
+    @patch("src.artcb.mcp.tools._api_post", side_effect=_mock_api_post)
+    def test_tool_autodev_record(self, mock_post):
+        result = execute_tool(
+            "artcb_autodev_record",
+            {"content": "note de dev"},
+            api_url="http://test:8000",
+        )
+        assert "600" in result[0]["text"]
 
     def test_tool_unknown(self):
         result = execute_tool("outil_inexistant", {}, api_url="http://test:8000")
