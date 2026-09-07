@@ -1347,6 +1347,117 @@ def ai_memo_read(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# P249 — POST /api/v1/ai/ingest-batch — mémoire repo scoped
+# ─────────────────────────────────────────────────────────────────────────────
+
+class IngestFile(BaseModel):
+    path: str = Field(min_length=1, max_length=1024)
+    sha256: str = Field(default="")
+    text: str | None = None
+    chars: int | None = None
+
+
+class IngestBatchRequest(BaseModel):
+    batch_id: str = Field(min_length=3, max_length=64)
+    scope: str = Field(default="public")
+    chain_visibility: str | None = None
+    kind: str = Field(default="repo_batch")
+    source_text: str = Field(min_length=1, max_length=400_000)
+    files: list[IngestFile] = Field(default_factory=list)
+
+
+@router_ai.post("/ingest-batch", summary="Graver un lot de fichiers repo (public/org/groupe/privé)")
+def ai_ingest_batch(
+    body: IngestBatchRequest,
+    request: Request,
+    key_record: Annotated[dict | None, Depends(require_write_actor)] = None,
+) -> dict:
+    """Ingest a packed repo batch. Org/group bodies use private chain visibility (not P2P)."""
+    from src.artcb.memory.repo_ingest import IngestBatch, apply_ingest_batch
+    from src.artcb.memory.repo_scope import chain_visibility as scope_chain
+
+    if body.scope not in {"public", "private", "group", "organization"}:
+        raise HTTPException(status_code=422, detail="scope must be public|private|group|organization")
+    vis = body.chain_visibility or scope_chain(body.scope)
+    if vis not in {"public", "private"}:
+        vis = "private"
+    agent_id = (
+        (key_record or {}).get("agent_id")
+        or request.headers.get("x-artcb-agent-id")
+        or "cursor-cloud-agent"
+    )
+    batch = IngestBatch(
+        batch_id=body.batch_id,
+        scope=body.scope,  # type: ignore[arg-type]
+        chain_visibility=vis,
+        kind=body.kind,
+        files=[f.model_dump() for f in body.files],
+        source_text=body.source_text,
+    )
+    state = _state(request)
+    try:
+        return apply_ingest_batch(state, batch, agent_id=str(agent_id))
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"ingest failed: {exc}") from exc
+
+
+@router_ai.get("/ingest/catalog", summary="Index des fichiers ingérés (paths + hashes + blocs)")
+def ai_ingest_catalog(
+    request: Request,
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> dict:
+    from src.artcb.memory.repo_ingest import load_index
+
+    state = _state(request)
+    data_dir = getattr(state.settings, "data_dir", Path("data"))
+    rows = load_index(Path(data_dir))
+    by_scope: dict[str, int] = {}
+    for row in rows:
+        scope = str(row.get("scope") or "?")
+        by_scope[scope] = by_scope.get(scope, 0) + 1
+    return {"count": len(rows), "by_scope": by_scope, "files": rows}
+
+
+@router_ai.get("/ingest/file", summary="Relire un fichier ingéré par path")
+def ai_ingest_file(
+    request: Request,
+    path: str = Query(min_length=1),
+    key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
+) -> dict:
+    from src.artcb.memory.repo_ingest import load_index, parse_batch_files
+
+    state = _state(request)
+    data_dir = getattr(state.settings, "data_dir", Path("data"))
+    rows = [r for r in load_index(Path(data_dir)) if r.get("path") == path]
+    if not rows:
+        raise HTTPException(status_code=404, detail="path not ingested")
+    row = rows[-1]
+    graph = state.get_graph(str(row.get("graph_id") or ""))
+    if graph is None:
+        raise HTTPException(status_code=404, detail="graph missing")
+    block = None
+    for b in state.chain.list_blocks():
+        if b.get("index") == row.get("block_index"):
+            block = b
+            break
+    if block:
+        state.authz.assert_block(request, block, "READ")
+    parsed = {p["path"]: p["text"] for p in parse_batch_files(graph.source_text)}
+    text = parsed.get(path)
+    if text is None and row.get("kind") == "repo_catalog":
+        text = graph.source_text
+    return {
+        "path": path,
+        "sha256": row.get("sha256"),
+        "scope": row.get("scope"),
+        "block_index": row.get("block_index"),
+        "graph_id": row.get("graph_id"),
+        "text": text,
+        "found": text is not None,
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # P1-3 — GET /api/v1/ai/events — SSE push nouveaux blocs
 # ─────────────────────────────────────────────────────────────────────────────
 
