@@ -166,8 +166,19 @@ def test_build_contributors_no_sybil_unchanged() -> None:
 
 # ── 4. PoolService.create_job avec anti_sybil ────────────────────────────────
 
-def test_pool_create_job_filters_cooldown_worker(tmp_path) -> None:
-    """create_job exclut les workers en cooldown AVANT d'attribuer les chunks."""
+def test_pool_create_job_filters_cooldown_worker(tmp_path, monkeypatch) -> None:
+    """create_job exclut les workers en cooldown AVANT d'attribuer les chunks.
+
+    On substitue encrypt_chunk_payload par un stub déterministe :
+    ce test vérifie uniquement la logique anti-sybil (qui reçoit le job),
+    pas le chiffrement KEM. Les clés hex sont factices (32 hex chars).
+    """
+    import artcb.pool.service as _svc_mod
+
+    def _stub_encrypt(text: str, kem_hex: str) -> dict:
+        return {"kem_alg": "stub", "kem_ct": "00", "nonce": "00", "ciphertext": "00", "context": "test"}
+
+    monkeypatch.setattr(_svc_mod, "encrypt_chunk_payload", _stub_encrypt)
     sybil = _sybil(60)
     _fresh(sybil, "addr_bob_node", last_s_ago=20)  # node de bob en cooldown
 

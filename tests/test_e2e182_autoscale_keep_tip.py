@@ -92,15 +92,17 @@ def _make_origin(tmp_path: Path) -> tuple[Path, str, str]:
 
 
 def _run_sync(dest: Path, origin: Path, pin: str) -> subprocess.CompletedProcess[str]:
+    # _home est créé hors de dest pour ne pas polluer git status --porcelain
+    home_dir = dest.parent / "_home_sync"
+    home_dir.mkdir(exist_ok=True)
     env = {
         **GIT_ENV,
         "ARTCB_REPLIT_PIN_SHA": pin,
         "ARTCB_REPLIT_BRANCH": "cursor/replit-sync-ready-16d8",
         "ARTCB_REPLIT_REMOTE": str(origin),
         "REPL_DIR": str(dest),
-        "HOME": str(dest / "_home"),
+        "HOME": str(home_dir),
     }
-    (dest / "_home").mkdir(exist_ok=True)
     return subprocess.run(
         ["bash", str(SYNC)],
         cwd=dest,

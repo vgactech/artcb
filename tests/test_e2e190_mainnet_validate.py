@@ -79,7 +79,9 @@ def test_pin_ancestor_fast_forward(tmp_path: Path, monkeypatch) -> None:
 
 def test_replit_git_sync_does_not_print_pin() -> None:
     body = (ROOT / "scripts" / "replit_git_sync.sh").read_text(encoding="utf-8")
-    assert "fetch --unshallow" in body
+    # Session 059 : --unshallow réécrit l'historique (LEÇONS_APPRISES L-037).
+    # Le script utilise désormais --update-shallow (non-destructif).
+    assert "fetch --update-shallow" in body
     assert "pin=$ARTCB_REPLIT_PIN_SHA" not in body
     assert "fetch --depth 1 origin" not in body
 

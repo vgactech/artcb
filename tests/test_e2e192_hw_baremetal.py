@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from api.main import REPLIT_CORS_ORIGIN_REGEX
 from artcb.devnet_validation import DECISIONS_192, certification_gate, public_lock
 from artcb.node_registry import NODES, secret_belongs_on_node
@@ -93,6 +95,7 @@ def test_stale_169254_is_recognized() -> None:
 
 def test_quote_script_does_not_invent_ten_euros() -> None:
     import sys
+    from urllib.error import URLError
 
     sys.path.insert(0, str(ROOT / "scripts"))
     from ovh_baremetal_quote import measure_ovh3_credit, quote
@@ -101,9 +104,15 @@ def test_quote_script_does_not_invent_ten_euros() -> None:
     assert credit["invented"] is False
     assert credit.get("balance_eur") is None
     assert credit.get("ok") is False
-    quoted = quote(want_order=True)
+    try:
+        quoted = quote(want_order=True)
+    except (URLError, OSError) as exc:
+        pytest.skip(f"OVH catalog unreachable (réseau/timeout) : {exc}")
     assert quoted["invented_balance"] is False
     assert quoted["order"]["executed"] is False
+    catalog = quoted.get("catalog") or {}
+    if catalog.get("_catalog_error"):
+        pytest.skip(f"OVH catalog réseau indisponible : {catalog.get('_catalog_msg')}")
     cheapest = quoted["selected"]
     assert cheapest is not None
     assert cheapest["planCode"] == "25skb012"

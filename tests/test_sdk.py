@@ -40,16 +40,19 @@ def sdk():
 # ── Tests instanciation ───────────────────────────────────────────────────────
 
 def _clear_api_key_env(monkeypatch) -> None:
-    """Supprime les clés API de l'environnement pour isoler les tests SDK.
+    """Supprime les clés API et URLs de l'environnement pour isoler les tests SDK.
 
-    Doppler injecte ARTCB_API_KEY et ARTCB_NODE_API_KEY dans l'env, ce qui
-    déclenche la vérification de sécurité HTTP pour les URLs non-locales.
-    Les tests d'instanciation du SDK testent la logique URL, pas la sécurité
-    réseau — on retire donc les clés pour éviter le faux positif.
+    Doppler injecte ARTCB_API_KEY, ARTCB_NODE_API_KEY, ARTCB_API_URL et
+    ARTCB_NODE_URL dans l'env. Quand un test passe api_key= sans URL, le SDK
+    récupère ARTCB_NODE_URL (remote OVH) comme base_url, ce qui déclenche
+    la vérification de sécurité HTTP. On retire toutes ces variables pour que
+    le SDK utilise son défaut http://localhost:8000 (local, pas de vérif).
     """
     monkeypatch.delenv("ARTCB_API_KEY", raising=False)
     monkeypatch.delenv("ARTCB_NODE_API_KEY", raising=False)
     monkeypatch.delenv("ARTCB_ALLOW_INSECURE_HTTP", raising=False)
+    monkeypatch.delenv("ARTCB_API_URL", raising=False)
+    monkeypatch.delenv("ARTCB_NODE_URL", raising=False)
 
 
 class TestArtcbClientInit:

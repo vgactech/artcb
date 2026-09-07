@@ -65,8 +65,12 @@ def extract_pdf_text(path: Path, max_pages: int | None = None, parallel: bool = 
     return "\n\n".join(chunks)
 
 
-def extract_pdf_chunks(path: Path, chunk_size: int = 2000, max_chunks: int = 5, parallel: bool = True) -> list[str]:
-    """Split book text into chunks for incremental encode tests with optional parallel extraction."""
+def extract_pdf_chunks(path: Path, chunk_size: int = 2000, max_chunks: int = 5, parallel: bool = False) -> list[str]:
+    """Split book text into chunks for incremental encode tests with optional parallel extraction.
+
+    parallel=False par défaut : évite le deadlock ThreadPoolExecutor de pypdf
+    sur macOS quand le PDF est large (chaque thread recrée un PdfReader complet).
+    """
     full_text = extract_pdf_text(path, parallel=parallel)
     if not full_text:
         return []

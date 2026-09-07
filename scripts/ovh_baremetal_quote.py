@@ -83,8 +83,20 @@ def euro_from_raw(raw: int | float | None) -> float | None:
 
 
 def public_eco_catalog() -> dict[str, Any]:
-    with urlopen(ECO_CATALOG, timeout=40) as resp:
-        cat = json.loads(resp.read().decode())
+    """Fetch OVH public ECO catalog. Returns error dict if network is unavailable."""
+    import concurrent.futures as _cf
+
+    def _fetch() -> dict[str, Any]:
+        with urlopen(ECO_CATALOG, timeout=12) as resp:
+            return json.loads(resp.read().decode())
+
+    ex = _cf.ThreadPoolExecutor(max_workers=1)
+    future = ex.submit(_fetch)
+    ex.shutdown(wait=False)  # ne pas bloquer sur __exit__ si le thread est lent
+    try:
+        cat = future.result(timeout=14)
+    except (_cf.TimeoutError, TimeoutError, HTTPError, URLError, OSError, json.JSONDecodeError) as exc:
+        return {"cheapest": [], "_catalog_error": type(exc).__name__, "_catalog_msg": str(exc)[:200]}
     rows: list[dict[str, Any]] = []
     for plan in cat.get("plans") or []:
         monthly = [
