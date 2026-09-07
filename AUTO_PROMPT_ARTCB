@@ -1427,3 +1427,17 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Interdit inchangé : wipe, D-0xx sans GO, certif, V-01-B producteur sans GO, clé OVH1
   vers Doppler 2/3/4, inventer SHA/solde/Settlement.
 - Contact : `official@artcb.space`. Halving retiré du prompt MCP (D-024).
+
+## [2026-09-07T09:46:05Z] Rapports 234–235 — réseau 5 nœuds + suite 0 fail
+
+- **234** : métriques réseau complet — 5/5 nœuds sur SHA `1c2b873`, convergence totale.
+  Latences : OVH 60-65ms, AWS3 195ms (Dublin), local 5ms. `peer_count=4` sur nœud local.
+  Problème mineur : `advertised_base_url: http://localhost:8000` sur AWS3+OVH4 → `ARTCB_NODE_PUBLIC_URL` absent.
+- **235** : suite complète **857 passed, 9 skipped, 0 failed** en 446s (première fois).
+  7 fixes : test_sdk ARTCB_NODE_URL, test_e2e190 --update-shallow, test_e2e182 _home hors dest,
+  test_anti_sybil stub KEM, test_e2e192 skip OVH réseau, ovh_baremetal_quote thread timeout non-bloquant,
+  pdf_loader parallel=False. commandTimeout Bob 1800s configuré.
+  Commit `7e313d5` pushé sur main. Bloc PoL #5 gravé ML-DSA-65.
+- SHA actuel main : `7e313d5`.
+- Prochaine étape autorisée sans GO : configurer `ARTCB_NODE_PUBLIC_URL` sur OVH4+AWS3 (Doppler).
+  Nécessitent GO : V-01-B producteur, PoUC/KCG, deploy OVH1.
