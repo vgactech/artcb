@@ -1456,3 +1456,13 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
   `certified=true` ≠ BFT ≠ V-01-B producteur.
 - Fichier : `237 rapport chat et simulation.md` (+ copie `rapports/rapports/`).
   Contact : `official@artcb.space`.
+
+## [2026-09-07T14:25:00Z] Rapport 238 — 237 figé ; KEM P2P clair ; lettres GO ici
+
+- **Ne pas réécrire 237** (déjà sur `main` `b71089a`). Cadastre + lettres déplacés
+  vers `238 rapport chat et simulation.md` (+ `rapports/rapports/`).
+- Codex PR #58 : `NodeIdentityStore._save` écrit `kem_secret_key_hex` en JSON
+  clair (`data/p2p/node_identity.json`, chmod 0600 seulement). Ce n'est **pas**
+  le blob wallet AES-GCM. GO-A élargi à cet artefact. Pas de D-0xx. Pas de code.
+- Live inchangé : 4 officiels `b71089a`, tip `27350024…`, digest `b5f93d3f…`.
+  Contact : `official@artcb.space`.

@@ -63,8 +63,11 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   Un agent Cursor/Bob n'est un user que sous `sess_` + `X-ARTCB-Agent-Id`.
   Les mémos auto-dev sont `visibility=private`. Pas de D-0xx. PoUC/KCG
   (rapports 230–232) restent rang 6 — ne pas coder.
-- Rapport 237 (rang 6) : Reasoning Fee + réponses simulées 220–236 + menu
-  **GO-A…GO-N**. Une lettre n'est du code que après GO opérateur.
+- Rapport 237 (rang 6, **figé** sur `main` `b71089a`) : Reasoning Fee §1–§45.
+  Ne pas le réécrire. Suite = 238.
+- Rapport 238 (rang 6) : cadastre 220–236 + mesures live + crypto/PoL/compression
+  + menu **GO-A…GO-N**. Une lettre n'est du code que après GO opérateur.
+  `node_identity.json` `kem_secret_key_hex` = JSON **clair** (pas AES-GCM).
   Chiffrement au repos ORG, pull P2P chiffré, IR binaire PoL, PoUC/KCG
   et V-01-B producteur **ne sont pas** « déjà faits ». `certified=true`
   ≠ BFT. Hash ≠ chiffrement. Formule `compression_ratio` IR ≠ gzip réel.
