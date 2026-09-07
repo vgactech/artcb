@@ -92,7 +92,10 @@ class AppState:
     live_bft: Any = None
     pol_state: dict[str, Any] = field(default_factory=lambda: {
         "pol_score": 0.6,
-        "delta_compression": 0.68,
+        # delta_compression est mesuré dynamiquement lors du minage, pas une heuristique fixe.
+        # IR JSON v0.1 sur texte court ≈ 5–28× plus gros que la source ; gzip(IR) ≈ 1.5× plus gros.
+        # La valeur 0.68 était une estimation non mesurée — retirée (GO-N 2026-09-07).
+        "delta_compression": None,
         "validation_rate": 1.0,
         "retrieval_accuracy": 1.0,
         "block_accepted": True,

@@ -18,17 +18,30 @@ Standard post-quantique hybride :
   - Wallet : Ed25519 + ML-DSA-65 (signature hybride)
   - Transport P2P : ML-KEM-768 (chiffrement de transport)
   - Adresse : SHA-256(RIPEMD-160(Ed25519_pubkey + ML-DSA_pubkey)) Bech32
+
+GO-A (2026-09-07) — Chiffrement au repos de kem_secret_key_hex :
+  La clé secrète KEM est chiffrée AES-256-GCM avant persistence sur disque.
+  Clé de chiffrement dérivée via HKDF-SHA256 depuis :
+    ARTCB_KEM_STORAGE_KEY (env — Doppler) OU machine_id_hash (fallback).
+  Format sur disque : {"kem_secret_enc": "<hex:nonce+tag+ct>", "kem_enc_version": 1}
+  Rétrocompatibilité : si kem_secret_key_hex présent en clair → migration auto au premier load.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
+import secrets
 import socket
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+from cryptography.hazmat.primitives import hashes
 
 from src.artcb.crypto.kem import (
     KEMError,
@@ -45,6 +58,75 @@ DEFAULT_P2P_PORT = int(os.getenv("ARTCB_P2P_PORT", "18444"))
 # Fichier local (non committé) où l'adresse wallet est persistée après
 # POST /setup/init-node. Lu au démarrage avant les variables d'env.
 _NODE_CONFIG_FILENAME = ".node_config"
+
+# ── GO-A : Chiffrement au repos de kem_secret_key_hex ────────────────────────
+_KEM_ENC_VERSION = 1
+_KEM_NONCE_LEN = 12
+_KEM_STORAGE_KEY_ENV = "ARTCB_KEM_STORAGE_KEY"
+
+
+def _kem_storage_key() -> bytes:
+    """Dérive la clé AES-256 pour chiffrer kem_secret_key_hex sur disque.
+
+    Priorité :
+    1. ARTCB_KEM_STORAGE_KEY (hex 32+ bytes, injecté par Doppler)
+    2. machine_id_hash (binding machine — fallback gracieux, pas une clé forte)
+    """
+    raw = os.environ.get(_KEM_STORAGE_KEY_ENV, "").strip()
+    if raw:
+        try:
+            key_material = bytes.fromhex(raw)
+        except ValueError:
+            key_material = raw.encode()
+    else:
+        # Fallback : binding machine (imparfait mais mieux que le clair)
+        machine_id = _machine_id_raw()
+        key_material = hashlib.sha256(b"artcb-kem-storage-v1:" + machine_id).digest()
+        logger.warning(
+            "ARTCB_KEM_STORAGE_KEY absent — KEM secret chiffré avec machine_id (fallback). "
+            "Définir ARTCB_KEM_STORAGE_KEY dans Doppler pour une sécurité renforcée."
+        )
+    # HKDF-SHA256 → 32 bytes AES-256
+    return HKDF(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=b"artcb-node-kem-v1",
+        info=b"kem_secret_storage",
+    ).derive(key_material)
+
+
+def _machine_id_raw() -> bytes:
+    """Identifiant machine stable (platform-agnostic)."""
+    candidates = [
+        "/etc/machine-id",
+        "/var/lib/dbus/machine-id",
+        "/proc/sys/kernel/random/boot_id",
+    ]
+    for path in candidates:
+        try:
+            val = Path(path).read_text().strip()
+            if val:
+                return val.encode()
+        except OSError:
+            pass
+    return socket.gethostname().encode()
+
+
+def _encrypt_kem_secret(secret_hex: str) -> str:
+    """Chiffre kem_secret_key_hex → hex(nonce + ciphertext_with_tag)."""
+    key = _kem_storage_key()
+    nonce = secrets.token_bytes(_KEM_NONCE_LEN)
+    ct = AESGCM(key).encrypt(nonce, bytes.fromhex(secret_hex), b"artcb-kem-secret-v1")
+    return (nonce + ct).hex()
+
+
+def _decrypt_kem_secret(enc_hex: str) -> str:
+    """Déchiffre hex(nonce+ct) → kem_secret_key_hex."""
+    key = _kem_storage_key()
+    raw = bytes.fromhex(enc_hex)
+    nonce, ct = raw[:_KEM_NONCE_LEN], raw[_KEM_NONCE_LEN:]
+    plaintext = AESGCM(key).decrypt(nonce, ct, b"artcb-kem-secret-v1")
+    return plaintext.hex()
 
 
 @dataclass
@@ -202,12 +284,28 @@ class NodeIdentityStore:
 
         if self.path.is_file():
             data = json.loads(self.path.read_text(encoding="utf-8"))
+
+            # GO-A : migration automatique clair → chiffré au premier chargement.
+            # Si kem_secret_key_hex est encore en clair (ancienne version), on migre.
+            needs_save = False
+            if "kem_secret_key_hex" in data and "kem_secret_enc" not in data:
+                enc = _encrypt_kem_secret(data["kem_secret_key_hex"])
+                data["kem_secret_enc"] = enc
+                data["kem_enc_version"] = _KEM_ENC_VERSION
+                del data["kem_secret_key_hex"]
+                needs_save = True
+                logger.info("node_identity: kem_secret migré de clair → chiffré AES-256-GCM (GO-A)")
+
+            # Déchiffrer le secret pour usage en mémoire
+            kem_secret_hex = _decrypt_kem_secret(data["kem_secret_enc"])
+
             # Mettre à jour l'URL dans node_identity.json si elle a changé
             stored_url = data.get("node_public_url") or ""
             if fresh_url and fresh_url != stored_url:
                 data["node_public_url"] = fresh_url
-                self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
+                needs_save = True
                 logger.info("node_identity: public_url updated %r → %r", stored_url, fresh_url)
+
             # AWS3-class leftover: identity created under X25519 fallback (32 bytes)
             # while liboqs is now present. Upgrade in place so we advertise a real
             # ML-KEM-768 key instead of lying with kem_algorithm=ML-KEM-768.
@@ -218,9 +316,10 @@ class NodeIdentityStore:
             if native_liboqs_available() and len(stored_pub) != MLKEM768_PUBLIC_BYTES:
                 secret, public = generate_kem_keypair()
                 data["kem_public_key_hex"] = public.hex()
-                data["kem_secret_key_hex"] = secret.hex()
-                self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
-                self.path.chmod(0o600)
+                data["kem_secret_enc"] = _encrypt_kem_secret(secret.hex())
+                data["kem_enc_version"] = _KEM_ENC_VERSION
+                kem_secret_hex = secret.hex()
+                needs_save = True
                 logger.warning(
                     "Upgraded stale P2P KEM identity from %d-byte public key to ML-KEM-768 (%d bytes)",
                     len(stored_pub),
@@ -228,14 +327,20 @@ class NodeIdentityStore:
                 )
             if data.get("network_id") != NETWORK_ID:
                 data["network_id"] = NETWORK_ID
-                self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
-                self.path.chmod(0o600)
+                needs_save = True
                 logger.info("node_identity: network_id migrated to %s", NETWORK_ID)
+
+            if needs_save:
+                # N'écrire que les champs sûrs — jamais kem_secret_key_hex en clair
+                safe_data = {k: v for k, v in data.items() if k != "kem_secret_key_hex"}
+                self.path.write_text(json.dumps(safe_data, indent=2), encoding="utf-8")
+                self.path.chmod(0o600)
+
             return NodeIdentity(
                 network_id=data.get("network_id", NETWORK_ID),
                 node_id=data["node_id"],
                 kem_public_key_hex=data["kem_public_key_hex"],
-                kem_secret_key_hex=data["kem_secret_key_hex"],
+                kem_secret_key_hex=kem_secret_hex,
                 api_port=int(data.get("api_port", api_port)),
                 p2p_port=int(data.get("p2p_port", DEFAULT_P2P_PORT)),
                 wallet_address=data.get("wallet_address"),
@@ -310,11 +415,16 @@ class NodeIdentityStore:
         return identity
 
     def _save(self, identity: NodeIdentity) -> None:
+        # GO-A : kem_secret_key_hex chiffré AES-256-GCM avant écriture sur disque.
+        # La clé publique reste en clair (elle est publique par définition).
+        enc = _encrypt_kem_secret(identity.kem_secret_key_hex)
         payload = {
             "network_id": identity.network_id,
             "node_id": identity.node_id,
             "kem_public_key_hex": identity.kem_public_key_hex,
-            "kem_secret_key_hex": identity.kem_secret_key_hex,
+            "kem_secret_enc": enc,           # chiffré AES-256-GCM
+            "kem_enc_version": _KEM_ENC_VERSION,
+            # kem_secret_key_hex n'est plus écrit en clair sur disque
             "api_port": identity.api_port,
             "p2p_port": identity.p2p_port,
         }

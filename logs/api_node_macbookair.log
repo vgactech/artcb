@@ -1,284 +1,263 @@
-2026-09-06T00:44:15 [WARNING] artcb.privacy.homomorphic: TenSEAL non installé — mode simulé (TESTS UNIQUEMENT). Production : pip install tenseal
-2026-09-06T00:44:16 [INFO] artcb.governance.manager: Creator wallet loaded: yRUitWXQQ2Ri/ykV...
-2026-09-06T00:44:16 [DEBUG] faiss.loader: Environment variable FAISS_OPT_LEVEL is not set, so let's pick the instruction set according to the current CPU
-2026-09-06T00:44:16 [INFO] faiss.loader: Loading faiss with AVX2 support.
-2026-09-06T00:44:16 [INFO] faiss.loader: Successfully loaded faiss with AVX2 support.
-2026-09-06T00:44:17 [DEBUG] artcb.system.optimizer: compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
-2026-09-06T00:44:17 [DEBUG] artcb.system.optimizer: Optimization profile workers=3 faiss_gpu=False chunk=400 max_contributors=10 network=BONNE(100.0Mbps)
-2026-09-06T00:44:17 [DEBUG] artcb.security.hardware_identity: Loaded device identity fingerprint=2d8dc493887b76fe...
-2026-09-06T00:44:18 [DEBUG] artcb.system.optimizer: compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
-2026-09-06T00:44:18 [DEBUG] src.artcb.security.anti_sybil: Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
-2026-09-06T00:44:18 [INFO] src.artcb.security.anti_sybil: AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=60s ai_bypass=True study_mode=False
-2026-09-06T00:44:18 [INFO] src.artcb.security.slashing: SlashingManager initialized: 0 events, 0 blacklisted addresses
-2026-09-06T00:44:18 [INFO] artcb.chain.manager: Security modules enabled (Anti-Sybil + Slashing)
-2026-09-06T00:44:18 [DEBUG] artcb.chain.manager: chain identity bound humans=True machines=True work=True
-2026-09-06T00:44:18 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
-2026-09-06T00:44:18 [DEBUG] artcb.economics.demographic: demographic ref digest=8b95a9f46c671505 adult_max=5763415792.0
-2026-09-06T00:44:18 [INFO] artcb.mining.protocol: Security modules ENABLED (Anti-Sybil + Slashing)
-2026-09-06T00:44:18 [DEBUG] artcb.chain.manager: chain identity bound humans=True machines=True work=True
-2026-09-06T00:44:18 [DEBUG] httpcore.connection: connect_tcp.started host='91.134.45.8' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:18 [DEBUG] httpcore.connection: connect_tcp.started host='152.228.144.34' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:18 [DEBUG] httpcore.connection: connect_tcp.started host='51.44.222.232' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:18 [DEBUG] httpcore.connection: connect_tcp.started host='151.80.107.29' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.started host='91.134.45.8' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.started host='51.44.222.232' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.started host='151.80.107.29' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:20 [DEBUG] httpcore.connection: connect_tcp.started host='152.228.144.34' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.started host='91.134.45.8' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.started host='152.228.144.34' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.started host='151.80.107.29' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:21 [DEBUG] httpcore.connection: connect_tcp.started host='51.44.222.232' port=8000 local_address=None timeout=1.5 socket_options=None
-2026-09-06T00:44:23 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:23 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:23 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:23 [DEBUG] httpcore.connection: connect_tcp.failed exception=ConnectTimeout(TimeoutError('timed out'))
-2026-09-06T00:44:23 [INFO] artcb.p2p.seed_discovery: seed_known_nodes directory=4 peers_added=0 errors=0 skipped=False announced=[]
-2026-09-06T00:44:23 [DEBUG] artcb.api: ARTCB API started debug=True bootstrap_mode=False
-2026-09-06T00:44:23 [INFO] uvicorn.error: Started server process [33658]
-2026-09-06T00:44:23 [INFO] uvicorn.error: Waiting for application startup.
-2026-09-06T00:44:23 [INFO] uvicorn.error: Application startup complete.
-2026-09-06T00:44:23 [INFO] uvicorn.error: Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-2026-09-06T00:46:47 [DEBUG] artcb.chain.ffi: Loaded C library path=/Users/deyi/.bob/playground/src/c/libartcb_chain.so v2=True
-2026-09-06T00:46:47 [DEBUG] artcb.release: release identity sha=477087c135d4 branch=main integrity=ok pin_set=False
+2026-09-07T09:57:08 [WARNING] artcb.privacy.homomorphic: TenSEAL non installé — mode simulé (TESTS UNIQUEMENT). Production : pip install tenseal
+2026-09-07T09:57:09 [INFO] artcb.governance.manager: Creator wallet loaded: yRUitWXQQ2Ri/ykV...
+2026-09-07T09:57:10 [DEBUG] faiss.loader: Environment variable FAISS_OPT_LEVEL is not set, so let's pick the instruction set according to the current CPU
+2026-09-07T09:57:10 [INFO] faiss.loader: Loading faiss with AVX2 support.
+2026-09-07T09:57:10 [INFO] faiss.loader: Successfully loaded faiss with AVX2 support.
+2026-09-07T09:57:11 [DEBUG] artcb.system.optimizer: compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-09-07T09:57:11 [DEBUG] artcb.system.optimizer: Optimization profile workers=3 faiss_gpu=False chunk=400 max_contributors=10 network=BONNE(100.0Mbps)
+2026-09-07T09:57:11 [DEBUG] artcb.security.hardware_identity: Loaded device identity fingerprint=2d8dc493887b76fe...
+2026-09-07T09:57:11 [DEBUG] artcb.ir.symbol_store: Loaded symbol registry entries=160
+2026-09-07T09:57:11 [DEBUG] artcb.system.optimizer: compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-09-07T09:57:11 [DEBUG] src.artcb.security.anti_sybil: Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-09-07T09:57:11 [INFO] src.artcb.security.anti_sybil: AntiSybilValidator initialized: min_pol=0.60 max_contributors=10 (dynamic=True) min_interval=60s ai_bypass=True study_mode=False
+2026-09-07T09:57:11 [INFO] src.artcb.security.slashing: SlashingManager initialized: 0 events, 0 blacklisted addresses
+2026-09-07T09:57:11 [INFO] artcb.chain.manager: Security modules enabled (Anti-Sybil + Slashing)
+2026-09-07T09:57:11 [DEBUG] artcb.chain.manager: chain identity bound humans=True machines=True work=True
+2026-09-07T09:57:11 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
+2026-09-07T09:57:11 [DEBUG] artcb.economics.demographic: demographic ref digest=8b95a9f46c671505 adult_max=5763415792.0
+2026-09-07T09:57:11 [INFO] artcb.mining.protocol: Security modules ENABLED (Anti-Sybil + Slashing)
+2026-09-07T09:57:11 [DEBUG] artcb.chain.manager: chain identity bound humans=True machines=True work=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Loaded graph_id=g_fd2671a7ea75 from disk cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Loaded graph_id=g_eeef593633ce from disk cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Loaded graph_id=g_38c95570b8f1 from disk cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Loaded graph_id=g_6a1d0680b6ef from disk cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Loaded graph_id=g_2ec0060fcc73 from disk cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_fd2671a7ea75 path=data/graphs/g_fd2671a7ea75.json cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_fd2671a7ea75 nodes=6
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_eeef593633ce path=data/graphs/g_eeef593633ce.json cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_eeef593633ce nodes=8
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_38c95570b8f1 path=data/graphs/g_38c95570b8f1.json cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_38c95570b8f1 nodes=9
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_6a1d0680b6ef path=data/graphs/g_6a1d0680b6ef.json cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_6a1d0680b6ef nodes=4
+2026-09-07T09:57:11 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_2ec0060fcc73 path=data/graphs/g_2ec0060fcc73.json cached=True
+2026-09-07T09:57:11 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_2ec0060fcc73 nodes=10
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='91.134.45.8' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='152.228.144.34' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='51.44.222.232' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='151.80.107.29' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x109ba2410>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x108bbebd0>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x109ba3450>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x109ba1210>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'2615'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://51.44.222.232:8000/health "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'2612'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://91.134.45.8:8000/health "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'2612'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://152.228.144.34:8000/health "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'2612'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://151.80.107.29:8000/health "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='51.44.222.232' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='91.134.45.8' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='152.228.144.34' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='151.80.107.29' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x109bbb290>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x109bbbf50>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x10c334d50>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x10c335b10>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:12 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5658'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://152.228.144.34:8000/api/v1/p2p/status "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5678'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://51.44.222.232:8000/api/v1/p2p/status "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5675'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://91.134.45.8:8000/api/v1/p2p/status "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5675'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://151.80.107.29:8000/api/v1/p2p/status "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='51.44.222.232' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='152.228.144.34' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x10c349190>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x10c34a1d0>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='91.134.45.8' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5514'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://51.44.222.232:8000/api/v1/network/nodes "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:12 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5514'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x10c34b6d0>
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://152.228.144.34:8000/api/v1/network/nodes "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.started host='151.80.107.29' port=8000 local_address=None timeout=1.5 socket_options=None
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5513'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://91.134.45.8:8000/api/v1/network/nodes "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: connect_tcp.complete return_value=<httpcore._backends.sync.SyncStream object at 0x109ba17d0>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_headers.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: send_request_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_headers.complete return_value=(b'HTTP/1.1', 200, b'OK', [(b'date', b'Mon, 07 Sep 2026 07:57:11 GMT'), (b'server', b'uvicorn'), (b'content-length', b'5514'), (b'content-type', b'application/json')])
+2026-09-07T09:57:12 [INFO] httpx: HTTP Request: GET http://151.80.107.29:8000/api/v1/network/nodes "HTTP/1.1 200 OK"
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.started request=<Request [b'GET']>
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: receive_response_body.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.started
+2026-09-07T09:57:12 [DEBUG] httpcore.http11: response_closed.complete
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.started
+2026-09-07T09:57:12 [DEBUG] httpcore.connection: close.complete
 liboqs-python faulthandler is disabled
-2026-09-06T00:46:47 [INFO] oqs.oqs: liboqs-python faulthandler is disabled
-2026-09-06T00:46:47 [INFO] uvicorn.access: 127.0.0.1:51025 - "GET /api/v1/health HTTP/1.1" 200
-2026-09-06T00:47:16 [INFO] uvicorn.access: 127.0.0.1:51029 - "POST /setup/init-node HTTP/1.1" 422
-2026-09-06T00:47:16 [INFO] uvicorn.access: 127.0.0.1:51030 - "POST /setup/init-node HTTP/1.1" 422
-2026-09-06T00:47:23 [INFO] uvicorn.access: 127.0.0.1:51033 - "POST /setup/init-node HTTP/1.1" 409
-2026-09-06T00:47:28 [INFO] uvicorn.access: 127.0.0.1:51035 - "GET /api/v1/network/nodes HTTP/1.1" 200
-2026-09-06T00:47:28 [INFO] uvicorn.access: 127.0.0.1:51036 - "GET /api/v1/p2p/status HTTP/1.1" 200
-2026-09-06T00:47:35 [INFO] uvicorn.access: 127.0.0.1:51037 - "POST /api/v1/api-keys/generate HTTP/1.1" 401
-2026-09-06T00:47:43 [INFO] uvicorn.access: 127.0.0.1:51039 - "POST /api/v1/auth/login HTTP/1.1" 422
-2026-09-06T00:47:50 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
-2026-09-06T00:47:50 [DEBUG] artcb.wallet.address: Generated address=artcb1hk6qyqqxywmfkuu2ad2ams9xnf667j7l49cl5h from pubkey_hash=bdb402000623b69b
-2026-09-06T00:47:50 [INFO] artcb.api.auth: Login successful: wallet=macbookair_node_deyi address=artcb1hk6qyqqxywmfkuu2ad2ams9xnf667j7l49cl5h
-2026-09-06T00:47:50 [INFO] uvicorn.access: 127.0.0.1:51041 - "POST /api/v1/auth/login HTTP/1.1" 200
-2026-09-06T00:47:55 [INFO] uvicorn.access: 127.0.0.1:51042 - "POST /api/v1/api-keys/generate HTTP/1.1" 422
-2026-09-06T00:48:00 [INFO] artcb.api.api_keys: API key created: kid_3470437e4b05aec9 (bob_agent_mining) owner=macbookair_node_deyi address=artcb1hk6qyqqxywmfkuu2ad2ams9xnf667j7l49cl5h
-2026-09-06T00:48:00 [INFO] uvicorn.access: 127.0.0.1:51043 - "POST /api/v1/api-keys/generate HTTP/1.1" 200
-2026-09-06T00:48:10 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=1
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=2
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=3
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=4
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=5
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=6
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=7
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=8
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=9
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=10
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=11
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=12
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=13
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=14
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=15
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=16
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=17
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=18
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=19
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=20
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=21
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=22
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=23
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=24
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=25
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=26
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=27
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=28
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=29
-2026-09-06T00:48:10 [DEBUG] artcb.agents.explorer: Explorer proposed 29 symbols for len=409
-2026-09-06T00:48:10 [DEBUG] artcb.agents.explorer: ExplorerAgent graph_id=g_38c95570b8f1 input_len=409 proposals=29
-2026-09-06T00:48:10 [DEBUG] artcb.ir.encoder: Encodage graph_id=g_38c95570b8f1 spans=9 chars=409
-2026-09-06T00:48:10 [DEBUG] artcb.ir.encoder: Cache STORE text_hash=sha256:a1e5d8140
-2026-09-06T00:48:10 [DEBUG] artcb.ir.encoder: Encodage terminé nodes=9 edges=8 macros=0 compression=-10.18 cache_size=1
-2026-09-06T00:48:10 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=37
-2026-09-06T00:48:10 [DEBUG] artcb.ir.decoder: Reconstruction exacte (100%) graph_id=g_38c95570b8f1
-2026-09-06T00:48:10 [DEBUG] artcb.agents.critic: CriticAgent pol=0.6000 validated=9/9 accepted=True
-2026-09-06T00:48:10 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_38c95570b8f1 path=data/graphs/g_38c95570b8f1.json cached=True
-2026-09-06T00:48:10 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_38c95570b8f1 nodes=9
-2026-09-06T00:48:10 [DEBUG] artcb.chain.manager: H_adult from HumanRegistry=0.0
-2026-09-06T00:48:10 [DEBUG] artcb.economics.emission: R(H) h_adult=0.0 clamped=1000000.0 reward=50.0000000000
-2026-09-06T00:48:10 [DEBUG] artcb.economics.emission: issued_reward index=0 (unused) H_adult=0.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2100000000000000 -> 5000000000
-2026-09-06T00:48:10 [DEBUG] artcb.chain.manager: Appended block index=0 hash=8ee26e84324036bdfa7784eda69159e27663719823cd2ebe6a2cf796b110c2e8 sha3=c56b91788fba6837 reward=5000000000 contributors=0 hybrid=True
-2026-09-06T00:48:10 [DEBUG] artcb.rtleg.timeline: RT-LEG append type=mining_block_stored id=evt_536855f7c8a0
-2026-09-06T00:48:10 [INFO] uvicorn.access: 127.0.0.1:51044 - "POST /api/v1/mining/pipeline HTTP/1.1" 200
-2026-09-06T00:48:17 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=38
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=39
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=40
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=41
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=42
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=43
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=44
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=45
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=46
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=47
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=48
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=49
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=50
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=51
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=52
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=53
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=54
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=55
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=56
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=57
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=58
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=59
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=60
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=61
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=62
-2026-09-06T00:48:17 [DEBUG] artcb.agents.explorer: Explorer proposed 29 symbols for len=367
-2026-09-06T00:48:17 [DEBUG] artcb.agents.explorer: ExplorerAgent graph_id=g_fd2671a7ea75 input_len=367 proposals=29
-2026-09-06T00:48:17 [DEBUG] artcb.ir.encoder: Encodage graph_id=g_fd2671a7ea75 spans=6 chars=367
-2026-09-06T00:48:17 [DEBUG] artcb.ir.encoder: Cache STORE text_hash=sha256:537b0d9a6
-2026-09-06T00:48:17 [DEBUG] artcb.ir.encoder: Encodage terminé nodes=6 edges=5 macros=0 compression=-13.20 cache_size=2
-2026-09-06T00:48:17 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=68
-2026-09-06T00:48:17 [DEBUG] artcb.ir.decoder: Reconstruction exacte (100%) graph_id=g_fd2671a7ea75
-2026-09-06T00:48:17 [DEBUG] artcb.agents.critic: CriticAgent pol=0.6000 validated=6/6 accepted=True
-2026-09-06T00:48:17 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_fd2671a7ea75 path=data/graphs/g_fd2671a7ea75.json cached=True
-2026-09-06T00:48:17 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_fd2671a7ea75 nodes=6
-2026-09-06T00:48:17 [DEBUG] artcb.chain.manager: H_adult from HumanRegistry=0.0
-2026-09-06T00:48:17 [DEBUG] artcb.economics.emission: R(H) h_adult=0.0 clamped=1000000.0 reward=50.0000000000
-2026-09-06T00:48:17 [DEBUG] artcb.economics.emission: issued_reward index=1 (unused) H_adult=0.0 interval=600.0 R(H)=50.0000000000 scaled=50.0000000000 remaining=2099995000000000 -> 5000000000
-2026-09-06T00:48:17 [DEBUG] artcb.chain.manager: Appended block index=1 hash=1876aa3e4f61af554e4d7566c81a967ed163369e54e7dc74478fa0317f1410a7 sha3=b3643d712f5cf704 reward=5000000000 contributors=0 hybrid=True
-2026-09-06T00:48:17 [DEBUG] artcb.rtleg.timeline: RT-LEG append type=mining_block_stored id=evt_2be6b955e453
-2026-09-06T00:48:17 [INFO] uvicorn.access: 127.0.0.1:51045 - "POST /api/v1/mining/pipeline HTTP/1.1" 200
-2026-09-06T00:48:27 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=69
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=70
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=71
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=72
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=73
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=74
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=75
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=76
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=77
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=78
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=79
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=80
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=81
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=82
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=83
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=84
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=85
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=86
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=87
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=88
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=89
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=90
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=91
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=92
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=93
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=94
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=95
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=96
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=97
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=98
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=99
-2026-09-06T00:48:27 [DEBUG] artcb.agents.explorer: Explorer proposed 35 symbols for len=474
-2026-09-06T00:48:27 [DEBUG] artcb.agents.explorer: ExplorerAgent graph_id=g_6a1d0680b6ef input_len=474 proposals=35
-2026-09-06T00:48:27 [DEBUG] artcb.ir.encoder: Encodage graph_id=g_6a1d0680b6ef spans=4 chars=474
-2026-09-06T00:48:27 [DEBUG] artcb.ir.encoder: Cache STORE text_hash=sha256:cc15ba3c8
-2026-09-06T00:48:27 [DEBUG] artcb.ir.encoder: Encodage terminé nodes=4 edges=3 macros=0 compression=-12.89 cache_size=3
-2026-09-06T00:48:27 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=103
-2026-09-06T00:48:27 [DEBUG] artcb.ir.decoder: Reconstruction exacte (100%) graph_id=g_6a1d0680b6ef
-2026-09-06T00:48:27 [DEBUG] artcb.agents.critic: CriticAgent pol=0.6000 validated=4/4 accepted=True
-2026-09-06T00:48:27 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_6a1d0680b6ef path=data/graphs/g_6a1d0680b6ef.json cached=True
-2026-09-06T00:48:27 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_6a1d0680b6ef nodes=4
-2026-09-06T00:48:27 [DEBUG] artcb.chain.manager: H_adult from HumanRegistry=0.0
-2026-09-06T00:48:27 [DEBUG] artcb.economics.emission: R(H) h_adult=0.0 clamped=1000000.0 reward=50.0000000000
-2026-09-06T00:48:27 [DEBUG] artcb.economics.emission: issued_reward index=2 (unused) H_adult=0.0 interval=7.0 R(H)=50.0000000000 scaled=0.5833333333 remaining=2099990000000000 -> 58333333
-2026-09-06T00:48:27 [DEBUG] artcb.chain.manager: Appended block index=2 hash=abfa52876e5e692442dff744623a7207ee8c3c7049fae654065c06dd3affe181 sha3=15608812c0669a0d reward=58333333 contributors=0 hybrid=True
-2026-09-06T00:48:27 [DEBUG] artcb.rtleg.timeline: RT-LEG append type=mining_block_stored id=evt_3b43ebf86e04
-2026-09-06T00:48:27 [INFO] uvicorn.access: 127.0.0.1:51047 - "POST /api/v1/mining/pipeline HTTP/1.1" 200
-2026-09-06T00:48:36 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=104
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=105
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=106
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=107
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=108
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=109
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=110
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=111
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=112
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=113
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=114
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=115
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=116
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=117
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=118
-2026-09-06T00:48:36 [DEBUG] artcb.agents.explorer: Explorer proposed 25 symbols for len=411
-2026-09-06T00:48:36 [DEBUG] artcb.agents.explorer: ExplorerAgent graph_id=g_2ec0060fcc73 input_len=411 proposals=25
-2026-09-06T00:48:36 [DEBUG] artcb.ir.encoder: Encodage graph_id=g_2ec0060fcc73 spans=10 chars=411
-2026-09-06T00:48:36 [DEBUG] artcb.ir.encoder: Cache STORE text_hash=sha256:525497e17
-2026-09-06T00:48:36 [DEBUG] artcb.ir.encoder: Encodage terminé nodes=10 edges=9 macros=0 compression=-20.99 cache_size=4
-2026-09-06T00:48:36 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=128
-2026-09-06T00:48:36 [DEBUG] artcb.ir.decoder: Reconstruction exacte (100%) graph_id=g_2ec0060fcc73
-2026-09-06T00:48:36 [DEBUG] artcb.agents.critic: CriticAgent pol=0.6000 validated=10/10 accepted=True
-2026-09-06T00:48:36 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_2ec0060fcc73 path=data/graphs/g_2ec0060fcc73.json cached=True
-2026-09-06T00:48:36 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_2ec0060fcc73 nodes=10
-2026-09-06T00:48:36 [DEBUG] artcb.chain.manager: H_adult from HumanRegistry=0.0
-2026-09-06T00:48:36 [DEBUG] artcb.economics.emission: R(H) h_adult=0.0 clamped=1000000.0 reward=50.0000000000
-2026-09-06T00:48:36 [DEBUG] artcb.economics.emission: issued_reward index=3 (unused) H_adult=0.0 interval=10.0 R(H)=50.0000000000 scaled=0.8333333333 remaining=2099989941666667 -> 83333333
-2026-09-06T00:48:36 [DEBUG] artcb.chain.manager: Appended block index=3 hash=46bea3d9b6e7ab93e1c0f8e7bbb920489828a841edc09e68a93b1a8a5bb274de sha3=c036d6a6c94c2239 reward=83333333 contributors=0 hybrid=True
-2026-09-06T00:48:36 [DEBUG] artcb.rtleg.timeline: RT-LEG append type=mining_block_stored id=evt_6411f8b55713
-2026-09-06T00:48:36 [INFO] uvicorn.access: 127.0.0.1:51048 - "POST /api/v1/mining/pipeline HTTP/1.1" 200
-2026-09-06T00:48:45 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=129
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=130
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=131
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=132
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=133
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=134
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=135
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=136
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=137
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=138
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=139
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=140
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=141
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=142
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=143
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=144
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=145
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=146
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=147
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=148
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=149
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=150
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=151
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=152
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=153
-2026-09-06T00:48:45 [DEBUG] artcb.agents.explorer: Explorer proposed 38 symbols for len=459
-2026-09-06T00:48:45 [DEBUG] artcb.agents.explorer: ExplorerAgent graph_id=g_eeef593633ce input_len=459 proposals=38
-2026-09-06T00:48:45 [DEBUG] artcb.ir.encoder: Encodage graph_id=g_eeef593633ce spans=8 chars=459
-2026-09-06T00:48:45 [DEBUG] artcb.ir.encoder: Cache STORE text_hash=sha256:ba29529b4
-2026-09-06T00:48:45 [DEBUG] artcb.ir.encoder: Encodage terminé nodes=8 edges=7 macros=0 compression=-21.27 cache_size=5
-2026-09-06T00:48:45 [DEBUG] artcb.ir.symbol_store: Saved symbol registry entries=160
-2026-09-06T00:48:45 [DEBUG] artcb.ir.decoder: Reconstruction exacte (100%) graph_id=g_eeef593633ce
-2026-09-06T00:48:45 [DEBUG] artcb.agents.critic: CriticAgent pol=0.6000 validated=8/8 accepted=True
-2026-09-06T00:48:45 [DEBUG] artcb.memory.graph_store: Saved graph_id=g_eeef593633ce path=data/graphs/g_eeef593633ce.json cached=True
-2026-09-06T00:48:45 [DEBUG] artcb.memory.vector_store: Indexed graph_id=g_eeef593633ce nodes=8
-2026-09-06T00:48:45 [DEBUG] artcb.chain.manager: H_adult from HumanRegistry=0.0
-2026-09-06T00:48:45 [DEBUG] artcb.economics.emission: R(H) h_adult=0.0 clamped=1000000.0 reward=50.0000000000
-2026-09-06T00:48:45 [DEBUG] artcb.economics.emission: issued_reward index=4 (unused) H_adult=0.0 interval=9.0 R(H)=50.0000000000 scaled=0.7500000000 remaining=2099989858333334 -> 75000000
-2026-09-06T00:48:45 [DEBUG] artcb.chain.manager: Appended block index=4 hash=d3f8af4d7a70b39c14d0b670beb8c050983723c2a488fa2fd77864b32912b182 sha3=250a7c2382692db4 reward=75000000 contributors=0 hybrid=True
-2026-09-06T00:48:45 [DEBUG] artcb.rtleg.timeline: RT-LEG append type=mining_block_stored id=evt_3d9d1439e3cc
-2026-09-06T00:48:45 [INFO] uvicorn.access: 127.0.0.1:51049 - "POST /api/v1/mining/pipeline HTTP/1.1" 200
-2026-09-06T00:48:50 [INFO] uvicorn.access: 127.0.0.1:51051 - "GET /api/v1/chain/verify HTTP/1.1" 200
-2026-09-06T00:48:55 [INFO] uvicorn.access: 127.0.0.1:51052 - "POST /api/v1/wallet/balance HTTP/1.1" 422
-2026-09-06T00:49:01 [INFO] uvicorn.access: 127.0.0.1:51053 - "GET /api/v1/chain/blocks?limit=5 HTTP/1.1" 200
-2026-09-06T01:55:02 [INFO] uvicorn.error: Shutting down
-2026-09-06T01:55:03 [INFO] uvicorn.error: Waiting for application shutdown.
-2026-09-06T01:55:03 [INFO] uvicorn.error: Application shutdown complete.
-2026-09-06T01:55:03 [INFO] uvicorn.error: Finished server process [33658]
+2026-09-07T09:57:12 [INFO] oqs.oqs: liboqs-python faulthandler is disabled
+2026-09-07T09:57:12 [INFO] artcb.p2p.peers: Added P2P peer peer_151_80_107_29_8000@151.80.107.29:8000 proto=protocol_compatible signed=False
+2026-09-07T09:57:12 [INFO] artcb.p2p.peers: Added P2P peer peer_152_228_144_34_8000@152.228.144.34:8000 proto=protocol_compatible signed=False
+2026-09-07T09:57:12 [INFO] artcb.p2p.peers: Added P2P peer peer_51_44_222_232_8000@51.44.222.232:8000 proto=protocol_compatible signed=False
+2026-09-07T09:57:12 [INFO] artcb.p2p.peers: Added P2P peer peer_91_134_45_8_8000@91.134.45.8:8000 proto=protocol_compatible signed=False
+2026-09-07T09:57:12 [INFO] artcb.p2p.seed_discovery: seed_known_nodes directory=4 peers_added=4 errors=0 skipped=False announced=[]
+2026-09-07T09:57:12 [DEBUG] artcb.api: ARTCB API started debug=True bootstrap_mode=False
+2026-09-07T09:57:12 [INFO] uvicorn.error: Started server process [2310]
+2026-09-07T09:57:12 [INFO] uvicorn.error: Waiting for application startup.
+2026-09-07T09:57:12 [INFO] uvicorn.error: Application startup complete.
+2026-09-07T09:57:12 [INFO] uvicorn.error: Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-09-07T10:13:07 [DEBUG] artcb.chain.ffi: Loaded C library path=/Users/deyi/.bob/playground/src/c/libartcb_chain.so v2=True
+2026-09-07T10:13:07 [DEBUG] artcb.release: release identity sha=1c2b873900ed branch=main integrity=ok pin_set=False
+2026-09-07T10:13:07 [INFO] uvicorn.access: 127.0.0.1:50068 - "GET /api/v1/health HTTP/1.1" 200
+2026-09-07T10:13:07 [INFO] uvicorn.access: 127.0.0.1:50069 - "GET /api/v1/chain/verify HTTP/1.1" 200
+2026-09-07T10:13:07 [INFO] uvicorn.access: 127.0.0.1:50070 - "GET /api/v1/p2p/status HTTP/1.1" 200
+2026-09-07T10:14:23 [DEBUG] artcb.release: release identity sha=1c2b873900ed branch=main integrity=ok pin_set=False
+2026-09-07T10:14:23 [INFO] uvicorn.access: 127.0.0.1:50085 - "GET /api/v1/health HTTP/1.1" 200
+2026-09-07T10:24:24 [INFO] uvicorn.access: 127.0.0.1:50112 - "GET /api/v1/node/status HTTP/1.1" 200
+2026-09-07T10:24:29 [INFO] uvicorn.access: 127.0.0.1:50115 - "GET /api/v1/node/status HTTP/1.1" 200
+2026-09-07T10:24:34 [DEBUG] artcb.release: release identity sha=1c2b873900ed branch=main integrity=ok pin_set=False
+2026-09-07T10:24:34 [INFO] uvicorn.access: 127.0.0.1:50117 - "GET /health HTTP/1.1" 200
+2026-09-07T10:24:34 [INFO] uvicorn.access: 127.0.0.1:50119 - "GET /api/v1/chain/status HTTP/1.1" 200
+2026-09-07T11:16:02 [DEBUG] artcb.release: release identity sha=1c2b873900ed branch=main integrity=ok pin_set=False
+2026-09-07T11:16:02 [INFO] uvicorn.access: 127.0.0.1:50790 - "GET /health HTTP/1.1" 200
+2026-09-07T11:49:42 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
+2026-09-07T11:49:42 [DEBUG] artcb.wallet.address: Generated address=artcb1wnuswpvwufx2540xh4e304nktuq7kasx50wlv2 from pubkey_hash=74f907058ee24caa
+2026-09-07T11:49:42 [INFO] artcb.api.auth: Login successful: wallet=artcb-autodev address=artcb1wnuswpvwufx2540xh4e304nktuq7kasx50wlv2
+2026-09-07T11:49:42 [INFO] uvicorn.access: 127.0.0.1:51357 - "POST /api/v1/auth/login HTTP/1.1" 200
+2026-09-07T11:49:42 [DEBUG] artcb.ir.encoder: Encodage graph_id=ai_memo_9344bad6d8b0 spans=3 chars=247
+2026-09-07T11:49:42 [DEBUG] artcb.ir.encoder: Cache STORE text_hash=sha256:baadeeea9
+2026-09-07T11:49:42 [DEBUG] artcb.ir.encoder: Encodage terminé nodes=3 edges=2 macros=0 compression=-35.38 cache_size=1
+2026-09-07T11:49:42 [DEBUG] artcb.memory.graph_store: Saved graph_id=ai_memo_9344bad6d8b0 path=data/graphs/ai_memo_9344bad6d8b0.json cached=True
+2026-09-07T11:49:42 [DEBUG] artcb.memory.vector_store: Indexed graph_id=ai_memo_9344bad6d8b0 nodes=3
+2026-09-07T11:49:42 [DEBUG] artcb.wallet.manager: WalletManager initialized wallet_dir=data/wallets
+2026-09-07T11:49:43 [DEBUG] artcb.wallet.address: Generated address=artcb1wnuswpvwufx2540xh4e304nktuq7kasx50wlv2 from pubkey_hash=74f907058ee24caa
+2026-09-07T11:49:43 [DEBUG] artcb.wallet.manager: Loaded wallet name=artcb-autodev address=artcb1wnuswpvwufx2540xh4e304nktuq7kasx50wlv2 hybrid=True
+2026-09-07T11:49:43 [DEBUG] artcb.mining.identity: mixed identity/legacy contributors — keeping legacy PoL split
+2026-09-07T11:49:43 [DEBUG] artcb.system.optimizer: compute_max_contributors: wallets_active=0 -> adoption_cap=10 | bandwidth=100.0 Mbps class=BONNE -> network_cap=41666 | result=10
+2026-09-07T11:49:43 [DEBUG] src.artcb.security.anti_sybil: Dynamic max_contributors recalculated: wallets_30d=0 bw=100.0Mbps class=BONNE -> limit=10
+2026-09-07T11:49:43 [DEBUG] src.artcb.security.anti_sybil: Block 5 passed anti-Sybil validation (source=ai:memo:pol_work)
+2026-09-07T11:49:43 [DEBUG] artcb.chain.manager: H_adult from HumanRegistry=0.0
+2026-09-07T11:49:43 [DEBUG] artcb.economics.emission: R(H) h_adult=0.0 clamped=1000000.0 reward=50.0000000000
+2026-09-07T11:49:43 [DEBUG] artcb.economics.emission: issued_reward index=5 (unused) H_adult=0.0 interval=9.0 R(H)=50.0000000000 scaled=0.7500000000 remaining=2099989783333334 -> 75000000
+2026-09-07T11:49:43 [DEBUG] src.artcb.security.anti_sybil: Block 5 recorded in reputation for 1 contributors
+2026-09-07T11:49:43 [DEBUG] artcb.chain.manager: Appended block index=5 hash=01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884 sha3=667d390f2310f4d0 reward=75000000 contributors=1 hybrid=True
+2026-09-07T11:49:43 [INFO] artcb.api.ai: AI memo gravé: bloc #5 graph=ai_memo_9344bad6d8b0 agent=bob_agent_235
+2026-09-07T11:49:43 [INFO] uvicorn.access: 127.0.0.1:51359 - "POST /api/v1/ai/memo HTTP/1.1" 200

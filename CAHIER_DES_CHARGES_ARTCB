@@ -716,7 +716,8 @@ export.artcb (ZIP)
   "graph_id": "g_abc123",
   "node_count": 2,
   "edge_count": 1,
-  "compression_ratio": 0.68,
+  "compression_ratio": null,
+  "compression_note": "GO-N 2026-09-07 : 0.68 était une heuristique non mesurée. IR JSON v0.1 est 3–28× plus gros que la source texte (expansion, pas compression). Valeur mesurée = null jusqu'à implémentation GO-I (IR binaire + zstd).",
   "pol_score": null,
   "nodes_preview": [
     {"id": "n1", "t": "D", "sym": "K1S1", "txt": "Nous avons décidé d'utiliser FastAPI."},

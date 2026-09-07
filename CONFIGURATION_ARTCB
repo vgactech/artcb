@@ -235,3 +235,21 @@ Chaque clone du repo public fonctionne **sans clé**. Les clés sont un choix **
 | Équipe hackathon | Hors scope agent | Toi |
 | Merge → main à chaque push | ✅ Règle D-001 | Agent |
 | Crédits Cursor formulaire | ⏳ | Toi |
+
+---
+
+## GO-J (2026-09-07) — ARTCB_NODE_PUBLIC_URL nœuds distants
+
+À configurer dans Doppler **sur chaque nœud** (SSH ou Doppler Dashboard) :
+
+| Nœud | IP | Variable | Valeur à définir |
+|------|-----|----------|-----------------|
+| OVH2 | 151.80.107.29 | `ARTCB_NODE_PUBLIC_URL` | `http://151.80.107.29:8000` |
+| AWS3 | 51.44.222.232 | `ARTCB_NODE_PUBLIC_URL` | `http://51.44.222.232:8000` |
+| OVH4 | 91.134.45.8  | `ARTCB_NODE_PUBLIC_URL` | `http://91.134.45.8:8000` |
+
+Sans cette variable, `advertised_base_url` retourne `http://localhost:8000` (bug d'annonce P2P).
+Après redémarrage du service sur chaque nœud, vérifier avec :
+`curl http://<IP>:8000/api/v1/p2p/status | grep advertised_base_url`
+
+OVH1 (`152.228.144.34`) est déjà correct (variable présente dans son env).
