@@ -1516,3 +1516,12 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Pairs 2/3/4 restent `27350024`. SHA live encore `c1d8027` jusqu’au follow-main.
 - Contact : `official@artcb.space`. Pas de D-0xx.
 
+## [2026-09-07T21:18:00Z] Rapport 249 — repo entier sur le livre (scopes)
+
+- 1446 paths git. 1065 lots / 0 fail. OVH1 height **1074** tip `3d1231cd…` valid.
+  idx 0–8 intacts. public 717 / private 357. KCG catalogue `K_40b33b30`.
+- Relu : AUTO_PROMPT (group 89 k), D-0xx (public), manager.py (public),
+  règle cursor (group), deploy `.pub` (org).
+- Secrets : catalogue only. Agent ≠ fondateur ORG. Pairs 2/3/4 restent `27350024`.
+- Contact : `official@artcb.space`. Pas de D-0xx.
+

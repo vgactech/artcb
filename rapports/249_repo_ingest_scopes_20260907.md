@@ -57,6 +57,37 @@ Corps UTF-8 : 1405. Secrets catalogue-only : 29. Binaires : 7.
 
 ---
 
-## 4. Live (après script)
+## 4. Live (mesuré 2026-09-07T21:17:51Z → 21:20Z)
 
-_À remplir avec les JSON mesurés — ne pas inventer._
+`POST /api/v1/ai/ingest-batch` × **1065**, **0 fail**, via `ingest-batch` (pas le fallback memo).  
+SHA working-tree agent : `7174761`. SHA `/health` nœud : toujours `c1d8027` (overlay keep-book, pas un merge `main`).  
+Livre : height **1074**, `last_index` **1073**, `last_hash` `3d1231cde101b70f77f852f3b7db698a0b8d8558fa6b747e51189450659c3acf`, `chain_valid` **true**.  
+SSH `blocks.jsonl` = **1074** lignes. idx **0–8 inchangés** (`b8a7d5ef` … `623d6e78`).
+
+| Visibilité chaîne | Blocs (SSH) |
+|---|---|
+| public | **717** |
+| private | **357** |
+
+Lots par scope : public **708** + organization **3** + group **5** + private **349** = 1065.
+
+Index `GET /ai/ingest/catalog` : **3539** lignes (fichiers + chunks + lignes catalogue).  
+`by_scope` index : public 2990 / organization 18 / group 15 / private 516.
+
+KCG catalogue : `K_40b33b30244c9a4c` graph `ing_repo_catalog_cat_0_ef6075b1`. KCG total **2** (lesson 248 + catalogue).
+
+Relu avec la même clé (après correctif « bearer ingest ⇒ relire le privé ») :
+
+| path | scope | chunks | chars | head |
+|---|---|---|---|---|
+| `AUTO_PROMPT_ARTCB` | **group** | 4 | 89257 | « TU DOIS METTRE À JOUR CETTE PROMPT… » |
+| `DECISIONS_UTILISATEUR_ARTCB` | public | 1 | 12844 | « # DÉCISIONS UTILISATEUR — ARTCB » |
+| `src/artcb/chain/manager.py` | public | 2 | 28979 | docstring manager |
+| `.cursor/rules/artcb-live-node.mdc` | **group** | 1 | 2635 | règle nœud live |
+| `deploy/artcb_ovh_node_2.pub` | **organization** | 1 | 99 | clé **publique** SSH |
+| `rapports/248_…md` | public | 1 | 5302 | rapport 248 |
+
+OVH2 / AWS3 / OVH4 : height **5** / `27350024…` (import 222). Pas un wipe.  
+GO-E produce off. Pas de D-0xx. Contact `official@artcb.space`.
+
+Le follow-main officiel peut **revenir** le code overlay vers `origin/main` ; les **1074 blocs** et les graphes disque restent. Merger ce PR pour que `/ai/ingest/*` tienne après le timer.

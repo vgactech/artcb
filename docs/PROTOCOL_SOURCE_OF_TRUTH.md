@@ -83,3 +83,6 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   Bloc 8 `623d6e78…` `ai_memo_05a709e390c3` `K_0b844c03`. Bootstrap lit
   désormais `/ai/memory` + `/kcg/stats`. Search MVP = SequenceMatcher
   (faux positifs). KCG local, pas répliqué. Pas de D-0xx.
+- Rapport 249 : ingest repo scoped. 1065 lots → OVH1 height 1074
+  tip `3d1231cd…`. Public / private chaîne ; org+groupe = body privé +
+  catalogue public. `GET /ai/ingest/file`. Secrets non inlinés. Pas de D-0xx.

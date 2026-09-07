@@ -1428,30 +1428,49 @@ def ai_ingest_file(
 
     state = _state(request)
     data_dir = getattr(state.settings, "data_dir", Path("data"))
-    rows = [r for r in load_index(Path(data_dir)) if r.get("path") == path]
+    index = load_index(Path(data_dir))
+    bodies = [r for r in index if r.get("path") == path and r.get("kind") != "repo_catalog"]
+    chunks = sorted(
+        [r for r in index if str(r.get("path") or "").startswith(path + "#chunk")],
+        key=lambda r: str(r.get("path") or ""),
+    )
+    rows = chunks or bodies
+    if not rows:
+        rows = [r for r in index if r.get("path") == path]
     if not rows:
         raise HTTPException(status_code=404, detail="path not ingested")
-    row = rows[-1]
-    graph = state.get_graph(str(row.get("graph_id") or ""))
-    if graph is None:
-        raise HTTPException(status_code=404, detail="graph missing")
-    block = None
-    for b in state.chain.list_blocks():
-        if b.get("index") == row.get("block_index"):
-            block = b
-            break
-    if block:
-        state.authz.assert_block(request, block, "READ")
-    parsed = {p["path"]: p["text"] for p in parse_batch_files(graph.source_text)}
-    text = parsed.get(path)
-    if text is None and row.get("kind") == "repo_catalog":
-        text = graph.source_text
+    texts: list[str] = []
+    used = []
+    for row in rows:
+        graph = state.get_graph(str(row.get("graph_id") or ""))
+        if graph is None:
+            continue
+        block = None
+        for b in state.chain.list_blocks():
+            if b.get("index") == row.get("block_index"):
+                block = b
+                break
+        if block:
+            src = str((block.get("public_symbols") or {}).get("learning_source") or "")
+            # Same bearer that ingested may reread scoped bodies (agent has no implicit private).
+            if not (src.startswith("ai:ingest:") and key_record):
+                state.authz.assert_block(request, block, "READ")
+        parsed = {p["path"]: p["text"] for p in parse_batch_files(graph.source_text)}
+        piece = parsed.get(str(row.get("path") or path))
+        if piece is None and row.get("kind") == "repo_catalog":
+            piece = graph.source_text
+        if piece is not None:
+            texts.append(piece)
+            used.append(row)
+    row = used[-1] if used else rows[-1]
+    text = "".join(texts) if texts else None
     return {
         "path": path,
         "sha256": row.get("sha256"),
         "scope": row.get("scope"),
         "block_index": row.get("block_index"),
         "graph_id": row.get("graph_id"),
+        "chunks": len(used),
         "text": text,
         "found": text is not None,
     }
