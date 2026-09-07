@@ -1419,7 +1419,7 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - **D-056 (2026-09-02) :** `OPERATOR_MAINNET_CERTIFICATION_GO=True` — tests doivent asserter `True` (pas False)
 - **replit_git_sync.sh :** utiliser `--update-shallow` (pas `--unshallow` destructif)
 - **5 blocs PoL auto-développement** minés par Bob agent sur chaîne locale
-- **Doppler token Bob :** `DOPPLER_TOKEN_REDACTED` (ne pas committer)
+- **Doppler token Bob :** stocker dans Doppler uniquement — jamais dans les fichiers committes
 - **Avancement global : 96% MVP** | Tests : 804+/843 PASS sur USER_MACHINE
 - **Rapport :** `rapports/059_node_reel_macbookair_fixes_pqc_mining_20260905.md`
 
