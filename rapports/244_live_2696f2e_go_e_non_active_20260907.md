@@ -67,7 +67,7 @@ blocs + signatures en JSON clair
 ```
 
 Le client pair à jour envoie `X-ARTCB-KEM-Public-Key` → enveloppe.  
-Le slogan `/p2p/status` disait encore « pull public en clair » seulement. Aligné dans ce commit : clair **sans** header ; chiffré **avec** header.
+Le slogan `/p2p/status` disait encore « pull public en clair » seulement. Aligné ensuite : clair **sans** header ; chiffré **seulement** si header KEM 1184 octets **et** encapsulage OK. Header malformé / KEM off / exception → `encrypted=false` + `encrypt_error` (fallback clair). Le header **ne** prouve **pas** la confidentialité.
 
 Rétrocompat : fallback clair si le pair est ancien (`test_e2e244`, 5 passed ici).
 
@@ -77,7 +77,7 @@ Rétrocompat : fallback clair si le pair est ancien (`test_e2e244`, 5 passed ici
 
 Code : `body_replication.py`. BODY local encore **JSON chmod 0600**, pas AES au repos. Transit : ML-KEM-768 exigé (1184 bytes).
 
-Dans **cet** environnement cloud : `liboqs` absent → `generate_kem_keypair()` = X25519 32 bytes. 4 tests GO-D échouaient pour cette raison, pas parce que le live est cassé. Ils **skip** maintenant si la clé n’est pas ML-KEM-768. Les nœuds live annoncent `ML-KEM-768`.
+Dans **cet** environnement cloud : `liboqs` absent → `generate_kem_keypair()` = X25519 32 bytes. Les 5 tests qui appellent `_make_identity(..., require_mlkem=True)` **skip**. Les 3 tests stockage / BODY absent tournent. Totaux GO-D ici : **3 passed / 5 skipped**. Les nœuds live annoncent `ML-KEM-768`.
 
 ---
 
@@ -116,7 +116,7 @@ V-01-B producteur live
 
 ```text
 test_e2e244_go_b_pull_encrypted     5 passed
-test_e2e243_body_replication        4 passed / 4 skipped (ML-KEM)
+test_e2e243_body_replication        3 passed / 5 skipped (ML-KEM)
 test_e2e245_go_i_ir_binary          (inclus dans le lot 94+2skip)
 test_e2e246_go_e_producer_failover  22 passed  (logique seule, pas live)
 test_e2e247_go_k_concept_memory
@@ -136,3 +136,20 @@ Lot B+D+E après correctif : GO-B 5 passed ; GO-D 3 passed + 5 skipped (ML-KEM) 
 
 Prochain GO **réseau** utile et peu risqué : `ARTCB_NODE_PUBLIC_URL` + `ARTCB_NODE_ID` sur OVH1 (ops, ancienne lettre J).  
 Prochain GO **dangereux** : E live seulement si tu l’écris explicitement.
+
+---
+
+## 9. Matrice protocole (correction Codex PR #59)
+
+Une case vide = non. Pas de déduction.
+
+| Règle | Décidée (D-0xx) | Simulée (sim/rapport) | Codée (fichier) | Testée (test) | Live (SHA) |
+|---|---|---|---|---|---|
+| Pull anonyme clair | — | 227–229, 238, 244 | `GET /p2p/blocks/public` sans header | `test_e2e244` fallback | `2696f2e` `encrypted=false` ×4 |
+| Pull chiffré si KEM 1184 **et** encapsulage OK | GO-B (pas D-0xx) | 240, 244 §3 | `p2p_routes.get_public_blocks` + `sync.pull_from_peer` | `test_e2e244` 5 passed | header non exercé ici ; sans header = clair |
+| Fallback clair si header KO / KEM off | — | Codex PR #59 | `except` → `encrypted=false` + `encrypt_error` | rétrocompat 244 | **non** mesuré live (pas de header pourri envoyé) |
+| BODY local JSON 0600 ; transit ML-KEM-768 | GO-D | 240, 244 §4 | `body_replication.py` | 3 passed + **5 skipped** sans liboqs | BODY non lu sur disque distant |
+| `ProducerMonitor` XOR + grâce ≠ BFT | GO-E ; **pas** produce | 241, 244 §5, 245 | `producer_election.py` ; runtime 245 défaut off | 22 + 5 runtime | **non** branché sur `2696f2e` ; `append=false` |
+| Hash ≠ chiffrement | 221 | 238, 244 | `domains.canonical_hash` | T-E46/47 historiques | tip public inchangé |
+
+§5 ci-dessus décrit l’état **au commit 244** (monitor non importé par l’API). Le câblage `ProducerFailoverRuntime` est le **245**, toujours sans append.

@@ -104,12 +104,14 @@ def p2p_status(request: Request) -> dict:
             if getattr(state, "producer_failover", None) is not None
             else {"wired": False, "will_append_blocks": False}
         ),
-        # GO-N + GO-B : GET sans header KEM = clair (mesuré live).
-        # GET avec X-ARTCB-KEM-Public-Key = enveloppe ML-KEM (pairs à jour).
+        # GO-N + GO-B : le header KEM ne garantit pas le chiffrement.
+        # Clé absente, longueur ≠ 1184, KEM off, ou encrypt_payload KO → clair + encrypt_error.
         "message": (
             "Calcul local par défaut — pool opt-in E2E ML-KEM ; "
             "push P2P chiffré ML-KEM+AES-GCM ; "
-            "pull : clair sans header KEM, chiffré si X-ARTCB-KEM-Public-Key (GO-B)"
+            "pull : clair sans header KEM ; "
+            "chiffré seulement si header KEM 1184 octets ET encapsulage OK "
+            "(sinon encrypted=false + encrypt_error, fallback clair)"
         ),
     }
 
@@ -328,12 +330,12 @@ def get_public_blocks(
 ) -> dict:
     """Liste blocs publics locaux — endpoint pull P2P.
 
-    GO-B 2026-09-07 : si le header X-ARTCB-KEM-Public-Key est présent,
-    la réponse est chiffrée ML-KEM-768 + AES-256-GCM (même mécanique que le push).
-    Le from_node_id est lié à la clé KEM du demandeur (pas auto-déclaré).
+    GO-B 2026-09-07 : header X-ARTCB-KEM-Public-Key **peut** produire une
+    enveloppe ML-KEM-768 + AES-GCM. Ce n'est pas automatique.
 
-    Sans header → réponse en clair (rétrocompatibilité devnet).
-    Avec header  → réponse chiffrée : {"envelope": {...}, "encrypted": true}
+    Sans header → clair (rétrocompat).
+    Header + clé 1184 octets + encapsulage OK → ``encrypted=true``.
+    Header mais clé invalide / KEM off / exception → clair + ``encrypt_error``.
     """
     from src.artcb.crypto.kem import encrypt_payload, KEMError, MLKEM768_PUBLIC_BYTES
     import json as _json
