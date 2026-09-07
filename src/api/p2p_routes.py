@@ -99,9 +99,13 @@ def p2p_status(request: Request) -> dict:
         "node_public_url": identity.node_public_url,
         "advertised_base_url": advertised_base_url(identity.node_public_url, identity.api_port),
         "machine": public_machine_view(state.device_identity),
-        # GO-N 2026-09-07 : le pull P2P (GET /p2p/blocks/public) est en clair (pas de Bearer requis).
-        # Seul le push est chiffré ML-KEM-768 + AES-GCM. "blocs publics chiffrés" était faux pour le pull.
-        "message": "Calcul local par défaut — pool opt-in E2E ML-KEM ; push P2P chiffré ML-KEM+AES-GCM ; pull public en clair (GET sans Bearer)",
+        # GO-N + GO-B : GET sans header KEM = clair (mesuré live).
+        # GET avec X-ARTCB-KEM-Public-Key = enveloppe ML-KEM (pairs à jour).
+        "message": (
+            "Calcul local par défaut — pool opt-in E2E ML-KEM ; "
+            "push P2P chiffré ML-KEM+AES-GCM ; "
+            "pull : clair sans header KEM, chiffré si X-ARTCB-KEM-Public-Key (GO-B)"
+        ),
     }
 
 

@@ -24,13 +24,18 @@ from artcb.authz.body_replication import (
 )
 from artcb.authz.registry import DomainRegistry, DomainManifest
 from artcb.authz.domains import canonical_hash
-from artcb.crypto.kem import generate_kem_keypair
+from artcb.crypto.kem import MLKEM768_PUBLIC_BYTES, generate_kem_keypair
 from artcb.p2p.node_identity import NodeIdentity
 from artcb.crypto_policy import NETWORK_ID
 
 
-def _make_identity(tmp_path: Path, suffix: str = "") -> NodeIdentity:
+def _make_identity(tmp_path: Path, suffix: str = "", *, require_mlkem: bool = False) -> NodeIdentity:
     secret, public = generate_kem_keypair()
+    if require_mlkem and len(public) != MLKEM768_PUBLIC_BYTES:
+        pytest.skip(
+            "GO-D chiffrement exige ML-KEM-768 (1184 bytes). "
+            "liboqs absent ici → generate_kem_keypair() retombe sur X25519 (32 bytes)."
+        )
     return NodeIdentity(
         network_id=NETWORK_ID,
         node_id=f"artcb1node_{suffix}",
@@ -71,7 +76,7 @@ def _make_manifest(domain_id: str, node_id: str, founder: str = "artcb1alice") -
 
 def test_encrypt_decrypt_roundtrip(tmp_path: Path) -> None:
     """Chiffrement pour nœud A, déchiffrement par nœud A."""
-    identity_a = _make_identity(tmp_path, "a")
+    identity_a = _make_identity(tmp_path, "a", require_mlkem=True)
     registry = _make_registry(tmp_path)
     svc = BodyReplicationService(registry, identity_a, tmp_path)
 
@@ -90,8 +95,8 @@ def test_encrypt_decrypt_roundtrip(tmp_path: Path) -> None:
 
 def test_decrypt_wrong_key_fails(tmp_path: Path) -> None:
     """Un nœud avec une autre clé ne peut pas déchiffrer."""
-    identity_a = _make_identity(tmp_path, "a")
-    identity_b = _make_identity(tmp_path, "b")
+    identity_a = _make_identity(tmp_path, "a", require_mlkem=True)
+    identity_b = _make_identity(tmp_path, "b", require_mlkem=True)
     registry = _make_registry(tmp_path)
     svc_a = BodyReplicationService(registry, identity_a, tmp_path)
     svc_b = BodyReplicationService(registry, identity_b, tmp_path)
@@ -134,8 +139,8 @@ def test_has_body(tmp_path: Path) -> None:
 
 def test_receive_valid_body(tmp_path: Path) -> None:
     """Réception et stockage d'un BODY chiffré valide."""
-    identity_sender = _make_identity(tmp_path / "sender", "sender")
-    identity_receiver = _make_identity(tmp_path / "receiver", "receiver")
+    identity_sender = _make_identity(tmp_path / "sender", "sender", require_mlkem=True)
+    identity_receiver = _make_identity(tmp_path / "receiver", "receiver", require_mlkem=True)
     registry = _make_registry(tmp_path)
 
     domain_id = "dom_receive"
@@ -161,7 +166,7 @@ def test_receive_valid_body(tmp_path: Path) -> None:
 
 def test_receive_hash_mismatch_raises(tmp_path: Path) -> None:
     """Si le hash reçu ne correspond pas → BodyHashMismatch."""
-    identity = _make_identity(tmp_path, "x")
+    identity = _make_identity(tmp_path, "x", require_mlkem=True)
     registry = _make_registry(tmp_path)
     svc = BodyReplicationService(registry, identity, tmp_path)
 
@@ -187,8 +192,8 @@ def test_receive_hash_mismatch_raises(tmp_path: Path) -> None:
 
 def test_receive_not_authorized_raises(tmp_path: Path) -> None:
     """Si ce nœud n'est pas dans authorized_nodes → BodyReplicationError."""
-    identity_sender = _make_identity(tmp_path / "s", "sender")
-    identity_receiver = _make_identity(tmp_path / "r", "receiver")
+    identity_sender = _make_identity(tmp_path / "s", "sender", require_mlkem=True)
+    identity_receiver = _make_identity(tmp_path / "r", "receiver", require_mlkem=True)
     registry = _make_registry(tmp_path)
 
     domain_id = "dom_not_auth"

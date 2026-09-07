@@ -1,5 +1,9 @@
 """Élection de producteur de secours — GO-E / V-01-B.
 
+LIVE (rapport 244) : ce module n'est importé par aucune route ``src/api``.
+Le ``ProducerMonitor`` n'est pas démarré sur les nœuds. XOR + grâce 30 s
+ne sont pas un verrou BFT d'élection. Ne pas l'activer sans GO manuscrit.
+
 Protocole anti-fork :
   - Un seul nœud produit des blocs à la fois (producteur actif).
   - Si le producteur ne bat pas dans HEARTBEAT_TIMEOUT secondes,

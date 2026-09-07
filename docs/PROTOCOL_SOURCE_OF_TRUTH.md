@@ -67,3 +67,8 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   fondateur = preuve. HOST_ONLY ≠ REPLICA ≠ CONSENSUS. TRANSFER_OWNERSHIP
   reste humain. Réplication privée automatique et consensus ORG **non
   certifiés**. 857 passed / 9 skipped ≠ maturité protocolaire 97 %.
+- Rapports 237–238 (rang 6) : Reasoning Fee figé (237) ; cadastre + lettres
+  (238). 239–243 : code GO-A…H puis B/D/I/E/K/M sur `main` `2696f2e`.
+  **GO-K/M 238 ≠ GO-K/M 242–243** (lettres réutilisées). Rapport 244 :
+  4 officiels déjà sur `2696f2e` ; `ProducerMonitor` **non** branché API ;
+  V-01-B producteur **non** exécuté. Pull anonyme toujours clair.

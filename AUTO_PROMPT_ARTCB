@@ -1454,3 +1454,25 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - 857 passed / 9 skipped / 0 failed (235) = suite verte, pas 97 % protocole.
 - PoUC/KCG toujours rang 6, non codés.
 
+## [2026-09-07T17:48:45Z] Rapports 237–239 — fee + GOs A/C/F/G/H/N (déjà sur main)
+
+- 237 figé : Reasoning Fee (vues ≠ CONSULT). 238 : cadastre 220–236 + lettres.
+- 239 (`f26c3d6`) : GO-A KEM au repos ; GO-C PR #57 ; GO-N docs ; GO-F/G/H + overdraft.
+  Suite 239 alors 897 passed / 8 skipped / 0 fail (machine Bob, pas ce cloud).
+
+## [2026-09-07T23:00:00Z] Rapports 240–243 — GO-B/D/I/E/K/M (`2696f2e`)
+
+- B : pull chiffré si header KEM ; fallback clair. D : BODY ML-KEM (local encore clair).
+- I : IR binaire + zstd. E : `producer_election.py` **tests only**.
+- K 242 = ConceptID (≠ gel 238). M 243 = réputation nœuds (≠ paquet domaine 238).
+
+## [2026-09-07T19:32:00Z] Rapport 244 — live déjà `2696f2e` ; ne pas activer E
+
+- 4 officiels mesurés = `2696f2e8d599e5ae99ba388d5f463d867bf996af` = `origin/main`.
+  Tip `27350024…` / digest `b5f93d3f…` / height 5. Pas de redeploy, pas de restart.
+- GET `/p2p/blocks/public` sans header = `encrypted=false` (5 blocs clairs).
+- `ProducerMonitor` absent de `src/api`. Fork risk XOR sans BFT d'élection : **off**.
+- GO-D tests : skip si liboqs absent (X25519 32 B ≠ 1184). Message P2P status aligné GO-B.
+- OVH1 `node_id` placeholder ; advertised localhost sur 2/3/4. `certified=true` ≠ BFT.
+- Contact : `official@artcb.space`. Pas de D-0xx. Pas de V-01-B producteur.
+
