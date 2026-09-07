@@ -1497,3 +1497,12 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - 244 : GO-D = **3 passed / 5 skipped** (plus de 4/4). Matrice protocole ajoutée §9.
 - Pas de D-0xx. Live inchangé `2696f2e`.
 
+## [2026-09-07T19:58:00Z] Rapport 247 — livre touché (append OVH1)
+
+- GO opérateur : écrire le livre. Pas un wipe. SHA live = `origin/main` = `c1d8027`.
+- Trois blocs publics gravés OVH1 `:8443` : idx 5 `cbff6e66…`, idx 6 `a9e411c3…`, idx 7 `f646c510…`.
+  Height 8. Disque `blocks.jsonl` = 8 lignes. idx 0–4 inchangés.
+- OVH2 / AWS3 / OVH4 restent height 5 / `27350024…` (règle import 222).
+- `/store` 500 sur retry ; `/ir/learn` 422 throttle 60 s (41.9 s). GO-E produce off.
+- Contact : `official@artcb.space`. Pas de D-0xx.
+
