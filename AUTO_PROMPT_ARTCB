@@ -1583,4 +1583,9 @@ sur le **vrai** chemin `append`/`import`. Index certifié **non** remplaçable p
 longest-chain. VIEW-CHANGE 265 transporte le P-set. T-E53.
 `PBFT_LIVE_E2E_PASS` seulement après preuve live A→L sur 4 nœuds.
 
+**Live 2026-09-08T14:46Z** SHA `f470d7b69104d54af4a1cbd9bbc9af06e0322b60` ×4.
+A : seq 1087 digest `e2055059bfcc259dff4b26fbd1ad87a7c48d5cba0ffd6d1524bf7e5d565429f7` cert Q=3 ×4.
+B : view 1→2 primary ovh-node-2→aws-node-3 processus UP. L : height **1091** tip `42510680b64efd88f5b2802ef0363ff791ac720ad5b607b48063113be2b58f6b`.
+Traces ns `pbft_*` sur les 4. **Verdict : `PBFT_LIVE_E2E_NOT_VALIDATED`** (append mémo pas encore exclusif-PBFT ; D/C/K partiels). `certified_distributed_mainnet` false.
+
 
