@@ -76,6 +76,10 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   `append_implemented=false`). Pas une D-0xx. Pas d'append live.
 - Rapport 246 : brief Bob (1c2b873 / GO-M 21/23 / pas de push) contredit par
   live `2696f2e` ×4. GO-M 23/23. ROADMAP Phase 15 à jour. Pas de redeploy.
+  Rapport 263 : réflexe autonomie + complétude A→Z dans
+  `.cursor/rules/artcb-live-node.mdc` et `AUTO_PROMPT_ARTCB` — ne pas clôturer
+  un tour sur une liste « NON démontré » ; 188 Q=3 et tip-attest se mesurent ;
+  partition 2 nœuds seulement si restore ; pas de PASS PBFT inventé.
 - Rapport 247 : livre écrit. OVH1 height 8 tip `f646c510…` (idx 5–7
   `cbff6e66` / `a9e411c3` / `f646c510`). Pairs 2/3/4 restent `27350024`
   (import 222). Wipe non. GO-E produce off. SHA `c1d8027` = `origin/main`.

@@ -1525,3 +1525,29 @@ Le serveur Replit s'éteint après inactivité (~5-10min). Au réveil : 15-30s d
 - Secrets : catalogue only. Agent ≠ fondateur ORG. Pairs 2/3/4 restent `27350024`.
 - Contact : `official@artcb.space`. Pas de D-0xx.
 
+## [2026-09-08T13:00:00Z] Rapport 263 — complétude A→Z + réflexe autonomie
+
+**Réflexe (ne plus le faire répéter) :** encoder dans cette section ET dans
+`.cursor/rules/artcb-live-node.mdc` toute consigne opérateur répétée, **le jour même**.
+
+Complétude A→Z :
+- Ne jamais terminer un tour par une liste incomplète (« NON démontré / reste à »)
+  sans exécuter **dans le même tour** la boucle live suivante jusqu’au chiffre.
+- Bout en bout = code + tests + live 4 nœuds + rapport + `HEAD:main` + follow-main ×4
+  + égalité `git_sha`. Pas de clôture avec un maillon manquant.
+- Autonomie : pas d’attente de GO pour follow-main / stop / partition / probe /
+  replica / mémo. Restore avant de finir.
+- Partition 2 nœuds **autorisée** si iptables `artcb263` **retirées** et artcb **active**
+  sur les deux avant la fin (trap EXIT).
+- 188 prepare/commit Q=3 se **mesure** (agent → `:8000` ×4). Ce n’est **pas** un
+  view-change PBFT. Interdit d’inventer un PASS PBFT.
+- Tip-attest Q=3 : chaque nœud signe `height|last_hash|git_sha|node_id`.
+- Evidence : persistente + sha256 + sidecar signé chaîne + replica merge + ancre mémo.
+  Tamper disque = mismatch sidecar. Delete local = récupérable par replica.
+- Deux producteurs concurrents : mesurer sérialisation **ou** fork ; rewind une
+  dernière ligne minoritaire si besoin ; **jamais** wipe.
+- Interdit inchangé : wipe, genesis/rescue, token affiché, Doppler mélangé, SHA inventé.
+
+T-E51. Contact : `official@artcb.space`. Pas une D-0xx. `certified_distributed_mainnet`
+reste false.
+

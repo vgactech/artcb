@@ -273,4 +273,5 @@
 | T-E48 | `pytest tests/test_e2e222_tip_resilience.py` | Import P2P déterministe (receive=pull) ; G duplicate / H prev_hash / I index / J hash / K event / M fork local | [x] | 2026-09-05 17 passed ; V-01-B live e68563e OVH1 stop, 2/3/4 gardent `27350024…` |
 | T-E49 | `pytest tests/test_e2e233_autodev_user.py tests/test_mcp_server.py` | User auto-dev : sess_ + agent ; opérateur ≠ user ; agent 403 ORG ; mémo privé attribué à l'adresse ; MCP content= | [x] | 2026-09-06 |
 | T-E50 | `pytest tests/test_e2e236_org_node_roles.py tests/test_e2e218_domain_registry.py` | HOST ≠ REPLICA ≠ CONSENSUS ; liste authorized_nodes ≠ certificat ; add_replica ne copie pas le BODY ; TRANSFER_OWNERSHIP humain | [x] | 2026-09-07 |
+| T-E51 | `pytest tests/test_e2e263_close.py` + live `scripts/run_live263_close.py` | Complétude A→Z ; tip-attest Q=3 ; evidence signée ; 188 Q=3 mesuré ; 2 byz ; 2 producteurs ; partition 2 nœuds restorée ; ancre mémo ; pas de PASS PBFT inventé | [ ] | 2026-09-08 |
 

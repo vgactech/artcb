@@ -41,16 +41,95 @@ def byzantine_evidence(request: Request, limit: int = 100) -> dict:
     """Offers an honest node refused. Not a BFT certificate."""
     from src.artcb.consensus.byzantine_evidence import EvidenceStore
 
-    data_dir = request.app.state.artcb.settings.data_dir
+    state = request.app.state.artcb
+    data_dir = state.settings.data_dir
     store = EvidenceStore(data_dir)
     rows = store.list(limit=limit)
+    summary = store.summary()
+    sidecar = store.sidecar()
+    authentic = False
+    if sidecar:
+        # Reuse tip-attest verifier on sha256 as "hash" stand-in via dedicated fields.
+        from src.artcb.crypto.hybrid import verify_hybrid_and_or_window
+        import base64
+
+        sha = str(summary.get("sha256") or "")
+        sig = str(sidecar.get("signature") or "")
+        ed_b64 = str(sidecar.get("producer_ed25519_b64") or "")
+        matches = sha and sha == str(sidecar.get("sha256") or "")
+        if matches and sig and ed_b64:
+            try:
+                ed_pk = base64.b64decode(ed_b64, validate=False)
+                pqc_b64 = str(sidecar.get("producer_pqc_b64") or "")
+                pqc_pk = base64.b64decode(pqc_b64, validate=False) if pqc_b64 else None
+                authentic = bool(
+                    verify_hybrid_and_or_window(
+                        message=sha.encode("utf-8"),
+                        signature_value=sig,
+                        ed25519_public_key=ed_pk,
+                        pqc_public_key=pqc_pk,
+                    )
+                )
+            except Exception:
+                authentic = False
     return {
         "evidence": rows,
-        "summary": store.summary(),
+        "summary": summary,
+        "sidecar": sidecar,
+        "authenticated": authentic,
+        "tampered": bool(summary.get("sha256") and sidecar.get("sha256") and not summary.get("current_matches_sidecar")),
         "not_block_append_bft": True,
         "scope": "active_byzantine_offer_evidence",
         "note": "259 = honest-offline. This list = active liar offers that were rejected.",
     }
+
+
+@router.post("/byzantine/evidence/sign")
+def byzantine_evidence_sign(request: Request) -> dict:
+    """Sign the current evidence JSONL digest with this node's chain key.
+
+    Sidecar only. Does not rewrite the book. signed_on_chain stays false until a memo.
+    """
+    from src.artcb.consensus.byzantine_evidence import EvidenceStore, EVIDENCE_SIGN_PROTOCOL
+    from src.artcb.consensus.tip_attest import producer_key_b64, sign_message
+
+    state = request.app.state.artcb
+    store = EvidenceStore(state.settings.data_dir)
+    summary = store.summary()
+    sha = str(summary.get("sha256") or "")
+    if not sha:
+        raise HTTPException(status_code=404, detail="no_evidence_file")
+    ed_b64, pqc_b64 = producer_key_b64(state.chain)
+    sidecar = store.write_sidecar(
+        {
+            "sha256": sha,
+            "bytes": summary.get("bytes"),
+            "count": summary.get("count"),
+            "signature": sign_message(state.chain, sha),
+            "producer_ed25519_b64": ed_b64,
+            "producer_pqc_b64": pqc_b64,
+            "protocol": EVIDENCE_SIGN_PROTOCOL,
+            "signed_on_chain": False,
+        }
+    )
+    return {
+        "ok": True,
+        "sidecar": sidecar,
+        "summary": store.summary(),
+        "not_block_append_bft": True,
+    }
+
+
+@router.get("/tip-attest")
+def consensus_tip_attest(request: Request) -> dict:
+    """This node signs its current tip. Collect Q=3 externally. Not PBFT."""
+    from src.artcb.consensus.tip_attest import attest_tip
+    from src.artcb.release import release_identity
+
+    state = request.app.state.artcb
+    identity = release_identity()
+    node_id = getattr(state.p2p_identity, "node_id", "") or ""
+    return attest_tip(state.chain, git_sha=str(identity.get("git_sha") or ""), node_id=node_id)
 
 
 @router.get("/liveness")

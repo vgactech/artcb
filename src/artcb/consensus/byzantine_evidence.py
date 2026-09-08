@@ -22,6 +22,8 @@ from src.artcb.trace.ns import now_wall_ns
 logger = logging.getLogger("artcb.consensus.byzantine_evidence")
 
 EVIDENCE_REL = Path("consensus") / "byzantine_evidence.jsonl"
+EVIDENCE_SIG_REL = Path("consensus") / "byzantine_evidence.sig.json"
+EVIDENCE_SIGN_PROTOCOL = "263-evidence-sign"
 # only these are "the peer lied" — wrong_index/prev happen on honest catch-up
 FRAUD_KINDS = frozenset(
     {
@@ -120,6 +122,8 @@ class EvidenceStore:
             raw = self.path.read_bytes()
             nbytes = len(raw)
             sha = hashlib.sha256(raw).hexdigest()
+        sidecar = self.sidecar()
+        sidecar_sha = str(sidecar.get("sha256") or "")
         return {
             "count": len(rows),
             "by_kind": by_kind,
@@ -129,9 +133,33 @@ class EvidenceStore:
             "bytes": nbytes,
             "persistent": self.path.is_file(),
             "signed_on_chain": False,
+            "sidecar_sha256": sidecar_sha,
+            "current_matches_sidecar": bool(sha and sidecar_sha and sha == sidecar_sha),
             "not_block_append_bft": True,
             "scope": "active_byzantine_offer_evidence",
         }
+
+    def sidecar_path(self) -> Path:
+        return self.data_dir / EVIDENCE_SIG_REL
+
+    def sidecar(self) -> dict[str, Any]:
+        path = self.sidecar_path()
+        if not path.is_file():
+            return {}
+        try:
+            parsed = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return {}
+        return parsed if isinstance(parsed, dict) else {}
+
+    def write_sidecar(self, payload: dict[str, Any]) -> dict[str, Any]:
+        path = self.sidecar_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        body = dict(payload)
+        body["protocol"] = EVIDENCE_SIGN_PROTOCOL
+        body["ts_ns"] = now_wall_ns()
+        path.write_text(json.dumps(body, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return body
 
 
 def store_for_chain(blocks_path: Path) -> EvidenceStore:
