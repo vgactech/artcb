@@ -1695,5 +1695,11 @@ Même vue + digest distinct = toujours 409 equivocation. NEW-VIEW `enter_view` j
 SHA live **`32869961950e5f9ec5b6d1f41652ceb03295cb20`** ×4. 10/10 rounds. Orphelin+VC heal 1119. B05 Y 409 (R271 était 200). N03 PASS. N04 1–30 % rounds certifiés ; **50 % FAIL**. N06+ contaminés après 50 %. Restore height **1130** tip `49dd849a…` view 15.
 `logs/272_p0_20260908T212134Z.json` `logs/272_net_replay.json`. T-E60 [x]. **CERTIFIED_100=false.**
 
+## [2026-09-08T22:57:22Z] 273 — binding NodeID↔clé + NEW-VIEW quorum (pas CERTIFIED_100)
+
+`verify_signed` / tip-attest / VIEW-CHANGE vérifient avec la clé **enregistrée** pour le NodeID. Un prepared d’un seul VIEW-CHANGE n’est plus sélectionnable. État prepared incomplet = `state_incomplete`.
+Tests A3/A7 + quorum : PASS. Live SHA `d9eba2ac` ×4 height **1130** : A3 **GAP** (K1 signé comme ovh-node-2 → 200 `not_accepted` ×3, identité acceptée). N04 50 % FAIL. 409 equivocation conservé.
+`logs/273_identity_20260908T225711Z.json` `logs/campaigns/273_20260908T225711Z/`. T-E61. **CERTIFIED_100=false.**
+
 
 

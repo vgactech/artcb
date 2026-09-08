@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from src.artcb.consensus.live_bft import n_f_q
-from src.artcb.consensus.tip_attest import producer_key_b64, sign_message, verify_chain_signature
+from src.artcb.consensus.tip_attest import producer_key_b64, sign_message
 from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS, official_replica_id
 from src.artcb.trace.ns import now_wall_ns
 
@@ -64,12 +64,16 @@ def verify_view_change(row: dict[str, Any]) -> bool:
         return False
     if str(row.get("replica_id") or "") not in OFFICIAL_COMPUTE_NODE_IDS:
         return False
-    return verify_chain_signature(
+    from src.artcb.consensus.replica_identity import verify_bound_signature
+
+    ok, _reason = verify_bound_signature(
+        replica_id=str(row.get("replica_id") or ""),
         message=message,
         signature=str(row.get("signature") or ""),
         producer_ed25519_b64=str(row.get("producer_ed25519_b64") or ""),
         producer_pqc_b64=str(row.get("producer_pqc_b64") or ""),
     )
+    return ok
 
 
 def verify_new_view(row: dict[str, Any], view_changes: list[dict[str, Any]]) -> bool:
@@ -90,12 +94,16 @@ def verify_new_view(row: dict[str, Any], view_changes: list[dict[str, Any]]) -> 
     message = nv_message(view=view, primary=primary, vc_digest=digest, replica_id=primary)
     if str(row.get("message") or "") != message:
         return False
-    return verify_chain_signature(
+    from src.artcb.consensus.replica_identity import verify_bound_signature
+
+    ok, _reason = verify_bound_signature(
+        replica_id=primary,
         message=message,
         signature=str(row.get("signature") or ""),
         producer_ed25519_b64=str(row.get("producer_ed25519_b64") or ""),
         producer_pqc_b64=str(row.get("producer_pqc_b64") or ""),
     )
+    return ok
 
 
 class PbftViewStore:

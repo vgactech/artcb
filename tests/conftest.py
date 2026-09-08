@@ -17,6 +17,16 @@ TEST_NODE_WALLET_ADDRESS = "artcb1testnode000000000000000000000000000"
 
 
 @pytest.fixture(autouse=True)
+def _clear_replica_registry() -> None:
+    """Identity binding override must not leak between tests."""
+    from src.artcb.consensus.replica_identity import clear_test_replica_registry
+
+    clear_test_replica_registry()
+    yield
+    clear_test_replica_registry()
+
+
+@pytest.fixture(autouse=True)
 def _wallet_passphrase_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     """All tests use encrypted wallets — ARTCB_WALLET_PASSPHRASE required.
 

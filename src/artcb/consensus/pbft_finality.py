@@ -20,7 +20,7 @@ from typing import Any
 
 from src.artcb.consensus.live_bft import n_f_q
 from src.artcb.consensus.pbft_view import primary_of
-from src.artcb.consensus.tip_attest import producer_key_b64, sign_message, verify_chain_signature
+from src.artcb.consensus.tip_attest import producer_key_b64, sign_message
 from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS
 from src.artcb.trace.ns import emit_pbft, now_mono_ns, now_wall_ns
 
@@ -86,19 +86,27 @@ def _sign_row(chain: Any, *, kind: str, message: str, replica_id: str, extra: di
     return row
 
 
-def verify_signed(row: dict[str, Any], expected_message: str) -> bool:
+def verify_signed_detailed(row: dict[str, Any], expected_message: str) -> tuple[bool, str]:
     if str(row.get("message") or "") != expected_message:
-        return False
+        return False, "message_mismatch"
     if str(row.get("replica_id") or "") not in OFFICIAL_COMPUTE_NODE_IDS:
-        return False
+        return False, "unknown_replica_id"
     if str(row.get("protocol") or "") not in ("", PBFT_FINALITY_PROTOCOL) and row.get("protocol") != PBFT_FINALITY_PROTOCOL:
-        return False
-    return verify_chain_signature(
+        return False, "protocol_mismatch"
+    from src.artcb.consensus.replica_identity import verify_bound_signature
+
+    return verify_bound_signature(
+        replica_id=str(row.get("replica_id") or ""),
         message=expected_message,
         signature=str(row.get("signature") or ""),
         producer_ed25519_b64=str(row.get("producer_ed25519_b64") or ""),
         producer_pqc_b64=str(row.get("producer_pqc_b64") or ""),
     )
+
+
+def verify_signed(row: dict[str, Any], expected_message: str) -> bool:
+    ok, _reason = verify_signed_detailed(row, expected_message)
+    return ok
 
 
 def exclusive_public_from(data_dir: Path) -> int:
@@ -388,14 +396,39 @@ class PbftFinalityStore:
         vcs = [vc for vc in (view_changes or []) if isinstance(vc, dict)]
         if not vcs:
             vcs = [vc for vc in (self._state.get("view_changes_265") or []) if isinstance(vc, dict)]
-        chosen = self.select_new_view_value(vcs) if vcs else None
-        if chosen is None:
+        analysis = self.analyze_new_view_certificate(vcs) if vcs else None
+        if analysis is not None and analysis.get("claimed_prepared") and not analysis.get("reconstructable"):
+            self._trace("enter_view", ok=False, t0=t0, reason="state_incomplete")
+            return {
+                "ok": False,
+                "reason": "state_incomplete",
+                "view": new_view,
+                "dropped": dropped,
+                "new_view_certificate": analysis,
+            }
+        if analysis is not None and analysis.get("claimed_prepared") and not analysis.get("quorum_ok"):
+            self._trace("enter_view", ok=False, t0=t0, reason="state_incomplete")
+            return {
+                "ok": False,
+                "reason": "state_incomplete",
+                "view": new_view,
+                "dropped": dropped,
+                "new_view_certificate": analysis,
+            }
+        chosen = analysis.get("selected") if analysis and analysis.get("quorum_ok") else None
+        if chosen is None and (analysis is None or not analysis.get("claimed_prepared")):
             pending = [row for row in self.prepared_set() if self.finalized_digest(int(row["seq"])) is None]
             if pending:
                 chosen = max(pending, key=lambda row: int(row["seq"]))
         bound = self.bind_prepared_constraint(chosen) if chosen else {"ok": False, "reason": "no_prepared"}
         self._trace("enter_view", ok=True, t0=t0, dropped=len(dropped), bound=bool(bound.get("ok")))
-        return {"ok": True, "view": new_view, "dropped": dropped, "bound": bound}
+        return {
+            "ok": True,
+            "view": new_view,
+            "dropped": dropped,
+            "bound": bound,
+            "new_view_certificate": analysis,
+        }
 
     def emit_preprepare(self, chain: Any, *, block: dict[str, Any]) -> dict[str, Any]:
         t0 = now_mono_ns()
@@ -425,6 +458,21 @@ class PbftFinalityStore:
     def accept_preprepare(self, row: dict[str, Any]) -> dict[str, Any]:
         t0 = now_mono_ns()
         if not verify_preprepare(row):
+            view = _iint(row, "view", 0)
+            seq = _iint(row, "seq")
+            digest = str(row.get("digest") or "")
+            replica = str(row.get("replica_id") or "")
+            msg = pp_message(view=view, seq=seq, digest=digest, replica_id=replica)
+            _ok, reason = verify_signed_detailed(row, msg)
+            if not _ok and reason in (
+                "invalid_replica_key_binding",
+                "invalid_replica_pqc_binding",
+                "unregistered_replica_key",
+                "replica_key_revoked",
+                "unknown_replica_id",
+            ):
+                self._trace("preprepare_recv", ok=False, t0=t0, reason=reason)
+                return {"ok": False, "reason": reason}
             self._trace("preprepare_recv", ok=False, t0=t0, reason="invalid")
             return {"ok": False, "reason": "invalid_preprepare"}
         view = int(row["view"])
@@ -463,6 +511,22 @@ class PbftFinalityStore:
     def accept_prepare(self, row: dict[str, Any]) -> dict[str, Any]:
         t0 = now_mono_ns()
         if not verify_prepare(row):
+            msg = prepare_message(
+                view=_iint(row, "view", 0),
+                seq=_iint(row, "seq"),
+                digest=str(row.get("digest") or ""),
+                replica_id=str(row.get("replica_id") or ""),
+            )
+            _ok, reason = verify_signed_detailed(row, msg)
+            if not _ok and reason in (
+                "invalid_replica_key_binding",
+                "invalid_replica_pqc_binding",
+                "unregistered_replica_key",
+                "replica_key_revoked",
+                "unknown_replica_id",
+            ):
+                self._trace("prepare_recv", ok=False, t0=t0, reason=reason)
+                return {"ok": False, "reason": reason}
             self._trace("prepare_recv", ok=False, t0=t0, reason="invalid")
             return {"ok": False, "reason": "invalid_prepare"}
         if _iint(row, "view") != self.view:
@@ -569,27 +633,88 @@ class PbftFinalityStore:
         )
         return verify_signed(row, msg)
 
-    def select_new_view_value(self, view_changes: list[dict[str, Any]]) -> dict[str, Any] | None:
-        """Highest seq with a *verified* prepared certificate. Conflicting digests at
-        the same seq are refused (no arbitrary pick)."""
-        by_seq: dict[int, dict[str, dict[str, Any]]] = {}
+    def analyze_new_view_certificate(self, view_changes: list[dict[str, Any]]) -> dict[str, Any]:
+        """Bind Q VIEW-CHANGE to the prepared actually carried by that quorum.
+
+        A cryptographically valid prepared certificate in a single VIEW-CHANGE
+        is not enough to select a NEW-VIEW value. The selected prepared must
+        come from a quorum (≥ Q unique replicas) of verified VIEW-CHANGE
+        messages, and must be the highest seq with a unique digest among
+        those messages.
+        """
+        valid: list[dict[str, Any]] = []
+        ids: list[str] = []
+        seen: set[str] = set()
+        claimed = False
+        reconstructable = False
         for vc in view_changes:
             if not self.verify_view_change_265(vc):
+                prepared = vc.get("prepared") if isinstance(vc.get("prepared"), list) else []
+                if prepared:
+                    claimed = True
                 continue
-            for item in vc.get("prepared") or []:
-                if not verify_prepared_certificate(item):
+            rid = str(vc.get("replica_id") or "")
+            if rid and rid not in seen:
+                seen.add(rid)
+                ids.append(rid)
+                valid.append(vc)
+            prepared = vc.get("prepared") if isinstance(vc.get("prepared"), list) else []
+            if prepared:
+                claimed = True
+                if any(verify_prepared_certificate(item) for item in prepared if isinstance(item, dict)):
+                    reconstructable = True
+        _n, _f, q = _n_f_q()
+        quorum_ok = len(ids) >= q
+        selected = None
+        if quorum_ok:
+            by_seq: dict[int, dict[str, dict[str, Any]]] = {}
+            for vc in valid:
+                for item in vc.get("prepared") or []:
+                    if not verify_prepared_certificate(item):
+                        continue
+                    seq = _iint(item, "seq")
+                    digest = str(item.get("digest") or "")
+                    by_seq.setdefault(seq, {})[digest] = item
+            consistent = []
+            for _seq, digests in by_seq.items():
+                if len(digests) != 1:
                     continue
-                seq = _iint(item, "seq")
-                digest = str(item.get("digest") or "")
-                by_seq.setdefault(seq, {})[digest] = item
-        consistent = []
-        for seq, digests in by_seq.items():
-            if len(digests) != 1:
-                continue
-            consistent.append(next(iter(digests.values())))
-        if not consistent:
-            return None
-        return max(consistent, key=lambda row: int(row["seq"]))
+                consistent.append(next(iter(digests.values())))
+            if consistent:
+                selected = max(consistent, key=lambda row: int(row["seq"]))
+        view = None
+        if valid:
+            view = int(valid[0].get("view") or 0)
+        reason = "ok"
+        if claimed and not reconstructable:
+            reason = "state_incomplete"
+        elif claimed and not quorum_ok:
+            reason = "prepared_without_vc_quorum"
+        elif quorum_ok and selected is None:
+            reason = "no_prepared"
+        return {
+            "kind": "NEW_VIEW_CERTIFICATE",
+            "view": view,
+            "primary": primary_of(int(view)) if view is not None else None,
+            "quorum_view_changes": len(ids),
+            "q": q,
+            "quorum_ok": quorum_ok,
+            "replica_ids": ids,
+            "claimed_prepared": claimed,
+            "reconstructable": reconstructable,
+            "selected": selected,
+            "reason": reason,
+        }
+
+    def select_new_view_value(self, view_changes: list[dict[str, Any]]) -> dict[str, Any] | None:
+        """Highest seq whose prepared is carried by a VIEW-CHANGE quorum.
+
+        A single valid prepared certificate is not selectable without Q
+        verified VIEW-CHANGE messages from distinct replicas.
+        """
+        analysis = self.analyze_new_view_certificate(view_changes)
+        chosen = analysis.get("selected")
+        return chosen if isinstance(chosen, dict) else None
 
     def bind_prepared_constraint(self, chosen: dict[str, Any] | None) -> dict[str, Any]:
         if not verify_prepared_certificate(chosen):

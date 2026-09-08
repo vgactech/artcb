@@ -115,24 +115,40 @@ def main() -> int:
             payload["sha_note"] = "live SHA != origin/main — results are SHA-specific"
 
         print("HEALTHY ROUNDS", HEALTHY, flush=True)
+        from artcb.consensus.campaign_artifacts import final_status_from_attempts, record_attempt
+
         ok_n = 0
         last = None
+        healthy_attempts: list[dict] = []
         for i in range(HEALTHY):
             rnd = l265.run_round(f"272-H{i}")
             if rnd.get("ok"):
                 ok_n += 1
                 last = rnd
+                record_attempt(healthy_attempts, result="PASS", reason=f"H{i}")
             else:
-                if str((rnd.get("proposed") or {}).get("detail") or rnd.get("reason") or "").find("equivocation") >= 0:
+                reason = str((rnd.get("proposed") or {}).get("detail") or rnd.get("reason") or "")
+                record_attempt(healthy_attempts, result="FAIL", reason=reason)
+                if reason.find("equivocation") >= 0:
                     l271._unlock_view("272_healthy_unlock")
                     rnd = l265.run_round(f"272-H{i}r")
                     if rnd.get("ok"):
                         ok_n += 1
                         last = rnd
+                        record_attempt(healthy_attempts, result="PASS", recovery="VIEW_CHANGE", reason=f"H{i}r")
+                    else:
+                        record_attempt(
+                            healthy_attempts,
+                            result="FAIL",
+                            recovery="VIEW_CHANGE",
+                            reason=str((rnd.get("proposed") or {}).get("detail") or rnd.get("reason") or ""),
+                        )
         payload["tests"]["healthy"] = {
             "ok": ok_n == HEALTHY,
             "ok_n": ok_n,
             "requested": HEALTHY,
+            "attempts": healthy_attempts,
+            "final_status": final_status_from_attempts(healthy_attempts),
             "last": {k: (last or {}).get(k) for k in ("ok", "seq", "digest")},
         }
 

@@ -1,0 +1,10 @@
+{
+  "origin_main": "d9eba2ac2bc8af954e31453da584802394735a69",
+  "live_sha": {
+    "ovh-node-1": "d9eba2ac2bc8af954e31453da584802394735a69",
+    "ovh-node-2": "d9eba2ac2bc8af954e31453da584802394735a69",
+    "aws-node-3": "d9eba2ac2bc8af954e31453da584802394735a69",
+    "ovh-node-4": "d9eba2ac2bc8af954e31453da584802394735a69"
+  },
+  "binding_note": "sender-supplied producer_* is not the authority after R273"
+}

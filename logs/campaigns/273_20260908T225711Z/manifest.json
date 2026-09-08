@@ -1,0 +1,67 @@
+{
+  "campaign_id": "273_20260908T225711Z",
+  "code_sha": "d9eba2ac2bc8af954e31453da584802394735a69",
+  "runner": "scripts/run_live273_identity_binding.py",
+  "timestamp": "2026-09-08T22:57:22Z",
+  "node_ids": [
+    "aws-node-3",
+    "ovh-node-1",
+    "ovh-node-2",
+    "ovh-node-4"
+  ],
+  "results": {
+    "a3_k1_as_ovh2": {
+      "ok": false,
+      "verdict": "GAP",
+      "attempts": [
+        {
+          "attempt": 1,
+          "result": "FAIL",
+          "reason": "k1_accepted_as_ovh_node_2",
+          "recovery": "",
+          "ts": "2026-09-08T22:57:22Z"
+        }
+      ],
+      "final_status": "FAIL",
+      "accepted_by": [
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4"
+      ],
+      "rejected_by": {},
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 200,
+          "reason": "not_accepted",
+          "detail": null
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 200,
+          "reason": "not_accepted",
+          "detail": null
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 200,
+          "reason": "not_accepted",
+          "detail": null
+        }
+      }
+    },
+    "official_keys_match_live": {
+      "ovh-node-1": true,
+      "ovh-node-2": true,
+      "aws-node-3": true,
+      "ovh-node-4": true
+    },
+    "certified_100": false,
+    "n04_50_not_recast": true
+  },
+  "forged_present": true,
+  "ssh": {
+    "returncode": 0,
+    "stderr": ""
+  }
+}

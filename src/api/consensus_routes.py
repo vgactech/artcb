@@ -147,7 +147,11 @@ def consensus_tip_attest(request: Request) -> dict:
 
     state = request.app.state.artcb
     identity = release_identity()
-    node_id = getattr(state.p2p_identity, "node_id", "") or ""
+    from src.artcb.consensus.replica_identity import official_consensus_node_id
+    from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS
+
+    official = official_consensus_node_id()
+    node_id = official if official in OFFICIAL_COMPUTE_NODE_IDS else (getattr(state.p2p_identity, "node_id", "") or "")
     return attest_tip(state.chain, git_sha=str(identity.get("git_sha") or ""), node_id=node_id)
 
 
@@ -268,13 +272,19 @@ def pbft_new_view(body: NewViewBody, request: Request) -> dict:
         installed = store.install_new_view(body.new_view, changes)
         if not installed.get("ok"):
             raise HTTPException(status_code=409, detail=installed.get("reason") or "invalid_new_view")
-        entered = _pbft_log(request).enter_view(int(installed.get("view") or body.view))
+        entered = _pbft_log(request).enter_view(int(installed.get("view") or body.view), changes)
+        if not entered.get("ok"):
+            raise HTTPException(status_code=409, detail=entered.get("reason") or "state_incomplete")
         return {**installed, "new_view": body.new_view, "view_changes_count": len(changes), "enter_view": entered}
     try:
         emitted = store.emit_new_view(state.chain, view=body.view, view_changes=changes)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
-    entered = _pbft_log(request).enter_view(int((emitted.get("new_view") or {}).get("view") or body.view))
+    entered = _pbft_log(request).enter_view(
+        int((emitted.get("new_view") or {}).get("view") or body.view), changes
+    )
+    if not entered.get("ok"):
+        raise HTTPException(status_code=409, detail=entered.get("reason") or "state_incomplete")
     return {**emitted, "enter_view": entered}
 
 
@@ -333,9 +343,22 @@ class BindPreparedBody(BaseModel):
     chosen: dict
 
 
+@router.get("/replica-identity")
+def consensus_replica_identity() -> dict:
+    """Public NodeID ↔ key registry. Keys in a message are not the authority."""
+    from src.artcb.consensus.replica_identity import public_registry_view
+
+    return public_registry_view()
+
+
 @router.get("/pbft/finality")
 def pbft_finality_status(request: Request) -> dict:
-    return _pbft_log(request).snapshot()
+    snap = _pbft_log(request).snapshot()
+    from src.artcb.consensus.replica_identity import binding_enforced, official_consensus_node_id
+
+    snap["identity_binding_enforced"] = binding_enforced()
+    snap["official_replica_id"] = official_consensus_node_id()
+    return snap
 
 
 @router.get("/pbft/prepared")
@@ -413,7 +436,16 @@ def pbft_prepare(body: PrepareMsgBody, request: Request) -> dict:
     state = request.app.state.artcb
     log = _pbft_log(request)
     if body.prepare:
-        return log.accept_prepare(body.prepare)
+        accepted = log.accept_prepare(body.prepare)
+        if not accepted.get("ok") and accepted.get("reason") in (
+            "invalid_replica_key_binding",
+            "invalid_replica_pqc_binding",
+            "unregistered_replica_key",
+            "replica_key_revoked",
+            "unknown_replica_id",
+        ):
+            raise HTTPException(status_code=409, detail=accepted.get("reason"))
+        return accepted
     try:
         row = log.emit_prepare(state.chain, view=int(body.view), seq=int(body.seq), digest=str(body.digest))
     except (TypeError, ValueError) as exc:

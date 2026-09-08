@@ -108,20 +108,25 @@ def verify_chain_signature(
 
 
 def verify_attest(row: dict[str, Any]) -> bool:
+    node_id = str(row.get("node_id") or "")
     message = canonical_message(
         height=int(row.get("height") or 0),
         last_hash=str(row.get("last_hash") or ""),
         git_sha=str(row.get("git_sha") or ""),
-        node_id=str(row.get("node_id") or ""),
+        node_id=node_id,
     )
     if str(row.get("message") or "") and str(row.get("message")) != message:
         return False
-    return verify_chain_signature(
+    from src.artcb.consensus.replica_identity import verify_bound_signature
+
+    ok, _reason = verify_bound_signature(
+        replica_id=node_id,
         message=message,
         signature=str(row.get("signature") or ""),
         producer_ed25519_b64=str(row.get("producer_ed25519_b64") or ""),
         producer_pqc_b64=str(row.get("producer_pqc_b64") or ""),
     )
+    return ok
 
 
 def quorum_from_attests(rows: list[dict[str, Any]], *, n: int | None = None) -> dict[str, Any]:
