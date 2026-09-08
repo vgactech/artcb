@@ -1,0 +1,45 @@
+{
+  "view": {
+    "ok": true,
+    "http": 200,
+    "dur_ns": 271087004,
+    "protocol": "264-pbft-view-change",
+    "replica_id": "aws-node-3",
+    "view": 15,
+    "primary": "ovh-node-4",
+    "n": 4,
+    "f": 1,
+    "q": 3,
+    "replicas": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4"
+    ],
+    "processes_stay_up": true,
+    "scope": "pbft_view_change_settlement",
+    "not_block_append_bft": true
+  },
+  "finality": {
+    "ok": true,
+    "http": 200,
+    "dur_ns": 303431431,
+    "protocol": "265-pbft-block-finality",
+    "replica_id": "aws-node-3",
+    "view": 15,
+    "primary": "ovh-node-4",
+    "n": 4,
+    "f": 1,
+    "q": 3,
+    "prepared_count": 38,
+    "committed_count": 44,
+    "certificate_count": 44,
+    "finality_on_append_path": true,
+    "not_longest_chain_after_cert": true,
+    "r264_is_baseline": true,
+    "exclusive_public_from_seq": 1087,
+    "public_append_exclusive_pbft": true,
+    "identity_binding_enforced": true,
+    "official_replica_id": "aws-node-3"
+  }
+}

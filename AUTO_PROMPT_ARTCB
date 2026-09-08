@@ -1701,5 +1701,14 @@ SHA live **`32869961950e5f9ec5b6d1f41652ceb03295cb20`** ×4. 10/10 rounds. Orphe
 Tests A3/A7 + quorum : PASS. Live SHA `d9eba2ac` ×4 height **1130** : A3 **GAP** (K1 signé comme ovh-node-2 → 200 `not_accepted` ×3, identité acceptée). N04 50 % FAIL. 409 equivocation conservé.
 `logs/273_identity_20260908T225711Z.json` `logs/campaigns/273_20260908T225711Z/`. T-E61. **CERTIFIED_100=false.**
 
+## [2026-09-08T23:36:00Z] 277 — Issue #77 live après déploiement R273 (pas CERTIFIED_100)
+
+PR #76 était une correction réelle, pas une preuve réseau. Campagne live SHA **`41c9e1dd4e142b884ab5f99f37430f63b4ad070a`** ×4 = origin/main, `binding_enforced=true` ×4, height **1133** tip `cc0bf8a1…` view 15.
+A3/A7 : 409 `invalid_replica_key_binding` ×3 (le GAP pré-déploiement `d9eba2ac` 200 `not_accepted` reste un GAP).
+NEW-VIEW live via `analyze-new-view` : 1/2 VC insuffisant ; 3 VC honnêtes `quorum_ok=true` `no_prepared` ; prepared non reconstructible = `state_incomplete` ; 3 VC K1≠Q.
+N04 50 % FAIL (`not_primary` sous netem replicas). A4–A8 / TPM (`/dev/tpm0` absent ×4) / C04 thousands = NOT_PROVEN.
+`logs/277_issue77_20260908T233012Z.json` MANIFEST `951e16fd…` `rapports/277_issue77_live_identity_newview_20260908.md`. T-E62 [x].
+**CERTIFIED_100=false.** Production ready = false. Jamais wipe. HPC interdit. AWS t3.small.
+
 
 

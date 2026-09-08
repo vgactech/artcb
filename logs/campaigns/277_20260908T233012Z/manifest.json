@@ -1,0 +1,698 @@
+{
+  "campaign_id": "277_20260908T233012Z",
+  "code_sha": "41c9e1dd4e142b884ab5f99f37430f63b4ad070a",
+  "runner": "scripts/run_live277_issue77.py",
+  "timestamp": "2026-09-08T23:32:57Z",
+  "node_ids": [
+    "aws-node-3",
+    "ovh-node-1",
+    "ovh-node-2",
+    "ovh-node-4"
+  ],
+  "results": {
+    "phase1_sha_x4": {
+      "status": "PASS",
+      "certified_100": false,
+      "shas": {
+        "ovh-node-1": "41c9e1dd4e142b884ab5f99f37430f63b4ad070a",
+        "ovh-node-2": "41c9e1dd4e142b884ab5f99f37430f63b4ad070a",
+        "aws-node-3": "41c9e1dd4e142b884ab5f99f37430f63b4ad070a",
+        "ovh-node-4": "41c9e1dd4e142b884ab5f99f37430f63b4ad070a"
+      },
+      "origin_main": "41c9e1dd4e142b884ab5f99f37430f63b4ad070a",
+      "want": "41c9e1dd4e142b884ab5f99f37430f63b4ad070a"
+    },
+    "phase1_binding_enforced_x4": {
+      "status": "PASS",
+      "certified_100": false,
+      "bindings": {
+        "ovh-node-1": true,
+        "ovh-node-2": true,
+        "aws-node-3": true,
+        "ovh-node-4": true
+      }
+    },
+    "a1_k1_as_node1": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "GAP",
+      "identity_passed": [
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4"
+      ],
+      "binding_rejected": {},
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 200,
+          "reason": "not_accepted",
+          "detail": null
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 200,
+          "reason": "not_accepted",
+          "detail": null
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 200,
+          "reason": "not_accepted",
+          "detail": null
+        }
+      }
+    },
+    "a3_k1_as_node2": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "BOUND",
+      "identity_passed": [],
+      "binding_rejected": {
+        "ovh-node-2": "invalid_replica_key_binding",
+        "aws-node-3": "invalid_replica_key_binding",
+        "ovh-node-4": "invalid_replica_key_binding"
+      },
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        }
+      },
+      "note": "200 not_accepted after verify_prepare = GAP, not PASS"
+    },
+    "a7_k2_as_node1": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "BOUND",
+      "identity_passed": [],
+      "binding_rejected": {
+        "ovh-node-2": "invalid_replica_key_binding",
+        "aws-node-3": "invalid_replica_key_binding",
+        "ovh-node-4": "invalid_replica_key_binding"
+      },
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        }
+      }
+    },
+    "unknown_key": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "BOUND",
+      "identity_passed": [],
+      "binding_rejected": {
+        "ovh-node-2": "invalid_replica_key_binding",
+        "aws-node-3": "invalid_replica_key_binding",
+        "ovh-node-4": "invalid_replica_key_binding"
+      },
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        }
+      }
+    },
+    "invalid_signature": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "reasons": [
+        "invalid_prepare"
+      ],
+      "note": "correct NodeID+key + bad sig → invalid_prepare, not identity GAP",
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 200,
+          "reason": "invalid_prepare",
+          "detail": null
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 200,
+          "reason": "invalid_prepare",
+          "detail": null
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 200,
+          "reason": "invalid_prepare",
+          "detail": null
+        }
+      }
+    },
+    "producer_star_forged": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "BOUND",
+      "identity_passed": [],
+      "binding_rejected": {
+        "ovh-node-2": "invalid_replica_key_binding",
+        "aws-node-3": "invalid_replica_key_binding",
+        "ovh-node-4": "invalid_replica_key_binding"
+      },
+      "note": "producer_* is not authority; K2 pubkey on a Node1 message must not authenticate",
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        }
+      }
+    },
+    "replay_old_sig_new_nodeid": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "BOUND",
+      "identity_passed": [],
+      "binding_rejected": {
+        "ovh-node-2": "invalid_replica_key_binding",
+        "aws-node-3": "invalid_replica_key_binding",
+        "ovh-node-4": "invalid_replica_key_binding"
+      },
+      "posts": {
+        "ovh-node-2": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding"
+        }
+      }
+    },
+    "new_view_0vc": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "empty set cannot select"
+    },
+    "new_view_1vc": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 1,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [
+            "ovh-node-1"
+          ],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "select": {
+        "http": 200,
+        "ok": false,
+        "chosen_is_none": true,
+        "bound": {
+          "ok": false,
+          "reason": "no_prepared"
+        },
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 1,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [
+            "ovh-node-1"
+          ],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        },
+        "error": null
+      },
+      "note": "1 honest VC is not Q"
+    },
+    "new_view_2vc": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 2,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [
+            "ovh-node-1",
+            "ovh-node-2"
+          ],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "2 honest VC is not Q"
+    },
+    "new_view_3vc_honest_empty_prepared": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 3,
+          "q": 3,
+          "quorum_ok": true,
+          "replica_ids": [
+            "ovh-node-1",
+            "ovh-node-2",
+            "aws-node-3"
+          ],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "no_prepared"
+        }
+      },
+      "select": {
+        "http": 200,
+        "ok": false,
+        "chosen_is_none": true,
+        "bound": {
+          "ok": false,
+          "reason": "no_prepared"
+        },
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 3,
+          "q": 3,
+          "quorum_ok": true,
+          "replica_ids": [
+            "ovh-node-1",
+            "ovh-node-2",
+            "aws-node-3"
+          ],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "no_prepared"
+        },
+        "error": null
+      },
+      "honest": [
+        {
+          "signer": "ovh-node-1",
+          "ssh_rc": 0,
+          "has_row": true
+        },
+        {
+          "signer": "ovh-node-2",
+          "ssh_rc": 0,
+          "has_row": true
+        },
+        {
+          "signer": "aws-node-3",
+          "ssh_rc": 0,
+          "has_row": true
+        }
+      ],
+      "note": "Q=3 honest VCs are admissible; empty prepared → no_prepared, no bind"
+    },
+    "new_view_1vc_state_incomplete": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 1,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [
+            "ovh-node-1"
+          ],
+          "claimed_prepared": true,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "state_incomplete"
+        }
+      },
+      "note": "claimed prepared, not reconstructable → state_incomplete"
+    },
+    "new_view_3vc_state_incomplete": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 3,
+          "q": 3,
+          "quorum_ok": true,
+          "replica_ids": [
+            "ovh-node-1",
+            "ovh-node-2",
+            "aws-node-3"
+          ],
+          "claimed_prepared": true,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "state_incomplete"
+        }
+      },
+      "note": "Q=3 + claimed unreconstructable prepared stays fail-closed"
+    },
+    "new_view_3vc_same_key_not_quorum": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 1,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [
+            "ovh-node-1"
+          ],
+          "claimed_prepared": true,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "state_incomplete"
+        }
+      },
+      "note": "3 VCs signed by K1 claiming 3 NodeIDs must not count as Q"
+    },
+    "combo_forged_identity_plus_view_change": {
+      "status": "PASS",
+      "certified_100": false,
+      "posts": {
+        "ovh-node-1": {
+          "ok": false,
+          "http": 200,
+          "reason": "invalid_view_change_265",
+          "detail": null
+        },
+        "ovh-node-2": {
+          "ok": false,
+          "http": 200,
+          "reason": "invalid_view_change_265",
+          "detail": null
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 200,
+          "reason": "invalid_view_change_265",
+          "detail": null
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 200,
+          "reason": "invalid_view_change_265",
+          "detail": null
+        }
+      }
+    },
+    "combo_forged_identity_plus_new_view": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": 16,
+          "primary": "ovh-node-1",
+          "quorum_view_changes": 1,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [
+            "ovh-node-1"
+          ],
+          "claimed_prepared": true,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "state_incomplete"
+        }
+      },
+      "note": "forged identities cannot form a NEW-VIEW quorum"
+    },
+    "n04_50": {
+      "status": "FAIL",
+      "propose": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "not_primary",
+        "digest": null,
+        "error": null
+      },
+      "view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "http": 200
+      },
+      "netem_targets": [
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4"
+      ],
+      "netem_applied": {
+        "ovh-node-2": [
+          0,
+          "qdisc netem 802c: root refcnt 2 limit 1000 loss 50%\n"
+        ],
+        "aws-node-3": [
+          0,
+          "qdisc netem 802b: root refcnt 3 limit 1000 loss 50%\n"
+        ],
+        "ovh-node-4": [
+          0,
+          "qdisc netem 8030: root refcnt 2 limit 1000 loss 50%\n"
+        ]
+      },
+      "note": "N04 row requires 1–50%. This cell is 50% only. Do not recast N04 PASS."
+    },
+    "a4_a8_live": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "live service registry was not revoked/expired/downgraded. Overlay is process-local on OVH1, not the running API.",
+      "live_revoked_flags": {
+        "ovh-node-1": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false
+        },
+        "ovh-node-2": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false
+        },
+        "aws-node-3": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false
+        },
+        "ovh-node-4": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false
+        }
+      },
+      "software_overlay_on_vm": {
+        "ssh_rc": 0,
+        "stderr": "",
+        "result": {
+          "ok": false,
+          "reason": "replica_key_revoked",
+          "live_service_mutated": false
+        }
+      },
+      "software_overlay_pass": true,
+      "a7_live": "PASS"
+    },
+    "tpm_quote": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "registry public keys ≠ TPM quote. Device presence recorded only.",
+      "nodes": {
+        "ovh-node-1": {
+          "ssh_rc": 0,
+          "stdout": "TPM0=no\nTPMRM=no\nTPM2=no\n\n",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        },
+        "ovh-node-2": {
+          "ssh_rc": 0,
+          "stdout": "TPM0=no\nTPMRM=no\nTPM2=no\n\n",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        },
+        "aws-node-3": {
+          "ssh_rc": 0,
+          "stdout": "TPM0=no\nTPMRM=no\nTPM2=no\n\n",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        },
+        "ovh-node-4": {
+          "ssh_rc": 0,
+          "stdout": "TPM0=no\nTPMRM=no\nTPM2=no\n\n",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        }
+      },
+      "any_tpm0": false
+    },
+    "c04_thousands": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "thousands of blocks not run this campaign; a short substitute is forbidden"
+    },
+    "certified_100": false,
+    "n04_row_not_recast_pass": true,
+    "production_ready": false
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "stamp": "20260908T233542Z",
+  "certified_100": false,
+  "partition_2_2": {
+    "status": "PASS",
+    "dual_tip_during": false,
+    "before": {
+      "ovh-node-1": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-2": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "aws-node-3": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      }
+    },
+    "during": {
+      "ovh-node-1": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-2": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "aws-node-3": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      }
+    },
+    "after": {
+      "ovh-node-1": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-2": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "aws-node-3": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      }
+    },
+    "isolate": {
+      "ovh-node-1": {
+        "rc": 0,
+        "out": "b265 -j DROP\n-A OUTPUT -d 151.80.107.29/32 -p tcp -m multiport --dports 8000,8443 -m comment --comment artcb265 -j DROP\n"
+      },
+      "ovh-node-2": {
+        "rc": 0,
+        "out": "265 -j DROP\n-A OUTPUT -d 152.228.144.34/32 -p tcp -m multiport --dports 8000,8443 -m comment --comment artcb265 -j DROP\n"
+      },
+      "aws-node-3": {
+        "rc": 0,
+        "out": "265 -j DROP\n-A OUTPUT -d 152.228.144.34/32 -p tcp -m multiport --dports 8000,8443 -m comment --comment artcb265 -j DROP\n"
+      },
+      "ovh-node-4": {
+        "rc": 0,
+        "out": "265 -j DROP\n-A OUTPUT -d 152.228.144.34/32 -p tcp -m multiport --dports 8000,8443 -m comment --comment artcb265 -j DROP\n"
+      }
+    }
+  },
+  "crash_during_forged_identity": {
+    "status": "FAIL",
+    "down": "failed\ndown\n",
+    "up": "active\n",
+    "posts": {
+      "aws-node-3": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "invalid_replica_key_binding"
+      },
+      "ovh-node-4": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "invalid_replica_key_binding"
+      }
+    },
+    "after": {
+      "ovh-node-1": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-2": {
+        "http": 0,
+        "height": null,
+        "last_hash": null,
+        "chain_valid": null,
+        "view": null,
+        "primary": null
+      },
+      "aws-node-3": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true,
+        "view": 15,
+        "primary": "ovh-node-4"
+      }
+    }
+  },
+  "final": {
+    "ovh-node-1": {
+      "http": 200,
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "primary": "ovh-node-4"
+    },
+    "aws-node-3": {
+      "http": 200,
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "primary": "ovh-node-4"
+    }
+  }
+}
