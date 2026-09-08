@@ -43,6 +43,7 @@ REPLICA_REL_GLOBS: tuple[tuple[str, str], ...] = (
     ("graphs", "*.json"),
     ("memory", "repo_index.jsonl"),
     ("kcg", "*"),
+    ("consensus", "byzantine_evidence.jsonl"),
 )
 
 
@@ -125,7 +126,7 @@ def _safe_rel(rel: str) -> Path | None:
     path = Path(rel)
     if path.is_absolute() or ".." in path.parts:
         return None
-    if path.parts and path.parts[0] not in {"graphs", "memory", "kcg"}:
+    if path.parts and path.parts[0] not in {"graphs", "memory", "kcg", "consensus"}:
         return None
     return path
 
@@ -192,10 +193,21 @@ def write_replica_files(data_dir: Path, files: list[dict[str, Any]]) -> dict[str
             rejected += 1
             continue
         dest = root / safe
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if safe.as_posix() == "consensus/byzantine_evidence.jsonl" and dest.is_file():
+            existing = {ln for ln in dest.read_text(encoding="utf-8").splitlines() if ln.strip()}
+            incoming = [ln for ln in raw.decode("utf-8", errors="replace").splitlines() if ln.strip()]
+            extra = [ln for ln in incoming if ln not in existing]
+            if not extra:
+                skipped += 1
+                continue
+            with dest.open("a", encoding="utf-8") as handle:
+                handle.write("\n".join(extra) + "\n")
+            written += 1
+            continue
         if dest.is_file() and hashlib.sha256(dest.read_bytes()).hexdigest() == digest:
             skipped += 1
             continue
-        dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_bytes(raw)
         written += 1
     return {"written": written, "skipped": skipped, "rejected": rejected, "received": len(files)}

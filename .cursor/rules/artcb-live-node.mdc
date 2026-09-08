@@ -32,6 +32,12 @@ Création de **nouveaux** projets : `DOPPLER_PERSONAL_TOKEN`. Binding `artcb-2`/
 
 Les 4 nœuds compute officiels **suivent `origin/main` automatiquement** (`scripts/artcb_follow_main.sh` + timer `artcb-follow-main.timer`). Ordre opérateur 2026-09-02 : si `main` avance, OVH1 `:34`, OVH2, AWS3 et OVH4 doivent le devenir **sans le répéter**. Keep-book : jamais wipe `blocks.jsonl`, jamais `install.sh` / genesis / rescue. Phase test : IAM large autorisé. Politique crypto **D-032 B** : ML-DSA-65 prioritaire, Ed25519 temporaire jusqu’au 2026-12-31, hybride si liboqs.
 
+## Autonomie live (opérateur, 2026-09-08 — ne plus attendre)
+
+Ne **pas** bloquer une tâche pour un GO de déploiement, de stop, de partition, de probe Byzantine reject-only, de replica ou de mémo. Exécuter, mesurer, graver le rapport, `git push origin HEAD:main`, follow-main ×4.
+
+Toujours avant de finir : nœud arrêté **relancé**, iptables `artcb261` **retirées**, un seul nœud officiel hors-ligne à la fois. Jamais deux down. Jamais wipe. Jamais genesis/rescue. Jamais inventer SHA/hauteur/tip. Jamais afficher le token. Jamais mélanger Doppler. Pas de PASS PBFT inventé.
+
 Sources de la clé nœud 1 : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH nœud 1.
 
 Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdit d’afficher le token.

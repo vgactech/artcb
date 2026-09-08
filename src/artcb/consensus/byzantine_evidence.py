@@ -9,6 +9,7 @@ It does not rewrite blocks.jsonl. It does not certify BFT append.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from dataclasses import asdict, dataclass
@@ -113,11 +114,21 @@ class EvidenceStore:
             node = str(row.get("from_node_id") or "unknown")
             by_kind[kind] = by_kind.get(kind, 0) + 1
             by_node[node] = by_node.get(node, 0) + 1
+        sha = ""
+        nbytes = 0
+        if self.path.is_file():
+            raw = self.path.read_bytes()
+            nbytes = len(raw)
+            sha = hashlib.sha256(raw).hexdigest()
         return {
             "count": len(rows),
             "by_kind": by_kind,
             "by_node": by_node,
             "path": str(self.path),
+            "sha256": sha,
+            "bytes": nbytes,
+            "persistent": self.path.is_file(),
+            "signed_on_chain": False,
             "not_block_append_bft": True,
             "scope": "active_byzantine_offer_evidence",
         }
