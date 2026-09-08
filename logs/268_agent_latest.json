@@ -1,0 +1,63 @@
+{
+  "stamp": "20260908T170137Z",
+  "protocol": "268-agent-memory",
+  "live_url": "https://152.228.144.34:8443",
+  "key_present": true,
+  "live_sha": {
+    "ovh-node-1": "960f069ef70af68df01d56797ab855535e6281c0",
+    "ovh-node-2": "960f069ef70af68df01d56797ab855535e6281c0",
+    "aws-node-3": "960f069ef70af68df01d56797ab855535e6281c0",
+    "ovh-node-4": "960f069ef70af68df01d56797ab855535e6281c0"
+  },
+  "sha_equal": true,
+  "bootstrap": {
+    "http": 200,
+    "protocol": "268-agent-memory-runtime",
+    "platform_hook": false,
+    "caps": [
+      "memory:read",
+      "context:read",
+      "kcg:read",
+      "memory:write",
+      "memo:write",
+      "kcg:publish",
+      "agent:register"
+    ]
+  },
+  "register": {
+    "http": 200,
+    "agent_id": "agent_320497e7c08d"
+  },
+  "event": {
+    "first_http": 200,
+    "first_status": "committed",
+    "block_index": 1098,
+    "block_hash": "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf",
+    "second_http": 200,
+    "second_status": "already_committed",
+    "idempotent": true,
+    "same_block": true,
+    "dur_ns": 21315583295,
+    "content_sha256": "98358bd51b559a788ac7e6e07dbf050e69d7aca7628555581588ffd32e4e0227",
+    "includes_thinking": false
+  },
+  "after_height": {
+    "ovh-node-1": [
+      1099,
+      "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf"
+    ],
+    "ovh-node-2": [
+      1099,
+      "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf"
+    ],
+    "aws-node-3": [
+      1099,
+      "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf"
+    ],
+    "ovh-node-4": [
+      1099,
+      "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf"
+    ]
+  },
+  "ok": true
+}

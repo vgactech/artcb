@@ -1651,5 +1651,12 @@ P8 : prepared certificate (PP + Q PREPARE) dans VC265 ; `must_repropose_prepared
 266 consolidé : `logs/266_pbft_cert_consolidated.json`. PBFT pas 100 %. SHA live = origin/main du run.
 T-E56.
 
+## [2026-09-08T17:01:37Z] 268 live — P8 PASS + agent protocol PASS
+
+SHA `960f069ef70af68df01d56797ab855535e6281c0` ×4. pytest 53.
+P8 : prepared_proofs ×4 ; select kept_x seq 1097 digest `c79319fbebfbd0459f3d1fac617e9a02c2646cc4641e4e5a86cfbbf891070bf3` ; propose Y HTTP 409 `must_repropose_prepared` ; repropose X cert ×4 writes ×4 ; view 6→7 primary ovh-node-4. `logs/268_p8_20260908T165949Z.json`.
+Agent : bootstrap 268 `ingest_platform_hook=false` ; register `agent_320497e7c08d` ; event 1098 `9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf` ; 2e POST `already_committed` same_block. Height **1099** tip `9c67ac06…` cert Q=3 commits=4 ×4. `logs/268_agent_20260908T170137Z.json`.
+PBFT 100 % : **NON**. Universal LLM adapters : **NON**. mTLS mesh : **NON**.
+
 
 
