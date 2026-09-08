@@ -35,7 +35,12 @@ from artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS  # noqa: E402
 from artcb.trace.ns import is_nanosecond_ts  # noqa: E402
 
 HTTP = l265.HTTP
-HTTPS = {"ovh-node-1": "https://152.228.144.34:8443"}
+HTTPS = {
+    "ovh-node-1": "https://152.228.144.34:8443",
+    "ovh-node-2": "https://151.80.107.29:8443",
+    "aws-node-3": "https://51.44.222.232:8443",
+    "ovh-node-4": "https://91.134.45.8:8443",
+}
 CTX = ssl._create_unverified_context()
 LEFT = ["ovh-node-1", "ovh-node-2"]
 RIGHT = ["aws-node-3", "ovh-node-4"]
@@ -103,7 +108,7 @@ from artcb.consensus.pbft_finality import sign_preprepare, verify_preprepare
 from artcb.consensus.pbft_view import PbftViewStore
 from artcb.node_registry import official_replica_id
 data = Path("/home/ubuntu/artcb/data")
-chain = ChainManager(data / "chain" / "blocks.jsonl")
+chain = ChainManager(data / "chain" / "blocks.jsonl", key_path=data / "chain.key", enable_security=False)
 rid = official_replica_id()
 view = int(PbftViewStore(data, replica_id=rid).view)
 x = json.loads(chain.append_block(graph_id="v02-x", graph_root="x", pol_score=0.1, visibility="public", source="pbft:v02", dry_run=True).to_json_line())
@@ -112,13 +117,16 @@ pp_x = sign_preprepare(chain, view=view, replica_id=rid, block=x)
 pp_y = sign_preprepare(chain, view=view, replica_id=rid, block=y)
 print(json.dumps({"view": view, "replica": rid, "x": x, "y": y, "pp_x": pp_x, "pp_y": pp_y, "vx": verify_preprepare(pp_x), "vy": verify_preprepare(pp_y)}))
 """
-    row = l265._ssh(primary, "python3 -c " + shlex.quote(code), timeout=60)
+    row = l265._ssh(primary, "cd /home/ubuntu/artcb && PYTHONPATH=src .venv/bin/python -c " + shlex.quote(code), timeout=60)
     try:
         parsed = json.loads((row.get("stdout") or "").strip().splitlines()[-1])
     except (json.JSONDecodeError, IndexError):
         parsed = {"raw": (row.get("stdout") or "")[:500], "stderr": (row.get("stderr") or "")[:300]}
-    parsed["ssh_rc"] = row.get("returncode")
-    return parsed
+        parsed["ssh_rc"] = row.get("returncode")
+        parsed["ssh_stderr"] = (row.get("stderr") or "")[-400:]
+        if "raw" not in parsed and not parsed.get("pp_x"):
+            parsed["ssh_stdout"] = (row.get("stdout") or "")[-500:]
+        return parsed
 
 
 def dv02_flood() -> dict:
@@ -151,6 +159,11 @@ def restore_all() -> dict:
     return out
 
 
+def want_test(name: str) -> bool:
+    only = {x.strip() for x in (os.environ.get("ARTCB266_ONLY") or "").split(",") if x.strip()}
+    return (not only) or name in only
+
+
 def verdict(ok: bool) -> str:
     return "PASS" if ok else "FAIL"
 
@@ -177,13 +190,17 @@ def main() -> int:
             "want": want_sha,
             "live": {n: (payload["before"].get(n) or {}).get("git_sha") for n in OFFICIAL_COMPUTE_NODE_IDS},
         }
+        if not want_test("V07"):
+            payload["tests"].pop("V07", None)
 
-        # V-01 — public memo must produce a certified height on all four.
         t01 = time.perf_counter_ns()
         before_h = {n: (payload["before"].get(n) or {}).get("height") for n in OFFICIAL_COMPUTE_NODE_IDS}
+        view0 = _http("GET", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/view")
+        memo_primary = primary_of(int(view0.get("view") or 0))
+        memo_url = f"{HTTPS[memo_primary]}/api/v1/ai/memo"
         memo = _http(
             "POST",
-            f"{HTTPS['ovh-node-1']}/api/v1/ai/memo",
+            memo_url,
             {
                 "content": f"266 V-01 exclusive PBFT public memo sha={want_sha[:12]}",
                 "memo_type": "proof",
@@ -213,6 +230,8 @@ def main() -> int:
         payload["tests"]["V01"] = {
             "result": verdict(v01_ok),
             "memo_http": memo.get("http"),
+            "memo_primary": memo_primary,
+            "memo_url_host": memo_primary,
             "block_index": seq,
             "block_hash": memo.get("block_hash"),
             "detail": memo.get("detail") or memo.get("error"),

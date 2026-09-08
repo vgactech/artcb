@@ -1600,6 +1600,13 @@ V-06 restart après certificat : height/hash/view/cert conservés.
 V-07 mesure sur `git_sha` = `origin/main` ×4.
 Traces ns obligatoires. T-E54.
 
+## [2026-09-08T16:12:00Z] 266 live — V-01…V-07 mesurés (SHA `78cd8d6…`)
+
+Premier script auto : V-01 FAIL (`client_request_failed` mémo hors-primary) ; V-02 FAIL (python3 sans nacl/passphrase).
+Retry même SHA : V-01 PASS seq **1094** cert `5688fb3c…` ×4 height **1095**. V-02 PASS deux PRE-PREPARE signés, split 2-2, pas de double finalité.
+V-03/V-04/V-05/V-06/V-07 PASS (voir `rapports/266_pbft_cert_live_20260908.md`).
+`PBFT_LIVE_E2E_PASS` après ces retries. Ne pas effacer le NOT_VALIDATED 265 ci-dessus.
+
 ## [2026-09-08T15:48:00Z] Historique protocole & autoprompt — interdiction d’effacer
 
 **Réflexe (ne plus le faire répéter) :**

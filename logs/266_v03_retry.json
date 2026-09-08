@@ -1,0 +1,12 @@
+{
+  "V03": "PASS",
+  "http": 409,
+  "detail": "invalid_certificate",
+  "seq": 1094,
+  "held_digest": {
+    "ovh-node-1": "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774",
+    "ovh-node-2": "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774",
+    "aws-node-3": "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774",
+    "ovh-node-4": "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+  }
+}

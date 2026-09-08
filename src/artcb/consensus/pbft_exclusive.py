@@ -67,7 +67,14 @@ def coordinate_public_finality(engine: Any, chain: Any, block: dict[str, Any]) -
         code, body = _http_json("POST", f"{hosts[primary]}/api/v1/consensus/pbft/client-request", {"block": block})
         pp = body.get("pre_prepare") if isinstance(body, dict) else None
         if code != 200 or not isinstance(pp, dict):
-            return {"ok": False, "wrote": False, "reason": "client_request_failed", "http": code, "detail": body}
+            detail = body.get("detail") if isinstance(body, dict) else body
+            return {
+                "ok": False,
+                "wrote": False,
+                "reason": f"client_request_failed:{code}:{detail}",
+                "http": code,
+                "detail": body,
+            }
         block = body.get("block") if isinstance(body.get("block"), dict) else block
         accepted = log.accept_preprepare(pp)
         if not accepted.get("ok"):

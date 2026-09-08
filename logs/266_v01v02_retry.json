@@ -1,0 +1,81 @@
+{
+  "protocol": "266-v01-v02-retry",
+  "unit": "nanosecond",
+  "before": {
+    "ovh-node-1": {
+      "git_sha": "78cd8d61e08c1dee99d83bf24ae7aba0bdf3f007",
+      "height": 1094,
+      "last_hash": "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048",
+      "view": 4,
+      "primary": "ovh-node-1"
+    },
+    "ovh-node-2": {
+      "git_sha": "78cd8d61e08c1dee99d83bf24ae7aba0bdf3f007",
+      "height": 1094,
+      "last_hash": "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048",
+      "view": 4,
+      "primary": "ovh-node-1"
+    },
+    "aws-node-3": {
+      "git_sha": "78cd8d61e08c1dee99d83bf24ae7aba0bdf3f007",
+      "height": 1094,
+      "last_hash": "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048",
+      "view": 4,
+      "primary": "ovh-node-1"
+    },
+    "ovh-node-4": {
+      "git_sha": "78cd8d61e08c1dee99d83bf24ae7aba0bdf3f007",
+      "height": 1094,
+      "last_hash": "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048",
+      "view": 4,
+      "primary": "ovh-node-1"
+    }
+  },
+  "primary": "ovh-node-1",
+  "V01": {
+    "result": "FAIL",
+    "http": 409,
+    "detail": "Block append failed: equivocation",
+    "block_index": null,
+    "block_hash": null,
+    "certs": {},
+    "heights": {
+      "ovh-node-1": [
+        1094,
+        "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048"
+      ],
+      "ovh-node-2": [
+        1094,
+        "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048"
+      ],
+      "aws-node-3": [
+        1094,
+        "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048"
+      ],
+      "ovh-node-4": [
+        1094,
+        "4006c38bc3d168755f66e4b0d03b4141297708b1c8c89650a884c5dbb0135048"
+      ]
+    },
+    "dur_ns": 112182974648
+  },
+  "V02": {
+    "result": "FAIL",
+    "primary": "ovh-node-1",
+    "ssh_rc": 1,
+    "vx": null,
+    "vy": null,
+    "error": "",
+    "seq": -1,
+    "digest_x": "",
+    "digest_y": "",
+    "recv": {
+      "x": {},
+      "y": {}
+    },
+    "cert_x_any": false,
+    "cert_y_any": false,
+    "dual_finality": false,
+    "dur_ns": 3237759349
+  }
+}

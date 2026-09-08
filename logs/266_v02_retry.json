@@ -1,0 +1,37 @@
+{
+  "V02": "PASS",
+  "seq": 1095,
+  "digest_x": "293693fb49bb3febb16eb690fa5f287565506fce0605a5ce823b456180dde6e0",
+  "digest_y": "5cfd14b7076570945679f08e2d2c3eae7e99ee710e64775c6bef36911a0e3943",
+  "view": 5,
+  "primary": "ovh-node-2",
+  "recv": {
+    "x": {
+      "ovh-node-1": {
+        "http": 200,
+        "ok": true,
+        "reason": null
+      },
+      "ovh-node-2": {
+        "http": 200,
+        "ok": true,
+        "reason": null
+      }
+    },
+    "y": {
+      "aws-node-3": {
+        "http": 200,
+        "ok": true,
+        "reason": null
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "ok": true,
+        "reason": null
+      }
+    }
+  },
+  "cert_x_any": false,
+  "cert_y_any": false,
+  "dual_finality": false
+}
