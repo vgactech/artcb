@@ -121,12 +121,49 @@ def _ssh_base(node_id: str) -> list[str] | None:
     return ["-i", str(key), *known_opts, "-o", "IdentitiesOnly=yes", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15", f"{spec.ssh_user}@{spec.ssh_host}"]
 
 
-def _ssh(node_id: str, remote: str, timeout: int = 60) -> dict:
+def _ssh(node_id: str, remote: str, timeout: int = 60, stdin: str | None = None) -> dict:
     base = _ssh_base(node_id)
     if base is None:
         return {"node_id": node_id, "returncode": 2, "stdout": "", "stderr": "missing_ssh_key"}
-    proc = subprocess.run(["ssh", *base, remote], capture_output=True, text=True, timeout=timeout, check=False)
+    proc = subprocess.run(
+        ["ssh", *base, remote],
+        input=stdin,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+        check=False,
+    )
     return {"node_id": node_id, "returncode": proc.returncode, "stdout": (proc.stdout or "")[-4000:], "stderr": (proc.stderr or "")[-400:]}
+
+
+def replica_from_ovh1() -> dict:
+    """POST /p2p/replica/run on OVH1 localhost. python3 -c + stdin (never a heredoc)."""
+    import shlex
+
+    code = (
+        "import json,sys,urllib.request,urllib.error\n"
+        "key=sys.stdin.read().strip()\n"
+        "req=urllib.request.Request('http://127.0.0.1:8000/api/v1/p2p/replica/run?include_files=true',"
+        "method='POST',headers={'Authorization':'Bearer '+key,'Accept':'application/json'})\n"
+        "try:\n"
+        "  with urllib.request.urlopen(req,timeout=200) as r:\n"
+        "    print(r.read().decode())\n"
+        "except urllib.error.HTTPError as e:\n"
+        "  print(json.dumps({'ok':False,'http':e.code,'detail':e.read().decode()[:300]}))\n"
+        "except Exception as e:\n"
+        "  print(json.dumps({'ok':False,'error':type(e).__name__}))\n"
+    )
+    key = _operator_key()
+    if len(key) < 16:
+        return {"ok": False, "error": "ARTCB_API_KEY missing"}
+    row = _ssh("ovh-node-1", "python3 -c " + shlex.quote(code), timeout=240, stdin=key)
+    try:
+        parsed = json.loads(row.get("stdout") or "{}")
+    except json.JSONDecodeError:
+        parsed = {"raw": (row.get("stdout") or "")[:400]}
+    peers = parsed.get("peers") or []
+    ok_peers = [p for p in peers if p.get("ok") or p.get("skipped")]
+    return {"ssh_rc": row.get("returncode"), "peer_ok": len(ok_peers), "ok": len(ok_peers) >= 3}
 
 
 def _scp(node_id: str, local: Path, remote: str) -> dict:
@@ -324,6 +361,13 @@ def main() -> int:
             "index": memo.get("index") or memo.get("block_index") or memo.get("last_index"),
             "hash": memo.get("hash") or memo.get("last_hash") or (memo.get("block") or {}).get("hash"),
         }
+        payload["replica"] = replica_from_ovh1()
+        payload["books_after"] = {
+            nid: _http("GET", f"{HTTP[nid]}/api/v1/chain/status")
+            for nid in OFFICIAL_COMPUTE_NODE_IDS
+        }
+        book_heights = [int((payload["books_after"].get(n) or {}).get("height") or 0) for n in OFFICIAL_COMPUTE_NODE_IDS]
+        book_hashes = [(payload["books_after"].get(n) or {}).get("last_hash") for n in OFFICIAL_COMPUTE_NODE_IDS]
         payload["questions"] = {
             "pbft_view_change_implemented": True,
             "q3_view_changes_signed": len(vcs) >= 3 and all(payload["vc_verified"]),
@@ -337,6 +381,7 @@ def main() -> int:
             "iptables_restored": True,
             "no_process_killed": True,
             "memo_anchored": payload["memo"].get("http") in (200, 201),
+            "books_converged": len(set(book_heights)) == 1 and len(set(book_hashes)) == 1 and book_heights[0] > 0,
         }
         payload["ok"] = all(payload["questions"].values())
     finally:
