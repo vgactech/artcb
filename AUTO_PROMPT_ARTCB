@@ -1668,5 +1668,10 @@ P16 privé index 1100 `204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a586
 T-E57 [x]. Campagne interne P9–P18 : **100 % PASS**. Preuve formelle toutes exécutions : **NON**. Universal LLM ingest : **NON**.
 Runner P16 désormais `visibility=public` (plus de fourche privée locale).
 
+## [2026-09-08T18:24:00Z] 270 — certification matrix (no 100% shortcut)
+
+Règle : une propriété critique non exécutée live = **NOT PROVEN**, jamais un pourcentage de certification.
+Matrice `src/artcb/consensus/pbft_certification_matrix.py`. Runner `scripts/run_live270_pbft_cert_matrix.py`. T-E58. HPC non. AWS t3.small.
+
 
 
