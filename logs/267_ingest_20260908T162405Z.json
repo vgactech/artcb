@@ -1,0 +1,73 @@
+{
+  "stamp": "20260908T162405Z",
+  "platform_hook": false,
+  "prompt_path": "/tmp/artcb_turn_prompt.txt",
+  "prompt_exists": true,
+  "live_url": "https://152.228.144.34:8443",
+  "key_present": true,
+  "before_height": {
+    "ovh-node-1": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "ovh-node-2": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "aws-node-3": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "ovh-node-4": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ]
+  },
+  "view": 5,
+  "primary": "ovh-node-2",
+  "ingest": {
+    "ingest_platform_hook": false,
+    "ingest_attempted": true,
+    "ingest_skipped": true,
+    "ingest_path": "/tmp/artcb_turn_prompt.txt",
+    "chars": 4883,
+    "bytes": 4965,
+    "sha256": "11625bfa78df8b164d1b78f625c107f7ff1c68662adcb1429aea87774bc12841",
+    "truncated": false,
+    "includes_thinking": false,
+    "includes_system_prompt": false,
+    "token_count_known": false,
+    "ingest_http": 409,
+    "ingest_block_index": null,
+    "ingest_block_hash": null,
+    "ingest_graph_id": null,
+    "dur_ns": 793309443,
+    "ingest_error": "Block append failed: client_request_failed:409:equivocation"
+  },
+  "ingest_wall_ns": 793313693,
+  "after_sha": {
+    "ovh-node-1": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+    "ovh-node-2": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+    "aws-node-3": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+    "ovh-node-4": "230b8eb5a5c9569e7baed5b866c3f200f57de52f"
+  },
+  "after_height": {
+    "ovh-node-1": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "ovh-node-2": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "aws-node-3": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "ovh-node-4": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ]
+  },
+  "cert_x4": false
+}

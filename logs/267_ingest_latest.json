@@ -1,0 +1,123 @@
+{
+  "stamp": "20260908T162514Z",
+  "platform_hook": false,
+  "prompt_path": "/tmp/artcb_turn_prompt.txt",
+  "prompt_exists": true,
+  "live_url": "https://152.228.144.34:8443",
+  "key_present": true,
+  "before_height": {
+    "ovh-node-1": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "ovh-node-2": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "aws-node-3": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ],
+    "ovh-node-4": [
+      1095,
+      "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774"
+    ]
+  },
+  "view": 6,
+  "primary": "aws-node-3",
+  "ingest": {
+    "ingest_platform_hook": false,
+    "ingest_attempted": true,
+    "ingest_skipped": false,
+    "ingest_path": "/tmp/artcb_turn_prompt.txt",
+    "chars": 4883,
+    "bytes": 4965,
+    "sha256": "11625bfa78df8b164d1b78f625c107f7ff1c68662adcb1429aea87774bc12841",
+    "truncated": false,
+    "includes_thinking": false,
+    "includes_system_prompt": false,
+    "token_count_known": false,
+    "ingest_http": 200,
+    "ingest_block_index": 1095,
+    "ingest_block_hash": "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96",
+    "ingest_graph_id": "ai_memo_81ace8e3f74f",
+    "dur_ns": 16719898784
+  },
+  "ingest_wall_ns": 16719906741,
+  "certs": {
+    "ovh-node-1": {
+      "http": 200,
+      "ok": true,
+      "digest": "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96",
+      "view": 6,
+      "seq": 1095,
+      "q": 3,
+      "commits": 4,
+      "dur_ns": 462507019
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "ok": true,
+      "digest": "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96",
+      "view": 6,
+      "seq": 1095,
+      "q": 3,
+      "commits": 4,
+      "dur_ns": 469539963
+    },
+    "aws-node-3": {
+      "http": 200,
+      "ok": true,
+      "digest": "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96",
+      "view": 6,
+      "seq": 1095,
+      "q": 3,
+      "commits": 4,
+      "dur_ns": 413782055
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "ok": true,
+      "digest": "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96",
+      "view": 6,
+      "seq": 1095,
+      "q": 3,
+      "commits": 4,
+      "dur_ns": 460060846
+    }
+  },
+  "readback": {
+    "http": 200,
+    "content_available": true,
+    "content_chars": 5401,
+    "original_chars": 4883,
+    "original_sha256": "11625bfa78df8b164d1b78f625c107f7ff1c68662adcb1429aea87774bc12841",
+    "user_query_in_content": true,
+    "starts_with_veriter": true
+  },
+  "after_sha": {
+    "ovh-node-1": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+    "ovh-node-2": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+    "aws-node-3": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+    "ovh-node-4": "230b8eb5a5c9569e7baed5b866c3f200f57de52f"
+  },
+  "after_height": {
+    "ovh-node-1": [
+      1096,
+      "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96"
+    ],
+    "ovh-node-2": [
+      1096,
+      "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96"
+    ],
+    "aws-node-3": [
+      1096,
+      "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96"
+    ],
+    "ovh-node-4": [
+      1096,
+      "2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96"
+    ]
+  },
+  "cert_x4": true
+}

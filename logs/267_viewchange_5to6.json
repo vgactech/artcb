@@ -1,0 +1,93 @@
+{
+  "plan": {
+    "from": 5,
+    "to": 6,
+    "old_p": "ovh-node-2",
+    "new_p": "aws-node-3"
+  },
+  "emits": {
+    "ovh-node-1": {
+      "http": 200,
+      "ok": true,
+      "detail": null
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "ok": true,
+      "detail": null
+    },
+    "aws-node-3": {
+      "http": 200,
+      "ok": true,
+      "detail": null
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "ok": true,
+      "detail": null
+    }
+  },
+  "vc_n": 4,
+  "recv": {
+    "ovh-node-1": [
+      true,
+      true,
+      true
+    ],
+    "ovh-node-2": [
+      true,
+      true,
+      true
+    ],
+    "aws-node-3": [
+      true,
+      true,
+      true
+    ],
+    "ovh-node-4": [
+      true,
+      true,
+      true
+    ]
+  },
+  "nv_http": 200,
+  "nv_ok": true,
+  "installs": {
+    "ovh-node-1": {
+      "http": 200,
+      "ok": true,
+      "view": 6,
+      "detail": null
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "ok": true,
+      "view": 6,
+      "detail": null
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "ok": true,
+      "view": 6,
+      "detail": null
+    }
+  },
+  "views": {
+    "ovh-node-1": {
+      "view": 6,
+      "primary": "aws-node-3"
+    },
+    "ovh-node-2": {
+      "view": 6,
+      "primary": "aws-node-3"
+    },
+    "aws-node-3": {
+      "view": 6,
+      "primary": "aws-node-3"
+    },
+    "ovh-node-4": {
+      "view": 6,
+      "primary": "aws-node-3"
+    }
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "stamp": "20260908T162405Z",
+  "note": "Measured live. Not InfiniBand NDR, not 800G, not RoCE, not QUIC/HTTP3 unless curl --http3 succeeds. WireGuard only if wg show lists a device.",
+  "client_curl": [
+    "curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 OpenSSL/3.0.13 zlib/1.3 brotli/1.1.0 zstd/1.5.5 libidn2/2.3.7 libpsl/0.21.2 (+libidn2/2.3.7) libssh/0.10.6/openssl/zlib nghttp2/1.59.0 librtmp/2.3 OpenLDAP/2.6.10",
+    "Release-Date: 2023-12-06, security patched: 8.5.0-2ubuntu10.9",
+    "Protocols: dict file ftp ftps gopher gophers http https imap imaps ldap ldaps mqtt pop3 pop3s rtmp rtsp scp sftp smb smbs smtp smtps telnet tftp"
+  ],
+  "http_versions": {
+    "https://152.228.144.34:8443/health": {
+      "http1.1": {
+        "flag": "--http1.1",
+        "url": "https://152.228.144.34:8443/health",
+        "rc": 0,
+        "write_out": "1.1 405 0.465497 18",
+        "stderr": "",
+        "headers": "HTTP/1.1 405 Method Not Allowed\nServer: nginx/1.24.0 (Ubuntu)\nDate: Tue, 08 Sep 2026 16:24:05 GMT\nContent-Type: application/json\nContent-Length: 31\nConnection: keep-alive\nallow: GET\nx-artcb-trace-ns: 4299245\n\n",
+        "dur_ns": 469740541
+      },
+      "http2": {
+        "flag": "--http2",
+        "url": "https://152.228.144.34:8443/health",
+        "rc": 0,
+        "write_out": "1.1 405 0.463368 18",
+        "stderr": "",
+        "headers": "HTTP/1.1 405 Method Not Allowed\nServer: nginx/1.24.0 (Ubuntu)\nDate: Tue, 08 Sep 2026 16:24:06 GMT\nContent-Type: application/json\nContent-Length: 31\nConnection: keep-alive\nallow: GET\nx-artcb-trace-ns: 2205166\n\n",
+        "dur_ns": 467482590
+      },
+      "http3": {
+        "flag": "--http3-only",
+        "url": "https://152.228.144.34:8443/health",
+        "rc": 2,
+        "write_out": "",
+        "stderr": "curl: option --http3-only: the installed libcurl version doesn't support this\ncurl: try 'curl --help' or 'curl --manual' for more information\n",
+        "headers": "HTTP/1.1 405 Method Not Allowed\nServer: nginx/1.24.0 (Ubuntu)\nDate: Tue, 08 Sep 2026 16:24:06 GMT\nContent-Type: application/json\nContent-Length: 31\nConnection: keep-alive\nallow: GET\nx-artcb-trace-ns: 2205166\n\n",
+        "dur_ns": 3800448
+      }
+    },
+    "http://152.228.144.34:8000/health": {
+      "http1.1": {
+        "flag": "--http1.1",
+        "url": "http://152.228.144.34:8000/health",
+        "rc": 0,
+        "write_out": "1.1 405 0.312872 0",
+        "stderr": "",
+        "headers": "HTTP/1.1 405 Method Not Allowed\ndate: Tue, 08 Sep 2026 16:24:06 GMT\nserver: uvicorn\nallow: GET\ncontent-length: 31\ncontent-type: application/json\nx-artcb-trace-ns: 3427872\n\n",
+        "dur_ns": 316517223
+      },
+      "http2": {
+        "flag": "--http2",
+        "url": "http://152.228.144.34:8000/health",
+        "rc": 0,
+        "write_out": "1.1 405 0.367101 0",
+        "stderr": "",
+        "headers": "HTTP/1.1 405 Method Not Allowed\ndate: Tue, 08 Sep 2026 16:24:06 GMT\nserver: uvicorn\nallow: GET\ncontent-length: 31\ncontent-type: application/json\nx-artcb-trace-ns: 2932880\n\n",
+        "dur_ns": 370730301
+      },
+      "http3": {
+        "skipped": true,
+        "reason": "http3 needs TLS"
+      }
+    },
+    "https://artcb.me/health": {
+      "http1.1": {
+        "flag": "--http1.1",
+        "url": "https://artcb.me/health",
+        "rc": 0,
+        "write_out": "1.1 405 0.808092 20",
+        "stderr": "",
+        "headers": "HTTP/1.1 405 Method Not Allowed\nServer: nginx/1.24.0 (Ubuntu)\nDate: Tue, 08 Sep 2026 16:24:08 GMT\nContent-Type: application/json\nContent-Length: 31\nConnection: keep-alive\nallow: GET\nx-artcb-trace-ns: 4632882\n\n",
+        "dur_ns": 812294397
+      },
+      "http2": {
+        "flag": "--http2",
+        "url": "https://artcb.me/health",
+        "rc": 0,
+        "write_out": "1.1 405 0.470463 20",
+        "stderr": "",
+        "headers": "HTTP/1.1 405 Method Not Allowed\nServer: nginx/1.24.0 (Ubuntu)\nDate: Tue, 08 Sep 2026 16:24:09 GMT\nContent-Type: application/json\nContent-Length: 31\nConnection: keep-alive\nallow: GET\nx-artcb-trace-ns: 2198314\n\n",
+        "dur_ns": 474397104
+      },
+      "http3": {
+        "flag": "--http3-only",
+        "url": "https://artcb.me/health",
+        "rc": 2,
+        "write_out": "",
+        "stderr": "curl: option --http3-only: the installed libcurl version doesn't support this\ncurl: try 'curl --help' or 'curl --manual' for more information\n",
+        "headers": "HTTP/1.1 405 Method Not Allowed\nServer: nginx/1.24.0 (Ubuntu)\nDate: Tue, 08 Sep 2026 16:24:09 GMT\nContent-Type: application/json\nContent-Length: 31\nConnection: keep-alive\nallow: GET\nx-artcb-trace-ns: 2198314\n\n",
+        "dur_ns": 3438477
+      }
+    }
+  },
+  "health": {
+    "https://152.228.144.34:8443/health": {
+      "url": "https://152.228.144.34:8443/health",
+      "http": 200,
+      "bytes": 2681,
+      "headers": {
+        "X-ARTCB-Trace-Ns": "38303772",
+        "Server": "nginx/1.24.0 (Ubuntu)",
+        "Alt-Svc": null,
+        "Strict-Transport-Security": null
+      },
+      "dur_ns": 509626848
+    },
+    "http://152.228.144.34:8000/health": {
+      "url": "http://152.228.144.34:8000/health",
+      "http": 200,
+      "bytes": 2681,
+      "headers": {
+        "X-ARTCB-Trace-Ns": "28678451",
+        "Server": "uvicorn",
+        "Alt-Svc": null,
+        "Strict-Transport-Security": null
+      },
+      "dur_ns": 349275206
+    },
+    "https://artcb.me/health": {
+      "url": "https://artcb.me/health",
+      "http": 200,
+      "bytes": 2681,
+      "headers": {
+        "X-ARTCB-Trace-Ns": "31303977",
+        "Server": "nginx/1.24.0 (Ubuntu)",
+        "Alt-Svc": null,
+        "Strict-Transport-Security": null
+      },
+      "dur_ns": 498935588
+    }
+  },
+  "nodes": {
+    "ovh-node-1": {
+      "ssh_rc": 0,
+      "ssh_dur_ns": 3116625982,
+      "ssh_err": "",
+      "parsed": {
+        "hostname": "artcb-node-1",
+        "infiniband_sys": false,
+        "infiniband_devs": [],
+        "rdma_class": [],
+        "net_class": [
+          "lo",
+          "ens3"
+        ],
+        "wg_bin": null,
+        "nginx_v": {
+          "rc": 0,
+          "out": "nginx version: nginx/1.24.0 (Ubuntu)\nbuilt with OpenSSL 3.0.13 30 Jan 2024\nTLS SNI support enabled\nconfigure arguments: --with-cc-opt='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=/usr/src/nginx-1.24.0-2ubuntu7.17 -fPIC -Wdate-time -D_FORTIFY_SOURCE=3' --with-ld-opt='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro -Wl,-z,now -fPIC' --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=stderr --lock-path=/var/lock/nginx.lock --pid-path=/run/nginx.pid --modules-path=/usr/lib/nginx/modules --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --with-compat --with-debug --with-pcre-jit --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_v2_module --with-http_dav_module --with-http_slice_module --with-threads --with-http_addition_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_secure_link_module --with-http_sub_module --with-mail_ssl_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_realip_module --with-http_geoip_module=dynamic --with-http_image_filter_module=dynamic --with-http_perl_module=dynamic --with-http_xslt_module=dynamic --with-mail=dynamic --with-stream=dynamic --with-stream_geoip_module=dynamic\n",
+          "err": ""
+        },
+        "ss": {
+          "rc": 0,
+          "out": "LISTEN 0      511          0.0.0.0:80        0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:8443      0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:443       0.0.0.0:*                                       \nLISTEN 0      2048         0.0.0.0:8000      0.0.0.0:*    users:((\"python\",pid=726079,fd=14))\nLISTEN 0      511             [::]:80           [::]:*                                       \nLISTEN 0      511             [::]:8443         [::]:*                                       \nLISTEN 0      511             [::]:443          [::]:*                                       \n",
+          "err": ""
+        },
+        "wg_show": {
+          "rc": 0,
+          "out": "NO_WIREGUARD\n",
+          "err": ""
+        },
+        "ip_link": {
+          "rc": 0,
+          "out": "lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> \nens3             UP             fa:16:3e:85:9b:59 <BROADCAST,MULTICAST,UP,LOWER_UP> \n",
+          "err": ""
+        },
+        "uname": {
+          "rc": 0,
+          "out": "Linux artcb-node-1 6.8.0-106-generic #106-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar  6 07:58:08 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+          "err": ""
+        },
+        "nic_speed": {
+          "rc": 0,
+          "out": "==ens3==\n-1\n\tSpeed: Unknown!\n\tDuplex: Unknown! (255)\n\tPort: Other\n",
+          "err": ""
+        }
+      },
+      "http2_in_nginx": true,
+      "http3_in_nginx": false,
+      "infiniband": false,
+      "wireguard": false
+    },
+    "ovh-node-2": {
+      "ssh_rc": 0,
+      "ssh_dur_ns": 3152867063,
+      "ssh_err": "",
+      "parsed": {
+        "hostname": "node-artcb-ovh-2",
+        "infiniband_sys": false,
+        "infiniband_devs": [],
+        "rdma_class": [],
+        "net_class": [
+          "lo",
+          "ens3"
+        ],
+        "wg_bin": null,
+        "nginx_v": {
+          "rc": 0,
+          "out": "nginx version: nginx/1.24.0 (Ubuntu)\nbuilt with OpenSSL 3.0.13 30 Jan 2024\nTLS SNI support enabled\nconfigure arguments: --with-cc-opt='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=/usr/src/nginx-1.24.0-2ubuntu7.17 -fPIC -Wdate-time -D_FORTIFY_SOURCE=3' --with-ld-opt='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro -Wl,-z,now -fPIC' --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=stderr --lock-path=/var/lock/nginx.lock --pid-path=/run/nginx.pid --modules-path=/usr/lib/nginx/modules --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --with-compat --with-debug --with-pcre-jit --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_v2_module --with-http_dav_module --with-http_slice_module --with-threads --with-http_addition_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_secure_link_module --with-http_sub_module --with-mail_ssl_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_realip_module --with-http_geoip_module=dynamic --with-http_image_filter_module=dynamic --with-http_perl_module=dynamic --with-http_xslt_module=dynamic --with-mail=dynamic --with-stream=dynamic --with-stream_geoip_module=dynamic\n",
+          "err": ""
+        },
+        "ss": {
+          "rc": 0,
+          "out": "LISTEN 0      511          0.0.0.0:80        0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:8443      0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:443       0.0.0.0:*                                       \nLISTEN 0      2048         0.0.0.0:8000      0.0.0.0:*    users:((\"python\",pid=233135,fd=14))\nLISTEN 0      511             [::]:80           [::]:*                                       \nLISTEN 0      511             [::]:8443         [::]:*                                       \nLISTEN 0      511             [::]:443          [::]:*                                       \n",
+          "err": ""
+        },
+        "wg_show": {
+          "rc": 0,
+          "out": "NO_WIREGUARD\n",
+          "err": ""
+        },
+        "ip_link": {
+          "rc": 0,
+          "out": "lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> \nens3             UP             fa:16:3e:8d:40:4e <BROADCAST,MULTICAST,UP,LOWER_UP> \n",
+          "err": ""
+        },
+        "uname": {
+          "rc": 0,
+          "out": "Linux node-artcb-ovh-2 6.8.0-138-generic #138-Ubuntu SMP PREEMPT_DYNAMIC Fri Jul 31 22:41:49 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+          "err": ""
+        },
+        "nic_speed": {
+          "rc": 0,
+          "out": "==ens3==\n-1\n\tSpeed: Unknown!\n\tDuplex: Unknown! (255)\n\tPort: Other\n",
+          "err": ""
+        }
+      },
+      "http2_in_nginx": true,
+      "http3_in_nginx": false,
+      "infiniband": false,
+      "wireguard": false
+    },
+    "aws-node-3": {
+      "ssh_rc": 0,
+      "ssh_dur_ns": 2412453872,
+      "ssh_err": "",
+      "parsed": {
+        "hostname": "ip-172-31-8-93",
+        "infiniband_sys": false,
+        "infiniband_devs": [],
+        "rdma_class": [],
+        "net_class": [
+          "lo",
+          "ens5"
+        ],
+        "wg_bin": null,
+        "nginx_v": {
+          "rc": 0,
+          "out": "nginx version: nginx/1.24.0 (Ubuntu)\nbuilt with OpenSSL 3.0.13 30 Jan 2024\nTLS SNI support enabled\nconfigure arguments: --with-cc-opt='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=/usr/src/nginx-1.24.0-2ubuntu7.17 -fPIC -Wdate-time -D_FORTIFY_SOURCE=3' --with-ld-opt='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro -Wl,-z,now -fPIC' --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=stderr --lock-path=/var/lock/nginx.lock --pid-path=/run/nginx.pid --modules-path=/usr/lib/nginx/modules --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --with-compat --with-debug --with-pcre-jit --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_v2_module --with-http_dav_module --with-http_slice_module --with-threads --with-http_addition_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_secure_link_module --with-http_sub_module --with-mail_ssl_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_realip_module --with-http_geoip_module=dynamic --with-http_image_filter_module=dynamic --with-http_perl_module=dynamic --with-http_xslt_module=dynamic --with-mail=dynamic --with-stream=dynamic --with-stream_geoip_module=dynamic\n",
+          "err": ""
+        },
+        "ss": {
+          "rc": 0,
+          "out": "LISTEN 0      2048         0.0.0.0:8000      0.0.0.0:*    users:((\"python\",pid=424491,fd=14))\nLISTEN 0      511          0.0.0.0:443       0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:80        0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:8443      0.0.0.0:*                                       \nLISTEN 0      511             [::]:443          [::]:*                                       \nLISTEN 0      511             [::]:80           [::]:*                                       \nLISTEN 0      511             [::]:8443         [::]:*                                       \n",
+          "err": ""
+        },
+        "wg_show": {
+          "rc": 0,
+          "out": "NO_WIREGUARD\n",
+          "err": ""
+        },
+        "ip_link": {
+          "rc": 0,
+          "out": "lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> \nens5             UP             06:5f:12:4c:06:17 <BROADCAST,MULTICAST,UP,LOWER_UP> \n",
+          "err": ""
+        },
+        "uname": {
+          "rc": 0,
+          "out": "Linux ip-172-31-8-93 7.0.0-1011-aws #11~24.04.1-Ubuntu SMP PREEMPT Mon Aug 10 15:20:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+          "err": ""
+        },
+        "nic_speed": {
+          "rc": 0,
+          "out": "==ens5==\n",
+          "err": ""
+        }
+      },
+      "http2_in_nginx": true,
+      "http3_in_nginx": false,
+      "infiniband": false,
+      "wireguard": false
+    },
+    "ovh-node-4": {
+      "ssh_rc": 0,
+      "ssh_dur_ns": 3035227929,
+      "ssh_err": "",
+      "parsed": {
+        "hostname": "node-artcb-ovh-4",
+        "infiniband_sys": false,
+        "infiniband_devs": [],
+        "rdma_class": [],
+        "net_class": [
+          "lo",
+          "ens3"
+        ],
+        "wg_bin": null,
+        "nginx_v": {
+          "rc": 0,
+          "out": "nginx version: nginx/1.24.0 (Ubuntu)\nbuilt with OpenSSL 3.0.13 30 Jan 2024\nTLS SNI support enabled\nconfigure arguments: --with-cc-opt='-g -O2 -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -ffile-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=. -flto=auto -ffat-lto-objects -fstack-protector-strong -fstack-clash-protection -Wformat -Werror=format-security -fcf-protection -fdebug-prefix-map=/build/nginx-HCDuKl/nginx-1.24.0=/usr/src/nginx-1.24.0-2ubuntu7.17 -fPIC -Wdate-time -D_FORTIFY_SOURCE=3' --with-ld-opt='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -Wl,-z,relro -Wl,-z,now -fPIC' --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf --http-log-path=/var/log/nginx/access.log --error-log-path=stderr --lock-path=/var/lock/nginx.lock --pid-path=/run/nginx.pid --modules-path=/usr/lib/nginx/modules --http-client-body-temp-path=/var/lib/nginx/body --http-fastcgi-temp-path=/var/lib/nginx/fastcgi --http-proxy-temp-path=/var/lib/nginx/proxy --http-scgi-temp-path=/var/lib/nginx/scgi --http-uwsgi-temp-path=/var/lib/nginx/uwsgi --with-compat --with-debug --with-pcre-jit --with-http_ssl_module --with-http_stub_status_module --with-http_realip_module --with-http_auth_request_module --with-http_v2_module --with-http_dav_module --with-http_slice_module --with-threads --with-http_addition_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_secure_link_module --with-http_sub_module --with-mail_ssl_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-stream_realip_module --with-http_geoip_module=dynamic --with-http_image_filter_module=dynamic --with-http_perl_module=dynamic --with-http_xslt_module=dynamic --with-mail=dynamic --with-stream=dynamic --with-stream_geoip_module=dynamic\n",
+          "err": ""
+        },
+        "ss": {
+          "rc": 0,
+          "out": "LISTEN 0      511          0.0.0.0:80        0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:8443      0.0.0.0:*                                       \nLISTEN 0      511          0.0.0.0:443       0.0.0.0:*                                       \nLISTEN 0      2048         0.0.0.0:8000      0.0.0.0:*    users:((\"python\",pid=458713,fd=14))\nLISTEN 0      511             [::]:80           [::]:*                                       \nLISTEN 0      511             [::]:8443         [::]:*                                       \nLISTEN 0      511             [::]:443          [::]:*                                       \n",
+          "err": ""
+        },
+        "wg_show": {
+          "rc": 0,
+          "out": "NO_WIREGUARD\n",
+          "err": ""
+        },
+        "ip_link": {
+          "rc": 0,
+          "out": "lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> \nens3             UP             fa:16:3e:15:e6:a3 <BROADCAST,MULTICAST,UP,LOWER_UP> \n",
+          "err": ""
+        },
+        "uname": {
+          "rc": 0,
+          "out": "Linux node-artcb-ovh-4 6.8.0-136-generic #136-Ubuntu SMP PREEMPT_DYNAMIC Wed Jul  1 21:53:05 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+          "err": ""
+        },
+        "nic_speed": {
+          "rc": 0,
+          "out": "==ens3==\n-1\n\tSpeed: Unknown!\n\tDuplex: Unknown! (255)\n\tPort: Other\n",
+          "err": ""
+        }
+      },
+      "http2_in_nginx": true,
+      "http3_in_nginx": false,
+      "infiniband": false,
+      "wireguard": false
+    }
+  }
+}

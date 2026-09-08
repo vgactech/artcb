@@ -1634,5 +1634,14 @@ Thinking / system prompt / tokens **ne sont pas** on-chain. Tokens **absents** d
 Ne pas graver les secrets. Preuve = `ingest.ingest_block_index` + hash + cert ×4.
 Rapports : `rapports/267_cursor_chat_vs_artcb_*.md` et `rapports/267_connexion_stack_vs_infiniband_quic_*.md`.
 
+## [2026-09-08T16:25:14Z] 267 live — ce prompt on-chain ; stack HTTP/1.1
+
+Mémo public OVH1 : index **1095** hash `2f70dedfe90c72948c205ec14d2cb66200dc2b0d67450566b495c726dc2e5e96`
+graph `ai_memo_81ace8e3f74f` cert ×4 view 6 primary aws-node-3 height **1096**.
+user_query 4883 car. sha256 `11625bfa78df8b164d1b78f625c107f7ff1c68662adcb1429aea87774bc12841` relu substring exacte.
+Premier POST 409 equivocation (lock 5:1095). VC 5→6 processus UP. KCG `K_f0c2f2604c4ed8b6`.
+Thinking/tokens/system/transcript 17 Mo **pas** on-chain. Cursor ≠ ARTCB.
+Stack : nginx 1.24 HTTP/1.1 TLS, uvicorn :8000, pas InfiniBand, pas HTTP/3, pas WireGuard.
+
 
 

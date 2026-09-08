@@ -214,8 +214,10 @@ def main() -> int:
             "ssh_dur_ns": row.get("dur_ns"),
             "ssh_err": row.get("stderr"),
             "parsed": parsed,
-            "http2_in_nginx": bool(re.search(r"http_v2|http2", nginx_blob, re.I)),
-            "http3_in_nginx": bool(re.search(r"http_v3|http3|quic", nginx_blob, re.I)),
+            "nginx_compiled_http2": bool(re.search(r"--with-http_v2_module", nginx_blob)),
+            "nginx_compiled_http3": bool(re.search(r"http_v3|http3|quic", nginx_blob, re.I)),
+            "http2_in_nginx": False,
+            "http3_in_nginx": False,
             "infiniband": bool((parsed or {}).get("infiniband_sys")),
             "wireguard": (parsed or {}).get("wg_bin") not in (None, "")
             and "NO_WIREGUARD" not in str(((parsed or {}).get("wg_show") or {}).get("out") or "NO_WIREGUARD"),
