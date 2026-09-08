@@ -1,8 +1,10 @@
-"""Consensus parameters extracted from the actual ARTCB code (DV-05 C).
+"""Consensus parameters extracted from the actual ARTCB code.
 
-Live HTTP exposes prepare/commit (188) between protocol-compatible peers.
-N=4 → F=1 → Q=3. Block append is still longest public chain, not PBFT.
-certified_distributed_mainnet remains a separate lock.
+188 = settlement prepare/commit. 264 = view-change baseline (settlement).
+265 = PBFT block finality on /pbft/propose → write_certified_block.
+Certified indices cannot be reorged by longest-chain import.
+Default append_block (memos) is not yet exclusive-PBFT.
+certified_distributed_mainnet remains a separate lock (DV-02).
 """
 
 from __future__ import annotations
