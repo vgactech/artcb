@@ -117,6 +117,7 @@ def main() -> int:
             # still execute: testnet, user demanded live on current nodes
             payload["sha_note"] = "continuing on deployed SHA anyway (test mainnet)"
 
+        print("TEST X01", flush=True)
         # --- X01 BFT_SETTLEMENT 188 ---
         view = int((freeze.get("ovh-node-1") or {}).get("view") or 0)
         wid = f"artcb271-{uuid.uuid4().hex[:12]}"
@@ -124,6 +125,7 @@ def main() -> int:
         payload["tests"]["X01"] = s188
         _mark(matrix, "PBFT-X01", bool(s188.get("ok")), level="L4", proof="POST /consensus/prepare+commit Q=3 on 4 live nodes")
 
+        print("TEST S05", flush=True)
         # --- S05 duplicate replica_id in certificate ---
         last_seq = int((l265._http("GET", f"{HTTP['ovh-node-1']}/api/v1/chain/status").get("height") or 1)) - 1
         cert_got = l265._http("GET", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/certificate?seq={last_seq}")
@@ -139,18 +141,22 @@ def main() -> int:
             payload["tests"]["S05"] = {"ok": s05, "http": r.get("http"), "detail": str(r.get("detail") or "")[:160]}
         _mark(matrix, "PBFT-S05", s05, level="L4", proof="duplicate replica commits rejected live")
 
+        print("TEST N07", flush=True)
         # --- N07 1000x duplicate cert ---
         n07_ok = False
         if cert:
             codes = []
             t0 = time.perf_counter()
-            for _ in range(1000):
-                codes.append(l265._http("POST", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/certificate", {"certificate": cert}).get("http"))
+            for i in range(1000):
+                codes.append(l265._http("POST", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/certificate", {"certificate": cert}, timeout=8).get("http"))
+                if i in (0, 99, 499, 999):
+                    print(f"N07 progress {i+1}/1000 last={codes[-1]}", flush=True)
             after = independent_safety(l265.independent_snapshot())
             n07_ok = after["converged"] and all(c in (200, 409) for c in codes)
             payload["tests"]["N07"] = {"ok": n07_ok, "n": 1000, "codes": sorted(set(codes)), "dur_s": round(time.perf_counter() - t0, 2), "safety": after}
         _mark(matrix, "PBFT-N07", n07_ok, level="L5", proof="1000 identical certificate POSTs, tip unchanged/converged")
 
+        print("TEST B04", flush=True)
         # --- B04 selective PREPARE X vs Y ---
         views = l265._http("GET", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/view")
         view = int(views.get("view") or 0)
@@ -173,6 +179,7 @@ def main() -> int:
             payload["tests"]["B04"] = {"ok": b04, "px": px.get("http"), "py": py.get("http"), "py_detail": str(py.get("detail") or py.get("reason") or "")[:160], "finalize_after": bool(fin.get("ok"))}
         _mark(matrix, "PBFT-B04", b04, level="L6", proof="PREPARE X to one replica, PREPARE Y to another")
 
+        print("TEST B05", flush=True)
         # --- B05 prepared certificate in VIEW-CHANGE (P8 on this SHA) ---
         b05 = False
         payload["tests"]["B05_note"] = "inline P8-like on current SHA"
@@ -222,6 +229,7 @@ def main() -> int:
             payload["tests"]["B05"] = {"ok": b05, "select_proof": selected.get("proof"), "y_http": y.get("http"), "y_detail": str(y.get("detail") or "")[:160], "vc265": len(vcs265)}
         _mark(matrix, "PBFT-B05", b05, level="L5", proof="prepared proofs + Y refused after VC on this SHA")
 
+        print("TEST R03", flush=True)
         # --- R03 truncated finality json ---
         target = "ovh-node-2"
         state = "/home/ubuntu/artcb/data/consensus/pbft_finality.json"
@@ -236,6 +244,7 @@ def main() -> int:
         payload["tests"]["R03"] = {"ok": r03, "invented": invented, "bogus_http": bogus.get("http"), "restored": restored}
         _mark(matrix, "PBFT-R03", r03, level="L5", proof="truncated pbft_finality.json does not invent a valid cert")
 
+        print("TEST N03", flush=True)
         # --- N03 asymmetric partition ---
         l265._ssh("ovh-node-1", "sudo bash /home/ubuntu/artcb/scripts/artcb271_asym.sh drop 91.134.45.8")
         left_ok = l265._http("GET", f"{HTTP['ovh-node-1']}/health").get("http") == 200
@@ -249,6 +258,7 @@ def main() -> int:
         payload["tests"]["N03"] = {"ok": n03, "round": {k: round_a.get(k) for k in ("ok", "seq", "digest", "reason", "phase")}, "during": after_a, "after": after_n03}
         _mark(matrix, "PBFT-N03", n03, level="L5", proof="OUTPUT drop 1→4 only; INPUT still open; no dual tip")
 
+        print("TEST N04", flush=True)
         # --- N04 packet loss sweep ---
         n04_rows = []
         n04_safety = True
@@ -267,6 +277,7 @@ def main() -> int:
         payload["tests"]["N04"] = {"ok": n04, "safety_all": n04_safety, "any_liveness": n04_any_live, "rows": n04_rows}
         _mark(matrix, "PBFT-N04", n04, level="L5", proof="tc netem loss 1,5,10,20,30,50% ×4 ifaces; safety=no dual tip")
 
+        print("TEST N06", flush=True)
         # --- N06 reorder ---
         for nid in OFFICIAL_COMPUTE_NODE_IDS:
             _netem(nid, "delay 40ms reorder 50% 25%")
@@ -277,6 +288,7 @@ def main() -> int:
         payload["tests"]["N06"] = {"ok": n06, "round_ok": bool(rnd6.get("ok")), "seq": rnd6.get("seq"), "digest": rnd6.get("digest"), "safety": snap6}
         _mark(matrix, "PBFT-N06", n06, level="L5", proof="tc netem delay 40ms reorder 50% 25% ×4")
 
+        print("TEST N08", flush=True)
         # --- N08 loss+delay+reorder ---
         for nid in OFFICIAL_COMPUTE_NODE_IDS:
             _netem(nid, "delay 80ms 20ms loss 10% reorder 25% 10%")
@@ -287,6 +299,7 @@ def main() -> int:
         payload["tests"]["N08"] = {"ok": n08, "round_ok": bool(rnd8.get("ok")), "seq": rnd8.get("seq"), "safety": snap8}
         _mark(matrix, "PBFT-N08", n08, level="L5", proof="combined delay+loss+reorder; safety required")
 
+        print("TEST C02", flush=True)
         # --- C02 crash + partition + delay ---
         crash = "aws-node-3"
         l265._ssh(crash, "sudo systemctl stop artcb")
@@ -306,6 +319,7 @@ def main() -> int:
         payload["tests"]["C02"] = {"ok": c02, "round_ok": bool(rnd_c.get("ok")), "during_majority_unique": snap_c.get("hash_unique"), "after": after_c02}
         _mark(matrix, "PBFT-C02", c02, level="L6", proof="aws-3 down + asym 1→2 + delay ovh4; restore; converge")
 
+        print("TEST C03", flush=True)
         # --- C03 clock skew ---
         skew = l265._ssh("ovh-node-2", "sudo timedatectl set-ntp false; sudo date -s '+70 seconds'; date -u +%s")
         rnd_sk = l265.run_round("271-C03")
@@ -315,6 +329,7 @@ def main() -> int:
         payload["tests"]["C03"] = {"ok": c03, "skew_rc": skew.get("returncode"), "round_ok": bool(rnd_sk.get("ok")), "seq": rnd_sk.get("seq"), "ntp_rc": uns.get("returncode"), "safety": snap_sk}
         _mark(matrix, "PBFT-C03", c03, level="L5", proof="+70s clock on ovh-2 then NTP restore")
 
+        print("TEST Q02", flush=True)
         # --- Q02 F=2 expected: two nodes down, remaining 2 cannot finalize ---
         a, b = "ovh-node-2", "aws-node-3"
         l265._ssh(a, "sudo systemctl stop artcb")
@@ -332,6 +347,7 @@ def main() -> int:
         payload["tests"]["Q02"] = {"ok": q02, "two_node_round_ok": rnd_f2.get("ok"), "reason": rnd_f2.get("reason") or rnd_f2.get("phase"), "expected_failure": True}
         _mark(matrix, "PBFT-Q02", q02, level="L4", proof="F=2 (2 processes down): remaining 2 must not finalize — expected")
 
+        print("TEST C05", flush=True)
         # --- C05 membership: unknown replica_id rejected ---
         v = int(l265._http("GET", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/view").get("view") or 0)
         evil = l265._http("POST", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/prepare", {"prepare": {"kind": "prepare", "view": v, "seq": 1, "digest": "ab" * 32, "replica_id": "evil-node-5", "message": "P|x", "signature": "00", "protocol": "265-pbft-block-finality"}})
@@ -339,6 +355,7 @@ def main() -> int:
         payload["tests"]["C05"] = {"ok": c05, "http": evil.get("http"), "detail": str(evil.get("detail") or evil.get("reason") or "")[:180]}
         _mark(matrix, "PBFT-C05", c05, level="L5", proof="replica_id outside official set rejected (no silent 5th validator)")
 
+        print("TEST A01 A02", flush=True)
         # --- A01 / A02 agent ---
         url = resolve_api_url()
         key = resolve_api_key()
@@ -357,6 +374,7 @@ def main() -> int:
         payload["tests"]["A02"] = {"ok": a02, "first": e1_h, "second": e2_h, "detail": str((e2 or {}).get("detail") if isinstance(e2, dict) else e2)[:160], "e1_status": (e1 or {}).get("status") if isinstance(e1, dict) else None, "safety": after_a2}
         _mark(matrix, "PBFT-A02", a02, level="L4", proof="public event then different payload 409; 4 tips")
 
+        print("TEST X03", flush=True)
         # --- X03 sample ARTCB features via live APIs / consensus ---
         econ_h, econ = http_json("GET", f"{url}/api/v1/economics/params", api_key=key, timeout=20)
         wal_h, wal = http_json("POST", f"{url}/api/v1/wallet/create", api_key=key, body={"label": f"271-{stamp[:8]}"}, timeout=30)
@@ -365,6 +383,7 @@ def main() -> int:
         payload["tests"]["X03"] = {"ok": x03, "economics_http": econ_h, "wallet_http": wal_h, "wallet_ok": bool((wal or {}).get("ok")) if isinstance(wal, dict) else wal_h, "memo_round": {k: memo_round.get(k) for k in ("ok", "seq", "digest")}, "h_adult_params": (econ or {}).get("h_adult") if isinstance(econ, dict) else None}
         _mark(matrix, "PBFT-X03", x03, level="L4", proof="economics params + wallet create + public PBFT round — not every product feature")
 
+        print("TEST C04", flush=True)
         # --- C04 long-run many certified blocks ---
         c04_ok_n = 0
         c04_fail = 0
