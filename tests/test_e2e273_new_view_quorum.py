@@ -156,6 +156,41 @@ def test_claimed_unreconstructable_prepared_is_state_incomplete(tmp_path: Path) 
     assert entered["reason"] == "state_incomplete"
 
 
+def test_three_same_key_view_changes_are_not_quorum(tmp_path: Path) -> None:
+    """K1 claiming three NodeIDs is not Q, even with a claimed prepared."""
+    stores, chains, _views = _cluster(tmp_path)
+    from artcb.consensus.pbft_finality import pset_digest, vc265_message
+    from artcb.consensus.tip_attest import producer_key_b64, sign_message
+    from src.artcb.consensus.replica_identity import register_chain_replicas
+
+    register_chain_replicas(chains)
+    prepared = [{"seq": 9, "digest": "aa" * 32}]
+    digest = pset_digest(prepared)
+    rows = []
+    for nid in list(OFFICIAL_COMPUTE_NODE_IDS)[:3]:
+        msg = vc265_message(view=1, from_view=0, replica_id=nid, pset_digest=digest)
+        ed, pqc = producer_key_b64(chains["ovh-node-1"])
+        rows.append(
+            {
+                "kind": "view-change-265",
+                "protocol": "265-pbft-block-finality",
+                "replica_id": nid,
+                "view": 1,
+                "from_view": 0,
+                "prepared": prepared,
+                "pset_digest": digest,
+                "message": msg,
+                "signature": sign_message(chains["ovh-node-1"], msg),
+                "producer_ed25519_b64": ed,
+                "producer_pqc_b64": pqc,
+            }
+        )
+    analysis = stores["ovh-node-4"].analyze_new_view_certificate(rows)
+    assert analysis["quorum_ok"] is False
+    assert analysis["selected"] is None
+    assert analysis["quorum_view_changes"] <= 1
+
+
 def test_attempts_helper_does_not_flatten_recovery() -> None:
     from src.artcb.consensus.campaign_artifacts import final_status_from_attempts, record_attempt
 

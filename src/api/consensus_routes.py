@@ -339,6 +339,10 @@ class SelectPreparedBody(BaseModel):
     view_changes: list[dict]
 
 
+class AnalyzeNewViewBody(BaseModel):
+    view_changes: list[dict]
+
+
 class BindPreparedBody(BaseModel):
     chosen: dict
 
@@ -493,18 +497,34 @@ def pbft_view_change_265(body: ViewChange265Body, request: Request) -> dict:
     return {"ok": True, "view_change": row}
 
 
+@router.post("/pbft/analyze-new-view")
+def pbft_analyze_new_view(body: AnalyzeNewViewBody, request: Request) -> dict:
+    """Read-only NEW-VIEW certificate analysis. Does not bind or enter_view."""
+    log = _pbft_log(request)
+    analysis = log.analyze_new_view_certificate(body.view_changes)
+    return {
+        "ok": True,
+        "analysis": analysis,
+        "selected_is_none": analysis.get("selected") is None,
+        "bound": False,
+        "note": "analyze only — no bind_prepared, no enter_view",
+    }
+
+
 @router.post("/pbft/select-prepared")
 def pbft_select_prepared(body: SelectPreparedBody, request: Request) -> dict:
     from src.artcb.consensus.pbft_finality import verify_prepared_certificate
 
     log = _pbft_log(request)
-    chosen = log.select_new_view_value(body.view_changes)
+    analysis = log.analyze_new_view_certificate(body.view_changes)
+    chosen = analysis.get("selected") if isinstance(analysis.get("selected"), dict) else None
     bound = log.bind_prepared_constraint(chosen) if chosen else {"ok": False, "reason": "no_prepared"}
     return {
         "ok": chosen is not None and bool(bound.get("ok")),
         "chosen": chosen,
         "proof": bool(chosen) and verify_prepared_certificate(chosen),
         "bound": bound,
+        "analysis": analysis,
     }
 
 
