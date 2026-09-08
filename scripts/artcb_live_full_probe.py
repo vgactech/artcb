@@ -171,6 +171,8 @@ def main() -> int:
             f"{base}/api/v1/chain/block/1073",
             f"{base}/api/v1/chain/block/1074",
             f"{base}/api/v1/chain/search?q=continuite",
+            f"{base}/api/v1/ir/concept-ids?q=Le+serveur+doit+verifier+la+signature.",
+            f"{base}/api/v1/consensus/liveness",
             f"{base}/api/v1/chain/stream?from_index=1070&limit=8",
             f"{base}/api/v1/chain?from_index=1070&limit=8",
             f"{base}/api/v1/ai/events?max_seconds=2",

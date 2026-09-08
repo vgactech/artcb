@@ -377,6 +377,12 @@ class ChainManager:
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
         self._book.note_appended(line, block)
+        try:
+            from src.artcb.chain.binary_log import append_record
+
+            append_record(self.blocks_path, block)
+        except Exception:
+            logger.debug("binary sidecar skipped on import", exc_info=True)
         logger.info(
             "Imported extending block index=%s vis=%s hash=%s",
             block.get("index"),
@@ -597,7 +603,14 @@ class ChainManager:
         line = block.to_json_line()
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
-        self._book.note_appended(line, json.loads(line))
+        parsed = json.loads(line)
+        self._book.note_appended(line, parsed)
+        try:
+            from src.artcb.chain.binary_log import append_record
+
+            append_record(self.blocks_path, parsed)
+        except Exception:
+            logger.debug("binary sidecar skipped on append", exc_info=True)
 
         if self.enable_security and self.anti_sybil and contributors:
             self.anti_sybil.record_valid_block(contributors, pol_score, index)

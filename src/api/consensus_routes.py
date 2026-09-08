@@ -36,6 +36,18 @@ def _engine(request: Request):
     return engine
 
 
+@router.get("/liveness")
+def consensus_liveness(request: Request) -> dict:
+    """Observe quorum / partition. Does not stop nodes. Does not steal produce."""
+    from src.artcb.consensus.liveness import assess_liveness, probe_hosts
+    from src.artcb.node_registry import OFFICIAL_COMPUTE_IPV4
+
+    hosts = [f"http://{ip}:8000" for ip in OFFICIAL_COMPUTE_IPV4]
+    pulses = probe_hosts(hosts, timeout=1.2)
+    report = assess_liveness(include_self=False, peer_reachable=pulses)
+    return report.to_dict()
+
+
 @router.get("/status")
 def consensus_status(request: Request) -> dict:
     state = request.app.state.artcb

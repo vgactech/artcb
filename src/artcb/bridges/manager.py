@@ -67,6 +67,11 @@ class BridgeResult:
 class BridgeManager:
     """Gestionnaire des bridges vers les blockchains externes."""
 
+    _status_ttl_s = 20.0
+
+    def __init__(self) -> None:
+        self._status_cache: tuple[float, list[dict[str, Any]]] | None = None
+
     # ------------------------------------------------------------------
     # Méthode principale
     # ------------------------------------------------------------------
@@ -110,8 +115,28 @@ class BridgeManager:
             return {"chain": chain, "status": "error", "error": str(exc)[:100]}
 
     def status_all(self) -> list[dict[str, Any]]:
-        """Ping toutes les chaînes en parallèle — timeout court (rapport 255: 105s sequential)."""
+        """Ping toutes les chaînes en parallèle — timeout court (rapport 255: 105s sequential).
+
+        20 s TTL cache: GRA11 egress is ~14 s; repeating the six RPCs on every
+        OpenAPI probe is what made /bridges/status a burst killer.
+        """
+        import time
+
         from src.artcb.trace.ns import emit, now_mono_ns
+
+        now = time.monotonic()
+        if self._status_cache and now - self._status_cache[0] < self._status_ttl_s:
+            emit(
+                None,
+                {
+                    "kind": "bridges_status",
+                    "cache": True,
+                    "count": len(self._status_cache[1]),
+                    "dur_ns": 0,
+                    "ok": True,
+                },
+            )
+            return list(self._status_cache[1])
 
         t0 = now_mono_ns()
         out: list[dict[str, Any]] = []
@@ -141,12 +166,14 @@ class BridgeManager:
             data_dir,
             {
                 "kind": "bridges_status",
+                "cache": False,
                 "count": len(out),
                 "ok_n": sum(1 for r in out if r.get("status") == "ok"),
                 "dur_ns": now_mono_ns() - t0,
                 "ok": True,
             },
         )
+        self._status_cache = (time.monotonic(), list(out))
         return out
 
     # ------------------------------------------------------------------

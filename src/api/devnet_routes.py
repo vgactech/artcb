@@ -49,22 +49,23 @@ def devnet_faucet_status(request: Request) -> dict:
 
 @router.get("/chain/explorer")
 def chain_explorer(request: Request) -> dict:
-    """Explorer PoL — blocs, rewards, symboles publics."""
+    """Explorer PoL — tip + 10 last visible blocks. No full-file verify."""
     state = _state(request)
-    blocks = state.chain.list_blocks_legacy()
-    public_blocks = [b for b in blocks if b.get("visibility") == "public"]
+    height = state.chain.height()
+    start = max(0, height - 10)
+    latest = list(state.chain.iter_blocks(from_index=start, limit=10))
     principal = state.authz.resolve(request)
-    visible = state.authz.filter_blocks(principal, blocks, "READ")
-    total_rewards = sum(int(b.get("block_reward", 0)) for b in blocks)
-    symbol_count = len(state.symbol_registry.export())
+    visible = state.authz.filter_blocks(principal, latest, "READ")
+    public_n = sum(1 for b in latest if b.get("visibility") == "public")
     return {
         "network": NETWORK_ID,
-        "block_count": len(blocks),
-        "public_block_count": len(public_blocks),
-        "total_rewards_satoshi": total_rewards,
-        "symbol_registry_count": symbol_count,
-        "latest_blocks": visible[-10:],
-        "verify": state.chain.verify(),
+        "block_count": height,
+        "public_block_count": public_n,
+        "public_block_count_window": public_n,
+        "total_rewards_satoshi": state.chain._book.issued_satoshi() if hasattr(state.chain, "_book") else None,
+        "symbol_registry_count": len(state.symbol_registry.export()),
+        "latest_blocks": visible,
+        "verify": {"valid": state.chain.chain_valid_tip(), "mode": "tip"},
     }
 
 

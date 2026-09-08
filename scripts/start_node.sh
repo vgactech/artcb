@@ -18,7 +18,17 @@ export ARTCB_GIT_SHA="${ARTCB_GIT_SHA:-$(git rev-parse HEAD 2>/dev/null || true)
 export ARTCB_GIT_BRANCH="${ARTCB_GIT_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)}"
 echo "── git ${ARTCB_GIT_BRANCH:-?}@${ARTCB_GIT_SHA:-unknown}"
 
-UVICORN=(.venv/bin/python -m uvicorn src.api.main:app --host 0.0.0.0 --port "${ARTCB_PORT:-8000}")
+# GRA11: 8 parallel GETs filled a tiny accept queue even when handlers were O(1).
+# backlog + concurrency cap keep the TCP file from dropping SYNs; keep-alive short
+# so a probe burst does not pin workers.
+UVICORN=(
+  .venv/bin/python -m uvicorn src.api.main:app
+  --host 0.0.0.0
+  --port "${ARTCB_PORT:-8000}"
+  --limit-concurrency "${ARTCB_LIMIT_CONCURRENCY:-32}"
+  --backlog "${ARTCB_UVICORN_BACKLOG:-2048}"
+  --timeout-keep-alive "${ARTCB_KEEPALIVE:-2}"
+)
 
 if [ -n "${DOPPLER_TOKEN:-}" ] && command -v doppler &>/dev/null; then
   if doppler me >/dev/null 2>&1; then

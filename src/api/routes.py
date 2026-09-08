@@ -437,19 +437,22 @@ def chain_list(
     visibility: str | None = Query(None),
     group_id: str | None = Query(None),
     from_index: int = Query(0, ge=0),
-    limit: int | None = Query(None, ge=1, le=4096),
+    limit: int | None = Query(256, ge=1, le=4096),
+    full: int = Query(0, ge=0, le=1, description="1 = no default cap (compat, O(n))"),
 ) -> dict:
     state = _state(request)
     principal = _authz(request).resolve(request)
+    use_limit = None if full else (limit or 256)
     blocks = state.chain.list_blocks(
-        visibility=visibility, group_id=group_id, from_index=from_index, limit=limit
+        visibility=visibility, group_id=group_id, from_index=from_index, limit=use_limit
     )
     blocks = _authz(request).filter_blocks(principal, blocks, READ)
     return {
         "blocks": blocks,
         "count": len(blocks),
         "from_index": from_index,
-        "limit": limit,
+        "limit": use_limit,
+        "truncated": bool(use_limit is not None and state.chain.height() > from_index + len(blocks)),
     }
 
 
@@ -461,6 +464,35 @@ def chain_block_detail(block_index: int, request: Request) -> dict:
         raise HTTPException(status_code=404, detail="block not found")
     _authz(request).assert_block(request, block, READ)
     return {"block": block}
+
+
+@router.get("/ir/concept-ids")
+def ir_concept_ids(q: str = Query(..., min_length=1, max_length=500)) -> dict:
+    """Encode one phrase and return ConceptIDs — language-neutral when the lexicon hits."""
+    from src.artcb.ir.concept import concept_id_from_node
+    from src.artcb.ir.encoder import IREncoder
+    from src.artcb.trace.ns import emit, now_mono_ns
+
+    t0 = now_mono_ns()
+    graph = IREncoder().encode(q)
+    ids = [concept_id_from_node(n) for n in graph.nodes]
+    emit(
+        None,
+        {
+            "kind": "concept_ids",
+            "q_len": len(q),
+            "n": len(ids),
+            "dur_ns": now_mono_ns() - t0,
+            "ok": True,
+        },
+    )
+    return {
+        "query": q,
+        "concept_ids": ids,
+        "symbols": [n.sym for n in graph.nodes],
+        "types": [n.t for n in graph.nodes],
+        "lexicon": "fr_en_es_v1",
+    }
 
 
 @router.get("/chain/verify")
@@ -501,20 +533,23 @@ def chain_blocks(
     visibility: str | None = Query(None),
     group_id: str | None = Query(None),
     from_index: int = Query(0, ge=0),
-    limit: int | None = Query(None, ge=1, le=4096),
+    limit: int | None = Query(256, ge=1, le=4096),
+    full: int = Query(0, ge=0, le=1, description="1 = no default cap (compat, O(n))"),
 ) -> dict:
     """Liste des blocs de la chaine — alias de GET /chain."""
     state = _state(request)
     principal = _authz(request).resolve(request)
+    use_limit = None if full else (limit or 256)
     blocks = state.chain.list_blocks(
-        visibility=visibility, group_id=group_id, from_index=from_index, limit=limit
+        visibility=visibility, group_id=group_id, from_index=from_index, limit=use_limit
     )
     blocks = _authz(request).filter_blocks(principal, blocks, READ)
     return {
         "blocks": blocks,
         "count": len(blocks),
         "from_index": from_index,
-        "limit": limit,
+        "limit": use_limit,
+        "truncated": bool(use_limit is not None and state.chain.height() > from_index + len(blocks)),
     }
 
 

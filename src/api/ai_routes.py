@@ -647,6 +647,9 @@ def chain_export(
     fmt: str = Query(default="jsonl", alias="format", description="jsonl | json | summary"),
     visibility: str = Query(default="all", description="all | private | public"),
     include_symbols: bool = Query(default=False),
+    from_index: int = Query(default=0, ge=0),
+    limit: int = Query(default=256, ge=1, le=4096),
+    full: int = Query(default=0, ge=0, le=1),
     key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
 ) -> dict:
     """
@@ -659,7 +662,8 @@ def chain_export(
     state = _state(request)
 
     try:
-        all_blocks = state.chain.list_blocks()
+        use_limit = None if full else limit
+        all_blocks = state.chain.list_blocks(from_index=from_index, limit=use_limit)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
@@ -789,25 +793,34 @@ def chain_block_sizes(
     state = _state(request)
 
     try:
-        raw_blocks = state.chain.list_blocks()
+        book = state.chain._book
+        book.ensure()
+        offs = list(book._offsets)
+        file_size = state.chain.blocks_path.stat().st_size if state.chain.blocks_path.is_file() else 0
+        raw_blocks = []
+        # Only materialize blocks needed for top/bottom breakdown later.
+        height = len(offs)
+        line_sizes = []
+        for i, off in enumerate(offs):
+            nxt = offs[i + 1] if i + 1 < len(offs) else file_size
+            line_sizes.append(max(0, nxt - off))
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
-    if not raw_blocks:
+    if not line_sizes:
         return {"block_count": 0, "message": "Chaîne vide"}
 
-    # ── Calcul taille par bloc ──────────────────────────────────────────────
+    # ── Calcul taille par bloc via offsets (pas de json.dumps du livre) ──
     sizes: list[dict] = []
     total_bytes = 0
     total_reward_satoshi = 0
+    raw_blocks = []  # filled only for sampled rows
 
-    for b in raw_blocks:
-        # Taille réelle : le champ block_size_bytes si présent (nouveaux blocs)
-        # sinon recalcul depuis la sérialisation JSON
-        raw_size = b.get("block_size_bytes")
-        if raw_size is None:
-            import json as _json
-            raw_size = len(_json.dumps(b, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+    for i, raw_size in enumerate(line_sizes):
+        b = {"index": i, "block_reward": 0, "contributors": [], "pol_score": 0.0, "visibility": None}
+        if i < 3 or i >= len(line_sizes) - 3:
+            got = state.chain.get_block(i) or b
+            b = got
 
         idx = b.get("index", 0)
         reward_satoshi = b.get("block_reward", 0)
@@ -882,9 +895,10 @@ def chain_block_sizes(
     )
     from src.artcb.economics.emission import issued_reward_satoshi, population_reward_artcb
 
-    issued_so_far = total_reward_satoshi
+    issued_so_far = int(book.issued_satoshi())
+    total_reward_satoshi = issued_so_far
     current_reward_satoshi = issued_reward_satoshi(
-        len(raw_blocks),
+        height,
         issued_so_far_satoshi=issued_so_far,
     )
     current_reward = current_reward_satoshi / SATOSHI_PER_ARTCB

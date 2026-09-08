@@ -6,14 +6,23 @@ import logging
 import uuid
 from dataclasses import dataclass
 
+from src.artcb.ir.concept_lexicon import (
+    CONTEXT_EXTRA,
+    DECISION_EXTRA,
+    EVENT_EXTRA,
+    GOAL_EXTRA,
+    HYPOTHESIS_EXTRA,
+    PROOF_EXTRA,
+    REASON_EXTRA,
+    action_code,
+    object_codes,
+)
 from src.artcb.ir.grammar import (
-    ACTION_TRIGGERS,
     CONTEXT_KEYWORDS,
     DECISION_KEYWORDS,
     EVENT_KEYWORDS,
     GOAL_KEYWORDS,
     HYPOTHESIS_KEYWORDS,
-    OBJECT_TRIGGERS,
     PROOF_KEYWORDS,
     REASON_KEYWORDS,
     EdgeType,
@@ -186,39 +195,54 @@ class IREncoder:
             return between
         return " "
 
+    @staticmethod
+    def _keyword_hit(text: str, keys: tuple[str, ...]) -> bool:
+        """Substring for long lemmas; word-boundary for short ones.
+
+        ``car `` matched inside Spanish ``verificar la`` and flipped type to R.
+        """
+        import re
+
+        for key in keys:
+            token = key.strip()
+            if not token:
+                continue
+            if len(token) <= 3:
+                if re.search(rf"\b{re.escape(token)}\b", text):
+                    return True
+            elif key in text:
+                return True
+        return False
+
     def _classify_sentence(self, sentence: str) -> NodeType:
         lowered = sentence.lower()
-        if any(k in lowered for k in DECISION_KEYWORDS):
+        if self._keyword_hit(lowered, DECISION_KEYWORDS + DECISION_EXTRA):
             return NodeType.DECISION
-        if any(k in lowered for k in HYPOTHESIS_KEYWORDS):
+        if self._keyword_hit(lowered, HYPOTHESIS_KEYWORDS + HYPOTHESIS_EXTRA):
             return NodeType.HYPOTHESIS
-        if any(k in lowered for k in REASON_KEYWORDS):
+        if self._keyword_hit(lowered, REASON_KEYWORDS + REASON_EXTRA):
             return NodeType.REASON
-        if any(k in lowered for k in GOAL_KEYWORDS):
+        if self._keyword_hit(lowered, GOAL_KEYWORDS + GOAL_EXTRA):
             return NodeType.GOAL
-        if any(k in lowered for k in PROOF_KEYWORDS):
+        if self._keyword_hit(lowered, PROOF_KEYWORDS + PROOF_EXTRA):
             return NodeType.PROOF
-        if any(k in lowered for k in EVENT_KEYWORDS):
+        if self._keyword_hit(lowered, EVENT_KEYWORDS + EVENT_EXTRA):
             return NodeType.EVENT
-        if any(k in lowered for k in CONTEXT_KEYWORDS):
+        if self._keyword_hit(lowered, CONTEXT_KEYWORDS + CONTEXT_EXTRA):
             return NodeType.CONTEXT
         return NodeType.FACT
 
     def _build_symbol(self, sentence: str, node_type: NodeType) -> str:
+        """Language-neutral symbol: all matching object codes, sorted.
+
+        One object (first match) made FR/EN/ES diverge when the first
+        hit was 'serveur' vs 'signature'. Collecting every lemma keeps
+        ConceptID stable for the same semantic bag.
+        """
         lowered = sentence.lower()
-        action = "O1"
-        for trigger, code in ACTION_TRIGGERS.items():
-            if trigger in lowered:
-                action = code
-                break
-
-        obj = ""
-        for trigger, code in OBJECT_TRIGGERS.items():
-            if trigger in lowered:
-                obj = code
-                break
-
-        if not obj:
+        action = action_code(lowered) or "O1"
+        objs = object_codes(lowered)
+        if not objs:
             type_fallback = {
                 NodeType.DECISION: "K1",
                 NodeType.HYPOTHESIS: "H",
@@ -228,9 +252,8 @@ class IREncoder:
                 NodeType.EVENT: "E",
                 NodeType.CONTEXT: "M2",
             }
-            obj = type_fallback.get(node_type, self._registry.mint_original(sentence))
-
-        return f"{action}{obj}"
+            objs = [type_fallback.get(node_type, self._registry.mint_original(sentence))]
+        return f"{action}{''.join(objs)}"
 
     @staticmethod
     def _has_causal_link(previous: str, current: str) -> bool:
