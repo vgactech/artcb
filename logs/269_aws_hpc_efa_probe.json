@@ -1,0 +1,58 @@
+{
+  "stamp": "20260908T171200Z",
+  "protocol": "269-aws-hpc-probe",
+  "launched": false,
+  "quota_increase_requested": false,
+  "secrets_printed": false,
+  "credential_source": "doppler:artcb3/dev",
+  "cursor_aws_keys": "InvalidClientTokenId (stale vs Doppler)",
+  "sts": {
+    "ok": true,
+    "account": "599128160879",
+    "arn": "arn:aws:iam::599128160879:user/node_artcb_3_agent"
+  },
+  "iam_attached": [
+    "AdministratorAccess",
+    "AmazonEC2FullAccess",
+    "IAMFullAccess",
+    "IAMUserChangePassword"
+  ],
+  "region": "eu-west-3",
+  "current_instance": {
+    "id": "i-085b74abd1aaf04ee",
+    "type": "t3.small",
+    "az": "eu-west-3a",
+    "efa": false,
+    "interface_type": "interface",
+    "ena": true
+  },
+  "efa_skus_in_region": 127,
+  "efa_min_vcpu": 24,
+  "efa_min_sku": "hpc7a.12xlarge",
+  "hpc_skus_offered": ["hpc6id.32xlarge", "hpc7a.12xlarge", "hpc7a.24xlarge", "hpc7a.48xlarge", "hpc7a.96xlarge"],
+  "not_offered_eu_west_3": ["hpc6a", "hpc7g", "hpc8a", "p4d", "p5", "p5en", "trn1", "g6e"],
+  "quotas_vcpu": {
+    "standard_ondemand": 16,
+    "hpc_ondemand": 0,
+    "g_vt_ondemand": 0,
+    "p_ondemand": 0,
+    "inf_ondemand": 0,
+    "trn_ondemand": 0
+  },
+  "dry_run_iam_allows": {
+    "create_placement_group_cluster": true,
+    "create_eni_efa": true,
+    "run_hpc7a_12xlarge_efa": true,
+    "run_c6i_32xlarge_efa": true,
+    "run_g6_xlarge": true
+  },
+  "efa_sg_all_traffic_self": false,
+  "pcs": "SubscriptionRequiredException",
+  "pcluster_cli": false,
+  "infiniband": false,
+  "price_ondemand_eu_paris_usd_per_hour": {
+    "hpc7a.12xlarge": "8.5553",
+    "c6i.32xlarge": "6.464"
+  },
+  "verdict": "IAM allows HPC/EFA APIs; quotas and SKU sizes block any real EFA launch today. Not activated."
+}
