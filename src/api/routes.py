@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
 import uuid
 
 from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from src.artcb.ir.encoder import IREncoder
@@ -81,7 +83,9 @@ def _authz(request: Request):
 def wailly_excerpt(request: Request, max_pages: int = 3) -> dict:
     """Load Wailly book excerpt for demo (D-010)."""
     from src.artcb.io.pdf_loader import extract_pdf_text, resolve_book_path
+    from src.artcb.trace.ns import emit, now_mono_ns
 
+    t0 = now_mono_ns()
     path = resolve_book_path()
     state = _state(request)
     if path is None:
@@ -89,8 +93,22 @@ def wailly_excerpt(request: Request, max_pages: int = 3) -> dict:
         if fallback.is_file():
             path = fallback
     if path is None or not path.is_file():
+        emit(
+            getattr(getattr(state, "settings", None), "data_dir", None),
+            {"kind": "wailly_excerpt", "ok": False, "dur_ns": now_mono_ns() - t0, "http": 404},
+        )
         raise HTTPException(status_code=404, detail="Wailly PDF not found")
     text = extract_pdf_text(path, max_pages=max_pages)
+    emit(
+        getattr(getattr(state, "settings", None), "data_dir", None),
+        {
+            "kind": "wailly_excerpt",
+            "ok": True,
+            "max_pages": max_pages,
+            "char_count": len(text),
+            "dur_ns": now_mono_ns() - t0,
+        },
+    )
     return {
         "source": "wailly_le_roi_de_l_inconnu.pdf",
         "max_pages": max_pages,
@@ -418,23 +436,31 @@ def chain_list(
     request: Request,
     visibility: str | None = Query(None),
     group_id: str | None = Query(None),
+    from_index: int = Query(0, ge=0),
+    limit: int | None = Query(None, ge=1, le=4096),
 ) -> dict:
     state = _state(request)
     principal = _authz(request).resolve(request)
-    blocks = state.chain.list_blocks(visibility=visibility, group_id=group_id)
+    blocks = state.chain.list_blocks(
+        visibility=visibility, group_id=group_id, from_index=from_index, limit=limit
+    )
     blocks = _authz(request).filter_blocks(principal, blocks, READ)
-    return {"blocks": blocks, "count": len(blocks)}
+    return {
+        "blocks": blocks,
+        "count": len(blocks),
+        "from_index": from_index,
+        "limit": limit,
+    }
 
 
 @router.get("/chain/block/{block_index}")
 def chain_block_detail(block_index: int, request: Request) -> dict:
     state = _state(request)
-    blocks = state.chain._read_all_blocks()
-    for block in blocks:
-        if block.get("index") == block_index:
-            _authz(request).assert_block(request, block, READ)
-            return {"block": block}
-    raise HTTPException(status_code=404, detail="block not found")
+    block = state.chain.get_block(block_index)
+    if block is None:
+        raise HTTPException(status_code=404, detail="block not found")
+    _authz(request).assert_block(request, block, READ)
+    return {"block": block}
 
 
 @router.get("/chain/verify")
@@ -444,19 +470,28 @@ def chain_verify(request: Request) -> dict:
 
 
 @router.get("/chain/status")
-def chain_status(request: Request) -> dict:
-    """Etat courant de la chaine — hauteur, dernier hash, timestamp."""
+def chain_status(request: Request, verify: int = Query(0, ge=0, le=1)) -> dict:
+    """Etat courant de la chaine — hauteur, dernier hash, timestamp.
+
+    Default is O(1) tip + last-block hash. Full file verify is ``?verify=1``
+    or GET /chain/verify (rapport 256: do not scan the book for status).
+    """
     state = _state(request)
-    blocks = state.chain.list_blocks()
-    height = len(blocks)
-    last_block = blocks[-1] if blocks else {}
+    tip = state.chain.tip()
+    if verify:
+        valid = bool(state.chain.verify().get("valid", False))
+        mode = "full"
+    else:
+        valid = bool(state.chain.chain_valid_tip())
+        mode = "tip"
     return {
-        "height": height,
-        "block_count": height,
-        "last_hash": last_block.get("hash", "0" * 64),
-        "last_timestamp": last_block.get("timestamp"),
-        "last_index": last_block.get("index", -1),
-        "chain_valid": state.chain.verify().get("valid", False),
+        "height": tip.get("height", 0),
+        "block_count": tip.get("height", 0),
+        "last_hash": tip.get("last_hash", "0" * 64),
+        "last_timestamp": tip.get("last_timestamp"),
+        "last_index": tip.get("last_index", -1),
+        "chain_valid": valid,
+        "verify_mode": mode,
     }
 
 
@@ -465,13 +500,76 @@ def chain_blocks(
     request: Request,
     visibility: str | None = Query(None),
     group_id: str | None = Query(None),
+    from_index: int = Query(0, ge=0),
+    limit: int | None = Query(None, ge=1, le=4096),
 ) -> dict:
     """Liste des blocs de la chaine — alias de GET /chain."""
     state = _state(request)
     principal = _authz(request).resolve(request)
-    blocks = state.chain.list_blocks(visibility=visibility, group_id=group_id)
+    blocks = state.chain.list_blocks(
+        visibility=visibility, group_id=group_id, from_index=from_index, limit=limit
+    )
     blocks = _authz(request).filter_blocks(principal, blocks, READ)
-    return {"blocks": blocks, "count": len(blocks)}
+    return {
+        "blocks": blocks,
+        "count": len(blocks),
+        "from_index": from_index,
+        "limit": limit,
+    }
+
+
+@router.get("/chain/stream")
+def chain_stream(
+    request: Request,
+    from_index: int = Query(0, ge=0),
+    limit: int = Query(256, ge=1, le=4096),
+    visibility: str | None = Query(None),
+    group_id: str | None = Query(None),
+) -> StreamingResponse:
+    """NDJSON stream of the book — index seek, not a JSON array of the whole file."""
+    from src.artcb.trace.ns import emit, now_mono_ns
+
+    state = _state(request)
+    principal = _authz(request).resolve(request)
+    t0 = now_mono_ns()
+
+    def _gen():
+        n = 0
+        nbytes = 0
+        try:
+            for rec in state.chain.iter_blocks(from_index=from_index):
+                if visibility and rec.get("visibility") != visibility:
+                    continue
+                if group_id and rec.get("group_id") != group_id:
+                    continue
+                allowed = _authz(request).filter_blocks(principal, [rec], READ)
+                if not allowed:
+                    continue
+                line = json.dumps(allowed[0], ensure_ascii=False, separators=(",", ":")) + "\n"
+                nbytes += len(line.encode("utf-8"))
+                n += 1
+                yield line
+                if n >= limit:
+                    break
+        finally:
+            emit(
+                getattr(getattr(state, "settings", None), "data_dir", None),
+                {
+                    "kind": "chain_stream",
+                    "from_index": from_index,
+                    "limit": limit,
+                    "count": n,
+                    "bytes": nbytes,
+                    "dur_ns": now_mono_ns() - t0,
+                    "ok": True,
+                },
+            )
+
+    return StreamingResponse(
+        _gen(),
+        media_type="application/x-ndjson",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 
 @router.get("/pol/score")

@@ -14,6 +14,7 @@ import os
 import urllib.parse
 import urllib.request
 import urllib.error
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
@@ -87,21 +88,21 @@ class BridgeManager:
         else:
             raise BridgeError(f"Chaîne non gérée : {chain}")
 
-    def ping_chain(self, chain: str) -> dict[str, Any]:
+    def ping_chain(self, chain: str, *, timeout: float = 15) -> dict[str, Any]:
         """Vérifie la disponibilité du RPC d'une chaîne."""
         chain = chain.lower()
         try:
             if chain == "bitcoin":
-                data = self._http_get(f"{_BTC_API}/blocks/tip/height")
+                data = self._http_get(f"{_BTC_API}/blocks/tip/height", timeout=timeout)
                 return {"chain": chain, "status": "ok", "tip_height": data}
             elif chain in ("ethereum", "bnb", "polygon", "avalanche"):
                 rpc = {"ethereum": _ETH_RPC, "bnb": _BSC_RPC,
                        "polygon": _POLYGON_RPC, "avalanche": _AVAX_RPC}[chain]
-                result = self._evm_rpc(rpc, "eth_blockNumber", [])
+                result = self._evm_rpc(rpc, "eth_blockNumber", [], timeout=timeout)
                 block = int(result, 16) if isinstance(result, str) and result.startswith("0x") else result
                 return {"chain": chain, "status": "ok", "block": block}
             elif chain == "solana":
-                result = self._sol_rpc("getSlot", [])
+                result = self._sol_rpc("getSlot", [], timeout=timeout)
                 return {"chain": chain, "status": "ok", "slot": result}
             else:
                 return {"chain": chain, "status": "unknown"}
@@ -109,8 +110,44 @@ class BridgeManager:
             return {"chain": chain, "status": "error", "error": str(exc)[:100]}
 
     def status_all(self) -> list[dict[str, Any]]:
-        """Ping toutes les chaînes supportées."""
-        return [self.ping_chain(c) for c in SUPPORTED_CHAINS]
+        """Ping toutes les chaînes en parallèle — timeout court (rapport 255: 105s sequential)."""
+        from src.artcb.trace.ns import emit, now_mono_ns
+
+        t0 = now_mono_ns()
+        out: list[dict[str, Any]] = []
+        with ThreadPoolExecutor(max_workers=len(SUPPORTED_CHAINS)) as pool:
+            futs = {pool.submit(self.ping_chain, c, timeout=2.0): c for c in SUPPORTED_CHAINS}
+            try:
+                for fut in as_completed(futs, timeout=2.5):
+                    chain = futs[fut]
+                    try:
+                        out.append(fut.result(timeout=0.1))
+                    except Exception as exc:
+                        out.append({"chain": chain, "status": "error", "error": str(exc)[:100]})
+            except TimeoutError:
+                pass
+        seen = {row.get("chain") for row in out}
+        for chain in SUPPORTED_CHAINS:
+            if chain not in seen:
+                out.append({"chain": chain, "status": "timeout"})
+        data_dir = None
+        try:
+            from src.artcb.config import load_settings
+
+            data_dir = load_settings().data_dir
+        except Exception:
+            data_dir = None
+        emit(
+            data_dir,
+            {
+                "kind": "bridges_status",
+                "count": len(out),
+                "ok_n": sum(1 for r in out if r.get("status") == "ok"),
+                "dur_ns": now_mono_ns() - t0,
+                "ok": True,
+            },
+        )
+        return out
 
     # ------------------------------------------------------------------
     # Implémentations par chaîne
@@ -186,10 +223,10 @@ class BridgeManager:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _http_get(url: str) -> Any:
+    def _http_get(url: str, timeout: float = 15) -> Any:
         req = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "ARTCB-Bridge/0.1"})
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
                 raw = resp.read().decode()
                 return json.loads(raw) if raw.strip().startswith(("{", "[")) else raw
         except urllib.error.HTTPError as exc:
@@ -198,14 +235,14 @@ class BridgeManager:
             raise BridgeError(f"GET {url}: {exc}") from exc
 
     @classmethod
-    def _evm_rpc(cls, rpc_url: str, method: str, params: list) -> Any:
+    def _evm_rpc(cls, rpc_url: str, method: str, params: list, timeout: float = 15) -> Any:
         payload = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
         req = urllib.request.Request(
             rpc_url, data=payload,
             headers={"Content-Type": "application/json", "User-Agent": "ARTCB-Bridge/0.1"},
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
                 data = json.loads(resp.read())
                 if "error" in data:
                     raise BridgeError(f"RPC error: {data['error']}")
@@ -216,14 +253,14 @@ class BridgeManager:
             raise BridgeError(f"EVM RPC {method}: {exc}") from exc
 
     @classmethod
-    def _sol_rpc(cls, method: str, params: list) -> Any:
+    def _sol_rpc(cls, method: str, params: list, timeout: float = 15) -> Any:
         payload = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
         req = urllib.request.Request(
             _SOL_RPC, data=payload,
             headers={"Content-Type": "application/json", "User-Agent": "ARTCB-Bridge/0.1"},
         )
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
                 data = json.loads(resp.read())
                 if "error" in data:
                     raise BridgeError(f"Solana RPC error: {data['error']}")

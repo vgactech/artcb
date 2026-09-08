@@ -11,6 +11,7 @@ from pathlib import Path
 from nacl import encoding, signing
 
 from src.artcb.chain import ffi
+from src.artcb.chain.book_index import BookIndex
 from src.artcb.config import load_settings
 from src.artcb.crypto.hashing import sha3_256_hex
 from src.artcb.crypto.hybrid import sign_hybrid, verify_hybrid_and_or_window
@@ -111,6 +112,7 @@ class ChainManager:
         settings = load_settings()
         self.blocks_path = blocks_path
         self.blocks_path.parent.mkdir(parents=True, exist_ok=True)
+        self._book = BookIndex(self.blocks_path)
         self.key_path = key_path or (settings.data_dir / "chain.key")
         self._pqc_key_path = self.key_path.with_suffix(".pqc")
         self._signing_key, self._pqc_secret_key, self._pqc_public_key = self._load_or_create_keys()
@@ -223,18 +225,77 @@ class ChainManager:
             pqc_public_key=self._pqc_public_key,
         )
 
+    def height(self) -> int:
+        self._book.ensure()
+        return self._book.height()
+
+    def tip(self) -> dict:
+        self._book.ensure()
+        return self._book.tip()
+
+    def get_block(self, index: int) -> dict | None:
+        self._book.ensure()
+        return self._book.get_block(int(index))
+
+    def iter_blocks(self, *, from_index: int = 0, limit: int | None = None):
+        self._book.ensure()
+        yield from self._book.iter_blocks(from_index=from_index, limit=limit)
+
+    def block_index_for_graph(self, graph_id: str) -> int | None:
+        self._book.ensure()
+        return self._book.block_index_for_graph(graph_id)
+
+    def chain_valid_tip(self) -> bool:
+        """O(1) last-block hash check. Full file verify is GET /chain/verify."""
+        h = self.height()
+        if h == 0:
+            return True
+        last = self.get_block(h - 1)
+        if last is None:
+            return False
+        try:
+            eco = None
+            version = int(last.get("hash_version") or HASH_VERSION_V1)
+            if version >= HASH_VERSION_V2:
+                eco = str(
+                    last.get("economic_root")
+                    or (last.get("economics") or {}).get("economic_root")
+                    or ""
+                )
+            expected = ffi.build_block_hash(
+                int(last["index"]),
+                str(last["timestamp"]),
+                str(last["prev_hash"]),
+                str(last["graph_root"]),
+                str(last.get("merkle_root") or last["graph_root"]),
+                float(last["pol_score"]),
+                economic_root=eco,
+            )
+        except (KeyError, TypeError, ValueError):
+            return False
+        return last.get("hash") == expected
+
     def list_blocks(
         self,
         *,
         visibility: str | None = None,
         group_id: str | None = None,
+        from_index: int = 0,
+        limit: int | None = None,
     ) -> list[dict]:
-        blocks = self._read_all_blocks()
-        if visibility:
-            blocks = [b for b in blocks if b.get("visibility") == visibility]
-        if group_id:
-            blocks = [b for b in blocks if b.get("group_id") == group_id]
-        return blocks
+        start = max(0, int(from_index or 0))
+        if start == 0 and limit is None and not visibility and not group_id:
+            return self._read_all_blocks()
+        out: list[dict] = []
+        for block in self.iter_blocks(from_index=start):
+            if visibility and block.get("visibility") != visibility:
+                continue
+            if group_id and block.get("group_id") != group_id:
+                continue
+            out.append(block)
+            if limit is not None and len(out) >= int(limit):
+                break
+        return out
 
     def _read_all_blocks(self) -> list[dict]:
         if not self.blocks_path.exists():
@@ -251,10 +312,9 @@ class ChainManager:
         return self._read_all_blocks()
 
     def last_hash(self) -> str:
-        blocks = self._read_all_blocks()
-        if not blocks:
+        if self.height() == 0:
             return GENESIS_PREV_HASH
-        return blocks[-1]["hash"]
+        return str(self.tip().get("last_hash") or GENESIS_PREV_HASH)
 
     def public_state_digest(self) -> str:
         """SHA-256 of public block hashes in order — comparable across nodes after sync."""
@@ -277,8 +337,14 @@ class ChainManager:
         t_import = now_mono_ns()
         if require_public and block.get("visibility") != "public":
             return False
-        existing = self._read_all_blocks()
-        if any(str(row.get("hash") or "") == str(block.get("hash") or "") for row in existing):
+        try:
+            idx = int(block.get("index", -1))
+        except (TypeError, ValueError):
+            return False
+        existing = self.get_block(idx)
+        if existing is not None:
+            return False
+        if str(block.get("hash") or "") and str(block.get("hash") or "") == self.last_hash():
             return False
         try:
             eco = None
@@ -302,7 +368,7 @@ class ChainManager:
             return False
         if block.get("hash") != expected:
             return False
-        expected_index = len(self._read_all_blocks())
+        expected_index = self.height()
         if int(block.get("index", -1)) != expected_index:
             return False
         if str(block.get("prev_hash") or "") != self.last_hash():
@@ -310,6 +376,7 @@ class ChainManager:
         line = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
+        self._book.note_appended(line, block)
         logger.info(
             "Imported extending block index=%s vis=%s hash=%s",
             block.get("index"),
@@ -356,8 +423,7 @@ class ChainManager:
         from src.artcb.trace.ns import emit, now_mono_ns
 
         t_append = now_mono_ns()
-        all_blocks = self._read_all_blocks()
-        index = len(all_blocks)
+        index = self.height()
         timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         prev_hash = self.last_hash()
         merkle = merkle_root or graph_root
@@ -528,8 +594,10 @@ class ChainManager:
             economics=economics_payload,
             hash_version=hash_version,
         )
+        line = block.to_json_line()
         with self.blocks_path.open("a", encoding="utf-8") as handle:
-            handle.write(block.to_json_line() + "\n")
+            handle.write(line + "\n")
+        self._book.note_appended(line, json.loads(line))
 
         if self.enable_security and self.anti_sybil and contributors:
             self.anti_sybil.record_valid_block(contributors, pol_score, index)
@@ -555,7 +623,8 @@ class ChainManager:
         return block
 
     def _issued_so_far_satoshi(self) -> int:
-        return sum(int(b.get("block_reward", 0) or 0) for b in self._read_all_blocks())
+        self._book.ensure()
+        return self._book.issued_satoshi()
 
     def _calculate_block_reward(
         self,
@@ -585,12 +654,12 @@ class ChainManager:
         """
         from src.artcb.tokenomics import TARGET_BLOCK_SECONDS
 
-        blocks = self._read_all_blocks()
-        if len(blocks) < 2:
+        self._book.ensure()
+        raw_ts = self._book.recent_timestamps(13)
+        if len(raw_ts) < 2:
             return TARGET_BLOCK_SECONDS
         stamps: list[datetime] = []
-        for block in blocks[-13:]:
-            ts_raw = block.get("timestamp", "")
+        for ts_raw in raw_ts:
             try:
                 stamps.append(datetime.fromisoformat(str(ts_raw).replace("Z", "+00:00")))
             except (ValueError, TypeError):
@@ -665,7 +734,7 @@ class ChainManager:
         return {
             "valid": valid,
             "message": message,
-            "block_count": len(self._read_all_blocks()),
+            "block_count": self.height(),
             "public_key": self.public_key_b64,
             "hybrid_signatures": self.is_hybrid,
             "pqc_algorithm": PQC_SIG_ALGORITHM if self.is_hybrid else None,

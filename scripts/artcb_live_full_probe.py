@@ -22,6 +22,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(ROOT / "src"))
 NODES = {
     "ovh-node-1": "http://152.228.144.34:8000",
     "ovh-node-2": "http://151.80.107.29:8000",
@@ -167,7 +169,11 @@ def main() -> int:
             f"{base}/api/v1/chain/block/0",
             f"{base}/api/v1/chain/block/4",
             f"{base}/api/v1/chain/block/1073",
+            f"{base}/api/v1/chain/block/1074",
             f"{base}/api/v1/chain/search?q=continuite",
+            f"{base}/api/v1/chain/stream?from_index=1070&limit=8",
+            f"{base}/api/v1/chain?from_index=1070&limit=8",
+            f"{base}/api/v1/ai/events?max_seconds=2",
             f"{base}/api/v1/ai/ingest/file?path=src/artcb/chain/manager.py",
             f"{base}/api/v1/p2p/replica/blocks",
         ]
@@ -183,6 +189,9 @@ def main() -> int:
                 method="POST",
                 body={"query": "propagation publique", "top_k": 3},
             ),
+            hit(f"{base}/api/v1/chain/status"),
+            hit(f"{base}/api/v1/chain/stream?from_index=0&limit=4"),
+            hit(f"{base}/api/v1/bridges/status", timeout=8),
         ]
         all_rows = rows + extra
         payload["nodes"][nid] = {
@@ -196,7 +205,6 @@ def main() -> int:
         }
         print(f"DONE {nid} {payload['nodes'][nid]['summary']}", flush=True)
     if ROOT.joinpath("src").is_dir():
-        sys.path.insert(0, str(ROOT / "src"))
         try:
             from artcb.ir.encoder import IREncoder
             from artcb.ir.concept import concept_id_from_node
@@ -227,14 +235,15 @@ def main() -> int:
             timeout=60,
             body={
                 "content": (
-                    "254 ns-trace + full live probe. Reports 252/253: replication 1074 is real; "
-                    "language IA not yet ConceptID-convergent; JSON still primary storage; "
-                    "BFT/adversarial not demonstrated. Probe hits every OpenAPI GET on 4 nodes "
-                    "plus encode/search/book read. Nanosecond traces on HTTP and chain_append."
+                    "257 stream+index. Reports 255/256: 254 ns traces are real; GRA11 saturates; "
+                    "GET /chain and bridges/status were full scans (4s / 105s). IR/index first, "
+                    "targeted block second. Offset index + NDJSON /chain/stream + O(1) status. "
+                    "ConceptID/BFT still not demonstrated. Probe hits every OpenAPI GET x4 "
+                    "plus stream/SSE/book/bridges. Nanosecond traces on HTTP, book_get, stream."
                 ),
                 "memo_type": "lesson",
-                "tags": ["254", "trace_ns", "live_probe", "memory"],
-                "session_id": "ai_memo_254",
+                "tags": ["257", "stream", "book_index", "live_probe", "memory"],
+                "session_id": "ai_memo_257",
                 "visibility": "public",
                 "inject_context": True,
             },
@@ -242,9 +251,9 @@ def main() -> int:
         payload["memo"] = memo
     out = ROOT / "logs"
     out.mkdir(exist_ok=True)
-    dest = out / f"254_live_probe_{stamp}.json"
+    dest = out / f"257_live_probe_{stamp}.json"
     dest.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    (out / "254_live_probe_latest.json").write_text(dest.read_text(encoding="utf-8"), encoding="utf-8")
+    (out / "257_live_probe_latest.json").write_text(dest.read_text(encoding="utf-8"), encoding="utf-8")
     brief = {
         "wrote": str(dest),
         "nodes": {

@@ -142,6 +142,7 @@ def create_app() -> FastAPI:
                     "kind": "http",
                     "method": request.method,
                     "path": request.url.path,
+                    "query": (request.url.query or "")[:240],
                     "dur_ns": dur,
                     "http": status,
                     "ok": ok,

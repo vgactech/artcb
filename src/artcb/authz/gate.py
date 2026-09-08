@@ -61,13 +61,24 @@ class AuthzGate:
         indexed = self.index.as_resource(graph_id)
         if indexed:
             return indexed
-        try:
-            blocks = self.chain.list_blocks()
-        except FileNotFoundError:
-            blocks = []
-        for block in blocks:
-            if block.get("graph_id") == graph_id:
-                return self.resource_for_block(block)
+        block = None
+        lookup = getattr(self.chain, "block_index_for_graph", None)
+        getter = getattr(self.chain, "get_block", None)
+        if callable(lookup) and callable(getter):
+            idx = lookup(graph_id)
+            if idx is not None:
+                block = getter(idx)
+        if block is None:
+            try:
+                blocks = self.chain.list_blocks()
+            except FileNotFoundError:
+                blocks = []
+            for row in blocks:
+                if row.get("graph_id") == graph_id:
+                    block = row
+                    break
+        if block is not None:
+            return self.resource_for_block(block)
         return ResourceRef(visibility="unstored", graph_id=graph_id)
 
     def decide(

@@ -577,42 +577,46 @@ def chain_search(
     results = []
 
     try:
-        # Recherche vectorielle globale (tous graph_ids)
+        from src.artcb.trace.ns import emit, now_mono_ns
+
+        t_search = now_mono_ns()
+        # IR / index first (rapport 256). Book is a targeted read, never a full scan.
         raw_results = state.vectors.search(q, graph_id=None, top_k=top_k)
-
-        # Enrichir avec les métadonnées de bloc
-        block_by_graph: dict[str, dict] = {}
-        try:
-            for b in state.chain.list_blocks():
-                gid = b.get("graph_id", "")
-                if gid not in block_by_graph:
-                    h = b.get("hash", "")
-                    block_by_graph[gid] = {
-                        "block_index": b.get("index"),
-                        "block_hash": h[:16] + "…" if len(h) >= 16 else h,
-                        "pol_score": b.get("pol_score"),
-                        "timestamp": b.get("timestamp"),
-                        "visibility": b.get("visibility"),
-                    }
-        except Exception:
-            pass
-
+        principal = state.authz.resolve(request)
+        book_hits = 0
         for r in raw_results:
             entry = dict(r)
             gid = r.get("graph_id", "")
-            if gid in block_by_graph:
-                entry["block"] = block_by_graph[gid]
-            results.append(entry)
-
-        principal = state.authz.resolve(request)
-        authorized = []
-        for r in results:
-            gid = r.get("graph_id", "")
             if not gid:
                 continue
-            if state.authz.decide(principal, "READ", state.authz.resource_for_graph(gid)).allowed:
-                authorized.append(r)
-        results = authorized
+            if not state.authz.decide(principal, "READ", state.authz.resource_for_graph(gid)).allowed:
+                continue
+            idx = state.chain.block_index_for_graph(gid)
+            if idx is not None:
+                block = state.chain.get_block(idx)
+                if block is not None:
+                    h = str(block.get("hash") or "")
+                    entry["block"] = {
+                        "block_index": block.get("index"),
+                        "block_hash": h[:16] + "…" if len(h) >= 16 else h,
+                        "pol_score": block.get("pol_score"),
+                        "timestamp": block.get("timestamp"),
+                        "visibility": block.get("visibility"),
+                    }
+                    book_hits += 1
+            results.append(entry)
+        emit(
+            getattr(getattr(state, "settings", None), "data_dir", None),
+            {
+                "kind": "chain_search",
+                "q_len": len(q),
+                "raw": len(raw_results),
+                "kept": len(results),
+                "book_hits": book_hits,
+                "dur_ns": now_mono_ns() - t_search,
+                "ok": True,
+            },
+        )
 
         # Filtrer par visibilité si demandé
         if visibility != "all":
@@ -1486,6 +1490,7 @@ from fastapi.responses import StreamingResponse
 @router_ai.get("/events", summary="SSE — notifications temps réel des nouveaux blocs IA")
 def ai_events_sse(
     request: Request,
+    max_seconds: float = Query(default=0, ge=0, le=300, description="0 = 5 min ; >0 coupe le flux (probe-safe)"),
     key_record: Annotated[dict | None, Depends(verify_api_key)] = None,
 ) -> StreamingResponse:
     """
@@ -1494,29 +1499,44 @@ def ai_events_sse(
 
     Format : data: {"event":"heartbeat","chain_height":N,"timestamp":T}
     """
+    from src.artcb.trace.ns import emit, now_mono_ns
+
     state = _state(request)
+    deadline = (time.time() + max_seconds) if max_seconds > 0 else None
 
     def _event_generator():
+        t0 = now_mono_ns()
+        polls = 0
         last_height = 0
-        # Heartbeat immédiat au démarrage — permet au client de confirmer l'ouverture
         try:
-            blocks = state.chain.list_blocks()
-            last_height = len(blocks)
+            last_height = state.chain.height()
         except Exception:
             last_height = 0
         hb0 = json.dumps({"event": "connected", "chain_height": last_height, "timestamp": time.time()})
         yield f"data: {hb0}\n\n"
 
         try:
-            for _ in range(150):  # max 5 minutes (150 × 2s)
-                import time as _time
-                _time.sleep(2)
+            for _ in range(150):  # max 5 minutes (150 × 2s) unless max_seconds
+                if deadline is not None and time.time() >= deadline:
+                    to = json.dumps({"event": "timeout", "chain_height": last_height, "timestamp": time.time()})
+                    yield f"data: {to}\n\n"
+                    break
+                remain = 2.0 if deadline is None else max(0.0, deadline - time.time())
+                if remain <= 0:
+                    to = json.dumps({"event": "timeout", "chain_height": last_height, "timestamp": time.time()})
+                    yield f"data: {to}\n\n"
+                    break
+                time.sleep(min(2.0, remain))
+                if deadline is not None and time.time() >= deadline:
+                    to = json.dumps({"event": "timeout", "chain_height": last_height, "timestamp": time.time()})
+                    yield f"data: {to}\n\n"
+                    break
                 try:
-                    blocks = state.chain.list_blocks()
-                    height = len(blocks)
+                    t_poll = now_mono_ns()
+                    height = state.chain.height()
+                    polls += 1
                     if height != last_height:
-                        # Nouveau bloc détecté
-                        last_block = blocks[-1] if blocks else {}
+                        last_block = state.chain.get_block(height - 1) or {}
                         ps = last_block.get("public_symbols") or {}
                         payload = json.dumps({
                             "event": "new_block",
@@ -1527,10 +1547,29 @@ def ai_events_sse(
                             "agent_id": ps.get("agent_id"),
                             "timestamp": time.time(),
                         }, ensure_ascii=False)
+                        emit(
+                            getattr(getattr(state, "settings", None), "data_dir", None),
+                            {
+                                "kind": "sse_poll",
+                                "height": height,
+                                "changed": True,
+                                "dur_ns": now_mono_ns() - t_poll,
+                                "ok": True,
+                            },
+                        )
                         yield f"data: {payload}\n\n"
                         last_height = height
                     else:
-                        # Heartbeat
+                        emit(
+                            getattr(getattr(state, "settings", None), "data_dir", None),
+                            {
+                                "kind": "sse_poll",
+                                "height": height,
+                                "changed": False,
+                                "dur_ns": now_mono_ns() - t_poll,
+                                "ok": True,
+                            },
+                        )
                         hb = json.dumps({"event": "heartbeat", "chain_height": height, "timestamp": time.time()})
                         yield f"data: {hb}\n\n"
                 except Exception as exc:
@@ -1538,6 +1577,17 @@ def ai_events_sse(
                     yield f"data: {err}\n\n"
         except GeneratorExit:
             pass
+        finally:
+            emit(
+                getattr(getattr(state, "settings", None), "data_dir", None),
+                {
+                    "kind": "sse_session",
+                    "polls": polls,
+                    "max_seconds": max_seconds,
+                    "dur_ns": now_mono_ns() - t0,
+                    "ok": True,
+                },
+            )
 
     return StreamingResponse(
         _event_generator(),
