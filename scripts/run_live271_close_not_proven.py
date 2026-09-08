@@ -16,6 +16,7 @@ import subprocess
 import sys
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -147,10 +148,16 @@ def main() -> int:
         if cert:
             codes = []
             t0 = time.perf_counter()
-            for i in range(1000):
-                codes.append(l265._http("POST", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/certificate", {"certificate": cert}, timeout=8).get("http"))
-                if i in (0, 99, 499, 999):
-                    print(f"N07 progress {i+1}/1000 last={codes[-1]}", flush=True)
+
+            def _once(_i: int) -> int:
+                return l265._http("POST", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/certificate", {"certificate": cert}, timeout=8).get("http") or 0
+
+            with ThreadPoolExecutor(max_workers=20) as pool:
+                futs = [pool.submit(_once, i) for i in range(1000)]
+                for j, fut in enumerate(as_completed(futs), start=1):
+                    codes.append(fut.result())
+                    if j in (1, 100, 500, 1000):
+                        print(f"N07 progress {j}/1000 last={codes[-1]}", flush=True)
             after = independent_safety(l265.independent_snapshot())
             n07_ok = after["converged"] and all(c in (200, 409) for c in codes)
             payload["tests"]["N07"] = {"ok": n07_ok, "n": 1000, "codes": sorted(set(codes)), "dur_s": round(time.perf_counter() - t0, 2), "safety": after}
