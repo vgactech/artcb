@@ -1658,5 +1658,11 @@ P8 : prepared_proofs ×4 ; select kept_x seq 1097 digest `c79319fbebfbd0459f3d1f
 Agent : bootstrap 268 `ingest_platform_hook=false` ; register `agent_320497e7c08d` ; event 1098 `9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf` ; 2e POST `already_committed` same_block. Height **1099** tip `9c67ac06…` cert Q=3 commits=4 ×4. `logs/268_agent_20260908T170137Z.json`.
 PBFT 100 % : **NON**. Universal LLM adapters : **NON**. mTLS mesh : **NON**.
 
+## [2026-09-08T17:22:00Z] 269 — P9…P18 campaign (no HPC)
+
+HPC rapport 269 AWS **non autorisé**. AWS reste t3.small.
+P9 mutation cert ; P10 dual propose/equivocation ; P11 PREPARE Y ; P12 replay view ; P13 crash/restart ; P14 JSON tronqué ; P15 agent_identity_conflict ; P16 idempotency_conflict ; P17 cert≠bloc ; P18 mutations.
+T-E57. Preuve formelle : non. Campagne interne live après follow-main.
+
 
 

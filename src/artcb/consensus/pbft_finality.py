@@ -246,6 +246,17 @@ class PbftFinalityStore:
         parsed.setdefault("committed", {})
         parsed.setdefault("certificates", {})
         parsed.setdefault("seen", [])
+        # P14: never surface unverified proofs after disk corruption / truncation.
+        prepared = parsed.get("prepared") if isinstance(parsed.get("prepared"), dict) else {}
+        parsed["prepared"] = {
+            key: row
+            for key, row in prepared.items()
+            if isinstance(row, dict) and verify_prepared_certificate(row)
+        }
+        certs = parsed.get("certificates") if isinstance(parsed.get("certificates"), dict) else {}
+        parsed["certificates"] = {
+            key: row for key, row in certs.items() if isinstance(row, dict) and verify_certificate(row)
+        }
         return parsed
 
     def _save(self) -> None:
@@ -382,9 +393,16 @@ class PbftFinalityStore:
         if _iint(row, "view") != self.view:
             self._trace("prepare_recv", ok=False, t0=t0, reason="wrong_view")
             return {"ok": False, "reason": "wrong_view"}
+        view = _iint(row, "view")
+        seq = _iint(row, "seq")
+        digest = str(row.get("digest") or "")
+        accepted = (self._state.get("accepted") or {}).get(f"{view}:{seq}")
+        if accepted != digest:
+            self._trace("prepare_recv", ok=False, t0=t0, reason="not_accepted", seq=seq)
+            return {"ok": False, "reason": "not_accepted"}
         self._store_prepare(row)
-        prepared = self._maybe_mark_prepared(int(row["view"]), int(row["seq"]), str(row["digest"]))
-        self._trace("prepare_recv", ok=True, t0=t0, seq=int(row["seq"]), prepared=prepared)
+        prepared = self._maybe_mark_prepared(view, seq, digest)
+        self._trace("prepare_recv", ok=True, t0=t0, seq=seq, prepared=prepared)
         return {"ok": True, "prepared": prepared}
 
     def emit_commit(self, chain: Any, *, view: int, seq: int, digest: str) -> dict[str, Any]:

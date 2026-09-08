@@ -81,13 +81,16 @@ def agent_register(
     unknown = [c for c in body.capabilities if c not in MEMORY_CAPABILITIES]
     if unknown:
         raise HTTPException(status_code=400, detail=f"unknown_capabilities:{unknown}")
-    row = rt.register_agent(
-        provider=body.provider,
-        label=body.label,
-        owner_address=rec.get("address") or rec.get("owner_address"),
-        capabilities=body.capabilities,
-        agent_id=body.agent_id,
-    )
+    try:
+        row = rt.register_agent(
+            provider=body.provider,
+            label=body.label,
+            owner_address=rec.get("address") or rec.get("owner_address"),
+            capabilities=body.capabilities,
+            agent_id=body.agent_id,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     return {"ok": True, "protocol": PROTOCOL_VERSION, "agent": row}
 
 
@@ -103,8 +106,12 @@ def agent_event(
     rt = _runtime(request)
     rec = key_record or {}
     agent_id = str(rec.get("agent_id") or rec.get("label") or "agent_anonymous")
+    digest = hashlib.sha256(body.content.encode("utf-8")).hexdigest()
     existing = rt.get_event(body.event_id)
     if existing:
+        held = str(existing.get("content_sha256") or "")
+        if held and held != digest:
+            raise HTTPException(status_code=409, detail="idempotency_conflict")
         return {
             "status": "already_committed",
             "event_id": body.event_id,
@@ -113,7 +120,6 @@ def agent_event(
             "graph_id": existing.get("graph_id"),
             "protocol": PROTOCOL_VERSION,
         }
-    digest = hashlib.sha256(body.content.encode("utf-8")).hexdigest()
     memo_body = MemoRequest(
         content=body.content,
         memo_type=body.kind if body.kind in {"observation", "lesson", "decision", "proof", "bug", "fix"} else "observation",

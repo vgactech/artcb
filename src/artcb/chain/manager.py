@@ -415,6 +415,7 @@ class ChainManager:
                     from_node_id=from_node_id,
                 )
                 return False
+            # Sidecar: hash does not include pbft_cert. Binding is (seq, digest==hash).
         existing = self.get_block(idx)
         if existing is not None:
             held = str(existing.get("hash") or "")

@@ -118,6 +118,15 @@ class AgentRuntime:
     ) -> dict[str, Any]:
         aid = agent_id or f"agent_{uuid.uuid4().hex[:12]}"
         allowed = [c for c in capabilities if c in MEMORY_CAPABILITIES]
+        existing = (self._state.get("agents") or {}).get(aid)
+        if isinstance(existing, dict):
+            if existing.get("revoked"):
+                raise ValueError("agent_revoked")
+            same_owner = not owner_address or not existing.get("owner_address") or existing.get("owner_address") == owner_address
+            same_provider = not provider or existing.get("provider") == (provider or "generic")[:64]
+            if not same_owner or not same_provider:
+                raise ValueError("agent_identity_conflict")
+            return existing
         row = {
             "agent_id": aid,
             "provider": (provider or "generic")[:64],
@@ -148,6 +157,9 @@ class AgentRuntime:
     ) -> dict[str, Any]:
         existing = self.get_event(event_id)
         if existing:
+            held = str(existing.get("content_sha256") or "")
+            if held and held != content_sha256:
+                return {**existing, "status": "idempotency_conflict"}
             return {**existing, "status": "already_committed"}
         row = {
             "event_id": event_id,
