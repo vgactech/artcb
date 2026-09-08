@@ -29,6 +29,9 @@ logger = logging.getLogger("artcb.consensus.pbft_finality")
 PBFT_FINALITY_PROTOCOL = "265-pbft-block-finality"
 STATE_REL = Path("consensus") / "pbft_finality.json"
 MSG_REL = Path("consensus") / "pbft_finality.jsonl"
+# First live certified seq (R265 TEST A). Public writes at or after this
+# index require a commit certificate. History before it stays longest-chain.
+FIRST_LIVE_CERTIFIED_SEQ = 1087
 
 
 def _iint(row: dict[str, Any], key: str, default: int = -1) -> int:
@@ -98,6 +101,38 @@ def verify_signed(row: dict[str, Any], expected_message: str) -> bool:
     )
 
 
+def exclusive_public_from(data_dir: Path) -> int:
+    """Lowest public seq that must carry a PBFT commit certificate."""
+    import os
+
+    env = (os.getenv("ARTCB_PBFT_EXCLUSIVE_FROM") or "").strip()
+    if env != "":
+        return int(env)
+    path = Path(data_dir) / STATE_REL
+    if path.is_file():
+        try:
+            parsed = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            parsed = {}
+        if isinstance(parsed, dict) and parsed.get("exclusive_public_from_seq") is not None:
+            return int(parsed["exclusive_public_from_seq"])
+    return FIRST_LIVE_CERTIFIED_SEQ
+
+
+def sign_preprepare(chain: Any, *, view: int, replica_id: str, block: dict[str, Any]) -> dict[str, Any]:
+    """Sign a PRE-PREPARE. Does not consult the replica lock (Byzantine primary can sign two)."""
+    seq = _iint(block, "index")
+    digest = block_digest(block)
+    msg = pp_message(view=int(view), seq=seq, digest=digest, replica_id=replica_id)
+    return _sign_row(
+        chain,
+        kind="pre-prepare",
+        message=msg,
+        replica_id=replica_id,
+        extra={"view": int(view), "seq": seq, "digest": digest, "block": block},
+    )
+
+
 def verify_preprepare(row: dict[str, Any]) -> bool:
     view = _iint(row, "view", 0)
     replica = str(row.get("replica_id") or "")
@@ -164,6 +199,7 @@ class PbftFinalityStore:
         if not self.path.is_file():
             return {
                 "protocol": PBFT_FINALITY_PROTOCOL,
+                "exclusive_public_from_seq": FIRST_LIVE_CERTIFIED_SEQ,
                 "accepted": {},
                 "prepared": {},
                 "committed": {},
@@ -177,6 +213,7 @@ class PbftFinalityStore:
         if not isinstance(parsed, dict):
             parsed = {}
         parsed.setdefault("protocol", PBFT_FINALITY_PROTOCOL)
+        parsed.setdefault("exclusive_public_from_seq", FIRST_LIVE_CERTIFIED_SEQ)
         parsed.setdefault("accepted", {})
         parsed.setdefault("prepared", {})
         parsed.setdefault("committed", {})
@@ -224,6 +261,8 @@ class PbftFinalityStore:
             "finality_on_append_path": True,
             "not_longest_chain_after_cert": True,
             "r264_is_baseline": True,
+            "exclusive_public_from_seq": exclusive_public_from(self.data_dir),
+            "public_append_exclusive_pbft": True,
         }
 
     def finalized_digest(self, seq: int) -> str | None:
@@ -257,8 +296,7 @@ class PbftFinalityStore:
         if locked and locked != digest:
             self._trace("preprepare", ok=False, t0=t0, reason="equivocation", seq=seq)
             raise ValueError("equivocation")
-        msg = pp_message(view=view, seq=seq, digest=digest, replica_id=self.replica_id)
-        row = _sign_row(chain, kind="pre-prepare", message=msg, replica_id=self.replica_id, extra={"view": view, "seq": seq, "digest": digest, "block": block})
+        row = sign_preprepare(chain, view=view, replica_id=self.replica_id, block=block)
         if not verify_preprepare(row):
             raise ValueError("preprepare_self_check_failed")
         self._accept(row)
@@ -455,6 +493,9 @@ class PbftFinalityStore:
         view = int(row["view"])
         seq = int(row["seq"])
         digest = str(row["digest"])
+        held = self.finalized_digest(seq)
+        if held and held != digest:
+            return None
         prep = (self._state.get("prepared") or {}).get(f"{view}:{seq}") or {}
         if str(prep.get("digest") or "") != digest:
             return None

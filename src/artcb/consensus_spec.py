@@ -2,9 +2,9 @@
 
 188 = settlement prepare/commit. 264 = view-change baseline (settlement).
 265 = PBFT block finality on /pbft/propose → write_certified_block.
-Certified indices cannot be reorged by longest-chain import.
-Default append_block (memos) is not yet exclusive-PBFT.
-certified_distributed_mainnet remains a separate lock (DV-02).
+266 = official public append is exclusive-PBFT (memo/store construct then
+certificate). Certified indices cannot be reorged by longest-chain import.
+certified_distributed_mainnet remains a separate lock (DV-01…07 + operator GO).
 """
 
 from __future__ import annotations
@@ -45,6 +45,7 @@ def public_spec() -> dict[str, Any]:
         "scope": "settlement_prepare_commit_and_block_finality",
         "pbft_view_change": "264-pbft-view-change",
         "pbft_block_finality": "265-pbft-block-finality",
+        "public_append_exclusive_pbft": True,
         "not_block_append_bft": False,
         "canonical_tip_after_cert": "pbft commit certificate locks the index; longest-chain cannot reorg a certified seq",
     }

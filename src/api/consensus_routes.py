@@ -309,6 +309,10 @@ class ProposeBlockBody(BaseModel):
     visibility: str = Field(default="public", max_length=16)
 
 
+class ClientRequestBody(BaseModel):
+    block: dict
+
+
 class CertificateBody(BaseModel):
     certificate: dict
     block: dict | None = None
@@ -353,6 +357,32 @@ def pbft_propose(body: ProposeBlockBody, request: Request) -> dict:
             dry_run=True,
         )
         block = json.loads(constructed.to_json_line())
+        pp = log.emit_preprepare(state.chain, block=block)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ok": True, "pre_prepare": pp, "block": block, "digest": pp.get("digest")}
+
+
+@router.post("/pbft/client-request")
+def pbft_client_request(body: ClientRequestBody, request: Request) -> dict:
+    """Non-primary submits a constructed block. Primary wraps it in PRE-PREPARE."""
+    from src.artcb.consensus.pbft_view import primary_of
+
+    state = request.app.state.artcb
+    log = _pbft_log(request)
+    block = body.block if isinstance(body.block, dict) else {}
+    view = int(log.view)
+    if log.replica_id != primary_of(view):
+        raise HTTPException(status_code=409, detail="not_primary")
+    try:
+        idx = int(block.get("index", -1))
+    except (TypeError, ValueError):
+        idx = -1
+    if idx != int(state.chain.height()) or str(block.get("prev_hash") or "") != str(state.chain.last_hash() or ""):
+        raise HTTPException(status_code=409, detail="not_extending")
+    if str(block.get("visibility") or "") != "public":
+        raise HTTPException(status_code=409, detail="not_public")
+    try:
         pp = log.emit_preprepare(state.chain, block=block)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc

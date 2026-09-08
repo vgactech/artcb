@@ -87,6 +87,11 @@ def official_replica_id() -> str:
             return nid
     return env
 
+
+def on_official_compute() -> bool:
+    """True only on one of the four live VMs. Pytest/agents must not HTTP-fanout."""
+    return bool(_local_ipv4s() & set(OFFICIAL_COMPUTE_IPV4))
+
 # Public HTTPS health (nginx + Let's Encrypt). IP :8000 remains the compute probe.
 PUBLIC_HEALTH_URLS: dict[str, str] = {
     "ovh-node-1": "https://artcb.me/health",

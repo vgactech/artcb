@@ -417,6 +417,8 @@ def ai_memo(
             public_symbols=public_symbols,
             source=f"ai:memo:{body.memo_type}",
         )
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=f"Block append failed: {exc}") from exc
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Block append failed: {exc}") from exc
 

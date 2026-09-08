@@ -4,9 +4,10 @@ Lifted from replicated_settlement.Cluster (same-machine sim) onto the
 live HTTP API. Classical bound: N >= 3F+1, Q = 2F+1.
 With four live machines: N=4, F=1, Q=3.
 
-This is settlement uniqueness (WorkID / SettlementID), not a rewrite of
-block append. Block production remains longest valid public chain.
-certified_distributed_mainnet is a separate gate.
+Settlement uniqueness (WorkID / SettlementID) is 188. Public block
+production on official replicas is exclusive-PBFT (265/266): construct
+→ PRE-PREPARE → PREPARE → COMMIT → certificate → write_certified_block.
+Private appends stay local. certified_distributed_mainnet is a separate gate.
 """
 
 from __future__ import annotations
@@ -134,8 +135,14 @@ class LiveBftEngine:
             "pbft_view": int(getattr(pbft, "view", 0) or 0),
             "pbft_primary": getattr(pbft, "primary", None),
             "pbft_finality": getattr(getattr(self, "pbft_log", None), "snapshot", lambda: {})(),
-            "not_block_append_bft": True,
+            "not_block_append_bft": False,
+            "public_append_exclusive_pbft": True,
         }
+
+    def finalize_public_block(self, chain: Any, block: dict[str, Any]) -> dict[str, Any]:
+        from src.artcb.consensus.pbft_exclusive import coordinate_public_finality
+
+        return coordinate_public_finality(self, chain, block)
 
     def propose(
         self,

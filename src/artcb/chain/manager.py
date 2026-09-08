@@ -98,6 +98,29 @@ class ChainBlock:
         payload["block_size_bytes"] = len(line.encode("utf-8"))
         return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
 
+    @classmethod
+    def from_payload(cls, payload: dict) -> "ChainBlock":
+        economics = payload.get("economics") if isinstance(payload.get("economics"), dict) else None
+        return cls(
+            index=int(payload["index"]),
+            timestamp=str(payload["timestamp"]),
+            prev_hash=str(payload["prev_hash"]),
+            graph_root=str(payload["graph_root"]),
+            merkle_root=str(payload.get("merkle_root") or payload["graph_root"]),
+            pol_score=float(payload["pol_score"]),
+            hash=str(payload["hash"]),
+            signature=str(payload.get("signature") or ""),
+            graph_id=str(payload.get("graph_id") or ""),
+            visibility=str(payload.get("visibility") or "private"),
+            group_id=payload.get("group_id"),
+            block_reward=int(payload.get("block_reward") or 0),
+            contributors=list(payload.get("contributors") or []),
+            public_symbols=dict(payload.get("public_symbols") or {}),
+            hash_sha3=payload.get("hash_sha3"),
+            economics=economics,
+            hash_version=int(payload.get("hash_version") or HASH_VERSION_V1),
+        )
+
 
 GENESIS_PREV_HASH = "0" * 64
 
@@ -356,7 +379,7 @@ class ChainManager:
             idx = int(block.get("index", -1))
         except (TypeError, ValueError):
             return False
-        from src.artcb.consensus.pbft_finality import finalized_digest_for
+        from src.artcb.consensus.pbft_finality import exclusive_public_from, finalized_digest_for, verify_certificate
 
         locked = finalized_digest_for(self.blocks_path.parent.parent, idx)
         offered_hash = str(block.get("hash") or "")
@@ -369,6 +392,29 @@ class ChainManager:
                 hash_held=locked,
             )
             return False
+        vis = str(block.get("visibility") or "")
+        if vis == "public" and idx >= exclusive_public_from(self.blocks_path.parent.parent):
+            cert = block.get("pbft_cert") if isinstance(block.get("pbft_cert"), dict) else None
+            if cert is None or not verify_certificate(cert):
+                record_reject(
+                    self.blocks_path,
+                    reason="pbft_cert_required",
+                    block=block,
+                    from_node_id=from_node_id,
+                )
+                return False
+            try:
+                cert_seq = int(cert.get("seq"))
+            except (TypeError, ValueError):
+                cert_seq = -1
+            if str(cert.get("digest") or "") != offered_hash or cert_seq != idx:
+                record_reject(
+                    self.blocks_path,
+                    reason="pbft_cert_mismatch",
+                    block=block,
+                    from_node_id=from_node_id,
+                )
+                return False
         existing = self.get_block(idx)
         if existing is not None:
             held = str(existing.get("hash") or "")
@@ -686,6 +732,37 @@ class ChainManager:
             except Exception:
                 pass
             return block
+        if str(visibility) == "public":
+            from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS, official_replica_id
+
+            if official_replica_id() in OFFICIAL_COMPUTE_NODE_IDS:
+                payload = json.loads(line)
+                hook = getattr(self, "pbft_finalize", None)
+                if callable(hook):
+                    result = hook(payload)
+                    if isinstance(result, dict) and result.get("wrote"):
+                        certified = result.get("block") if isinstance(result.get("block"), dict) else payload
+                        if result.get("certificate") and isinstance(certified, dict):
+                            certified = dict(certified)
+                            certified["pbft_cert"] = result["certificate"]
+                        try:
+                            emit(
+                                self.blocks_path.parent.parent,
+                                {
+                                    "kind": "chain_append",
+                                    "index": index,
+                                    "visibility": visibility,
+                                    "source": source,
+                                    "dur_ns": now_mono_ns() - t_append,
+                                    "ok": True,
+                                    "pbft_certified": True,
+                                },
+                            )
+                        except Exception:
+                            pass
+                        return ChainBlock.from_payload(certified)
+                    raise ValueError(str((result or {}).get("reason") or "pbft_finalize_failed"))
+                raise ValueError("pbft_required_for_public_append")
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
         parsed = json.loads(line)

@@ -89,9 +89,13 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   `append` dry_run + `write_certified_block` / `import`. Index certifié
   non reorg (`pbft_finalized_conflict`). R264 reste la **baseline**
   view-change settlement. Traces **nanoseconde** obligatoires
-  (`data/trace/ns.jsonl`, `X-ARTCB-Trace-Ns`). `PBFT_LIVE_E2E_PASS`
-  seulement après preuve live A–L. `certified_distributed_mainnet`
-  reste gated par DV-02 (flood/chaos) — ce n’est pas levé ici.
+  (`data/trace/ns.jsonl`, `X-ARTCB-Trace-Ns`).
+  Rapport 266 : exclusivité PBFT des écritures publiques officielles
+  (`pbft_required_for_public_append` / `client-request` / `pbft_cert_required`
+  dès seq 1087) + PRE-PREPARE Byzantine signés contradictoires + crash
+  primary + partition 2-2. `PBFT_LIVE_E2E_PASS` seulement après V-01…V-07
+  live sur le SHA déployé = `origin/main`. `certified_distributed_mainnet`
+  reste le gate DV-01…07 + operator GO — distinct du PASS PBFT.
 - Rapport 247 : livre écrit. OVH1 height 8 tip `f646c510…` (idx 5–7
   `cbff6e66` / `a9e411c3` / `f646c510`). Pairs 2/3/4 restent `27350024`
   (import 222). Wipe non. GO-E produce off. SHA `c1d8027` = `origin/main`.

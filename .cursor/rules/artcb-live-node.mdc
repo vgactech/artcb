@@ -36,7 +36,7 @@ Les 4 nœuds compute officiels **suivent `origin/main` automatiquement** (`scrip
 
 Ne **pas** bloquer une tâche pour un GO de déploiement, de stop, de partition, de probe Byzantine reject-only, de replica ou de mémo. Exécuter, mesurer, graver le rapport, `git push origin HEAD:main`, follow-main ×4.
 
-Toujours avant de finir : nœud arrêté **relancé**, iptables `artcb261` / `artcb263` / `artcb264` / `artcb265` **retirées**. Jamais wipe. Jamais genesis/rescue. Jamais inventer SHA/hauteur/tip. Jamais afficher le token. Jamais mélanger Doppler. **Tous les processus restent UP** pour un test de view-change (pas de kill). Un PASS PBFT view-change se **mesure** (Q=3 VIEW-CHANGE + NEW-VIEW signés) — on ne le déclare pas « non revendiqué ».
+Toujours avant de finir : nœud arrêté **relancé**, iptables `artcb261` / `artcb263` / `artcb264` / `artcb265` / `artcb266` **retirées**. Jamais wipe. Jamais genesis/rescue. Jamais inventer SHA/hauteur/tip. Jamais afficher le token. Jamais mélanger Doppler. **Tous les processus restent UP** pour un test de view-change (pas de kill). Un PASS PBFT view-change se **mesure** (Q=3 VIEW-CHANGE + NEW-VIEW signés) — on ne le déclare pas « non revendiqué ». `PBFT_LIVE_E2E_PASS` exige V-01…V-07 mesurés sur le SHA déployé, pas le PASS d’un script 265 partiel.
 
 ## Complétude A→Z (opérateur, 2026-09-08 — réflexe, ne plus le faire répéter)
 
@@ -47,7 +47,7 @@ Ce bloc **est** le protocole / autoprompt. Toute consigne opérateur répétée 
 3. « Bout en bout » = code + tests + live 4 nœuds + rapport + `HEAD:main` + follow-main ×4 + égalité `git_sha`. S’il manque un maillon, **continuer**, ne pas clôturer.
 4. Partition **2 nœuds** autorisée **uniquement** si les deux sont **restorés** (iptables + artcb active) avant la fin du tour. Trap EXIT obligatoire.
 5. Deux producteurs concurrents : mesurer (sérialisation ou fork). Fork → replica majorité ; rewind **une** dernière ligne minoritaire si besoin — **jamais** wipe du livre.
-6. 188 prepare/commit Q=3 se **mesure** (agent coordinateur vers `:8000` ×4). **R264 = BASELINE** view-change settlement, **pas** certification PBFT de finalité des blocs. Le PBFT complet (265) : PRE-PREPARE → PREPARE → COMMIT → certificat Q=3 → `append`/`import` du **même** bloc ; un index finalisé **ne peut pas** être remplacé par longest-chain. VIEW-CHANGE transporte le P-set. Processus UP (isolation, pas kill) sauf TEST I restart explicite puis relance.
+6. 188 prepare/commit Q=3 se **mesure** (agent coordinateur vers `:8000` ×4). **R264 = BASELINE** view-change settlement. **R265** = chemin PRE-PREPARE → PREPARE → COMMIT → certificat Q=3 → `write_certified_block`. **R266** = exclusivité PBFT des écritures **publiques** officielles (mémo/store construct → PBFT → certificat ; import public ≥ seq 1087 exige `pbft_cert`) + PRE-PREPARE Byzantine valides contradictoires + crash réel du primary + partition 2-2 sans double finalité. Processus UP sauf crash/restart explicites puis relance. Toujours iptables `artcb266` restorées.
 7. Preuve Byzantine : persistente + sha256 + signature chaîne (sidecar) + replica merge + ancre mémo on-chain. Falsification disque = sidecar mismatch. Suppression locale = récupérable par replica.
 8. Réflexe : si tu t’apprêtes à écrire « il reste » ou « non revendiqué » pour une consigne déjà répétée (PBFT, view-change, tout inclure, traces ns), **implémente et mesure**. Encoder ici toute nouvelle répétition opérateur **sans qu’on te le redemande**.
 9. **Tous les processus restent.** Interdit de laisser un artcb down ou des iptables en place en fin de tour.

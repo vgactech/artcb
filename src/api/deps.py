@@ -196,6 +196,10 @@ def build_app_state() -> AppState:
 
     replica_id = official_replica_id() or p2p_identity.node_id
     live_bft = LiveBftEngine(settings.data_dir, node_id=replica_id)
+    from src.artcb.node_registry import on_official_compute
+
+    if on_official_compute():
+        chain.pbft_finalize = lambda constructed: live_bft.finalize_public_block(chain, constructed)
 
     state = AppState(
         settings=settings,
