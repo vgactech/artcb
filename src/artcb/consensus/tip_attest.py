@@ -58,15 +58,18 @@ def attest_tip(chain: Any, *, git_sha: str, node_id: str) -> dict[str, Any]:
 
 
 def verify_attest(row: dict[str, Any]) -> bool:
+    from src.artcb.crypto.hybrid import HybridSignature, is_hybrid_envelope
+    from src.artcb.crypto.pqc import pqc_available
+    from src.artcb.crypto_policy import fallback_still_open
+
     message = canonical_message(
         height=int(row.get("height") or 0),
         last_hash=str(row.get("last_hash") or ""),
         git_sha=str(row.get("git_sha") or ""),
         node_id=str(row.get("node_id") or ""),
     )
-    if message != str(row.get("message") or message):
-        if str(row.get("message") or "") and str(row.get("message")) != message:
-            return False
+    if str(row.get("message") or "") and str(row.get("message")) != message:
+        return False
     sig = str(row.get("signature") or "")
     ed_b64 = str(row.get("producer_ed25519_b64") or "")
     if not sig or not ed_b64:
@@ -82,6 +85,20 @@ def verify_attest(row: dict[str, Any]) -> bool:
             pqc_pk = base64.b64decode(pqc_b64, validate=False)
         except Exception:
             pqc_pk = None
+    if is_hybrid_envelope(sig) and not pqc_available():
+        # Agent without liboqs: check the Ed25519 leg while D-032 B is open.
+        if not fallback_still_open():
+            return False
+        parsed = HybridSignature.parse(sig)
+        if parsed is None or not parsed.ed25519_hex:
+            return False
+        try:
+            from nacl.signing import VerifyKey
+
+            VerifyKey(ed_pk).verify(message.encode("utf-8"), bytes.fromhex(parsed.ed25519_hex))
+            return True
+        except Exception:
+            return False
     try:
         return bool(
             verify_hybrid_and_or_window(

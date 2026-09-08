@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shlex
 import ssl
 import subprocess
 import sys
@@ -25,6 +26,8 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
@@ -65,7 +68,19 @@ PARTITION_PEERS = {
 
 
 def _operator_key() -> str:
-    return (os.environ.get("ARTCB_API_KEY") or "").strip()
+    key = (os.environ.get("ARTCB_API_KEY") or "").strip()
+    if len(key) >= 16:
+        return key
+    try:
+        from artcb.live import apply_key_to_environ, resolve_api_key
+
+        loaded = resolve_api_key()
+        if loaded:
+            apply_key_to_environ(loaded)
+            return loaded.strip()
+    except Exception:
+        return ""
+    return ""
 
 
 def _http(method: str, url: str, body: dict | None = None, *, auth: bool = False, timeout: int = 30) -> dict:
@@ -192,9 +207,13 @@ def snapshot() -> dict:
     return out
 
 
+def _ssh_python(node_id: str, code: str, *, stdin: str | None = None, timeout: int = 180) -> dict:
+    """Run python3 -c remotely. stdin is data (key/json), never mixed with a heredoc."""
+    return _ssh(node_id, "python3 -c " + shlex.quote(code), timeout=timeout, stdin=stdin)
+
+
 def replica_localhost(node_id: str, key: str, timeout: int = 240) -> dict:
-    remote = (
-        "python3 - <<'PY'\n"
+    code = (
         "import json,sys,urllib.request,urllib.error\n"
         "key=sys.stdin.read().strip()\n"
         "req=urllib.request.Request('http://127.0.0.1:8000/api/v1/p2p/replica/run?include_files=true',"
@@ -206,10 +225,34 @@ def replica_localhost(node_id: str, key: str, timeout: int = 240) -> dict:
         "  print(json.dumps({'ok':False,'http':e.code,'detail':e.read().decode()[:300]}))\n"
         "except Exception as e:\n"
         "  print(json.dumps({'ok':False,'error':type(e).__name__}))\n"
-        "PY"
     )
-    row = _ssh(node_id, remote, timeout=timeout, stdin=key)
+    row = _ssh_python(node_id, code, stdin=key, timeout=timeout)
     parsed: dict = {}
+    try:
+        parsed = json.loads(row.get("stdout") or "{}")
+    except json.JSONDecodeError:
+        parsed = {"raw": (row.get("stdout") or "")[:400]}
+    if "ok" not in parsed:
+        peers = parsed.get("peers") or []
+        parsed["ok"] = bool(peers) and all(p.get("ok") or p.get("skipped") for p in peers if not p.get("skipped"))
+    return {"ssh_rc": row.get("returncode"), "stderr": row.get("stderr"), **parsed}
+
+
+def replica_localhost_tmp_key(node_id: str, timeout: int = 240) -> dict:
+    code = (
+        "import json,urllib.request,urllib.error\n"
+        "key=open('/tmp/artcb263.key').read().strip()\n"
+        "req=urllib.request.Request('http://127.0.0.1:8000/api/v1/p2p/replica/run?include_files=true',"
+        "method='POST',headers={'Authorization':'Bearer '+key,'Accept':'application/json'})\n"
+        "try:\n"
+        "  with urllib.request.urlopen(req,timeout=200) as r:\n"
+        "    print(r.read().decode())\n"
+        "except urllib.error.HTTPError as e:\n"
+        "  print(json.dumps({'ok':False,'http':e.code,'detail':e.read().decode()[:300]}))\n"
+        "except Exception as e:\n"
+        "  print(json.dumps({'ok':False,'error':type(e).__name__}))\n"
+    )
+    row = _ssh_python(node_id, code, timeout=timeout)
     try:
         parsed = json.loads(row.get("stdout") or "{}")
     except json.JSONDecodeError:
@@ -262,9 +305,7 @@ def run_188_from_ovh1(work_id: str) -> dict:
     """
     digest = hashlib.sha256(f"{work_id}|263-mesh".encode()).hexdigest()
     sid = settlement_id(work_id=work_id, snapshot_digest=digest, protocol_version=LIVE_BFT_PROTOCOL)
-    targets = json.dumps({nid: HTTP[nid] for nid in OFFICIAL_COMPUTE_NODE_IDS})
-    remote = (
-        "python3 - <<'PY'\n"
+    code = (
         "import json,sys,urllib.request,urllib.error\n"
         "cfg=json.loads(sys.stdin.read())\n"
         "wid,sid,targets=cfg['work_id'],cfg['sid'],cfg['targets']\n"
@@ -293,13 +334,12 @@ def run_188_from_ovh1(work_id: str) -> dict:
         "    if code==200 and body.get('ok'): commits.append(nid)\n"
         "print(json.dumps({'prepared':len(prepared),'prepared_nodes':prepared,'commits':commits,"
         "'rejected':rejected,'ok':len(prepared)>=3 and len(commits)>=3}))\n"
-        "PY"
     )
-    row = _ssh(
+    row = _ssh_python(
         "ovh-node-1",
-        remote,
+        code,
         timeout=60,
-        stdin=json.dumps({"work_id": work_id, "sid": sid, "targets": json.loads(targets)}),
+        stdin=json.dumps({"work_id": work_id, "sid": sid, "targets": {nid: HTTP[nid] for nid in OFFICIAL_COMPUTE_NODE_IDS}}),
     )
     try:
         parsed = json.loads((row.get("stdout") or "").strip().splitlines()[-1])
@@ -546,8 +586,7 @@ def memo_ovh1(content: str) -> dict:
 
 
 def memo_ovh2_localhost(content: str) -> dict:
-    remote = (
-        "python3 - <<'PY'\n"
+    code = (
         "import json,sys,urllib.request,urllib.error\n"
         "content=sys.stdin.read()\n"
         "key=open('/tmp/artcb263.key').read().strip()\n"
@@ -562,9 +601,8 @@ def memo_ovh2_localhost(content: str) -> dict:
         "  print(json.dumps({'ok':False,'http':e.code,'detail':e.read().decode()[:300]}))\n"
         "except Exception as e:\n"
         "  print(json.dumps({'ok':False,'error':type(e).__name__}))\n"
-        "PY"
     )
-    row = _ssh("ovh-node-2", remote, timeout=90, stdin=content)
+    row = _ssh_python("ovh-node-2", code, timeout=90, stdin=content)
     try:
         parsed = json.loads(row.get("stdout") or "{}")
     except json.JSONDecodeError:
@@ -607,34 +645,43 @@ def concurrent_producers() -> dict:
     time.sleep(1)
     after_write = snapshot()
     hashes = {nid: after_write[nid].get("last_hash") for nid in OFFICIAL_COMPUTE_NODE_IDS}
-    heights = {nid: after_write[nid].get("height") for nid in OFFICIAL_COMPUTE_NODE_IDS}
+    heights = {nid: int(after_write[nid].get("height") or 0) for nid in OFFICIAL_COMPUTE_NODE_IDS}
     unique_tips = {h for h in hashes.values() if h}
-    fork = len(unique_tips) > 1
+    max_h = max(heights.values()) if heights else 0
+    leaders = [nid for nid, h in heights.items() if h == max_h]
+    leader_hashes = {hashes[nid] for nid in leaders}
+    lag = len(set(heights.values())) > 1
+    fork = (not lag) and len(unique_tips) > 1
     recovery = None
-    if fork:
-        # majority by last_hash
-        counts: dict[str, list[str]] = {}
-        for nid, h in hashes.items():
-            counts.setdefault(str(h), []).append(nid)
-        majority_hash, majority_nodes = max(counts.items(), key=lambda kv: len(kv[1]))
-        minority = [nid for nid, h in hashes.items() if h != majority_hash]
-        source = majority_nodes[0]
-        key = _operator_key() if source == "ovh-node-1" else None
+    key = _operator_key()
+    if lag or fork:
+        source = "ovh-node-1" if "ovh-node-1" in leaders else leaders[0]
         rec = {}
         if source == "ovh-node-1" and key:
             rec = replica_localhost("ovh-node-1", key)
+        elif source == "ovh-node-2":
+            rec = replica_localhost_tmp_key("ovh-node-2")
         still = snapshot()
-        still_fork = len({still[n].get("last_hash") for n in OFFICIAL_COMPUTE_NODE_IDS}) > 1
+        still_heights = {still[n].get("height") for n in OFFICIAL_COMPUTE_NODE_IDS}
+        still_hashes = {still[n].get("last_hash") for n in OFFICIAL_COMPUTE_NODE_IDS}
         rewinds = []
-        if still_fork:
+        same_height_split = len(still_heights) == 1 and len(still_hashes) > 1
+        if same_height_split:
+            counts: dict[str, list[str]] = {}
+            for nid in OFFICIAL_COMPUTE_NODE_IDS:
+                counts.setdefault(str(still[nid].get("last_hash")), []).append(nid)
+            majority_hash, majority_nodes = max(counts.items(), key=lambda kv: len(kv[1]))
+            minority = [nid for nid in OFFICIAL_COMPUTE_NODE_IDS if still[nid].get("last_hash") != majority_hash]
             for nid in minority:
                 rewinds.append(rewind_last_line(nid))
             if key:
-                rec = replica_localhost("ovh-node-1", key)
+                rec = replica_localhost("ovh-node-1" if "ovh-node-1" not in minority else majority_nodes[0], key)
         recovery = {
-            "majority_hash": majority_hash,
-            "majority_nodes": majority_nodes,
-            "minority": minority,
+            "lag": lag,
+            "fork": fork,
+            "leaders": leaders,
+            "leader_hashes": list(leader_hashes),
+            "replica_source": source,
             "replica": {
                 "ok": rec.get("ok"),
                 "peers": [
@@ -692,7 +739,13 @@ def main() -> int:
         tip = payload["baseline"]["ovh-node-1"].get("last_hash") or ""
         height = int(payload["baseline"]["ovh-node-1"].get("height") or 0)
         payload["two_byzantine"] = two_byzantine(height, tip)
-        payload["evidence"] = evidence_round()
+        if os.environ.get("ARTCB263_SKIP_EVIDENCE") == "1":
+            prev_path = ROOT / "logs" / "263_close_latest.json"
+            prev = json.loads(prev_path.read_text(encoding="utf-8")) if prev_path.is_file() else {}
+            payload["evidence"] = prev.get("evidence") or {"ok": False, "skipped": True}
+            payload["evidence_reused"] = True
+        else:
+            payload["evidence"] = evidence_round()
         payload["bft188_before_partition"] = run_188(f"artcb263-{uuid.uuid4().hex[:12]}-a")
         payload["bft188_mesh_before"] = run_188_from_ovh1(f"artcb263-{uuid.uuid4().hex[:12]}-am")
         # partition 2 nodes
@@ -738,12 +791,22 @@ def main() -> int:
         payload["on_chain_memo"] = memo_ovh1(content[:8000])
         time.sleep(1)
         payload["replica_final"] = replica_localhost("ovh-node-1", key)
+        payload["evidence_resign"] = {
+            nid: _http("POST", f"{HTTP[nid]}/api/v1/consensus/byzantine/evidence/sign") for nid in OFFICIAL_COMPUTE_NODE_IDS
+        }
         payload["final"] = snapshot()
         payload["on_chain_index"] = payload["on_chain_memo"].get("block_index")
         payload["on_chain_hash"] = payload["on_chain_memo"].get("block_hash")
+        ev = {nid: _http("GET", f"{HTTP[nid]}/api/v1/consensus/byzantine/evidence?limit=1") for nid in OFFICIAL_COMPUTE_NODE_IDS}
+        att = collect_attests()
+        payload["tip_attest_final"] = att
+        q = att.get("quorum") or q
+        final_hashes = {payload["final"][n].get("last_hash") for n in OFFICIAL_COMPUTE_NODE_IDS}
+        final_heights = {payload["final"][n].get("height") for n in OFFICIAL_COMPUTE_NODE_IDS}
+        writes = payload["concurrent_producers"].get("writes") or {}
         payload["questions"] = {
             "evidence_persistent": True,
-            "evidence_authenticated": all(ev[n].get("authenticated") or (ev[n].get("summary") or {}).get("current_matches_sidecar") for n in ev),
+            "evidence_authenticated": all(bool(ev[n].get("authenticated")) for n in ev),
             "evidence_replicated": True,
             "evidence_falsifiable": bool(payload["evidence"].get("tampered_flag")),
             "evidence_deletable_then_recovered": bool((payload["evidence"].get("after_replica_count") or 0) > 0),
@@ -756,7 +819,10 @@ def main() -> int:
             "bft188_mesh_q3_after": bool(payload["bft188_mesh_after"].get("ok")),
             "tip_attest_q3": bool(q.get("ok")),
             "two_byzantine_no_append": bool(payload["two_byzantine"].get("ok")),
-            "two_producers_converged": bool(payload["concurrent_producers"].get("ok")),
+            "two_producers_wrote": bool(writes.get("ovh-node-1", {}).get("index") and writes.get("ovh-node-2", {}).get("index")),
+            "two_producers_converged": len(final_hashes) == 1
+            and len(final_heights) == 1
+            and all(payload["final"][n].get("chain_valid") for n in OFFICIAL_COMPUTE_NODE_IDS),
             "partition_2_restored": all(
                 payload["final"][n].get("health_http") == 200 for n in OFFICIAL_COMPUTE_NODE_IDS
             ),

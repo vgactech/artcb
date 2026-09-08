@@ -37,6 +37,28 @@ def test_n_f_q_still_four_is_q3() -> None:
     assert (n, f, q) == (4, 1, 3)
 
 
+def test_verify_attest_accepts_hybrid_ed25519_when_liboqs_absent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from artcb.consensus.tip_attest import canonical_message, producer_key_b64, sign_message
+
+    chain = ChainManager(tmp_path / "b.jsonl", key_path=tmp_path / "k", enable_security=False)
+    msg = canonical_message(height=1, last_hash="aa" * 32, git_sha="b" * 40, node_id="n1")
+    ed, pqc = producer_key_b64(chain)
+    row = {
+        "height": 1,
+        "last_hash": "aa" * 32,
+        "git_sha": "b" * 40,
+        "node_id": "n1",
+        "message": msg,
+        "signature": sign_message(chain, msg),
+        "producer_ed25519_b64": ed,
+        "producer_pqc_b64": pqc,
+    }
+    assert verify_attest(row) is True
+    monkeypatch.setattr("artcb.crypto.pqc.pqc_available", lambda: False)
+    monkeypatch.setattr("src.artcb.crypto.pqc.pqc_available", lambda: False)
+    assert verify_attest(row) is True
+
+
 def test_two_of_four_is_below_quorum() -> None:
     report = assess_liveness(
         include_self=False,
