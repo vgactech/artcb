@@ -163,6 +163,20 @@ def test_accept_prepare_returns_binding_reason(tmp_path: Path) -> None:
     assert got.get("reason") == "invalid_replica_key_binding"
 
 
+def test_binding_enforced_by_official_marker_not_ip(tmp_path: Path, monkeypatch) -> None:
+    from src.artcb.consensus import replica_identity as rid
+
+    monkeypatch.delenv("ARTCB_REQUIRE_REPLICA_BINDING", raising=False)
+    monkeypatch.delenv("ARTCB_REPLICA_REGISTRY", raising=False)
+    monkeypatch.setattr(rid, "on_official_compute", lambda: False)
+    marker = tmp_path / "official_node"
+    marker.write_text("aws-node-3\n", encoding="utf-8")
+    monkeypatch.setattr(rid, "OFFICIAL_NODE_MARKER", marker)
+    assert rid.binding_enforced() is True
+    marker.write_text("not-a-node\n", encoding="utf-8")
+    assert rid.binding_enforced() is False
+
+
 def test_official_ids_still_four() -> None:
     assert OFFICIAL_COMPUTE_NODE_IDS == ("ovh-node-1", "ovh-node-2", "aws-node-3", "ovh-node-4")
     assert primary_of(15) == "ovh-node-4"

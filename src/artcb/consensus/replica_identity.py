@@ -20,7 +20,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator
 
-from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS, official_replica_id, on_official_compute
+from src.artcb.node_registry import (
+    OFFICIAL_COMPUTE_NODE_IDS,
+    OFFICIAL_NODE_MARKER,
+    official_replica_id,
+    on_official_compute,
+)
 
 REGISTRY_REL = Path(__file__).resolve().parent / "official_replica_keys.json"
 BINDING_REASONS = frozenset(
@@ -69,6 +74,16 @@ def binding_enforced() -> bool:
     mode = (os.getenv("ARTCB_REPLICA_REGISTRY") or "").strip().lower()
     if mode in {"live", "official", "1"}:
         return True
+    # Official VMs write /etc/artcb/official_node. Do not key enforcement on
+    # the public IPv4: AWS often sees only the VPC address, which is not identity.
+    if OFFICIAL_NODE_MARKER.is_file():
+        try:
+            raw = OFFICIAL_NODE_MARKER.read_text(encoding="utf-8").strip().splitlines()
+            marker = (raw[0] if raw else "").strip()
+        except OSError:
+            marker = ""
+        if marker in OFFICIAL_COMPUTE_NODE_IDS:
+            return True
     return bool(on_official_compute())
 
 
