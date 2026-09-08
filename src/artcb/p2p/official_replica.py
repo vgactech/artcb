@@ -76,7 +76,12 @@ def list_replica_blocks(sync: P2PSyncService, *, from_index: int = 0, limit: int
     return out[:cap]
 
 
-def import_replica_blocks(sync: P2PSyncService, blocks: list[dict[str, Any]]) -> dict[str, Any]:
+def import_replica_blocks(
+    sync: P2PSyncService,
+    blocks: list[dict[str, Any]],
+    *,
+    from_node_id: str = "official-replica",
+) -> dict[str, Any]:
     imported = 0
     duplicates = 0
     rejected: list[dict[str, Any]] = []
@@ -90,15 +95,21 @@ def import_replica_blocks(sync: P2PSyncService, blocks: list[dict[str, Any]]) ->
         if block_hash and any(str(row.get("hash") or "") == block_hash for row in existing):
             duplicates += 1
             continue
+        held = next((row for row in existing if int(row.get("index", -1)) == int(block.get("index") or -1)), None)
         try:
-            ok = sync.chain.import_extending_block(block, require_public=False)
+            ok = sync.chain.import_extending_block(
+                block, require_public=False, from_node_id=from_node_id
+            )
         except Exception as exc:  # noqa: BLE001 — one bad block must not abort the chunk mid-write
             rejected.append({"index": block.get("index"), "reason": type(exc).__name__})
             break
         if ok:
             imported += 1
         else:
-            rejected.append({"index": block.get("index"), "reason": "import_failed"})
+            reason = "import_failed"
+            if held and str(held.get("hash") or "") and block_hash and str(held.get("hash")) != block_hash:
+                reason = "equivocation"
+            rejected.append({"index": block.get("index"), "reason": reason})
             break
     return {
         "imported": imported,

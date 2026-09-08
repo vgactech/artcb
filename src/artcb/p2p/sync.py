@@ -48,18 +48,25 @@ def decide_public_import(
     local_tip: str,
     local_hashes: set[str],
     structure_ok: bool,
+    existing_at_index: dict[str, Any] | None = None,
+    check_signature_envelope: bool = True,
 ) -> ImportDecision:
     """Deterministic import rule. receive and pull must call this same function.
 
     Order: visibility → structure/hash → duplicate → DOMAIN_COMMITMENT
-    binding (when present) → index → prev_hash → append.
+    binding (when present) → equivocation (same index, other hash) →
+    index → prev_hash → signature envelope / embedded key → append.
 
-    A public block that extends the tip (correct index + prev_hash + hash)
-    is appended. That is the point of visibility=public. Forks stay off
-    the tip (wrong_index / wrong_prev_hash). Mixed public/private chains
-    still cannot be rebuilt from public-only pull — official replica
-    copies the full book among the four compute IPv4s.
+    A public block that extends the tip (correct index + prev_hash + hash
+    + parseable signature) is appended. Forks stay off the tip.
+    Two different hashes at the same index are evidence, not a merge.
+    This is not PBFT view-change.
     """
+    from src.artcb.consensus.byzantine_guard import (
+        signature_envelope_ok,
+        verify_offered_signature,
+    )
+
     if block.get("visibility") != "public":
         return ImportDecision("reject", "not_public")
     if not structure_ok:
@@ -79,10 +86,21 @@ def decide_public_import(
         index = int(block.get("index", -1))
     except (TypeError, ValueError):
         return ImportDecision("reject", "bad_index")
+    if existing_at_index:
+        held = str(existing_at_index.get("hash") or "")
+        if block_hash and held == block_hash:
+            return ImportDecision("duplicate", "already_on_chain")
+        if block_hash and held and held != block_hash:
+            return ImportDecision("reject", "equivocation")
     if index != local_len:
         return ImportDecision("reject", "wrong_index")
     if str(block.get("prev_hash") or "") != local_tip:
         return ImportDecision("reject", "wrong_prev_hash")
+    if check_signature_envelope and not signature_envelope_ok(str(block.get("signature") or "")):
+        return ImportDecision("reject", "invalid_signature")
+    remote_sig = verify_offered_signature(block)
+    if remote_sig is False:
+        return ImportDecision("reject", "invalid_signature")
     return ImportDecision("append", "extends_tip")
 
 
@@ -124,25 +142,51 @@ class P2PSyncService:
         decisions: list[ImportDecision] = []
         to_archive: list[dict[str, Any]] = []
         extended = 0
+        offered_at: dict[int, str] = {}
         ordered = sorted(blocks, key=lambda row: int(row.get("index") or 0) if str(row.get("index") or "").isdigit() or isinstance(row.get("index"), int) else 0)
         for block in ordered:
             local = self.chain._read_all_blocks()
             local_hashes = {str(row.get("hash") or "") for row in local}
-            decision = decide_public_import(
-                block,
-                local_len=len(local),
-                local_tip=self.chain.last_hash(),
-                local_hashes=local_hashes,
-                structure_ok=self.verify_block_structure(block) if block.get("visibility") == "public" else False,
-            )
+            try:
+                idx = int(block.get("index", -1))
+            except (TypeError, ValueError):
+                idx = -1
+            existing = next((row for row in local if int(row.get("index", -1)) == idx), None) if idx >= 0 else None
+            offered_hash = str(block.get("hash") or "")
+            if idx >= 0 and idx in offered_at and offered_at[idx] and offered_hash and offered_at[idx] != offered_hash:
+                decision = ImportDecision("reject", "equivocation")
+            else:
+                decision = decide_public_import(
+                    block,
+                    local_len=len(local),
+                    local_tip=self.chain.last_hash(),
+                    local_hashes=local_hashes,
+                    structure_ok=self.verify_block_structure(block) if block.get("visibility") == "public" else False,
+                    existing_at_index=existing,
+                )
             decisions.append(decision)
             if decision.action == "reject":
                 logger.warning("P2P import reject index=%s reason=%s", block.get("index"), decision.reason)
+                if decision.reason in {"equivocation", "invalid_signature", "hash_mismatch"}:
+                    try:
+                        from src.artcb.consensus.byzantine_evidence import record_reject
+
+                        record_reject(
+                            self.chain.blocks_path,
+                            reason=decision.reason,
+                            block=block,
+                            from_node_id=from_node_id,
+                            hash_held=str((existing or {}).get("hash") or offered_at.get(idx) or ""),
+                        )
+                    except Exception:
+                        logger.debug("byzantine evidence skip", exc_info=True)
                 continue
             if decision.action == "duplicate":
                 continue
             to_archive.append(block)
             if decision.action == "append":
+                if idx >= 0 and offered_hash:
+                    offered_at[idx] = offered_hash
                 try:
                     if self.chain.import_extending_public_block(block):
                         extended += 1

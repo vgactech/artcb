@@ -172,4 +172,9 @@ def test_m_concurrent_producers_do_not_silently_merge(tmp_path: Path) -> None:
     assert chain_a.last_hash() == before_a
     assert len(chain_a._read_all_blocks()) == height_a
     reasons = {d.reason for d in svc_a.last_import_decisions}
-    assert "wrong_index" in reasons or "wrong_prev_hash" in reasons or "already_on_chain" in reasons
+    assert reasons & {
+        "wrong_index",
+        "wrong_prev_hash",
+        "already_on_chain",
+        "equivocation",
+    }

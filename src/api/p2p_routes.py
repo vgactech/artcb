@@ -49,6 +49,17 @@ class ReceiveBlocksRequest(BaseModel):
     envelope: dict[str, str]
 
 
+class OfferBlocksRequest(BaseModel):
+    """Public plaintext offer — same decide_public_import as encrypted receive.
+
+    A well-formed tip-extension still appends (visibility=public). The live
+    Byzantine probe must only send payloads that the guard rejects.
+    """
+
+    blocks: list[dict] = Field(default_factory=list)
+    from_node_id: str = Field(default="unknown", max_length=80)
+
+
 def _state(request: Request):
     return request.app.state.artcb
 
@@ -388,6 +399,37 @@ def list_incoming_public(request: Request, from_index: int = Query(0, ge=0)) -> 
     return {"blocks": blocks, "count": len(blocks), "source": "p2p_incoming_public"}
 
 
+@router.post("/blocks/offer")
+def offer_public_blocks(body: OfferBlocksRequest, request: Request) -> dict:
+    """Anonymous public offer. Verdicts are the same as receive/pull.
+
+    Returns each decide_public_import reason. Does not wipe the book.
+    Not a BFT commit vote.
+    """
+    sync = _state(request).p2p_sync
+    from_node = (body.from_node_id or "unknown").strip() or "unknown"
+    height_before = len(sync.chain._read_all_blocks())
+    tip_before = sync.chain.last_hash()
+    imported = sync.import_public_blocks(list(body.blocks or []), from_node_id=from_node)
+    decisions = [
+        {"action": d.action, "reason": d.reason} for d in (sync.last_import_decisions or [])
+    ]
+    if any(row["action"] == "append" for row in decisions):
+        logger.warning("public offer appended from_node=%s n=%s", from_node[:24], imported)
+    return {
+        "imported": imported,
+        "received": len(body.blocks or []),
+        "decisions": decisions,
+        "height_before": height_before,
+        "height_after": len(sync.chain._read_all_blocks()),
+        "tip_before": tip_before,
+        "tip_after": sync.chain.last_hash(),
+        "from_node_id": from_node,
+        "not_block_append_bft": True,
+        "encrypted": False,
+    }
+
+
 @router.post("/blocks/receive")
 def receive_encrypted_blocks(body: ReceiveBlocksRequest, request: Request) -> dict:
     """Reçoit un lot de blocs publics chiffré ML-KEM."""
@@ -564,7 +606,11 @@ def replica_push(body: ReceiveBlocksRequest, request: Request) -> dict:
     if not isinstance(blocks, list):
         raise HTTPException(status_code=400, detail="bad_replica_blocks")
     height_before = len(sync.chain._read_all_blocks())
-    result = import_replica_blocks(sync, blocks)
+    result = import_replica_blocks(
+        sync,
+        blocks,
+        from_node_id=str(body.envelope.get("from_node_id") or "official-replica"),
+    )
     append_flux(
         sync.chain.blocks_path.parent.parent,
         {

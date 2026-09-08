@@ -36,6 +36,23 @@ def _engine(request: Request):
     return engine
 
 
+@router.get("/byzantine/evidence")
+def byzantine_evidence(request: Request, limit: int = 100) -> dict:
+    """Offers an honest node refused. Not a BFT certificate."""
+    from src.artcb.consensus.byzantine_evidence import EvidenceStore
+
+    data_dir = request.app.state.artcb.settings.data_dir
+    store = EvidenceStore(data_dir)
+    rows = store.list(limit=limit)
+    return {
+        "evidence": rows,
+        "summary": store.summary(),
+        "not_block_append_bft": True,
+        "scope": "active_byzantine_offer_evidence",
+        "note": "259 = honest-offline. This list = active liar offers that were rejected.",
+    }
+
+
 @router.get("/liveness")
 def consensus_liveness(request: Request) -> dict:
     """Observe quorum / partition. Does not stop nodes. Does not steal produce."""

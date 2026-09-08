@@ -324,14 +324,29 @@ class ChainManager:
         material = "|".join(hashes).encode("utf-8")
         return hashlib.sha256(material).hexdigest()
 
-    def import_extending_block(self, block: dict, *, require_public: bool = False) -> bool:
+    def import_extending_block(
+        self,
+        block: dict,
+        *,
+        require_public: bool = False,
+        from_node_id: str = "unknown",
+    ) -> bool:
         """Append a remote block if it extends the local tip.
 
-        Hash structure is verified. The producer signature uses the remote
-        chain key and is not checked against this node's key.
-        ``require_public=True`` is the anonymous P2P importer.
-        Official replica calls this with ``require_public=False``.
+        Hash structure is verified. A parseable signature envelope is
+        required on the public path. An embedded producer key, when
+        present, must verify. Same-index different-hash is equivocation
+        evidence — the local book is never overwritten.
+        Official replica calls this with ``require_public=False`` so a
+        historical private predecessor can still extend the tip.
+        This is not PBFT view-change and does not check against this
+        node's own chain key.
         """
+        from src.artcb.consensus.byzantine_evidence import record_reject
+        from src.artcb.consensus.byzantine_guard import (
+            signature_envelope_ok,
+            verify_offered_signature,
+        )
         from src.artcb.trace.ns import now_mono_ns
 
         t_import = now_mono_ns()
@@ -343,6 +358,16 @@ class ChainManager:
             return False
         existing = self.get_block(idx)
         if existing is not None:
+            held = str(existing.get("hash") or "")
+            offered = str(block.get("hash") or "")
+            if held and offered and held != offered:
+                record_reject(
+                    self.blocks_path,
+                    reason="equivocation",
+                    block=block,
+                    from_node_id=from_node_id,
+                    hash_held=held,
+                )
             return False
         if str(block.get("hash") or "") and str(block.get("hash") or "") == self.last_hash():
             return False
@@ -367,11 +392,34 @@ class ChainManager:
         except (KeyError, TypeError, ValueError):
             return False
         if block.get("hash") != expected:
+            record_reject(
+                self.blocks_path,
+                reason="hash_mismatch",
+                block=block,
+                from_node_id=from_node_id,
+            )
             return False
         expected_index = self.height()
         if int(block.get("index", -1)) != expected_index:
             return False
         if str(block.get("prev_hash") or "") != self.last_hash():
+            return False
+        if require_public and not signature_envelope_ok(str(block.get("signature") or "")):
+            record_reject(
+                self.blocks_path,
+                reason="invalid_signature",
+                block=block,
+                from_node_id=from_node_id,
+            )
+            return False
+        remote_sig = verify_offered_signature(block)
+        if remote_sig is False:
+            record_reject(
+                self.blocks_path,
+                reason="invalid_signature",
+                block=block,
+                from_node_id=from_node_id,
+            )
             return False
         line = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
         with self.blocks_path.open("a", encoding="utf-8") as handle:
