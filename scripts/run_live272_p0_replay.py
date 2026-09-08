@@ -58,6 +58,10 @@ def main() -> int:
         "tests": {},
     }
     try:
+        for nid in OFFICIAL_COMPUTE_NODE_IDS:
+            l265._scp(nid, ROOT / "scripts" / "artcb271_netem.sh", "/home/ubuntu/artcb/scripts/artcb271_netem.sh")
+            l265._scp(nid, ROOT / "scripts" / "artcb271_asym.sh", "/home/ubuntu/artcb/scripts/artcb271_asym.sh")
+            l265._ssh(nid, "chmod +x /home/ubuntu/artcb/scripts/artcb271_netem.sh /home/ubuntu/artcb/scripts/artcb271_asym.sh")
         freeze = l265.independent_snapshot()
         payload["before"] = independent_safety(freeze)
         payload["freeze_nodes"] = {
