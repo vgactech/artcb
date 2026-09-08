@@ -117,6 +117,62 @@ Suite possible (non codée) : RPC privés Doppler, pas de bitcoin depuis GRA11, 
 
 ---
 
-## Tests
+## Tests locaux
 
-`pytest tests/test_e2e258_gap_fixes.py` (+ 257/254 si verts).
+`pytest tests/test_e2e258_gap_fixes.py tests/test_e2e257_stream_book.py tests/test_e2e254_ns_trace.py tests/test_e2e247_go_k_concept_memory.py` : **40 passed**.
+
+---
+
+## 7. Live après GO deploy (2026-09-08T00:35Z → 00:38Z)
+
+Rien d’inventé. follow-main keep-book ×4 : livres restés à **1076** jusqu’au mémo.
+
+`origin/main` = `/health` ×4 = **`5d8cef808e8a2cba7be59e39ac5531fb58483b18`**.
+
+### ConceptID — mesuré sur OVH1 et AWS3
+
+Phrases du probe 254/257 :
+
+| Langue | texte | symbol | ConceptID |
+|---|---|---|---|
+| FR | Le serveur doit vérifier la signature. | `V1N1S2` | `Kc55d3ab3505178da` |
+| EN | The server must verify the signature. | `V1N1S2` | `Kc55d3ab3505178da` |
+| ES | El servidor debe verificar la firma. | `V1N1S2` | `Kc55d3ab3505178da` |
+
+**Overlap probe = 1** (les trois IDs identiques). Plus 0.
+
+Benchmark demandé par l’audit (`voiture` / `car` / `coche`) : **overlap 0**. EN `car` tombe encore sur le mot-clé raison FR. **Pas un PASS universel.**
+
+### Liveness — observé, pas un test BFT
+
+`GET /consensus/liveness` ×4 : `n=4` `q=3` `reachable=4` `partitioned=false`.  
+Aucun nœud arrêté. Aucun producteur tué. **BFT / failover / partition adversariale : toujours non démontrés.**
+
+### Routes (séquentiel, ns serveur)
+
+| Surface | OVH1 | OVH2 | AWS3 | OVH4 |
+|---|---|---|---|---|
+| `/chain/status` tip | 8.4 ms | 12.8 ms | 3.6 ms | 8.9 ms |
+| `/chain/stream?from=1070&limit=8` | 3.8 ms | 2.8 ms | 1.9 ms | 2.5 ms |
+| `/chain` default 256 | 70.6 ms `truncated` | 54.9 ms | 22.5 ms | 34.7 ms |
+| `/explorer` | 4.6 ms | 4.7 ms | 3.3 ms | 5.6 ms |
+| `/block-sizes` | 19.7 ms | 18.8 ms | 14.3 ms | 21.0 ms |
+| bridges 1er GET | 14.06 s | 14.06 s | 291 ms | 14.14 s |
+| bridges 2e GET (cache) | **1.5 ms** | **1.8 ms** | **1.3 ms** | **1.9 ms** |
+
+### Burst 8 × `/chain/status` parallèle
+
+OVH1 : **8/8 OK, 0 timeout**, wall 343 ms.  
+AWS3 : **8/8 OK, 0 timeout**, wall 303 ms.  
+C’est le status O(1), pas un probe OpenAPI 100 routes. GRA11 n’est pas « résolu pour toute charge ».
+
+### Mémo + KCG + replica + sidecar
+
+`POST /ai/memo` : HTTP 200, bloc **1076** hash `b44ee5318a7f92d5ab57ba10d09c717f3d7dbc37d9eb1987fc2645ca4dec5d95` graph `ai_memo_21b7ad020b7c`.  
+KCG `K_b04c41cf4ce74dec` + consult `C_b26183c85cc4f287` + use 200.
+
+Replica depuis 127.0.0.1 OVH1 : OVH2/AWS3/OVH4 **1076→1077**, même tip `b44ee531…`, imported 1, 0 erreur.
+
+Sur OVH1 : `blocks.jsonl` **1077** lignes (pas vidé). `blocks.bin` existe, magic **`ABLK`**, **7759** octets — sidecar des blocs **nouveaux** seulement, historique JSONL intact.
+
+Après replica, status localhost 2.7 ms, height 1077, `chain_valid=true`.
