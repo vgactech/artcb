@@ -324,6 +324,79 @@ class PbftFinalityStore:
             out.append(item)
         return out
 
+    def _uncommitted_prepared_digest(self, seq: int) -> str | None:
+        """Authoritative prepared digest for seq until a commit certificate exists."""
+        if self.finalized_digest(seq):
+            return None
+        digests: set[str] = set()
+        for row in (self._state.get("prepared") or {}).values():
+            if not isinstance(row, dict):
+                continue
+            if _iint(row, "seq") != int(seq):
+                continue
+            digest = str(row.get("digest") or "")
+            if digest:
+                digests.add(digest)
+        if len(digests) == 1:
+            return next(iter(digests))
+        return None
+
+    def _must_digest(self, seq: int) -> str | None:
+        constraint = self._state.get("must_repropose") if isinstance(self._state.get("must_repropose"), dict) else {}
+        if constraint and _iint(constraint, "seq") == int(seq):
+            digest = str(constraint.get("digest") or "")
+            if digest:
+                return digest
+        return self._uncommitted_prepared_digest(seq)
+
+    def remember_view_change_265(self, row: dict[str, Any]) -> bool:
+        if not self.verify_view_change_265(row):
+            return False
+        with self._lock:
+            bucket = list(self._state.get("view_changes_265") or [])
+            bucket.append(row)
+            self._state["view_changes_265"] = bucket[-32:]
+            self._save()
+        return True
+
+    def enter_view(self, new_view: int, view_changes: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+        """NEW-VIEW: drop unprepared PRE-PREPARE locks from older views; bind prepared X.
+
+        Same-view distinct digest remains equivocation. This only releases
+        *unprepared* accepted[] entries whose view is strictly less than new_view.
+        """
+        t0 = now_mono_ns()
+        new_view = int(new_view)
+        dropped: list[str] = []
+        with self._lock:
+            accepted = dict(self._state.get("accepted") or {})
+            accepted_pp = dict(self._state.get("accepted_pp") or {})
+            for key in list(accepted.keys()):
+                try:
+                    old_view = int(str(key).split(":")[0])
+                except (TypeError, ValueError):
+                    continue
+                if old_view >= new_view:
+                    continue
+                accepted.pop(key, None)
+                accepted_pp.pop(key, None)
+                dropped.append(key)
+            self._state["accepted"] = accepted
+            self._state["accepted_pp"] = accepted_pp
+            self._state["view_entered"] = new_view
+            self._save()
+        vcs = [vc for vc in (view_changes or []) if isinstance(vc, dict)]
+        if not vcs:
+            vcs = [vc for vc in (self._state.get("view_changes_265") or []) if isinstance(vc, dict)]
+        chosen = self.select_new_view_value(vcs) if vcs else None
+        if chosen is None:
+            pending = [row for row in self.prepared_set() if self.finalized_digest(int(row["seq"])) is None]
+            if pending:
+                chosen = max(pending, key=lambda row: int(row["seq"]))
+        bound = self.bind_prepared_constraint(chosen) if chosen else {"ok": False, "reason": "no_prepared"}
+        self._trace("enter_view", ok=True, t0=t0, dropped=len(dropped), bound=bool(bound.get("ok")))
+        return {"ok": True, "view": new_view, "dropped": dropped, "bound": bound}
+
     def emit_preprepare(self, chain: Any, *, block: dict[str, Any]) -> dict[str, Any]:
         t0 = now_mono_ns()
         view = self.view
@@ -334,16 +407,14 @@ class PbftFinalityStore:
         digest = block_digest(block)
         if not digest:
             raise ValueError("empty_digest")
+        required = self._must_digest(seq)
+        if required and required != digest:
+            self._trace("preprepare", ok=False, t0=t0, reason="must_repropose_prepared", seq=seq)
+            raise ValueError("must_repropose_prepared")
         locked = (self._state.get("accepted") or {}).get(f"{view}:{seq}")
         if locked and locked != digest:
             self._trace("preprepare", ok=False, t0=t0, reason="equivocation", seq=seq)
             raise ValueError("equivocation")
-        constraint = self._state.get("must_repropose") if isinstance(self._state.get("must_repropose"), dict) else {}
-        cseq = _iint(constraint, "seq") if constraint else -1
-        cdigest = str(constraint.get("digest") or "") if constraint else ""
-        if cseq == seq and cdigest and cdigest != digest:
-            self._trace("preprepare", ok=False, t0=t0, reason="must_repropose_prepared", seq=seq)
-            raise ValueError("must_repropose_prepared")
         row = sign_preprepare(chain, view=view, replica_id=self.replica_id, block=block)
         if not verify_preprepare(row):
             raise ValueError("preprepare_self_check_failed")
@@ -362,6 +433,10 @@ class PbftFinalityStore:
             return {"ok": False, "reason": "wrong_view"}
         seq = int(row["seq"])
         digest = str(row["digest"])
+        required = self._must_digest(seq)
+        if required and required != digest:
+            self._trace("preprepare_recv", ok=False, t0=t0, reason="must_repropose_prepared", seq=seq)
+            return {"ok": False, "reason": "must_repropose_prepared"}
         locked = (self._state.get("accepted") or {}).get(f"{view}:{seq}")
         if locked and locked != digest:
             self._trace("preprepare_recv", ok=False, t0=t0, reason="equivocation", seq=seq)
@@ -426,8 +501,15 @@ class PbftFinalityStore:
         if _iint(row, "view") != self.view:
             self._trace("commit_recv", ok=False, t0=t0, reason="wrong_view")
             return {"ok": False, "reason": "wrong_view"}
+        view = _iint(row, "view")
+        seq = _iint(row, "seq")
+        digest = str(row.get("digest") or "")
+        prep = (self._state.get("prepared") or {}).get(f"{view}:{seq}") or {}
+        if str(prep.get("digest") or "") != digest:
+            self._trace("commit_recv", ok=False, t0=t0, reason="not_prepared", seq=seq)
+            return {"ok": False, "reason": "not_prepared"}
         cert = self._store_commit(row)
-        self._trace("commit_recv", ok=True, t0=t0, seq=int(row["seq"]), certified=bool(cert))
+        self._trace("commit_recv", ok=True, t0=t0, seq=seq, certified=bool(cert))
         return {"ok": True, "certificate": cert}
 
     def install_certificate(self, cert: dict[str, Any]) -> dict[str, Any]:
@@ -470,6 +552,7 @@ class PbftFinalityStore:
             extra={"view": int(view), "from_view": from_view, "prepared": prepared, "pset_digest": digest},
         )
         self._append_msg(row)
+        self.remember_view_change_265(row)
         self._trace("view_change", ok=True, t0=t0, to_view=int(view), prepared=len(prepared))
         return row
 

@@ -268,12 +268,14 @@ def pbft_new_view(body: NewViewBody, request: Request) -> dict:
         installed = store.install_new_view(body.new_view, changes)
         if not installed.get("ok"):
             raise HTTPException(status_code=409, detail=installed.get("reason") or "invalid_new_view")
-        return {**installed, "new_view": body.new_view, "view_changes_count": len(changes)}
+        entered = _pbft_log(request).enter_view(int(installed.get("view") or body.view))
+        return {**installed, "new_view": body.new_view, "view_changes_count": len(changes), "enter_view": entered}
     try:
         emitted = store.emit_new_view(state.chain, view=body.view, view_changes=changes)
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
-    return emitted
+    entered = _pbft_log(request).enter_view(int((emitted.get("new_view") or {}).get("view") or body.view))
+    return {**emitted, "enter_view": entered}
 
 
 def _pbft_log(request: Request):
@@ -450,8 +452,8 @@ def pbft_view_change_265(body: ViewChange265Body, request: Request) -> dict:
     state = request.app.state.artcb
     log = _pbft_log(request)
     if body.view_change:
-        ok = log.verify_view_change_265(body.view_change)
-        return {"ok": ok, "reason": None if ok else "invalid_view_change_265"}
+        stored = log.remember_view_change_265(body.view_change)
+        return {"ok": stored, "reason": None if stored else "invalid_view_change_265"}
     try:
         row = log.emit_view_change_265(state.chain, view=body.view)
     except ValueError as exc:
@@ -465,10 +467,12 @@ def pbft_select_prepared(body: SelectPreparedBody, request: Request) -> dict:
 
     log = _pbft_log(request)
     chosen = log.select_new_view_value(body.view_changes)
+    bound = log.bind_prepared_constraint(chosen) if chosen else {"ok": False, "reason": "no_prepared"}
     return {
-        "ok": chosen is not None,
+        "ok": chosen is not None and bool(bound.get("ok")),
         "chosen": chosen,
         "proof": bool(chosen) and verify_prepared_certificate(chosen),
+        "bound": bound,
     }
 
 
