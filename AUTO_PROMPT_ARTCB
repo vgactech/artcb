@@ -1570,4 +1570,17 @@ OVH1 isolé `/health` 200, view 0, `artcb` active, BOOK 1086 pendant. Restore RU
 Catch-up view 1 ×4. Mémo index 1086 hash `1332be898f42cd91ccebb69eb8b38e909e79c0d087bec69348d931684bef6be8`.
 Replica → 1087 ×4. Processus jamais tués.
 
+R264 = **BASELINE** (settlement view-change). Pas une certification de finalité de blocs.
+
+## [2026-09-08T14:40:00Z] 265 — PBFT finalité des blocs + traces nanoseconde
+
+**Réflexe (ne plus le faire répéter) :** traces **nanoseconde** (`ts_ns`, `dur_ns`, `data/trace/ns.jsonl`)
+sur HTTP, append/import **et chaque phase PBFT**. Jamais moins que la nanoseconde.
+Un run sans traces ns = `NOT_VALIDATED`.
+
+R264 n'est pas le PASS final. 265 = PRE-PREPARE → PREPARE → COMMIT → certificat Q=3
+sur le **vrai** chemin `append`/`import`. Index certifié **non** remplaçable par
+longest-chain. VIEW-CHANGE 265 transporte le P-set. T-E53.
+`PBFT_LIVE_E2E_PASS` seulement après preuve live A→L sur 4 nœuds.
+
 

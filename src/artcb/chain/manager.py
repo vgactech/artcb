@@ -356,6 +356,19 @@ class ChainManager:
             idx = int(block.get("index", -1))
         except (TypeError, ValueError):
             return False
+        from src.artcb.consensus.pbft_finality import finalized_digest_for
+
+        locked = finalized_digest_for(self.blocks_path.parent.parent, idx)
+        offered_hash = str(block.get("hash") or "")
+        if locked and offered_hash and locked != offered_hash:
+            record_reject(
+                self.blocks_path,
+                reason="pbft_finalized_conflict",
+                block=block,
+                from_node_id=from_node_id,
+                hash_held=locked,
+            )
+            return False
         existing = self.get_block(idx)
         if existing is not None:
             held = str(existing.get("hash") or "")
@@ -458,6 +471,12 @@ class ChainManager:
         """Anonymous P2P: only visibility=public may extend the tip."""
         return self.import_extending_block(block, require_public=True)
 
+    def write_certified_block(self, block: dict, cert: dict, *, from_node_id: str = "pbft") -> bool:
+        """Write a PBFT-finalized block. Certificate is sidecar to the hash."""
+        payload = dict(block)
+        payload["pbft_cert"] = cert
+        return self.import_extending_block(payload, require_public=False, from_node_id=from_node_id)
+
     def append_block(
         self,
         *,
@@ -473,6 +492,7 @@ class ChainManager:
         source: str = "unknown",  # "ai_memo" | "ai_think" | "mining" — pour bypass AI
         verified_humans: float | None = None,
         h_adult: float | None = None,
+        dry_run: bool = False,
     ) -> ChainBlock:
         from src.artcb.trace.ns import emit, now_mono_ns
 
@@ -649,6 +669,23 @@ class ChainManager:
             hash_version=hash_version,
         )
         line = block.to_json_line()
+        if dry_run:
+            try:
+                emit(
+                    self.blocks_path.parent.parent,
+                    {
+                        "kind": "chain_construct",
+                        "index": index,
+                        "visibility": visibility,
+                        "source": source,
+                        "dur_ns": now_mono_ns() - t_append,
+                        "ok": True,
+                        "dry_run": True,
+                    },
+                )
+            except Exception:
+                pass
+            return block
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
         parsed = json.loads(line)

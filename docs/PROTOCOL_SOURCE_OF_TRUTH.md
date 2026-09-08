@@ -84,7 +84,14 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   (`src/artcb/consensus/pbft_view.py`) — VIEW-CHANGE Q=3 + NEW-VIEW ;
   primary = `OFFICIAL_COMPUTE_NODE_IDS[view % 4]` ; processus restent UP
   (isolation iptables `artcb264`, pas `systemctl stop`). Pas un 2f+1 sur
-  `append_block`. Interdit d’écrire « non revendiqué » à la place.
+  Rapport 265 : PBFT **finalité des blocs** (`src/artcb/consensus/pbft_finality.py`)
+  PRE-PREPARE → PREPARE → COMMIT → certificat Q=3 sur le chemin
+  `append` dry_run + `write_certified_block` / `import`. Index certifié
+  non reorg (`pbft_finalized_conflict`). R264 reste la **baseline**
+  view-change settlement. Traces **nanoseconde** obligatoires
+  (`data/trace/ns.jsonl`, `X-ARTCB-Trace-Ns`). `PBFT_LIVE_E2E_PASS`
+  seulement après preuve live A–L. `certified_distributed_mainnet`
+  reste gated par DV-02 (flood/chaos) — ce n’est pas levé ici.
 - Rapport 247 : livre écrit. OVH1 height 8 tip `f646c510…` (idx 5–7
   `cbff6e66` / `a9e411c3` / `f646c510`). Pairs 2/3/4 restent `27350024`
   (import 222). Wipe non. GO-E produce off. SHA `c1d8027` = `origin/main`.

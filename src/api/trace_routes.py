@@ -27,4 +27,6 @@ def list_ns_traces(
         "path": "data/trace/ns.jsonl",
         "unit": "nanosecond",
         "includes_book": True,
+        "includes_pbft": True,
+        "granularity": "nanosecond",
     }

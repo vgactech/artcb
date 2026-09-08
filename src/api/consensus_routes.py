@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -272,4 +274,150 @@ def pbft_new_view(body: NewViewBody, request: Request) -> dict:
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     return emitted
+
+
+def _pbft_log(request: Request):
+    engine = _engine(request)
+    store = getattr(engine, "pbft_log", None)
+    if store is None:
+        raise HTTPException(status_code=503, detail="pbft_finality_unavailable")
+    return store
+
+
+class PrePrepareBody(BaseModel):
+    pre_prepare: dict
+
+
+class PrepareMsgBody(BaseModel):
+    prepare: dict | None = None
+    view: int | None = None
+    seq: int | None = None
+    digest: str | None = None
+
+
+class CommitMsgBody(BaseModel):
+    commit: dict | None = None
+    view: int | None = None
+    seq: int | None = None
+    digest: str | None = None
+
+
+class ProposeBlockBody(BaseModel):
+    graph_id: str = Field(default="pbft-265", max_length=256)
+    graph_root: str = Field(default="265-finality", max_length=256)
+    source: str = Field(default="pbft:propose", max_length=64)
+    visibility: str = Field(default="public", max_length=16)
+
+
+class CertificateBody(BaseModel):
+    certificate: dict
+    block: dict | None = None
+
+
+class ViewChange265Body(BaseModel):
+    view: int = Field(ge=1)
+    view_change: dict | None = None
+
+
+@router.get("/pbft/finality")
+def pbft_finality_status(request: Request) -> dict:
+    return _pbft_log(request).snapshot()
+
+
+@router.get("/pbft/prepared")
+def pbft_prepared(request: Request) -> dict:
+    log = _pbft_log(request)
+    return {"ok": True, "prepared": log.prepared_set(), "view": log.view}
+
+
+@router.get("/pbft/certificate")
+def pbft_certificate(request: Request, seq: int) -> dict:
+    cert = _pbft_log(request).certificate(int(seq))
+    if not cert:
+        raise HTTPException(status_code=404, detail="no_certificate")
+    return {"ok": True, "certificate": cert}
+
+
+@router.post("/pbft/propose")
+def pbft_propose(body: ProposeBlockBody, request: Request) -> dict:
+    """Primary constructs a real chain block (dry_run) and signs PRE-PREPARE."""
+    state = request.app.state.artcb
+    log = _pbft_log(request)
+    try:
+        constructed = state.chain.append_block(
+            graph_id=body.graph_id,
+            graph_root=body.graph_root,
+            pol_score=0.1,
+            visibility=body.visibility,
+            source=body.source,
+            dry_run=True,
+        )
+        block = json.loads(constructed.to_json_line())
+        pp = log.emit_preprepare(state.chain, block=block)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ok": True, "pre_prepare": pp, "block": block, "digest": pp.get("digest")}
+
+
+@router.post("/pbft/pre-prepare")
+def pbft_pre_prepare(body: PrePrepareBody, request: Request) -> dict:
+    log = _pbft_log(request)
+    accepted = log.accept_preprepare(body.pre_prepare)
+    if not accepted.get("ok"):
+        raise HTTPException(status_code=409, detail=accepted.get("reason") or "invalid_preprepare")
+    return accepted
+
+
+@router.post("/pbft/prepare")
+def pbft_prepare(body: PrepareMsgBody, request: Request) -> dict:
+    state = request.app.state.artcb
+    log = _pbft_log(request)
+    if body.prepare:
+        return log.accept_prepare(body.prepare)
+    try:
+        row = log.emit_prepare(state.chain, view=int(body.view), seq=int(body.seq), digest=str(body.digest))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ok": True, "prepare": row}
+
+
+@router.post("/pbft/commit")
+def pbft_commit_msg(body: CommitMsgBody, request: Request) -> dict:
+    state = request.app.state.artcb
+    log = _pbft_log(request)
+    if body.commit:
+        return log.accept_commit(body.commit)
+    try:
+        emitted = log.emit_commit(state.chain, view=int(body.view), seq=int(body.seq), digest=str(body.digest))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ok": True, **emitted}
+
+
+@router.post("/pbft/certificate")
+def pbft_install_certificate(body: CertificateBody, request: Request) -> dict:
+    state = request.app.state.artcb
+    log = _pbft_log(request)
+    installed = log.install_certificate(body.certificate)
+    if not installed.get("ok"):
+        raise HTTPException(status_code=409, detail=installed.get("reason") or "invalid_certificate")
+    wrote = False
+    if body.block:
+        wrote = state.chain.write_certified_block(body.block, body.certificate)
+    return {**installed, "wrote": wrote}
+
+
+@router.post("/pbft/view-change-265")
+def pbft_view_change_265(body: ViewChange265Body, request: Request) -> dict:
+    state = request.app.state.artcb
+    log = _pbft_log(request)
+    if body.view_change:
+        ok = log.verify_view_change_265(body.view_change)
+        return {"ok": ok, "reason": None if ok else "invalid_view_change_265"}
+    try:
+        row = log.emit_view_change_265(state.chain, view=body.view)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ok": True, "view_change": row}
+
 

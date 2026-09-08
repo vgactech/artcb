@@ -40,7 +40,9 @@ def public_spec() -> dict[str, Any]:
         "four_live_nodes_bft_q": FOUR_NODE_BFT_Q,
         "dv05": "LIVE engine exists; PASS only after honest/offline/delay/double-proposal/divergence on 4 nodes",
         "canonical_tip_sim": "longest valid chain; tie -> lexicographically smaller hash (distributed.py)",
-        "scope": "settlement_prepare_commit",
+        "scope": "settlement_prepare_commit_and_block_finality",
         "pbft_view_change": "264-pbft-view-change",
-        "not_block_append_bft": True,
+        "pbft_block_finality": "265-pbft-block-finality",
+        "not_block_append_bft": False,
+        "canonical_tip_after_cert": "pbft commit certificate locks the index; longest-chain cannot reorg a certified seq",
     }

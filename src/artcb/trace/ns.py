@@ -30,6 +30,20 @@ def trace_path(data_dir: Path) -> Path:
     return Path(data_dir) / TRACE_REL
 
 
+def is_nanosecond_ts(value: Any) -> bool:
+    """Wall/mono timestamps must be ns, never ms (ms since epoch ~1e12)."""
+    try:
+        n = int(value)
+    except (TypeError, ValueError):
+        return False
+    return n >= 1_000_000_000
+
+
+def emit_pbft(data_dir: Path | None, *, phase: str, **fields: Any) -> dict[str, Any]:
+    row = {"kind": f"pbft_{phase}", "phase": phase, "unit": "nanosecond", **fields}
+    return emit(data_dir, row)
+
+
 def emit(data_dir: Path | None, row: dict[str, Any]) -> dict[str, Any]:
     record = {
         "ts_ns": now_wall_ns(),

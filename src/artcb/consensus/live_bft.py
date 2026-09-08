@@ -82,11 +82,13 @@ class LiveBftEngine:
         from pathlib import Path
 
         from src.artcb.consensus.pbft_view import PbftViewStore
+        from src.artcb.consensus.pbft_finality import PbftFinalityStore
 
         root = Path(data_dir)
         self.node_id = node_id
         self.ledger = SettlementLedger(root / "consensus" / "ledger.json")
         self.pbft = PbftViewStore(root, replica_id=node_id)
+        self.pbft_log = PbftFinalityStore(root, replica_id=node_id, view_store=self.pbft)
         self._reservations: dict[str, str] = {}
         self._lock = threading.Lock()
 
@@ -131,6 +133,7 @@ class LiveBftEngine:
             "scope": "settlement_prepare_commit",
             "pbft_view": int(getattr(pbft, "view", 0) or 0),
             "pbft_primary": getattr(pbft, "primary", None),
+            "pbft_finality": getattr(getattr(self, "pbft_log", None), "snapshot", lambda: {})(),
             "not_block_append_bft": True,
         }
 

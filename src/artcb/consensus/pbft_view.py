@@ -191,6 +191,22 @@ class PbftViewStore:
             "ts_ns": now_wall_ns(),
         }
         self._append_vc(row)
+        try:
+            from src.artcb.trace.ns import emit
+
+            emit(
+                self.data_dir,
+                {
+                    "kind": "pbft_view_change_264",
+                    "phase": "view-change",
+                    "view": int(view),
+                    "replica_id": replica,
+                    "ok": True,
+                    "ts_ns": row["ts_ns"],
+                },
+            )
+        except Exception:
+            pass
         return row
 
     def accept_view_change(self, row: dict[str, Any]) -> dict[str, Any]:

@@ -42,6 +42,8 @@ def test_http_middleware_sets_header_and_file(client: TestClient) -> None:
     body = traced.json()
     assert body["unit"] == "nanosecond"
     assert body["includes_book"] is True
+    assert body.get("includes_pbft") is True
+    assert body.get("granularity") == "nanosecond"
     assert body["summary"]["rows"] >= 1
 
 
