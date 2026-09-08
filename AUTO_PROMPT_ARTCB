@@ -1618,4 +1618,9 @@ V-03/V-04/V-05/V-06/V-07 PASS (voir `rapports/266_pbft_cert_live_20260908.md`).
 
 Cette consigne **n’annule pas** les blocs 264/265/266 ci-dessus ; elle les conserve.
 
+## [2026-09-08T16:20:00Z] suite horodatée — 266 live
+
+Le bloc 16:12:00Z (V-01…V-07 mesurés, height 1095, view 5, SHA `78cd8d6…`) reste ci-dessus. Ajout en fin de fichier pour respecter l’append-only après la règle 15:48.
+
+
 
