@@ -34,6 +34,48 @@ HEALTHY = max(3, int(os.environ.get("ARTCB272_HEALTHY", "10")))
 LOSS_PCT = (1, 5, 10, 20, 30, 50)
 
 
+def _finish_pp(pp: dict, block: dict, view: int, primary: str) -> dict:
+    """Complete PREPARE→COMMIT→certificate for an already-accepted PRE-PREPARE."""
+    from artcb.consensus.pbft_finality import verify_certificate
+
+    digest = str(pp.get("digest") or block.get("hash") or "")
+    seq = int(block.get("index") or -1)
+    for nid in OFFICIAL_COMPUTE_NODE_IDS:
+        if nid != primary:
+            l265._http("POST", f"{HTTP[nid]}/api/v1/consensus/pbft/pre-prepare", {"pre_prepare": pp})
+    prepares = {
+        n: l265._http("POST", f"{HTTP[n]}/api/v1/consensus/pbft/prepare", {"view": view, "seq": seq, "digest": digest})
+        for n in OFFICIAL_COMPUTE_NODE_IDS
+    }
+    for nid in OFFICIAL_COMPUTE_NODE_IDS:
+        for src, row in prepares.items():
+            prep = row.get("prepare")
+            if src != nid and isinstance(prep, dict):
+                l265._http("POST", f"{HTTP[nid]}/api/v1/consensus/pbft/prepare", {"prepare": prep})
+    cert = None
+    commits = {}
+    for nid in OFFICIAL_COMPUTE_NODE_IDS:
+        commits[nid] = l265._http("POST", f"{HTTP[nid]}/api/v1/consensus/pbft/commit", {"view": view, "seq": seq, "digest": digest})
+        if isinstance(commits[nid].get("certificate"), dict):
+            cert = commits[nid]["certificate"]
+    for nid in OFFICIAL_COMPUTE_NODE_IDS:
+        cmsg = commits[nid].get("commit") if isinstance(commits[nid], dict) else None
+        if not isinstance(cmsg, dict):
+            continue
+        for dst in OFFICIAL_COMPUTE_NODE_IDS:
+            if dst == nid:
+                continue
+            got = l265._http("POST", f"{HTTP[dst]}/api/v1/consensus/pbft/commit", {"commit": cmsg})
+            if isinstance(got.get("certificate"), dict):
+                cert = got["certificate"]
+    writes = {}
+    if isinstance(cert, dict) and verify_certificate(cert):
+        for nid in OFFICIAL_COMPUTE_NODE_IDS:
+            writes[nid] = l265._http("POST", f"{HTTP[nid]}/api/v1/consensus/pbft/certificate", {"certificate": cert, "block": block})
+    ok = bool(cert) and verify_certificate(cert) and all((writes.get(n) or {}).get("wrote") for n in OFFICIAL_COMPUTE_NODE_IDS)
+    return {"ok": ok, "seq": seq, "digest": digest, "writes": {n: (writes.get(n) or {}).get("wrote") for n in OFFICIAL_COMPUTE_NODE_IDS}}
+
+
 def _write(payload: dict, stamp: str) -> None:
     out = ROOT / "logs"
     out.mkdir(exist_ok=True)
@@ -162,11 +204,7 @@ def main() -> int:
             x = l265._http("POST", f"{HTTP[new_p]}/api/v1/consensus/pbft/client-request", {"block": block})
             fin = None
             if isinstance(x.get("pre_prepare"), dict):
-                fin = l265.run_round("272-p8-fin")
-            elif "must_repropose" in str(y.get("detail") or ""):
-                # Y refused; complete via another VC if X client-request failed
-                l271._unlock_view("272_p8_close")
-                fin = l265.run_round("272-p8-fin")
+                fin = _finish_pp(x["pre_prepare"], x.get("block") or block, int(unlock.get("to_view") or v + 1), new_p)
             y_refused = y.get("http") == 409 and "must_repropose_prepared" in str(y.get("detail") or "")
             b05 = {
                 "ok": bool(selected.get("proof")) and y_refused,

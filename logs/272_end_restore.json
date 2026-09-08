@@ -1,0 +1,65 @@
+{
+  "probe_http": 409,
+  "detail": "equivocation",
+  "unlock": {
+    "from_view": 14,
+    "to_view": 15,
+    "vc_n": 4,
+    "new_view": true,
+    "primary": "ovh-node-4",
+    "views": {
+      "ovh-node-1": {
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-2": {
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "aws-node-3": {
+        "view": 15,
+        "primary": "ovh-node-4"
+      },
+      "ovh-node-4": {
+        "view": 15,
+        "primary": "ovh-node-4"
+      }
+    },
+    "reason": "272_end_restore"
+  },
+  "round": {
+    "ok": true,
+    "seq": 1129,
+    "digest": "49dd849a33bd68f4206ad8a4fa4de66faafd36504eed71711e4bcab2bc94d941"
+  },
+  "after": {
+    "ovh-node-1": {
+      "height": 1130,
+      "last_hash": "49dd849a33bd68f4206ad8a4fa4de66faafd36504eed71711e4bcab2bc94d941",
+      "view": 15,
+      "chain_valid": true,
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20"
+    },
+    "ovh-node-2": {
+      "height": 1130,
+      "last_hash": "49dd849a33bd68f4206ad8a4fa4de66faafd36504eed71711e4bcab2bc94d941",
+      "view": 15,
+      "chain_valid": true,
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20"
+    },
+    "aws-node-3": {
+      "height": 1130,
+      "last_hash": "49dd849a33bd68f4206ad8a4fa4de66faafd36504eed71711e4bcab2bc94d941",
+      "view": 15,
+      "chain_valid": true,
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20"
+    },
+    "ovh-node-4": {
+      "height": 1130,
+      "last_hash": "49dd849a33bd68f4206ad8a4fa4de66faafd36504eed71711e4bcab2bc94d941",
+      "view": 15,
+      "chain_valid": true,
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20"
+    }
+  }
+}

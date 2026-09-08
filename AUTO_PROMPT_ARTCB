@@ -1689,5 +1689,11 @@ Récompense live depuis genesis : R(H)=50 (H_adult=0) × médiane Δt/600, cap 2
 `logs/271_close_20260908T201920Z.json` `logs/271_rewards_live.json` `rapports/271_pbft_close_18_live_rewards_20260908.md`. T-E59 [x].
 **PBFT 100 % = NON CERTIFIÉ.** BFT_SETTLEMENT PASS (188). BFT_BLOCK_CONSENSUS PARTIAL.
 
+## [2026-09-08T22:20:00Z] 272 — P0 orphan + prepared-set (pas CERTIFIED_100)
+
+Même vue + digest distinct = toujours 409 equivocation. NEW-VIEW `enter_view` jette accepted des vues plus anciennes. Prepared X lie propose ; Y = 409 `must_repropose_prepared`. accept_commit exige prepared.
+SHA live **`32869961950e5f9ec5b6d1f41652ceb03295cb20`** ×4. 10/10 rounds. Orphelin+VC heal 1119. B05 Y 409 (R271 était 200). N03 PASS. N04 1–30 % rounds certifiés ; **50 % FAIL**. N06+ contaminés après 50 %. Restore height **1130** tip `49dd849a…` view 15.
+`logs/272_p0_20260908T212134Z.json` `logs/272_net_replay.json`. T-E60 [x]. **CERTIFIED_100=false.**
+
 
 

@@ -1,0 +1,301 @@
+{
+  "stamp": "20260908T212134Z",
+  "protocol": "272-p0-orphan-prepared",
+  "origin_main": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+  "git_sha_agent": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+  "hpc": false,
+  "wipe": false,
+  "overlay_forbidden": true,
+  "certified_100_claim": false,
+  "tests": {
+    "healthy": {
+      "ok": true,
+      "ok_n": 10,
+      "requested": 10,
+      "last": {
+        "ok": true,
+        "seq": 1118,
+        "digest": "513adecb5f0b74f954e3fa492838fd1f55f0d23587730aa82e40f03c2fdea09f"
+      }
+    },
+    "orphan": {
+      "ok": true,
+      "first_http": 200,
+      "second_http": 409,
+      "second_detail": "equivocation",
+      "same_view_equivocation": true,
+      "unlock": {
+        "from_view": 12,
+        "to_view": 13,
+        "vc_n": 4,
+        "primary": "ovh-node-2"
+      },
+      "heal": {
+        "ok": true,
+        "seq": 1119,
+        "digest": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+        "phase": null
+      }
+    },
+    "B05": {
+      "ok": true,
+      "select_proof": true,
+      "bound": {
+        "ok": true,
+        "seq": 1120,
+        "digest": "3ced8e3a82014cf1c103d3a1a6e84e43610872b8666b418e54d030ee3b328920",
+        "has_block": true
+      },
+      "y_http": 409,
+      "y_detail": "must_repropose_prepared",
+      "x_http": 200,
+      "fin": {
+        "ok": false,
+        "seq": null,
+        "digest": null
+      },
+      "vc265": 4
+    },
+    "N03": {
+      "ok": false,
+      "during_round": {
+        "ok": false,
+        "seq": null,
+        "phase": "propose"
+      },
+      "heal": {
+        "ok": false,
+        "seq": null,
+        "digest": null
+      },
+      "during_safety": true
+    },
+    "N04": {
+      "ok": false,
+      "liveness_1pct": false,
+      "safety_all": true,
+      "rows": [
+        {
+          "loss_pct": 1,
+          "round_ok": false,
+          "seq": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 5,
+          "round_ok": false,
+          "seq": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 10,
+          "round_ok": false,
+          "seq": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 20,
+          "round_ok": false,
+          "seq": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 30,
+          "round_ok": false,
+          "seq": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 50,
+          "round_ok": false,
+          "seq": null,
+          "reason": "propose",
+          "safety": true
+        }
+      ]
+    },
+    "N06": {
+      "ok": false,
+      "round_ok": false,
+      "seq": null,
+      "safety": true
+    },
+    "N08": {
+      "ok": false,
+      "round_ok": false,
+      "seq": null,
+      "safety": true
+    },
+    "C03": {
+      "ok": false,
+      "skew_rc": 0,
+      "round_ok": false,
+      "seq": null
+    },
+    "A02": {
+      "ok": false,
+      "first": 409,
+      "second": 409,
+      "detail": "Block append failed: client_request_failed:409:must_repropose_prepared"
+    },
+    "X03": {
+      "ok": false,
+      "economics_http": 200,
+      "wallet_http": 409,
+      "memo_round": {
+        "ok": false,
+        "seq": null,
+        "digest": null
+      }
+    }
+  },
+  "before": {
+    "height_unique": 1,
+    "hash_unique": 1,
+    "view_unique": 1,
+    "sha_unique": 1,
+    "converged": true,
+    "heights": {
+      "ovh-node-1": 1109,
+      "ovh-node-2": 1109,
+      "aws-node-3": 1109,
+      "ovh-node-4": 1109
+    },
+    "hashes": {
+      "ovh-node-1": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "ovh-node-2": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "aws-node-3": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "ovh-node-4": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa"
+    },
+    "views": {
+      "ovh-node-1": 12,
+      "ovh-node-2": 12,
+      "aws-node-3": 12,
+      "ovh-node-4": 12
+    },
+    "shas": {
+      "ovh-node-1": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "ovh-node-2": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "aws-node-3": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "ovh-node-4": "32869961950e5f9ec5b6d1f41652ceb03295cb20"
+    }
+  },
+  "freeze_nodes": {
+    "ovh-node-1": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    },
+    "ovh-node-2": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    },
+    "aws-node-3": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    },
+    "ovh-node-4": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    }
+  },
+  "sha_equal": true,
+  "after": {
+    "height_unique": 1,
+    "hash_unique": 1,
+    "view_unique": 1,
+    "sha_unique": 1,
+    "converged": true,
+    "heights": {
+      "ovh-node-1": 1120,
+      "ovh-node-2": 1120,
+      "aws-node-3": 1120,
+      "ovh-node-4": 1120
+    },
+    "hashes": {
+      "ovh-node-1": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+      "ovh-node-2": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+      "aws-node-3": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+      "ovh-node-4": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b"
+    },
+    "views": {
+      "ovh-node-1": 14,
+      "ovh-node-2": 14,
+      "aws-node-3": 14,
+      "ovh-node-4": 14
+    },
+    "shas": {
+      "ovh-node-1": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "ovh-node-2": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "aws-node-3": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "ovh-node-4": "32869961950e5f9ec5b6d1f41652ceb03295cb20"
+    }
+  },
+  "after_nodes": {
+    "ovh-node-1": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1120,
+      "last_hash": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+      "view": 14,
+      "primary": "aws-node-3",
+      "chain_valid": true
+    },
+    "ovh-node-2": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1120,
+      "last_hash": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+      "view": 14,
+      "primary": "aws-node-3",
+      "chain_valid": true
+    },
+    "aws-node-3": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1120,
+      "last_hash": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+      "view": 14,
+      "primary": "aws-node-3",
+      "chain_valid": true
+    },
+    "ovh-node-4": {
+      "git_sha": "32869961950e5f9ec5b6d1f41652ceb03295cb20",
+      "height": 1120,
+      "last_hash": "f4079eeff8149d33d0c68df42292547206a17e3e4c8f9f8faed612ebe86d480b",
+      "view": 14,
+      "primary": "aws-node-3",
+      "chain_valid": true
+    }
+  },
+  "summary": {
+    "healthy": true,
+    "orphan": true,
+    "B05": true,
+    "N03": false,
+    "N04": false,
+    "N06": false,
+    "N08": false,
+    "C03": false,
+    "A02": false,
+    "X03": false
+  },
+  "all_ok": false
+}

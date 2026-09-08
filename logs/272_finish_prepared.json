@@ -1,0 +1,30 @@
+{
+  "view": 14,
+  "primary": "aws-node-3",
+  "client": {
+    "http": 200,
+    "detail": null,
+    "digest": "3ced8e3a82014cf1c103d3a1a6e84e43610872b8666b418e54d030ee3b328920"
+  },
+  "seq": 1120,
+  "digest": "3ced8e3a82014cf1c103d3a1a6e84e43610872b8666b418e54d030ee3b328920",
+  "cert_ok": true,
+  "writes": {
+    "ovh-node-1": true,
+    "ovh-node-2": true,
+    "aws-node-3": true,
+    "ovh-node-4": true
+  },
+  "heights": {
+    "ovh-node-1": 1121,
+    "ovh-node-2": 1121,
+    "aws-node-3": 1121,
+    "ovh-node-4": 1121
+  },
+  "hashes": {
+    "ovh-node-1": "3ced8e3a82014cf1c103d3a1a6e84e43610872b8666b418e54d030ee3b328920",
+    "ovh-node-2": "3ced8e3a82014cf1c103d3a1a6e84e43610872b8666b418e54d030ee3b328920",
+    "aws-node-3": "3ced8e3a82014cf1c103d3a1a6e84e43610872b8666b418e54d030ee3b328920",
+    "ovh-node-4": "3ced8e3a82014cf1c103d3a1a6e84e43610872b8666b418e54d030ee3b328920"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "ovh-node-1": {
+    "rc": 0,
+    "tail": "ip netem/asym scripts before live replay\nkeep-book reset --hard 32869961950e5f9ec5b6d1f41652ceb03295cb20\nrelease.env sha=32869961950e5f9ec5b6d1f41652ceb03295cb20 branch=main\nartcb restarted old=89619ccc75509ff4d36dc175267800cbb4ced7a2 new=32869961950e5f9ec5b6d1f41652ceb03295cb20\nblocks.jsonl not emptied lines=1109\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=32869961950e5f9ec5b6d1f41652ceb03295cb20\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  },
+  "ovh-node-2": {
+    "rc": 0,
+    "tail": "ip netem/asym scripts before live replay\nkeep-book reset --hard 32869961950e5f9ec5b6d1f41652ceb03295cb20\nrelease.env sha=32869961950e5f9ec5b6d1f41652ceb03295cb20 branch=main\nartcb restarted old=89619ccc75509ff4d36dc175267800cbb4ced7a2 new=32869961950e5f9ec5b6d1f41652ceb03295cb20\nblocks.jsonl not emptied lines=1109\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=32869961950e5f9ec5b6d1f41652ceb03295cb20\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  },
+  "aws-node-3": {
+    "rc": 0,
+    "tail": "ip netem/asym scripts before live replay\nkeep-book reset --hard 32869961950e5f9ec5b6d1f41652ceb03295cb20\nrelease.env sha=32869961950e5f9ec5b6d1f41652ceb03295cb20 branch=main\nartcb restarted old=89619ccc75509ff4d36dc175267800cbb4ced7a2 new=32869961950e5f9ec5b6d1f41652ceb03295cb20\nblocks.jsonl not emptied lines=1109\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=32869961950e5f9ec5b6d1f41652ceb03295cb20\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  },
+  "ovh-node-4": {
+    "rc": 0,
+    "tail": "ip netem/asym scripts before live replay\nkeep-book reset --hard 32869961950e5f9ec5b6d1f41652ceb03295cb20\nrelease.env sha=32869961950e5f9ec5b6d1f41652ceb03295cb20 branch=main\nartcb restarted old=89619ccc75509ff4d36dc175267800cbb4ced7a2 new=32869961950e5f9ec5b6d1f41652ceb03295cb20\nblocks.jsonl not emptied lines=1109\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=32869961950e5f9ec5b6d1f41652ceb03295cb20\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  }
+}
