@@ -1678,5 +1678,16 @@ Après : height **1107** tip `94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4
 `logs/270_pbft_cert_20260908T182742Z.json`. T-E58 [x].
 **PBFT 100 % = NON CERTIFIÉ.** BFT_SETTLEMENT NOT_PROVEN. BFT_BLOCK_CONSENSUS partiel.
 
+## [2026-09-08T20:50:00Z] 271 — 18 NOT_PROVEN exécutés live ; CERTIFIED_100=false
+
+Les 18 manquants R270 ont été **exécutés** (iptables, tc netem, crash, 1000× cert, 188). Pas de wipe. AWS t3.small. HPC interdit.
+SHA live `4fb2b1bb567f29628bdd7b2427d6815f00097792` ×4 = origin/main docs ; moteur `f59dd88`.
+**34 PASS / 9 FAIL / 0 NOT_PROVEN.** CERTIFIED_100=false. NOT_CERTIFIED.
+X01 188 PASS (prepare+commit ×4 view 9). B04 PASS (PREPARE Y 409 not_accepted). B05 FAIL (Y HTTP 200 malgré select_proof).
+Bug liveness : PRE-PREPARE orphelin → 409 equivocation jusqu’à VIEW-CHANGE. Unlock 8→9 seq **1107** `54bb4291…` ; B05 rebloque view 11 ; C04 0/16 ; N04/N06/N08 FAIL (safety sans round). Restore VC 11→12 seq **1108** `62bbae14…` height **1109** chain_valid ×4.
+Récompense live depuis genesis : R(H)=50 (H_adult=0) × médiane Δt/600, cap 21M, pas de 210k. Somme **2340.49999651** ARTCB. i=0 → 50 ; i=1107/1108 → 22.25 (=50×267/600, pas le trou mural). Budget unique settle_block.
+`logs/271_close_20260908T201920Z.json` `logs/271_rewards_live.json` `rapports/271_pbft_close_18_live_rewards_20260908.md`. T-E59 [x].
+**PBFT 100 % = NON CERTIFIÉ.** BFT_SETTLEMENT PASS (188). BFT_BLOCK_CONSENSUS PARTIAL.
+
 
 

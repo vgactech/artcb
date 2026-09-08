@@ -42,9 +42,13 @@ def test_fail_is_not_certified() -> None:
     for row in matrix["rows"]:
         apply_result(matrix, row["id"], verdict="PASS", result="PASS")
     apply_result(matrix, "PBFT-S01", verdict="FAIL", result="FAIL")
+    apply_result(matrix, "PBFT-X01", verdict="PASS", result="PASS")
+    apply_result(matrix, "PBFT-X02", verdict="PASS", result="PASS")
     finalize(matrix)
     assert matrix["certified_100"] is False
     assert matrix["global_verdict"] == "NOT_CERTIFIED"
+    assert matrix["bft_settlement"] == "PASS"
+    assert matrix["bft_block_consensus"] == "PARTIAL"
 
 
 def test_independent_safety_detects_divergence() -> None:

@@ -1,0 +1,64 @@
+{
+  "views_before": {
+    "ovh-node-1": 11,
+    "ovh-node-2": 11,
+    "aws-node-3": 11,
+    "ovh-node-4": 11
+  },
+  "probe_http": 409,
+  "probe_detail": "equivocation",
+  "unlock": {
+    "from_view": 11,
+    "to_view": 12,
+    "vc_n": 4,
+    "new_view": true,
+    "primary": "ovh-node-1"
+  },
+  "round": {
+    "ok": true,
+    "seq": 1108,
+    "digest": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+    "reason": null,
+    "phase": null
+  },
+  "after": {
+    "ovh-node-1": {
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true,
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+    },
+    "ovh-node-2": {
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true,
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+    },
+    "aws-node-3": {
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true,
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+    },
+    "ovh-node-4": {
+      "height": 1109,
+      "last_hash": "62bbae14a7985bb00d083ebdb30211138fb353830b20e403384ee46e4ab6baaa",
+      "view": 12,
+      "primary": "ovh-node-1",
+      "chain_valid": true,
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+    }
+  },
+  "svc": {
+    "ovh-node-1": "active\nqdisc noqueue 0: dev lo root refcnt 2 \nqdisc fq_codel 0: dev ens3 root refcnt 2 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 \n0\n",
+    "ovh-node-2": "active\nqdisc noqueue 0: dev lo root refcnt 2 \nqdisc fq_codel 0: dev ens3 root refcnt 2 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 \n0\n",
+    "aws-node-3": "active\nqdisc noqueue 0: dev lo root refcnt 2 \nqdisc mq 0: dev ens5 root \n0\n",
+    "ovh-node-4": "active\nqdisc noqueue 0: dev lo root refcnt 2 \nqdisc fq_codel 0: dev ens3 root refcnt 2 limit 10240p flows 1024 quantum 1514 target 5ms interval 100ms memory_limit 32Mb ecn drop_batch 64 \n0\n"
+  }
+}

@@ -164,6 +164,12 @@ def finalize(matrix: dict[str, Any]) -> dict[str, Any]:
         matrix["global_verdict"] = "PARTIALLY_VERIFIED"
     else:
         matrix["global_verdict"] = "NOT_PROVEN"
+    by_id = {r["id"]: r.get("verdict") for r in matrix["rows"]}
+    matrix["bft_settlement"] = by_id.get("PBFT-X01") or "NOT_PROVEN"
+    x02 = by_id.get("PBFT-X02") or "NOT_PROVEN"
+    matrix["bft_block_consensus"] = (
+        "PARTIAL" if x02 == "PASS" and not matrix["certified_100"] else x02
+    )
     return matrix
 
 

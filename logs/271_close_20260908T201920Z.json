@@ -1,0 +1,1335 @@
+{
+  "stamp": "20260908T201920Z",
+  "protocol": "271-close-not-proven",
+  "origin_main": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+  "hpc": false,
+  "wipe": false,
+  "aws": "t3.small",
+  "n_f_q": [
+    4,
+    1,
+    3
+  ],
+  "long_rounds": 16,
+  "tests": {
+    "X01": {
+      "work_id": "artcb271-646fff9b3b1a",
+      "view": 9,
+      "prepared": 4,
+      "prepared_nodes": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4"
+      ],
+      "commits": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4"
+      ],
+      "rejected": [],
+      "ok": true
+    },
+    "S05": {
+      "ok": true,
+      "http": 409,
+      "detail": "invalid_certificate"
+    },
+    "N07": {
+      "ok": true,
+      "n": 1000,
+      "codes": [
+        200
+      ],
+      "dur_s": 178.04,
+      "safety": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 9,
+          "ovh-node-2": 9,
+          "aws-node-3": 9,
+          "ovh-node-4": 9
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      }
+    },
+    "B04": {
+      "ok": true,
+      "px": 200,
+      "py": 409,
+      "py_detail": "not_accepted"
+    },
+    "B04_unlock": {
+      "from_view": 9,
+      "to_view": 10,
+      "vc_n": 4,
+      "new_view": true,
+      "primary": "aws-node-3",
+      "views": {
+        "ovh-node-1": {
+          "view": 10,
+          "primary": "aws-node-3"
+        },
+        "ovh-node-2": {
+          "view": 10,
+          "primary": "aws-node-3"
+        },
+        "aws-node-3": {
+          "view": 10,
+          "primary": "aws-node-3"
+        },
+        "ovh-node-4": {
+          "view": 10,
+          "primary": "aws-node-3"
+        }
+      },
+      "reason": "271_b04_close_lock"
+    },
+    "B05_note": "inline P8-like on current SHA",
+    "B05": {
+      "ok": false,
+      "select_proof": true,
+      "y_http": 200,
+      "y_detail": "",
+      "vc265": 4
+    },
+    "R03": {
+      "ok": true,
+      "invented": false,
+      "bogus_http": 404,
+      "restored": true
+    },
+    "N03": {
+      "ok": false,
+      "round": {
+        "ok": false,
+        "seq": null,
+        "digest": null,
+        "reason": null,
+        "phase": "propose"
+      },
+      "during": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      },
+      "after": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      },
+      "heal": {
+        "ok": false,
+        "seq": null,
+        "digest": null
+      }
+    },
+    "N04": {
+      "ok": false,
+      "safety_all": true,
+      "any_liveness": false,
+      "liveness_1pct": false,
+      "rows": [
+        {
+          "loss_pct": 1,
+          "round_ok": false,
+          "seq": null,
+          "digest": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 5,
+          "round_ok": false,
+          "seq": null,
+          "digest": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 10,
+          "round_ok": false,
+          "seq": null,
+          "digest": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 20,
+          "round_ok": false,
+          "seq": null,
+          "digest": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 30,
+          "round_ok": false,
+          "seq": null,
+          "digest": null,
+          "reason": "propose",
+          "safety": true
+        },
+        {
+          "loss_pct": 50,
+          "round_ok": false,
+          "seq": null,
+          "digest": null,
+          "reason": "propose",
+          "safety": true
+        }
+      ]
+    },
+    "N06": {
+      "ok": false,
+      "round_ok": false,
+      "seq": null,
+      "digest": null,
+      "safety": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      }
+    },
+    "N08": {
+      "ok": false,
+      "round_ok": false,
+      "seq": null,
+      "safety": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      }
+    },
+    "C02": {
+      "ok": true,
+      "round_ok": false,
+      "during_majority_unique": 2,
+      "after": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      }
+    },
+    "C03": {
+      "ok": false,
+      "skew_rc": 0,
+      "round_ok": false,
+      "seq": null,
+      "ntp_rc": 0,
+      "safety": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      }
+    },
+    "Q02": {
+      "ok": true,
+      "two_node_round_ok": false,
+      "reason": "propose",
+      "expected_failure": true
+    },
+    "C05": {
+      "ok": true,
+      "http": 200,
+      "detail": "invalid_prepare"
+    },
+    "A01": {
+      "ok": true,
+      "first": 200,
+      "second": 409,
+      "detail": "agent_identity_conflict"
+    },
+    "A02": {
+      "ok": false,
+      "first": 409,
+      "second": 409,
+      "detail": "Block append failed: client_request_failed:409:equivocation",
+      "e1_status": null,
+      "safety": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      }
+    },
+    "X03": {
+      "ok": false,
+      "economics_http": 200,
+      "wallet_http": 409,
+      "wallet_ok": true,
+      "memo_round": {
+        "ok": false,
+        "seq": null,
+        "digest": null
+      },
+      "h_adult_params": "live counter = HumanRegistry.verified_adult_count (18+); Hmax NOT frozen at 8.3e9",
+      "note": "wallet 200=created or 409=device already bound; seed_hex never logged"
+    },
+    "C04": {
+      "ok": false,
+      "requested": 16,
+      "ok_n": 0,
+      "fail_n": 16,
+      "last": {
+        "ok": null,
+        "seq": null,
+        "digest": null
+      },
+      "safety": {
+        "height_unique": 1,
+        "hash_unique": 1,
+        "view_unique": 1,
+        "sha_unique": 1,
+        "converged": true,
+        "heights": {
+          "ovh-node-1": 1108,
+          "ovh-node-2": 1108,
+          "aws-node-3": 1108,
+          "ovh-node-4": 1108
+        },
+        "hashes": {
+          "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+          "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+        },
+        "views": {
+          "ovh-node-1": 11,
+          "ovh-node-2": 11,
+          "aws-node-3": 11,
+          "ovh-node-4": 11
+        },
+        "shas": {
+          "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+          "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+        }
+      },
+      "thousands": false
+    }
+  },
+  "before": {
+    "height_unique": 1,
+    "hash_unique": 1,
+    "view_unique": 1,
+    "sha_unique": 1,
+    "converged": true,
+    "heights": {
+      "ovh-node-1": 1107,
+      "ovh-node-2": 1107,
+      "aws-node-3": 1107,
+      "ovh-node-4": 1107
+    },
+    "hashes": {
+      "ovh-node-1": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661",
+      "ovh-node-2": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661",
+      "aws-node-3": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661",
+      "ovh-node-4": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661"
+    },
+    "views": {
+      "ovh-node-1": 8,
+      "ovh-node-2": 8,
+      "aws-node-3": 8,
+      "ovh-node-4": 8
+    },
+    "shas": {
+      "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+    }
+  },
+  "freeze_nodes": {
+    "ovh-node-1": {
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "height": 1107,
+      "last_hash": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661",
+      "view": 8,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    },
+    "ovh-node-2": {
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "height": 1107,
+      "last_hash": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661",
+      "view": 8,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    },
+    "aws-node-3": {
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "height": 1107,
+      "last_hash": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661",
+      "view": 8,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    },
+    "ovh-node-4": {
+      "git_sha": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "height": 1107,
+      "last_hash": "94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661",
+      "view": 8,
+      "primary": "ovh-node-1",
+      "chain_valid": true
+    }
+  },
+  "sha_equal": true,
+  "overlay_r270": {
+    "copied": 25,
+    "prior_sha": null
+  },
+  "propose_probe": {
+    "http": 409,
+    "detail": "equivocation",
+    "primary": "ovh-node-1"
+  },
+  "unlock": {
+    "from_view": 8,
+    "to_view": 9,
+    "vc_n": 4,
+    "new_view": true,
+    "primary": "ovh-node-2",
+    "views": {
+      "ovh-node-1": {
+        "view": 9,
+        "primary": "ovh-node-2"
+      },
+      "ovh-node-2": {
+        "view": 9,
+        "primary": "ovh-node-2"
+      },
+      "aws-node-3": {
+        "view": 9,
+        "primary": "ovh-node-2"
+      },
+      "ovh-node-4": {
+        "view": 9,
+        "primary": "ovh-node-2"
+      }
+    },
+    "reason": "271_dangling_preprepare"
+  },
+  "baseline_after_unlock": {
+    "ok": true,
+    "seq": 1107,
+    "digest": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+    "reason": null,
+    "phase": null
+  },
+  "after": {
+    "height_unique": 1,
+    "hash_unique": 1,
+    "view_unique": 1,
+    "sha_unique": 1,
+    "converged": true,
+    "heights": {
+      "ovh-node-1": 1108,
+      "ovh-node-2": 1108,
+      "aws-node-3": 1108,
+      "ovh-node-4": 1108
+    },
+    "hashes": {
+      "ovh-node-1": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+      "ovh-node-2": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+      "aws-node-3": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7",
+      "ovh-node-4": "54bb42917ece366c5e305d3975cabd953af1764668c179913fbae1f02a2619d7"
+    },
+    "views": {
+      "ovh-node-1": 11,
+      "ovh-node-2": 11,
+      "aws-node-3": 11,
+      "ovh-node-4": 11
+    },
+    "shas": {
+      "ovh-node-1": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "ovh-node-2": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "aws-node-3": "4fb2b1bb567f29628bdd7b2427d6815f00097792",
+      "ovh-node-4": "4fb2b1bb567f29628bdd7b2427d6815f00097792"
+    }
+  },
+  "matrix": {
+    "protocol": "270-pbft-certification-matrix",
+    "n": 4,
+    "f": 1,
+    "q": 3,
+    "replicas": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4"
+    ],
+    "settlement_protocol": "188-live-bft-prepare-commit",
+    "view_protocol": "264-pbft-view-change",
+    "block_finality_protocol": "265-pbft-block-finality",
+    "exclusive_public_from_seq": 1087,
+    "hpc": false,
+    "wipe": false,
+    "rows": [
+      {
+        "id": "PBFT-P00",
+        "property": "Freeze SHA/N/F/Q/genesis/view \u00d74",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: independent_snapshot \u00d74",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-P01",
+        "property": "Same protocol version \u00d74",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: git_sha=805098126cf3f6dd5ef614b44ba59899a4e53e72",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-S01",
+        "property": "Safety: no two incompatible finalized values",
+        "min_level": "L6",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: no dual tip across L01; not exhaustive L6",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-S02",
+        "property": "Finality irreversible without explicit procedure",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: tip unchanged after idle wait (not a full comms-cut)",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-S03",
+        "property": "seq=index digest=hash binding",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: digest/hash binding via invalid cert",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-S04",
+        "property": "Certificate \u2260 block rejected",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: cert\u2260block 409",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-S05",
+        "property": "Duplicate replica_id does not count as Q",
+        "min_level": "L1",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "duplicate replica commits rejected live",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-L01",
+        "property": "Liveness: honest Q progresses",
+        "min_level": "L4",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: two certified public rounds \u00d74",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-L02",
+        "property": "Liveness after leader timeout/view-change",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: progress after primary down",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-F01",
+        "property": "Primary process down, no new block (stay)",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: node down then up; not specifically primary-idle",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-F02",
+        "property": "Primary down + new certified block on majority",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: majority certified while one process down",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-F03",
+        "property": "Primary rejoin after majority progressed",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: lagging node rejoined via replica",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-F04",
+        "property": "Replica crash/restart keeps public tip",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: stop/start ovh-node-1",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-B01",
+        "property": "Byzantine primary dual propose / equivocation",
+        "min_level": "L6",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L6",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: HTTP dual propose on live primary",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-B02",
+        "property": "Byzantine PREPARE X/Y same seq",
+        "min_level": "L6",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L6",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: PREPARE Y after accepted X",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-B03",
+        "property": "Forged signatures / unknown key rejected",
+        "min_level": "L6",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L6",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: forged PREPARE HTTP",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-B04",
+        "property": "Conflicting votes from one replica",
+        "min_level": "L6",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L6",
+        "result": "PASS",
+        "proof": "PREPARE X to one replica, PREPARE Y to another",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-B05",
+        "property": "Prepared certificate required in VIEW-CHANGE",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "FAIL",
+        "proof": "prepared proofs + Y refused after VC on this SHA",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-R01",
+        "property": "Crash recovery persistence",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: process restart",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-R02",
+        "property": "Protocol catch-up of lagging replica (not jsonl-append)",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: p2p/replica/run not jsonl-append",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-R03",
+        "property": "Truncated PBFT state does not invent certificates",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "truncated pbft_finality.json does not invent a valid cert",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-N01",
+        "property": "Real 2\u20132 partition: neither side finalizes",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: iptables 2-2, neither side Q=3",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-N02",
+        "property": "Heal after partition \u2192 convergence",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: heal + replica_from_ovh1",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-N03",
+        "property": "Asymmetric partition",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "FAIL",
+        "proof": "OUTPUT drop 1\u21924 only; INPUT still open; no dual tip; certified round after restore",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-N04",
+        "property": "Packet loss sweep 1\u201350%",
+        "min_level": "L5",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "FAIL",
+        "proof": "tc netem loss 1\u201350% \u00d74; PASS requires safety at all rates AND a certified round at 1%",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-N05",
+        "property": "Injected delay / jitter",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: 100ms netem on ovh-node-2 then restore",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-N06",
+        "property": "Message reordering middlebox",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "FAIL",
+        "proof": "tc netem delay 40ms reorder 50% 25% \u00d74; PASS requires certified round + no dual tip",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-N07",
+        "property": "Duplication 1x\u20131000x same message",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "1000 identical certificate POSTs, tip unchanged/converged",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-N08",
+        "property": "Combined loss+delay+reorder",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "FAIL",
+        "proof": "combined delay+loss+reorder; PASS requires certified round + no dual tip",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-Q01",
+        "property": "Q<3 cannot produce valid finality",
+        "min_level": "L4",
+        "critical": true,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: run_round on 2 nodes must not finalize",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-Q02",
+        "property": "F=2 expected failure vs spec (not a protocol violation)",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "F=2 (2 processes down): remaining 2 must not finalize \u2014 expected",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-V01",
+        "property": "VIEW-CHANGE Q=3 + NEW-VIEW",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: VIEW-CHANGE majority + NEW-VIEW + certify",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-V02",
+        "property": "Replay wrong-view rejected",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: wrong-view PRE-PREPARE rejected (HTTP 200 may wrap invalid_*)",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-C01",
+        "property": "Byzantine + crash combined",
+        "min_level": "L6",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L6",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: replica down + equivocation + majority certify + protocol replica",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-C02",
+        "property": "Crash + partition + delayed message",
+        "min_level": "L6",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L6",
+        "result": "PASS",
+        "proof": "aws-3 down + asym 1\u21922 + delay ovh4; restore; converge",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-C03",
+        "property": "Clock skew consensus independence",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "FAIL",
+        "proof": "+70s clock on ovh-2 then NTP restore; PASS requires certified round under skew",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-C04",
+        "property": "Long-run thousands of blocks",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "FAIL",
+        "proof": "0/16 certified rounds live; thousands=False (FAIL unless \u22651000)",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-C05",
+        "property": "Membership change validators",
+        "min_level": "L5",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L5",
+        "result": "PASS",
+        "proof": "replica_id outside official set rejected (no silent 5th validator)",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-A01",
+        "property": "Agent identity conflict through consensus",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "same agent_id different provider \u2192 409",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-A02",
+        "property": "Agent idempotency conflict + public PBFT replicate",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "FAIL",
+        "proof": "public event then different payload 409; 4 tips",
+        "verdict": "FAIL"
+      },
+      {
+        "id": "PBFT-X01",
+        "property": "BFT_SETTLEMENT (188) independent of block PBFT",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "POST /consensus/prepare+commit Q=3 on 4 live nodes",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-X02",
+        "property": "BFT_BLOCK_CONSENSUS exclusive public append",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "PASS",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "PASS",
+        "proof": "R270 live SHA 8050981 engine f59dd88: exclusive PBFT public append run_round",
+        "verdict": "PASS"
+      },
+      {
+        "id": "PBFT-X03",
+        "property": "All ARTCB product features via live consensus",
+        "min_level": "L4",
+        "critical": false,
+        "local": "NOT_PROVEN",
+        "multi_node": "NOT_PROVEN",
+        "live_wan": "FAIL",
+        "fault_injection": "NOT_EXECUTED",
+        "byzantine": "NOT_EXECUTED",
+        "level": "L4",
+        "result": "FAIL",
+        "proof": "economics params + wallet create/bind + public PBFT round \u2014 not every product feature",
+        "verdict": "FAIL"
+      }
+    ],
+    "totals": {
+      "PASS": 34,
+      "FAIL": 9,
+      "NOT_PROVEN": 0,
+      "NOT_EXECUTED": 0,
+      "SKIPPED": 0,
+      "TOTAL_REQUIRED": 43,
+      "TOTAL_EXECUTED": 43
+    },
+    "certified_100": false,
+    "global_verdict": "NOT_CERTIFIED",
+    "bft_settlement": "PASS",
+    "bft_block_consensus": "PARTIAL"
+  },
+  "certified_100": false,
+  "global_verdict": "NOT_CERTIFIED"
+}

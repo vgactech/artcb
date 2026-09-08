@@ -1,12 +1,12 @@
 {
-  "n": 1107,
+  "n": 1109,
   "first_index": 0,
-  "last_index": 1106,
-  "sum_satoshi": 229599999651,
-  "sum_artcb": 2295.99999651,
+  "last_index": 1108,
+  "sum_satoshi": 234049999651,
+  "sum_artcb": 2340.49999651,
   "min_sat": 0,
   "max_sat": 10633333333,
-  "unique_rewards": 16,
+  "unique_rewards": 17,
   "zeros": 4,
   "genesis_50": 1,
   "fast_1s_floor": 1062,
@@ -56,6 +56,10 @@
       2
     ],
     [
+      2225000000,
+      2
+    ],
+    [
       5000000000,
       1
     ],
@@ -69,10 +73,6 @@
     ],
     [
       2516666667,
-      1
-    ],
-    [
-      2591666667,
       1
     ]
   ],
@@ -10039,6 +10039,24 @@
       "visibility": "public",
       "pbft": true,
       "ts": "2026-09-08T18:38:55"
+    },
+    {
+      "index": 1107,
+      "reward_satoshi": 2225000000,
+      "reward_artcb": 22.25,
+      "dt_s": 6083.0,
+      "visibility": "public",
+      "pbft": true,
+      "ts": "2026-09-08T20:20:18"
+    },
+    {
+      "index": 1108,
+      "reward_satoshi": 2225000000,
+      "reward_artcb": 22.25,
+      "dt_s": 1638.0,
+      "visibility": "public",
+      "pbft": true,
+      "ts": "2026-09-08T20:47:36"
     }
   ],
   "ssh_rc": 0,
