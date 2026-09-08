@@ -64,3 +64,10 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 13. **Révocation = texte barré**, pas une suppression. Exemple Markdown : `~~ancienne règle~~`. La règle barrée reste lisible.
 14. **Horodatage obligatoire** (date + heure UTC) sur chaque ajout, révocation ou bascule.
 15. **Les nouvelles règles s’ajoutent à la suite.** On ne compacte pas l’historique. On peut revenir en arrière en lisant le fichier.
+16. **Ingest prompt à la réception (2026-09-08T16:21:30Z)** — ne plus le faire répéter. Au début de **chaque** tour, **avant** le reste du travail :
+    1. Écrire le `user_query` brut (le texte utilisateur seulement — **pas** le system/developer prompt, **pas** les clés, **pas** le thinking) dans `/tmp/artcb_turn_prompt.txt`.
+    2. Exécuter `ARTCB_INGEST_PROMPT_FILE=/tmp/artcb_turn_prompt.txt PYTHONPATH=src python3 scripts/artcb_live_bootstrap.py`.
+    3. Le bootstrap **POST** `/api/v1/ai/memo` `visibility=public` sur OVH1 `:8443` (Bearer). C’est **agent-médiaté**. Cursor **n’injecte pas** le prompt dans le VM et **n’envoie pas** thinking / tokens / transcript sur ARTCB.
+    4. Interdit de prétendre que le thinking, les compteurs de tokens, le system prompt ou le transcript Cursor 17 Mo sont on-chain. Interdit de graver des secrets / clés / system prompt.
+    5. Preuve de **ce** prompt = `ingest.ingest_block_index` + `ingest.ingest_block_hash` + certificat PBFT ×4. Si `ingest_skipped=true`, le prompt **n’est pas** sur ARTCB — le dire.
+

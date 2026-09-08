@@ -2,12 +2,14 @@
 """Activate the live ARTCB node for this agent process.
 
 Order: Cursor env → Doppler → ~/.artcb/cursor_agent.env → SSH pull from OVH.
-Prints metadata only. Never prints the API key.
+If ARTCB_INGEST_PROMPT_FILE is set, POST that file to /ai/memo (agent-mediated;
+Cursor does not inject the prompt). Prints metadata only. Never prints the API key.
 Exit 0 if /health is reachable. Exit 3 if the key is missing but the node is up.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import sys
@@ -22,6 +24,8 @@ from artcb.live import (  # noqa: E402
     compact_memory_snapshot,
     fetch_doppler_secret,
     http_json,
+    ingest_prompt_file,
+    prompt_file_skipped_reason,
     pull_remote_agent_env,
     resolve_api_key,
     resolve_api_url,
@@ -73,6 +77,45 @@ def main() -> int:
         context=context if isinstance(context, dict) else {},
     )
 
+    last_memo_http = 0
+    last_memo_chars = None
+    last_memo_sha256 = None
+    last_idx = memory_snap.get("last_memo_index")
+    if key and last_idx is not None:
+        last_memo_http, last_memo = http_json(
+            "GET", f"{url}/api/v1/ai/memo/{last_idx}", api_key=key
+        )
+        if isinstance(last_memo, dict):
+            text = last_memo.get("content_text") or ""
+            if isinstance(text, str) and text:
+                last_memo_chars = len(text)
+                last_memo_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    ingest: dict = {
+        "ingest_platform_hook": False,
+        "ingest_attempted": False,
+        "ingest_skipped": True,
+        "ingest_reason": prompt_file_skipped_reason(""),
+        "includes_thinking": False,
+        "includes_system_prompt": False,
+        "token_count_known": False,
+    }
+    prompt_file = (os.environ.get("ARTCB_INGEST_PROMPT_FILE") or "").strip()
+    if prompt_file and key:
+        ingest["ingest_attempted"] = True
+        p = Path(prompt_file)
+        if p.is_file():
+            ingest = ingest_prompt_file(
+                p,
+                url=url,
+                api_key=key,
+                tags=["ingest_at_receipt", "user_query", "bootstrap"],
+                session_id="bootstrap-turn-prompt",
+            )
+        else:
+            ingest["ingest_reason"] = prompt_file_skipped_reason(prompt_file)
+            ingest["ingest_path"] = prompt_file
+
     status = {
         "ok": health_code == 200,
         "live_url": url,
@@ -93,6 +136,10 @@ def main() -> int:
         "kcg_http": kcg_code,
         "ai_context_http": ctx_code,
         **memory_snap,
+        "last_memo_http": last_memo_http,
+        "last_memo_content_chars": last_memo_chars,
+        "last_memo_content_sha256": last_memo_sha256,
+        "ingest": ingest,
         "token_printed": False,
     }
     write_bootstrap_stamp(

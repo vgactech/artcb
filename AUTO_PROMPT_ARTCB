@@ -1622,5 +1622,17 @@ Cette consigne **n’annule pas** les blocs 264/265/266 ci-dessus ; elle les con
 
 Le bloc 16:12:00Z (V-01…V-07 mesurés, height 1095, view 5, SHA `78cd8d6…`) reste ci-dessus. Ajout en fin de fichier pour respecter l’append-only après la règle 15:48.
 
+## [2026-09-08T16:21:30Z] 267 — vérité Cursor chat vs ARTCB + ingest à la réception
+
+**Réflexe (ne plus le faire répéter) :** au début de chaque tour, écrire le `user_query` dans
+`/tmp/artcb_turn_prompt.txt` puis
+`ARTCB_INGEST_PROMPT_FILE=/tmp/artcb_turn_prompt.txt PYTHONPATH=src python3 scripts/artcb_live_bootstrap.py`.
+Le bootstrap POST `/ai/memo` public OVH1. **Pas** un hook plateforme Cursor.
+Cursor stocke prompt + thinking + tools dans `transcript.json` (MCP `batch-fetch-details`)
+et `https://cursor.com/agents/<bcId>`. ARTCB ne reçoit **que** ce que l’agent POST.
+Thinking / system prompt / tokens **ne sont pas** on-chain. Tokens **absents** du transcript Cursor.
+Ne pas graver les secrets. Preuve = `ingest.ingest_block_index` + hash + cert ×4.
+Rapports : `rapports/267_cursor_chat_vs_artcb_*.md` et `rapports/267_connexion_stack_vs_infiniband_quic_*.md`.
+
 
 

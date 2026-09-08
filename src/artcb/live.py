@@ -15,12 +15,14 @@ own project (see ``artcb.node_registry``).
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
 import ssl
 import stat
 import subprocess
+import time
 from pathlib import Path
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -326,18 +328,28 @@ def write_bootstrap_stamp(payload: dict[str, Any]) -> Path:
     return dest
 
 
-def http_json(method: str, url: str, *, api_key: str | None = None, body: dict | None = None) -> tuple[int, Any]:
+MEMO_CONTENT_MAX = 32000
+
+
+def http_json(
+    method: str,
+    url: str,
+    *,
+    api_key: str | None = None,
+    body: dict | None = None,
+    timeout: float = 20,
+) -> tuple[int, Any]:
     token = api_key or resolve_api_key()
     if token:
         try:
             assert_live_transport(url, sending_bearer=True)
-        except LiveSecurityError as exc:
-            return 0, {"error": "LiveSecurityError", "detail": str(exc)}
+        except LiveSecurityError as raw_exc:
+            return 0, {"error": "LiveSecurityError", "detail": str(raw_exc)}
     data = None if body is None else json.dumps(body).encode()
     req = Request(url, data=data, method=method, headers=auth_headers(token or None))
     ctx = tls_context(url)
     try:
-        with urlopen(req, timeout=20, context=ctx) as resp:
+        with urlopen(req, timeout=timeout, context=ctx) as resp:
             raw = resp.read().decode("utf-8")
             return resp.status, json.loads(raw) if raw else {}
     except HTTPError as exc:
@@ -349,3 +361,80 @@ def http_json(method: str, url: str, *, api_key: str | None = None, body: dict |
         return exc.code, parsed
     except (URLError, TimeoutError, OSError) as exc:
         return 0, {"error": type(exc).__name__}
+
+
+def prompt_file_skipped_reason(path_raw: str) -> str:
+    """Honest skip: Cursor never injects the user prompt into the VM."""
+    if not (path_raw or "").strip():
+        return (
+            "ARTCB_INGEST_PROMPT_FILE unset — Cursor n'injecte pas le prompt "
+            "dans le VM; l'agent doit écrire le user_query puis poster /ai/memo"
+        )
+    return "file_missing"
+
+
+def ingest_prompt_file(
+    path: Path,
+    *,
+    url: str,
+    api_key: str,
+    tags: list[str] | None = None,
+    session_id: str = "turn-prompt",
+    timeout: float = 180,
+) -> dict[str, Any]:
+    """POST the file bytes as a public /ai/memo. Agent-mediated, not a Cursor hook.
+
+    Never includes thinking, system prompts, or token meters. Truncates only if
+    the memo API max (32000 chars) is exceeded; records sha256 of the full file.
+    """
+    t0 = time.perf_counter_ns()
+    raw = path.read_bytes()
+    text = raw.decode("utf-8")
+    digest = hashlib.sha256(raw).hexdigest()
+    truncated = False
+    body_text = text
+    if len(text) > MEMO_CONTENT_MAX:
+        truncated = True
+        trailer = (
+            f"\n\n[TRUNCATED ARTCB_MEMO_MAX={MEMO_CONTENT_MAX} "
+            f"sha256_full={digest} chars_full={len(text)}]"
+        )
+        keep = MEMO_CONTENT_MAX - len(trailer)
+        body_text = text[:keep] + trailer
+    payload = {
+        "content": body_text,
+        "memo_type": "observation",
+        "tags": tags or ["ingest_at_receipt", "user_query"],
+        "session_id": session_id,
+        "visibility": "public",
+        "inject_context": True,
+    }
+    code, resp = http_json(
+        "POST",
+        f"{url.rstrip('/')}/api/v1/ai/memo",
+        api_key=api_key,
+        body=payload,
+        timeout=timeout,
+    )
+    resp_d = resp if isinstance(resp, dict) else {"detail": resp}
+    out: dict[str, Any] = {
+        "ingest_platform_hook": False,
+        "ingest_attempted": True,
+        "ingest_skipped": code != 200,
+        "ingest_path": str(path),
+        "chars": len(text),
+        "bytes": len(raw),
+        "sha256": digest,
+        "truncated": truncated,
+        "includes_thinking": False,
+        "includes_system_prompt": False,
+        "token_count_known": False,
+        "ingest_http": code,
+        "ingest_block_index": resp_d.get("block_index"),
+        "ingest_block_hash": resp_d.get("block_hash"),
+        "ingest_graph_id": resp_d.get("graph_id"),
+        "dur_ns": time.perf_counter_ns() - t0,
+    }
+    if code != 200:
+        out["ingest_error"] = resp_d.get("detail") or resp_d.get("error") or resp_d
+    return out
