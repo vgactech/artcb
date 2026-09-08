@@ -31,6 +31,32 @@ logger = logging.getLogger("artcb.mcp.tools")
 
 TOOLS: list[dict[str, Any]] = [
     {
+        "name": "artcb_agent_bootstrap",
+        "description": (
+            "Handshake ARTCB Agent Memory Protocol (R268). "
+            "Retourne agent_id, capabilities, required_actions. "
+            "N'envoie pas le thinking ni le system prompt."
+        ),
+        "inputSchema": {"type": "object", "properties": {}},
+    },
+    {
+        "name": "artcb_memory_event",
+        "description": (
+            "Écriture mémoire idempotente (POST /api/v1/agent/events). "
+            "event_id stable évite les doubles gravures. Jamais de thinking/secrets."
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "event_id": {"type": "string"},
+                "content": {"type": "string"},
+                "kind": {"type": "string", "default": "observation"},
+                "visibility": {"type": "string", "enum": ["private", "public"], "default": "public"},
+            },
+            "required": ["event_id", "content"],
+        },
+    },
+    {
         "name": "artcb_whoami",
         "description": (
             "Identité ARTCB de cet agent. Une session sess_ = user réel. "
@@ -250,7 +276,11 @@ def _text_content(text: str) -> list[dict[str, str]]:
 def execute_tool(name: str, arguments: dict[str, Any], *, api_url: str) -> list[dict[str, Any]]:
     """Exécute un outil MCP et retourne le contenu MCP."""
     try:
-        if name == "artcb_whoami":
+        if name == "artcb_agent_bootstrap":
+            return _tool_agent_bootstrap(api_url)
+        elif name == "artcb_memory_event":
+            return _tool_memory_event(arguments, api_url)
+        elif name == "artcb_whoami":
             return _tool_whoami(api_url)
         elif name == "artcb_login":
             return _tool_login(arguments, api_url)
@@ -275,6 +305,31 @@ def execute_tool(name: str, arguments: dict[str, Any], *, api_url: str) -> list[
     except Exception as exc:
         logger.exception("Tool %s error", name)
         return _text_content(f"Erreur outil {name} : {exc}")
+
+
+def _tool_agent_bootstrap(api_url: str) -> list[dict]:
+    try:
+        resp = _api_get(f"{api_url}/api/v1/agent/bootstrap")
+    except Exception as exc:
+        return _text_content(f"bootstrap indisponible : {exc}")
+    return _text_content(json.dumps(resp, ensure_ascii=False)[:4000])
+
+
+def _tool_memory_event(args: dict, api_url: str) -> list[dict]:
+    resp = _api_post(
+        f"{api_url}/api/v1/agent/events",
+        {
+            "event_id": args["event_id"],
+            "content": args["content"],
+            "kind": args.get("kind") or "observation",
+            "visibility": args.get("visibility") or "public",
+        },
+    )
+    return _text_content(
+        f"status={resp.get('status')} event_id={resp.get('event_id')} "
+        f"block={((resp.get('memo') or {}).get('block_index'))} "
+        f"hash={str((resp.get('memo') or {}).get('block_hash') or '')[:16]}"
+    )
 
 
 def _tool_whoami(api_url: str) -> list[dict]:

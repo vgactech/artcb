@@ -167,6 +167,33 @@ def verify_commit(row: dict[str, Any]) -> bool:
     return verify_signed(row, msg)
 
 
+def verify_prepared_certificate(item: dict[str, Any] | None) -> bool:
+    """Strong P-set entry: signed PRE-PREPARE + Q unique signed PREPAREs."""
+    if not isinstance(item, dict):
+        return False
+    view = _iint(item, "view")
+    seq = _iint(item, "seq")
+    digest = str(item.get("digest") or "")
+    if seq < 0 or not digest:
+        return False
+    pp = item.get("preprepare") if isinstance(item.get("preprepare"), dict) else None
+    if pp is None or not verify_preprepare(pp):
+        return False
+    if _iint(pp, "view") != view or _iint(pp, "seq") != seq or str(pp.get("digest") or "") != digest:
+        return False
+    prepares = [p for p in (item.get("prepares") or []) if isinstance(p, dict) and verify_prepare(p)]
+    ids: set[str] = set()
+    for p in prepares:
+        if _iint(p, "view") != view or _iint(p, "seq") != seq or str(p.get("digest") or "") != digest:
+            return False
+        rid = str(p.get("replica_id") or "")
+        if not rid or rid in ids:
+            continue
+        ids.add(rid)
+    _n, _f, q = _n_f_q()
+    return len(ids) >= q
+
+
 def verify_certificate(cert: dict[str, Any] | None) -> bool:
     if not isinstance(cert, dict):
         return False
@@ -278,8 +305,12 @@ class PbftFinalityStore:
     def prepared_set(self) -> list[dict[str, Any]]:
         out = []
         for key, row in (self._state.get("prepared") or {}).items():
-            if isinstance(row, dict) and row.get("digest"):
-                out.append({"seq": int(row.get("seq") or key.split(":")[-1]), "digest": row["digest"], "view": int(row.get("view") or 0)})
+            if not isinstance(row, dict) or not row.get("digest"):
+                continue
+            item = dict(row)
+            item.setdefault("seq", int(row.get("seq") or key.split(":")[-1]))
+            item.setdefault("view", int(row.get("view") or 0))
+            out.append(item)
         return out
 
     def emit_preprepare(self, chain: Any, *, block: dict[str, Any]) -> dict[str, Any]:
@@ -296,6 +327,12 @@ class PbftFinalityStore:
         if locked and locked != digest:
             self._trace("preprepare", ok=False, t0=t0, reason="equivocation", seq=seq)
             raise ValueError("equivocation")
+        constraint = self._state.get("must_repropose") if isinstance(self._state.get("must_repropose"), dict) else {}
+        cseq = _iint(constraint, "seq") if constraint else -1
+        cdigest = str(constraint.get("digest") or "") if constraint else ""
+        if cseq == seq and cdigest and cdigest != digest:
+            self._trace("preprepare", ok=False, t0=t0, reason="must_repropose_prepared", seq=seq)
+            raise ValueError("must_repropose_prepared")
         row = sign_preprepare(chain, view=view, replica_id=self.replica_id, block=block)
         if not verify_preprepare(row):
             raise ValueError("preprepare_self_check_failed")
@@ -392,6 +429,11 @@ class PbftFinalityStore:
             self._save()
             self._append_msg({"kind": "certificate", "seq": seq, "digest": digest, "ts_ns": now_wall_ns()})
         self._trace("certificate", ok=True, t0=t0, seq=seq, digest=digest[:16])
+        constraint = self._state.get("must_repropose") if isinstance(self._state.get("must_repropose"), dict) else {}
+        if constraint and _iint(constraint, "seq") == seq:
+            with self._lock:
+                self._state.pop("must_repropose", None)
+                self._save()
         return {"ok": True, "seq": seq, "digest": digest}
 
     def emit_view_change_265(self, chain: Any, *, view: int) -> dict[str, Any]:
@@ -427,21 +469,38 @@ class PbftFinalityStore:
         return verify_signed(row, msg)
 
     def select_new_view_value(self, view_changes: list[dict[str, Any]]) -> dict[str, Any] | None:
-        """Highest seq prepared in any valid VC. Safety: re-propose that digest."""
-        best: dict[str, Any] | None = None
+        """Highest seq with a *verified* prepared certificate. Conflicting digests at
+        the same seq are refused (no arbitrary pick)."""
+        by_seq: dict[int, dict[str, dict[str, Any]]] = {}
         for vc in view_changes:
             if not self.verify_view_change_265(vc):
                 continue
             for item in vc.get("prepared") or []:
-                if not isinstance(item, dict):
+                if not verify_prepared_certificate(item):
                     continue
                 seq = _iint(item, "seq")
                 digest = str(item.get("digest") or "")
-                if seq < 0 or not digest:
-                    continue
-                if best is None or seq > int(best["seq"]):
-                    best = {"seq": seq, "digest": digest}
-        return best
+                by_seq.setdefault(seq, {})[digest] = item
+        consistent = []
+        for seq, digests in by_seq.items():
+            if len(digests) != 1:
+                continue
+            consistent.append(next(iter(digests.values())))
+        if not consistent:
+            return None
+        return max(consistent, key=lambda row: int(row["seq"]))
+
+    def bind_prepared_constraint(self, chosen: dict[str, Any] | None) -> dict[str, Any]:
+        if not verify_prepared_certificate(chosen):
+            return {"ok": False, "reason": "invalid_prepared_certificate"}
+        assert chosen is not None
+        seq = int(chosen["seq"])
+        digest = str(chosen["digest"])
+        block = ((chosen.get("preprepare") or {}) if isinstance(chosen.get("preprepare"), dict) else {}).get("block")
+        with self._lock:
+            self._state["must_repropose"] = {"seq": seq, "digest": digest, "block": block if isinstance(block, dict) else None}
+            self._save()
+        return {"ok": True, "seq": seq, "digest": digest, "has_block": isinstance(block, dict)}
 
     def _accept(self, row: dict[str, Any]) -> None:
         view = int(row["view"])
@@ -449,6 +508,8 @@ class PbftFinalityStore:
         digest = str(row["digest"])
         with self._lock:
             self._state.setdefault("accepted", {})[f"{view}:{seq}"] = digest
+            if row.get("kind") == "pre-prepare" or row.get("block"):
+                self._state.setdefault("accepted_pp", {})[f"{view}:{seq}"] = row
             seen = list(self._state.get("seen") or [])
             sig = str(row.get("signature") or "")[:80]
             if sig and sig not in seen:
@@ -479,8 +540,27 @@ class PbftFinalityStore:
         _n, _f, q = _n_f_q()
         if len(ids) < q:
             return False
+        unique: dict[str, dict[str, Any]] = {}
+        for m in matching:
+            rid = str(m.get("replica_id") or "")
+            if rid and rid not in unique:
+                unique[rid] = m
+        pp = (self._state.get("accepted_pp") or {}).get(f"{view}:{seq}")
+        cert = {
+            "kind": "prepared-certificate",
+            "protocol": PBFT_FINALITY_PROTOCOL,
+            "view": view,
+            "seq": seq,
+            "digest": digest,
+            "q": q,
+            "replica_ids": sorted(unique),
+            "preprepare": pp if isinstance(pp, dict) else None,
+            "prepares": list(unique.values()),
+        }
+        if not verify_prepared_certificate(cert):
+            return False
         with self._lock:
-            self._state.setdefault("prepared", {})[f"{view}:{seq}"] = {"view": view, "seq": seq, "digest": digest, "q": len(ids)}
+            self._state.setdefault("prepared", {})[f"{view}:{seq}"] = cert
             self._save()
         return True
 

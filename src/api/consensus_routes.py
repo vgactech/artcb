@@ -323,6 +323,14 @@ class ViewChange265Body(BaseModel):
     view_change: dict | None = None
 
 
+class SelectPreparedBody(BaseModel):
+    view_changes: list[dict]
+
+
+class BindPreparedBody(BaseModel):
+    chosen: dict
+
+
 @router.get("/pbft/finality")
 def pbft_finality_status(request: Request) -> dict:
     return _pbft_log(request).snapshot()
@@ -449,5 +457,27 @@ def pbft_view_change_265(body: ViewChange265Body, request: Request) -> dict:
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     return {"ok": True, "view_change": row}
+
+
+@router.post("/pbft/select-prepared")
+def pbft_select_prepared(body: SelectPreparedBody, request: Request) -> dict:
+    from src.artcb.consensus.pbft_finality import verify_prepared_certificate
+
+    log = _pbft_log(request)
+    chosen = log.select_new_view_value(body.view_changes)
+    return {
+        "ok": chosen is not None,
+        "chosen": chosen,
+        "proof": bool(chosen) and verify_prepared_certificate(chosen),
+    }
+
+
+@router.post("/pbft/bind-prepared")
+def pbft_bind_prepared(body: BindPreparedBody, request: Request) -> dict:
+    log = _pbft_log(request)
+    installed = log.bind_prepared_constraint(body.chosen)
+    if not installed.get("ok"):
+        raise HTTPException(status_code=409, detail=installed.get("reason") or "bind_failed")
+    return installed
 
 

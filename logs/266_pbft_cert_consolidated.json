@@ -1,0 +1,66 @@
+{
+  "stamp": "20260908T165826Z",
+  "origin_main": "b66f51a95eab6085639dbcabfd049409c2051e5e",
+  "sha_tested_266": "78cd8d61e08c1dee99d83bf24ae7aba0bdf3f007",
+  "sha_first_runner": "78cd8d61e08c1dee99d83bf24ae7aba0bdf3f007",
+  "sha_equal_origin_main_now": false,
+  "note": "266 live V-01\u2026V-07 measured on 78cd8d6. origin/main later moved (docs 230b8eb then ingest 267). First runner JSON has PBFT_LIVE_E2E_PASS=false; retries flipped V01/V02 to PASS on the same SHA. Do not read the first runner file as the final verdict.",
+  "first_run": {
+    "file": "logs/266_pbft_cert_20260908T155024Z.json",
+    "PBFT_LIVE_E2E_PASS": false,
+    "reason": "V01 client_request_failed (memo not on primary); V02 python3 without nacl/passphrase"
+  },
+  "retry": {
+    "V01": "PASS",
+    "V01_file": "logs/266_v01_retry.json",
+    "V01_seq": 1094,
+    "V01_digest": "5688fb3cc37cccce720a40bf1baa6d3da44dd3190a2358c9ee77084dea65c774",
+    "V02": "PASS",
+    "V02_file": "logs/266_v02_retry.json",
+    "V02_dual_finality": false
+  },
+  "final_tests": {
+    "V07": "PASS",
+    "V01": "PASS",
+    "V02": "PASS",
+    "V03": "PASS",
+    "V04": "PASS",
+    "V05": "PASS",
+    "V06": "PASS",
+    "DV02": "PASS"
+  },
+  "latest_tests_first_runner_only": {
+    "V07": "PASS",
+    "V01": "FAIL",
+    "V02": "FAIL",
+    "V03": "PASS",
+    "V04": "PASS",
+    "V05": "PASS",
+    "V06": "PASS",
+    "DV02": "PASS"
+  },
+  "ingest_267_first_live": {
+    "file": "logs/267_ingest_20260908T162514Z.json",
+    "after_sha": {
+      "ovh-node-1": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+      "ovh-node-2": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+      "aws-node-3": "230b8eb5a5c9569e7baed5b866c3f200f57de52f",
+      "ovh-node-4": "230b8eb5a5c9569e7baed5b866c3f200f57de52f"
+    },
+    "block_index": 1095
+  },
+  "recert_b66f51a9": {
+    "file": "logs/267_ingest_20260908T165526Z.json",
+    "after_sha": {
+      "ovh-node-1": "b66f51a95eab6085639dbcabfd049409c2051e5e",
+      "ovh-node-2": "b66f51a95eab6085639dbcabfd049409c2051e5e",
+      "aws-node-3": "b66f51a95eab6085639dbcabfd049409c2051e5e",
+      "ovh-node-4": "b66f51a95eab6085639dbcabfd049409c2051e5e"
+    },
+    "block_index": 1096,
+    "block_hash": "40b16afaefa9e42a5b38882ee49364947ca6fb6f038ab9515c53c96d0f5f6758",
+    "cert_x4": true
+  },
+  "not_100_percent_pbft": true,
+  "p8_prepared_vc": "see R268 live"
+}

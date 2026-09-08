@@ -141,8 +141,10 @@ class TestMCPToolsList:
         srv = ArtcbMCPServer()
         resp = srv.handle({"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})
         tools = resp["result"]["tools"]
-        assert len(tools) == 10
+        assert len(tools) >= 12
         names = {t["name"] for t in tools}
+        assert "artcb_agent_bootstrap" in names
+        assert "artcb_memory_event" in names
         assert "artcb_whoami" in names
         assert "artcb_login" in names
         assert "artcb_autodev_record" in names

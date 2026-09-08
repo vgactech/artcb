@@ -46,6 +46,7 @@ from src.api.authz_routes import router as authz_router
 from src.api.setup_routes import router as setup_router
 from src.api.network_routes import router as network_router
 from src.api.kcg_routes import router as kcg_router
+from src.api.agent_protocol_routes import router as agent_protocol_router
 
 # Any Replit account — never a named Autoscale hostname in git.
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
@@ -391,6 +392,7 @@ def create_app() -> FastAPI:
     app.include_router(libp2p_router)
     app.include_router(privacy_router)
     app.include_router(kcg_router)  # GO-F : KCG events CONSULT/USE
+    app.include_router(agent_protocol_router)
     from src.api.trace_routes import router as trace_router
 
     app.include_router(trace_router)
