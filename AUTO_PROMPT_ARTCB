@@ -1551,3 +1551,15 @@ Complétude A→Z :
 T-E51. Contact : `official@artcb.space`. Pas une D-0xx. `certified_distributed_mainnet`
 reste false.
 
+## [2026-09-08T13:30:00Z] Rapport 264 — PBFT view-change inclus (processus UP)
+
+**Réflexe :** « inclus le PBFT » / « tout inclure » / « tous les processus restent »
+= **coder + mesurer** VIEW-CHANGE Q=3 + NEW-VIEW dans le même tour. Interdit
+d’écrire « non revendiqué » à la place.
+
+- Primary = `OFFICIAL_COMPUTE_NODE_IDS[view % 4]`. Isolation réseau du primary,
+  **pas** `systemctl stop`. Restore iptables `artcb264` avant la fin.
+- Prepare de l’ancienne vue → `wrong_view`. 188 sur la nouvelle vue Q=3.
+- Pas un 2f+1 sur `append_block`. Pas de wipe. Pas de token. T-E52.
+
+

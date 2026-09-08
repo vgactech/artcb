@@ -14,12 +14,29 @@ router = APIRouter(prefix="/api/v1/consensus", tags=["consensus"])
 class PrepareBody(BaseModel):
     work_id: str = Field(min_length=1, max_length=256)
     settlement_id: str = Field(min_length=8, max_length=128)
+    view: int | None = Field(default=None, ge=0, le=10_000_000)
 
 
 class CommitBody(BaseModel):
     work_id: str = Field(min_length=1, max_length=256)
     settlement_id: str = Field(min_length=8, max_length=128)
     epoch: int = Field(default=1, ge=1, le=10_000_000)
+    view: int | None = Field(default=None, ge=0, le=10_000_000)
+
+
+class ViewChangeBody(BaseModel):
+    view: int = Field(ge=1, le=10_000_000)
+    reason: str = Field(default="primary_unreachable", max_length=128)
+
+
+class ReceiveViewChangeBody(BaseModel):
+    view_change: dict
+
+
+class NewViewBody(BaseModel):
+    view: int = Field(ge=1, le=10_000_000)
+    view_changes: list[dict]
+    new_view: dict | None = None
 
 
 class ProposeBody(BaseModel):
@@ -159,8 +176,12 @@ def consensus_status(request: Request) -> dict:
 @router.post("/prepare")
 def consensus_prepare(body: PrepareBody, request: Request):
     engine = _engine(request)
-    result = engine.prepare_local(body.work_id, body.settlement_id)
-    payload = {"result": result, "node": engine.node_id}
+    result = engine.prepare_local(body.work_id, body.settlement_id, view=body.view)
+    payload = {
+        "result": result,
+        "node": engine.node_id,
+        "view": int(getattr(getattr(engine, "pbft", None), "view", 0) or 0),
+    }
     return JSONResponse(status_code=200 if result == "prepared" else 409, content=payload)
 
 
@@ -190,3 +211,65 @@ def consensus_propose(body: ProposeBody, request: Request) -> dict:
         epoch=body.epoch,
         forged_sid=body.forged_sid,
     )
+
+
+def _pbft(request: Request):
+    engine = _engine(request)
+    store = getattr(engine, "pbft", None)
+    if store is None:
+        raise HTTPException(status_code=503, detail="pbft_view_unavailable")
+    return store
+
+
+@router.get("/pbft/view")
+def pbft_view(request: Request) -> dict:
+    return _pbft(request).snapshot()
+
+
+@router.post("/pbft/view-change")
+def pbft_view_change(body: ViewChangeBody, request: Request) -> dict:
+    """This replica signs a VIEW-CHANGE. Process stays up. Does not wipe the book."""
+    state = request.app.state.artcb
+    store = _pbft(request)
+    try:
+        row = store.emit_view_change(
+            state.chain,
+            view=body.view,
+            height=int(state.chain.height()),
+            last_hash=str(state.chain.last_hash() or ""),
+            reason=body.reason,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {"ok": True, **row, "quorum": store.quorum_for(body.view)}
+
+
+@router.post("/pbft/view-change/receive")
+def pbft_view_change_receive(body: ReceiveViewChangeBody, request: Request) -> dict:
+    store = _pbft(request)
+    return store.accept_view_change(body.view_change)
+
+
+@router.get("/pbft/view-changes")
+def pbft_view_changes(request: Request, view: int) -> dict:
+    store = _pbft(request)
+    return store.quorum_for(int(view))
+
+
+@router.post("/pbft/new-view")
+def pbft_new_view(body: NewViewBody, request: Request) -> dict:
+    """Install NEW-VIEW. If this replica is the new primary and new_view is omitted, it signs it."""
+    state = request.app.state.artcb
+    store = _pbft(request)
+    changes = list(body.view_changes or [])
+    if body.new_view:
+        installed = store.install_new_view(body.new_view, changes)
+        if not installed.get("ok"):
+            raise HTTPException(status_code=409, detail=installed.get("reason") or "invalid_new_view")
+        return {**installed, "new_view": body.new_view, "view_changes_count": len(changes)}
+    try:
+        emitted = store.emit_new_view(state.chain, view=body.view, view_changes=changes)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return emitted
+

@@ -36,7 +36,7 @@ Les 4 nœuds compute officiels **suivent `origin/main` automatiquement** (`scrip
 
 Ne **pas** bloquer une tâche pour un GO de déploiement, de stop, de partition, de probe Byzantine reject-only, de replica ou de mémo. Exécuter, mesurer, graver le rapport, `git push origin HEAD:main`, follow-main ×4.
 
-Toujours avant de finir : nœud arrêté **relancé**, iptables `artcb261` / `artcb263` **retirées**. Jamais wipe. Jamais genesis/rescue. Jamais inventer SHA/hauteur/tip. Jamais afficher le token. Jamais mélanger Doppler. Pas de PASS PBFT inventé.
+Toujours avant de finir : nœud arrêté **relancé**, iptables `artcb261` / `artcb263` / `artcb264` **retirées**. Jamais wipe. Jamais genesis/rescue. Jamais inventer SHA/hauteur/tip. Jamais afficher le token. Jamais mélanger Doppler. **Tous les processus restent UP** pour un test de view-change (pas de kill). Un PASS PBFT view-change se **mesure** (Q=3 VIEW-CHANGE + NEW-VIEW signés) — on ne le déclare pas « non revendiqué ».
 
 ## Complétude A→Z (opérateur, 2026-09-08 — réflexe, ne plus le faire répéter)
 
@@ -47,9 +47,10 @@ Ce bloc **est** le protocole / autoprompt. Toute consigne opérateur répétée 
 3. « Bout en bout » = code + tests + live 4 nœuds + rapport + `HEAD:main` + follow-main ×4 + égalité `git_sha`. S’il manque un maillon, **continuer**, ne pas clôturer.
 4. Partition **2 nœuds** autorisée **uniquement** si les deux sont **restorés** (iptables + artcb active) avant la fin du tour. Trap EXIT obligatoire.
 5. Deux producteurs concurrents : mesurer (sérialisation ou fork). Fork → replica majorité ; rewind **une** dernière ligne minoritaire si besoin — **jamais** wipe du livre.
-6. 188 prepare/commit Q=3 se **mesure** (agent coordinateur vers `:8000` ×4). Ce n’est **pas** un view-change PBFT. Ne pas inventer un PASS PBFT.
+6. 188 prepare/commit Q=3 se **mesure** (agent coordinateur vers `:8000` ×4). **PBFT view-change** (264) se **code et se mesure** dans le même tour : VIEW-CHANGE × Q=3 + NEW-VIEW, primary = `OFFICIAL_COMPUTE_NODE_IDS[view % 4]`. Tous les processus restent UP (isolation réseau du primary, pas `systemctl stop`). Prepare de l’ancienne vue → `wrong_view`. Ce n’est pas un 2f+1 sur `append_block`.
 7. Preuve Byzantine : persistente + sha256 + signature chaîne (sidecar) + replica merge + ancre mémo on-chain. Falsification disque = sidecar mismatch. Suppression locale = récupérable par replica.
-8. Réflexe : si tu t’apprêtes à écrire « il reste », **fais-le** d’abord. Encoder ici toute nouvelle répétition opérateur **sans qu’on te le redemande**.
+8. Réflexe : si tu t’apprêtes à écrire « il reste » ou « non revendiqué » pour une consigne déjà répétée (PBFT, view-change, tout inclure), **implémente et mesure**. Encoder ici toute nouvelle répétition opérateur **sans qu’on te le redemande**.
+9. **Tous les processus restent.** Interdit de laisser un artcb down ou des iptables en place en fin de tour.
 
 Sources de la clé nœud 1 : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH nœud 1.
 

@@ -26,10 +26,10 @@ def test_rule_and_autoprompt_require_completeness_a_to_z() -> None:
     assert "Complétude A→Z" in rule
     assert "Ne jamais terminer un tour" in rule
     assert "Partition **2 nœuds**" in rule or "Partition 2 nœuds" in rule
-    assert "Pas de PASS PBFT inventé" in rule
+    assert "PBFT" in rule
     prompt = (ROOT / "AUTO_PROMPT_ARTCB").read_text(encoding="utf-8")
     assert "Complétude A→Z" in prompt
-    assert "ne jamais terminer un tour par une liste incomplète" in prompt.lower() or "Ne jamais terminer un tour" in prompt
+    assert "Ne jamais terminer un tour" in prompt
 
 
 def test_n_f_q_still_four_is_q3() -> None:

@@ -41,5 +41,6 @@ def public_spec() -> dict[str, Any]:
         "dv05": "LIVE engine exists; PASS only after honest/offline/delay/double-proposal/divergence on 4 nodes",
         "canonical_tip_sim": "longest valid chain; tie -> lexicographically smaller hash (distributed.py)",
         "scope": "settlement_prepare_commit",
+        "pbft_view_change": "264-pbft-view-change",
         "not_block_append_bft": True,
     }

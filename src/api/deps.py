@@ -192,8 +192,10 @@ def build_app_state() -> AppState:
         symbol_sync=symbol_sync,
     )
     from src.artcb.consensus.live_bft import LiveBftEngine
+    from src.artcb.node_registry import official_replica_id
 
-    live_bft = LiveBftEngine(settings.data_dir, node_id=p2p_identity.node_id)
+    replica_id = official_replica_id() or p2p_identity.node_id
+    live_bft = LiveBftEngine(settings.data_dir, node_id=replica_id)
 
     state = AppState(
         settings=settings,

@@ -81,14 +81,20 @@ class LiveBftEngine:
     def __init__(self, data_dir, *, node_id: str) -> None:
         from pathlib import Path
 
+        from src.artcb.consensus.pbft_view import PbftViewStore
+
         root = Path(data_dir)
         self.node_id = node_id
         self.ledger = SettlementLedger(root / "consensus" / "ledger.json")
+        self.pbft = PbftViewStore(root, replica_id=node_id)
         self._reservations: dict[str, str] = {}
         self._lock = threading.Lock()
 
-    def prepare_local(self, work_id: str, sid: str) -> str:
+    def prepare_local(self, work_id: str, sid: str, view: int | None = None) -> str:
         with self._lock:
+            current = int(getattr(getattr(self, "pbft", None), "view", 0) or 0)
+            if view is not None and int(view) != current:
+                return "wrong_view"
             if self.ledger.count_for_work(work_id) > 0:
                 return "already_settled"
             held = self._reservations.get(work_id)
@@ -111,6 +117,7 @@ class LiveBftEngine:
     def status(self, peers: list[PeerRecord], *, self_host: str = "") -> dict[str, Any]:
         remotes = unique_compatible_hosts(peers, self_host=self_host)
         n, f, q = n_f_q(1 + len(remotes))
+        pbft = getattr(self, "pbft", None)
         return {
             "live_bft_implemented": True,
             "protocol": LIVE_BFT_PROTOCOL,
@@ -122,6 +129,8 @@ class LiveBftEngine:
             "bft_capable": f is not None and f >= 1,
             "compatible_remote_hosts": [p.host for p in remotes],
             "scope": "settlement_prepare_commit",
+            "pbft_view": int(getattr(pbft, "view", 0) or 0),
+            "pbft_primary": getattr(pbft, "primary", None),
             "not_block_append_bft": True,
         }
 

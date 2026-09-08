@@ -13,7 +13,6 @@ from collections import defaultdict
 from typing import Any
 
 from src.artcb.consensus.live_bft import n_f_q
-from src.artcb.crypto.hybrid import verify_hybrid_and_or_window
 from src.artcb.trace.ns import now_wall_ns
 
 TIP_ATTEST_PROTOCOL = "263-tip-attest-q3"
@@ -57,36 +56,32 @@ def attest_tip(chain: Any, *, git_sha: str, node_id: str) -> dict[str, Any]:
     }
 
 
-def verify_attest(row: dict[str, Any]) -> bool:
-    from src.artcb.crypto.hybrid import HybridSignature, is_hybrid_envelope
+def verify_chain_signature(
+    *,
+    message: str,
+    signature: str,
+    producer_ed25519_b64: str,
+    producer_pqc_b64: str = "",
+) -> bool:
+    from src.artcb.crypto.hybrid import HybridSignature, is_hybrid_envelope, verify_hybrid_and_or_window
     from src.artcb.crypto.pqc import pqc_available
     from src.artcb.crypto_policy import fallback_still_open
 
-    message = canonical_message(
-        height=int(row.get("height") or 0),
-        last_hash=str(row.get("last_hash") or ""),
-        git_sha=str(row.get("git_sha") or ""),
-        node_id=str(row.get("node_id") or ""),
-    )
-    if str(row.get("message") or "") and str(row.get("message")) != message:
-        return False
-    sig = str(row.get("signature") or "")
-    ed_b64 = str(row.get("producer_ed25519_b64") or "")
-    if not sig or not ed_b64:
+    sig = str(signature or "")
+    ed_b64 = str(producer_ed25519_b64 or "")
+    if not sig or not ed_b64 or not message:
         return False
     try:
         ed_pk = base64.b64decode(ed_b64, validate=False)
     except Exception:
         return False
-    pqc_b64 = str(row.get("producer_pqc_b64") or "")
     pqc_pk = None
-    if pqc_b64:
+    if producer_pqc_b64:
         try:
-            pqc_pk = base64.b64decode(pqc_b64, validate=False)
+            pqc_pk = base64.b64decode(producer_pqc_b64, validate=False)
         except Exception:
             pqc_pk = None
     if is_hybrid_envelope(sig) and not pqc_available():
-        # Agent without liboqs: check the Ed25519 leg while D-032 B is open.
         if not fallback_still_open():
             return False
         parsed = HybridSignature.parse(sig)
@@ -110,6 +105,23 @@ def verify_attest(row: dict[str, Any]) -> bool:
         )
     except Exception:
         return False
+
+
+def verify_attest(row: dict[str, Any]) -> bool:
+    message = canonical_message(
+        height=int(row.get("height") or 0),
+        last_hash=str(row.get("last_hash") or ""),
+        git_sha=str(row.get("git_sha") or ""),
+        node_id=str(row.get("node_id") or ""),
+    )
+    if str(row.get("message") or "") and str(row.get("message")) != message:
+        return False
+    return verify_chain_signature(
+        message=message,
+        signature=str(row.get("signature") or ""),
+        producer_ed25519_b64=str(row.get("producer_ed25519_b64") or ""),
+        producer_pqc_b64=str(row.get("producer_pqc_b64") or ""),
+    )
 
 
 def quorum_from_attests(rows: list[dict[str, Any]], *, n: int | None = None) -> dict[str, Any]:

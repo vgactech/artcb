@@ -48,6 +48,44 @@ OFFICIAL_COMPUTE_IPV4: tuple[str, ...] = (
     "91.134.45.8",
 )
 OFFICIAL_COMPUTE_HTTP_PORT = 8000
+OFFICIAL_NODE_MARKER = Path("/etc/artcb/official_node")
+
+
+def _local_ipv4s() -> set[str]:
+    import socket
+
+    found: set[str] = set()
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.connect(("1.1.1.1", 80))
+            found.add(sock.getsockname()[0])
+    except OSError:
+        pass
+    try:
+        hostname = socket.gethostname()
+        found.add(socket.gethostbyname(hostname))
+    except OSError:
+        pass
+    return {ip for ip in found if ip and not ip.startswith("127.")}
+
+
+def official_replica_id() -> str:
+    """PBFT replica id: ARTCB_NODE_ID, /etc/artcb/official_node, or local IPv4."""
+    import os
+
+    env = (os.getenv("ARTCB_NODE_ID") or "").strip()
+    if env in OFFICIAL_COMPUTE_NODE_IDS:
+        return env
+    if OFFICIAL_NODE_MARKER.is_file():
+        raw = OFFICIAL_NODE_MARKER.read_text(encoding="utf-8").strip().splitlines()
+        marker = (raw[0] if raw else "").strip()
+        if marker in OFFICIAL_COMPUTE_NODE_IDS:
+            return marker
+    local = _local_ipv4s()
+    for nid, ip in zip(OFFICIAL_COMPUTE_NODE_IDS, OFFICIAL_COMPUTE_IPV4):
+        if ip in local:
+            return nid
+    return env
 
 # Public HTTPS health (nginx + Let's Encrypt). IP :8000 remains the compute probe.
 PUBLIC_HEALTH_URLS: dict[str, str] = {

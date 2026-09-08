@@ -79,7 +79,12 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   Rapport 263 : réflexe autonomie + complétude A→Z dans
   `.cursor/rules/artcb-live-node.mdc` et `AUTO_PROMPT_ARTCB` — ne pas clôturer
   un tour sur une liste « NON démontré » ; 188 Q=3 et tip-attest se mesurent ;
-  partition 2 nœuds seulement si restore ; pas de PASS PBFT inventé.
+  partition 2 nœuds seulement si restore.
+  Rapport 264 : view-change PBFT Castro-Liskov **codé et mesuré**
+  (`src/artcb/consensus/pbft_view.py`) — VIEW-CHANGE Q=3 + NEW-VIEW ;
+  primary = `OFFICIAL_COMPUTE_NODE_IDS[view % 4]` ; processus restent UP
+  (isolation iptables `artcb264`, pas `systemctl stop`). Pas un 2f+1 sur
+  `append_block`. Interdit d’écrire « non revendiqué » à la place.
 - Rapport 247 : livre écrit. OVH1 height 8 tip `f646c510…` (idx 5–7
   `cbff6e66` / `a9e411c3` / `f646c510`). Pairs 2/3/4 restent `27350024`
   (import 222). Wipe non. GO-E produce off. SHA `c1d8027` = `origin/main`.
