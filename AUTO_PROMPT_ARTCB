@@ -1668,10 +1668,15 @@ P16 privé index 1100 `204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a586
 T-E57 [x]. Campagne interne P9–P18 : **100 % PASS**. Preuve formelle toutes exécutions : **NON**. Universal LLM ingest : **NON**.
 Runner P16 désormais `visibility=public` (plus de fourche privée locale).
 
-## [2026-09-08T18:24:00Z] 270 — certification matrix (no 100% shortcut)
+## [2026-09-08T18:40:11Z] 270 — certification matrix live PARTIALLY_VERIFIED
 
-Règle : une propriété critique non exécutée live = **NOT PROVEN**, jamais un pourcentage de certification.
-Matrice `src/artcb/consensus/pbft_certification_matrix.py`. Runner `scripts/run_live270_pbft_cert_matrix.py`. T-E58. HPC non. AWS t3.small.
+SHA live `805098126cf3f6dd5ef614b44ba59899a4e53e72` ×4 = origin/main du gel. Moteur PBFT `f59dd88`. Runner `9ddc465`.
+N=4 F=1 Q=3. HPC false. AWS t3.small.
+25 PASS, 0 FAIL, 18 NOT_PROVEN, CERTIFIED_100=false.
+L01 seq 1101 `482ab4d6…` + 1102 `1e7c9f31…` ; B01 409 equivocation ; B02 409 not_accepted ; V02 409 invalid_preprepare ; C01 seq 1104 `3cfe2e44…` ovh-2 down ; N01 2–2 dual=false ; V01/F02 primary ovh-4 down view 7→8 seq 1105 `eb58e40d…` ; N05 netem 100ms seq 1106 `94f57bb2…`.
+Après : height **1107** tip `94f57bb2a74e98b069af5f6fb5e4ecc97f5689d82a10fd21e4b6cf69ed8b8661` view 8 primary ovh-node-1 chain_valid ×4.
+`logs/270_pbft_cert_20260908T182742Z.json`. T-E58 [x].
+**PBFT 100 % = NON CERTIFIÉ.** BFT_SETTLEMENT NOT_PROVEN. BFT_BLOCK_CONSENSUS partiel.
 
 
 
