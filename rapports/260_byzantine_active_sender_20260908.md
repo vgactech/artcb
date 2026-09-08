@@ -4,7 +4,7 @@
 **Contact :** `official@artcb.space`  
 **259 reste le référentiel opérationnel.** On ne relance pas l’arrêt OVH4.  
 **Pas de wipe.** Pas de `install.sh` / genesis / rescue. GO-E produce **off**.  
-**Pas un PASS BFT. Pas production-ready.**
+**Pas un PASS BFT. Pas production-ready.** Live 260 **déployé et exercé** sur les 4 compute (`a6211b4f…`).
 
 ---
 
@@ -79,20 +79,42 @@ Nœud divergé : le replica **refuse** d’écraser (`equivocation`). Le rattrap
 
 ---
 
-## Live (mesuré 2026-09-08T01:00:55Z) — SHA encore `8105efa7…`
+## Live réel (mesuré 2026-09-08T01:04Z → 01:05Z)
 
-Matrice **inchangée** avant/après probe : height **1078**, tip `93c8b7c1dde1e79afa8f277f10f1705298c0beda5e9a7f3e5281a1f2d6cc51be`, `chain_valid=true` ×4. OVH4 **up**. Aucun wipe. `appended_from_byzantine_offer=false`.
+follow-main keep-book ×4 : `origin/main` = `/health` ×4 = **`a6211b4f530c68c35a13638ba07d37c174f1c4bd`**.  
+Livres restés à **1078** lignes jusqu’au mémo honnête. OVH4 **jamais arrêté**.
 
-| Appel | HTTP | Lecture |
-|---|---|---|
-| `POST /p2p/blocks/offer` ×3 | **405** Method Not Allowed | route 260 **absente** sur ce SHA |
-| `GET /consensus/byzantine/evidence` | **404** | idem |
-| `POST /p2p/blocks/receive` enveloppe poubelle | **400** | rejeté, livre intact |
-| `POST /p2p/replica/push` enveloppe poubelle | **400** `replica_decrypt_failed:KEMError` | nginx `:8443` voit un peer allowlist (loopback XFF) puis KEM refuse ; **pas d’append** |
+### Offres Byzantine (identité déclarée `ovh-node-4`) → 4 nœuds
 
-Les 8 contrôles V-XX sont **PASS locaux**. Ils ne sont **pas** encore PASS live sur les 4 compute — il manque le follow-main de ce SHA. Le CI de la branche 259 docs-only n’est toujours pas une preuve réseau.
+`POST /p2p/blocks/offer` HTTP **200** partout. **0 append**. tip resté `93c8b7c1…` height **1078**.
 
-Déployer 260 exige un **GO follow-main** explicite. Pas exécuté ici.
+| Offre | Verdict ×4 |
+|---|---|
+| hash `ff…` au next index | `hash_mismatch` |
+| hash structurellement valide + `signature=not-a-real-signature` | `invalid_signature` |
+| 2 blocs bien formés, **même index déjà tenu**, hashes distincts | `equivocation` ×2 |
+| flood 12 × hash faux | `hash_mismatch` ×12 |
+
+`GET /consensus/byzantine/evidence` ×4 : HTTP 200, **16** preuves chacune (`hash_mismatch` 13, `invalid_signature` 1, `equivocation` 2).
+
+### Progression honnête après la tempête
+
+`POST /ai/memo` OVH1 : HTTP **200**, `block_index` **1078**, hash **`bca7c61dfa0a72cbee0d7cb10787e89613acd3155d81f5cf68226ad7c32cf9ff`**, graph `ai_memo_7889bda57589`. Height **1079**.
+
+Replica localhost OVH1 : OVH2 / AWS3 / OVH4 **1078→1079**, même tip `bca7c61d…`, imported 1, 0 erreur.
+
+| Nœud | SHA | height | tip | `wc -l` | liveness | evidence |
+|---|---|---|---|---|---|---|
+| OVH1 / 2 / AWS3 / OVH4 | `a6211b4f530c…` | **1079** | `bca7c61dfa0a72cb…` | **1079** | `reachable=4` | **16** |
+
+### Lecture honnête
+
+| | |
+|---|---|
+| PASS live | Offres actives contradictoires **rejetées** sur 4 nœuds ; preuve persistée ; honnêtes avancent ; replica catch-up |
+| NON | PBFT / view-change / 2f+1 signatures de bloc |
+| NON | Un nœud officiel qui **écrit** deux tips signés sur son disque |
+| NON | Partition réseau / production-ready global |
 
 ---
 
