@@ -1658,11 +1658,15 @@ P8 : prepared_proofs ×4 ; select kept_x seq 1097 digest `c79319fbebfbd0459f3d1f
 Agent : bootstrap 268 `ingest_platform_hook=false` ; register `agent_320497e7c08d` ; event 1098 `9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf` ; 2e POST `already_committed` same_block. Height **1099** tip `9c67ac06…` cert Q=3 commits=4 ×4. `logs/268_agent_20260908T170137Z.json`.
 PBFT 100 % : **NON**. Universal LLM adapters : **NON**. mTLS mesh : **NON**.
 
-## [2026-09-08T17:22:00Z] 269 — P9…P18 campaign (no HPC)
+## [2026-09-08T17:31:00Z] 269 — P9…P18 live PASS (no HPC)
 
-HPC rapport 269 AWS **non autorisé**. AWS reste t3.small.
-P9 mutation cert ; P10 dual propose/equivocation ; P11 PREPARE Y ; P12 replay view ; P13 crash/restart ; P14 JSON tronqué ; P15 agent_identity_conflict ; P16 idempotency_conflict ; P17 cert≠bloc ; P18 mutations.
-T-E57. Preuve formelle : non. Campagne interne live après follow-main.
+HPC rapport 269 AWS **non autorisé**. AWS reste **t3.small** `i-085b74abd1aaf04ee`.
+SHA moteur `f59dd88dfacde1a898fd59b01040a02a59f7e3b2` ×4.
+P9 mutations HTTP 409 ×7 ; P10 200 puis 409 `equivocation` ; P10_finalize cert writes 4/4 digest `24b8a8724ab9c0048458681e1b7a812c5e5a29d5287fc19d73f0fc9dc4d98143` seq 1099 ; P11 409 `not_accepted` ; P12 `invalid_prepare` ; P13 crash ovh1 restore ; P14 JSON tronqué pas de cert inventé ; P15 409 `agent_identity_conflict` ; P16 409 `idempotency_conflict` ; P17 409 ; P18 28/28 puis re-vérif **210/210**.
+P16 privé index 1100 `204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a5860b01100` sans pbft_cert — rattrapé jsonl ×4, height **1101**, `chain_valid` ×4, view 7 primary ovh-node-4.
+`logs/269_p9_p18_20260908T172433Z.json` + `logs/269_p9_p18_catchup_20260908T173122Z.json`.
+T-E57 [x]. Campagne interne P9–P18 : **100 % PASS**. Preuve formelle toutes exécutions : **NON**. Universal LLM ingest : **NON**.
+Runner P16 désormais `visibility=public` (plus de fourche privée locale).
 
 
 

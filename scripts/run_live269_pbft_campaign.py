@@ -217,7 +217,8 @@ def main() -> int:
     r2_h, r2 = http_json("POST", f"{url}/api/v1/agent/register", api_key=key, body={"provider": "claude", "label": "p15b", "agent_id": aid, "capabilities": ["memory:read"]}, timeout=30)
     tests["P15"] = {"ok": r1_h == 200 and r2_h == 409, "first": r1_h, "second": r2_h, "detail": str((r2 or {}).get("detail") if isinstance(r2, dict) else r2)[:180]}
     eid = f"evt_269_{uuid.uuid4().hex[:12]}"
-    body_a = {"event_id": eid, "kind": "observation", "content": f"269-A {stamp}", "visibility": "private", "tags": ["269"], "session_id": "269"}
+    # Public + PBFT so a 4-node live run cannot leave a private-local fork.
+    body_a = {"event_id": eid, "kind": "observation", "content": f"269-A {stamp}", "visibility": "public", "tags": ["269"], "session_id": "269"}
     e1_h, e1 = http_json("POST", f"{url}/api/v1/agent/events", api_key=key, body=body_a, timeout=60)
     e2_h, e2 = http_json("POST", f"{url}/api/v1/agent/events", api_key=key, body={**body_a, "content": f"269-B {stamp}"}, timeout=60)
     tests["P16"] = {
@@ -225,6 +226,7 @@ def main() -> int:
         "first": e1_h,
         "second": e2_h,
         "detail": str((e2 or {}).get("detail") if isinstance(e2, dict) else e2)[:180],
+        "visibility": "public",
         "includes_thinking": False,
     }
 
@@ -239,7 +241,7 @@ def main() -> int:
     p18_ok = 0
     p18_n = 0
     if cert:
-        for kind in kinds * 4:
+        for kind in kinds * 30:
             p18_n += 1
             mutated = _mutate(cert, kind)
             r = l265._http("POST", f"{HTTP[replica]}/api/v1/consensus/pbft/certificate", {"certificate": mutated})

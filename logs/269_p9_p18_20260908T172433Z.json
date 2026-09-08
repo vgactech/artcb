@@ -1,0 +1,209 @@
+{
+  "stamp": "20260908T172433Z",
+  "protocol": "269-pbft-p9-p18",
+  "git_sha_agent": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+  "hpc": false,
+  "wipe": false,
+  "before": {
+    "ovh-node-1": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1099,
+      "last_hash": "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf",
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-2": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1099,
+      "last_hash": "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf",
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "aws-node-3": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1099,
+      "last_hash": "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf",
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-4": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1099,
+      "last_hash": "9c67ac0627c7938110f25ad9723e23db38aafc0d1a0b610059ef7cef248571cf",
+      "view": 7,
+      "primary": "ovh-node-4"
+    }
+  },
+  "sha_equal": true,
+  "tests": {
+    "P9_have_cert": {
+      "http": 200,
+      "ok": true
+    },
+    "P9": {
+      "ok": true,
+      "cases": {
+        "view": {
+          "http": 409,
+          "detail": "invalid_certificate",
+          "rejected": true
+        },
+        "seq": {
+          "http": 409,
+          "detail": "invalid_certificate",
+          "rejected": true
+        },
+        "digest": {
+          "http": 409,
+          "detail": "invalid_certificate",
+          "rejected": true
+        },
+        "replica_id_all": {
+          "http": 409,
+          "detail": "invalid_certificate",
+          "rejected": true
+        },
+        "signature_all": {
+          "http": 409,
+          "detail": "invalid_certificate",
+          "rejected": true
+        },
+        "drop_commit": {
+          "http": 409,
+          "detail": "invalid_certificate",
+          "rejected": true
+        },
+        "dup_commit": {
+          "http": 409,
+          "detail": "invalid_certificate",
+          "rejected": true
+        }
+      }
+    },
+    "P10": {
+      "ok": true,
+      "first": 200,
+      "second": 409,
+      "detail": "equivocation"
+    },
+    "P11": {
+      "ok": true,
+      "http": 409,
+      "detail": "not_accepted"
+    },
+    "P12": {
+      "ok": true,
+      "http": 200,
+      "detail": "invalid_prepare"
+    },
+    "P10_finalize": {
+      "ok": true,
+      "cert": true,
+      "writes": {
+        "ovh-node-1": true,
+        "ovh-node-2": true,
+        "aws-node-3": true,
+        "ovh-node-4": true
+      }
+    },
+    "P13_stop": {
+      "node_id": "ovh-node-1",
+      "returncode": 0,
+      "stdout": "failed\n",
+      "stderr": ""
+    },
+    "P13_start": {
+      "node_id": "ovh-node-1",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "P13": {
+      "ok": true,
+      "down": true,
+      "up": true,
+      "tips": [
+        "24b8a8724ab9c0048458681e1b7a812c5e5a29d5287fc19d73f0fc9dc4d98143"
+      ]
+    },
+    "P14_bak": {
+      "node_id": "ovh-node-1",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "P14_restart": {
+      "node_id": "ovh-node-1",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "P14_restore": {
+      "node_id": "ovh-node-1",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "P14": {
+      "ok": true,
+      "invented_valid_cert": false,
+      "bogus_http": 404,
+      "restored": true
+    },
+    "P15": {
+      "ok": true,
+      "first": 200,
+      "second": 409,
+      "detail": "agent_identity_conflict"
+    },
+    "P16": {
+      "ok": true,
+      "first": 200,
+      "second": 409,
+      "detail": "idempotency_conflict",
+      "includes_thinking": false
+    },
+    "P17": {
+      "ok": true,
+      "http": 409,
+      "detail": "invalid_certificate"
+    },
+    "P18": {
+      "ok": true,
+      "rejected": 28,
+      "n": 28
+    }
+  },
+  "after": {
+    "ovh-node-1": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1101,
+      "last_hash": "204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a5860b01100",
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-2": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1100,
+      "last_hash": "24b8a8724ab9c0048458681e1b7a812c5e5a29d5287fc19d73f0fc9dc4d98143",
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "aws-node-3": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1100,
+      "last_hash": "24b8a8724ab9c0048458681e1b7a812c5e5a29d5287fc19d73f0fc9dc4d98143",
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-4": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1100,
+      "last_hash": "24b8a8724ab9c0048458681e1b7a812c5e5a29d5287fc19d73f0fc9dc4d98143",
+      "view": 7,
+      "primary": "ovh-node-4"
+    }
+  },
+  "converged": false,
+  "ok": false
+}

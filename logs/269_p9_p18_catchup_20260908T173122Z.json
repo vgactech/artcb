@@ -1,0 +1,102 @@
+{
+  "stamp": "20260908T173122Z",
+  "protocol": "269-pbft-p9-p18-catchup",
+  "hpc": false,
+  "wipe": false,
+  "aws_instance": "t3.small",
+  "aws_instance_id": "i-085b74abd1aaf04ee",
+  "engine_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+  "public_certified_seq": 1099,
+  "public_certified_digest": "24b8a8724ab9c0048458681e1b7a812c5e5a29d5287fc19d73f0fc9dc4d98143",
+  "private_p16_index": 1100,
+  "private_p16_hash": "204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a5860b01100",
+  "private_p16_pbft_cert": false,
+  "catchup": "jsonl-append of private memo 1100 onto ovh-2/aws-3/ovh-4 then restart; no wipe",
+  "after": {
+    "ovh-node-1": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1101,
+      "last_hash": "204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a5860b01100",
+      "chain_valid": true,
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-2": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1101,
+      "last_hash": "204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a5860b01100",
+      "chain_valid": true,
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "aws-node-3": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1101,
+      "last_hash": "204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a5860b01100",
+      "chain_valid": true,
+      "view": 7,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-4": {
+      "git_sha": "f59dd88dfacde1a898fd59b01040a02a59f7e3b2",
+      "height": 1101,
+      "last_hash": "204f6164123bd65cbe2e426d9a9b47f5dd9b6e2f90fb39cb98257a5860b01100",
+      "chain_valid": true,
+      "view": 7,
+      "primary": "ovh-node-4"
+    }
+  },
+  "converged": true,
+  "P9": {
+    "ok": true,
+    "cases": {
+      "view": {
+        "http": 409,
+        "detail": "invalid_certificate",
+        "rejected": true
+      },
+      "seq": {
+        "http": 409,
+        "detail": "invalid_certificate",
+        "rejected": true
+      },
+      "digest": {
+        "http": 409,
+        "detail": "invalid_certificate",
+        "rejected": true
+      },
+      "replica_id_all": {
+        "http": 409,
+        "detail": "invalid_certificate",
+        "rejected": true
+      },
+      "signature_all": {
+        "http": 409,
+        "detail": "invalid_certificate",
+        "rejected": true
+      },
+      "drop_commit": {
+        "http": 409,
+        "detail": "invalid_certificate",
+        "rejected": true
+      },
+      "dup_commit": {
+        "http": 409,
+        "detail": "invalid_certificate",
+        "rejected": true
+      }
+    },
+    "cert_ok": true
+  },
+  "P17": {
+    "ok": true,
+    "http": 409,
+    "detail": "invalid_certificate"
+  },
+  "P18": {
+    "ok": true,
+    "rejected": 210,
+    "n": 210
+  },
+  "ok": true
+}
