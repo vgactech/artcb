@@ -28,6 +28,7 @@ for extra in (ROOT, ROOT / "src", ROOT / "scripts"):
 import run_live264_pbft_viewchange as l264  # noqa: E402
 import run_live265_pbft_e2e as l265  # noqa: E402
 import run_live266_pbft_cert as l266  # noqa: E402
+import run_live270_pbft_cert_matrix as l270  # noqa: E402
 from artcb.consensus.live_bft import LIVE_BFT_PROTOCOL, n_f_q  # noqa: E402
 from artcb.consensus.pbft_certification_matrix import (  # noqa: E402
     apply_result,
@@ -45,11 +46,82 @@ HTTP = l265.HTTP
 HTTPS = l266.HTTPS
 LONG_ROUNDS = max(8, int(os.environ.get("ARTCB271_LONG_ROUNDS", "40")))
 LOSS_PCT = (1, 5, 10, 20, 30, 50)
+THE_18 = (
+    "PBFT-X01",
+    "PBFT-S05",
+    "PBFT-N07",
+    "PBFT-B04",
+    "PBFT-B05",
+    "PBFT-R03",
+    "PBFT-N03",
+    "PBFT-N04",
+    "PBFT-N06",
+    "PBFT-N08",
+    "PBFT-C02",
+    "PBFT-C03",
+    "PBFT-Q02",
+    "PBFT-C05",
+    "PBFT-A01",
+    "PBFT-A02",
+    "PBFT-X03",
+    "PBFT-C04",
+)
+PRIOR_270 = ROOT / "logs" / "270_pbft_cert_latest.json"
 
 
 def _mark(matrix, row_id, ok, *, level, proof, **extra) -> None:
     verdict = "PASS" if ok else "FAIL"
     apply_result(matrix, row_id, result=verdict, verdict=verdict, live_wan=verdict, level=level, proof=proof, **extra)
+
+
+def _overlay_r270(matrix: dict) -> dict:
+    """Keep R270 PASSes for rows this campaign does not re-execute.
+
+    Provenance stays on SHA 8050981 / engine f59dd88; 4fb2b1b is the docs merge.
+    """
+    copied = 0
+    if not PRIOR_270.is_file():
+        return {"copied": 0, "missing": str(PRIOR_270)}
+    prior = json.loads(PRIOR_270.read_text(encoding="utf-8"))
+    rows = ((prior.get("matrix") or {}).get("rows") or [])
+    for row in rows:
+        rid = str(row.get("id") or "")
+        if rid in THE_18 or row.get("verdict") != "PASS":
+            continue
+        apply_result(
+            matrix,
+            rid,
+            verdict="PASS",
+            result="PASS",
+            live_wan="PASS",
+            level=row.get("level") or "L4",
+            proof=f"R270 live SHA 8050981 engine f59dd88: {row.get('proof') or ''}"[:400],
+            local=row.get("local") or "PASS",
+            multi_node=row.get("multi_node") or "PASS",
+        )
+        copied += 1
+    return {"copied": copied, "prior_sha": (prior.get("freeze_nodes") or {}).get("ovh-node-1", {}).get("git_sha")}
+
+
+def _unlock_view(reason: str) -> dict:
+    """VIEW-CHANGE Q=3 + NEW-VIEW to drop a dangling PRE-PREPARE lock."""
+    vnow = int(l265._http("GET", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/view").get("view") or 0)
+    new_v = vnow + 1
+    nodes = list(OFFICIAL_COMPUTE_NODE_IDS)
+    vcs, nv_obj = l270._view_change(nodes, new_v, reason)
+    views = {}
+    for nid in nodes:
+        row = l265._http("GET", f"{HTTP[nid]}/api/v1/consensus/pbft/view")
+        views[nid] = {"view": row.get("view"), "primary": row.get("primary") or primary_of(int(row.get("view") or new_v))}
+    return {
+        "from_view": vnow,
+        "to_view": new_v,
+        "vc_n": len(vcs),
+        "new_view": bool(nv_obj),
+        "primary": primary_of(new_v),
+        "views": views,
+        "reason": reason,
+    }
 
 
 def _iface(nid: str) -> str:
@@ -118,9 +190,35 @@ def main() -> int:
             # still execute: testnet, user demanded live on current nodes
             payload["sha_note"] = "continuing on deployed SHA anyway (test mainnet)"
 
+        payload["overlay_r270"] = _overlay_r270(matrix)
+
+        print("UNLOCK dangling PRE-PREPARE if propose 409", flush=True)
+        prim = primary_of(int((freeze.get("ovh-node-1") or {}).get("view") or 0))
+        probe = l265._http(
+            "POST",
+            f"{HTTP[prim]}/api/v1/consensus/pbft/propose",
+            {"graph_id": f"271-probe-{stamp}", "graph_root": "probe", "source": "pbft:271-probe"},
+        )
+        payload["propose_probe"] = {
+            "http": probe.get("http"),
+            "detail": str(probe.get("detail") or probe.get("reason") or "")[:180],
+            "primary": prim,
+        }
+        stuck = probe.get("http") == 409 and "equivocation" in str(probe.get("detail") or probe.get("reason") or "").lower()
+        if stuck or probe.get("http") != 200:
+            payload["unlock"] = _unlock_view("271_dangling_preprepare")
+            base = l265.run_round("271-unlock")
+            payload["baseline_after_unlock"] = {k: base.get(k) for k in ("ok", "seq", "digest", "reason", "phase")}
+            print(f"UNLOCKED baseline_ok={base.get('ok')} seq={base.get('seq')}", flush=True)
+        elif isinstance(probe.get("pre_prepare"), dict):
+            # Probe opened a lock — close it with a full round or VC.
+            payload["unlock"] = _unlock_view("271_probe_opened_pp")
+            base = l265.run_round("271-unlock")
+            payload["baseline_after_unlock"] = {k: base.get(k) for k in ("ok", "seq", "digest", "reason", "phase")}
+
         print("TEST X01", flush=True)
         # --- X01 BFT_SETTLEMENT 188 ---
-        view = int((freeze.get("ovh-node-1") or {}).get("view") or 0)
+        view = int(l265._http("GET", f"{HTTP['ovh-node-1']}/api/v1/consensus/pbft/view").get("view") or 0)
         wid = f"artcb271-{uuid.uuid4().hex[:12]}"
         s188 = l264.run_188(wid, view=view, nodes=list(OFFICIAL_COMPUTE_NODE_IDS))
         payload["tests"]["X01"] = s188
@@ -182,8 +280,11 @@ def main() -> int:
             px = l265._http("POST", f"{HTTP[left]}/api/v1/consensus/pbft/prepare", {"view": view, "seq": seq, "digest": digest})
             py = l265._http("POST", f"{HTTP[right]}/api/v1/consensus/pbft/prepare", {"view": view, "seq": seq, "digest": "ee" * 32})
             b04 = px.get("http") == 200 and (py.get("http") == 409 or "not_accepted" in str(py.get("detail") or py.get("reason") or ""))
-            fin = l265.run_round("271-b04-fin")
-            payload["tests"]["B04"] = {"ok": b04, "px": px.get("http"), "py": py.get("http"), "py_detail": str(py.get("detail") or py.get("reason") or "")[:160], "finalize_after": bool(fin.get("ok"))}
+            payload["tests"]["B04"] = {"ok": b04, "px": px.get("http"), "py": py.get("http"), "py_detail": str(py.get("detail") or py.get("reason") or "")[:160]}
+            payload["tests"]["B04_unlock"] = _unlock_view("271_b04_close_lock")
+        else:
+            payload["tests"]["B04"] = {"ok": False, "reason": "propose_failed", "http": proposed.get("http"), "detail": str(proposed.get("detail") or proposed.get("reason") or "")[:180]}
+            payload["tests"]["B04_unlock"] = _unlock_view("271_b04_propose_failed")
         _mark(matrix, "PBFT-B04", b04, level="L6", proof="PREPARE X to one replica, PREPARE Y to another")
 
         print("TEST B05", flush=True)
@@ -261,9 +362,10 @@ def main() -> int:
         l265._ssh("ovh-node-1", "sudo bash /home/ubuntu/artcb/scripts/artcb271_asym.sh restore 91.134.45.8")
         l265.replica_from_ovh1()
         after_n03 = independent_safety(l265.independent_snapshot())
-        n03 = left_ok and right_ok and after_n03["converged"] and not (round_a.get("ok") is True and after_a["hash_unique"] > 1)
-        payload["tests"]["N03"] = {"ok": n03, "round": {k: round_a.get(k) for k in ("ok", "seq", "digest", "reason", "phase")}, "during": after_a, "after": after_n03}
-        _mark(matrix, "PBFT-N03", n03, level="L5", proof="OUTPUT drop 1→4 only; INPUT still open; no dual tip")
+        heal = l265.run_round("271-N03-heal")
+        n03 = left_ok and right_ok and after_n03["converged"] and not (round_a.get("ok") is True and after_a["hash_unique"] > 1) and bool(heal.get("ok"))
+        payload["tests"]["N03"] = {"ok": n03, "round": {k: round_a.get(k) for k in ("ok", "seq", "digest", "reason", "phase")}, "during": after_a, "after": after_n03, "heal": {k: heal.get(k) for k in ("ok", "seq", "digest")}}
+        _mark(matrix, "PBFT-N03", n03, level="L5", proof="OUTPUT drop 1→4 only; INPUT still open; no dual tip; certified round after restore")
 
         print("TEST N04", flush=True)
         # --- N04 packet loss sweep ---
@@ -280,9 +382,10 @@ def main() -> int:
             n04_rows.append({"loss_pct": pct, "round_ok": bool(rnd.get("ok")), "seq": rnd.get("seq"), "digest": rnd.get("digest"), "reason": rnd.get("reason") or rnd.get("phase"), "safety": snap["converged"]})
             _clear_netem_all()
             time.sleep(1)
-        n04 = n04_safety and len(n04_rows) == len(LOSS_PCT)
-        payload["tests"]["N04"] = {"ok": n04, "safety_all": n04_safety, "any_liveness": n04_any_live, "rows": n04_rows}
-        _mark(matrix, "PBFT-N04", n04, level="L5", proof="tc netem loss 1,5,10,20,30,50% ×4 ifaces; safety=no dual tip")
+        live_1 = any(r["round_ok"] for r in n04_rows if r["loss_pct"] == 1)
+        n04 = n04_safety and live_1 and len(n04_rows) == len(LOSS_PCT)
+        payload["tests"]["N04"] = {"ok": n04, "safety_all": n04_safety, "any_liveness": n04_any_live, "liveness_1pct": live_1, "rows": n04_rows}
+        _mark(matrix, "PBFT-N04", n04, level="L5", proof="tc netem loss 1–50% ×4; PASS requires safety at all rates AND a certified round at 1%")
 
         print("TEST N06", flush=True)
         # --- N06 reorder ---
@@ -291,9 +394,9 @@ def main() -> int:
         rnd6 = l265.run_round("271-N06")
         snap6 = independent_safety(l265.independent_snapshot())
         _clear_netem_all()
-        n06 = snap6["converged"]
+        n06 = snap6["converged"] and bool(rnd6.get("ok"))
         payload["tests"]["N06"] = {"ok": n06, "round_ok": bool(rnd6.get("ok")), "seq": rnd6.get("seq"), "digest": rnd6.get("digest"), "safety": snap6}
-        _mark(matrix, "PBFT-N06", n06, level="L5", proof="tc netem delay 40ms reorder 50% 25% ×4")
+        _mark(matrix, "PBFT-N06", n06, level="L5", proof="tc netem delay 40ms reorder 50% 25% ×4; PASS requires certified round + no dual tip")
 
         print("TEST N08", flush=True)
         # --- N08 loss+delay+reorder ---
@@ -302,9 +405,9 @@ def main() -> int:
         rnd8 = l265.run_round("271-N08")
         snap8 = independent_safety(l265.independent_snapshot())
         _clear_netem_all()
-        n08 = snap8["converged"]
+        n08 = snap8["converged"] and bool(rnd8.get("ok"))
         payload["tests"]["N08"] = {"ok": n08, "round_ok": bool(rnd8.get("ok")), "seq": rnd8.get("seq"), "safety": snap8}
-        _mark(matrix, "PBFT-N08", n08, level="L5", proof="combined delay+loss+reorder; safety required")
+        _mark(matrix, "PBFT-N08", n08, level="L5", proof="combined delay+loss+reorder; PASS requires certified round + no dual tip")
 
         print("TEST C02", flush=True)
         # --- C02 crash + partition + delay ---
@@ -332,9 +435,9 @@ def main() -> int:
         rnd_sk = l265.run_round("271-C03")
         uns = l265._ssh("ovh-node-2", "sudo timedatectl set-ntp true; sudo systemctl restart systemd-timesyncd 2>/dev/null || true; date -u +%s")
         snap_sk = independent_safety(l265.independent_snapshot())
-        c03 = snap_sk["converged"]
+        c03 = snap_sk["converged"] and bool(rnd_sk.get("ok"))
         payload["tests"]["C03"] = {"ok": c03, "skew_rc": skew.get("returncode"), "round_ok": bool(rnd_sk.get("ok")), "seq": rnd_sk.get("seq"), "ntp_rc": uns.get("returncode"), "safety": snap_sk}
-        _mark(matrix, "PBFT-C03", c03, level="L5", proof="+70s clock on ovh-2 then NTP restore")
+        _mark(matrix, "PBFT-C03", c03, level="L5", proof="+70s clock on ovh-2 then NTP restore; PASS requires certified round under skew")
 
         print("TEST Q02", flush=True)
         # --- Q02 F=2 expected: two nodes down, remaining 2 cannot finalize ---
@@ -384,11 +487,26 @@ def main() -> int:
         print("TEST X03", flush=True)
         # --- X03 sample ARTCB features via live APIs / consensus ---
         econ_h, econ = http_json("GET", f"{url}/api/v1/economics/params", api_key=key, timeout=20)
-        wal_h, wal = http_json("POST", f"{url}/api/v1/wallet/create", api_key=key, body={"label": f"271-{stamp[:8]}"}, timeout=30)
+        wal_h, wal = http_json(
+            "POST",
+            f"{url}/api/v1/wallet/create",
+            api_key=key,
+            body={"name": f"w271_{stamp[8:14]}", "password": "artcb271-live"},
+            timeout=30,
+        )
         memo_round = l265.run_round("271-X03")
-        x03 = econ_h == 200 and bool(memo_round.get("ok")) and after_a2["converged"]
-        payload["tests"]["X03"] = {"ok": x03, "economics_http": econ_h, "wallet_http": wal_h, "wallet_ok": bool((wal or {}).get("ok")) if isinstance(wal, dict) else wal_h, "memo_round": {k: memo_round.get(k) for k in ("ok", "seq", "digest")}, "h_adult_params": (econ or {}).get("h_adult") if isinstance(econ, dict) else None}
-        _mark(matrix, "PBFT-X03", x03, level="L4", proof="economics params + wallet create + public PBFT round — not every product feature")
+        wallet_ok = wal_h in (200, 409)
+        x03 = econ_h == 200 and wallet_ok and bool(memo_round.get("ok")) and after_a2["converged"]
+        payload["tests"]["X03"] = {
+            "ok": x03,
+            "economics_http": econ_h,
+            "wallet_http": wal_h,
+            "wallet_ok": wallet_ok,
+            "memo_round": {k: memo_round.get(k) for k in ("ok", "seq", "digest")},
+            "h_adult_params": (econ or {}).get("h_adult") if isinstance(econ, dict) else None,
+            "note": "wallet 200=created or 409=device already bound; seed_hex never logged",
+        }
+        _mark(matrix, "PBFT-X03", x03, level="L4", proof="economics params + wallet create/bind + public PBFT round — not every product feature")
 
         print("TEST C04", flush=True)
         # --- C04 long-run many certified blocks ---
@@ -403,9 +521,9 @@ def main() -> int:
             else:
                 c04_fail += 1
         snap_l = independent_safety(l265.independent_snapshot())
-        c04 = c04_ok_n >= max(8, LONG_ROUNDS // 2) and snap_l["converged"] and c04_fail == 0
+        c04 = c04_ok_n >= max(8, LONG_ROUNDS // 2) and snap_l["converged"] and c04_fail == 0 and LONG_ROUNDS >= 1000
         payload["tests"]["C04"] = {"ok": c04, "requested": LONG_ROUNDS, "ok_n": c04_ok_n, "fail_n": c04_fail, "last": {k: (last_ok or {}).get(k) for k in ("ok", "seq", "digest")}, "safety": snap_l, "thousands": LONG_ROUNDS >= 1000}
-        _mark(matrix, "PBFT-C04", c04, level="L5", proof=f"{c04_ok_n}/{LONG_ROUNDS} certified rounds live; thousands={LONG_ROUNDS>=1000}")
+        _mark(matrix, "PBFT-C04", c04, level="L5", proof=f"{c04_ok_n}/{LONG_ROUNDS} certified rounds live; thousands={LONG_ROUNDS>=1000} (FAIL unless ≥1000)")
 
         after = l265.independent_snapshot()
         payload["after"] = independent_safety(after)
