@@ -56,3 +56,11 @@ Ce bloc **est** le protocole / autoprompt. Toute consigne opérateur répétée 
 Sources de la clé nœud 1 : secret Cursor `ARTCB_API_KEY` → Doppler `ARTCB_API_KEY` → `~/.artcb/cursor_agent.env` → SSH nœud 1.
 
 Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdit d’afficher le token.
+
+## Historique protocole / autoprompt (opérateur, 2026-09-08T15:48:00Z — ne plus le faire répéter)
+
+11. **Ne jamais effacer** une ancienne règle, un protocole ou un élément d’autoprompt. Interdit de supprimer, remplacer ou réécrire en place.
+12. **Tout le texte déjà écrit reste** dans le fichier (historique complet, consultable).
+13. **Révocation = texte barré**, pas une suppression. Exemple Markdown : `~~ancienne règle~~`. La règle barrée reste lisible.
+14. **Horodatage obligatoire** (date + heure UTC) sur chaque ajout, révocation ou bascule.
+15. **Les nouvelles règles s’ajoutent à la suite.** On ne compacte pas l’historique. On peut revenir en arrière en lisant le fichier.

@@ -96,6 +96,9 @@ Une case vide se lit « non ». Elle ne se remplit pas par déduction.
   primary + partition 2-2. `PBFT_LIVE_E2E_PASS` seulement après V-01…V-07
   live sur le SHA déployé = `origin/main`. `certified_distributed_mainnet`
   reste le gate DV-01…07 + operator GO — distinct du PASS PBFT.
+- 2026-09-08T15:48:00Z : historique protocole/autoprompt — **ne jamais
+  effacer** une ancienne règle ; révocation = texte barré horodaté ;
+  les nouvelles règles s’ajoutent à la suite. Pas une D-0xx.
 - Rapport 247 : livre écrit. OVH1 height 8 tip `f646c510…` (idx 5–7
   `cbff6e66` / `a9e411c3` / `f646c510`). Pairs 2/3/4 restent `27350024`
   (import 222). Wipe non. GO-E produce off. SHA `c1d8027` = `origin/main`.

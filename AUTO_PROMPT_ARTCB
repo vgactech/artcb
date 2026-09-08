@@ -1600,4 +1600,15 @@ V-06 restart après certificat : height/hash/view/cert conservés.
 V-07 mesure sur `git_sha` = `origin/main` ×4.
 Traces ns obligatoires. T-E54.
 
+## [2026-09-08T15:48:00Z] Historique protocole & autoprompt — interdiction d’effacer
+
+**Réflexe (ne plus le faire répéter) :**
+- Interdit de supprimer, effacer ou remplacer une ancienne règle / protocole / élément d’autoprompt.
+- Tout le contenu déjà écrit **reste** dans le fichier (historique complet).
+- Révocation : **barrer** (`~~ancienne règle~~`), ne pas modifier en place, ne pas compacter.
+- Chaque changement / révocation / bascule porte **date + heure UTC**.
+- La nouvelle règle s’**ajoute à la suite**. On retrace l’évolution ; on peut revenir en arrière.
+
+Cette consigne **n’annule pas** les blocs 264/265/266 ci-dessus ; elle les conserve.
+
 
