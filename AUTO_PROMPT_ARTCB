@@ -1764,10 +1764,11 @@ Live stamp `20260909T181610Z` SHA ×4 `75836c715fb47cf87d37365bd6d5b8e36d940c5e`
 `logs/286_mac_ssh_live.json` `rapports/286_mac_ssh_cursor_doppler_20260909.md`. T-E70 [x] (pytest PASS ; SSH live FAIL honnête).
 **CERTIFIED_100=false.**
 
-## [2026-09-09T18:22:00Z] 287 — RFC1918 Mac exige un tunnel (pas CERTIFIED_100)
+## [2026-09-09T18:26:20Z] 287 — RFC1918 Mac exige un tunnel (pas CERTIFIED_100)
 
 `10.234.49.2` = LAN uniquement. Cloud = `NOT_REACHABLE` sans tunnel **démarré sur le Mac**. ngrok depuis une VM cloud ≠ accès Mac. Compte ngrok partagé : 0 tunnel / 0 endpoint. P2P register LAN URL forbidden. `tunnel_required=true`. Pas de SHA health Mac inventé.
-`logs/287_mac_tunnel_live.json` `rapports/287_mac_rfc1918_tunnel_20260909.md`. T-E71.
+Live stamp `20260909T182620Z` SHA ×4 `75836c715fb47cf87d37365bd6d5b8e36d940c5e`.
+`logs/287_mac_tunnel_live.json` `rapports/287_mac_rfc1918_tunnel_20260909.md`. T-E71 [x] (pytest PASS ; tunnel live ABSENT honnête).
 **CERTIFIED_100=false.**
 
 

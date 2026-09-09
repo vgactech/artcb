@@ -1,0 +1,59 @@
+{
+  "run": "287_mac_tunnel",
+  "stamp": "20260909T182620Z",
+  "certified_100": false,
+  "official_shas": {
+    "ovh-node-1": "75836c715fb47cf87d37365bd6d5b8e36d940c5e",
+    "ovh-node-2": "75836c715fb47cf87d37365bd6d5b8e36d940c5e",
+    "aws-node-3": "75836c715fb47cf87d37365bd6d5b8e36d940c5e",
+    "ovh-node-4": "75836c715fb47cf87d37365bd6d5b8e36d940c5e"
+  },
+  "ovh1_height": 1133,
+  "ovh1_last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+  "p2p_register_lan": {
+    "url": "http://10.234.49.2:8001",
+    "ok": false,
+    "reason": "private_or_loopback_forbidden"
+  },
+  "mac": {
+    "node_id": "mac-node-local",
+    "tunnel_required": true,
+    "official_compute": false,
+    "certified_100": false,
+    "lan_ssh_host": "10.234.49.2",
+    "lan_only": true,
+    "lan_health_http": "http://10.234.49.2:8001",
+    "remote": {
+      "ok": false,
+      "reason": "rfc1918_requires_tunnel",
+      "ssh_host": null,
+      "health_http": null,
+      "tunnel_required": true,
+      "lan_ssh_host": "10.234.49.2",
+      "rejected": "10.234.49.2"
+    },
+    "ngrok": {
+      "tunnels_http": 200,
+      "endpoints_http": 200,
+      "n_tunnels": 0,
+      "n_endpoints": 0,
+      "n_public": 0,
+      "public_hosts": [],
+      "error": null
+    },
+    "tcp": {},
+    "verdict": {
+      "rfc1918_lan": "NOT_REACHABLE_FROM_CLOUD",
+      "tunnel": "ABSENT",
+      "ngrok_account_tunnels": "ABSENT",
+      "mac_health_sha": null,
+      "note": "10.234.49.2 is RFC1918. Cloud VMs and Cursor cloud agents need a tunnel started on the Mac. Starting ngrok on a cloud VM does not reach the Mac. Do not invent a Mac health SHA."
+    }
+  },
+  "honesty": {
+    "did_not_start_ngrok_on_cloud_vm": true,
+    "mac_not_official_compute": true,
+    "no_invented_mac_sha": true,
+    "no_secret_in_json": true
+  }
+}
