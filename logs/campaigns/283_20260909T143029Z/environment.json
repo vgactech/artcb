@@ -1,0 +1,8 @@
+{
+  "shas": {
+    "ovh-node-1": "667742087f143b6a0271f3075da2fdf58c539dd6",
+    "ovh-node-2": "667742087f143b6a0271f3075da2fdf58c539dd6",
+    "aws-node-3": "667742087f143b6a0271f3075da2fdf58c539dd6",
+    "ovh-node-4": "667742087f143b6a0271f3075da2fdf58c539dd6"
+  }
+}

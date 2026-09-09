@@ -1743,5 +1743,12 @@ GO opérateur : AMI UEFI+TPM, pas swtpm recasté. Snapshot `snap-0621d1c686307f3
 `logs/282_nitrotpm_live.json` `rapports/282_nitrotpm_ami_aws3_20260909.md`. T-E67 [x].
 **CERTIFIED_100=false.**
 
+## [2026-09-09T14:30:29Z] 283 — certification par profil d’environnement (pas CERTIFIED_100)
+
+L4 n’est plus une exigence universelle. Politique : environnement → capacités → niveau max → preuves → validation → certification du **profil**. L4 sur une VM = `NOT_APPLICABLE` (pas FAIL). L3 ≠ L4.
+Live SHA **`667742087f143b6a0271f3075da2fdf58c539dd6`** ×4 = origin/main. OVH ×3 : `CLOUD_VM` max L2 observé L2, profil **PASS**, L3 `NOT_REACHABLE`, L4 `NOT_APPLICABLE`. AWS3 : `CLOUD_VM_VTPM` max L3 observé L3 quote verified + freshness PASS + node binding PASS, EK `LOCAL_CREATEEK` **NOT_PROVEN**, profil **PARTIAL**, L4 `NOT_APPLICABLE`, `certified_hardware_identity=false`. hardware TPM `NOT_APPLICABLE` ×4. N04 last FAIL. CI NOT_PROVEN.
+`logs/283_profile_cert_live.json` `rapports/283_profile_cert_environment_20260909.md`. T-E68 [x].
+**CERTIFIED_100=false.**
+
 
 
