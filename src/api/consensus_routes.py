@@ -355,6 +355,14 @@ def consensus_replica_identity() -> dict:
     return public_registry_view()
 
 
+@router.get("/platform-attest")
+def consensus_platform_attest() -> dict:
+    """TPM if present; otherwise the closest VM analog. Never a fake quote."""
+    from src.artcb.consensus.platform_attest import collect_platform_attestation
+
+    return collect_platform_attestation()
+
+
 @router.get("/pbft/finality")
 def pbft_finality_status(request: Request) -> dict:
     snap = _pbft_log(request).snapshot()
@@ -446,6 +454,9 @@ def pbft_prepare(body: PrepareMsgBody, request: Request) -> dict:
             "invalid_replica_pqc_binding",
             "unregistered_replica_key",
             "replica_key_revoked",
+            "replica_key_expired",
+            "replica_key_not_yet_valid",
+            "replica_pqc_downgrade",
             "unknown_replica_id",
         ):
             raise HTTPException(status_code=409, detail=accepted.get("reason"))

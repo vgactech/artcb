@@ -464,13 +464,9 @@ class PbftFinalityStore:
             replica = str(row.get("replica_id") or "")
             msg = pp_message(view=view, seq=seq, digest=digest, replica_id=replica)
             _ok, reason = verify_signed_detailed(row, msg)
-            if not _ok and reason in (
-                "invalid_replica_key_binding",
-                "invalid_replica_pqc_binding",
-                "unregistered_replica_key",
-                "replica_key_revoked",
-                "unknown_replica_id",
-            ):
+            from src.artcb.consensus.replica_identity import BINDING_REASONS
+
+            if not _ok and reason in BINDING_REASONS:
                 self._trace("preprepare_recv", ok=False, t0=t0, reason=reason)
                 return {"ok": False, "reason": reason}
             self._trace("preprepare_recv", ok=False, t0=t0, reason="invalid")
@@ -518,13 +514,9 @@ class PbftFinalityStore:
                 replica_id=str(row.get("replica_id") or ""),
             )
             _ok, reason = verify_signed_detailed(row, msg)
-            if not _ok and reason in (
-                "invalid_replica_key_binding",
-                "invalid_replica_pqc_binding",
-                "unregistered_replica_key",
-                "replica_key_revoked",
-                "unknown_replica_id",
-            ):
+            from src.artcb.consensus.replica_identity import BINDING_REASONS
+
+            if not _ok and reason in BINDING_REASONS:
                 self._trace("prepare_recv", ok=False, t0=t0, reason=reason)
                 return {"ok": False, "reason": reason}
             self._trace("prepare_recv", ok=False, t0=t0, reason="invalid")

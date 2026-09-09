@@ -112,7 +112,13 @@ class PbftViewStore:
         self.path = self.data_dir / VIEW_REL
         self.vc_path = self.data_dir / VC_REL
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.replica_id = replica_id or official_replica_id() or "unknown"
+        try:
+            from src.artcb.consensus.replica_identity import official_consensus_node_id
+
+            claimed = official_consensus_node_id()
+        except Exception:
+            claimed = official_replica_id()
+        self.replica_id = replica_id or claimed or official_replica_id() or "unknown"
         self._lock = threading.Lock()
         self._state = self._load()
 

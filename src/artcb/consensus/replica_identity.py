@@ -34,13 +34,21 @@ BINDING_REASONS = frozenset(
         "invalid_replica_pqc_binding",
         "unregistered_replica_key",
         "replica_key_revoked",
+        "replica_key_expired",
+        "replica_key_not_yet_valid",
+        "replica_pqc_downgrade",
         "unknown_replica_id",
     }
 )
+OVERLAY_DEFAULT = Path("/etc/artcb/replica_overlay.json")
+OVERLAY_VERSION_DEFAULT = Path("/var/lib/artcb/node/overlay_seen_version")
 
 _lock = threading.Lock()
 _test_override: dict[str, "ReplicaKeyBinding"] | None = None
 _official_cache: dict[str, "ReplicaKeyBinding"] | None = None
+_overlay_cache: dict[str, "ReplicaKeyBinding"] = {}
+_overlay_mtime: float | None = None
+_overlay_meta: dict[str, Any] = {"present": False}
 
 
 @dataclass(frozen=True)
@@ -49,7 +57,9 @@ class ReplicaKeyBinding:
     ed25519_b64: str
     pqc_b64: str = ""
     activation_epoch: int = 0
+    not_after_epoch: int = 0
     revoked: bool = False
+    require_pqc: bool = False
 
     def to_public_dict(self) -> dict[str, Any]:
         return {
@@ -57,7 +67,9 @@ class ReplicaKeyBinding:
             "ed25519_b64": self.ed25519_b64,
             "pqc_b64": self.pqc_b64,
             "activation_epoch": self.activation_epoch,
+            "not_after_epoch": self.not_after_epoch,
             "revoked": self.revoked,
+            "require_pqc": self.require_pqc,
         }
 
 
@@ -101,7 +113,9 @@ def _parse_replicas(payload: dict[str, Any]) -> dict[str, ReplicaKeyBinding]:
             ed25519_b64=ed,
             pqc_b64=_norm_b64(str(raw.get("pqc_b64") or "")),
             activation_epoch=int(raw.get("activation_epoch") or 0),
+            not_after_epoch=int(raw.get("not_after_epoch") or 0),
             revoked=bool(raw.get("revoked")),
+            require_pqc=bool(raw.get("require_pqc")),
         )
     return out
 
@@ -135,7 +149,9 @@ def install_test_replica_registry(mapping: dict[str, ReplicaKeyBinding | dict[st
             ed25519_b64=_norm_b64(str(raw.get("ed25519_b64") or "")),
             pqc_b64=_norm_b64(str(raw.get("pqc_b64") or "")),
             activation_epoch=int(raw.get("activation_epoch") or 0),
+            not_after_epoch=int(raw.get("not_after_epoch") or 0),
             revoked=bool(raw.get("revoked")),
+            require_pqc=bool(raw.get("require_pqc")),
         )
     with _lock:
         _test_override = parsed
@@ -168,12 +184,120 @@ def register_chain_replicas(chains: dict[str, Any]) -> dict[str, ReplicaKeyBindi
     return mapping
 
 
+def overlay_file() -> Path:
+    extra = (os.getenv("ARTCB_REPLICA_OVERLAY") or "").strip()
+    return Path(extra) if extra else OVERLAY_DEFAULT
+
+
+def overlay_version_file() -> Path:
+    extra = (os.getenv("ARTCB_REPLICA_OVERLAY_VERSION") or "").strip()
+    return Path(extra) if extra else OVERLAY_VERSION_DEFAULT
+
+
+def _seen_overlay_version() -> int:
+    path = overlay_version_file()
+    try:
+        return int(path.read_text(encoding="utf-8").strip() or "0")
+    except (OSError, ValueError):
+        return 0
+
+
+def _remember_overlay_version(version: int) -> None:
+    path = overlay_version_file()
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(str(int(version)) + "\n", encoding="utf-8")
+    except OSError:
+        pass
+
+
+def load_overlay(*, force: bool = False) -> tuple[dict[str, ReplicaKeyBinding], dict[str, Any]]:
+    """Live overlay merged into the official registry. Rollback of version is rejected."""
+    global _overlay_cache, _overlay_mtime, _overlay_meta
+    path = overlay_file()
+    try:
+        mtime = path.stat().st_mtime if path.is_file() else None
+    except OSError:
+        mtime = None
+    official_snapshot = load_official_registry()
+    with _lock:
+        if not force and mtime == _overlay_mtime and _overlay_meta:
+            return dict(_overlay_cache), dict(_overlay_meta)
+        if mtime is None:
+            _overlay_cache = {}
+            _overlay_mtime = None
+            _overlay_meta = {"present": False, "applied": False, "reason": "absent"}
+            return {}, dict(_overlay_meta)
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            _overlay_cache = {}
+            _overlay_mtime = mtime
+            _overlay_meta = {"present": True, "applied": False, "reason": "invalid_json", "error": type(exc).__name__}
+            return {}, dict(_overlay_meta)
+        if not isinstance(payload, dict):
+            _overlay_cache = {}
+            _overlay_mtime = mtime
+            _overlay_meta = {"present": True, "applied": False, "reason": "invalid_payload"}
+            return {}, dict(_overlay_meta)
+        version = int(payload.get("version") or 0)
+        seen = _seen_overlay_version()
+        if version and seen and version < seen:
+            _overlay_cache = {}
+            _overlay_mtime = mtime
+            _overlay_meta = {
+                "present": True,
+                "applied": False,
+                "reason": "overlay_rollback_rejected",
+                "version": version,
+                "seen": seen,
+            }
+            return {}, dict(_overlay_meta)
+        parsed = _parse_replicas(payload if isinstance(payload.get("replicas"), dict) else payload)
+        rows = payload.get("replicas") if isinstance(payload.get("replicas"), dict) else {}
+        official = dict(official_snapshot)
+        merged: dict[str, ReplicaKeyBinding] = {}
+        for nid, raw in rows.items():
+            if nid not in OFFICIAL_COMPUTE_NODE_IDS or not isinstance(raw, dict):
+                continue
+            base = official.get(nid)
+            if nid in parsed:
+                merged[nid] = parsed[nid]
+                continue
+            if base is None:
+                continue
+            merged[nid] = ReplicaKeyBinding(
+                node_id=nid,
+                ed25519_b64=base.ed25519_b64,
+                pqc_b64=base.pqc_b64,
+                activation_epoch=int(raw.get("activation_epoch") or base.activation_epoch),
+                not_after_epoch=int(raw.get("not_after_epoch") or base.not_after_epoch),
+                revoked=bool(raw["revoked"]) if "revoked" in raw else base.revoked,
+                require_pqc=bool(raw["require_pqc"]) if "require_pqc" in raw else base.require_pqc,
+            )
+        if version:
+            _remember_overlay_version(version)
+        _overlay_cache = merged
+        _overlay_mtime = mtime
+        _overlay_meta = {"present": True, "applied": True, "reason": "ok", "version": version, "ids": list(merged)}
+        return dict(merged), dict(_overlay_meta)
+
+
 def active_registry() -> dict[str, ReplicaKeyBinding]:
     with _lock:
         if _test_override is not None:
             return dict(_test_override)
     if binding_enforced():
-        return load_official_registry()
+        official = load_official_registry()
+        overlay, _meta = load_overlay()
+        if overlay:
+            official.update(overlay)
+        return official
+    overlay, _meta = load_overlay()
+    if overlay:
+        official = load_official_registry()
+        official.update(overlay)
+        return official
     return {}
 
 
@@ -212,8 +336,17 @@ def verify_replica_key_binding(
             return True, "registry_inactive"
         if expected.revoked:
             return False, "replica_key_revoked"
+        import time
+
+        now = int(time.time())
+        if expected.activation_epoch and now < int(expected.activation_epoch):
+            return False, "replica_key_not_yet_valid"
+        if expected.not_after_epoch and now > int(expected.not_after_epoch):
+            return False, "replica_key_expired"
         if _norm_b64(expected.ed25519_b64) != ed:
             return False, "invalid_replica_key_binding"
+        if expected.require_pqc and not pqc:
+            return False, "replica_pqc_downgrade"
         if expected.pqc_b64 and pqc and _norm_b64(expected.pqc_b64) != pqc:
             return False, "invalid_replica_pqc_binding"
         return True, "ok"
@@ -256,26 +389,67 @@ def verify_bound_signature(
     return True, "ok"
 
 
+def local_ed25519_b64() -> str:
+    """Public Ed25519 of the local chain.key — no ChainManager / liboqs."""
+    try:
+        from src.artcb.config import load_settings
+        from src.artcb.wallet.encryption import decrypt_private_key, is_encrypted_key_blob
+        from nacl.encoding import Base64Encoder
+        from nacl.signing import SigningKey
+    except Exception:
+        return ""
+    try:
+        raw = (load_settings().data_dir / "chain.key").read_bytes()
+        seed = decrypt_private_key(raw) if is_encrypted_key_blob(raw) else raw[:32]
+        return SigningKey(seed).verify_key.encode(encoder=Base64Encoder).decode("ascii")
+    except Exception:
+        return ""
+
+
+def local_identity_status() -> dict[str, Any]:
+    marker = official_replica_id()
+    ed = local_ed25519_b64()
+    owner = owner_of_ed25519(ed) if ed else None
+    coherent = bool(owner and marker and owner == marker)
+    return {
+        "official_node_marker": marker,
+        "local_ed25519_b64": ed,
+        "key_owner": owner,
+        "coherent": coherent,
+        "mismatch": bool(owner and marker and owner != marker),
+        "note": "official_node is a deployment label. The registered key is the consensus identity.",
+    }
+
+
 def official_consensus_node_id() -> str:
-    """Consensus identity is the official replica id, not IP / wallet / env alone."""
-    rid = official_replica_id()
-    if rid in OFFICIAL_COMPUTE_NODE_IDS:
-        return rid
-    return rid
+    """Speak as the key owner when official_node disagrees. File is not the proof."""
+    status = local_identity_status()
+    owner = str(status.get("key_owner") or "")
+    marker = str(status.get("official_node_marker") or official_replica_id())
+    if owner in OFFICIAL_COMPUTE_NODE_IDS:
+        return owner
+    if marker in OFFICIAL_COMPUTE_NODE_IDS:
+        return marker
+    return marker or owner
 
 
 def public_registry_view() -> dict[str, Any]:
     official = load_official_registry()
     active = active_registry()
+    _overlay, overlay_meta = load_overlay()
+    local = local_identity_status()
     return {
-        "protocol": "273-replica-identity-binding",
+        "protocol": "278-replica-identity-binding",
         "binding_enforced": binding_enforced(),
         "test_override": _test_override is not None,
         "official_replica_ids": list(OFFICIAL_COMPUTE_NODE_IDS),
         "local_replica_id": official_consensus_node_id(),
+        "local_identity": local,
+        "overlay": overlay_meta,
         "replicas": {nid: row.to_public_dict() for nid, row in (active or official).items()},
         "note": (
-            "IP / hostname / ARTCB_NODE_ID label a machine. "
-            "Only the registered public key proves the consensus role."
+            "IP / hostname / ARTCB_NODE_ID / official_node label a machine. "
+            "Only the registered public key proves the consensus role. "
+            "A live overlay can revoke/expire/rotate without rewriting git."
         ),
     }
