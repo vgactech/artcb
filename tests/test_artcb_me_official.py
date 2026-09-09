@@ -34,14 +34,14 @@ def test_dns_a_records_map_live_nodes() -> None:
     assert ARTCB_DNS_A_RECORDS[""] == "152.228.144.34"
     assert ARTCB_DNS_A_RECORDS["n1"] == "152.228.144.34"
     assert ARTCB_DNS_A_RECORDS["n2"] == "151.80.107.29"
-    assert ARTCB_DNS_A_RECORDS["n3"] == "51.44.222.232"
+    assert ARTCB_DNS_A_RECORDS["n3"] == "13.38.209.25"
     assert ARTCB_DNS_A_RECORDS["n4"] == "91.134.45.8"
     assert ARTCB_DNS_A_RECORDS["node"] == "152.228.144.34"
     assert "www" not in ARTCB_DNS_A_RECORDS or ARTCB_DNS_A_RECORDS["www"] == "152.228.144.34"
     assert set(ARTCB_DNS_A_RECORDS.values()) == {
         "152.228.144.34",
         "151.80.107.29",
-        "51.44.222.232",
+        "13.38.209.25",
         "91.134.45.8",
     }
     seeds = " ".join(BOOTSTRAP_NODES)

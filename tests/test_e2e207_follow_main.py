@@ -22,7 +22,7 @@ def test_four_official_compute_nodes_and_public_health() -> None:
     )
     assert NODES["ovh-node-1"].ssh_host == "152.228.144.34"
     assert NODES["ovh-node-2"].ssh_host == "151.80.107.29"
-    assert NODES["aws-node-3"].ssh_host == "51.44.222.232"
+    assert NODES["aws-node-3"].ssh_host == "13.38.209.25"
     assert NODES["ovh-node-4"].ssh_host == "91.134.45.8"
     assert PUBLIC_HEALTH_URLS["ovh-node-1"] == "https://artcb.me/health"
     assert PUBLIC_HEALTH_URLS["ovh-node-2"] == "https://n2.artcb.me/health"

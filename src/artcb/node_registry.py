@@ -44,7 +44,7 @@ OFFICIAL_COMPUTE_NODE_IDS: tuple[str, ...] = (
 OFFICIAL_COMPUTE_IPV4: tuple[str, ...] = (
     "152.228.144.34",
     "151.80.107.29",
-    "51.44.222.232",
+    "13.38.209.25",
     "91.134.45.8",
 )
 OFFICIAL_COMPUTE_HTTP_PORT = 8000
@@ -143,9 +143,9 @@ NODES: dict[str, NodeSpec] = {
         provider="aws",
         doppler_project="artcb3",
         doppler_token_env="KEY_API_ARTCB_DOPPLER_3",
-        health_http="http://51.44.222.232:8000",
-        api_https="https://51.44.222.232:8443",
-        ssh_host="51.44.222.232",
+        health_http="http://13.38.209.25:8000",
+        api_https="https://13.38.209.25:8443",
+        ssh_host="13.38.209.25",
         ssh_user="ubuntu",
         public_notes=(
             "AWS account 599128160879 IAM user node_artcb_3_agent. "
@@ -155,7 +155,9 @@ NODES: dict[str, NodeSpec] = {
             "AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY. "
             "IAM 2026-08-31 later session: AdministratorAccess + AmazonEC2FullAccess "
             "+ IAMFullAccess + IAMUserChangePassword (earlier probe had ChangePassword only). "
-            "EC2 i-085b74abd1aaf04ee public IP 51.44.222.232 (t3.small fallback from t3.large)."
+            "EC2 i-06c9404e42798ff76 EIP 13.38.209.25 t3.small NitroTPM AMI "
+            "ami-0b82a9f93189c018e (retired pre-TPM i-085b74abd1aaf04ee "
+            "51.44.222.232). HPC forbidden."
         ),
     ),
     "ovh-node-4": NodeSpec(

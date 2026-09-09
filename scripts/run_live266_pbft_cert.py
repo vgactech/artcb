@@ -38,14 +38,14 @@ HTTP = l265.HTTP
 HTTPS = {
     "ovh-node-1": "https://152.228.144.34:8443",
     "ovh-node-2": "https://151.80.107.29:8443",
-    "aws-node-3": "https://51.44.222.232:8443",
+    "aws-node-3": "https://13.38.209.25:8443",
     "ovh-node-4": "https://91.134.45.8:8443",
 }
 CTX = ssl._create_unverified_context()
 LEFT = ["ovh-node-1", "ovh-node-2"]
 RIGHT = ["aws-node-3", "ovh-node-4"]
 LEFT_IPS = ["152.228.144.34", "151.80.107.29"]
-RIGHT_IPS = ["51.44.222.232", "91.134.45.8"]
+RIGHT_IPS = ["13.38.209.25", "91.134.45.8"]
 
 
 def _http(method: str, url: str, body: dict | None = None, timeout: int = 40, *, auth: bool = False) -> dict:

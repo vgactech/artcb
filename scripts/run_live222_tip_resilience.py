@@ -23,7 +23,7 @@ KNOWN = ROOT / "deploy" / "ovh_artcb_node_1.known_hosts"
 NODES = {
     "ovh-node-1": "http://152.228.144.34:8000",
     "ovh-node-2": "http://151.80.107.29:8000",
-    "aws-node-3": "http://51.44.222.232:8000",
+    "aws-node-3": "http://13.38.209.25:8000",
     "ovh-node-4": "http://91.134.45.8:8000",
 }
 

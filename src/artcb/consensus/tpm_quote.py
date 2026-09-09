@@ -58,9 +58,10 @@ def attempt_attestation_quote(*, extra_data: bytes, is_vm: bool) -> dict[str, An
             "quote": None,
             "note": (
                 "No /dev/tpm0 on this machine. OVH Public Cloud does not expose "
-                "hypervisor vTPM. AWS NitroTPM requires a UEFI AMI flagged at "
-                "RegisterImage — it cannot be enabled on the existing instance. "
-                "Do not recast cloud identity or guest swtpm as a TPM quote."
+                "hypervisor vTPM. AWS NitroTPM requires RegisterImage boot-mode=uefi "
+                "tpm-support=v2.0 then a new launch; it cannot be toggled on a "
+                "running instance. Do not recast cloud identity or guest swtpm "
+                "as a TPM quote."
             ),
         }
     if not _which("tpm2_quote") or not _which("tpm2_checkquote"):
@@ -72,7 +73,7 @@ def attempt_attestation_quote(*, extra_data: bytes, is_vm: bool) -> dict[str, An
             "quote": None,
             "note": "tpm2-tools required for quote + checkquote",
         }
-    qualifier = extra_data[:32] if extra_data else b"\x00" * 32
+    qualifier = (extra_data or b"")[:32].ljust(32, b"\x00")
     qhex = qualifier.hex()
     root = state_dir()
     try:

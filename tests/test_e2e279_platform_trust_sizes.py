@@ -22,7 +22,7 @@ def _cloud_aws(**extra):
         "document_ok": True,
         "pkcs7_present": True,
         "pkcs7_verified": False,
-        "instance_id": "i-085b74abd1aaf04ee",
+        "instance_id": "i-06c9404e42798ff76",
         "instance_type": "t3.small",
         "region": "eu-west-3",
     }
@@ -157,7 +157,7 @@ def test_env_cannot_usurp_platform_instance() -> None:
 def test_matching_instance_binds() -> None:
     bind = evaluate_node_platform_binding(
         declared_node_id="aws-node-3",
-        observed_instance_id="i-085b74abd1aaf04ee",
+        observed_instance_id="i-06c9404e42798ff76",
         observed_provider="aws",
         attestation_public_key="eJsXlnBP1o1/Oq1v9zQ0z8n1Al3jBtJ4M/KLSESb34Q=",
     )
@@ -168,7 +168,7 @@ def test_matching_instance_binds() -> None:
         network_id="artcb-official",
         node_id="aws-node-3",
         provider="aws",
-        provider_instance_id="i-085b74abd1aaf04ee",
+        provider_instance_id="i-06c9404e42798ff76",
         attestation_public_key="eJsXlnBP1o1/Oq1v9zQ0z8n1Al3jBtJ4M/KLSESb34Q=",
     )
     assert bind["node_binding"] == expected
@@ -233,7 +233,7 @@ def test_aws_iid_pin_fails_closed_on_junk() -> None:
     from src.artcb.consensus.platform_attest import verify_aws_iid_rsa2048_pin
 
     got = verify_aws_iid_rsa2048_pin(
-        document='{"instanceId":"i-085b74abd1aaf04ee","region":"eu-west-3"}',
+        document='{"instanceId":"i-06c9404e42798ff76","region":"eu-west-3"}',
         rsa2048_body="not-a-pkcs7",
         region="eu-west-3",
     )

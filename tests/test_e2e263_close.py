@@ -65,7 +65,7 @@ def test_two_of_four_is_below_quorum() -> None:
         peer_reachable=[
             ("http://152.228.144.34:8000", True, 1),
             ("http://151.80.107.29:8000", True, 1),
-            ("http://51.44.222.232:8000", False, None),
+            ("http://13.38.209.25:8000", False, None),
             ("http://91.134.45.8:8000", False, None),
         ],
     )

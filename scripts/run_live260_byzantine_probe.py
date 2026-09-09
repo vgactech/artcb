@@ -25,7 +25,7 @@ CTX = ssl._create_unverified_context()
 NODES = {
     "ovh-node-1": "https://152.228.144.34:8443",
     "ovh-node-2": "https://151.80.107.29:8443",
-    "aws-node-3": "https://51.44.222.232:8443",
+    "aws-node-3": "https://13.38.209.25:8443",
     "ovh-node-4": "https://91.134.45.8:8443",
 }
 

@@ -54,7 +54,7 @@ def test_bootstrap_nodes_are_the_four_always_on_servers() -> None:
     assert seeds == [
         "http://152.228.144.34:8000",
         "http://151.80.107.29:8000",
-        "http://51.44.222.232:8000",
+        "http://13.38.209.25:8000",
         "http://91.134.45.8:8000",
     ]
     assert all("replit.app" not in s for s in seeds)
@@ -199,7 +199,7 @@ def test_extra_bootstrap_nodes_are_env_only(monkeypatch) -> None:
     assert seeds[:4] == [
         "http://152.228.144.34:8000",
         "http://151.80.107.29:8000",
-        "http://51.44.222.232:8000",
+        "http://13.38.209.25:8000",
         "http://91.134.45.8:8000",
     ]
     assert "http://203.0.113.50:8000" in seeds

@@ -51,7 +51,7 @@ def _pair(tmp_path: Path) -> tuple[ChainManager, ChainManager]:
 def test_replica_allowlist() -> None:
     assert replica_peer_allowed("152.228.144.34")
     assert replica_peer_allowed("151.80.107.29")
-    assert replica_peer_allowed("51.44.222.232")
+    assert replica_peer_allowed("13.38.209.25")
     assert replica_peer_allowed("91.134.45.8")
     assert replica_peer_allowed("127.0.0.1")
     assert replica_peer_allowed("testclient")

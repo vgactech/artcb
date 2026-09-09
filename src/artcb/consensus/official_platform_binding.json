@@ -17,8 +17,8 @@
     },
     "aws-node-3": {
       "provider": "aws",
-      "provider_instance_id": "i-085b74abd1aaf04ee",
-      "ipv4": "51.44.222.232",
+      "provider_instance_id": "i-06c9404e42798ff76",
+      "ipv4": "13.38.209.25",
       "ed25519_b64": "eJsXlnBP1o1/Oq1v9zQ0z8n1Al3jBtJ4M/KLSESb34Q="
     },
     "ovh-node-4": {
