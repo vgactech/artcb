@@ -1757,10 +1757,11 @@ Live SHA **`b848428899d3c209a551299414e03e8beef15107`** ×4. OVH VM_PROVEN L2 AB
 `logs/284_classify_live.json` `rapports/284_classify_unknown_not_baremetal_20260909.md`. T-E69 [x].
 **CERTIFIED_100=false.**
 
-## [2026-09-09T18:20:00Z] 286 — Cursor → mac-node-local (pas CERTIFIED_100)
+## [2026-09-09T18:16:10Z] 286 — Cursor → mac-node-local (pas CERTIFIED_100)
 
 Observateur R285. `KEY_API_ARTCB_DOPPLER_MAC` n’est **pas** dans l’env Cursor cloud (contrairement à `_2/_3/_4`) ni dans `artcb-blockchain/dev` (67 noms). Poussé dans `prd` = invisible au `DOPPLER_TOKEN` cloud (HTTP 400). TCP `10.234.49.2:22` et `:8001` = TimeoutError. Ne pas inventer un SHA health Mac. Ne pas ajouter à OFFICIAL_COMPUTE. Clef jamais affichée.
-`logs/286_mac_ssh_live.json` `rapports/286_mac_ssh_cursor_doppler_20260909.md`. T-E70.
+Live stamp `20260909T181610Z` SHA ×4 `75836c715fb47cf87d37365bd6d5b8e36d940c5e`. AWS3 rattrapé `8e95fde`→`75836c7` keep-book.
+`logs/286_mac_ssh_live.json` `rapports/286_mac_ssh_cursor_doppler_20260909.md`. T-E70 [x] (pytest PASS ; SSH live FAIL honnête).
 **CERTIFIED_100=false.**
 
 

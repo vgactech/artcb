@@ -1,0 +1,91 @@
+{
+  "run": "286_mac_ssh",
+  "stamp": "20260909T181610Z",
+  "certified_100": false,
+  "official_shas": {
+    "ovh-node-1": "75836c715fb47cf87d37365bd6d5b8e36d940c5e",
+    "ovh-node-2": "75836c715fb47cf87d37365bd6d5b8e36d940c5e",
+    "aws-node-3": "75836c715fb47cf87d37365bd6d5b8e36d940c5e",
+    "ovh-node-4": "75836c715fb47cf87d37365bd6d5b8e36d940c5e"
+  },
+  "ovh1_height": 1133,
+  "ovh1_last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+  "ovh1_last_index": 1132,
+  "mac": {
+    "node_id": "mac-node-local",
+    "official_compute": false,
+    "rfc1918": true,
+    "ssh_host": "10.234.49.2",
+    "ssh_user": "deyi",
+    "health_http": "http://10.234.49.2:8001",
+    "doppler_project": "artcb-1",
+    "doppler_config": "prd",
+    "token_env": "KEY_API_ARTCB_DOPPLER_MAC",
+    "token_present": false,
+    "shared_doppler_project": "artcb-blockchain",
+    "shared_doppler_config_probed": "dev",
+    "certified_100": false,
+    "ssh": {
+      "attempted": false
+    },
+    "key_file": {
+      "written": false,
+      "reason": "KEY_API_ARTCB_DOPPLER_MAC_absent"
+    },
+    "tcp": {
+      "ssh_22": {
+        "host": "10.234.49.2",
+        "port": 22,
+        "ok": false,
+        "error": "TimeoutError",
+        "dur_s": 5.005
+      },
+      "health_8001": {
+        "host": "10.234.49.2",
+        "port": 8001,
+        "ok": false,
+        "error": "TimeoutError",
+        "dur_s": 5.001
+      }
+    },
+    "doppler": {
+      "artcb_blockchain_dev": {
+        "http": 200,
+        "n_names": 67,
+        "has_key_api_artcb_doppler_mac": false,
+        "has_cursor_ssh_private_key": false,
+        "error": null
+      },
+      "artcb_blockchain_prd": {
+        "http": 400,
+        "n_names": 0,
+        "has_key_api_artcb_doppler_mac": false,
+        "has_cursor_ssh_private_key": false,
+        "error": {
+          "messages": [
+            "This token does not have access to requested config 'prd'"
+          ],
+          "success": false
+        }
+      },
+      "artcb_1_prd": {
+        "http": 0,
+        "error": "KEY_API_ARTCB_DOPPLER_MAC_absent"
+      }
+    },
+    "verdict": {
+      "credentials_path": "FAIL",
+      "token_in_cursor_env": "FAIL",
+      "token_in_artcb_blockchain_dev": "FAIL",
+      "lan_path": "NOT_REACHABLE",
+      "ssh_login": "FAIL",
+      "mac_health_sha": null,
+      "note": "Do not invent a Mac health SHA. Cursor cloud DOPPLER_TOKEN is artcb-blockchain/dev. KEY_API_ARTCB_DOPPLER_MAC must be a Cursor environment secret like _2/_3/_4. 10.234.49.2 is RFC1918."
+    }
+  },
+  "honesty": {
+    "mac_not_official_compute": true,
+    "no_invented_mac_sha": true,
+    "no_private_key_in_json": true
+  }
+}

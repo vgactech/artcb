@@ -1,9 +1,10 @@
 # Rapport 286 — Cursor cloud → mac-node-local (Doppler + SSH)
 
-**Date** : 2026-09-09  
+**Date** : 2026-09-09T18:16:10Z  
 **Agent** : Cursor cloud (`bc-1563f881-5a04-45df-9d2a-24e83164568e`)  
-**origin/main / OVH1 live SHA** : `75836c715fb47cf87d37365bd6d5b8e36d940c5e`  
+**origin/main / live SHA ×4** : `75836c715fb47cf87d37365bd6d5b8e36d940c5e`  
 **Livre OVH1** : height **1133**, last_index **1132**, tip `cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3`  
+**Live JSON** : `logs/286_mac_ssh_live.json` stamp `20260909T181610Z`  
 **CERTIFIED_100** : false  
 **N04** : last, FAIL (non rejoué ici)
 
@@ -57,6 +58,10 @@ Les nœuds 2/3/4 marchent parce que `KEY_API_ARTCB_DOPPLER_2/3/4` sont des **sec
 1. Secret Cursor d’environnement **`KEY_API_ARTCB_DOPPLER_MAC`** (même geste que `_2`/`_3`/`_4`).
 2. Dupliquer le **nom** `KEY_API_ARTCB_DOPPLER_MAC` dans `artcb-blockchain` / **`dev`** si on veut le lire via `DOPPLER_TOKEN`.
 3. Tunnel (WireGuard / Tailscale / ngrok **depuis le Mac**) : sinon RFC1918 reste `NOT_REACHABLE`.
+
+## Follow-main (keep-book, pas le Mac)
+
+Premier probe `20260909T181450Z` : AWS3 encore sur `8e95fde` (R284 docs). Follow-main AWS3 → `75836c7`, book 1133 lignes, pas de wipe. OVH1/2/4 déjà à `75836c7` (no restart). Health ×4 **healthy** après. Second probe `20260909T181610Z` : SHA ×4 égal `origin/main`.
 
 ## Non revendiqué / non recasté
 
