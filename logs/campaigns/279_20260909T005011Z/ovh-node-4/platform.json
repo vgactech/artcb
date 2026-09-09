@@ -1,0 +1,13 @@
+{
+  "class": "cloud_instance_identity",
+  "trust_level": 2,
+  "overall": "CLOUD_ATTESTED",
+  "hardware_tpm": "NOT_AVAILABLE",
+  "platform_identity": "OVH_CLOUD_ATTESTED",
+  "certified_hardware": false,
+  "crypto_verified": false,
+  "instance_id": "22dc6a47-5b79-4084-82d7-eabb4f5b2680",
+  "binding_verified": true,
+  "identity_mismatch": false,
+  "sha": "5e0d424e0cee85466b44fc163761c2cbda98a855"
+}

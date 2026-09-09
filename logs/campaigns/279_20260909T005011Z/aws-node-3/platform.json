@@ -1,0 +1,13 @@
+{
+  "class": "cloud_instance_identity",
+  "trust_level": 2,
+  "overall": "CLOUD_ATTESTED",
+  "hardware_tpm": "NOT_AVAILABLE",
+  "platform_identity": "AWS_CLOUD_ATTESTED",
+  "certified_hardware": false,
+  "crypto_verified": false,
+  "instance_id": "i-085b74abd1aaf04ee",
+  "binding_verified": true,
+  "identity_mismatch": false,
+  "sha": "5e0d424e0cee85466b44fc163761c2cbda98a855"
+}

@@ -522,7 +522,8 @@ class ChainManager:
                 from_node_id=from_node_id,
             )
             return False
-        line = json.dumps(block, ensure_ascii=False, separators=(",", ":"))
+        # Re-converge after pbft_cert / any post-hash sidecar is attached.
+        line = encode_jsonl_with_converged_size(block)
         with self.blocks_path.open("a", encoding="utf-8") as handle:
             handle.write(line + "\n")
         self._book.note_appended(line, block)

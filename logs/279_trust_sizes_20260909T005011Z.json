@@ -1,0 +1,84 @@
+{
+  "stamp": "20260909T005011Z",
+  "shas": {
+    "ovh-node-1": "5e0d424e0cee85466b44fc163761c2cbda98a855",
+    "ovh-node-2": "5e0d424e0cee85466b44fc163761c2cbda98a855",
+    "aws-node-3": "5e0d424e0cee85466b44fc163761c2cbda98a855",
+    "ovh-node-4": "5e0d424e0cee85466b44fc163761c2cbda98a855"
+  },
+  "results": {
+    "platform_levels": "PASS",
+    "node_platform_binding": "PASS",
+    "block_size_field_historical": "MEASURED",
+    "book_audit": "FAIL",
+    "api_block_sizes": "MEASURED",
+    "tpm_quote": "NOT_PROVEN",
+    "c04_thousands": "NOT_PROVEN",
+    "n04_50": "FAIL",
+    "certified_100": false,
+    "production_ready": false
+  },
+  "compact": {
+    "ovh-node-1": {
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "hardware_tpm": "NOT_AVAILABLE",
+      "platform_identity": "OVH_CLOUD_ATTESTED",
+      "certified_hardware": false,
+      "crypto_verified": false,
+      "instance_id": "f2642e42-323c-4621-b0e8-a82ffb20f184",
+      "binding_verified": true,
+      "identity_mismatch": false,
+      "sha": "5e0d424e0cee85466b44fc163761c2cbda98a855"
+    },
+    "ovh-node-2": {
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "hardware_tpm": "NOT_AVAILABLE",
+      "platform_identity": "OVH_CLOUD_ATTESTED",
+      "certified_hardware": false,
+      "crypto_verified": false,
+      "instance_id": "6470522e-1561-4741-9254-5f58b909eeb9",
+      "binding_verified": true,
+      "identity_mismatch": false,
+      "sha": "5e0d424e0cee85466b44fc163761c2cbda98a855"
+    },
+    "aws-node-3": {
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "hardware_tpm": "NOT_AVAILABLE",
+      "platform_identity": "AWS_CLOUD_ATTESTED",
+      "certified_hardware": false,
+      "crypto_verified": false,
+      "instance_id": "i-085b74abd1aaf04ee",
+      "binding_verified": true,
+      "identity_mismatch": false,
+      "sha": "5e0d424e0cee85466b44fc163761c2cbda98a855"
+    },
+    "ovh-node-4": {
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "hardware_tpm": "NOT_AVAILABLE",
+      "platform_identity": "OVH_CLOUD_ATTESTED",
+      "certified_hardware": false,
+      "crypto_verified": false,
+      "instance_id": "22dc6a47-5b79-4084-82d7-eabb4f5b2680",
+      "binding_verified": true,
+      "identity_mismatch": false,
+      "sha": "5e0d424e0cee85466b44fc163761c2cbda98a855"
+    }
+  },
+  "book": {
+    "line_count": null,
+    "file_bytes": null,
+    "claimed_mismatch": null,
+    "line_bytes": null,
+    "dt_s": null
+  },
+  "artefact": "{'root': '/workspace/logs/campaigns/279_20260909T005011Z', 'manifest_sha256': '19b8c5442931cffc788b36141dcfc59666c6ea2b4ca2e0ed025a7873bdd0074b', 'manifest': {'campaign_id': '279_20260909T005011Z', 'code_sha': '5e0d424e0cee85466b44fc163761c2cbda98a855', 'runner': 'scripts/run_live279_trust_sizes.py', 'timestamp': '2026-09-09T00:50:27Z', 'node_ids': ['aws-node-3', 'ovh-node-1', 'ovh-node-2', 'ovh-node-4'], 'results': {'platform_levels': {'status': 'PASS', 'certified_100': False, 'nodes': {'ovh-node-1': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'OVH_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': 'f2642e42-323c-4621-b0e8-a82ffb20f184', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}, 'ovh-node-2': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'OVH_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': '6470522e-1561-4741-9254-5f58b909eeb9', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}, 'aws-node-3': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'AWS_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': 'i-085b74abd1aaf04ee', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}, 'ovh-node-4': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'OVH_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': '22dc6a47-5b79-4084-82d7-eabb4f5b2680', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}}, 'recast_cloud_as_tpm': False, 'note': 'four VMs should be CLOUD_ATTESTED / hardware TPM NOT_AVAILABLE \u2014 never TPM_ATTESTED'}, 'node_platform_binding': {'status': 'PASS', 'certified_100': False, 'mismatches': 0, 'nodes': {'ovh-node-1': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'OVH_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': 'f2642e42-323c-4621-b0e8-a82ffb20f184', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}, 'ovh-node-2': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'OVH_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': '6470522e-1561-4741-9254-5f58b909eeb9', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}, 'aws-node-3': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'AWS_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': 'i-085b74abd1aaf04ee', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}, 'ovh-node-4': {'class': 'cloud_instance_identity', 'trust_level': 2, 'overall': 'CLOUD_ATTESTED', 'hardware_tpm': 'NOT_AVAILABLE', 'platform_identity': 'OVH_CLOUD_ATTESTED', 'certified_hardware': False, 'crypto_verified': False, 'instance_id': '22dc6a47-5b79-4084-82d7-eabb4f5b2680', 'binding_verified': True, 'identity_mismatch': False, 'sha': '5e0d424e0cee85466b44fc163761c2cbda98a855'}}}, 'block_size_field_historical': {'status': 'MEASURED', 'certified_100': False, 'claimed_mismatch': None, 'missing_claimed': None, 'line_count': None, 'file_bytes': None, 'stats': None, 'note': 'old engraved field may not equal line_bytes; that is the R279 bug being measured'}, 'book_audit': {'status': 'FAIL', 'certified_100': False, 'line_count': None, 'first_index': None, 'last_index': None, 'dt_s': None, 'head': None, 'tail': None, 'largest': None, 'smallest': None}, 'api_block_sizes': {'status': 'MEASURED', 'certified_100': False, 'distribution': {'min_bytes': 7497, 'p25_bytes': 7598, 'p50_bytes': 7598, 'p75_bytes': 7600, 'p90_bytes': 7601, 'p95_bytes': 7731, 'p99_bytes': 46728, 'max_bytes': 47193, 'avg_bytes': 9125, 'stdev_bytes': 7502, 'total_kb': 10097.2, 'total_mb': 9.861, 'unit': 'file_bytes_including_newline'}}, 'tpm_quote': {'status': 'NOT_PROVEN', 'certified_100': False, 'note': '/dev/tpm0 absent on these VMs; quote not collected'}, 'c04_thousands': {'status': 'NOT_PROVEN', 'certified_100': False}, 'n04_50': {'status': 'FAIL', 'certified_100': False, 'note': 'kept from R272/R278 \u2014 not recast'}, 'certified_100': False, 'production_ready': False}, 'book_audit': {}, 'api_block_sizes': {'ok': True, 'http': 200, 'dur_ns': 341594594, 'block_count': 1133, 'distribution': {'min_bytes': 7497, 'p25_bytes': 7598, 'p50_bytes': 7598, 'p75_bytes': 7600, 'p90_bytes': 7601, 'p95_bytes': 7731, 'p99_bytes': 46728, 'max_bytes': 47193, 'avg_bytes': 9125, 'stdev_bytes': 7502, 'total_kb': 10097.2, 'total_mb': 9.861, 'unit': 'file_bytes_including_newline'}, 'buckets': {'<1KB': 0, '1-10KB': 1088, '10-100KB': 45, '100KB-1MB': 0, '>1MB': 0}, 'tokenomics': {'supply_max_artcb': 21000000.0, 'mined_artcb': 2549.74999654, 'mined_pct': 0.012142, 'remaining_artcb': 20997450.25000346, 'emission_model': 'R(H)', 'halving_removed': True, 'current_epoch_fixe': None, 'current_epoch_dynamique': None, 'current_epoch_total': None, 'current_reward_artcb': 50.0, 'r_h_artcb': 50.0, 'next_halving_at_block': None, 'blocks_until_halving': None, 'halving_interval': None, 'max_halvings': None, 'size_does_NOT_affect_reward': True, 'reward_formula': 'min(R(H), remaining_21M)  [D-024 geopopulation, no 210k schedule]', 'what_affects_reward': ['verified_humans R(H)', 'remaining 21M hard cap', 'contributors count (split du reward)', 'pol_score (pond\u00e9ration du split entre contributors)'], 'what_does_NOT_affect_reward': ['block_index (plus de halving 210k)', 'mining velocity extra_epochs', 'block_size_bytes', 'content volume', 'visibility (private/public)', 'graph complexity']}, 'top_largest': [{'index': 1130, 'size_bytes': 47193, 'size_kb': 46.09, 'reward_artcb': 7.83333333, 'reward_satoshi': 783333333, 'contributors': 1, 'pol_score': 0.75, 'visibility': 'public', 'breakdown': {'header_bytes': 46829, 'contributors_bytes': 144, 'public_symbols_bytes': 220}}, {'index': 1131, 'size_bytes': 47193, 'size_kb': 46.09, 'reward_artcb': 9.0, 'reward_satoshi': 900000000, 'contributors': 1, 'pol_score': 0.75, 'visibility': 'public', 'breakdown': {'header_bytes': 46829, 'contributors_bytes': 144, 'public_symbols_bytes': 220}}, {'index': 1095, 'size_bytes': 47192, 'size_kb': 46.09, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 47190, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}, {'index': 1096, 'size_bytes': 47192, 'size_kb': 46.09, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 47190, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}, {'index': 1098, 'size_bytes': 47170, 'size_kb': 46.06, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 47168, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}], 'top_smallest': [{'index': 96, 'size_bytes': 7597, 'size_kb': 7.42, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 7595, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}, {'index': 97, 'size_bytes': 7597, 'size_kb': 7.42, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 7595, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}, {'index': 98, 'size_bytes': 7597, 'size_kb': 7.42, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 7595, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}, {'index': 99, 'size_bytes': 7597, 'size_kb': 7.42, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 7595, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}, {'index': 7, 'size_bytes': 7497, 'size_kb': 7.32, 'reward_artcb': 0.0, 'reward_satoshi': 0, 'contributors': 0, 'pol_score': 0.0, 'visibility': None, 'breakdown': {'header_bytes': 7495, 'contributors_bytes': 0, 'public_symbols_bytes': 2}}], 'claimed_vs_measured_sample': [{'index': 0, 'file_bytes': 7733, 'line_bytes_approx': 7732, 'claimed_block_size_bytes': 7708}, {'index': 1, 'file_bytes': 7754, 'line_bytes_approx': 7753, 'claimed_block_size_bytes': 7729}, {'index': 1131, 'file_bytes': 47193, 'line_bytes_approx': 47192, 'claimed_block_size_bytes': 7738}, {'index': 1132, 'file_bytes': 46726, 'line_bytes_approx': 46725, 'claimed_block_size_bytes': 7271}], 'note': \"size_bytes ici = octets fichier (ligne JSON + newline) via offsets. Ce n'est pas wire_bytes (HTTP/TLS/TCP). Le champ grav\u00e9 block_size_bytes des blocs anciens \u00e9tait mesur\u00e9 AVANT l'insertion du champ lui-m\u00eame (trop petit). Les \u00e9critures R279 convergent jusqu'\u00e0 \u00e9galit\u00e9 UTF-8 de la ligne JSON (sans newline). 1 s/bloc \u2260 finalit\u00e9 r\u00e9seau. 22,61 TPS n'est pas une capacit\u00e9 universelle.\"}}}",
+  "certified_100": false
+}

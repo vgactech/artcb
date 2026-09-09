@@ -1,0 +1,18 @@
+{
+  "ovh-node-1": {
+    "rc": 0,
+    "tail": "u/artcb before=76b6ee649cb21ded14d85bd4efd4726a3c5d3145 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=5e0d424e0cee85466b44fc163761c2cbda98a855\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 5e0d424e feat(attest): multi-level platform trust and honest block sizes\nkeep-book reset --hard 5e0d424e0cee85466b44fc163761c2cbda98a855\nrelease.env sha=5e0d424e0cee85466b44fc163761c2cbda98a855 branch=main\nartcb restarted old=76b6ee649cb21ded14d85bd4efd4726a3c5d3145 new=5e0d424e0cee85466b44fc163761c2cbda98a855\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=5e0d424e0cee85466b44fc163761c2cbda98a855\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  },
+  "ovh-node-2": {
+    "rc": 0,
+    "tail": "follow-main start repo=/home/ubuntu/artcb before=5e0d424e0cee85466b44fc163761c2cbda98a855 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=5e0d424e0cee85466b44fc163761c2cbda98a855\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 5e0d424e feat(attest): multi-level platform trust and honest block sizes\nkeep-book reset --hard 5e0d424e0cee85466b44fc163761c2cbda98a855\nrelease.env sha=5e0d424e0cee85466b44fc163761c2cbda98a855 branch=main\nno restart (sha unchanged)\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=5e0d424e0cee85466b44fc163761c2cbda98a855\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  },
+  "aws-node-3": {
+    "rc": 0,
+    "tail": "u/artcb before=76b6ee649cb21ded14d85bd4efd4726a3c5d3145 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=5e0d424e0cee85466b44fc163761c2cbda98a855\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 5e0d424e feat(attest): multi-level platform trust and honest block sizes\nkeep-book reset --hard 5e0d424e0cee85466b44fc163761c2cbda98a855\nrelease.env sha=5e0d424e0cee85466b44fc163761c2cbda98a855 branch=main\nartcb restarted old=76b6ee649cb21ded14d85bd4efd4726a3c5d3145 new=5e0d424e0cee85466b44fc163761c2cbda98a855\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=5e0d424e0cee85466b44fc163761c2cbda98a855\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  },
+  "ovh-node-4": {
+    "rc": 0,
+    "tail": "u/artcb before=76b6ee649cb21ded14d85bd4efd4726a3c5d3145 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=5e0d424e0cee85466b44fc163761c2cbda98a855\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 5e0d424e feat(attest): multi-level platform trust and honest block sizes\nkeep-book reset --hard 5e0d424e0cee85466b44fc163761c2cbda98a855\nrelease.env sha=5e0d424e0cee85466b44fc163761c2cbda98a855 branch=main\nartcb restarted old=76b6ee649cb21ded14d85bd4efd4726a3c5d3145 new=5e0d424e0cee85466b44fc163761c2cbda98a855\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=5e0d424e0cee85466b44fc163761c2cbda98a855\nDEPLOYED_BRANCH=main\nfollow-main done\n"
+  }
+}

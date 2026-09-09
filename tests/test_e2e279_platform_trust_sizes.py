@@ -182,6 +182,25 @@ def test_block_size_bytes_equals_utf8_line() -> None:
     assert sizes["payload_bytes"] < sizes["line_bytes"]
 
 
+def test_import_line_includes_pbft_cert_in_size() -> None:
+    """Sidecar cert is ~39 KiB; size must be measured after it is attached."""
+    payload = {
+        "index": 9,
+        "timestamp": "2026-09-09T00:00:00+00:00",
+        "prev_hash": "0" * 64,
+        "graph_root": "g",
+        "merkle_root": "m",
+        "pol_score": 0.1,
+        "hash": "h" * 64,
+        "signature": "s",
+        "pbft_cert": {"commits": ["x" * 8000], "seq": 9, "digest": "h" * 64},
+    }
+    line = encode_jsonl_with_converged_size(dict(payload))
+    obj = json.loads(line)
+    assert obj["block_size_bytes"] == len(line.encode("utf-8"))
+    assert obj["block_size_bytes"] > 8000
+
+
 def test_block_size_converges_across_digit_widths() -> None:
     payload = {"index": 0, "blob": "x" * 990}
     line = encode_jsonl_with_converged_size(payload)

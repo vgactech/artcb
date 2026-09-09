@@ -140,12 +140,37 @@ def _block_sizes(nid: str) -> dict:
 
 
 def _audit_book(nid: str) -> dict:
-    got = l265._ssh(nid, "python3 -", timeout=120, stdin=AUDIT_PY)
-    text = (got.get("stdout") or "").strip()
+    remote = "/tmp/artcb279_book_audit.json"
+    got = l265._ssh(
+        nid,
+        f"python3 - > {remote} && wc -c {remote}",
+        timeout=120,
+        stdin=AUDIT_PY,
+    )
+    if got.get("returncode") != 0:
+        return {"ok": False, "stderr": (got.get("stderr") or "")[:400], "stdout": (got.get("stdout") or "")[:200]}
+    local = ROOT / "logs" / "279_book_audit.json"
+    local.parent.mkdir(parents=True, exist_ok=True)
+    base = l265._ssh_base(nid)
+    if base is None:
+        return {"ok": False, "stderr": "missing_ssh_key"}
+    host = base[-1]
+    flags = base[:-1]
+    import subprocess
+
+    proc = subprocess.run(
+        ["scp", *flags, f"{host}:{remote}", str(local)],
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=False,
+    )
+    if proc.returncode != 0 or not local.is_file():
+        return {"ok": False, "stderr": (proc.stderr or "")[:300]}
     try:
-        return {"ok": got.get("returncode") == 0, "audit": json.loads(text), "stderr": (got.get("stderr") or "")[:200]}
-    except json.JSONDecodeError:
-        return {"ok": False, "raw": text[-500:], "stderr": (got.get("stderr") or "")[:300]}
+        return {"ok": True, "audit": json.loads(local.read_text(encoding="utf-8"))}
+    except json.JSONDecodeError as exc:
+        return {"ok": False, "stderr": type(exc).__name__}
 
 
 def main() -> int:

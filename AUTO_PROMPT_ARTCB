@@ -1716,5 +1716,12 @@ TPM matériel absent ×4 (KVM/amazon). Analog mesuré : OVH metadata uuid + AWS 
 `logs/278_adversarial_20260909T000908Z.json` `logs/278_reprobe.json` `rapports/278_adversarial_post_r273_20260909.md`. T-E63 [x].
 **CERTIFIED_100=false.**
 
+## [2026-09-09T00:55:00Z] 279 — Platform Trust L0–L4 + tailles livre (pas CERTIFIED_100)
+
+TPM n’est pas le système d’identité. L4 quote matériel / L3 vTPM / L2 cloud / L1 VM observée / L0 none. Dual verdicts. Binding NodeID↔instance. `block_size_bytes` converge ; import reconverge après `pbft_cert`.
+Live SHA **`5e0d424e0cee85466b44fc163761c2cbda98a855`** ×4. L2 `CLOUD_ATTESTED` ×4, hardware TPM `NOT_AVAILABLE`, binding verified, PKCS#7/OVH **non CA-vérifiés**. Livre 1133 lignes index 0–1132, file 10 339 579 B, claimed≠line 1133/1133, min 7496 max 47192 (cert ~39 Ko), avg 9124, Δt p50=1 s moyenne 549 s. Docs 622/28k/665k ≠ ce livre. Ingest tour 409 equivocation.
+`logs/279_trust_sizes_20260909T005011Z.json` `logs/279_book_audit.json` `rapports/279_platform_trust_block_sizes_20260909.md`. T-E64 [x].
+**CERTIFIED_100=false.** N04 50 % FAIL. C04 / TPM quote NOT_PROVEN.
+
 
 
