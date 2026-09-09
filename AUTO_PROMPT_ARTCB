@@ -1794,5 +1794,10 @@ Config : `MemoRequest.content` / `ThinkRequest.question` `max_length=32000` dans
 ~~thinking_recorded unique~~ trop ambigu. Cinq états : available_from_runtime / received / private_stored / public_hash_recorded / integrity_verified. `thinking_recorded` = stored AND integrity seulement. `visibility=private` ≠ thinking modèle. Cursor n'injecte pas → NOT_PROVEN. HTTP 200 ≠ byte-for-byte. Exhaustive AEP PARTIAL. Live SHA `05d7030` jusqu’à merge. T-E75.
 **CERTIFIED_100=false.**
 
+## [2026-09-09] 293 — audit capture 4 couches (pas CERTIFIED_100)
+
+Chat visible ≠ `ARTCB_INGEST_THINKING_FILE` ≠ ARTCB. `AGENT_TRANSCRIPTS` env set, dir absent. Socket `/run/cursor/api.sock` existe. Transcript MCP layer 2 `bacd8b4f…` 30 650 605 B, 2500 champs thinking (corps hors git). `thinking_recorded=false`. Exhaustive PARTIAL. Live `AR-293-20260909T194104Z` SHA ×4 `05d7030` height 1133. T-E76.
+**CERTIFIED_100=false.**
+
 
 

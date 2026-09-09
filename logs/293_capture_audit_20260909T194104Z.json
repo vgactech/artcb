@@ -1,0 +1,74 @@
+{
+  "run_id": "AR-293-20260909T194104Z",
+  "inventory": {
+    "layers": {
+      "1_model_runtime": {
+        "artcb_ingest_thinking_file_set": false,
+        "status": "NOT_PROVEN"
+      },
+      "2_cursor_interface": {
+        "mcp_transcript_fetched": true,
+        "mcp_transcript_bytes": 30650605,
+        "mcp_transcript_sha256": "bacd8b4f43b786a01f46b9e7fa7429808d807a7cb1fb402e57fea96e93deb70b",
+        "mcp_message_count": 14248,
+        "embedded_thinking_fields": 2500,
+        "embedded_thinking_chars": 1807778,
+        "status": "OBSERVED_VIA_MCP",
+        "note": "Chat/transcript store. Embedded thinking strings \u2260 ARTCB_INGEST_THINKING_FILE and \u2260 thinking_recorded."
+      },
+      "3_agent_vm": {
+        "agent_transcripts_env_set": true,
+        "agent_transcripts_dir_exists": false,
+        "cursor_socket_exists": true,
+        "cursor_socket_path_set": true,
+        "conversation_id_set": true,
+        "ingest_prompt_file_set": false,
+        "status": "PARTIAL"
+      },
+      "4_artcb": {
+        "thinking_states": {
+          "thinking_available_from_runtime": false,
+          "thinking_received": false,
+          "thinking_private_stored": false,
+          "thinking_public_hash_recorded": false,
+          "thinking_integrity_verified": false,
+          "thinking_recorded": false,
+          "acquisition": "NOT_PROVEN",
+          "reason": "layer2_transcript_has_thinking_fields_but_ingest_hook_unset",
+          "inject_context": false,
+          "visibility_lane": "private",
+          "note": "visibility=private is a confidentiality lane, not proof that model thinking arrived. acquisition \u2260 storage."
+        },
+        "thinking_recorded": false,
+        "status": "NOT_STORED"
+      }
+    },
+    "thinking_recorded": false,
+    "thinking_available_from_runtime": false,
+    "thinking_received": false,
+    "thinking_private_stored": false,
+    "thinking_integrity_verified": false,
+    "embedded_thinking_fields_observed": true,
+    "chat_visible_neq_artcb_stored": true,
+    "mcp_contains_secret_like": true,
+    "certified_100": false,
+    "note": "Visible chat or MCP transcript \u2260 VM ingest hook \u2260 ARTCB private byte-for-byte store. Do not POST secret-bearing transcripts public."
+  },
+  "official_shas": {
+    "ovh-node-1": "05d703022a949a61849516e1c8ed20a4e715d9a7",
+    "ovh-node-2": "05d703022a949a61849516e1c8ed20a4e715d9a7",
+    "aws-node-3": "05d703022a949a61849516e1c8ed20a4e715d9a7",
+    "ovh-node-4": "05d703022a949a61849516e1c8ed20a4e715d9a7"
+  },
+  "ovh1_height": 1133,
+  "ovh1_last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+  "thinking_recorded": false,
+  "certified_100": false,
+  "exhaustive": "PARTIAL",
+  "mcp_transcript_path_recorded": true,
+  "body_printed": false,
+  "posted_to_artcb": false,
+  "reason_not_posted": "transcript_may_contain_secrets; live still 05d7030 32k cap; integrity not proven",
+  "tip": "89eb922e93843168812384d45d6219aac94ba2ccdde78cb7df986c37723b9c67",
+  "event_count": 10
+}
