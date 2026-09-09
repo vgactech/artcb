@@ -73,6 +73,7 @@ def attempt_attestation_quote(*, extra_data: bytes, is_vm: bool) -> dict[str, An
             "quote": None,
             "note": "tpm2-tools required for quote + checkquote",
         }
+    # extra_data: 16-byte node-binding prefix + 16-byte freshness nonce (R283).
     qualifier = (extra_data or b"")[:32].ljust(32, b"\x00")
     qhex = qualifier.hex()
     root = state_dir()

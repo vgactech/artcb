@@ -35,10 +35,16 @@ def test_verified_vtpm_quote_is_l3_not_l4() -> None:
     assert snap["platform_class"] == "vtpm"
     assert snap["trust_level"] == 3
     assert snap["overall_platform_trust"] == "VTPM_ATTESTED"
-    assert snap["hardware_tpm_attestation"] == "NOT_AVAILABLE"
+    assert snap["hardware_tpm_attestation"] == "NOT_APPLICABLE"
     assert snap["certified_hardware_identity"] is False
+    assert snap["environment"] == "VM"
+    assert snap["environment_profile"] == "VM_VTPM"
+    assert snap["maximum_supported_level"] == 3
+    assert snap["l3"] == "PASS"
+    assert snap["l4"] == "NOT_APPLICABLE"
     assert snap["split_verdicts"]["platform_crypto_attestation"] == "PASS"
-    assert snap["split_verdicts"]["certification"] == "FAIL"
+    assert snap["split_verdicts"]["certification"] == "PARTIAL"
+    assert snap["profile_certified_100"] is False
 
 
 def test_live_vms_without_device_stay_l2_not_l3() -> None:
@@ -54,4 +60,7 @@ def test_live_vms_without_device_stay_l2_not_l3() -> None:
     assert snap["overall_platform_trust"] == "CLOUD_ATTESTED"
     assert (snap.get("tpm") or {}).get("quote", {}).get("reason") == "DEVICE_ABSENT"
     assert snap["split_verdicts"]["platform_crypto_attestation"] == "NOT_PROVEN"
-    assert snap["split_verdicts"]["certification"] == "FAIL"
+    assert snap["l3"] == "NOT_REACHABLE"
+    assert snap["l4"] == "NOT_APPLICABLE"
+    assert snap["split_verdicts"]["certification"] == "PASS"
+    assert snap["profile_certified_100"] is False

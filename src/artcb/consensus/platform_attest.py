@@ -1,5 +1,11 @@
 """Multi-root platform attestation — TPM is one root, not the only one.
 
+Policy (R283): ENVIRONMENT → CAPABILITIES → MAXIMUM LEVEL → REQUIRED
+EVIDENCE → VERIFY → PROFILE CERTIFICATION.
+
+Never: « every node must satisfy L4 hardware TPM ».
+L4 on a VM is NOT_APPLICABLE / NOT_REACHABLE, not a universal FAIL.
+
 Best available proof on this machine, never recast:
 
     L4  TPM hardware + quote + PCR     → TPM_ATTESTED
@@ -19,8 +25,11 @@ attestation and it is NOT a TPM quote.
 
 `attestation_crypto_verified` stays false until a TPM/vTPM quote verifies.
 An AWS RSA-2048 pin against the published regional cert is a *sub*-verdict
-(`aws_iid_rsa2048_pin`); it does not flip certification or hardware TPM.
+(`aws_iid_rsa2048_pin`); it does not flip L3/L4 or CERTIFIED_100.
 OVH metadata remains unsigned in this implementation.
+
+`CERTIFIED_100` on a node means: 100 % of requirements applicable to the
+detected environment profile are PASS. It does not mean L4 everywhere.
 """
 
 from __future__ import annotations
@@ -227,15 +236,16 @@ def completed_trust_level(
 
 
 def hardware_tpm_attestation(*, klass: str, tpm: dict[str, Any], virt: dict[str, Any]) -> str:
+    """L4 hardware TPM axis. On a VM this is NOT_APPLICABLE, not a failure."""
     if virt.get("is_vm") or klass in {"vtpm", "cloud_instance_identity", "vm_unattested"}:
-        return "NOT_AVAILABLE"
+        return "NOT_APPLICABLE"
     if klass == "tpm_hardware" and quote_present(tpm):
         return "TPM_HARDWARE_ATTESTED"
     if klass == "tpm_hardware":
         return "HARDWARE_PRESENT_QUOTE_MISSING"
     if not tpm.get("present"):
-        return "HARDWARE_UNATTESTED"
-    return "NOT_AVAILABLE"
+        return "NOT_REACHABLE"
+    return "NOT_REACHABLE"
 
 
 def vtpm_attestation(*, klass: str, tpm: dict[str, Any]) -> str:
@@ -266,6 +276,233 @@ def overall_platform_trust(level: int) -> str:
         TRUST_L1_OBSERVED: "VM_UNATTESTED",
         TRUST_L0_NONE: "UNKNOWN",
     }.get(level, "UNKNOWN")
+
+
+def detect_environment(*, virt: dict[str, Any], aws: dict[str, Any], ovh: dict[str, Any]) -> str:
+    if virt.get("is_vm"):
+        if aws.get("document_ok") or ovh.get("document_ok"):
+            return "CLOUD_VM"
+        return "VM"
+    return "BARE_METAL"
+
+
+def detect_environment_profile(
+    *,
+    virt: dict[str, Any],
+    tpm: dict[str, Any],
+    aws: dict[str, Any],
+    ovh: dict[str, Any],
+) -> str:
+    env = detect_environment(virt=virt, aws=aws, ovh=ovh)
+    present = bool(tpm.get("present"))
+    if env == "BARE_METAL":
+        return "BARE_METAL"
+    if present and env == "CLOUD_VM":
+        return "CLOUD_VM_VTPM"
+    if present:
+        return "VM_VTPM"
+    if env == "CLOUD_VM":
+        return "CLOUD_VM"
+    return "VM_UNATTESTED"
+
+
+def maximum_supported_level(profile: str, *, tpm: dict[str, Any]) -> int:
+    if profile == "BARE_METAL":
+        return TRUST_L4_TPM if tpm.get("present") else TRUST_L1_OBSERVED
+    if profile in {"CLOUD_VM_VTPM", "VM_VTPM"}:
+        return TRUST_L3_VTPM
+    if profile == "CLOUD_VM":
+        return TRUST_L2_CLOUD
+    if profile == "VM_UNATTESTED":
+        return TRUST_L1_OBSERVED
+    return TRUST_L0_NONE
+
+
+def _axis_applicability(profile: str, *, tpm_present: bool) -> tuple[str, str]:
+    """(l3_axis, l4_axis) — APPLICABLE / NOT_APPLICABLE / NOT_REACHABLE."""
+    if profile in {"CLOUD_VM_VTPM", "VM_VTPM"}:
+        return "APPLICABLE", "NOT_APPLICABLE"
+    if profile == "CLOUD_VM":
+        return "NOT_REACHABLE", "NOT_APPLICABLE"
+    if profile == "VM_UNATTESTED":
+        return "NOT_REACHABLE", "NOT_APPLICABLE"
+    if profile == "BARE_METAL":
+        if tpm_present:
+            return "NOT_APPLICABLE", "APPLICABLE"
+        return "NOT_APPLICABLE", "NOT_REACHABLE"
+    return "NOT_APPLICABLE", "NOT_APPLICABLE"
+
+
+def _status_ok(value: str) -> bool:
+    return value in {"PASS", "NOT_APPLICABLE", "NOT_REACHABLE"}
+
+
+def evaluate_environment_profile_policy(
+    *,
+    virt: dict[str, Any],
+    tpm: dict[str, Any],
+    aws: dict[str, Any],
+    ovh: dict[str, Any],
+    klass: str,
+    level: int,
+    binding: dict[str, Any],
+    recast: bool,
+    iid_pin: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Four axes: environment, max level, attested level, profile certification."""
+    environment = detect_environment(virt=virt, aws=aws, ovh=ovh)
+    profile = detect_environment_profile(virt=virt, tpm=tpm, aws=aws, ovh=ovh)
+    max_level = maximum_supported_level(profile, tpm=tpm)
+    quote_ok = quote_present(tpm)
+    q = tpm.get("quote") if isinstance(tpm.get("quote"), dict) else {}
+    pin = iid_pin or {}
+    official = set(load_platform_binding_registry())
+    declared = str(binding.get("declared_node_id") or "")
+
+    l3_app, l4_app = _axis_applicability(profile, tpm_present=bool(tpm.get("present")))
+    if l3_app != "APPLICABLE":
+        l3 = l3_app
+    elif quote_ok and klass == "vtpm":
+        l3 = "PASS"
+    else:
+        l3 = "NOT_PROVEN"
+    if l4_app != "APPLICABLE":
+        l4 = l4_app
+    elif quote_ok and klass == "tpm_hardware":
+        l4 = "PASS"
+    else:
+        l4 = "NOT_PROVEN"
+
+    if aws.get("document_ok") or ovh.get("document_ok"):
+        cloud = "PASS"
+    elif profile == "BARE_METAL":
+        cloud = "NOT_APPLICABLE"
+    else:
+        cloud = "NOT_PROVEN"
+
+    if binding.get("identity_mismatch"):
+        registry = "FAIL"
+    elif binding.get("binding_verified"):
+        registry = "PASS"
+    else:
+        registry = "NOT_PROVEN"
+
+    if aws.get("document_ok"):
+        meta = "PASS" if pin.get("verified") is True else "NOT_PROVEN"
+    elif ovh.get("document_ok"):
+        meta = "NOT_PROVEN"
+    else:
+        meta = "NOT_APPLICABLE"
+
+    if klass in {"vtpm", "tpm_hardware"}:
+        ek = "PASS" if q.get("ek_manufacturer_verified") is True else "NOT_PROVEN"
+        prefix = str(q.get("binding_prefix_hex") or "")
+        qbind = "PASS" if quote_ok and prefix and prefix != ("00" * 16) else "NOT_PROVEN"
+        if q.get("freshness_bound") is True and quote_ok:
+            freshness = "PASS"
+        else:
+            freshness = "NOT_PROVEN"
+        quote_req = "PASS" if quote_ok else "NOT_PROVEN"
+    else:
+        ek = "NOT_APPLICABLE"
+        qbind = "NOT_APPLICABLE"
+        freshness = "NOT_APPLICABLE" if profile in {"CLOUD_VM", "VM_UNATTESTED"} else "NOT_PROVEN"
+        quote_req = "NOT_APPLICABLE" if profile in {"CLOUD_VM", "VM_UNATTESTED"} else "NOT_PROVEN"
+
+    capabilities = {
+        "instance_identity": bool(aws.get("document_ok") or ovh.get("document_ok")),
+        "vtpm_or_nitrotpm": bool(virt.get("is_vm") and tpm.get("present")),
+        "tpm20_interface": bool(tpm.get("present")),
+        "tpm_quote": quote_ok,
+        "quote_verification": quote_ok,
+        "hardware_tpm": bool((not virt.get("is_vm")) and tpm.get("present")),
+    }
+
+    if profile == "CLOUD_VM":
+        core = {
+            "environment_detected": "PASS",
+            "cloud_identity_observed": cloud,
+            "registry_binding": registry,
+        }
+        completeness = {
+            "metadata_signature": meta,
+            "freshness_challenge": "NOT_PROVEN",
+        }
+    elif profile in {"CLOUD_VM_VTPM", "VM_VTPM"}:
+        core = {
+            "environment_detected": "PASS",
+            "vtpm_present": "PASS" if tpm.get("present") else "NOT_PROVEN",
+            "quote_verified": quote_req,
+        }
+        if profile == "CLOUD_VM_VTPM" or declared in official:
+            core["registry_binding"] = registry
+        completeness = {
+            "quote_freshness": freshness,
+            "ek_ak_provenance": ek,
+            "quote_node_binding": qbind,
+        }
+    elif profile == "BARE_METAL":
+        present = bool(tpm.get("present"))
+        core = {
+            "environment_detected": "PASS",
+            "hardware_tpm_present": "PASS" if present else "NOT_REACHABLE",
+            "quote_verified": quote_req if present else "NOT_REACHABLE",
+        }
+        completeness = {
+            "quote_freshness": freshness if present else "NOT_REACHABLE",
+            "ek_ak_provenance": ek if present else "NOT_REACHABLE",
+            "quote_node_binding": qbind if present else "NOT_REACHABLE",
+        }
+    else:
+        core = {"environment_detected": "PASS"}
+        completeness = {"attested_identity": "NOT_PROVEN"}
+
+    requirements = {**core, **completeness, "l3": l3, "l4": l4}
+    mismatch = bool(binding.get("identity_mismatch"))
+    if recast or mismatch:
+        certification = "FAIL"
+        certified_100 = False
+    elif profile == "VM_UNATTESTED":
+        certification = "NOT_PROVEN"
+        certified_100 = False
+    elif any(v == "FAIL" for v in core.values()):
+        certification = "FAIL"
+        certified_100 = False
+    elif not all(_status_ok(v) for v in core.values()):
+        certification = "NOT_PROVEN"
+        certified_100 = False
+    else:
+        certified_100 = all(_status_ok(v) for v in completeness.values())
+        if certified_100:
+            certification = "PASS"
+        elif profile in {"CLOUD_VM_VTPM", "VM_VTPM", "BARE_METAL"}:
+            certification = "PARTIAL"
+        else:
+            certification = "PASS"
+
+    return {
+        "environment": environment,
+        "environment_profile": profile,
+        "maximum_supported_level": max_level,
+        "attested_level": level,
+        "capabilities": capabilities,
+        "core_requirements": core,
+        "completeness_requirements": completeness,
+        "requirements": requirements,
+        "l3": l3,
+        "l4": l4,
+        "quote_freshness": freshness,
+        "ek_ak_provenance": ek,
+        "quote_node_binding": qbind,
+        "profile_certification": certification,
+        "profile_certified_100": certified_100,
+        "note": (
+            "profile_certification is scored against the detected environment. "
+            "L4 on a VM is NOT_APPLICABLE, not FAIL. CERTIFIED_100 requires every "
+            "applicable requirement of this profile, including freshness and EK "
+            "provenance when the profile is L3/L4. L3 is never L4."
+        ),
+    }
 
 
 AWS_IID_CERT_DIR = Path(__file__).resolve().parent / "aws_iid_certs"
@@ -345,14 +582,25 @@ def split_platform_verdicts(
     certified_hardware_identity: bool,
     iid_pin: dict[str, Any] | None = None,
     recast_cloud_as_tpm: bool = False,
+    profile_certification: str | None = None,
+    l3: str | None = None,
+    l4: str | None = None,
+    profile_certified_100: bool = False,
 ) -> dict[str, Any]:
-    """Dashboard-safe names. observed PASS ≠ crypto PASS ≠ CERTIFIED_100."""
+    """Dashboard-safe names. observed PASS ≠ crypto PASS ≠ profile CERTIFIED_100.
+
+    `certification` is the environment-profile result (PASS/PARTIAL/NOT_PROVEN/FAIL),
+    not a universal L4 hardware-TPM gate.
+    """
     if recast_cloud_as_tpm or (certified_hardware_identity and hardware_tpm != "TPM_HARDWARE_ATTESTED"):
         observed = "FAIL"
+        certification = "FAIL"
     elif overall in {"CLOUD_ATTESTED", "TPM_ATTESTED", "VTPM_ATTESTED", "VM_UNATTESTED", "UNKNOWN"}:
         observed = "PASS"
+        certification = profile_certification or "NOT_PROVEN"
     else:
         observed = "FAIL"
+        certification = "FAIL"
     pin = iid_pin or {}
     if pin.get("verified") is True:
         pin_verdict = "PASS"
@@ -369,14 +617,19 @@ def split_platform_verdicts(
         "platform_level_observed": observed,
         "platform_crypto_attestation": "PASS" if attestation_crypto_verified else "NOT_PROVEN",
         "hardware_tpm": hardware_tpm,
-        "certification": "FAIL",
+        "certification": certification,
+        "l3": l3 or "NOT_PROVEN",
+        "l4": l4 or ("NOT_APPLICABLE" if hardware_tpm in {"NOT_APPLICABLE", "NOT_AVAILABLE"} else "NOT_PROVEN"),
+        "profile_certified_100": bool(profile_certified_100) and certification == "PASS",
         "aws_iid_rsa2048_pin": pin_verdict,
         "note": (
             "platform_level_observed PASS = classification + registry binding, "
             "not a CA-verified attestation. platform_crypto_attestation stays "
             "NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is "
             "a pin of the AWS IID signature only (no freshness, no Ed25519 bind). "
-            "certification FAIL until CERTIFIED_100."
+            "certification is the detected environment profile (L2/L3/L4 as "
+            "applicable). L4 on a VM is NOT_APPLICABLE. profile_certified_100 "
+            "is 100 % of that profile, not a demand that every node be L4."
         ),
     }
 
@@ -561,14 +814,25 @@ def collect_platform_attestation(
     )
     extra_hex = str(binding.get("node_binding") or "")
     try:
-        extra = bytes.fromhex(extra_hex)[:32] if extra_hex else b"\x00" * 32
+        digest = bytes.fromhex(extra_hex) if extra_hex else b"\x00" * 16
     except ValueError:
-        extra = b"\x00" * 32
+        digest = b"\x00" * 16
+    bind16 = digest[:16].ljust(16, b"\x00")[:16]
+    freshness_nonce = os.urandom(16)
+    extra = bind16 + freshness_nonce
     if not quote_present(tpm):
         from src.artcb.consensus.tpm_quote import attempt_attestation_quote
 
         tpm = dict(tpm)
-        tpm["quote"] = attempt_attestation_quote(extra_data=extra, is_vm=bool(virt.get("is_vm")))
+        quote = attempt_attestation_quote(extra_data=extra, is_vm=bool(virt.get("is_vm")))
+        if quote.get("verified") is True:
+            quote = dict(quote)
+            quote["freshness_bound"] = True
+            quote["freshness_nonce_hex"] = freshness_nonce.hex()
+            quote["binding_prefix_hex"] = bind16.hex()
+            quote["ek_provenance"] = "LOCAL_CREATEEK"
+            quote["ek_manufacturer_verified"] = False
+        tpm["quote"] = quote
     klass = classify(tpm=tpm, virt=virt, aws=aws, ovh=ovh)
     level = completed_trust_level(klass=klass, tpm=tpm, virt=virt, aws=aws, ovh=ovh)
     hw = hardware_tpm_attestation(klass=klass, tpm=tpm, virt=virt)
@@ -579,8 +843,9 @@ def collect_platform_attestation(
         (klass == "tpm_hardware" and quote_present(tpm))
         or (klass == "vtpm" and quote_present(tpm))
     )
-    recast = overall == "TPM_ATTESTED" and hw == "NOT_AVAILABLE"
+    recast = bool(virt.get("is_vm")) and (overall == "TPM_ATTESTED" or level == TRUST_L4_TPM)
     recast = recast or (level == TRUST_L4_TPM and hw != "TPM_HARDWARE_ATTESTED")
+    recast = recast or (overall == "TPM_ATTESTED" and hw in {"NOT_AVAILABLE", "NOT_APPLICABLE"})
     iid_pin: dict[str, Any]
     if aws.get("document_ok"):
         iid_pin = verify_aws_iid_rsa2048_pin(
@@ -596,6 +861,17 @@ def collect_platform_attestation(
         "reason": iid_pin.get("reason"),
         "region": iid_pin.get("region"),
     }
+    policy = evaluate_environment_profile_policy(
+        virt=virt,
+        tpm=tpm,
+        aws=aws,
+        ovh=ovh,
+        klass=klass,
+        level=level,
+        binding=binding,
+        recast=recast,
+        iid_pin=iid_pin,
+    )
     splits = split_platform_verdicts(
         overall=overall,
         hardware_tpm=hw,
@@ -603,6 +879,10 @@ def collect_platform_attestation(
         certified_hardware_identity=level == TRUST_L4_TPM,
         iid_pin=iid_pin,
         recast_cloud_as_tpm=recast,
+        profile_certification=str(policy["profile_certification"]),
+        l3=str(policy["l3"]),
+        l4=str(policy["l4"]),
+        profile_certified_100=bool(policy["profile_certified_100"]),
     )
     evidence = {
         "platform_class": klass,
@@ -612,14 +892,30 @@ def collect_platform_attestation(
         "hardware_tpm_attestation": hw,
         "platform_identity_attestation": plat,
         "overall_platform_trust": overall,
+        "environment_profile": policy["environment_profile"],
         "binding": binding.get("node_binding"),
     }
     evidence_hash = hashlib.sha256(
         json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
     return {
-        "protocol": "281-platform-attestation",
+        "protocol": "283-environment-profile-attestation",
         "ts_ns": now_wall_ns(),
+        "environment": policy["environment"],
+        "environment_profile": policy["environment_profile"],
+        "maximum_supported_level": policy["maximum_supported_level"],
+        "attested_level": policy["attested_level"],
+        "capabilities": policy["capabilities"],
+        "profile_requirements": policy["requirements"],
+        "core_requirements": policy["core_requirements"],
+        "completeness_requirements": policy["completeness_requirements"],
+        "profile_certification": policy["profile_certification"],
+        "profile_certified_100": policy["profile_certified_100"],
+        "l3": policy["l3"],
+        "l4": policy["l4"],
+        "quote_freshness": policy["quote_freshness"],
+        "ek_ak_provenance": policy["ek_ak_provenance"],
+        "quote_node_binding": policy["quote_node_binding"],
         "platform_class": klass,
         "trust_level": level,
         "trust_level_name": {
@@ -675,15 +971,20 @@ def collect_platform_attestation(
         "aws_imds": public_aws,
         "ovh_metadata": ovh,
         "nonce": hashlib.sha256(f"{now_wall_ns()}|{instance_id}|{declared}".encode()).hexdigest()[:32],
+        "quote_qualifier": {
+            "binding_prefix_hex": bind16.hex(),
+            "freshness_nonce_hex": freshness_nonce.hex() if quote_present(tpm) and (tpm.get("quote") or {}).get("freshness_bound") else None,
+        },
         "evidence_hash": evidence_hash,
         "note": (
-            "TPM hardware and cloud identity are independent verdicts. "
-            "CLOUD_ATTESTED is not TPM_ATTESTED. Absent /dev/tpm0 on a VM is "
-            "NOT_AVAILABLE for hardware TPM, not a global NODE IDENTITY NOT_PROVEN. "
+            "Policy: environment → capabilities → max level → required evidence → "
+            "verify → profile certification. L4 on a VM is NOT_APPLICABLE, not FAIL. "
+            "L3 NitroTPM/vTPM is never L4. CLOUD_ATTESTED is not TPM_ATTESTED. "
             "PKCS#7 / OVH metadata signatures are not a TPM quote. "
-            "split_verdicts.platform_level_observed PASS is not certification. "
-            "split_verdicts.platform_crypto_attestation stays NOT_PROVEN without "
-            "a verified TPM/vTPM quote. AWS RSA-2048 pin is a sub-verdict only."
+            "split_verdicts.certification is the detected profile, not a universal "
+            "hardware-TPM gate. CERTIFIED_100 is 100 % of that profile (freshness + "
+            "EK provenance included for L3/L4). AWS RSA-2048 pin is a sub-verdict only. "
+            "Local tpm2_createek is not manufacturer EK provenance."
         ),
     }
 

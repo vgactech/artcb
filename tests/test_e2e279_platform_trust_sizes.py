@@ -42,16 +42,25 @@ def test_cloud_vm_is_l2_not_tpm() -> None:
     assert snap["platform_class"] == "cloud_instance_identity"
     assert snap["trust_level"] == 2
     assert snap["overall_platform_trust"] == "CLOUD_ATTESTED"
-    assert snap["hardware_tpm_attestation"] == "NOT_AVAILABLE"
+    assert snap["hardware_tpm_attestation"] == "NOT_APPLICABLE"
     assert snap["platform_identity_attestation"] == "AWS_CLOUD_ATTESTED"
     assert snap["certified_hardware_identity"] is False
     assert snap["tpm_quote_proven"] is False
     assert snap["attestation_crypto_verified"] is False
+    assert snap["environment"] == "CLOUD_VM"
+    assert snap["environment_profile"] == "CLOUD_VM"
+    assert snap["maximum_supported_level"] == 2
+    assert snap["attested_level"] == 2
+    assert snap["l3"] == "NOT_REACHABLE"
+    assert snap["l4"] == "NOT_APPLICABLE"
+    assert snap["profile_certification"] == "PASS"
+    assert snap["profile_certified_100"] is False
     v = snap["split_verdicts"]
     assert v["platform_level_observed"] == "PASS"
     assert v["platform_crypto_attestation"] == "NOT_PROVEN"
-    assert v["hardware_tpm"] == "NOT_AVAILABLE"
-    assert v["certification"] == "FAIL"
+    assert v["hardware_tpm"] == "NOT_APPLICABLE"
+    assert v["certification"] == "PASS"
+    assert v["l4"] == "NOT_APPLICABLE"
     assert v["aws_iid_rsa2048_pin"] == "NOT_PROVEN"
 
 
@@ -66,14 +75,20 @@ def test_ovh_vm_is_l2_not_tpm() -> None:
     )
     assert snap["trust_level"] == 2
     assert snap["overall_platform_trust"] == "CLOUD_ATTESTED"
-    assert snap["hardware_tpm_attestation"] == "NOT_AVAILABLE"
+    assert snap["hardware_tpm_attestation"] == "NOT_APPLICABLE"
     assert snap["platform_identity_attestation"] == "OVH_CLOUD_ATTESTED"
     assert snap["certified_hardware_identity"] is False
+    assert snap["environment_profile"] == "CLOUD_VM"
+    assert snap["maximum_supported_level"] == 2
+    assert snap["l3"] == "NOT_REACHABLE"
+    assert snap["l4"] == "NOT_APPLICABLE"
+    assert snap["profile_certification"] == "PASS"
+    assert snap["profile_certified_100"] is False
     v = snap["split_verdicts"]
     assert v["platform_level_observed"] == "PASS"
     assert v["platform_crypto_attestation"] == "NOT_PROVEN"
-    assert v["hardware_tpm"] == "NOT_AVAILABLE"
-    assert v["certification"] == "FAIL"
+    assert v["hardware_tpm"] == "NOT_APPLICABLE"
+    assert v["certification"] == "PASS"
     assert v["aws_iid_rsa2048_pin"] == "NOT_APPLICABLE"
 
 
@@ -91,6 +106,13 @@ def test_vtpm_without_quote_stays_below_l3() -> None:
     assert snap["trust_level"] == 2  # cloud document is the completed proof
     assert snap["overall_platform_trust"] == "CLOUD_ATTESTED"
     assert snap["certified_hardware_identity"] is False
+    assert snap["environment_profile"] == "CLOUD_VM_VTPM"
+    assert snap["maximum_supported_level"] == 3
+    assert snap["attested_level"] == 2
+    assert snap["l3"] == "NOT_PROVEN"
+    assert snap["l4"] == "NOT_APPLICABLE"
+    assert snap["profile_certification"] == "NOT_PROVEN"
+    assert snap["hardware_tpm_attestation"] == "NOT_APPLICABLE"
 
 
 def test_bare_metal_tpm_quote_is_l4() -> None:
@@ -111,7 +133,10 @@ def test_bare_metal_tpm_quote_is_l4() -> None:
     assert v["platform_level_observed"] == "PASS"
     assert v["platform_crypto_attestation"] == "PASS"
     assert v["hardware_tpm"] == "TPM_HARDWARE_ATTESTED"
-    assert v["certification"] == "FAIL"
+    assert snap["l4"] == "PASS"
+    assert snap["l3"] == "NOT_APPLICABLE"
+    assert v["certification"] == "PARTIAL"
+    assert snap["profile_certified_100"] is False
 
 
 def test_generic_vm_is_l1() -> None:
@@ -127,6 +152,8 @@ def test_generic_vm_is_l1() -> None:
     assert snap["trust_level"] == 1
     assert snap["overall_platform_trust"] == "VM_UNATTESTED"
     assert snap["certified_hardware_identity"] is False
+    assert snap["l4"] == "NOT_APPLICABLE"
+    assert snap["profile_certification"] == "NOT_PROVEN"
 
 
 def test_env_cannot_usurp_platform_instance() -> None:
@@ -246,13 +273,19 @@ def test_split_verdicts_never_certify_from_cloud_observe() -> None:
 
     v = split_platform_verdicts(
         overall="CLOUD_ATTESTED",
-        hardware_tpm="NOT_AVAILABLE",
+        hardware_tpm="NOT_APPLICABLE",
         attestation_crypto_verified=False,
         certified_hardware_identity=False,
         iid_pin={"verified": True, "reason": "ok"},
         recast_cloud_as_tpm=False,
+        profile_certification="PASS",
+        l3="NOT_REACHABLE",
+        l4="NOT_APPLICABLE",
+        profile_certified_100=False,
     )
     assert v["platform_level_observed"] == "PASS"
     assert v["aws_iid_rsa2048_pin"] == "PASS"
     assert v["platform_crypto_attestation"] == "NOT_PROVEN"
-    assert v["certification"] == "FAIL"
+    assert v["certification"] == "PASS"
+    assert v["profile_certified_100"] is False
+    assert v["l4"] == "NOT_APPLICABLE"
