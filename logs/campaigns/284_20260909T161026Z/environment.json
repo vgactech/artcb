@@ -1,0 +1,10 @@
+{
+  "shas": {
+    "ovh-node-1": "b848428899d3c209a551299414e03e8beef15107",
+    "ovh-node-2": "",
+    "aws-node-3": "b848428899d3c209a551299414e03e8beef15107",
+    "ovh-node-4": ""
+  },
+  "prompt_hash": "9f45f2a05c903425b3862d7f3c9d7a811a1c0cf7fe765e0cc7beba4274546443",
+  "policy_hash": "08753095e8baf74c4fe6dddf26873a8c71773559040bec2c7f9b39afe29cea3c"
+}

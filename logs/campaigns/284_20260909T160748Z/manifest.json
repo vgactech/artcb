@@ -1,0 +1,192 @@
+{
+  "campaign_id": "284_20260909T160748Z",
+  "code_sha": "233cbea51bcc2eb726d3bcc73fa93e1dc092f284",
+  "runner": "scripts/run_live284_classify.py",
+  "timestamp": "2026-09-09T16:07:59Z",
+  "node_ids": [
+    "aws-node-3",
+    "ovh-node-1",
+    "ovh-node-2",
+    "ovh-node-4"
+  ],
+  "results": {
+    "unknown_not_bare_metal": {
+      "status": "FAIL",
+      "certified_100": false
+    },
+    "aws3_nitrotpm_not_swtpm": {
+      "status": "FAIL",
+      "certified_100": false,
+      "aws": {
+        "sha": "233cbea51bcc2eb726d3bcc73fa93e1dc092f284",
+        "raw_hash": "f6584174ea27fa6486c2872f5f5199e89271909963b3196f2b140c9b61a8bd56",
+        "environment": "CLOUD_VM",
+        "environment_certainty": "VM_PROVEN",
+        "environment_profile": "CLOUD_VM_TPM_UNKNOWN",
+        "tpm_kind": "UNKNOWN_TPM",
+        "maximum_theoretical_level": 3,
+        "maximum_verified_level": 2,
+        "attested_level": 2,
+        "l3": "NOT_PROVEN",
+        "l4": "NOT_APPLICABLE",
+        "profile_certification": "PASS",
+        "profile_certified_100": false,
+        "missing_requirements": [
+          "hypervisor_vtpm_provenance",
+          "freshness_challenge",
+          "l3"
+        ],
+        "freshness_kind": "LOCAL_GENERATED",
+        "ek_provenance_verified": "NOT_PROVEN",
+        "quote_signature_verified": "PASS",
+        "overall_precise": "CLOUD_IDENTITY_OBSERVED",
+        "policy_hash": "08753095e8baf74c4fe6dddf26873a8c71773559040bec2c7f9b39afe29cea3c",
+        "certified_hardware": false
+      }
+    },
+    "ovh_l2_observed": {
+      "status": "PASS",
+      "certified_100": false
+    },
+    "pre_r273_gap": {
+      "status": "GAP",
+      "certified_100": false,
+      "note": "K1→Node2 before 41c9e1dd remains GAP, not retroactive PASS"
+    },
+    "n04_50": {
+      "status": "FAIL",
+      "certified_100": false,
+      "note": "last — not replayed"
+    },
+    "c04_thousands": {
+      "status": "NOT_PROVEN",
+      "certified_100": false
+    },
+    "verifier_challenge": {
+      "status": "NOT_PROVEN",
+      "certified_100": false
+    },
+    "ek_manufacturer": {
+      "status": "NOT_PROVEN",
+      "certified_100": false
+    },
+    "mac_rfc1918": {
+      "status": "NOT_REACHABLE",
+      "certified_100": false,
+      "note": "10.234.49.2 not reachable from this cloud VM"
+    },
+    "honesty_guard": {
+      "status": "PASS",
+      "certified_100": false
+    },
+    "certified_100": false,
+    "production_ready": false
+  },
+  "compact": {
+    "ovh-node-1": {
+      "sha": "233cbea51bcc2eb726d3bcc73fa93e1dc092f284",
+      "raw_hash": "f73ce8bc482b0fb248048f41fb39a8e5ca4d3173df4d064c4d29fea76c812084",
+      "environment": "CLOUD_VM",
+      "environment_certainty": "VM_PROVEN",
+      "environment_profile": "CLOUD_VM",
+      "tpm_kind": "ABSENT",
+      "maximum_theoretical_level": 2,
+      "maximum_verified_level": 2,
+      "attested_level": 2,
+      "l3": "NOT_REACHABLE",
+      "l4": "NOT_APPLICABLE",
+      "profile_certification": "PASS",
+      "profile_certified_100": false,
+      "missing_requirements": [
+        "metadata_signature",
+        "freshness_challenge",
+        "l3"
+      ],
+      "freshness_kind": "ABSENT",
+      "ek_provenance_verified": "NOT_PROVEN",
+      "quote_signature_verified": "NOT_APPLICABLE",
+      "overall_precise": "CLOUD_IDENTITY_OBSERVED",
+      "policy_hash": "08753095e8baf74c4fe6dddf26873a8c71773559040bec2c7f9b39afe29cea3c",
+      "certified_hardware": false
+    },
+    "ovh-node-2": {
+      "sha": "233cbea51bcc2eb726d3bcc73fa93e1dc092f284",
+      "raw_hash": "0653e6dab4ebeeea935af31942157a79b104a0f8ac605adc686ea0fdc4551360",
+      "environment": "CLOUD_VM",
+      "environment_certainty": "VM_PROVEN",
+      "environment_profile": "CLOUD_VM",
+      "tpm_kind": "ABSENT",
+      "maximum_theoretical_level": 2,
+      "maximum_verified_level": 2,
+      "attested_level": 2,
+      "l3": "NOT_REACHABLE",
+      "l4": "NOT_APPLICABLE",
+      "profile_certification": "PASS",
+      "profile_certified_100": false,
+      "missing_requirements": [
+        "metadata_signature",
+        "freshness_challenge",
+        "l3"
+      ],
+      "freshness_kind": "ABSENT",
+      "ek_provenance_verified": "NOT_PROVEN",
+      "quote_signature_verified": "NOT_APPLICABLE",
+      "overall_precise": "CLOUD_IDENTITY_OBSERVED",
+      "policy_hash": "08753095e8baf74c4fe6dddf26873a8c71773559040bec2c7f9b39afe29cea3c",
+      "certified_hardware": false
+    },
+    "aws-node-3": {
+      "sha": "233cbea51bcc2eb726d3bcc73fa93e1dc092f284",
+      "raw_hash": "f6584174ea27fa6486c2872f5f5199e89271909963b3196f2b140c9b61a8bd56",
+      "environment": "CLOUD_VM",
+      "environment_certainty": "VM_PROVEN",
+      "environment_profile": "CLOUD_VM_TPM_UNKNOWN",
+      "tpm_kind": "UNKNOWN_TPM",
+      "maximum_theoretical_level": 3,
+      "maximum_verified_level": 2,
+      "attested_level": 2,
+      "l3": "NOT_PROVEN",
+      "l4": "NOT_APPLICABLE",
+      "profile_certification": "PASS",
+      "profile_certified_100": false,
+      "missing_requirements": [
+        "hypervisor_vtpm_provenance",
+        "freshness_challenge",
+        "l3"
+      ],
+      "freshness_kind": "LOCAL_GENERATED",
+      "ek_provenance_verified": "NOT_PROVEN",
+      "quote_signature_verified": "PASS",
+      "overall_precise": "CLOUD_IDENTITY_OBSERVED",
+      "policy_hash": "08753095e8baf74c4fe6dddf26873a8c71773559040bec2c7f9b39afe29cea3c",
+      "certified_hardware": false
+    },
+    "ovh-node-4": {
+      "sha": "233cbea51bcc2eb726d3bcc73fa93e1dc092f284",
+      "raw_hash": "c66320fe50ced227bd63f8af39d60b04d2805b462bdcb2a99c53103e8d6ada74",
+      "environment": "CLOUD_VM",
+      "environment_certainty": "VM_PROVEN",
+      "environment_profile": "CLOUD_VM",
+      "tpm_kind": "ABSENT",
+      "maximum_theoretical_level": 2,
+      "maximum_verified_level": 2,
+      "attested_level": 2,
+      "l3": "NOT_REACHABLE",
+      "l4": "NOT_APPLICABLE",
+      "profile_certification": "PASS",
+      "profile_certified_100": false,
+      "missing_requirements": [
+        "metadata_signature",
+        "freshness_challenge",
+        "l3"
+      ],
+      "freshness_kind": "ABSENT",
+      "ek_provenance_verified": "NOT_PROVEN",
+      "quote_signature_verified": "NOT_APPLICABLE",
+      "overall_precise": "CLOUD_IDENTITY_OBSERVED",
+      "policy_hash": "08753095e8baf74c4fe6dddf26873a8c71773559040bec2c7f9b39afe29cea3c",
+      "certified_hardware": false
+    }
+  },
+  "ledger_tip": "9a0019e2c282221a4f05d21846af9a5695823e1a99e295d130e15321f4be5087"
+}

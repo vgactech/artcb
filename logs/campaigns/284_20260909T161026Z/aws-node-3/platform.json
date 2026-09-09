@@ -1,0 +1,24 @@
+{
+  "sha": "b848428899d3c209a551299414e03e8beef15107",
+  "raw_hash": "483d0ee74e76eb31839b4c7d59c8cd190262c1636b2e334025c9d24cb28d39fc",
+  "environment": "CLOUD_VM",
+  "environment_certainty": "VM_PROVEN",
+  "environment_profile": "CLOUD_VM_VTPM",
+  "tpm_kind": "NITROTPM",
+  "maximum_theoretical_level": 3,
+  "maximum_verified_level": 3,
+  "attested_level": 3,
+  "l3": "PASS",
+  "l4": "NOT_APPLICABLE",
+  "profile_certification": "PARTIAL",
+  "profile_certified_100": false,
+  "missing_requirements": [
+    "ek_ak_provenance"
+  ],
+  "freshness_kind": "LOCAL_GENERATED",
+  "ek_provenance_verified": "NOT_PROVEN",
+  "quote_signature_verified": "PASS",
+  "overall_precise": "VTPM_ATTESTED",
+  "policy_hash": "08753095e8baf74c4fe6dddf26873a8c71773559040bec2c7f9b39afe29cea3c",
+  "certified_hardware": false
+}

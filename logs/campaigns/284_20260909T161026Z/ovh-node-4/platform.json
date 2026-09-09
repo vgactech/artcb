@@ -1,0 +1,22 @@
+{
+  "sha": "",
+  "raw_hash": "b116d295387279ccc64a0e0296cde88d729b6b4b752ff2efdafa619e34e90841",
+  "environment": null,
+  "environment_certainty": null,
+  "environment_profile": null,
+  "tpm_kind": null,
+  "maximum_theoretical_level": null,
+  "maximum_verified_level": null,
+  "attested_level": null,
+  "l3": null,
+  "l4": null,
+  "profile_certification": null,
+  "profile_certified_100": null,
+  "missing_requirements": null,
+  "freshness_kind": null,
+  "ek_provenance_verified": null,
+  "quote_signature_verified": null,
+  "overall_precise": null,
+  "policy_hash": null,
+  "certified_hardware": null
+}
