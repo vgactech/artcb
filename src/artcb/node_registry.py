@@ -30,6 +30,11 @@ class NodeSpec:
     ssh_host: str | None = None
     ssh_user: str = "ubuntu"
     public_notes: str = ""
+    # RFC1918 / .local hosts are LAN-only. Cloud agents must use a measured
+    # public tunnel host — never recast 10.x/192.168/172.16 as reachable.
+    tunnel_required: bool = False
+    tunnel_ssh_host: str | None = None
+    tunnel_health_http: str | None = None
 
 
 # The four infrastructure VMs that must follow GitHub origin/main automatically.
@@ -232,10 +237,14 @@ NODES: dict[str, NodeSpec] = {
         api_https=None,
         ssh_host="10.234.49.2",
         ssh_user="deyi",
+        tunnel_required=True,
+        tunnel_ssh_host=None,
+        tunnel_health_http=None,
         public_notes=(
             "MacBook Air deyi@luxiufengdeMacBook-Air.local — LAN 10.234.49.2. "
             "RFC1918: injoignable depuis les VMs cloud / agents Cursor cloud "
-            "sans tunnel (WireGuard/Tailscale/ngrok). "
+            "sans tunnel public mesuré (WireGuard/Tailscale/ngrok démarré SUR le Mac). "
+            "Un ngrok lancé depuis une VM cloud n'atteint pas le Mac. "
             "Rôle: observateur PBFT local, dev, replay de campagnes. "
             "Doppler project artcb-1 (config prd). "
             "Token service KEY_API_ARTCB_DOPPLER_MAC : doit être un secret "
@@ -407,6 +416,9 @@ def public_registry() -> dict[str, Any]:
                 "api_https": spec.api_https,
                 "ssh_host": spec.ssh_host,
                 "ssh_user": spec.ssh_user,
+                "tunnel_required": spec.tunnel_required,
+                "tunnel_ssh_host": spec.tunnel_ssh_host,
+                "tunnel_health_http": spec.tunnel_health_http,
                 "notes": spec.public_notes,
             }
             for nid, spec in NODES.items()

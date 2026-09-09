@@ -17,10 +17,13 @@ alwaysApply: false
 - Le `DOPPLER_TOKEN` des agents cloud Cursor lit `artcb-blockchain` / **`dev`**, pas `prd`. Mettre `KEY_API_ARTCB_DOPPLER_MAC` :
   1. comme secret d’environnement Cursor (comme `_2` / `_3` / `_4`) ;
   2. **et** dans `artcb-blockchain/dev` si on veut le lire via le token partagé.
-- `10.234.49.2` est RFC1918 : Timeout depuis OVH/AWS/agents cloud sans tunnel. Ne **pas** inventer un `git_sha` health Mac.
+- `10.234.49.2` est RFC1918 : **injoignable** depuis OVH/AWS/agents Cursor cloud. Un timeout LAN n’est pas un PASS SSH.
+- Tunnel **obligatoire** pour l’accès distant, **démarré sur le Mac** (ngrok / Tailscale / WireGuard). Un ngrok lancé depuis une VM cloud n’atteint pas le Mac.
+- `tunnel_required=true`. `ARTCB_MAC_TUNNEL_SSH_HOST` / `ARTCB_MAC_TUNNEL_HEALTH_HTTP` = endpoint **public mesuré** — jamais `10.234.49.2` ni `*.local`.
+- Compte ngrok partagé : 0 tunnel / 0 endpoint au probe R287. Ne **pas** inventer un `git_sha` health Mac.
 
 ## Interdits
 
 - Ne pas coller PEM / `dp.st.…` / mot de passe sudo dans le chat, git, ou un rapport.
 - Ne pas recaster un timeout LAN en PASS SSH.
-- N04 50 % reste FAIL et **dernier**. `CERTIFIED_100=false`.
+- Ne pas traiter `10.234.49.2` comme un tunnel. N04 50 % reste FAIL et **dernier**. `CERTIFIED_100=false`.

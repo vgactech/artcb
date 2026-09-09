@@ -25,6 +25,8 @@ KEY_PATH_DEFAULT = Path("/tmp/cursor_mac")
 SHARED_CONFIG_CURSOR_CLOUD = "dev"
 TOKEN_ENV = "KEY_API_ARTCB_DOPPLER_MAC"
 SSH_SECRET_NAME = "CURSOR_SSH_PRIVATE_KEY"
+TUNNEL_SSH_ENV = "ARTCB_MAC_TUNNEL_SSH_HOST"
+TUNNEL_HTTP_ENV = "ARTCB_MAC_TUNNEL_HEALTH_HTTP"
 
 
 def mac_spec():
@@ -38,6 +40,173 @@ def is_rfc1918(host: str) -> bool:
     except ValueError:
         return False
     return bool(addr.is_private)
+
+
+def host_from_url_or_host(raw: str) -> str:
+    text = (raw or "").strip()
+    if "://" in text:
+        from urllib.parse import urlparse
+
+        return (urlparse(text).hostname or "").strip().lower()
+    if text.count(":") == 1 and text.rsplit(":", 1)[-1].isdigit():
+        return text.rsplit(":", 1)[0].strip().lower()
+    return text.lower().rstrip(".")
+
+
+def is_lan_only_host(host: str) -> bool:
+    """True for RFC1918, loopback, mDNS .local — not a cloud-reachable path."""
+    h = host_from_url_or_host(host)
+    if not h:
+        return True
+    if h in {"localhost", "127.0.0.1", "::1", "0.0.0.0"}:
+        return True
+    if h.endswith(".local") or h.endswith(".lan"):
+        return True
+    return is_rfc1918(h)
+
+
+def select_cloud_remote(spec=None, env: dict[str, str] | None = None) -> dict[str, Any]:
+    """Pick SSH/health target for a cloud agent. RFC1918 is never a tunnel."""
+    spec = spec or mac_spec()
+    environ = env if env is not None else os.environ
+    lan_ssh = spec.ssh_host or ""
+    lan_http = spec.health_http or ""
+    tunnel_ssh = (environ.get(TUNNEL_SSH_ENV) or spec.tunnel_ssh_host or "").strip()
+    tunnel_http = (environ.get(TUNNEL_HTTP_ENV) or spec.tunnel_health_http or "").strip()
+    ssh_host = host_from_url_or_host(tunnel_ssh) if tunnel_ssh else ""
+    if ssh_host and is_lan_only_host(ssh_host):
+        return {
+            "ok": False,
+            "reason": "tunnel_host_is_lan_only",
+            "ssh_host": None,
+            "health_http": None,
+            "tunnel_required": True,
+            "lan_ssh_host": lan_ssh,
+            "rejected": ssh_host,
+        }
+    if ssh_host:
+        http = tunnel_http or None
+        return {
+            "ok": True,
+            "reason": "public_tunnel",
+            "ssh_host": ssh_host,
+            "health_http": http,
+            "tunnel_required": True,
+            "lan_ssh_host": lan_ssh,
+            "rejected": None,
+        }
+    if spec.tunnel_required or is_lan_only_host(lan_ssh):
+        return {
+            "ok": False,
+            "reason": "rfc1918_requires_tunnel",
+            "ssh_host": None,
+            "health_http": None,
+            "tunnel_required": True,
+            "lan_ssh_host": lan_ssh,
+            "rejected": lan_ssh,
+        }
+    return {
+        "ok": True,
+        "reason": "direct_public",
+        "ssh_host": lan_ssh,
+        "health_http": lan_http,
+        "tunnel_required": False,
+        "lan_ssh_host": lan_ssh,
+        "rejected": None,
+    }
+
+
+def list_ngrok_tunnels(api_key: str) -> dict[str, Any]:
+    """Public URLs only. Never returns the API key."""
+    if not (api_key or "").strip():
+        return {"http": 0, "n_tunnels": 0, "n_endpoints": 0, "public_urls": [], "error": "NGROK_API_KEY_absent"}
+    headers = {
+        "Authorization": f"Bearer {api_key.strip()}",
+        "Ngrok-Version": "2",
+        "Accept": "application/json",
+    }
+    urls: list[str] = []
+    out: dict[str, Any] = {"public_urls": urls, "error": None}
+
+    def _get(path: str) -> tuple[int, Any]:
+        req = Request(f"https://api.ngrok.com{path}", headers=headers)
+        try:
+            with urlopen(req, timeout=20) as resp:
+                return int(resp.status), json.loads(resp.read().decode("utf-8"))
+        except HTTPError as exc:
+            return int(exc.code), {"error": exc.read()[:200].decode("utf-8", errors="replace")}
+        except (URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+            return 0, {"error": type(exc).__name__}
+
+    st, tunnels_body = _get("/tunnels")
+    out["tunnels_http"] = st
+    items = []
+    if isinstance(tunnels_body, dict):
+        items = tunnels_body.get("tunnels") or []
+    out["n_tunnels"] = len(items) if isinstance(items, list) else 0
+    for item in items if isinstance(items, list) else []:
+        if isinstance(item, dict):
+            u = item.get("public_url") or item.get("url")
+            if u:
+                urls.append(str(u))
+    st2, eps_body = _get("/endpoints")
+    out["endpoints_http"] = st2
+    eps = []
+    if isinstance(eps_body, dict):
+        eps = eps_body.get("endpoints") or []
+    out["n_endpoints"] = len(eps) if isinstance(eps, list) else 0
+    for item in eps if isinstance(eps, list) else []:
+        if isinstance(item, dict):
+            u = item.get("url") or item.get("hostport")
+            if u:
+                urls.append(str(u))
+    out["public_urls"] = urls
+    out["n_public"] = len(urls)
+    return out
+
+
+def probe_mac_tunnel(*, tcp_timeout: float = 5.0, ngrok_api_key: str | None = None) -> dict[str, Any]:
+    spec = mac_spec()
+    remote = select_cloud_remote(spec)
+    lan_url = spec.health_http or f"http://{spec.ssh_host}:8001"
+    ngrok = list_ngrok_tunnels(ngrok_api_key or "")
+    tcp = {}
+    if remote.get("ok") and remote.get("ssh_host"):
+        tcp["tunnel_ssh"] = probe_tcp(str(remote["ssh_host"]), 22, timeout=tcp_timeout)
+    result = {
+        "node_id": spec.node_id,
+        "tunnel_required": True,
+        "official_compute": mac_is_official_compute(),
+        "certified_100": False,
+        "lan_ssh_host": spec.ssh_host,
+        "lan_only": is_lan_only_host(spec.ssh_host or ""),
+        "lan_health_http": lan_url,
+        "remote": remote,
+        "ngrok": {
+            "tunnels_http": ngrok.get("tunnels_http"),
+            "endpoints_http": ngrok.get("endpoints_http"),
+            "n_tunnels": ngrok.get("n_tunnels"),
+            "n_endpoints": ngrok.get("n_endpoints"),
+            "n_public": ngrok.get("n_public"),
+            "public_hosts": [host_from_url_or_host(u) for u in ngrok.get("public_urls") or []],
+            "error": ngrok.get("error"),
+        },
+        "tcp": tcp,
+        "verdict": {
+            "rfc1918_lan": "NOT_REACHABLE_FROM_CLOUD",
+            "tunnel": "PASS" if remote.get("ok") else "ABSENT",
+            "ngrok_account_tunnels": "ABSENT" if int(ngrok.get("n_public") or 0) == 0 else "PRESENT",
+            "mac_health_sha": None,
+            "note": (
+                "10.234.49.2 is RFC1918. Cloud VMs and Cursor cloud agents need a "
+                "tunnel started on the Mac. Starting ngrok on a cloud VM does not "
+                "reach the Mac. Do not invent a Mac health SHA."
+            ),
+        },
+    }
+    if json_contains_private_key(result):
+        raise RuntimeError("tunnel probe JSON leaked secret material — abort")
+    return result
 
 
 def mac_is_official_compute() -> bool:
@@ -241,7 +410,12 @@ def probe_mac_access(
         result["doppler"]["cursor_ssh_private_key_looks_like_key"] = looks_like_private_key(pem)
         if write_key and looks_like_private_key(pem):
             result["key_file"] = write_key_file(pem, dest)
-            result["ssh"] = try_ssh(dest, spec.ssh_user, host)
+            remote = select_cloud_remote(spec)
+            result["remote"] = remote
+            if remote.get("ok") and remote.get("ssh_host"):
+                result["ssh"] = try_ssh(dest, spec.ssh_user, str(remote["ssh_host"]))
+            else:
+                result["ssh"] = {"attempted": False, "stderr_class": remote.get("reason") or "rfc1918_requires_tunnel"}
         elif write_key:
             result["key_file"] = {"written": False, "reason": "secret_missing_or_not_a_key"}
     else:
@@ -253,17 +427,22 @@ def probe_mac_access(
     token_in_shared_dev = bool(names_dev.get("has_key_api_artcb_doppler_mac"))
     lan_ok = bool(tcp22["ok"] and tcp8001["ok"])
     ssh_ok = bool((result.get("ssh") or {}).get("stdout_ok"))
+    remote = result.get("remote") or select_cloud_remote(spec)
+    result["remote"] = remote
+    result["tunnel_required"] = True
     result["verdict"] = {
         "credentials_path": "PASS" if token_ok and looks_like_key_written(result) else "FAIL",
         "token_in_cursor_env": "PASS" if token_ok else "FAIL",
         "token_in_artcb_blockchain_dev": "PASS" if token_in_shared_dev else "FAIL",
         "lan_path": "PASS" if lan_ok else "NOT_REACHABLE",
+        "tunnel": "PASS" if remote.get("ok") else "ABSENT",
         "ssh_login": "PASS" if ssh_ok else "FAIL",
         "mac_health_sha": None,
         "note": (
             "Do not invent a Mac health SHA. Cursor cloud DOPPLER_TOKEN is "
             "artcb-blockchain/dev. KEY_API_ARTCB_DOPPLER_MAC must be a Cursor "
-            "environment secret like _2/_3/_4. 10.234.49.2 is RFC1918."
+            "environment secret like _2/_3/_4. 10.234.49.2 is RFC1918 — a tunnel "
+            "started on the Mac is required for cloud access."
         ),
     }
     if json_contains_private_key(result):
