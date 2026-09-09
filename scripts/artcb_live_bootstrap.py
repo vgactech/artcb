@@ -16,8 +16,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT / "src") not in sys.path:
-    sys.path.insert(0, str(ROOT / "src"))
+for extra in (str(ROOT), str(ROOT / "src")):
+    if extra not in sys.path:
+        sys.path.insert(0, extra)
 
 from artcb.live import (  # noqa: E402
     apply_key_to_environ,
@@ -25,13 +26,16 @@ from artcb.live import (  # noqa: E402
     fetch_doppler_secret,
     http_json,
     ingest_prompt_file,
+    ingest_thinking_file,
     prompt_file_skipped_reason,
+    thinking_file_skipped_reason,
     pull_remote_agent_env,
     resolve_api_key,
     resolve_api_url,
     write_bootstrap_stamp,
     write_local_env,
 )
+from artcb.trace.thinking import empty_thinking_states  # noqa: E402
 
 
 def _load_key() -> tuple[str, str]:
@@ -116,6 +120,28 @@ def main() -> int:
             ingest["ingest_reason"] = prompt_file_skipped_reason(prompt_file)
             ingest["ingest_path"] = prompt_file
 
+    thinking_ingest: dict = {
+        "ingest_attempted": False,
+        "ingest_skipped": True,
+        "includes_thinking": False,
+        "visibility": "private",
+        "reason": thinking_file_skipped_reason(""),
+        **empty_thinking_states(reason=thinking_file_skipped_reason("")),
+    }
+    thinking_file = (os.environ.get("ARTCB_INGEST_THINKING_FILE") or "").strip()
+    if thinking_file and key:
+        thinking_ingest["ingest_attempted"] = True
+        tp = Path(thinking_file)
+        if tp.is_file():
+            thinking_ingest = ingest_thinking_file(tp, url=url, api_key=key)
+        else:
+            thinking_ingest["reason"] = thinking_file_skipped_reason(thinking_file)
+            thinking_ingest["ingest_path"] = thinking_file
+            thinking_ingest.update(
+                empty_thinking_states(reason=thinking_file_skipped_reason(thinking_file))
+            )
+            thinking_ingest["thinking_available_from_runtime"] = True
+
     status = {
         "ok": health_code == 200,
         "live_url": url,
@@ -140,6 +166,7 @@ def main() -> int:
         "last_memo_content_chars": last_memo_chars,
         "last_memo_content_sha256": last_memo_sha256,
         "ingest": ingest,
+        "thinking_ingest": thinking_ingest,
         "token_printed": False,
     }
     write_bootstrap_stamp(

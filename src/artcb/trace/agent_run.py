@@ -1,16 +1,23 @@
-"""Agent execution provenance — hashes and events, not private model thinking.
+"""Agent execution provenance — hashes and events on the public ledger.
 
 Chain: H_i = SHA256(event_i || H_{i-1}). Prompt content stays off-chain;
 only prompt_hash is recorded. Failures and retries are first-class events.
+
+~~Private model thinking is never recorded~~ (R268 / R284 / R289) — too coarse.
+visibility=private may store thinking losslessly *when the runtime provides it*.
+Public events still never carry the thinking body. Acquisition ≠ storage.
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from artcb.trace.thinking import empty_thinking_states
 
 POLICY_ID = "284-environment-classification"
 POLICY_VERSION = "284.1"
@@ -25,9 +32,33 @@ POLICY_RULES = (
     "N04_50=FAIL_last"
 )
 
+AEP_POLICY_ID = "289-aep-lossless"
+AEP_POLICY_VERSION = "292.1"
+AEP_POLICY_RULES = (
+    "THINKING_PUBLIC_BODY_FORBIDDEN;"
+    "VISIBILITY_PRIVATE_NEQ_MODEL_THINKING;"
+    "ACQUISITION_NEQ_STORAGE;"
+    "THINKING_RECORDED_ALIAS=private_stored_AND_integrity;"
+    "THINKING_PRIVATE_LOSSLESS_WHEN_PRESENT;"
+    "LOSSLESS_INPUT_NO_SILENT_TRUNCATE;"
+    "MISSING_FAILURE_EVENT=PROVENANCE_GAP;"
+    "SSH_FAIL_MAY_BE_PROVENANCE_COMPLETE;"
+    "CURSOR_RUNTIME_NOT_HOOKED=NOT_PROVEN;"
+    "R284_SIX_EVENTS=PARTIAL_NOT_EXHAUSTIVE;"
+    "HTTP_200_NEQ_INTEGRITY;"
+    "CERTIFIED_100=false;"
+    "PRE_R273_K1_Node2=GAP_not_PASS;"
+    "N04_50=FAIL_last"
+)
+
 
 def policy_hash() -> str:
     raw = f"{POLICY_ID}|{POLICY_VERSION}|{POLICY_RULES}".encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
+def aep_policy_hash() -> str:
+    raw = f"{AEP_POLICY_ID}|{AEP_POLICY_VERSION}|{AEP_POLICY_RULES}".encode("utf-8")
     return hashlib.sha256(raw).hexdigest()
 
 
@@ -41,13 +72,52 @@ def sha256_json(payload: Any) -> str:
 
 
 class AgentRunLedger:
-    def __init__(self, *, run_id: str, agent_id: str, prompt_hash: str, code_sha: str) -> None:
+    def __init__(
+        self,
+        *,
+        run_id: str,
+        agent_id: str,
+        prompt_hash: str,
+        code_sha: str,
+        policy_id: str | None = None,
+        policy_version: str | None = None,
+        policy_hash_value: str | None = None,
+    ) -> None:
         self.run_id = run_id
         self.agent_id = agent_id
         self.prompt_hash = prompt_hash
         self.code_sha = code_sha
+        self.code_sha_start = code_sha
+        self.code_sha_end = code_sha
+        self.policy_id = policy_id or POLICY_ID
+        self.policy_version = policy_version or POLICY_VERSION
+        self.policy_hash_value = policy_hash_value or policy_hash()
+        self.thinking_states = empty_thinking_states(
+            reason="cursor_runtime_did_not_inject_thinking"
+        )
+        self.thinking_recorded = False
         self.prev = "0" * 64
         self.events: list[dict[str, Any]] = []
+        self.ts_ns_start = time.time_ns()
+
+    def set_thinking_states(self, states: dict[str, Any]) -> None:
+        from artcb.trace.thinking import derive_thinking_recorded
+
+        self.thinking_states = dict(states)
+        self.thinking_recorded = derive_thinking_recorded(self.thinking_states)
+        self.thinking_states["thinking_recorded"] = self.thinking_recorded
+
+    def set_code_sha_end(self, sha: str) -> dict[str, Any] | None:
+        sha = (sha or "")[:40]
+        self.code_sha_end = sha
+        if sha and self.code_sha_start and sha != self.code_sha_start[:40]:
+            return self.add(
+                "ENVIRONMENT_CHANGED",
+                status="FAIL",
+                detail={"code_sha_start": self.code_sha_start, "code_sha_end": sha},
+                actor="SYSTEM_ACTION",
+            )
+        return None
 
     def add(
         self,
@@ -60,11 +130,16 @@ class AgentRunLedger:
         detail: dict[str, Any] | None = None,
         actor: str = "AGENT_ACTION",
     ) -> dict[str, Any]:
+        extra = dict(detail or {})
+        if "thinking" in extra or "private_reasoning" in extra:
+            extra.pop("thinking", None)
+            extra.pop("private_reasoning", None)
         body = {
             "event_id": f"{self.run_id}-{len(self.events) + 1:04d}",
             "run_id": self.run_id,
             "parent_event_id": self.events[-1]["event_id"] if self.events else "",
             "ts": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "ts_ns": time.time_ns(),
             "agent_id": self.agent_id,
             "actor": actor,
             "action": action,
@@ -73,11 +148,13 @@ class AgentRunLedger:
             "output_hash": output_hash,
             "artifact_hash": artifact_hash,
             "code_sha": self.code_sha,
-            "policy_id": POLICY_ID,
-            "policy_version": POLICY_VERSION,
-            "policy_hash": policy_hash(),
-            "detail": detail or {},
+            "policy_id": self.policy_id,
+            "policy_version": self.policy_version,
+            "policy_hash": self.policy_hash_value,
+            "thinking_recorded": False,
+            "detail": extra,
         }
+        # Public event: hashes only. Never copy thinking body into the ledger.
         digest = sha256_json({"event": body, "prev": self.prev})
         body["chain_hash"] = digest
         body["prev_hash"] = self.prev
@@ -92,13 +169,25 @@ class AgentRunLedger:
             "agent_id": self.agent_id,
             "prompt_hash": self.prompt_hash,
             "code_sha": self.code_sha,
-            "policy_id": POLICY_ID,
-            "policy_version": POLICY_VERSION,
-            "policy_hash": policy_hash(),
+            "code_sha_start": self.code_sha_start,
+            "code_sha_end": self.code_sha_end,
+            "policy_id": self.policy_id,
+            "policy_version": self.policy_version,
+            "policy_hash": self.policy_hash_value,
+            "thinking_recorded": bool(self.thinking_states.get("thinking_recorded")),
+            "thinking_available_from_runtime": bool(self.thinking_states.get("thinking_available_from_runtime")),
+            "thinking_received": bool(self.thinking_states.get("thinking_received")),
+            "thinking_private_stored": bool(self.thinking_states.get("thinking_private_stored")),
+            "thinking_public_hash_recorded": bool(self.thinking_states.get("thinking_public_hash_recorded")),
+            "thinking_integrity_verified": bool(self.thinking_states.get("thinking_integrity_verified")),
+            "thinking_states": dict(self.thinking_states),
+            "cursor_runtime_instrumented": False,
+            "certified_100": False,
             "tip": self.prev,
             "events": self.events,
             "note": (
-                "Hashes only. Private model thinking is not recorded. "
+                "Hashes only on the public ledger. visibility=private may store "
+                "thinking when the runtime provides it. Acquisition ≠ storage. "
                 "A missing failure event is itself a provenance gap."
             ),
         }

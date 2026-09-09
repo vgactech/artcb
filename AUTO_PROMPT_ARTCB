@@ -1771,5 +1771,33 @@ Live stamp `20260909T182620Z` SHA ×4 `75836c715fb47cf87d37365bd6d5b8e36d940c5e`
 `logs/287_mac_tunnel_live.json` `rapports/287_mac_rfc1918_tunnel_20260909.md`. T-E71 [x] (pytest PASS ; tunnel live ABSENT honnête).
 **CERTIFIED_100=false.**
 
+## [2026-09-09T18:37:29Z] 289 — AEP lossless (pas CERTIFIED_100)
+
+`AgentRunLedger` R284 = résumé hash-chain (6 events) = **PARTIAL** exhaustive. Thinking privé interdit. LOSSLESS_INPUT : pas de troncature silencieuse. Probe Mac Python peut être `COMPLETE_FOR_PROFILE` **et** SSH FAIL. Cursor runtime / ChatGPT / Claude / E2E agent→ARTCB = **NOT_PROVEN**.
+Live `AR-289-20260909T183729Z` SHA ×4 `05d703022a949a61849516e1c8ed20a4e715d9a7` height **1133**. 16 events tip `b46e5112…`. mac_ssh COMPLETE_FOR_PROFILE ; exhaustive PARTIAL.
+`logs/289_aep_agent_run_20260909T183729Z.json` `rapports/289_aep_lossless_20260909.md`. T-E72 [x].
+**CERTIFIED_100=false.**
+
+## [2026-09-09T18:53:00Z] 290 — thinking intégral → visibilité private (pas CERTIFIED_100)
+
+~~Thinking jamais sur ARTCB~~ révoqué pour `private`. Public = hash seulement. Private = bytes intacts, pas de résumé. Cursor n'injecte pas le thinking dans la VM → fichier absent = NOT_PROVEN.
+`ingest_thinking_file` `visibility=private` `inject_context=false` ~~chunks lossless 32k~~ révoqué R291. T-E73.
+**CERTIFIED_100=false.**
+
+## [2026-09-09] 291 — supprimer la limite 32 000 caractères des mémos (pas CERTIFIED_100)
+
+Config : `MemoRequest.content` / `ThinkRequest.question` `max_length=32000` dans `src/api/ai_routes.py` (422 Pydantic) ; `EventBody.content` idem ; client `MEMO_CONTENT_MAX` + truncate dans `src/artcb/live.py`. **Supprimé.** Aucune limite de caractères applicative. Live SHA encore `05d7030` jusqu’à merge + follow-main ×4 → POST >32k live = encore 422. T-E74.
+**CERTIFIED_100=false.**
+
+## [2026-09-09] 292 — AEP thinking states : acquisition ≠ storage (pas CERTIFIED_100)
+
+~~thinking_recorded unique~~ trop ambigu. Cinq états : available_from_runtime / received / private_stored / public_hash_recorded / integrity_verified. `thinking_recorded` = stored AND integrity seulement. `visibility=private` ≠ thinking modèle. Cursor n'injecte pas → NOT_PROVEN. HTTP 200 ≠ byte-for-byte. Exhaustive AEP PARTIAL. Live SHA `05d7030` jusqu’à merge. T-E75.
+**CERTIFIED_100=false.**
+
+## [2026-09-09] 293 — audit capture 4 couches (pas CERTIFIED_100)
+
+Chat visible ≠ `ARTCB_INGEST_THINKING_FILE` ≠ ARTCB. `AGENT_TRANSCRIPTS` env set, dir absent. Socket `/run/cursor/api.sock` existe. Transcript MCP layer 2 `bacd8b4f…` 30 650 605 B, 2500 champs thinking (corps hors git). `thinking_recorded=false`. Exhaustive PARTIAL. Live `AR-293-20260909T194104Z` SHA ×4 `05d7030` height 1133. T-E76.
+**CERTIFIED_100=false.**
+
 
 

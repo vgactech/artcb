@@ -328,9 +328,6 @@ def write_bootstrap_stamp(payload: dict[str, Any]) -> Path:
     return dest
 
 
-MEMO_CONTENT_MAX = 32000
-
-
 def http_json(
     method: str,
     url: str,
@@ -384,25 +381,15 @@ def ingest_prompt_file(
 ) -> dict[str, Any]:
     """POST the file bytes as a public /ai/memo. Agent-mediated, not a Cursor hook.
 
-    Never includes thinking, system prompts, or token meters. Truncates only if
-    the memo API max (32000 chars) is exceeded; records sha256 of the full file.
+    No character cap. Public lane: user_query. Thinking belongs on the private lane
+    (see ingest_thinking_file).
     """
     t0 = time.perf_counter_ns()
     raw = path.read_bytes()
     text = raw.decode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
-    truncated = False
-    body_text = text
-    if len(text) > MEMO_CONTENT_MAX:
-        truncated = True
-        trailer = (
-            f"\n\n[TRUNCATED ARTCB_MEMO_MAX={MEMO_CONTENT_MAX} "
-            f"sha256_full={digest} chars_full={len(text)}]"
-        )
-        keep = MEMO_CONTENT_MAX - len(trailer)
-        body_text = text[:keep] + trailer
     payload = {
-        "content": body_text,
+        "content": text,
         "memo_type": "observation",
         "tags": tags or ["ingest_at_receipt", "user_query"],
         "session_id": session_id,
@@ -425,7 +412,7 @@ def ingest_prompt_file(
         "chars": len(text),
         "bytes": len(raw),
         "sha256": digest,
-        "truncated": truncated,
+        "truncated": False,
         "includes_thinking": False,
         "includes_system_prompt": False,
         "token_count_known": False,
@@ -436,5 +423,130 @@ def ingest_prompt_file(
         "dur_ns": time.perf_counter_ns() - t0,
     }
     if code != 200:
+        out["ingest_error"] = resp_d.get("detail") or resp_d.get("error") or resp_d
+    return out
+
+
+def split_lossless_chunks(text: str, *, max_chars: int) -> list[str]:
+    """Optional split. Concat(chunks) == text. Not used to cap memos."""
+    if max_chars < 1:
+        raise ValueError("max_chars")
+    if len(text) <= max_chars:
+        return [text]
+    return [text[i : i + max_chars] for i in range(0, len(text), max_chars)]
+
+
+def thinking_file_skipped_reason(path_raw: str) -> str:
+    """Honest skip: Cursor never injects model thinking into the VM."""
+    if not (path_raw or "").strip():
+        return (
+            "ARTCB_INGEST_THINKING_FILE unset — Cursor n'injecte pas le thinking "
+            "dans le VM; visibility=private n'est pas une preuve d'acquisition"
+        )
+    return "file_missing"
+
+
+def ingest_thinking_file(
+    path: Path,
+    *,
+    url: str,
+    api_key: str,
+    session_id: str = "turn-thinking",
+    timeout: float = 180,
+) -> dict[str, Any]:
+    """POST thinking bytes as one visibility=private memo. No summary. No char cap.
+
+    Cursor still does not inject thinking into this VM. If the file is absent,
+    this is NOT_PROVEN, not a silent skip pretending the thinking was stored.
+    inject_context=False so ARTCB does not prepend a context summary.
+    HTTP 200 ≠ integrity: SHA256(raw)==payload==received==stored is required.
+    """
+    from artcb.trace.thinking import thinking_states, verify_thinking_integrity_chain
+
+    t0 = time.perf_counter_ns()
+    raw = path.read_bytes()
+    text = raw.decode("utf-8")
+    payload_bytes = text.encode("utf-8")
+    digest = hashlib.sha256(raw).hexdigest()
+    payload = {
+        "content": text,
+        "memo_type": "observation",
+        "tags": ["ingest_at_receipt", "thinking", "lossless", "private"],
+        "session_id": session_id,
+        "visibility": "private",
+        "inject_context": False,
+    }
+    code, resp = http_json(
+        "POST",
+        f"{url.rstrip('/')}/api/v1/ai/memo",
+        api_key=api_key,
+        body=payload,
+        timeout=timeout,
+    )
+    resp_d = resp if isinstance(resp, dict) else {"detail": resp}
+    ok = code == 200
+    block_index = resp_d.get("block_index")
+    received_sha = str(resp_d.get("content_sha256") or "")
+    stored_sha = ""
+    if ok and block_index is not None:
+        get_code, get_resp = http_json(
+            "GET",
+            f"{url.rstrip('/')}/api/v1/ai/memo/{block_index}",
+            api_key=api_key,
+            timeout=timeout,
+        )
+        get_d = get_resp if isinstance(get_resp, dict) else {}
+        if get_code == 200:
+            stored_sha = str(get_d.get("content_sha256") or "")
+    integrity = verify_thinking_integrity_chain(
+        raw=raw,
+        payload=payload_bytes,
+        received_sha256=received_sha,
+        stored_sha256=stored_sha,
+    )
+    states = thinking_states(
+        available_from_runtime=True,
+        received=True,
+        private_stored=bool(ok and block_index is not None),
+        public_hash_recorded=bool(received_sha),
+        integrity_verified=bool(integrity.get("verified")),
+        reason="" if integrity.get("verified") else (integrity.get("reason") or "integrity_not_proven"),
+        hashes=integrity.get("hashes") if isinstance(integrity.get("hashes"), dict) else None,
+    )
+    out: dict[str, Any] = {
+        "ok": ok,
+        "ingest_platform_hook": False,
+        "ingest_attempted": True,
+        "ingest_skipped": not ok,
+        "ingest_path": str(path),
+        "visibility": "private",
+        "includes_thinking": True,
+        "includes_system_prompt": False,
+        "sha256": digest,
+        "chars": len(text),
+        "bytes": len(raw),
+        "n_chunks": 1,
+        "transformation_id": "",
+        "truncated": False,
+        "inject_context": False,
+        "ingest_http": code,
+        "ingest_block_index": block_index,
+        "ingest_block_hash": resp_d.get("block_hash"),
+        "content_sha256": received_sha,
+        "stored_content_sha256": stored_sha,
+        "integrity": integrity,
+        "thinking_states": states,
+        "dur_ns": time.perf_counter_ns() - t0,
+    }
+    out.update({k: states[k] for k in (
+        "thinking_available_from_runtime",
+        "thinking_received",
+        "thinking_private_stored",
+        "thinking_public_hash_recorded",
+        "thinking_integrity_verified",
+        "thinking_recorded",
+        "acquisition",
+    )})
+    if not ok:
         out["ingest_error"] = resp_d.get("detail") or resp_d.get("error") or resp_d
     return out

@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import logging
+import hashlib
 import secrets
 import time
 import uuid
@@ -282,8 +283,10 @@ def ai_status(
 # ─────────────────────────────────────────────────────────────────────────────
 
 class MemoRequest(BaseModel):
-    content: str = Field(min_length=1, max_length=32000,
-                         description="Observation, raisonnement, leçon, bug, solution…")
+    content: str = Field(
+        min_length=1,
+        description="Observation, raisonnement, leçon, bug, solution… Aucune limite de caractères.",
+    )
     memo_type: str = Field(
         default="observation",
         description="Type: observation | bug | fix | lesson | decision | hypothesis | goal | proof",
@@ -392,6 +395,7 @@ def ai_memo(
         )
 
     # Marquer le bloc comme memo IA via public_symbols
+    content_sha256 = hashlib.sha256(body.content.encode("utf-8")).hexdigest()
     public_symbols = {
         "learning_source": f"ai:memo:{body.memo_type}",
         "agent_id": agent_id,
@@ -399,6 +403,8 @@ def ai_memo(
         "tags": ",".join(body.tags),
         "memo_type": body.memo_type,
         "principal_kind": str((key_record or {}).get("kind") or "anonymous"),
+        "content_sha256": content_sha256,
+        "content_chars": str(len(body.content)),
     }
     # P1-1 — lien parent→enfant (bug→fix)
     if body.parent_block_index is not None:
@@ -445,6 +451,8 @@ def ai_memo(
         "principal_kind": (key_record or {}).get("kind") or "anonymous",
         "visibility": body.visibility,
         "node_count": len(graph.nodes),
+        "content_sha256": content_sha256,
+        "content_chars": len(body.content),
         "message": f"Observation gravée en bloc #{block.index} — immuable ML-DSA-65",
     }
 
@@ -454,8 +462,10 @@ def ai_memo(
 # ─────────────────────────────────────────────────────────────────────────────
 
 class ThinkRequest(BaseModel):
-    question: str = Field(min_length=1, max_length=32000,
-                           description="Problème, question ou sujet à raisonner")
+    question: str = Field(
+        min_length=1,
+        description="Problème, question ou sujet à raisonner. Aucune limite de caractères.",
+    )
     session_id: str = Field(default="ai_think")
     use_llm: bool = Field(default=False, description="Enrichir avec LLM connecteur")
     llm_provider: str | None = Field(default=None)
@@ -1383,6 +1393,8 @@ def ai_memo_read(
         "parent_block_index": ps.get("parent_block_index"),
         "content_text": content_text,
         "content_available": content_text is not None,
+        "content_sha256": ps.get("content_sha256") or "",
+        "content_chars": ps.get("content_chars"),
     }
 
 
