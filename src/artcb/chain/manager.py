@@ -776,9 +776,9 @@ class ChainManager:
                 pass
             return block
         if str(visibility) == "public":
-            from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS, official_replica_id
+            from src.artcb.node_registry import official_pbft_replica_ids, official_replica_id
 
-            if official_replica_id() in OFFICIAL_COMPUTE_NODE_IDS:
+            if official_replica_id() in official_pbft_replica_ids():
                 payload = json.loads(line)
                 hook = getattr(self, "pbft_finalize", None)
                 if callable(hook):

@@ -1771,5 +1771,16 @@ Live stamp `20260909T182620Z` SHA ×4 `75836c715fb47cf87d37365bd6d5b8e36d940c5e`
 `logs/287_mac_tunnel_live.json` `rapports/287_mac_rfc1918_tunnel_20260909.md`. T-E71 [x] (pytest PASS ; tunnel live ABSENT honnête).
 **CERTIFIED_100=false.**
 
+## [2026-09-09T21:50:00Z] 297 — Mac replica architectural, enrollment live OFF (pas CERTIFIED_100)
+
+GO : promouvoir le Mac au 5ᵉ replica. **Pas** `OFFICIAL_COMPUTE_NODE_IDS += mac`. Rôle `pbft_replica=true` ; follow-main / IPv4 restent 4 VMs ; `official_pbft_replica_ids()` = 4 jusqu’à `ARTCB_MAC_PBFT_ENROLLED=1` **et** clé Ed25519 enregistrée. N=5 ⇒ f=1 Q=3. Tunnel = transport. TPM non bloquant. Context Contract v297.1 `includes_thinking=false`. PR #84 hors sujet. N04 FAIL indépendant.
+`rapports/297_mac_official_pbft_replica_20260909.md`. T-E74.
+**CERTIFIED_100=false.**
+
+## [2026-09-09T21:55:00Z] 297b — isolation refusée ; Mac = nœud comme OVH/AWS (pas CERTIFIED_100)
+
+~~Sas `live_enrolled=False` / `ARTCB_MAC_PBFT_ENROLLED`.~~ L’opérateur refuse l’isolation. `official_pbft_replica_ids()` = tous les `pbft_replica=True` (Mac inclus). N/f/Q adaptatifs. Chemin clone GitHub + launchd. Seeds IPv4 ×4 restent la topologie SSH, pas une exclusion PBFT. T-E74 mis à jour.
+**CERTIFIED_100=false.**
+
 
 

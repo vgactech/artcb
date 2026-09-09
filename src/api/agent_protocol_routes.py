@@ -60,6 +60,20 @@ def agent_bootstrap(
     except Exception:
         health = {}
     snap = rt.bootstrap(key_record, protocol_http=health)
+    try:
+        from src.artcb.agent_context_contract import build_context_contract
+
+        snap["context_contract"] = build_context_contract(
+            chain=request.app.state.artcb.chain,
+            key_record=key_record if isinstance(key_record, dict) else None,
+        )
+    except Exception:
+        snap["context_contract"] = {
+            "version": "297.1",
+            "error": "contract_unavailable",
+            "includes_thinking": False,
+            "certified_100": False,
+        }
     snap["memory_api"] = {
         "context": "/api/v1/ai/context",
         "memory": "/api/v1/ai/memory",

@@ -1,6 +1,7 @@
 """mac-node-local SSH/Doppler access — fail-closed, never prints key material.
 
-Observer/dev only. Not an official PBFT replica.
+Architectural role is PBFT replica (R297). This module is transport/access:
+RFC1918, tunnel, Doppler isolation. It does not enroll the Mac into live PBFT.
 """
 
 from __future__ import annotations

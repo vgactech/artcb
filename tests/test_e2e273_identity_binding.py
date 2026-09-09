@@ -178,8 +178,11 @@ def test_binding_enforced_by_official_marker_not_ip(tmp_path: Path, monkeypatch)
 
 
 def test_official_ids_still_four() -> None:
+    from artcb.node_registry import official_pbft_replica_ids
+
     assert OFFICIAL_COMPUTE_NODE_IDS == ("ovh-node-1", "ovh-node-2", "aws-node-3", "ovh-node-4")
-    assert primary_of(15) == "ovh-node-4"
+    ids = official_pbft_replica_ids()
+    assert primary_of(15) == ids[15 % len(ids)]
 
 
 def test_r272_equivocation_not_reopened(tmp_path: Path) -> None:

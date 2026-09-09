@@ -21,8 +21,10 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from src.artcb.node_registry import (
+    MAC_NODE_ID,
     OFFICIAL_COMPUTE_NODE_IDS,
     OFFICIAL_NODE_MARKER,
+    official_pbft_replica_ids,
     official_replica_id,
     on_official_compute,
 )
@@ -95,7 +97,7 @@ def binding_enforced() -> bool:
             marker = (raw[0] if raw else "").strip()
         except OSError:
             marker = ""
-        if marker in OFFICIAL_COMPUTE_NODE_IDS:
+        if marker in official_pbft_replica_ids() or marker in OFFICIAL_COMPUTE_NODE_IDS:
             return True
     return bool(on_official_compute())
 
@@ -104,7 +106,8 @@ def _parse_replicas(payload: dict[str, Any]) -> dict[str, ReplicaKeyBinding]:
     rows = payload.get("replicas") if isinstance(payload.get("replicas"), dict) else {}
     out: dict[str, ReplicaKeyBinding] = {}
     for nid, raw in rows.items():
-        if nid not in OFFICIAL_COMPUTE_NODE_IDS or not isinstance(raw, dict):
+        allowed = set(official_pbft_replica_ids()) | {MAC_NODE_ID}
+        if nid not in allowed or not isinstance(raw, dict):
             continue
         ed = _norm_b64(str(raw.get("ed25519_b64") or ""))
         if not ed:
@@ -266,7 +269,8 @@ def load_overlay(*, force: bool = False) -> tuple[dict[str, ReplicaKeyBinding], 
         official = dict(official_snapshot)
         merged: dict[str, ReplicaKeyBinding] = {}
         for nid, raw in rows.items():
-            if nid not in OFFICIAL_COMPUTE_NODE_IDS or not isinstance(raw, dict):
+            allowed = set(official_pbft_replica_ids()) | {MAC_NODE_ID}
+            if nid not in allowed or not isinstance(raw, dict):
                 continue
             base = official.get(nid)
             if nid in parsed:
@@ -336,7 +340,7 @@ def verify_replica_key_binding(
     if owner and owner != claimed:
         return False, "invalid_replica_key_binding"
     registry = active_registry()
-    if claimed in OFFICIAL_COMPUTE_NODE_IDS:
+    if claimed in official_pbft_replica_ids():
         expected = registry.get(claimed)
         if expected is None:
             if binding_enforced():
@@ -434,7 +438,11 @@ def local_identity_status() -> dict[str, Any]:
         "official_node_marker": marker,
         "official_node_file": file_id,
         "env_node_id": env_id,
-        "env_shadows_file": bool(env_id in OFFICIAL_COMPUTE_NODE_IDS and file_id and env_id != file_id),
+        "env_shadows_file": bool(
+            env_id in set(official_pbft_replica_ids()) | set(OFFICIAL_COMPUTE_NODE_IDS) | {MAC_NODE_ID}
+            and file_id
+            and env_id != file_id
+        ),
         "local_ed25519_b64": ed,
         "key_owner": owner,
         "coherent": coherent,
@@ -449,9 +457,10 @@ def official_consensus_node_id() -> str:
     status = local_identity_status()
     owner = str(status.get("key_owner") or "")
     marker = str(status.get("official_node_marker") or official_replica_id())
-    if owner in OFFICIAL_COMPUTE_NODE_IDS:
+    known = set(official_pbft_replica_ids()) | set(OFFICIAL_COMPUTE_NODE_IDS) | {MAC_NODE_ID}
+    if owner in known:
         return owner
-    if marker in OFFICIAL_COMPUTE_NODE_IDS:
+    if marker in known:
         return marker
     return marker or owner
 
@@ -492,7 +501,8 @@ def public_registry_view() -> dict[str, Any]:
         "protocol": "279-replica-identity-binding",
         "binding_enforced": binding_enforced(),
         "test_override": _test_override is not None,
-        "official_replica_ids": list(OFFICIAL_COMPUTE_NODE_IDS),
+        "official_replica_ids": list(official_pbft_replica_ids()),
+        "follow_main_node_ids": list(OFFICIAL_COMPUTE_NODE_IDS),
         "local_replica_id": official_consensus_node_id(),
         "local_identity": local,
         "platform_binding": platform_binding,

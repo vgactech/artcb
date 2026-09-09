@@ -148,10 +148,10 @@ def consensus_tip_attest(request: Request) -> dict:
     state = request.app.state.artcb
     identity = release_identity()
     from src.artcb.consensus.replica_identity import official_consensus_node_id
-    from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS
+    from src.artcb.node_registry import official_pbft_replica_ids
 
     official = official_consensus_node_id()
-    node_id = official if official in OFFICIAL_COMPUTE_NODE_IDS else (getattr(state.p2p_identity, "node_id", "") or "")
+    node_id = official if official in official_pbft_replica_ids() else (getattr(state.p2p_identity, "node_id", "") or "")
     return attest_tip(state.chain, git_sha=str(identity.get("git_sha") or ""), node_id=node_id)
 
 

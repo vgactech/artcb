@@ -1,29 +1,23 @@
 ---
-description: MacBook Air local observer — Doppler artcb-1, RFC1918, not PBFT official
+description: MacBook Air official ARTCB replica — cloned-user path, same class as OVH/AWS
 alwaysApply: false
 ---
 
-# mac-node-local — observateur LAN (pas un replica PBFT)
+# mac-node-local — nœud ARTCB officiel (comme OVH/AWS)
 
-- `node_id` **`mac-node-local`**. Provider `local-macos`. Health `http://10.234.49.2:8001`. SSH `deyi@10.234.49.2`.
-- Doppler projet **`artcb-1`** / config **`prd`**. Token Cursor **`KEY_API_ARTCB_DOPPLER_MAC`**.
-- SSH : secret Doppler `CURSOR_SSH_PRIVATE_KEY` (ed25519 `cursor_mac_node`). Jamais afficher la clef. Jamais git. `cursor_agent` révoquée 2026-09-09.
-- Launchd `me.artcb.node` KeepAlive, port **8001**.
+~~Observateur LAN (pas un replica PBFT).~~ **Barré R297.**  
+~~`live_enrolled=False` / sas `ARTCB_MAC_PBFT_ENROLLED`.~~ **Barré 2026-09-09T21:55Z — l’opérateur a refusé l’isolation.**
 
-## Isolation
-
-- **Pas** dans `OFFICIAL_COMPUTE_NODE_IDS`. Ne pas follow-main ce Mac comme replica.
-- Ne pas copier Stripe / Bob / GitHub dans `artcb-1`.
-- Le `DOPPLER_TOKEN` des agents cloud Cursor lit `artcb-blockchain` / **`dev`**, pas `prd`. Mettre `KEY_API_ARTCB_DOPPLER_MAC` :
-  1. comme secret d’environnement Cursor (comme `_2` / `_3` / `_4`) ;
-  2. **et** dans `artcb-blockchain/dev` si on veut le lire via le token partagé.
-- `10.234.49.2` est RFC1918 : **injoignable** depuis OVH/AWS/agents Cursor cloud. Un timeout LAN n’est pas un PASS SSH.
-- Tunnel **obligatoire** pour l’accès distant, **démarré sur le Mac** (ngrok / Tailscale / WireGuard). Un ngrok lancé depuis une VM cloud n’atteint pas le Mac.
-- `tunnel_required=true`. `ARTCB_MAC_TUNNEL_SSH_HOST` / `ARTCB_MAC_TUNNEL_HEALTH_HTTP` = endpoint **public mesuré** — jamais `10.234.49.2` ni `*.local`.
-- Compte ngrok partagé : 0 tunnel / 0 endpoint au probe R287. Ne **pas** inventer un `git_sha` health Mac.
+- Même classe que OVH-1/2/4 et AWS-3 : **`pbft_replica=true`**, **`follow_main=true`**.
+- Chemin = **user réel qui clone** `vgactech/artcb` + process node (`launchd` `me.artcb.node`, `ARTCB_NODE_ID=mac-node-local`, port **8001**).
+- Membership = `official_pbft_replica_ids()` = **tous** les `NodeSpec.pbft_replica=True`. Un nouveau nœud (n’importe où) s’ajoute de la même façon → `N = len(replicas)`, `f,Q = n_f_q(N)`.
+- Les 4 IPv4 publiques restent les **seeds** SSH/` :8000`. Ce n’est pas une exclusion du Mac du consensus. L’IP LAN DHCP n’est pas l’identité.
+- Doppler **`artcb-1` / `prd`**. Jamais Stripe / Bob / GitHub / OVH / AWS dans ce vault.
+- TPM / Secure Enclave = `NOT_APPLICABLE`, **non bloquant**.
+- `CERTIFIED_100=false` tant que les mêmes preuves live (PREPARE/COMMIT/certificat, pas seulement `/health`) ne sont pas mesurées. N04 FAIL **indépendant**. PR #84 hors sujet.
 
 ## Interdits
 
-- Ne pas coller PEM / `dp.st.…` / mot de passe sudo dans le chat, git, ou un rapport.
-- Ne pas recaster un timeout LAN en PASS SSH.
-- Ne pas traiter `10.234.49.2` comme un tunnel. N04 50 % reste FAIL et **dernier**. `CERTIFIED_100=false`.
+- Ne pas recaster le Mac en observateur.
+- Ne pas coller PEM / `dp.st.…` / sudo dans le chat ou git.
+- Ne pas inventer un SHA, une clé, ou un certificat.

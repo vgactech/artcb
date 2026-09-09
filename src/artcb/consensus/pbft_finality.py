@@ -18,10 +18,9 @@ import threading
 from pathlib import Path
 from typing import Any
 
-from src.artcb.consensus.live_bft import n_f_q
 from src.artcb.consensus.pbft_view import primary_of
 from src.artcb.consensus.tip_attest import producer_key_b64, sign_message
-from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS
+from src.artcb.node_registry import official_pbft_n_f_q, official_pbft_replica_ids
 from src.artcb.trace.ns import emit_pbft, now_mono_ns, now_wall_ns
 
 logger = logging.getLogger("artcb.consensus.pbft_finality")
@@ -41,7 +40,7 @@ def _iint(row: dict[str, Any], key: str, default: int = -1) -> int:
 
 
 def _n_f_q() -> tuple[int, int, int]:
-    n, f, q = n_f_q(4)
+    n, f, q = official_pbft_n_f_q()
     return n, int(f or 1), int(q)
 
 
@@ -89,7 +88,7 @@ def _sign_row(chain: Any, *, kind: str, message: str, replica_id: str, extra: di
 def verify_signed_detailed(row: dict[str, Any], expected_message: str) -> tuple[bool, str]:
     if str(row.get("message") or "") != expected_message:
         return False, "message_mismatch"
-    if str(row.get("replica_id") or "") not in OFFICIAL_COMPUTE_NODE_IDS:
+    if str(row.get("replica_id") or "") not in official_pbft_replica_ids():
         return False, "unknown_replica_id"
     if str(row.get("protocol") or "") not in ("", PBFT_FINALITY_PROTOCOL) and row.get("protocol") != PBFT_FINALITY_PROTOCOL:
         return False, "protocol_mismatch"

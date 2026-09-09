@@ -8,6 +8,8 @@ Public identifiers only. Secrets live in Doppler or ``~/.artcb/nodes/*.env``.
 
 from __future__ import annotations
 
+import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -15,6 +17,8 @@ from typing import Any
 SHARED_DOPPLER_PROJECT = "artcb-blockchain"
 SHARED_DOPPLER_CONFIG = "dev"
 LOCAL_NODES_DIR = Path.home() / ".artcb" / "nodes"
+MAC_NODE_ID = "mac-node-local"
+REPLICA_KEYS_PATH = Path(__file__).resolve().parent / "consensus" / "official_replica_keys.json"
 
 
 @dataclass(frozen=True)
@@ -35,15 +39,23 @@ class NodeSpec:
     tunnel_required: bool = False
     tunnel_ssh_host: str | None = None
     tunnel_health_http: str | None = None
+    # Role vs transport vs deploy. tunnel_required is not a role.
+    pbft_replica: bool = False
+    follow_main: bool = False
+    tpm_required: bool = False
 
 
-# The four infrastructure VMs that must follow GitHub origin/main automatically.
+# Public IPv4 seed VMs (SSH follow-main timers + :8000 fan-out).
+# This is network topology, not PBFT membership. A cloned laptop is a
+# replica even if it has no public IPv4 in this tuple.
 OFFICIAL_COMPUTE_NODE_IDS: tuple[str, ...] = (
     "ovh-node-1",
     "ovh-node-2",
     "aws-node-3",
     "ovh-node-4",
 )
+FOLLOW_MAIN_REMOTE_NODE_IDS: tuple[str, ...] = OFFICIAL_COMPUTE_NODE_IDS
+FOLLOW_MAIN_NODE_IDS: tuple[str, ...] = FOLLOW_MAIN_REMOTE_NODE_IDS
 
 # Compute IPv4s — official replica of the full book is allowed only among these.
 OFFICIAL_COMPUTE_IPV4: tuple[str, ...] = (
@@ -74,17 +86,68 @@ def _local_ipv4s() -> set[str]:
     return {ip for ip in found if ip and not ip.startswith("127.")}
 
 
-def official_replica_id() -> str:
-    """PBFT replica id: ARTCB_NODE_ID, /etc/artcb/official_node, or local IPv4."""
-    import os
+def replica_key_registered(node_id: str, *, path: Path | None = None) -> bool:
+    """True if node_id has a non-empty Ed25519 in the public-key registry."""
+    extra = (os.getenv("ARTCB_REPLICA_REGISTRY_PATH") or "").strip()
+    target = Path(extra) if extra else (path or REPLICA_KEYS_PATH)
+    try:
+        payload = json.loads(target.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError, TypeError):
+        return False
+    if not isinstance(payload, dict):
+        return False
+    rows = payload.get("replicas")
+    if not isinstance(rows, dict):
+        return False
+    row = rows.get(str(node_id))
+    if not isinstance(row, dict):
+        return False
+    return bool("".join(str(row.get("ed25519_b64") or "").split()))
 
+
+def mac_has_registered_replica_key(*, path: Path | None = None) -> bool:
+    return replica_key_registered(MAC_NODE_ID, path=path)
+
+
+def official_pbft_replica_ids() -> tuple[str, ...]:
+    """PBFT membership: every NodeSpec with pbft_replica=True, registry order.
+
+    N is adaptive. A new official node (clone, bare-metal, extra VM) joins by
+    setting pbft_replica=True — same path as a user who cloned GitHub.
+    No Mac-only enrollment env. Seed IPv4 list stays separate.
+    """
+    return tuple(nid for nid, spec in NODES.items() if spec.pbft_replica)
+
+
+def follow_main_local_clone_ids() -> tuple[str, ...]:
+    """Nodes that track origin/main on their own machine (git clone / launchd)."""
+    return tuple(nid for nid, spec in NODES.items() if spec.follow_main)
+
+
+def official_pbft_n_f_q() -> tuple[int, int | None, int]:
+    from src.artcb.consensus.live_bft import n_f_q
+
+    return n_f_q(len(official_pbft_replica_ids()))
+
+
+def mac_pbft_live_enrolled() -> bool:
+    """Compatibility alias. Mac is enrolled iff it is a pbft_replica in NODES."""
+    return MAC_NODE_ID in official_pbft_replica_ids()
+
+
+def official_replica_id() -> str:
+    """PBFT replica id: ARTCB_NODE_ID, /etc/artcb/official_node, or cloud IPv4.
+
+    Mac identity is the node_id / marker — never a DHCP RFC1918 address.
+    """
+    membership = official_pbft_replica_ids()
     env = (os.getenv("ARTCB_NODE_ID") or "").strip()
-    if env in OFFICIAL_COMPUTE_NODE_IDS:
+    if env in membership or env == MAC_NODE_ID:
         return env
     if OFFICIAL_NODE_MARKER.is_file():
         raw = OFFICIAL_NODE_MARKER.read_text(encoding="utf-8").strip().splitlines()
         marker = (raw[0] if raw else "").strip()
-        if marker in OFFICIAL_COMPUTE_NODE_IDS:
+        if marker in membership or marker == MAC_NODE_ID:
             return marker
     local = _local_ipv4s()
     for nid, ip in zip(OFFICIAL_COMPUTE_NODE_IDS, OFFICIAL_COMPUTE_IPV4):
@@ -117,6 +180,8 @@ NODES: dict[str, NodeSpec] = {
         api_https="https://152.228.144.34:8443",
         ssh_host="152.228.144.34",
         ssh_user="ubuntu",
+        pbft_replica=True,
+        follow_main=True,
         public_notes=(
             "Existing GRA11 live node at 152.228.144.34. "
             "Dedicated vault artcb-ovh-node-1 was never created (service token "
@@ -135,6 +200,8 @@ NODES: dict[str, NodeSpec] = {
         api_https="https://151.80.107.29:8443",
         ssh_host="151.80.107.29",
         ssh_user="ubuntu",
+        pbft_replica=True,
+        follow_main=True,
         public_notes=(
             "OVH nic vc491276-ovh (vgac4237@gmail.com). "
             "Public Cloud project 1fc10a3fb27d4511a8c7873cd16243f2. "
@@ -152,6 +219,8 @@ NODES: dict[str, NodeSpec] = {
         api_https="https://13.38.209.25:8443",
         ssh_host="13.38.209.25",
         ssh_user="ubuntu",
+        pbft_replica=True,
+        follow_main=True,
         public_notes=(
             "AWS account 599128160879 IAM user node_artcb_3_agent. "
             "Doppler project artcb3 (service token Cursor KEY_API_ARTCB_DOPPLER_3). "
@@ -175,6 +244,8 @@ NODES: dict[str, NodeSpec] = {
         api_https="https://91.134.45.8:8443",
         ssh_host="91.134.45.8",
         ssh_user="ubuntu",
+        pbft_replica=True,
+        follow_main=True,
         public_notes=(
             "OVH nic xy4589-ovh (vgac42@gmail.com). "
             "Public Cloud project 926bb1d6755e4f2c98ae9db06ef44e4f "
@@ -228,7 +299,7 @@ NODES: dict[str, NodeSpec] = {
     ),
     "mac-node-local": NodeSpec(
         node_id="mac-node-local",
-        display_name="MacBook Air local — dev/observer",
+        display_name="MacBook Air — official ARTCB replica (cloned-user path)",
         provider="local-macos",
         doppler_project="artcb-1",
         doppler_config="prd",
@@ -240,21 +311,20 @@ NODES: dict[str, NodeSpec] = {
         tunnel_required=True,
         tunnel_ssh_host=None,
         tunnel_health_http=None,
+        pbft_replica=True,
+        follow_main=True,
+        tpm_required=False,
         public_notes=(
-            "MacBook Air deyi@luxiufengdeMacBook-Air.local — LAN 10.234.49.2. "
-            "RFC1918: injoignable depuis les VMs cloud / agents Cursor cloud "
-            "sans tunnel public mesuré (WireGuard/Tailscale/ngrok démarré SUR le Mac). "
-            "Un ngrok lancé depuis une VM cloud n'atteint pas le Mac. "
-            "Rôle: observateur PBFT local, dev, replay de campagnes. "
-            "Doppler project artcb-1 (config prd). "
-            "Token service KEY_API_ARTCB_DOPPLER_MAC : doit être un secret "
-            "Cursor d’environnement (comme KEY_API_ARTCB_DOPPLER_2/3/4) ET "
-            "présent dans artcb-blockchain/dev — le DOPPLER_TOKEN cloud ne "
-            "lit que config=dev, pas prd. "
-            "SSH: CURSOR_SSH_PRIVATE_KEY via Doppler artcb-1/prd ; "
-            "jamais afficher la clef. cursor_agent révoquée 2026-09-09. "
-            "Port ARTCB: 8001. Launchd: me.artcb.node KeepAlive. "
-            "Pas un nœud PBFT officiel (pas dans OFFICIAL_COMPUTE_NODE_IDS)."
+            "Same class as OVH/AWS: official PBFT replica. Path = git clone "
+            "vgactech/artcb + launchd me.artcb.node (ARTCB_NODE_ID=mac-node-local). "
+            "Tracks origin/main locally (cloned-user follow-main), not via SSH "
+            "from the four public IPv4 seeds. "
+            "Membership = official_pbft_replica_ids() = every pbft_replica=True. "
+            "N/f/Q = n_f_q(len(replicas)) — grows if another node is added. "
+            "RFC1918 / tunnel_required is transport only. Identity is node_id+key. "
+            "Doppler artcb-1/prd only. TPM NOT_APPLICABLE, not a blocker. "
+            "CERTIFIED_100=false until the same live proofs as the other replicas. "
+            "N04 FAIL is independent. PR #84 is unrelated."
         ),
     ),
 }
@@ -401,10 +471,20 @@ def local_env_path(node_id: str) -> Path:
 
 
 def public_registry() -> dict[str, Any]:
+    n, f, q = official_pbft_n_f_q()
     return {
         "shared_doppler_project": SHARED_DOPPLER_PROJECT,
         "shared_doppler_config": SHARED_DOPPLER_CONFIG,
         "isolation_rule": "one Doppler project per real node / cloud account",
+        "follow_main_remote_node_ids": list(FOLLOW_MAIN_REMOTE_NODE_IDS),
+        "follow_main_local_clone_ids": list(follow_main_local_clone_ids()),
+        "official_compute_node_ids": list(OFFICIAL_COMPUTE_NODE_IDS),
+        "official_pbft_replica_ids": list(official_pbft_replica_ids()),
+        "pbft": {"n": n, "f": f, "q": q},
+        "mac_pbft_replica_role": True,
+        "mac_in_pbft_membership": MAC_NODE_ID in official_pbft_replica_ids(),
+        "mac_has_registered_replica_key": mac_has_registered_replica_key(),
+        "certified_100": False,
         "nodes": {
             nid: {
                 "display_name": spec.display_name,
@@ -419,6 +499,9 @@ def public_registry() -> dict[str, Any]:
                 "tunnel_required": spec.tunnel_required,
                 "tunnel_ssh_host": spec.tunnel_ssh_host,
                 "tunnel_health_http": spec.tunnel_health_http,
+                "pbft_replica": spec.pbft_replica,
+                "follow_main": spec.follow_main,
+                "tpm_required": spec.tpm_required,
                 "notes": spec.public_notes,
             }
             for nid, spec in NODES.items()

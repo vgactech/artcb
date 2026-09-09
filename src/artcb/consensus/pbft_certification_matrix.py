@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from src.artcb.consensus.live_bft import LIVE_BFT_PROTOCOL, n_f_q
+from src.artcb.consensus.live_bft import LIVE_BFT_PROTOCOL
 from src.artcb.consensus.pbft_finality import FIRST_LIVE_CERTIFIED_SEQ, PBFT_FINALITY_PROTOCOL
 from src.artcb.consensus.pbft_view import PBFT_VIEW_PROTOCOL
-from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS
+from src.artcb.node_registry import official_pbft_n_f_q, official_pbft_replica_ids
 
-N, F, Q = n_f_q(4)
+N, F, Q = official_pbft_n_f_q()
 
 # Critical rows that block CERTIFIED_100 if not live-proven on the SHA under test.
 CRITICAL_IDS = (
@@ -102,12 +102,13 @@ def empty_row(spec: dict[str, str]) -> dict[str, Any]:
 
 def new_matrix() -> dict[str, Any]:
     rows = [empty_row(s) for s in REQUIRED]
+    n, f, q = official_pbft_n_f_q()
     return {
         "protocol": "270-pbft-certification-matrix",
-        "n": N,
-        "f": F,
-        "q": Q,
-        "replicas": list(OFFICIAL_COMPUTE_NODE_IDS),
+        "n": n,
+        "f": f,
+        "q": q,
+        "replicas": list(official_pbft_replica_ids()),
         "settlement_protocol": LIVE_BFT_PROTOCOL,
         "view_protocol": PBFT_VIEW_PROTOCOL,
         "block_finality_protocol": PBFT_FINALITY_PROTOCOL,
@@ -175,7 +176,7 @@ def finalize(matrix: dict[str, Any]) -> dict[str, Any]:
 
 def independent_safety(snapshots: dict[str, dict[str, Any]]) -> dict[str, Any]:
     """Compare four node snapshots. Divergence of public tip is a safety alarm."""
-    ids = list(OFFICIAL_COMPUTE_NODE_IDS)
+    ids = list(official_pbft_replica_ids())
     heights = {(snapshots.get(n) or {}).get("height") for n in ids}
     hashes = {(snapshots.get(n) or {}).get("last_hash") for n in ids}
     views = {(snapshots.get(n) or {}).get("view") for n in ids}

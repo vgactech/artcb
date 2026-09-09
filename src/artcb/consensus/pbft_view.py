@@ -1,7 +1,9 @@
-"""PBFT view-change for the four official replicas (N=4, F=1, Q=3).
+"""PBFT view-change for official replicas (default N=4, F=1, Q=3).
 
 Castro-Liskov: VIEW-CHANGE from 2F+1 replicas elects a new primary via
-NEW-VIEW. The replica set is OFFICIAL_COMPUTE_NODE_IDS.
+NEW-VIEW. The replica set is official_pbft_replica_ids() (4 cloud VMs,
+or 5 after Mac live enrollment). OFFICIAL_COMPUTE_NODE_IDS stays the
+follow-main / public-IPv4 set.
 
 This gates settlement prepare/commit (188) on the current view.
 Block append remains longest valid public chain. Processes stay up:
@@ -16,9 +18,8 @@ import threading
 from pathlib import Path
 from typing import Any
 
-from src.artcb.consensus.live_bft import n_f_q
 from src.artcb.consensus.tip_attest import producer_key_b64, sign_message
-from src.artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS, official_replica_id
+from src.artcb.node_registry import official_pbft_n_f_q, official_pbft_replica_ids, official_replica_id
 from src.artcb.trace.ns import now_wall_ns
 
 logger = logging.getLogger("artcb.consensus.pbft_view")
@@ -29,7 +30,7 @@ VC_REL = Path("consensus") / "pbft_view_change.jsonl"
 
 
 def primary_of(view: int) -> str:
-    ids = OFFICIAL_COMPUTE_NODE_IDS
+    ids = official_pbft_replica_ids()
     return ids[int(view) % len(ids)]
 
 
@@ -62,7 +63,7 @@ def verify_view_change(row: dict[str, Any]) -> bool:
     )
     if str(row.get("message") or "") != message:
         return False
-    if str(row.get("replica_id") or "") not in OFFICIAL_COMPUTE_NODE_IDS:
+    if str(row.get("replica_id") or "") not in official_pbft_replica_ids():
         return False
     from src.artcb.consensus.replica_identity import verify_bound_signature
 
@@ -85,7 +86,7 @@ def verify_new_view(row: dict[str, Any], view_changes: list[dict[str, Any]]) -> 
         return False
     valid = [vc for vc in view_changes if verify_view_change(vc) and int(vc.get("view") or 0) == view]
     ids = {str(vc.get("replica_id") or "") for vc in valid}
-    _n, f, q = n_f_q(4)
+    _n, f, q = official_pbft_n_f_q()
     if f is None or len(ids) < q:
         return False
     digest = vc_digest(valid)
@@ -157,16 +158,16 @@ class PbftViewStore:
         return str(self._state.get("primary") or primary_of(self.view))
 
     def snapshot(self) -> dict[str, Any]:
-        _n, f, q = n_f_q(4)
+        n, f, q = official_pbft_n_f_q()
         return {
             "protocol": PBFT_VIEW_PROTOCOL,
             "replica_id": self.replica_id,
             "view": self.view,
             "primary": self.primary,
-            "n": 4,
+            "n": n,
             "f": f,
             "q": q,
-            "replicas": list(OFFICIAL_COMPUTE_NODE_IDS),
+            "replicas": list(official_pbft_replica_ids()),
             "processes_stay_up": True,
             "scope": "pbft_view_change_settlement",
             "not_block_append_bft": True,
@@ -174,7 +175,7 @@ class PbftViewStore:
 
     def emit_view_change(self, chain: Any, *, view: int, height: int, last_hash: str, reason: str) -> dict[str, Any]:
         replica = self.replica_id
-        if replica not in OFFICIAL_COMPUTE_NODE_IDS:
+        if replica not in official_pbft_replica_ids():
             replica = official_replica_id() or replica
             self.replica_id = replica
         from_view = self.view
@@ -255,7 +256,7 @@ class PbftViewStore:
     def quorum_for(self, view: int) -> dict[str, Any]:
         rows = self.view_changes(view)
         ids = [str(r.get("replica_id") or "") for r in rows]
-        _n, f, q = n_f_q(4)
+        _n, f, q = official_pbft_n_f_q()
         return {
             "ok": f is not None and len(ids) >= q,
             "view": int(view),
@@ -268,12 +269,12 @@ class PbftViewStore:
         }
 
     def emit_new_view(self, chain: Any, *, view: int, view_changes: list[dict[str, Any]] | None = None) -> dict[str, Any]:
-        if self.replica_id not in OFFICIAL_COMPUTE_NODE_IDS:
+        if self.replica_id not in official_pbft_replica_ids():
             self.replica_id = official_replica_id() or self.replica_id
         rows = view_changes if view_changes is not None else self.view_changes(view)
         valid = [r for r in rows if verify_view_change(r) and int(r.get("view") or 0) == int(view)]
         ids = {str(r.get("replica_id") or "") for r in valid}
-        _n, f, q = n_f_q(4)
+        _n, f, q = official_pbft_n_f_q()
         if f is None or len(ids) < q:
             raise ValueError("no_view_change_quorum")
         primary = primary_of(int(view))

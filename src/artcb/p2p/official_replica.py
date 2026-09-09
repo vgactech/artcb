@@ -1,4 +1,8 @@
-"""Official-replica path — full book among the four compute IPv4s.
+"""Official-replica path — full book among the four public compute IPv4s.
+
+Mac is never added here via RFC1918. Live P2P to mac-node-local needs a
+measured non-LAN endpoint (MAC-3). Membership is official_pbft_replica_ids().
+"""
 
 Anonymous P2P stays public-only. That path cannot rebuild a mixed
 public/private hash chain (a public block's prev_hash often points at a
