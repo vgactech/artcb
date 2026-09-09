@@ -1771,10 +1771,11 @@ Live stamp `20260909T182620Z` SHA ×4 `75836c715fb47cf87d37365bd6d5b8e36d940c5e`
 `logs/287_mac_tunnel_live.json` `rapports/287_mac_rfc1918_tunnel_20260909.md`. T-E71 [x] (pytest PASS ; tunnel live ABSENT honnête).
 **CERTIFIED_100=false.**
 
-## [2026-09-09T18:40:00Z] 289 — AEP lossless (pas CERTIFIED_100)
+## [2026-09-09T18:37:29Z] 289 — AEP lossless (pas CERTIFIED_100)
 
 `AgentRunLedger` R284 = résumé hash-chain (6 events) = **PARTIAL** exhaustive. Thinking privé interdit. LOSSLESS_INPUT : pas de troncature silencieuse. Probe Mac Python peut être `COMPLETE_FOR_PROFILE` **et** SSH FAIL. Cursor runtime / ChatGPT / Claude / E2E agent→ARTCB = **NOT_PROVEN**.
-`src/artcb/trace/aep.py` `scripts/run_live289_aep.py` `tests/test_e2e289_aep.py`. T-E72.
+Live `AR-289-20260909T183729Z` SHA ×4 `05d703022a949a61849516e1c8ed20a4e715d9a7` height **1133**. 16 events tip `b46e5112…`. mac_ssh COMPLETE_FOR_PROFILE ; exhaustive PARTIAL.
+`logs/289_aep_agent_run_20260909T183729Z.json` `rapports/289_aep_lossless_20260909.md`. T-E72 [x].
 **CERTIFIED_100=false.**
 
 
