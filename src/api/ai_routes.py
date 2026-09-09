@@ -282,8 +282,10 @@ def ai_status(
 # ─────────────────────────────────────────────────────────────────────────────
 
 class MemoRequest(BaseModel):
-    content: str = Field(min_length=1, max_length=32000,
-                         description="Observation, raisonnement, leçon, bug, solution…")
+    content: str = Field(
+        min_length=1,
+        description="Observation, raisonnement, leçon, bug, solution… Aucune limite de caractères.",
+    )
     memo_type: str = Field(
         default="observation",
         description="Type: observation | bug | fix | lesson | decision | hypothesis | goal | proof",
@@ -454,8 +456,10 @@ def ai_memo(
 # ─────────────────────────────────────────────────────────────────────────────
 
 class ThinkRequest(BaseModel):
-    question: str = Field(min_length=1, max_length=32000,
-                           description="Problème, question ou sujet à raisonner")
+    question: str = Field(
+        min_length=1,
+        description="Problème, question ou sujet à raisonner. Aucune limite de caractères.",
+    )
     session_id: str = Field(default="ai_think")
     use_llm: bool = Field(default=False, description="Enrichir avec LLM connecteur")
     llm_provider: str | None = Field(default=None)

@@ -328,9 +328,6 @@ def write_bootstrap_stamp(payload: dict[str, Any]) -> Path:
     return dest
 
 
-MEMO_CONTENT_MAX = 32000
-
-
 def http_json(
     method: str,
     url: str,
@@ -384,27 +381,15 @@ def ingest_prompt_file(
 ) -> dict[str, Any]:
     """POST the file bytes as a public /ai/memo. Agent-mediated, not a Cursor hook.
 
-    Never includes thinking, system prompts, or token meters. Truncates only if
-    the memo API max (32000 chars) is exceeded; records sha256 of the full file.
-    Public lane: user_query. Thinking belongs on the private lane (see
-    ingest_thinking_file).
+    No character cap. Public lane: user_query. Thinking belongs on the private lane
+    (see ingest_thinking_file).
     """
     t0 = time.perf_counter_ns()
     raw = path.read_bytes()
     text = raw.decode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
-    truncated = False
-    body_text = text
-    if len(text) > MEMO_CONTENT_MAX:
-        truncated = True
-        trailer = (
-            f"\n\n[TRUNCATED ARTCB_MEMO_MAX={MEMO_CONTENT_MAX} "
-            f"sha256_full={digest} chars_full={len(text)}]"
-        )
-        keep = MEMO_CONTENT_MAX - len(trailer)
-        body_text = text[:keep] + trailer
     payload = {
-        "content": body_text,
+        "content": text,
         "memo_type": "observation",
         "tags": tags or ["ingest_at_receipt", "user_query"],
         "session_id": session_id,
@@ -427,7 +412,7 @@ def ingest_prompt_file(
         "chars": len(text),
         "bytes": len(raw),
         "sha256": digest,
-        "truncated": truncated,
+        "truncated": False,
         "includes_thinking": False,
         "includes_system_prompt": False,
         "token_count_known": False,
@@ -442,8 +427,8 @@ def ingest_prompt_file(
     return out
 
 
-def split_lossless_chunks(text: str, *, max_chars: int = MEMO_CONTENT_MAX) -> list[str]:
-    """Declared chunking — not a summary. Concat(chunks) == text."""
+def split_lossless_chunks(text: str, *, max_chars: int) -> list[str]:
+    """Optional split. Concat(chunks) == text. Not used to cap memos."""
     if max_chars < 1:
         raise ValueError("max_chars")
     if len(text) <= max_chars:
@@ -459,62 +444,34 @@ def ingest_thinking_file(
     session_id: str = "turn-thinking",
     timeout: float = 180,
 ) -> dict[str, Any]:
-    """POST thinking bytes as visibility=private memos. No summary. No public body.
+    """POST thinking bytes as one visibility=private memo. No summary. No char cap.
 
     Cursor still does not inject thinking into this VM. If the file is absent,
     this is NOT_PROVEN, not a silent skip pretending the thinking was stored.
     inject_context=False so ARTCB does not prepend a context summary.
-    Chunks if > MEMO_CONTENT_MAX; transformation_id=chunk-v1; full sha256 kept.
     """
     t0 = time.perf_counter_ns()
     raw = path.read_bytes()
     text = raw.decode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
-    chunks = split_lossless_chunks(text)
-    if "".join(chunks) != text:
-        return {
-            "ok": False,
-            "reason": "chunk_concat_mismatch",
-            "sha256": digest,
-            "visibility": "private",
-            "includes_thinking": True,
-        }
-    posts: list[dict[str, Any]] = []
-    parent = None
-    for i, chunk in enumerate(chunks):
-        payload = {
-            "content": chunk,
-            "memo_type": "observation",
-            "tags": ["ingest_at_receipt", "thinking", "lossless", "private", f"chunk-{i + 1}-of-{len(chunks)}"],
-            "session_id": session_id,
-            "visibility": "private",
-            "inject_context": False,
-            "parent_block_index": parent,
-        }
-        code, resp = http_json(
-            "POST",
-            f"{url.rstrip('/')}/api/v1/ai/memo",
-            api_key=api_key,
-            body=payload,
-            timeout=timeout,
-        )
-        resp_d = resp if isinstance(resp, dict) else {"detail": resp}
-        row = {
-            "chunk": i + 1,
-            "http": code,
-            "chars": len(chunk),
-            "block_index": resp_d.get("block_index"),
-            "block_hash": resp_d.get("block_hash"),
-        }
-        if code != 200:
-            row["error"] = resp_d.get("detail") or resp_d.get("error") or resp_d
-        posts.append(row)
-        if code == 200 and resp_d.get("block_index") is not None:
-            parent = resp_d.get("block_index")
-        else:
-            break
-    ok = bool(posts) and all(p.get("http") == 200 for p in posts) and len(posts) == len(chunks)
-    return {
+    payload = {
+        "content": text,
+        "memo_type": "observation",
+        "tags": ["ingest_at_receipt", "thinking", "lossless", "private"],
+        "session_id": session_id,
+        "visibility": "private",
+        "inject_context": False,
+    }
+    code, resp = http_json(
+        "POST",
+        f"{url.rstrip('/')}/api/v1/ai/memo",
+        api_key=api_key,
+        body=payload,
+        timeout=timeout,
+    )
+    resp_d = resp if isinstance(resp, dict) else {"detail": resp}
+    ok = code == 200
+    out: dict[str, Any] = {
         "ok": ok,
         "ingest_platform_hook": False,
         "ingest_attempted": True,
@@ -526,10 +483,15 @@ def ingest_thinking_file(
         "sha256": digest,
         "chars": len(text),
         "bytes": len(raw),
-        "n_chunks": len(chunks),
-        "transformation_id": "chunk-v1" if len(chunks) > 1 else "",
+        "n_chunks": 1,
+        "transformation_id": "",
         "truncated": False,
         "inject_context": False,
-        "posts": posts,
+        "ingest_http": code,
+        "ingest_block_index": resp_d.get("block_index"),
+        "ingest_block_hash": resp_d.get("block_hash"),
         "dur_ns": time.perf_counter_ns() - t0,
     }
+    if not ok:
+        out["ingest_error"] = resp_d.get("detail") or resp_d.get("error") or resp_d
+    return out

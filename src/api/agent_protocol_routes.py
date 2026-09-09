@@ -38,7 +38,7 @@ class RegisterBody(BaseModel):
 class EventBody(BaseModel):
     event_id: str = Field(min_length=8, max_length=128)
     kind: str = Field(default="observation", max_length=32)
-    content: str = Field(min_length=1, max_length=32000)
+    content: str = Field(min_length=1, description="Mémoire agent. Aucune limite de caractères.")
     visibility: str = Field(default="public", max_length=16)
     tags: list[str] = Field(default_factory=list)
     session_id: str = Field(default="agent-event", max_length=64)
