@@ -1723,5 +1723,12 @@ Live SHA **`5e0d424e0cee85466b44fc163761c2cbda98a855`** ×4. L2 `CLOUD_ATTESTED`
 `logs/279_trust_sizes_20260909T005011Z.json` `logs/279_book_audit.json` `rapports/279_platform_trust_block_sizes_20260909.md`. T-E64 [x].
 **CERTIFIED_100=false.** N04 50 % FAIL. C04 / TPM quote NOT_PROVEN.
 
+## [2026-09-09T01:34:17Z] 280 — split verdicts observé ≠ crypto ≠ certification
+
+`platform_level_observed PASS` n’est pas une attestation CA. `platform_crypto_attestation=NOT_PROVEN` sans quote TPM/vTPM. `certification=FAIL`.
+Live SHA **`0d7546c09ddd3b5f3ce3235d6ed69927263ea4bf`** ×4. AWS3 pin RSA-2048 eu-west-3 **PASS** (sous-verdict) ; crypto reste NOT_PROVEN. OVH pin N/A. Fraîcheur / challenge / liaison Ed25519 / `wire_bytes` / finalité PBFT : non faits ici.
+`logs/280_split_verdicts_20260909T013417Z.json` `rapports/280_split_verdicts_l2_crypto_20260909.md`. T-E65 [x].
+**CERTIFIED_100=false.**
+
 
 

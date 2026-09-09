@@ -1,0 +1,22 @@
+{
+  "sha": "0d7546c09ddd3b5f3ce3235d6ed69927263ea4bf",
+  "class": "cloud_instance_identity",
+  "overall": "CLOUD_ATTESTED",
+  "trust_level": 2,
+  "split": {
+    "platform_level_observed": "PASS",
+    "platform_crypto_attestation": "NOT_PROVEN",
+    "hardware_tpm": "NOT_AVAILABLE",
+    "certification": "FAIL",
+    "aws_iid_rsa2048_pin": "PASS",
+    "note": "platform_level_observed PASS = classification + registry binding, not a CA-verified attestation. platform_crypto_attestation stays NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is a pin of the AWS IID signature only (no freshness, no Ed25519 bind). certification FAIL until CERTIFIED_100."
+  },
+  "crypto_verified": false,
+  "certified_hardware": false,
+  "rsa2048_pin": {
+    "verified": true,
+    "reason": "ok",
+    "region": "eu-west-3"
+  },
+  "instance_id": "i-085b74abd1aaf04ee"
+}
