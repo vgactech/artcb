@@ -48,6 +48,10 @@ def test_r284_six_events_are_partial_exhaustive() -> None:
     assert exhaustive["certified_100"] is False
     assert exhaustive["e2e_agent_artcb"] == "NOT_PROVEN"
     assert exhaustive["thinking_recorded"] is False
+    assert exhaustive["thinking_available_from_runtime"] is False
+    assert exhaustive["thinking_received"] is False
+    assert exhaustive["thinking_private_stored"] is False
+    assert exhaustive["thinking_integrity_verified"] is False
     summary = certify_provenance(events, profile="r284_classify_summary")
     assert summary["profile_certification"] == "COMPLETE_FOR_SUMMARY"
     ssh = certify_provenance(events, profile="mac_ssh_probe")
@@ -81,9 +85,17 @@ def test_ssh_fail_can_be_provenance_complete_for_profile() -> None:
     assert cert["execution_trace_complete"] is True
     assert cert["certified_100"] is False
     assert cert["tool_trace_complete"] is False
-    dumped = json.dumps(led.write(Path("/tmp/artcb_aep_test.json")))
+    dumped_path = Path("/tmp/artcb_aep_test.json")
+    payload = led.write(dumped_path)
+    dumped = json.dumps(payload)
     assert "BEGIN" not in dumped
-    assert "thinking" not in dumped.lower() or "not recorded" in dumped.lower()
+    assert payload["thinking_available_from_runtime"] is False
+    assert payload["thinking_received"] is False
+    assert payload["thinking_private_stored"] is False
+    assert payload["thinking_public_hash_recorded"] is False
+    assert payload["thinking_integrity_verified"] is False
+    assert payload["thinking_recorded"] is False
+    assert payload["thinking_states"]["acquisition"] == "NOT_PROVEN"
 
 
 def test_missing_failure_event_is_a_gap() -> None:

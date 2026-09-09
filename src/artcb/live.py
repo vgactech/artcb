@@ -436,6 +436,16 @@ def split_lossless_chunks(text: str, *, max_chars: int) -> list[str]:
     return [text[i : i + max_chars] for i in range(0, len(text), max_chars)]
 
 
+def thinking_file_skipped_reason(path_raw: str) -> str:
+    """Honest skip: Cursor never injects model thinking into the VM."""
+    if not (path_raw or "").strip():
+        return (
+            "ARTCB_INGEST_THINKING_FILE unset — Cursor n'injecte pas le thinking "
+            "dans le VM; visibility=private n'est pas une preuve d'acquisition"
+        )
+    return "file_missing"
+
+
 def ingest_thinking_file(
     path: Path,
     *,
@@ -449,10 +459,14 @@ def ingest_thinking_file(
     Cursor still does not inject thinking into this VM. If the file is absent,
     this is NOT_PROVEN, not a silent skip pretending the thinking was stored.
     inject_context=False so ARTCB does not prepend a context summary.
+    HTTP 200 ≠ integrity: SHA256(raw)==payload==received==stored is required.
     """
+    from artcb.trace.thinking import thinking_states, verify_thinking_integrity_chain
+
     t0 = time.perf_counter_ns()
     raw = path.read_bytes()
     text = raw.decode("utf-8")
+    payload_bytes = text.encode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
     payload = {
         "content": text,
@@ -471,6 +485,34 @@ def ingest_thinking_file(
     )
     resp_d = resp if isinstance(resp, dict) else {"detail": resp}
     ok = code == 200
+    block_index = resp_d.get("block_index")
+    received_sha = str(resp_d.get("content_sha256") or "")
+    stored_sha = ""
+    if ok and block_index is not None:
+        get_code, get_resp = http_json(
+            "GET",
+            f"{url.rstrip('/')}/api/v1/ai/memo/{block_index}",
+            api_key=api_key,
+            timeout=timeout,
+        )
+        get_d = get_resp if isinstance(get_resp, dict) else {}
+        if get_code == 200:
+            stored_sha = str(get_d.get("content_sha256") or "")
+    integrity = verify_thinking_integrity_chain(
+        raw=raw,
+        payload=payload_bytes,
+        received_sha256=received_sha,
+        stored_sha256=stored_sha,
+    )
+    states = thinking_states(
+        available_from_runtime=True,
+        received=True,
+        private_stored=bool(ok and block_index is not None),
+        public_hash_recorded=bool(received_sha),
+        integrity_verified=bool(integrity.get("verified")),
+        reason="" if integrity.get("verified") else (integrity.get("reason") or "integrity_not_proven"),
+        hashes=integrity.get("hashes") if isinstance(integrity.get("hashes"), dict) else None,
+    )
     out: dict[str, Any] = {
         "ok": ok,
         "ingest_platform_hook": False,
@@ -488,10 +530,23 @@ def ingest_thinking_file(
         "truncated": False,
         "inject_context": False,
         "ingest_http": code,
-        "ingest_block_index": resp_d.get("block_index"),
+        "ingest_block_index": block_index,
         "ingest_block_hash": resp_d.get("block_hash"),
+        "content_sha256": received_sha,
+        "stored_content_sha256": stored_sha,
+        "integrity": integrity,
+        "thinking_states": states,
         "dur_ns": time.perf_counter_ns() - t0,
     }
+    out.update({k: states[k] for k in (
+        "thinking_available_from_runtime",
+        "thinking_received",
+        "thinking_private_stored",
+        "thinking_public_hash_recorded",
+        "thinking_integrity_verified",
+        "thinking_recorded",
+        "acquisition",
+    )})
     if not ok:
         out["ingest_error"] = resp_d.get("detail") or resp_d.get("error") or resp_d
     return out

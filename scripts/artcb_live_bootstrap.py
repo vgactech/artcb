@@ -27,12 +27,14 @@ from artcb.live import (  # noqa: E402
     ingest_prompt_file,
     ingest_thinking_file,
     prompt_file_skipped_reason,
+    thinking_file_skipped_reason,
     pull_remote_agent_env,
     resolve_api_key,
     resolve_api_url,
     write_bootstrap_stamp,
     write_local_env,
 )
+from artcb.trace.thinking import empty_thinking_states  # noqa: E402
 
 
 def _load_key() -> tuple[str, str]:
@@ -122,7 +124,8 @@ def main() -> int:
         "ingest_skipped": True,
         "includes_thinking": False,
         "visibility": "private",
-        "reason": "ARTCB_INGEST_THINKING_FILE unset — Cursor n'injecte pas le thinking dans le VM",
+        "reason": thinking_file_skipped_reason(""),
+        **empty_thinking_states(reason=thinking_file_skipped_reason("")),
     }
     thinking_file = (os.environ.get("ARTCB_INGEST_THINKING_FILE") or "").strip()
     if thinking_file and key:
@@ -131,8 +134,12 @@ def main() -> int:
         if tp.is_file():
             thinking_ingest = ingest_thinking_file(tp, url=url, api_key=key)
         else:
-            thinking_ingest["reason"] = "file_missing"
+            thinking_ingest["reason"] = thinking_file_skipped_reason(thinking_file)
             thinking_ingest["ingest_path"] = thinking_file
+            thinking_ingest.update(
+                empty_thinking_states(reason=thinking_file_skipped_reason(thinking_file))
+            )
+            thinking_ingest["thinking_available_from_runtime"] = True
 
     status = {
         "ok": health_code == 200,

@@ -2,7 +2,8 @@
 """R289 live — AEP operational ledger for the Mac RFC1918 / Doppler probe.
 
 Records what *this Python probe* did. Does not claim Cursor tool-call capture.
-Does not record private model thinking. SSH FAIL may be COMPLETE_FOR_PROFILE.
+Does not claim model thinking was acquired: Cursor does not inject it.
+visibility=private ≠ thinking stored. SSH FAIL may be COMPLETE_FOR_PROFILE.
 CERTIFIED_100 stays false. N04 last. PRE_R273 GAP kept.
 """
 
@@ -37,6 +38,7 @@ from artcb.trace.agent_run import (  # noqa: E402
     aep_policy_hash,
     sha256_json,
 )
+from artcb.trace.thinking import empty_thinking_states  # noqa: E402
 
 HTTP = l265.HTTP
 PROMPT_PATH = Path("/tmp/artcb_turn_prompt.txt")
@@ -157,13 +159,18 @@ def main() -> int:
         actor="SYSTEM_ACTION",
         detail={"code_sha_start": led.code_sha_start, "code_sha_end": led.code_sha_end},
     )
+    thinking = empty_thinking_states(reason="cursor_runtime_did_not_inject_thinking")
+    led.set_thinking_states(thinking)
     cert = certify_provenance(
         led.events,
         profile="mac_ssh_probe",
         lossless_ok=bool(lossless.get("ok")),
         cursor_runtime_instrumented=False,
+        thinking_states=thinking,
     )
-    exhaustive = certify_provenance(led.events, profile="exhaustive_agent")
+    exhaustive = certify_provenance(
+        led.events, profile="exhaustive_agent", thinking_states=thinking
+    )
     led.add(
         "FINAL_VERDICT",
         status="FAIL",
@@ -181,8 +188,11 @@ def main() -> int:
         profile="mac_ssh_probe",
         lossless_ok=bool(lossless.get("ok")),
         cursor_runtime_instrumented=False,
+        thinking_states=thinking,
     )
-    exhaustive = certify_provenance(led.events, profile="exhaustive_agent")
+    exhaustive = certify_provenance(
+        led.events, profile="exhaustive_agent", thinking_states=thinking
+    )
     ledger_path = ROOT / "logs" / f"289_aep_agent_run_{stamp}.json"
     ledger = led.write(ledger_path)
     ledger["lossless"] = {k: lossless[k] for k in lossless if k != "raw"}
@@ -208,6 +218,11 @@ def main() -> int:
             "ssh": "FAIL",
             "certified_100": False,
             "thinking_recorded": False,
+            "thinking_available_from_runtime": False,
+            "thinking_received": False,
+            "thinking_private_stored": False,
+            "thinking_public_hash_recorded": False,
+            "thinking_integrity_verified": False,
             "official_shas": shas,
             "height": chain.get("height"),
             "wrote": str(ledger_path),

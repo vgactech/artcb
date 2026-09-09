@@ -1,8 +1,11 @@
-"""ARTCB Agent Execution Provenance (AEP) — operational events, not private thinking.
+"""ARTCB Agent Execution Provenance (AEP) — operational events.
 
 R284 AgentRunLedger is a hash-chain *summary*. Exhaustive Cursor/ChatGPT/Claude
 tool traces are NOT_PROVEN until those runtimes emit events. A Python probe
 can still be COMPLETE_FOR_PROFILE (e.g. mac_ssh_probe) while SSH itself FAILs.
+
+Model thinking (CoT) ≠ visibility=private. Private lane may store thinking
+only when the runtime provides it. Cursor does not inject thinking here.
 CERTIFIED_100 stays false.
 """
 
@@ -11,9 +14,11 @@ from __future__ import annotations
 from typing import Any
 
 from artcb.trace.agent_run import sha256_bytes, sha256_json
+from artcb.trace.thinking import THINKING_STATE_KEYS, empty_thinking_states
 
-# Operational catalog. THINKING_RECEIVED = private-lane lossless body (hash on
-# the public ledger). The thinking bytes themselves are visibility=private.
+# Operational catalog. THINKING_RECEIVED = public hash that thinking bytes
+# arrived for the private lane. The body itself is visibility=private.
+# THINKING_RECEIVED in the catalog ≠ thinking_available_from_runtime.
 EVENT_CATALOG: frozenset[str] = frozenset(
     {
         "INPUT_RECEIVED",
@@ -168,6 +173,7 @@ def certify_provenance(
     *,
     profile: str,
     thinking_recorded: bool = False,
+    thinking_states: dict[str, Any] | None = None,
     cursor_runtime_instrumented: bool = False,
     lossless_ok: bool = True,
 ) -> dict[str, Any]:
@@ -178,6 +184,15 @@ def certify_provenance(
     failure_gaps = _failed_without_status(events)
     has_input = "INPUT_RECEIVED" in actions
     has_verdict = "FINAL_VERDICT" in actions
+    states = dict(thinking_states or empty_thinking_states())
+    # Operational completeness is independent of thinking acquisition.
+    # A private lane existing, or a caller passing thinking_recorded=True, must
+    # not flip the alias unless private_stored AND integrity_verified.
+    caller_claimed_recorded = bool(thinking_recorded)
+    if caller_claimed_recorded and not (
+        states.get("thinking_private_stored") and states.get("thinking_integrity_verified")
+    ):
+        states["thinking_recorded"] = False
     trace_complete = (
         not missing
         and chain_ok
@@ -185,7 +200,6 @@ def certify_provenance(
         and has_input
         and has_verdict
         and lossless_ok
-        and not thinking_recorded
     )
     if profile == "exhaustive_agent":
         trace_complete = False  # never claimed from this layer alone
@@ -201,13 +215,13 @@ def certify_provenance(
         profile_cert = "NOT_PROVEN"
 
     e2e = "NOT_PROVEN"
-    return {
+    out: dict[str, Any] = {
         "profile": profile,
         "profile_certification": profile_cert,
         "execution_trace_complete": bool(trace_complete and profile != "exhaustive_agent"),
         "tool_trace_complete": False,
         "cursor_runtime_instrumented": bool(cursor_runtime_instrumented),
-        "thinking_recorded": False,
+        "thinking_recorded": bool(states.get("thinking_recorded")),
         "chain_ok": chain_ok,
         "missing_events": missing,
         "failure_status_gaps": failure_gaps,
@@ -219,6 +233,11 @@ def certify_provenance(
         "note": (
             "SSH FAIL may coexist with COMPLETE_FOR_PROFILE. "
             "R284 six-event logs remain PARTIAL for exhaustive provenance. "
-            "Private thinking is not recorded."
+            "visibility=private ≠ model thinking acquired. "
+            "thinking_recorded is private_stored AND integrity_verified."
         ),
     }
+    for key in THINKING_STATE_KEYS:
+        out[key] = bool(states.get(key))
+    out["thinking_acquisition"] = states.get("acquisition") or "NOT_PROVEN"
+    return out

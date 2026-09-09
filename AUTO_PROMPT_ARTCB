@@ -1789,5 +1789,10 @@ Live `AR-289-20260909T183729Z` SHA ×4 `05d703022a949a61849516e1c8ed20a4e715d9a7
 Config : `MemoRequest.content` / `ThinkRequest.question` `max_length=32000` dans `src/api/ai_routes.py` (422 Pydantic) ; `EventBody.content` idem ; client `MEMO_CONTENT_MAX` + truncate dans `src/artcb/live.py`. **Supprimé.** Aucune limite de caractères applicative. Live SHA encore `05d7030` jusqu’à merge + follow-main ×4 → POST >32k live = encore 422. T-E74.
 **CERTIFIED_100=false.**
 
+## [2026-09-09] 292 — AEP thinking states : acquisition ≠ storage (pas CERTIFIED_100)
+
+~~thinking_recorded unique~~ trop ambigu. Cinq états : available_from_runtime / received / private_stored / public_hash_recorded / integrity_verified. `thinking_recorded` = stored AND integrity seulement. `visibility=private` ≠ thinking modèle. Cursor n'injecte pas → NOT_PROVEN. HTTP 200 ≠ byte-for-byte. Exhaustive AEP PARTIAL. Live SHA `05d7030` jusqu’à merge. T-E75.
+**CERTIFIED_100=false.**
+
 
 

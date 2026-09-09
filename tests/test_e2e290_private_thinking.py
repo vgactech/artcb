@@ -5,6 +5,8 @@ R291 — no application character cap on memos / think / agent events.
 
 from __future__ import annotations
 
+import hashlib
+
 import pytest
 
 from api.agent_protocol_routes import EventBody
@@ -58,7 +60,15 @@ def test_ingest_prompt_and_thinking_post_full_text(tmp_path, monkeypatch: pytest
 
     def fake_http(method, url, *, api_key=None, body=None, timeout=20):
         captured.append({"method": method, "url": url, "body": body, "timeout": timeout})
-        return 200, {"block_index": 9999, "block_hash": "ab" * 32, "graph_id": "ai_memo_nocap"}
+        digest = hashlib.sha256((body or {}).get("content", "").encode("utf-8")).hexdigest() if body else ""
+        if method == "GET":
+            return 200, {"block_index": 9999, "content_sha256": ""}
+        return 200, {
+            "block_index": 9999,
+            "block_hash": "ab" * 32,
+            "graph_id": "ai_memo_nocap",
+            "content_sha256": digest,
+        }
 
     monkeypatch.setattr("artcb.live.http_json", fake_http)
     raw = "γ" * 50_000
@@ -73,7 +83,11 @@ def test_ingest_prompt_and_thinking_post_full_text(tmp_path, monkeypatch: pytest
     assert out_p["chars"] == 50_000
     assert out_t["chars"] == 50_000
     assert out_t["n_chunks"] == 1
-    assert captured[0]["body"]["content"] == raw
-    assert captured[1]["body"]["content"] == raw
-    assert captured[1]["body"]["visibility"] == "private"
-    assert captured[1]["body"]["inject_context"] is False
+    posts = [c for c in captured if c["method"] == "POST"]
+    assert posts[0]["body"]["content"] == raw
+    assert posts[1]["body"]["content"] == raw
+    assert posts[1]["body"]["visibility"] == "private"
+    assert posts[1]["body"]["inject_context"] is False
+    assert out_t["thinking_received"] is True
+    assert out_t["thinking_integrity_verified"] is False
+    assert out_t["thinking_recorded"] is False

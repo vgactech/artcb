@@ -69,6 +69,11 @@ def test_prompt_file_skipped_reason_honest() -> None:
     assert "ARTCB_INGEST_PROMPT_FILE unset" in reason
     assert "Cursor n'injecte pas" in reason
     assert prompt_file_skipped_reason("/no/such") == "file_missing"
+    from artcb.live import thinking_file_skipped_reason
+
+    t_reason = thinking_file_skipped_reason("")
+    assert "ARTCB_INGEST_THINKING_FILE unset" in t_reason
+    assert "visibility=private" in t_reason
 
 
 def test_ingest_prompt_file_posts_user_query_only(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
