@@ -196,10 +196,11 @@ def classify(*, tpm: dict[str, Any], virt: dict[str, Any], aws: dict[str, Any], 
 
 
 def quote_present(tpm: dict[str, Any]) -> bool:
+    """True only for a cryptographically verified quote. A dict of failure is not a quote."""
     quote = tpm.get("quote")
-    if quote in (None, "", [], {}):
+    if not isinstance(quote, dict):
         return False
-    return True
+    return quote.get("verified") is True
 
 
 def completed_trust_level(
@@ -558,6 +559,22 @@ def collect_platform_attestation(
         observed_provider=provider,
         attestation_public_key=pubkey or "",
     )
+    extra_hex = str(binding.get("node_binding") or "")
+    try:
+        extra = bytes.fromhex(extra_hex)[:32] if extra_hex else b"\x00" * 32
+    except ValueError:
+        extra = b"\x00" * 32
+    if not quote_present(tpm):
+        from src.artcb.consensus.tpm_quote import attempt_attestation_quote
+
+        tpm = dict(tpm)
+        tpm["quote"] = attempt_attestation_quote(extra_data=extra, is_vm=bool(virt.get("is_vm")))
+    klass = classify(tpm=tpm, virt=virt, aws=aws, ovh=ovh)
+    level = completed_trust_level(klass=klass, tpm=tpm, virt=virt, aws=aws, ovh=ovh)
+    hw = hardware_tpm_attestation(klass=klass, tpm=tpm, virt=virt)
+    vt = vtpm_attestation(klass=klass, tpm=tpm)
+    plat = platform_identity_attestation(aws=aws, ovh=ovh, klass=klass)
+    overall = overall_platform_trust(level)
     crypto_verified = bool(
         (klass == "tpm_hardware" and quote_present(tpm))
         or (klass == "vtpm" and quote_present(tpm))
@@ -601,7 +618,7 @@ def collect_platform_attestation(
         json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
     return {
-        "protocol": "280-platform-attestation",
+        "protocol": "281-platform-attestation",
         "ts_ns": now_wall_ns(),
         "platform_class": klass,
         "trust_level": level,

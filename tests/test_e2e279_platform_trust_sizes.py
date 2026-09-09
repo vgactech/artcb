@@ -97,7 +97,7 @@ def test_bare_metal_tpm_quote_is_l4() -> None:
     snap = collect_platform_attestation(
         declared_node_id="ovh-baremetal-1",
         attestation_public_key="ak",
-        tpm={"present": True, "quote": {"ak": "real"}},
+        tpm={"present": True, "quote": {"verified": True, "ak": "real"}},
         virt={"is_vm": False, "hostname": "dell", "machine_id": "m", "dmi_uuid": "d"},
         aws={"document_ok": False},
         ovh={"document_ok": False},
