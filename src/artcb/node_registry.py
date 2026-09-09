@@ -221,6 +221,29 @@ NODES: dict[str, NodeSpec] = {
             "operator chooses otherwise."
         ),
     ),
+    "mac-node-local": NodeSpec(
+        node_id="mac-node-local",
+        display_name="MacBook Air local — dev/observer",
+        provider="local-macos",
+        doppler_project="artcb-1",
+        doppler_token_env="KEY_API_ARTCB_DOPPLER_MAC",
+        health_http="http://10.234.49.2:8001",
+        api_https=None,
+        ssh_host="10.234.49.2",
+        ssh_user="deyi",
+        public_notes=(
+            "MacBook Air deyi@luxiufengdeMacBook-Air.local — LAN 10.234.49.2. "
+            "RFC1918: injoignable depuis les VMs cloud sans tunnel. "
+            "Rôle: observateur PBFT local, dev, replay de campagnes. "
+            "Doppler project artcb-1 (config prd). Service token Cursor: "
+            "KEY_API_ARTCB_DOPPLER_MAC dans artcb-blockchain. "
+            "SSH: clef cursor_mac_node (ed25519) gérée par Cursor via Doppler — "
+            "jamais la clef cursor_agent révoquée le 2026-09-09. "
+            "Port ARTCB: 8001 (évite conflit avec OVH1 mirror éventuel sur 8000). "
+            "Launchd plist: ~/Library/LaunchAgents/me.artcb.node.plist. "
+            "Pas un nœud PBFT officiel (pas dans OFFICIAL_COMPUTE_NODE_IDS)."
+        ),
+    ),
 }
 
 # Secrets that belong on a node project — never copy Stripe/Bob/GitHub here.
@@ -314,6 +337,21 @@ NODE_SECRET_ALLOWLIST = {
             "ARTCB_API_URL",
             "ARTCB_WALLET_PASSPHRASE",
             "DOPPLER_TOKEN",
+        }
+    ),
+    "mac-node-local": frozenset(
+        {
+            "ARTCB_API_KEY",
+            "ARTCB_API_URL",
+            "ARTCB_NODE_ID",
+            "ARTCB_PORT",
+            "ARTCB_HOST",
+            "ARTCB_NODE_PUBLIC_URL",
+            "ARTCB_WALLET_PASSPHRASE",
+            "ARTCB_NODE_SSH_HOST",
+            "ARTCB_NODE_SSH_USER",
+            "CURSOR_SSH_PUBLIC_KEY",
+            "CURSOR_SSH_PRIVATE_KEY",
         }
     ),
 }

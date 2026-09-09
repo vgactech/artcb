@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  ARTCB — nœud local macOS (mac-node-local)
+  Déploiement : cp deploy/mac_node_local_launchd.plist ~/Library/LaunchAgents/me.artcb.node.plist
+                launchctl load ~/Library/LaunchAgents/me.artcb.node.plist
+
+  Gestion via Doppler : les secrets sont injectés par `doppler run` au démarrage.
+  Cursor récupère CURSOR_SSH_PRIVATE_KEY depuis Doppler artcb-1 / prd
+  (token KEY_API_ARTCB_DOPPLER_MAC stocké dans artcb-blockchain).
+
+  SSH : clef cursor_mac_node (ed25519) dans ~/.ssh/ — gérée par Cursor uniquement.
+  Port ARTCB : 8001 (pas 8000 pour éviter conflit avec mirror OVH1 éventuel).
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>me.artcb.node</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/doppler</string>
+    <string>run</string>
+    <string>--project</string>
+    <string>artcb-1</string>
+    <string>--config</string>
+    <string>prd</string>
+    <string>--</string>
+    <string>/Users/deyi/.bob/playground/.venv/bin/python</string>
+    <string>-m</string>
+    <string>uvicorn</string>
+    <string>src.api.main:app</string>
+    <string>--host</string>
+    <string>0.0.0.0</string>
+    <string>--port</string>
+    <string>8001</string>
+    <string>--limit-concurrency</string>
+    <string>16</string>
+    <string>--timeout-keep-alive</string>
+    <string>5</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/deyi/.bob/playground</string>
+
+  <!-- Le token Doppler est lu depuis DOPPLER_TOKEN injecté par /etc/artcb/doppler.env
+       ou depuis la session CLI globale (~/.doppler). Ne jamais mettre le token ici. -->
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>ARTCB_NODE_ID</key>
+    <string>mac-node-local</string>
+    <key>PYTHONPATH</key>
+    <string>src</string>
+    <key>HOME</key>
+    <string>/Users/deyi</string>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/Users/deyi/.bob/playground/logs/api_node_macbookair.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/deyi/.bob/playground/logs/api_node_macbookair.log</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+</dict>
+</plist>
