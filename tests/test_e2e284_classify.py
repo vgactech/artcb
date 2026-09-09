@@ -118,12 +118,14 @@ def test_not_reachable_does_not_count_as_certified() -> None:
 
 def test_parse_amzn_properties() -> None:
     got = parse_tpm2_properties(
-        "TPM2_PT_MANUFACTURER:\n  raw: 0x414D5A4E\n  value: AMZN\n"
-        "TPM2_PT_VENDOR_STRING_1:\n  value: Nitro\n"
-        "TPM2_PT_VENDOR_STRING_2:\n  value: TPM\n"
+        "TPM2_PT_MANUFACTURER:\n  raw: 0x414D5A4E\n  value: \"AMZN\"\n"
+        "TPM2_PT_VENDOR_STRING_1:\n  value: \"Nitr\"\n"
+        "TPM2_PT_VENDOR_STRING_2:\n  value: \"oTPM\"\n"
+        "TPM2_PT_VENDOR_STRING_3:\n  value: \"v1.0\"\n"
     )
     assert got["manufacturer"] == "AMZN"
-    assert "Nitro" in got["vendor"]
+    assert "Nitr" in got["vendor"]
+    assert "oTPM" in got["vendor"]
 
 
 def test_agent_run_hash_chain_breaks_on_tamper() -> None:

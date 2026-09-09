@@ -77,7 +77,7 @@ def _read_text(path: Path, limit: int = 400) -> str:
         return ""
 
 
-def _cmd(args: list[str], timeout: int = 8) -> dict[str, Any]:
+def _cmd(args: list[str], timeout: int = 8, keep: int = 500) -> dict[str, Any]:
     try:
         proc = subprocess.run(args, capture_output=True, text=True, timeout=timeout, check=False)
     except (OSError, subprocess.TimeoutExpired) as exc:
@@ -85,7 +85,7 @@ def _cmd(args: list[str], timeout: int = 8) -> dict[str, Any]:
     return {
         "ok": proc.returncode == 0,
         "rc": proc.returncode,
-        "stdout": (proc.stdout or "")[-500:],
+        "stdout": (proc.stdout or "")[:keep] if keep > 500 else (proc.stdout or "")[-keep:],
         "stderr": (proc.stderr or "")[-160:],
     }
 
@@ -112,7 +112,7 @@ def tpm_probe() -> dict[str, Any]:
     props = {"manufacturer": "", "vendor": ""}
     if (tpm0 or tpmrm) and has_tools:
         pcrs = _cmd(["tpm2_pcrread", "sha256:0,1,7"], timeout=10)
-        cap = _cmd(["tpm2_getcap", "properties-fixed"], timeout=10)
+        cap = _cmd(["tpm2_getcap", "properties-fixed"], timeout=10, keep=4000)
         props = parse_tpm2_properties(str(cap.get("stdout") or ""))
         quote = None  # a real AK quote needs an enrolled AK; do not fake one
     sw = software_tpm_observed({"manufacturer": props.get("manufacturer"), "vendor": props.get("vendor")})
