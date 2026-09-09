@@ -49,6 +49,7 @@ _official_cache: dict[str, "ReplicaKeyBinding"] | None = None
 _overlay_cache: dict[str, "ReplicaKeyBinding"] = {}
 _overlay_mtime: float | None = None
 _overlay_meta: dict[str, Any] = {"present": False}
+_overlay_seen_mem: int = 0
 
 
 @dataclass(frozen=True)
@@ -195,18 +196,25 @@ def overlay_version_file() -> Path:
 
 
 def _seen_overlay_version() -> int:
+    global _overlay_seen_mem
     path = overlay_version_file()
+    disk = 0
     try:
-        return int(path.read_text(encoding="utf-8").strip() or "0")
+        disk = int(path.read_text(encoding="utf-8").strip() or "0")
     except (OSError, ValueError):
-        return 0
+        disk = 0
+    return max(int(_overlay_seen_mem or 0), disk)
 
 
 def _remember_overlay_version(version: int) -> None:
+    global _overlay_seen_mem
+    version = int(version)
+    if version > int(_overlay_seen_mem or 0):
+        _overlay_seen_mem = version
     path = overlay_version_file()
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(str(int(version)) + "\n", encoding="utf-8")
+        path.write_text(str(version) + "\n", encoding="utf-8")
     except OSError:
         pass
 
@@ -406,18 +414,33 @@ def local_ed25519_b64() -> str:
         return ""
 
 
+def official_node_file_id() -> str:
+    try:
+        raw = OFFICIAL_NODE_MARKER.read_text(encoding="utf-8").strip().splitlines()
+        return (raw[0] if raw else "").strip()
+    except OSError:
+        return ""
+
+
 def local_identity_status() -> dict[str, Any]:
     marker = official_replica_id()
+    file_id = official_node_file_id()
+    env_id = (os.getenv("ARTCB_NODE_ID") or "").strip()
     ed = local_ed25519_b64()
     owner = owner_of_ed25519(ed) if ed else None
     coherent = bool(owner and marker and owner == marker)
+    file_mismatch = bool(owner and file_id and file_id != owner)
     return {
         "official_node_marker": marker,
+        "official_node_file": file_id,
+        "env_node_id": env_id,
+        "env_shadows_file": bool(env_id in OFFICIAL_COMPUTE_NODE_IDS and file_id and env_id != file_id),
         "local_ed25519_b64": ed,
         "key_owner": owner,
         "coherent": coherent,
-        "mismatch": bool(owner and marker and owner != marker),
-        "note": "official_node is a deployment label. The registered key is the consensus identity.",
+        "mismatch": bool(owner and marker and owner != marker) or file_mismatch,
+        "file_mismatch": file_mismatch,
+        "note": "official_node / ARTCB_NODE_ID label a machine. The registered key is the consensus identity.",
     }
 
 

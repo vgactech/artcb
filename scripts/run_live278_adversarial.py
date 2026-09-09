@@ -280,7 +280,14 @@ def main() -> int:
     ident_r = _ident(TARGET)
     local_r = ident_r.get("local_identity") if isinstance(ident_r.get("local_identity"), dict) else {}
     results["official_node_tamper"] = _row(
-        "PASS" if local.get("mismatch") is True and local_r.get("mismatch") is not True else "FAIL",
+        "PASS"
+        if (
+            local.get("file_mismatch") is True
+            and ident_t.get("local_replica_id") == "ovh-node-4"
+            and ident_r.get("local_replica_id") == "ovh-node-4"
+            and local_r.get("file_mismatch") is not True
+        )
+        else "FAIL",
         backup_rc=bak.get("returncode"),
         tamper_rc=tamper.get("returncode"),
         restore_rc=restore_m.get("returncode"),
@@ -288,7 +295,7 @@ def main() -> int:
         after=local_r,
         spoken_as_during=ident_t.get("local_replica_id"),
         spoken_as_after=ident_r.get("local_replica_id"),
-        note="file may change; consensus id must stay the key owner",
+        note="ARTCB_NODE_ID may shadow the file. Consensus id must stay the key owner.",
     )
 
     print("reboot ovh-2", flush=True)
@@ -335,10 +342,15 @@ def main() -> int:
         nid: _post_one(nid, a3_down["row"]) for nid in ("ovh-node-1", "aws-node-3", "ovh-node-4")
     } if a3_down.get("row") else {}
     l265._ssh("ovh-node-2", "sudo systemctl start artcb")
-    _t.sleep(6)
-    tip_after = {nid: l265._http("GET", f"{HTTP[nid]}/api/v1/chain/status", timeout=8) for nid in OFFICIAL_COMPUTE_NODE_IDS}
+    tip_after = {}
+    ovh2_up = False
+    for _ in range(15):
+        _t.sleep(2)
+        tip_after = {nid: l265._http("GET", f"{HTTP[nid]}/api/v1/chain/status", timeout=8) for nid in OFFICIAL_COMPUTE_NODE_IDS}
+        if (tip_after.get("ovh-node-2") or {}).get("http") == 200:
+            ovh2_up = True
+            break
     hashes = {d.get("last_hash") for d in tip_during.values()}
-    ovh2_up = (tip_after.get("ovh-node-2") or {}).get("http") == 200
     bind_down = all(_reason(p) == "invalid_replica_key_binding" for p in posts_down.values()) if posts_down else False
     results["creator_or_replica_crash"] = _row(
         "PASS" if ovh2_up and len(hashes) == 1 and bind_down else "FAIL",
