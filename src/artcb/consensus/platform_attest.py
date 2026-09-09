@@ -43,6 +43,19 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Iterator
 
+from src.artcb.consensus.tpm_kind import (
+    KIND_ABSENT,
+    KIND_HARDWARE,
+    KIND_SOFTWARE,
+    KIND_UNKNOWN,
+    KNOWN_VM_VIRT,
+    classify_tpm_kind,
+    environment_certainty,
+    hypervisor_vtpm_proven,
+    parse_tpm2_properties,
+    software_tpm_observed,
+)
+from src.artcb.trace.agent_run import POLICY_ID, POLICY_VERSION, policy_hash
 from src.artcb.trace.ns import now_wall_ns
 
 NETWORK_ID = "artcb-official"
@@ -96,14 +109,24 @@ def tpm_probe() -> dict[str, Any]:
     has_tools = "yes" in (tools.get("stdout") or "")
     quote = None
     pcrs = None
-    if tpm0 and has_tools:
+    props = {"manufacturer": "", "vendor": ""}
+    if (tpm0 or tpmrm) and has_tools:
         pcrs = _cmd(["tpm2_pcrread", "sha256:0,1,7"], timeout=10)
+        cap = _cmd(["tpm2_getcap", "properties-fixed"], timeout=10)
+        props = parse_tpm2_properties(str(cap.get("stdout") or ""))
         quote = None  # a real AK quote needs an enrolled AK; do not fake one
+    sw = software_tpm_observed({"manufacturer": props.get("manufacturer"), "vendor": props.get("vendor")})
+    sw_proc = _cmd(["bash", "-lc", "pgrep -a swtpm || true"])
+    if "swtpm" in (sw_proc.get("stdout") or "").lower():
+        sw = True
     return {
         "present": bool(tpm0 or tpmrm),
         "tpm0": tpm0,
         "tpmrm0": tpmrm,
         "tpm2_tools": has_tools,
+        "manufacturer": props.get("manufacturer") or "",
+        "vendor": props.get("vendor") or "",
+        "software_tpm": sw,
         "quote": quote,
         "pcrs": pcrs,
         "verdict": (
@@ -111,21 +134,47 @@ def tpm_probe() -> dict[str, Any]:
             if tpm0 and quote is None
             else ("ABSENT" if not tpm0 else "NOT_PROVEN")
         ),
-        "note": "device presence ≠ attested quote. swtpm is not hardware TPM.",
+        "note": (
+            "device presence ≠ attested quote. swtpm is SOFTWARE_TPM, never L3. "
+            "NitroTPM requires manufacturer AMZN / vendor NitroTPM, not /dev/tpm0 alone."
+        ),
     }
 
 
 def virt_probe() -> dict[str, Any]:
     detect = _cmd(["systemd-detect-virt"])
-    virt = (detect.get("stdout") or "").strip() or "unknown"
+    virt = (detect.get("stdout") or "").strip().lower() or "unknown"
+    cmd_ok = detect.get("ok") is True
+    dmi_vendor = _read_text(Path("/sys/class/dmi/id/sys_vendor"))
+    dmi_product = _read_text(Path("/sys/class/dmi/id/product_name"))
+    if cmd_ok and virt == "none":
+        certainty = "BARE_METAL_PROVEN"
+        is_vm = False
+        bare = True
+    elif cmd_ok and virt in KNOWN_VM_VIRT:
+        certainty = "VM_PROVEN"
+        is_vm = True
+        bare = False
+    else:
+        certainty = "UNKNOWN"
+        is_vm = False
+        bare = False
+        blob = f"{dmi_vendor} {dmi_product}".lower()
+        if any(token in blob for token in ("amazon", "qemu", "google", "xen", "ovh", "kvm", "bochs", "vmware")):
+            certainty = "VM_PROVEN"
+            is_vm = True
     return {
         "systemd_detect_virt": virt,
-        "is_vm": virt not in {"", "none", "unknown"} and detect.get("ok") is True,
-        "dmi_sys_vendor": _read_text(Path("/sys/class/dmi/id/sys_vendor")),
-        "dmi_product": _read_text(Path("/sys/class/dmi/id/product_name")),
+        "systemd_detect_virt_ok": cmd_ok,
+        "environment_certainty": certainty,
+        "bare_metal_proven": bare,
+        "is_vm": is_vm,
+        "dmi_sys_vendor": dmi_vendor,
+        "dmi_product": dmi_product,
         "dmi_uuid": _read_text(Path("/sys/class/dmi/id/product_uuid")),
         "machine_id": _read_text(Path("/etc/machine-id")),
         "hostname": socket.gethostname(),
+        "note": "UNKNOWN is not BARE_METAL. A failed virt probe must not raise trust.",
     }
 
 
@@ -190,16 +239,16 @@ def ovh_metadata_probe() -> dict[str, Any]:
 
 
 def classify(*, tpm: dict[str, Any], virt: dict[str, Any], aws: dict[str, Any], ovh: dict[str, Any]) -> str:
-    """Primary evidence class. vTPM on a VM is never tpm_hardware."""
-    tpm_present = bool(tpm.get("present"))
-    is_vm = bool(virt.get("is_vm"))
-    if tpm_present and not is_vm:
+    """Primary evidence class. Device presence is not hypervisor vTPM or hardware TPM."""
+    kind = classify_tpm_kind(tpm=tpm, virt=virt)
+    certainty = environment_certainty(virt)
+    if kind == KIND_HARDWARE and certainty == "BARE_METAL_PROVEN":
         return "tpm_hardware"
-    if tpm_present and is_vm:
+    if hypervisor_vtpm_proven(kind):
         return "vtpm"
     if aws.get("document_ok") or ovh.get("document_ok"):
         return "cloud_instance_identity"
-    if is_vm:
+    if certainty == "VM_PROVEN" or virt.get("is_vm"):
         return "vm_unattested"
     return "unknown"
 
@@ -220,15 +269,21 @@ def completed_trust_level(
     aws: dict[str, Any],
     ovh: dict[str, Any],
 ) -> int:
-    """Highest *completed* proof. Device-without-quote does not grant L4/L3."""
+    """Highest *completed* proof. Device-without-quote does not grant L4/L3.
+
+    SOFTWARE_TPM and UNKNOWN_TPM quotes never grant L3.
+    UNKNOWN environment never grants L4.
+    """
     has_quote = quote_present(tpm)
-    if klass == "tpm_hardware" and has_quote:
+    kind = classify_tpm_kind(tpm=tpm, virt=virt)
+    certainty = environment_certainty(virt)
+    if klass == "tpm_hardware" and has_quote and kind == KIND_HARDWARE and certainty == "BARE_METAL_PROVEN":
         return TRUST_L4_TPM
-    if klass == "vtpm" and has_quote:
+    if klass == "vtpm" and has_quote and hypervisor_vtpm_proven(kind):
         return TRUST_L3_VTPM
     if aws.get("document_ok") or ovh.get("document_ok"):
         return TRUST_L2_CLOUD
-    if virt.get("is_vm") or klass == "vm_unattested":
+    if virt.get("is_vm") or klass == "vm_unattested" or certainty == "VM_PROVEN":
         return TRUST_L1_OBSERVED
     if klass == "tpm_hardware" or klass == "vtpm":
         return TRUST_L1_OBSERVED
@@ -236,9 +291,12 @@ def completed_trust_level(
 
 
 def hardware_tpm_attestation(*, klass: str, tpm: dict[str, Any], virt: dict[str, Any]) -> str:
-    """L4 hardware TPM axis. On a VM this is NOT_APPLICABLE, not a failure."""
-    if virt.get("is_vm") or klass in {"vtpm", "cloud_instance_identity", "vm_unattested"}:
+    """L4 hardware TPM axis. On a VM or UNKNOWN environment this is not L4."""
+    certainty = environment_certainty(virt)
+    if virt.get("is_vm") or certainty == "VM_PROVEN" or klass in {"vtpm", "cloud_instance_identity", "vm_unattested"}:
         return "NOT_APPLICABLE"
+    if certainty != "BARE_METAL_PROVEN":
+        return "NOT_PROVEN"
     if klass == "tpm_hardware" and quote_present(tpm):
         return "TPM_HARDWARE_ATTESTED"
     if klass == "tpm_hardware":
@@ -279,11 +337,15 @@ def overall_platform_trust(level: int) -> str:
 
 
 def detect_environment(*, virt: dict[str, Any], aws: dict[str, Any], ovh: dict[str, Any]) -> str:
-    if virt.get("is_vm"):
-        if aws.get("document_ok") or ovh.get("document_ok"):
-            return "CLOUD_VM"
+    """UNKNOWN ≠ BARE_METAL. Cloud identity is independent VM proof."""
+    if aws.get("document_ok") or ovh.get("document_ok"):
+        return "CLOUD_VM"
+    certainty = environment_certainty(virt)
+    if certainty == "VM_PROVEN" or virt.get("is_vm"):
         return "VM"
-    return "BARE_METAL"
+    if certainty == "BARE_METAL_PROVEN":
+        return "BARE_METAL"
+    return "UNKNOWN"
 
 
 def detect_environment_profile(
@@ -294,47 +356,100 @@ def detect_environment_profile(
     ovh: dict[str, Any],
 ) -> str:
     env = detect_environment(virt=virt, aws=aws, ovh=ovh)
-    present = bool(tpm.get("present"))
+    kind = classify_tpm_kind(tpm=tpm, virt=virt)
+    if env == "UNKNOWN":
+        return "UNKNOWN"
     if env == "BARE_METAL":
         return "BARE_METAL"
-    if present and env == "CLOUD_VM":
+    if hypervisor_vtpm_proven(kind) and env == "CLOUD_VM":
         return "CLOUD_VM_VTPM"
-    if present:
+    if hypervisor_vtpm_proven(kind):
         return "VM_VTPM"
+    if kind == KIND_SOFTWARE:
+        return "CLOUD_VM_SOFTWARE_TPM" if env == "CLOUD_VM" else "VM_SOFTWARE_TPM"
+    if kind == KIND_UNKNOWN and tpm.get("present"):
+        return "CLOUD_VM_TPM_UNKNOWN" if env == "CLOUD_VM" else "VM_TPM_UNKNOWN"
     if env == "CLOUD_VM":
         return "CLOUD_VM"
     return "VM_UNATTESTED"
 
 
-def maximum_supported_level(profile: str, *, tpm: dict[str, Any]) -> int:
+def maximum_theoretical_level(profile: str, *, tpm: dict[str, Any], virt: dict[str, Any] | None = None) -> int:
+    """What this *class* could reach if evidence were complete. Not a proven max."""
+    virt = virt or {}
+    kind = classify_tpm_kind(tpm=tpm, virt=virt)
+    if profile == "UNKNOWN":
+        return TRUST_L0_NONE
+    if kind == KIND_SOFTWARE:
+        return TRUST_L2_CLOUD if profile.startswith("CLOUD_") else TRUST_L1_OBSERVED
     if profile == "BARE_METAL":
-        return TRUST_L4_TPM if tpm.get("present") else TRUST_L1_OBSERVED
+        return TRUST_L4_TPM if tpm.get("present") and kind == KIND_HARDWARE else TRUST_L1_OBSERVED
     if profile in {"CLOUD_VM_VTPM", "VM_VTPM"}:
         return TRUST_L3_VTPM
-    if profile == "CLOUD_VM":
+    if profile in {"CLOUD_VM_TPM_UNKNOWN", "VM_TPM_UNKNOWN"}:
+        return TRUST_L3_VTPM
+    if profile.startswith("CLOUD_"):
         return TRUST_L2_CLOUD
-    if profile == "VM_UNATTESTED":
+    if profile in {"VM_UNATTESTED", "VM_SOFTWARE_TPM"}:
         return TRUST_L1_OBSERVED
     return TRUST_L0_NONE
 
 
-def _axis_applicability(profile: str, *, tpm_present: bool) -> tuple[str, str]:
-    """(l3_axis, l4_axis) — APPLICABLE / NOT_APPLICABLE / NOT_REACHABLE."""
+def maximum_verified_level(*, attested: int, kind: str, profile: str) -> int:
+    """Highest level the *proven* root actually supports. swtpm never L3."""
+    if kind == KIND_SOFTWARE:
+        return min(attested, TRUST_L2_CLOUD if profile.startswith("CLOUD_") else TRUST_L1_OBSERVED)
+    if kind == KIND_UNKNOWN:
+        return min(attested, TRUST_L2_CLOUD if profile.startswith("CLOUD_") else TRUST_L1_OBSERVED)
+    if profile == "UNKNOWN":
+        return TRUST_L0_NONE
+    return attested
+
+
+def maximum_supported_level(profile: str, *, tpm: dict[str, Any], virt: dict[str, Any] | None = None) -> int:
+    """Compat alias of maximum_theoretical_level. Do not read as verified max."""
+    return maximum_theoretical_level(profile, tpm=tpm, virt=virt)
+
+
+def _axis_applicability(profile: str, *, tpm_present: bool, kind: str) -> tuple[str, str]:
+    """(l3_axis, l4_axis) — APPLICABLE / NOT_APPLICABLE / NOT_REACHABLE / NOT_PROVEN."""
+    if profile == "UNKNOWN":
+        return "NOT_PROVEN", "NOT_PROVEN"
+    if kind == KIND_SOFTWARE:
+        return "NOT_APPLICABLE", "NOT_APPLICABLE"
     if profile in {"CLOUD_VM_VTPM", "VM_VTPM"}:
         return "APPLICABLE", "NOT_APPLICABLE"
+    if profile in {"CLOUD_VM_TPM_UNKNOWN", "VM_TPM_UNKNOWN"}:
+        return "NOT_PROVEN", "NOT_APPLICABLE"
     if profile == "CLOUD_VM":
         return "NOT_REACHABLE", "NOT_APPLICABLE"
     if profile == "VM_UNATTESTED":
         return "NOT_REACHABLE", "NOT_APPLICABLE"
     if profile == "BARE_METAL":
-        if tpm_present:
+        if tpm_present and kind == KIND_HARDWARE:
             return "NOT_APPLICABLE", "APPLICABLE"
         return "NOT_APPLICABLE", "NOT_REACHABLE"
     return "NOT_APPLICABLE", "NOT_APPLICABLE"
 
 
-def _status_ok(value: str) -> bool:
-    return value in {"PASS", "NOT_APPLICABLE", "NOT_REACHABLE"}
+def _core_satisfied(value: str) -> bool:
+    """NOT_REACHABLE does not satisfy a core requirement."""
+    return value in {"PASS", "NOT_APPLICABLE"}
+
+
+def _certified_100(requirements: dict[str, str]) -> bool:
+    """Applicable satisfied / applicable == 100%. NOT_APPLICABLE is excluded.
+
+    NOT_REACHABLE stays in the denominator and is not satisfied.
+    """
+    applicable = [v for v in requirements.values() if v != "NOT_APPLICABLE"]
+    if not applicable:
+        return False
+    return all(v == "PASS" for v in applicable)
+
+
+def missing_requirements(requirements: dict[str, str]) -> list[str]:
+    return [k for k, v in requirements.items() if v not in {"PASS", "NOT_APPLICABLE"}]
 
 
 def evaluate_environment_profile_policy(
@@ -352,14 +467,15 @@ def evaluate_environment_profile_policy(
     """Four axes: environment, max level, attested level, profile certification."""
     environment = detect_environment(virt=virt, aws=aws, ovh=ovh)
     profile = detect_environment_profile(virt=virt, tpm=tpm, aws=aws, ovh=ovh)
-    max_level = maximum_supported_level(profile, tpm=tpm)
+    kind = classify_tpm_kind(tpm=tpm, virt=virt)
+    max_theo = maximum_theoretical_level(profile, tpm=tpm, virt=virt)
     quote_ok = quote_present(tpm)
     q = tpm.get("quote") if isinstance(tpm.get("quote"), dict) else {}
     pin = iid_pin or {}
     official = set(load_platform_binding_registry())
     declared = str(binding.get("declared_node_id") or "")
 
-    l3_app, l4_app = _axis_applicability(profile, tpm_present=bool(tpm.get("present")))
+    l3_app, l4_app = _axis_applicability(profile, tpm_present=bool(tpm.get("present")), kind=kind)
     if l3_app != "APPLICABLE":
         l3 = l3_app
     elif quote_ok and klass == "vtpm":
@@ -411,14 +527,19 @@ def evaluate_environment_profile_policy(
 
     capabilities = {
         "instance_identity": bool(aws.get("document_ok") or ovh.get("document_ok")),
-        "vtpm_or_nitrotpm": bool(virt.get("is_vm") and tpm.get("present")),
+        "vtpm_or_nitrotpm": hypervisor_vtpm_proven(kind),
         "tpm20_interface": bool(tpm.get("present")),
         "tpm_quote": quote_ok,
         "quote_verification": quote_ok,
-        "hardware_tpm": bool((not virt.get("is_vm")) and tpm.get("present")),
+        "hardware_tpm": kind == KIND_HARDWARE,
+        "tpm_kind": kind,
+        "software_tpm": kind == KIND_SOFTWARE,
     }
 
-    if profile == "CLOUD_VM":
+    if profile == "UNKNOWN":
+        core = {"environment_detected": "NOT_PROVEN"}
+        completeness = {"environment_certainty": "NOT_PROVEN"}
+    elif profile == "CLOUD_VM":
         core = {
             "environment_detected": "PASS",
             "cloud_identity_observed": cloud,
@@ -426,6 +547,17 @@ def evaluate_environment_profile_policy(
         }
         completeness = {
             "metadata_signature": meta,
+            "freshness_challenge": "NOT_PROVEN",
+        }
+    elif profile in {"CLOUD_VM_SOFTWARE_TPM", "CLOUD_VM_TPM_UNKNOWN"}:
+        core = {
+            "environment_detected": "PASS",
+            "cloud_identity_observed": cloud,
+            "registry_binding": registry,
+        }
+        completeness = {
+            "metadata_signature": meta,
+            "hypervisor_vtpm_provenance": "NOT_PROVEN" if profile.endswith("UNKNOWN") else "NOT_APPLICABLE",
             "freshness_challenge": "NOT_PROVEN",
         }
     elif profile in {"CLOUD_VM_VTPM", "VM_VTPM"}:
@@ -442,7 +574,7 @@ def evaluate_environment_profile_policy(
             "quote_node_binding": qbind,
         }
     elif profile == "BARE_METAL":
-        present = bool(tpm.get("present"))
+        present = bool(tpm.get("present")) and kind == KIND_HARDWARE
         core = {
             "environment_detected": "PASS",
             "hardware_tpm_present": "PASS" if present else "NOT_REACHABLE",
@@ -454,25 +586,27 @@ def evaluate_environment_profile_policy(
             "quote_node_binding": qbind if present else "NOT_REACHABLE",
         }
     else:
-        core = {"environment_detected": "PASS"}
+        core = {"environment_detected": "PASS" if environment != "UNKNOWN" else "NOT_PROVEN"}
         completeness = {"attested_identity": "NOT_PROVEN"}
 
     requirements = {**core, **completeness, "l3": l3, "l4": l4}
+    missing = missing_requirements(requirements)
+    max_verified = maximum_verified_level(attested=level, kind=kind, profile=profile)
     mismatch = bool(binding.get("identity_mismatch"))
     if recast or mismatch:
         certification = "FAIL"
         certified_100 = False
-    elif profile == "VM_UNATTESTED":
+    elif profile in {"VM_UNATTESTED", "UNKNOWN", "VM_SOFTWARE_TPM", "VM_TPM_UNKNOWN"}:
         certification = "NOT_PROVEN"
         certified_100 = False
     elif any(v == "FAIL" for v in core.values()):
         certification = "FAIL"
         certified_100 = False
-    elif not all(_status_ok(v) for v in core.values()):
+    elif not all(_core_satisfied(v) for v in core.values()):
         certification = "NOT_PROVEN"
         certified_100 = False
     else:
-        certified_100 = all(_status_ok(v) for v in completeness.values())
+        certified_100 = _certified_100(requirements)
         if certified_100:
             certification = "PASS"
         elif profile in {"CLOUD_VM_VTPM", "VM_VTPM", "BARE_METAL"}:
@@ -480,27 +614,47 @@ def evaluate_environment_profile_policy(
         else:
             certification = "PASS"
 
+    q_sig = "PASS" if quote_ok else ("NOT_APPLICABLE" if kind in {KIND_ABSENT} else "NOT_PROVEN")
     return {
         "environment": environment,
+        "environment_certainty": environment_certainty(virt),
         "environment_profile": profile,
-        "maximum_supported_level": max_level,
+        "tpm_kind": kind,
+        "maximum_supported_level": max_theo,
+        "maximum_theoretical_level": max_theo,
+        "maximum_verified_level": max_verified,
         "attested_level": level,
         "capabilities": capabilities,
         "core_requirements": core,
         "completeness_requirements": completeness,
         "requirements": requirements,
+        "missing_requirements": missing,
         "l3": l3,
         "l4": l4,
         "quote_freshness": freshness,
+        "freshness_kind": (
+            "VERIFIER_CHALLENGE"
+            if q.get("verifier_challenge") is True
+            else ("LOCAL_GENERATED" if q.get("freshness_bound") is True else "ABSENT")
+        ),
         "ek_ak_provenance": ek,
+        "quote_signature_verified": q_sig,
+        "ak_provenance_verified": "PASS" if q.get("ak_manufacturer_verified") is True else "NOT_PROVEN",
+        "ek_provenance_verified": "PASS" if q.get("ek_manufacturer_verified") is True else "NOT_PROVEN",
+        "manufacturer_chain_verified": "PASS" if q.get("manufacturer_chain_verified") is True else "NOT_PROVEN",
         "quote_node_binding": qbind,
         "profile_certification": certification,
         "profile_certified_100": certified_100,
+        "policy_id": POLICY_ID,
+        "policy_version": POLICY_VERSION,
+        "policy_hash": policy_hash(),
         "note": (
             "profile_certification is scored against the detected environment. "
-            "L4 on a VM is NOT_APPLICABLE, not FAIL. CERTIFIED_100 requires every "
-            "applicable requirement of this profile, including freshness and EK "
-            "provenance when the profile is L3/L4. L3 is never L4."
+            "UNKNOWN is not BARE_METAL. SOFTWARE_TPM is never L3. "
+            "L4 on a VM is NOT_APPLICABLE, not FAIL. CERTIFIED_100 = applicable "
+            "PASS / applicable requirements; NOT_APPLICABLE is excluded; "
+            "NOT_REACHABLE is not satisfied. L3 is never L4. "
+            "LOCAL_GENERATED nonce is not a verifier challenge."
         ),
     }
 
@@ -833,15 +987,18 @@ def collect_platform_attestation(
             quote["ek_provenance"] = "LOCAL_CREATEEK"
             quote["ek_manufacturer_verified"] = False
         tpm["quote"] = quote
+    tpm = dict(tpm)
+    tpm["device_kind"] = classify_tpm_kind(tpm=tpm, virt=virt)
     klass = classify(tpm=tpm, virt=virt, aws=aws, ovh=ovh)
     level = completed_trust_level(klass=klass, tpm=tpm, virt=virt, aws=aws, ovh=ovh)
     hw = hardware_tpm_attestation(klass=klass, tpm=tpm, virt=virt)
     vt = vtpm_attestation(klass=klass, tpm=tpm)
     plat = platform_identity_attestation(aws=aws, ovh=ovh, klass=klass)
     overall = overall_platform_trust(level)
+    kind_now = str(tpm.get("device_kind") or "")
     crypto_verified = bool(
-        (klass == "tpm_hardware" and quote_present(tpm))
-        or (klass == "vtpm" and quote_present(tpm))
+        (klass == "tpm_hardware" and quote_present(tpm) and kind_now == KIND_HARDWARE)
+        or (klass == "vtpm" and quote_present(tpm) and hypervisor_vtpm_proven(kind_now))
     )
     recast = bool(virt.get("is_vm")) and (overall == "TPM_ATTESTED" or level == TRUST_L4_TPM)
     recast = recast or (level == TRUST_L4_TPM and hw != "TPM_HARDWARE_ATTESTED")
@@ -899,12 +1056,25 @@ def collect_platform_attestation(
         json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
     return {
-        "protocol": "283-environment-profile-attestation",
+        "protocol": "284-environment-classification",
+        "policy_id": policy["policy_id"],
+        "policy_version": policy["policy_version"],
+        "policy_hash": policy["policy_hash"],
         "ts_ns": now_wall_ns(),
         "environment": policy["environment"],
+        "environment_certainty": policy["environment_certainty"],
         "environment_profile": policy["environment_profile"],
+        "tpm_kind": policy["tpm_kind"],
         "maximum_supported_level": policy["maximum_supported_level"],
+        "maximum_theoretical_level": policy["maximum_theoretical_level"],
+        "maximum_verified_level": policy["maximum_verified_level"],
         "attested_level": policy["attested_level"],
+        "missing_requirements": policy["missing_requirements"],
+        "freshness_kind": policy["freshness_kind"],
+        "quote_signature_verified": policy["quote_signature_verified"],
+        "ak_provenance_verified": policy["ak_provenance_verified"],
+        "ek_provenance_verified": policy["ek_provenance_verified"],
+        "manufacturer_chain_verified": policy["manufacturer_chain_verified"],
         "capabilities": policy["capabilities"],
         "profile_requirements": policy["requirements"],
         "core_requirements": policy["core_requirements"],
@@ -946,7 +1116,14 @@ def collect_platform_attestation(
         "vtpm_attestation": vt,
         "platform_identity_attestation": plat,
         "overall_platform_trust": overall,
-        "certified_hardware_identity": level == TRUST_L4_TPM,
+        "overall_platform_trust_precise": (
+            "CLOUD_IDENTITY_OBSERVED" if overall == "CLOUD_ATTESTED" else overall
+        ),
+        "certified_hardware_identity": (
+            level == TRUST_L4_TPM
+            and kind_now == KIND_HARDWARE
+            and environment_certainty(virt) == "BARE_METAL_PROVEN"
+        ),
         "tpm_quote_proven": bool(klass == "tpm_hardware" and quote_present(tpm)),
         "cloud_identity_closest_analog": klass == "cloud_instance_identity" or level == TRUST_L2_CLOUD,
         "bare_metal_tpm_path_implemented": True,

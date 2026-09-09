@@ -27,8 +27,8 @@ def test_verified_vtpm_quote_is_l3_not_l4() -> None:
     snap = collect_platform_attestation(
         declared_node_id="lab-vm",
         attestation_public_key="k",
-        tpm={"present": True, "quote": {"verified": True, "kind": "vtpm"}},
-        virt={"is_vm": True, "hostname": "kvm", "machine_id": "m", "dmi_uuid": "d"},
+        tpm={"present": True, "device_kind": "NITROTPM", "manufacturer": "AMZN", "vendor": "NitroTPM v1.0", "quote": {"verified": True, "kind": "vtpm"}},
+        virt={"is_vm": True, "environment_certainty": "VM_PROVEN", "hostname": "kvm", "machine_id": "m", "dmi_uuid": "d"},
         aws={"document_ok": False},
         ovh={"document_ok": False},
     )
@@ -39,6 +39,7 @@ def test_verified_vtpm_quote_is_l3_not_l4() -> None:
     assert snap["certified_hardware_identity"] is False
     assert snap["environment"] == "VM"
     assert snap["environment_profile"] == "VM_VTPM"
+    assert snap["tpm_kind"] == "NITROTPM"
     assert snap["maximum_supported_level"] == 3
     assert snap["l3"] == "PASS"
     assert snap["l4"] == "NOT_APPLICABLE"

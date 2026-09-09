@@ -32,6 +32,8 @@ def test_aws_l3_quote_is_partial_not_l4() -> None:
         attestation_public_key="eJsXlnBP1o1/Oq1v9zQ0z8n1Al3jBtJ4M/KLSESb34Q=",
         tpm={
             "present": True,
+            "manufacturer": "AMZN",
+            "vendor": "NitroTPM v1.0",
             "quote": {"verified": True, "kind": "vtpm", "ek_manufacturer_verified": False},
         },
         virt={"is_vm": True, "hostname": "n3", "machine_id": "m", "dmi_uuid": "d"},
@@ -66,6 +68,8 @@ def test_l3_freshness_and_ek_do_not_imply_certified_100() -> None:
         attestation_public_key="eJsXlnBP1o1/Oq1v9zQ0z8n1Al3jBtJ4M/KLSESb34Q=",
         tpm={
             "present": True,
+            "manufacturer": "AMZN",
+            "vendor": "NitroTPM v1.0",
             "quote": {
                 "verified": True,
                 "kind": "vtpm",
@@ -114,7 +118,8 @@ def test_vm_cannot_be_l4_even_with_quote() -> None:
         aws={"document_ok": False},
         ovh={"document_ok": False},
     )
-    assert snap["trust_level"] == 3
+    assert snap["trust_level"] < 4
+    assert snap["tpm_kind"] == "UNKNOWN_TPM"
     assert snap["certified_hardware_identity"] is False
     assert snap["l4"] == "NOT_APPLICABLE"
     assert snap["hardware_tpm_attestation"] == "NOT_APPLICABLE"

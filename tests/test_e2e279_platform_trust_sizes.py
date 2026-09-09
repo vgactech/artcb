@@ -97,22 +97,25 @@ def test_vtpm_without_quote_stays_below_l3() -> None:
         declared_node_id="aws-node-3",
         attestation_public_key="k",
         tpm={"present": True, "quote": None},
-        virt={"is_vm": True, "hostname": "v", "machine_id": "m", "dmi_uuid": "d"},
+        virt={"is_vm": True, "environment_certainty": "VM_PROVEN", "hostname": "v", "machine_id": "m", "dmi_uuid": "d"},
         aws=_cloud_aws(),
         ovh={"document_ok": False},
     )
-    assert snap["platform_class"] == "vtpm"
-    assert snap["vtpm_attestation"] == "VTPM_PRESENT_QUOTE_MISSING"
+    assert snap["platform_class"] == "cloud_instance_identity"
+    assert snap["tpm_kind"] == "UNKNOWN_TPM"
     assert snap["trust_level"] == 2  # cloud document is the completed proof
     assert snap["overall_platform_trust"] == "CLOUD_ATTESTED"
+    assert snap["overall_platform_trust_precise"] == "CLOUD_IDENTITY_OBSERVED"
     assert snap["certified_hardware_identity"] is False
-    assert snap["environment_profile"] == "CLOUD_VM_VTPM"
-    assert snap["maximum_supported_level"] == 3
+    assert snap["environment_profile"] == "CLOUD_VM_TPM_UNKNOWN"
+    assert snap["maximum_theoretical_level"] == 3
+    assert snap["maximum_verified_level"] == 2
     assert snap["attested_level"] == 2
     assert snap["l3"] == "NOT_PROVEN"
     assert snap["l4"] == "NOT_APPLICABLE"
-    assert snap["profile_certification"] == "NOT_PROVEN"
+    assert snap["profile_certification"] == "PASS"
     assert snap["hardware_tpm_attestation"] == "NOT_APPLICABLE"
+    assert snap["profile_certified_100"] is False
 
 
 def test_bare_metal_tpm_quote_is_l4() -> None:
@@ -120,7 +123,7 @@ def test_bare_metal_tpm_quote_is_l4() -> None:
         declared_node_id="ovh-baremetal-1",
         attestation_public_key="ak",
         tpm={"present": True, "quote": {"verified": True, "ak": "real"}},
-        virt={"is_vm": False, "hostname": "dell", "machine_id": "m", "dmi_uuid": "d"},
+        virt={"is_vm": False, "bare_metal_proven": True, "environment_certainty": "BARE_METAL_PROVEN", "hostname": "dell", "machine_id": "m", "dmi_uuid": "d"},
         aws={"document_ok": False},
         ovh={"document_ok": False},
     )
