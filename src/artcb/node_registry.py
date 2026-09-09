@@ -18,6 +18,8 @@ SHARED_DOPPLER_PROJECT = "artcb-blockchain"
 SHARED_DOPPLER_CONFIG = "dev"
 LOCAL_NODES_DIR = Path.home() / ".artcb" / "nodes"
 MAC_NODE_ID = "mac-node-local"
+# ~~2026-09-09T21:50:00Z~~ MAC_PBFT_ENROLL_ENV = "ARTCB_MAC_PBFT_ENROLLED"
+# Révocation 2026-09-09T21:55:00Z : sas isolation refusé. Constante conservée en commentaire (R299 2026-09-10T23:05:00Z).
 REPLICA_KEYS_PATH = Path(__file__).resolve().parent / "consensus" / "official_replica_keys.json"
 
 
@@ -45,6 +47,10 @@ class NodeSpec:
     tpm_required: bool = False
 
 
+# ~~2026-09-09 original~~ The four infrastructure VMs that must follow GitHub origin/main automatically.
+# ~~2026-09-09T21:50:00Z~~ Do NOT append mac-node-local here: follow-main + public IPv4 fan-out stay
+# on the VMs. PBFT membership is official_pbft_replica_ids() (4 or 5).
+# **Barré 2026-09-09T21:55:00Z / précisé 2026-09-10T23:05:00Z** : seeds IPv4 ≠ exclusion PBFT.
 # Public IPv4 seed VMs (SSH follow-main timers + :8000 fan-out).
 # This is network topology, not PBFT membership. A cloned laptop is a
 # replica even if it has no public IPv4 in this tuple.
@@ -109,6 +115,22 @@ def mac_has_registered_replica_key(*, path: Path | None = None) -> bool:
     return replica_key_registered(MAC_NODE_ID, path=path)
 
 
+# ~~2026-09-09T21:50:00Z enrollment gate — revoked 2026-09-09T21:55:00Z, kept 2026-09-10T23:05:00Z~~
+# def mac_pbft_live_enrolled() -> bool:
+#     """Live PBFT membership gate. Role can be replica while this is false.
+#     Requires ARTCB_MAC_PBFT_ENROLLED=1 AND a registered Mac public key.
+#     Env alone must not enlarge N — that would break the live 4-node quorum.
+#     """
+#     flag = (os.getenv(MAC_PBFT_ENROLL_ENV) or "").strip().lower()
+#     if flag not in {"1", "true", "yes", "on"}:
+#         return False
+#     return mac_has_registered_replica_key()
+# def official_pbft_replica_ids() -> tuple[str, ...]:
+#     if mac_pbft_live_enrolled():
+#         return OFFICIAL_COMPUTE_NODE_IDS + (MAC_NODE_ID,)
+#     return OFFICIAL_COMPUTE_NODE_IDS
+
+
 def official_pbft_replica_ids() -> tuple[str, ...]:
     """PBFT membership: every NodeSpec with pbft_replica=True, registry order.
 
@@ -133,6 +155,23 @@ def official_pbft_n_f_q() -> tuple[int, int | None, int]:
 def mac_pbft_live_enrolled() -> bool:
     """Compatibility alias. Mac is enrolled iff it is a pbft_replica in NODES."""
     return MAC_NODE_ID in official_pbft_replica_ids()
+
+
+# ~~2026-09-09 original official_replica_id — conservé 2026-09-10T23:05:00Z~~
+# def official_replica_id() -> str:
+#     env = (os.getenv("ARTCB_NODE_ID") or "").strip()
+#     if env in OFFICIAL_COMPUTE_NODE_IDS:
+#         return env
+#     if OFFICIAL_NODE_MARKER.is_file():
+#         raw = OFFICIAL_NODE_MARKER.read_text(encoding="utf-8").strip().splitlines()
+#         marker = (raw[0] if raw else "").strip()
+#         if marker in OFFICIAL_COMPUTE_NODE_IDS:
+#             return marker
+#     local = _local_ipv4s()
+#     for nid, ip in zip(OFFICIAL_COMPUTE_NODE_IDS, OFFICIAL_COMPUTE_IPV4):
+#         if ip in local:
+#             return nid
+#     return env
 
 
 def official_replica_id() -> str:
@@ -297,6 +336,14 @@ NODES: dict[str, NodeSpec] = {
             "operator chooses otherwise."
         ),
     ),
+    # ~~2026-09-09 original NodeSpec — barré 2026-09-09T21:55:00Z, conservé 2026-09-10T23:05:00Z~~
+    # display_name="MacBook Air local — dev/observer"
+    # public_notes=(
+    #     "MacBook Air deyi@luxiufengdeMacBook-Air.local — LAN 10.234.49.2. "
+    #     "Rôle: observateur PBFT local, dev, replay de campagnes. "
+    #     "Pas un nœud PBFT officiel (pas dans OFFICIAL_COMPUTE_NODE_IDS)."
+    # )
+    # ~~2026-09-09T21:50:00Z~~ display_name="... official PBFT replica (not live-enrolled)"
     "mac-node-local": NodeSpec(
         node_id="mac-node-local",
         display_name="MacBook Air — official ARTCB replica (cloned-user path)",

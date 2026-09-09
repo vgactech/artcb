@@ -4,7 +4,7 @@
   "f": 1,
   "q": 3,
   "activation_epoch": 1130,
-  "note": "Public keys only. Authority is this registry, not producer_* fields on a message. Collected from live GET /api/v1/consensus/tip-attest on 2026-09-08T22:49Z SHA d9eba2ac2bc8af954e31453da584802394735a69 height 1130.",
+  "note": "Public keys only. Authority is this registry, not producer_* fields on a message. Collected from live GET /api/v1/consensus/tip-attest on 2026-09-08T22:49Z SHA d9eba2ac2bc8af954e31453da584802394735a69 height 1130. ~~n was 4 at collection~~ appended 2026-09-09 Mac ed25519 from local data/chain.key (public only). 2026-09-10T23:12:00Z R299: original 4-node sentence kept; Mac row added after, not substituted.",
   "replicas": {
     "ovh-node-1": {
       "ed25519_b64": "u3WrGfKSYatkntc6ctlZqDyHI/98yV2PfJ8FTC/IXSU=",

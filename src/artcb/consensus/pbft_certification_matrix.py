@@ -13,6 +13,9 @@ from src.artcb.consensus.pbft_finality import FIRST_LIVE_CERTIFIED_SEQ, PBFT_FIN
 from src.artcb.consensus.pbft_view import PBFT_VIEW_PROTOCOL
 from src.artcb.node_registry import official_pbft_n_f_q, official_pbft_replica_ids
 
+# ~~2026-09-08 original — conservé 2026-09-10T23:12:00Z~~
+# N, F, Q = 4, 1, 3
+# Barré 2026-09-09T21:55:00Z : lu depuis official_pbft_n_f_q() (N adaptatif).
 N, F, Q = official_pbft_n_f_q()
 
 # Critical rows that block CERTIFIED_100 if not live-proven on the SHA under test.

@@ -1,3 +1,7 @@
+# ~~2026-09-08 original module contract — conservé 2026-09-10T23:12:00Z~~
+# """PBFT view-change for official replicas (default N=4, F=1, Q=3).
+# The replica set is OFFICIAL_COMPUTE_NODE_IDS (exactly 4 cloud VMs)."""
+# Barré 2026-09-09T21:55:00Z : membership = official_pbft_replica_ids() (N adaptatif).
 """PBFT view-change for official replicas (default N=4, F=1, Q=3).
 
 Castro-Liskov: VIEW-CHANGE from 2F+1 replicas elects a new primary via

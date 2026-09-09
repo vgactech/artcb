@@ -1,3 +1,8 @@
+# ~~2026-09-08 original — conservé 2026-09-10T23:12:00Z~~
+# N, F, Q = 4, 1, 3  # hardcoded from OFFICIAL_COMPUTE_NODE_IDS
+# def _n_f_q() -> tuple[int, int, int]:
+#     return 4, 1, 3
+# Barré 2026-09-09T21:55:00Z : N/f/Q = official_pbft_n_f_q().
 """PBFT block finality (Castro-Liskov) on the public append/import path.
 
 N=4 F=1 Q=3. Sequence = block index. Digest = block hash.

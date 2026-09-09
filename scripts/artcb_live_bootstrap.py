@@ -33,6 +33,43 @@ from artcb.live import (  # noqa: E402
     write_local_env,
 )
 
+# ~~2026-09-08 original ingest path had no local archive — conservé 2026-09-10T23:12:00Z~~
+# prompt_file was POSTed then discarded from /tmp on the next overwrite.
+TURN_PROMPT_ARCHIVE = ROOT / "data" / "trace" / "turn_prompts.jsonl"
+
+
+def archive_turn_prompt(path: Path) -> dict:
+    """Append-only archive of the current ingest file. Never deletes path."""
+    import time
+
+    row: dict = {
+        "ts_ns": time.time_ns(),
+        "path": str(path),
+        "archived": False,
+        "reason": "missing",
+    }
+    try:
+        if not path.is_file():
+            return row
+        raw = path.read_text(encoding="utf-8")
+        row.update(
+            {
+                "archived": True,
+                "reason": "ok",
+                "chars": len(raw),
+                "sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+                "includes_thinking": False,
+                "text": raw,
+            }
+        )
+        TURN_PROMPT_ARCHIVE.parent.mkdir(parents=True, exist_ok=True)
+        with TURN_PROMPT_ARCHIVE.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(row, separators=(",", ":")) + "\n")
+    except OSError as exc:
+        row["archived"] = False
+        row["reason"] = f"archive_error:{type(exc).__name__}"
+    return row
+
 
 def _load_key() -> tuple[str, str]:
     key = resolve_api_key()
@@ -92,6 +129,9 @@ def main() -> int:
                 last_memo_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
 
     prompt_file = (os.environ.get("ARTCB_INGEST_PROMPT_FILE") or "").strip()
+    prompt_archive = (
+        archive_turn_prompt(Path(prompt_file)) if prompt_file else {"archived": False, "reason": "file_unset"}
+    )
     ingest: dict = {
         "ingest_platform_hook": False,
         "ingest_attempted": False,
@@ -144,6 +184,7 @@ def main() -> int:
         "last_memo_content_chars": last_memo_chars,
         "last_memo_content_sha256": last_memo_sha256,
         "ingest": ingest,
+        "prompt_archive": prompt_archive,
         "token_printed": False,
     }
     write_bootstrap_stamp(

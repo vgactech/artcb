@@ -1787,5 +1787,18 @@ GO : promouvoir le Mac au 5ᵉ replica. **Pas** `OFFICIAL_COMPUTE_NODE_IDS += ma
 Règle 16 enfreinte au tour précédent : fichier écrit, mais skip reason = « FILE unset » alors que la cause était `api_key_missing` / health 0. Corrigé. Complet = `HEAD:main` + follow-main ×4 + SHA mesuré. Thinking Machine = transcripts jsonl, pas CoT, pas ARTCB.
 **CERTIFIED_100=false.**
 
+## [2026-09-10T23:05:00Z] 299 — interdiction de supprimer (règles + code)
 
+L'erreur que l'opérateur voulait que l'agent retrouve **seul** : règles **11–15** (pas seulement 16). On ne supprime pas, on ne compacte pas. On barre + horodate + on ajoute à la suite. **Idem dans le code** (`# ~~revoked~~` puis nouveau bloc). Violation : réécriture de `.cursor/rules/mac-node-local.mdc` et remplacement de `official_pbft_replica_ids` / notes Mac. Texte original rétabli. Thinking Machine = transcripts jsonl, pas CoT, pas ARTCB.
+**CERTIFIED_100=false.**
+
+## [2026-09-10T23:12:00Z] 299b — /tmp brut + archive + Mac pas isolé
+
+Ce que l'opérateur avait oublié de figer, ajouté ici :
+1. `/tmp/artcb_turn_prompt.txt` = `user_query` **brut intégral** (règle 16). Interdit d'y coller un résumé (violation précédente + règles 11–12).
+2. Avant écrasement : append `data/trace/turn_prompts.jsonl` (`ts_ns`, sha256, chars).
+3. Relire `alwaysApply` + ce fichier **de la première à la dernière ligne** au début de chaque tour — le chat n'est pas le protocole.
+4. Thinking : Machine = `~/.cursor/projects/<workspace>/agent-transcripts/*.jsonl` (chat + outils, **pas** le CoT privé). Cloud = backend Cursor, **pas** le disque Mac, **pas** ARTCB. UI `showThinkingBlocks` = affichage. `includes_thinking=false`.
+5. Mac = même classe que OVH/AWS (clone GitHub + launchd). ~~`live_enrolled=False` / FOLLOW_MAIN = 4 VMs only.~~ Isolation refusée 2026-09-09T21:55:00Z. Complet = push + follow-main ×4 + SHA mesuré + mêmes tests live.
+**CERTIFIED_100=false.**
 
