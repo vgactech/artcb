@@ -13,9 +13,14 @@ A software TPM (swtpm) / vTPM is NOT a hardware TPM.
 CLOUD_ATTESTED is valid for a cloud VM security level; it is never
 certified_hardware_identity.
 
-PKCS#7 / OVH metadata signatures are collected when present but not
-verified against vendor CAs in this revision — attestation_crypto_verified
-stays false until that check exists.
+L2 CLOUD_ATTESTED means: provider instance identity was observed and
+bound to the ARTCB registry. It is NOT a CA-verified cryptographic
+attestation and it is NOT a TPM quote.
+
+`attestation_crypto_verified` stays false until a TPM/vTPM quote verifies.
+An AWS RSA-2048 pin against the published regional cert is a *sub*-verdict
+(`aws_iid_rsa2048_pin`); it does not flip certification or hardware TPM.
+OVH metadata remains unsigned in this implementation.
 """
 
 from __future__ import annotations
@@ -127,10 +132,12 @@ def aws_imds_probe() -> dict[str, Any]:
         hdr["X-aws-ec2-metadata-token"] = token["body"].strip()
     doc = _http_plain("http://169.254.169.254/latest/dynamic/instance-identity/document", headers=hdr, timeout=1)
     pkcs7 = _http_plain("http://169.254.169.254/latest/dynamic/instance-identity/pkcs7", headers=hdr, timeout=1)
+    rsa2048 = _http_plain("http://169.254.169.254/latest/dynamic/instance-identity/rsa2048", headers=hdr, timeout=1)
     parsed = None
-    if doc.get("ok") and (doc.get("body") or "").lstrip().startswith("{"):
+    raw_doc = doc.get("body") or ""
+    if doc.get("ok") and raw_doc.lstrip().startswith("{"):
         try:
-            parsed = json.loads(doc["body"])
+            parsed = json.loads(raw_doc)
         except json.JSONDecodeError:
             parsed = None
     return {
@@ -138,13 +145,16 @@ def aws_imds_probe() -> dict[str, Any]:
         "document_ok": bool(parsed),
         "pkcs7_present": bool(pkcs7.get("ok") and pkcs7.get("body")),
         "pkcs7_verified": False,
+        "rsa2048_present": bool(rsa2048.get("ok") and rsa2048.get("body")),
         "instance_id": (parsed or {}).get("instanceId"),
         "instance_type": (parsed or {}).get("instanceType"),
         "region": (parsed or {}).get("region"),
+        "_document_raw": raw_doc if parsed else "",
+        "_rsa2048_raw": (rsa2048.get("body") or "") if rsa2048.get("ok") else "",
         "note": (
             "AWS instance-identity document is a cloud analog, not a TPM quote. "
-            "accountId omitted. PKCS#7 blob may be present; signature is not "
-            "checked against AWS CAs in this revision."
+            "accountId omitted from public fields. RSA-2048 pin uses the published "
+            "regional cert; that is not a TPM quote and not CERTIFIED_100."
         ),
     }
 
@@ -255,6 +265,119 @@ def overall_platform_trust(level: int) -> str:
         TRUST_L1_OBSERVED: "VM_UNATTESTED",
         TRUST_L0_NONE: "UNKNOWN",
     }.get(level, "UNKNOWN")
+
+
+AWS_IID_CERT_DIR = Path(__file__).resolve().parent / "aws_iid_certs"
+
+
+def _wrap_pkcs7(raw: str) -> str:
+    blob = "".join(str(raw or "").split())
+    if "BEGIN" in str(raw or ""):
+        return str(raw)
+    lines = [blob[i : i + 64] for i in range(0, len(blob), 64)]
+    return "-----BEGIN PKCS7-----\n" + "\n".join(lines) + "\n-----END PKCS7-----\n"
+
+
+def verify_aws_iid_rsa2048_pin(*, document: str, rsa2048_body: str, region: str) -> dict[str, Any]:
+    """Pin-verify AWS IID RSA-2048 against the published regional cert.
+
+    This is the procedure AWS documents (`openssl smime -verify -noverify`).
+    `-noverify` means the cert is pinned, not walked to a public CA.
+    Success is NOT a TPM quote, NOT freshness/challenge, NOT Ed25519 bind,
+    and NOT CERTIFIED_100.
+    """
+    region = str(region or "").strip()
+    cert_path = AWS_IID_CERT_DIR / f"{region}-rsa2048.pem"
+    if not document.strip() or not str(rsa2048_body or "").strip():
+        return {"verified": False, "reason": "missing_document_or_signature", "region": region}
+    if not cert_path.is_file():
+        return {"verified": False, "reason": "no_pinned_rsa2048_cert", "region": region}
+    import tempfile
+
+    wrapped = _wrap_pkcs7(rsa2048_body)
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            sig = Path(tmp) / "rsa2048"
+            doc = Path(tmp) / "document"
+            out = Path(tmp) / "out"
+            sig.write_text(wrapped, encoding="utf-8")
+            doc.write_text(document, encoding="utf-8")
+            proc = subprocess.run(
+                [
+                    "openssl",
+                    "smime",
+                    "-verify",
+                    "-in",
+                    str(sig),
+                    "-inform",
+                    "PEM",
+                    "-content",
+                    str(doc),
+                    "-certfile",
+                    str(cert_path),
+                    "-noverify",
+                    "-out",
+                    str(out),
+                ],
+                capture_output=True,
+                text=True,
+                timeout=8,
+                check=False,
+            )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"verified": False, "reason": type(exc).__name__, "region": region}
+    ok = proc.returncode == 0
+    return {
+        "verified": ok,
+        "reason": "ok" if ok else ((proc.stderr or proc.stdout or "openssl_failed")[-240:]),
+        "region": region,
+        "pinned_cert": cert_path.name,
+        "note": "AWS-documented pin. Not a CA walk, not a TPM quote, not node-key binding.",
+    }
+
+
+def split_platform_verdicts(
+    *,
+    overall: str,
+    hardware_tpm: str,
+    attestation_crypto_verified: bool,
+    certified_hardware_identity: bool,
+    iid_pin: dict[str, Any] | None = None,
+    recast_cloud_as_tpm: bool = False,
+) -> dict[str, Any]:
+    """Dashboard-safe names. observed PASS ≠ crypto PASS ≠ CERTIFIED_100."""
+    if recast_cloud_as_tpm or (certified_hardware_identity and hardware_tpm != "TPM_HARDWARE_ATTESTED"):
+        observed = "FAIL"
+    elif overall in {"CLOUD_ATTESTED", "TPM_ATTESTED", "VTPM_ATTESTED", "VM_UNATTESTED", "UNKNOWN"}:
+        observed = "PASS"
+    else:
+        observed = "FAIL"
+    pin = iid_pin or {}
+    if pin.get("verified") is True:
+        pin_verdict = "PASS"
+    elif pin.get("reason") in {"missing_document_or_signature", "no_pinned_rsa2048_cert", None} and not pin.get("verified"):
+        pin_verdict = "NOT_PROVEN"
+    elif pin.get("reason") == "not_aws":
+        pin_verdict = "NOT_APPLICABLE"
+    else:
+        pin_verdict = "FAIL" if pin.get("verified") is False and pin.get("reason") not in {
+            "missing_document_or_signature",
+            "no_pinned_rsa2048_cert",
+        } else "NOT_PROVEN"
+    return {
+        "platform_level_observed": observed,
+        "platform_crypto_attestation": "PASS" if attestation_crypto_verified else "NOT_PROVEN",
+        "hardware_tpm": hardware_tpm,
+        "certification": "FAIL",
+        "aws_iid_rsa2048_pin": pin_verdict,
+        "note": (
+            "platform_level_observed PASS = classification + registry binding, "
+            "not a CA-verified attestation. platform_crypto_attestation stays "
+            "NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is "
+            "a pin of the AWS IID signature only (no freshness, no Ed25519 bind). "
+            "certification FAIL until CERTIFIED_100."
+        ),
+    }
 
 
 def load_platform_binding_registry() -> dict[str, dict[str, str]]:
@@ -439,6 +562,31 @@ def collect_platform_attestation(
         (klass == "tpm_hardware" and quote_present(tpm))
         or (klass == "vtpm" and quote_present(tpm))
     )
+    recast = overall == "TPM_ATTESTED" and hw == "NOT_AVAILABLE"
+    recast = recast or (level == TRUST_L4_TPM and hw != "TPM_HARDWARE_ATTESTED")
+    iid_pin: dict[str, Any]
+    if aws.get("document_ok"):
+        iid_pin = verify_aws_iid_rsa2048_pin(
+            document=str(aws.get("_document_raw") or ""),
+            rsa2048_body=str(aws.get("_rsa2048_raw") or ""),
+            region=str(aws.get("region") or ""),
+        )
+    else:
+        iid_pin = {"verified": False, "reason": "not_aws"}
+    public_aws = {k: v for k, v in aws.items() if not str(k).startswith("_")}
+    public_aws["rsa2048_pin"] = {
+        "verified": bool(iid_pin.get("verified")),
+        "reason": iid_pin.get("reason"),
+        "region": iid_pin.get("region"),
+    }
+    splits = split_platform_verdicts(
+        overall=overall,
+        hardware_tpm=hw,
+        attestation_crypto_verified=crypto_verified,
+        certified_hardware_identity=level == TRUST_L4_TPM,
+        iid_pin=iid_pin,
+        recast_cloud_as_tpm=recast,
+    )
     evidence = {
         "platform_class": klass,
         "trust_level": level,
@@ -453,7 +601,7 @@ def collect_platform_attestation(
         json.dumps(evidence, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
     return {
-        "protocol": "279-platform-attestation",
+        "protocol": "280-platform-attestation",
         "ts_ns": now_wall_ns(),
         "platform_class": klass,
         "trust_level": level,
@@ -480,6 +628,7 @@ def collect_platform_attestation(
         ),
         "attestation_verified": bool(aws.get("document_ok") or ovh.get("document_ok") or quote_present(tpm)),
         "attestation_crypto_verified": crypto_verified,
+        "split_verdicts": splits,
         "hardware_tpm_attestation": hw,
         "vtpm_attestation": vt,
         "platform_identity_attestation": plat,
@@ -506,7 +655,7 @@ def collect_platform_attestation(
         "binding": binding,
         "tpm": tpm,
         "virt": virt,
-        "aws_imds": aws,
+        "aws_imds": public_aws,
         "ovh_metadata": ovh,
         "nonce": hashlib.sha256(f"{now_wall_ns()}|{instance_id}|{declared}".encode()).hexdigest()[:32],
         "evidence_hash": evidence_hash,
@@ -514,7 +663,10 @@ def collect_platform_attestation(
             "TPM hardware and cloud identity are independent verdicts. "
             "CLOUD_ATTESTED is not TPM_ATTESTED. Absent /dev/tpm0 on a VM is "
             "NOT_AVAILABLE for hardware TPM, not a global NODE IDENTITY NOT_PROVEN. "
-            "PKCS#7 / OVH metadata signatures are not CA-verified here."
+            "PKCS#7 / OVH metadata signatures are not a TPM quote. "
+            "split_verdicts.platform_level_observed PASS is not certification. "
+            "split_verdicts.platform_crypto_attestation stays NOT_PROVEN without "
+            "a verified TPM/vTPM quote. AWS RSA-2048 pin is a sub-verdict only."
         ),
     }
 

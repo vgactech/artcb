@@ -221,11 +221,22 @@ def main() -> int:
 
     audit = book.get("audit") if isinstance(book.get("audit"), dict) else {}
     results = {
-        "platform_levels": _row(
+        "platform_level_observed": _row(
             "PASS" if cloud_ok == 4 and tpm_hw_available == 0 and not recast else "FAIL",
             nodes=compact,
             recast_cloud_as_tpm=recast,
-            note="four VMs should be CLOUD_ATTESTED / hardware TPM NOT_AVAILABLE — never TPM_ATTESTED",
+            note="classification+binding only — not CA crypto, not CERTIFIED_100",
+        ),
+        "platform_crypto_attestation": _row(
+            "NOT_PROVEN",
+            note="no TPM/vTPM quote; AWS IID pin is a sub-verdict, not this field",
+        ),
+        "hardware_tpm": _row("NOT_AVAILABLE" if tpm_hw_available == 0 else "FAIL", nodes={nid: compact[nid]["hardware_tpm"] for nid in compact}),
+        "certification": _row("FAIL", certified_100=False),
+        "platform_levels": _row(
+            "PASS" if cloud_ok == 4 and tpm_hw_available == 0 and not recast else "FAIL",
+            alias_of="platform_level_observed",
+            note="deprecated alias; do not read as cryptographic certification",
         ),
         "node_platform_binding": _row(
             "PASS" if mismatches == 0 and all(c.get("binding_verified") for c in compact.values()) else "FAIL",

@@ -47,6 +47,12 @@ def test_cloud_vm_is_l2_not_tpm() -> None:
     assert snap["certified_hardware_identity"] is False
     assert snap["tpm_quote_proven"] is False
     assert snap["attestation_crypto_verified"] is False
+    v = snap["split_verdicts"]
+    assert v["platform_level_observed"] == "PASS"
+    assert v["platform_crypto_attestation"] == "NOT_PROVEN"
+    assert v["hardware_tpm"] == "NOT_AVAILABLE"
+    assert v["certification"] == "FAIL"
+    assert v["aws_iid_rsa2048_pin"] == "NOT_PROVEN"
 
 
 def test_ovh_vm_is_l2_not_tpm() -> None:
@@ -63,6 +69,12 @@ def test_ovh_vm_is_l2_not_tpm() -> None:
     assert snap["hardware_tpm_attestation"] == "NOT_AVAILABLE"
     assert snap["platform_identity_attestation"] == "OVH_CLOUD_ATTESTED"
     assert snap["certified_hardware_identity"] is False
+    v = snap["split_verdicts"]
+    assert v["platform_level_observed"] == "PASS"
+    assert v["platform_crypto_attestation"] == "NOT_PROVEN"
+    assert v["hardware_tpm"] == "NOT_AVAILABLE"
+    assert v["certification"] == "FAIL"
+    assert v["aws_iid_rsa2048_pin"] == "NOT_APPLICABLE"
 
 
 def test_vtpm_without_quote_stays_below_l3() -> None:
@@ -95,6 +107,11 @@ def test_bare_metal_tpm_quote_is_l4() -> None:
     assert snap["overall_platform_trust"] == "TPM_ATTESTED"
     assert snap["hardware_tpm_attestation"] == "TPM_HARDWARE_ATTESTED"
     assert snap["certified_hardware_identity"] is True
+    v = snap["split_verdicts"]
+    assert v["platform_level_observed"] == "PASS"
+    assert v["platform_crypto_attestation"] == "PASS"
+    assert v["hardware_tpm"] == "TPM_HARDWARE_ATTESTED"
+    assert v["certification"] == "FAIL"
 
 
 def test_generic_vm_is_l1() -> None:
@@ -210,3 +227,32 @@ def test_block_size_converges_across_digit_widths() -> None:
     payload2 = {"index": 1, "blob": "y" * 9990}
     line2 = encode_jsonl_with_converged_size(payload2)
     assert json.loads(line2)["block_size_bytes"] == len(line2.encode("utf-8"))
+
+
+def test_aws_iid_pin_fails_closed_on_junk() -> None:
+    from src.artcb.consensus.platform_attest import verify_aws_iid_rsa2048_pin
+
+    got = verify_aws_iid_rsa2048_pin(
+        document='{"instanceId":"i-085b74abd1aaf04ee","region":"eu-west-3"}',
+        rsa2048_body="not-a-pkcs7",
+        region="eu-west-3",
+    )
+    assert got["verified"] is False
+    assert got["reason"] != "ok"
+
+
+def test_split_verdicts_never_certify_from_cloud_observe() -> None:
+    from src.artcb.consensus.platform_attest import split_platform_verdicts
+
+    v = split_platform_verdicts(
+        overall="CLOUD_ATTESTED",
+        hardware_tpm="NOT_AVAILABLE",
+        attestation_crypto_verified=False,
+        certified_hardware_identity=False,
+        iid_pin={"verified": True, "reason": "ok"},
+        recast_cloud_as_tpm=False,
+    )
+    assert v["platform_level_observed"] == "PASS"
+    assert v["aws_iid_rsa2048_pin"] == "PASS"
+    assert v["platform_crypto_attestation"] == "NOT_PROVEN"
+    assert v["certification"] == "FAIL"

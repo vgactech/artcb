@@ -475,6 +475,7 @@ def public_registry_view() -> dict[str, Any]:
             "hardware_tpm_attestation": snap.get("hardware_tpm_attestation"),
             "platform_identity_attestation": snap.get("platform_identity_attestation"),
             "certified_hardware_identity": snap.get("certified_hardware_identity"),
+            "split_verdicts": snap.get("split_verdicts"),
             "binding": snap.get("binding"),
         }
     except Exception as exc:
