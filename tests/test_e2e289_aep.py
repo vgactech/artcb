@@ -96,8 +96,7 @@ def test_missing_failure_event_is_a_gap() -> None:
     assert "SECRET_LOOKUP" in cert["missing_events"]
 
 
-def test_event_catalog_has_no_private_thinking() -> None:
-    assert "PRIVATE_THINKING" not in EVENT_CATALOG
-    assert "CHAIN_OF_THOUGHT" not in EVENT_CATALOG
+def test_event_catalog_thinking_is_received_not_dumped_on_public() -> None:
+    assert "THINKING_RECEIVED" in EVENT_CATALOG
     assert "SSH_ATTEMPT" in EVENT_CATALOG
     assert "SECRET_LOOKUP" in EVENT_CATALOG

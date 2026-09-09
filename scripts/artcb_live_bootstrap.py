@@ -25,6 +25,7 @@ from artcb.live import (  # noqa: E402
     fetch_doppler_secret,
     http_json,
     ingest_prompt_file,
+    ingest_thinking_file,
     prompt_file_skipped_reason,
     pull_remote_agent_env,
     resolve_api_key,
@@ -116,6 +117,23 @@ def main() -> int:
             ingest["ingest_reason"] = prompt_file_skipped_reason(prompt_file)
             ingest["ingest_path"] = prompt_file
 
+    thinking_ingest: dict = {
+        "ingest_attempted": False,
+        "ingest_skipped": True,
+        "includes_thinking": False,
+        "visibility": "private",
+        "reason": "ARTCB_INGEST_THINKING_FILE unset — Cursor n'injecte pas le thinking dans le VM",
+    }
+    thinking_file = (os.environ.get("ARTCB_INGEST_THINKING_FILE") or "").strip()
+    if thinking_file and key:
+        thinking_ingest["ingest_attempted"] = True
+        tp = Path(thinking_file)
+        if tp.is_file():
+            thinking_ingest = ingest_thinking_file(tp, url=url, api_key=key)
+        else:
+            thinking_ingest["reason"] = "file_missing"
+            thinking_ingest["ingest_path"] = thinking_file
+
     status = {
         "ok": health_code == 200,
         "live_url": url,
@@ -140,6 +158,7 @@ def main() -> int:
         "last_memo_content_chars": last_memo_chars,
         "last_memo_content_sha256": last_memo_sha256,
         "ingest": ingest,
+        "thinking_ingest": thinking_ingest,
         "token_printed": False,
     }
     write_bootstrap_stamp(

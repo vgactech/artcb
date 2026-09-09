@@ -1778,5 +1778,11 @@ Live `AR-289-20260909T183729Z` SHA ×4 `05d703022a949a61849516e1c8ed20a4e715d9a7
 `logs/289_aep_agent_run_20260909T183729Z.json` `rapports/289_aep_lossless_20260909.md`. T-E72 [x].
 **CERTIFIED_100=false.**
 
+## [2026-09-09T18:53:00Z] 290 — thinking intégral → visibilité private (pas CERTIFIED_100)
+
+~~Thinking jamais sur ARTCB~~ révoqué pour `private`. Public = hash seulement. Private = bytes intacts, pas de résumé. Cursor n'injecte pas le thinking dans la VM → fichier absent = NOT_PROVEN.
+`ingest_thinking_file` `visibility=private` `inject_context=false` chunks lossless. T-E73.
+**CERTIFIED_100=false.**
+
 
 

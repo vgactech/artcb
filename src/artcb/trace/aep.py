@@ -12,7 +12,8 @@ from typing import Any
 
 from artcb.trace.agent_run import sha256_bytes, sha256_json
 
-# Operational catalog — never includes PRIVATE_THINKING / CHAIN_OF_THOUGHT.
+# Operational catalog. THINKING_RECEIVED = private-lane lossless body (hash on
+# the public ledger). The thinking bytes themselves are visibility=private.
 EVENT_CATALOG: frozenset[str] = frozenset(
     {
         "INPUT_RECEIVED",
@@ -31,6 +32,7 @@ EVENT_CATALOG: frozenset[str] = frozenset(
         "DOPPLER_KEY_CHECK",
         "TOOL_CALL",
         "TOOL_RESULT",
+        "THINKING_RECEIVED",
         "TEST_STARTED",
         "TEST_RESULT",
         "TEST_EXECUTED",
