@@ -1,0 +1,520 @@
+{
+  "campaign_id": "278_20260909T000908Z",
+  "code_sha": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61",
+  "runner": "scripts/run_live278_adversarial.py",
+  "timestamp": "2026-09-09T00:19:02Z",
+  "node_ids": [
+    "aws-node-3",
+    "ovh-node-1",
+    "ovh-node-2",
+    "ovh-node-4"
+  ],
+  "results": {
+    "pre_r273_a3_gap_preserved": {
+      "status": "PASS",
+      "certified_100": false,
+      "note": "SHA d9eba2ac A3 was GAP (200 not_accepted). Not recast. See logs/campaigns/273_20260908T225711Z"
+    },
+    "phase1_sha_x4": {
+      "status": "PASS",
+      "certified_100": false,
+      "shas": {
+        "ovh-node-1": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61",
+        "ovh-node-2": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61",
+        "aws-node-3": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61",
+        "ovh-node-4": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61"
+      },
+      "origin_main": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61",
+      "want": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61"
+    },
+    "phase1_binding_x4": {
+      "status": "PASS",
+      "certified_100": false,
+      "bindings": {
+        "ovh-node-1": true,
+        "ovh-node-2": true,
+        "aws-node-3": true,
+        "ovh-node-4": true
+      }
+    },
+    "platform_attest": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "tpm_quote_proven": false,
+      "any_tpm": false,
+      "any_cloud_identity": true,
+      "nodes": {
+        "ovh-node-1": {
+          "platform_class": "cloud_instance_identity",
+          "tpm_present": false,
+          "tpm_verdict": "ABSENT",
+          "aws_instance": null,
+          "aws_type": null,
+          "ovh_uuid": "f2642e42-323c-4621-b0e8-a82ffb20f184",
+          "virt": "kvm",
+          "http": 200
+        },
+        "ovh-node-2": {
+          "platform_class": "cloud_instance_identity",
+          "tpm_present": false,
+          "tpm_verdict": "ABSENT",
+          "aws_instance": null,
+          "aws_type": null,
+          "ovh_uuid": "6470522e-1561-4741-9254-5f58b909eeb9",
+          "virt": "kvm",
+          "http": 200
+        },
+        "aws-node-3": {
+          "platform_class": "cloud_instance_identity",
+          "tpm_present": false,
+          "tpm_verdict": "ABSENT",
+          "aws_instance": "i-085b74abd1aaf04ee",
+          "aws_type": "t3.small",
+          "ovh_uuid": null,
+          "virt": "amazon",
+          "http": 200
+        },
+        "ovh-node-4": {
+          "platform_class": "cloud_instance_identity",
+          "tpm_present": false,
+          "tpm_verdict": "ABSENT",
+          "aws_instance": null,
+          "aws_type": null,
+          "ovh_uuid": "22dc6a47-5b79-4084-82d7-eabb4f5b2680",
+          "virt": "kvm",
+          "http": 200
+        }
+      },
+      "note": "cloud identity ≠ TPM quote. Bare-metal TPM path is implemented and idle without /dev/tpm0."
+    },
+    "a3_k1_as_node2_post_r273": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "BOUND",
+      "binding_rejected": {
+        "ovh-node-2": "invalid_replica_key_binding",
+        "aws-node-3": "invalid_replica_key_binding",
+        "ovh-node-4": "invalid_replica_key_binding"
+      },
+      "identity_passed": [],
+      "era": "POST_R273"
+    },
+    "a7_k2_as_node1": {
+      "status": "PASS",
+      "certified_100": false,
+      "verdict": "BOUND",
+      "binding_rejected": {
+        "ovh-node-2": "invalid_replica_key_binding",
+        "aws-node-3": "invalid_replica_key_binding",
+        "ovh-node-4": "invalid_replica_key_binding"
+      }
+    },
+    "a4_live_revoke": {
+      "status": "PASS",
+      "certified_100": false,
+      "expect": "replica_key_revoked",
+      "actual": "replica_key_revoked",
+      "post": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "replica_key_revoked",
+        "error": null
+      },
+      "overlay": {
+        "version": 11,
+        "replicas": {
+          "ovh-node-2": {
+            "revoked": true
+          }
+        }
+      },
+      "note": "revoke ovh-node-2 on running ovh-4"
+    },
+    "a5_live_expire": {
+      "status": "PASS",
+      "certified_100": false,
+      "expect": "replica_key_expired",
+      "actual": "replica_key_expired",
+      "post": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "replica_key_expired",
+        "error": null
+      },
+      "overlay": {
+        "version": 12,
+        "replicas": {
+          "ovh-node-2": {
+            "not_after_epoch": 1
+          }
+        }
+      },
+      "note": "expire ovh-node-2 on running ovh-4"
+    },
+    "a6_live_downgrade": {
+      "status": "PASS",
+      "certified_100": false,
+      "expect": "replica_pqc_downgrade",
+      "actual": "replica_pqc_downgrade",
+      "post": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "replica_pqc_downgrade",
+        "error": null
+      },
+      "overlay": {
+        "version": 13,
+        "replicas": {
+          "ovh-node-2": {
+            "require_pqc": true
+          }
+        }
+      },
+      "note": "require_pqc ovh-node-2 on running ovh-4"
+    },
+    "a8_live_rotation_old_key": {
+      "status": "PASS",
+      "certified_100": false,
+      "post": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "invalid_replica_key_binding",
+        "error": null
+      },
+      "note": "old K2 after overlay rotation must 409"
+    },
+    "registry_rollback": {
+      "status": "FAIL",
+      "certified_100": false,
+      "overlay": {
+        "present": true,
+        "applied": true,
+        "reason": "ok",
+        "version": 19,
+        "ids": [
+          "ovh-node-2"
+        ]
+      },
+      "post": {
+        "ok": false,
+        "http": 200,
+        "reason": "not_accepted",
+        "detail": null,
+        "error": null
+      },
+      "note": "version 19 after 20 must not apply"
+    },
+    "registry_corrupt": {
+      "status": "PASS",
+      "certified_100": false,
+      "overlay": {
+        "present": true,
+        "applied": false,
+        "reason": "invalid_json",
+        "error": "JSONDecodeError"
+      }
+    },
+    "official_node_tamper": {
+      "status": "FAIL",
+      "certified_100": false,
+      "backup_rc": 0,
+      "tamper_rc": 0,
+      "restore_rc": 0,
+      "during": {
+        "official_node_marker": "ovh-node-4",
+        "local_ed25519_b64": "fiXJqTRUFuDYPQkh8q8UuzilVyK8sshJANQkDmfjNBs=",
+        "key_owner": "ovh-node-4",
+        "coherent": true,
+        "mismatch": false,
+        "note": "official_node is a deployment label. The registered key is the consensus identity."
+      },
+      "after": {
+        "official_node_marker": "ovh-node-4",
+        "local_ed25519_b64": "fiXJqTRUFuDYPQkh8q8UuzilVyK8sshJANQkDmfjNBs=",
+        "key_owner": "ovh-node-4",
+        "coherent": true,
+        "mismatch": false,
+        "note": "official_node is a deployment label. The registered key is the consensus identity."
+      },
+      "spoken_as_during": "ovh-node-4",
+      "spoken_as_after": "ovh-node-4",
+      "note": "file may change; consensus id must stay the key owner"
+    },
+    "reboot_identity": {
+      "status": "PASS",
+      "certified_100": false,
+      "before_height": 1133,
+      "after_height": 1133,
+      "before_id": "ovh-node-2",
+      "after_id": "ovh-node-2",
+      "before_view": 15,
+      "after_view": 15,
+      "after_sha": "d6212444874ef0d65d72c8cc2e4726fcdb9aae61"
+    },
+    "creator_or_replica_crash": {
+      "status": "FAIL",
+      "certified_100": false,
+      "dual_tip": false,
+      "binding_while_down": true,
+      "posts_down": {
+        "ovh-node-1": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding",
+          "error": null
+        },
+        "aws-node-3": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding",
+          "error": null
+        },
+        "ovh-node-4": {
+          "ok": false,
+          "http": 409,
+          "reason": null,
+          "detail": "invalid_replica_key_binding",
+          "error": null
+        }
+      },
+      "heights": {
+        "before": {
+          "ovh-node-1": 1133,
+          "ovh-node-2": 1133,
+          "aws-node-3": 1133,
+          "ovh-node-4": 1133
+        },
+        "during": {
+          "ovh-node-1": 1133,
+          "aws-node-3": 1133,
+          "ovh-node-4": 1133
+        },
+        "after": {
+          "ovh-node-1": 1133,
+          "ovh-node-2": null,
+          "aws-node-3": 1133,
+          "ovh-node-4": 1133
+        }
+      },
+      "note": "ovh-2 stopped (not the event creator/primary). Identity still bound. Primary remains ovh-4."
+    },
+    "net_loss_10": {
+      "status": "FAIL",
+      "certified_100": false,
+      "spec": "loss 10%",
+      "view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "http": 200
+      },
+      "propose": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "not_primary",
+        "digest": null,
+        "error": null
+      },
+      "netem": {
+        "ovh-node-2": [
+          0,
+          "qdisc netem 802d: root refcnt 2 limit 1000 loss 10%\n"
+        ],
+        "aws-node-3": [
+          0,
+          "qdisc netem 802c: root refcnt 3 limit 1000 loss 10%\n"
+        ],
+        "ovh-node-4": [
+          0,
+          "qdisc netem 8031: root refcnt 2 limit 1000 loss 10%\n"
+        ]
+      }
+    },
+    "net_delay_100ms": {
+      "status": "FAIL",
+      "certified_100": false,
+      "spec": "delay 100ms",
+      "view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "http": 200
+      },
+      "propose": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "not_primary",
+        "digest": null,
+        "error": null
+      },
+      "netem": {
+        "ovh-node-2": [
+          0,
+          "qdisc netem 802e: root refcnt 2 limit 1000 delay 100ms\n"
+        ],
+        "aws-node-3": [
+          0,
+          "qdisc netem 802d: root refcnt 3 limit 1000 delay 100ms\n"
+        ],
+        "ovh-node-4": [
+          0,
+          "qdisc netem 8032: root refcnt 2 limit 1000 delay 100ms\n"
+        ]
+      }
+    },
+    "net_reorder": {
+      "status": "FAIL",
+      "certified_100": false,
+      "spec": "delay 50ms reorder 25% 50%",
+      "view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "http": 200
+      },
+      "propose": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "not_primary",
+        "digest": null,
+        "error": null
+      },
+      "netem": {
+        "ovh-node-2": [
+          0,
+          ": root refcnt 2 limit 1000 delay 50ms reorder 25% 50% gap 1\n"
+        ],
+        "aws-node-3": [
+          0,
+          ": root refcnt 3 limit 1000 delay 50ms reorder 25% 50% gap 1\n"
+        ],
+        "ovh-node-4": [
+          0,
+          ": root refcnt 2 limit 1000 delay 50ms reorder 25% 50% gap 1\n"
+        ]
+      }
+    },
+    "net_loss_delay": {
+      "status": "FAIL",
+      "certified_100": false,
+      "spec": "loss 10% delay 100ms",
+      "view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "http": 200
+      },
+      "propose": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "not_primary",
+        "digest": null,
+        "error": null
+      },
+      "netem": {
+        "ovh-node-2": [
+          0,
+          "c netem 8030: root refcnt 2 limit 1000 delay 100ms loss 10%\n"
+        ],
+        "aws-node-3": [
+          0,
+          "c netem 802f: root refcnt 3 limit 1000 delay 100ms loss 10%\n"
+        ],
+        "ovh-node-4": [
+          0,
+          "c netem 8034: root refcnt 2 limit 1000 delay 100ms loss 10%\n"
+        ]
+      }
+    },
+    "n04_50": {
+      "status": "FAIL",
+      "certified_100": false,
+      "spec": "loss 50%",
+      "view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "http": 200
+      },
+      "propose": {
+        "ok": false,
+        "http": 409,
+        "reason": null,
+        "detail": "not_primary",
+        "digest": null,
+        "error": null
+      },
+      "netem": {
+        "ovh-node-2": [
+          0,
+          "qdisc netem 8031: root refcnt 2 limit 1000 loss 50%\n"
+        ],
+        "aws-node-3": [
+          0,
+          "qdisc netem 8030: root refcnt 3 limit 1000 loss 50%\n"
+        ],
+        "ovh-node-4": [
+          0,
+          "qdisc netem 8035: root refcnt 2 limit 1000 loss 50%\n"
+        ]
+      }
+    },
+    "n04_row_not_recast_pass": true,
+    "nodeid_clone": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "a second live VM with the same NodeID+key was not launched (would be a Sybil on the book)"
+    },
+    "c04_thousands": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "1k/10k/100k certified appends not executed; a short substitute is forbidden"
+    },
+    "certified_100": false,
+    "production_ready": false,
+    "restore": {
+      "ovh-node-1": {
+        "overlay": 0,
+        "artcb": "active\n"
+      },
+      "ovh-node-2": {
+        "overlay": 0,
+        "artcb": "active\n"
+      },
+      "aws-node-3": {
+        "overlay": 255,
+        "artcb": "active\n"
+      },
+      "ovh-node-4": {
+        "overlay": 0,
+        "artcb": "active\n"
+      }
+    }
+  },
+  "verdicts": {
+    "identity_binding": "PASS",
+    "a7_binding": "PASS",
+    "revocation": "PASS",
+    "expiration": "PASS",
+    "downgrade": "PASS",
+    "rotation": "PASS",
+    "official_node_integrity": "FAIL",
+    "registry_rollback": "FAIL",
+    "registry_corrupt": "PASS",
+    "reboot_identity": "PASS",
+    "replica_crash": "FAIL",
+    "new_view": "PASS",
+    "new_view_note": "Q=1/2/3 + state_incomplete measured on SHA 41c9e1dd campaign 277, not re-bound here",
+    "partition_safety": "PASS",
+    "partition_note": "2-2 dual=false on 277 combo extra; not recast as this SHA unless re-run",
+    "liveness_50_loss": "FAIL",
+    "tpm": "NOT_PROVEN",
+    "large_scale": "NOT_PROVEN",
+    "certified_100": false
+  }
+}

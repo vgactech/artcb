@@ -1,0 +1,39 @@
+{
+  "platform_class": "cloud_instance_identity",
+  "tpm": {
+    "present": false,
+    "tpm0": false,
+    "tpmrm0": false,
+    "tpm2_tools": false,
+    "quote": null,
+    "pcrs": null,
+    "verdict": "ABSENT",
+    "note": "device presence ≠ attested quote. swtpm is not hardware TPM."
+  },
+  "virt": {
+    "systemd_detect_virt": "amazon",
+    "is_vm": true,
+    "dmi_sys_vendor": "Amazon EC2",
+    "dmi_product": "t3.small",
+    "dmi_uuid": "",
+    "machine_id": "ec258654f7465a3f0405a3d0710a502a",
+    "hostname": "ip-172-31-8-93"
+  },
+  "aws_imds": {
+    "reachable": true,
+    "document_ok": true,
+    "pkcs7_present": true,
+    "instance_id": "i-085b74abd1aaf04ee",
+    "instance_type": "t3.small",
+    "region": "eu-west-3",
+    "note": "AWS instance-identity document is a cloud analog, not a TPM quote."
+  },
+  "ovh_metadata": {
+    "reachable": false,
+    "document_ok": false,
+    "uuid": null,
+    "name": null,
+    "note": "OpenStack/OVH metadata is a cloud analog, not a TPM quote."
+  },
+  "http": 200
+}

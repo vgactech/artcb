@@ -1,0 +1,39 @@
+{
+  "rollback": {
+    "v30_overlay": {
+      "present": true,
+      "applied": true,
+      "reason": "ok",
+      "version": 30,
+      "ids": [
+        "ovh-node-2"
+      ]
+    },
+    "v30_post": {
+      "http": 409,
+      "reason": null,
+      "detail": "replica_key_revoked"
+    },
+    "v29_overlay": {
+      "present": true,
+      "applied": false,
+      "reason": "overlay_rollback_rejected",
+      "version": 29,
+      "seen": 30
+    },
+    "v29_post": {
+      "http": 200,
+      "reason": "not_accepted",
+      "detail": null
+    }
+  },
+  "tamper": {
+    "during_file": "ovh-node-2",
+    "during_env": "ovh-node-4",
+    "during_mismatch": true,
+    "during_shadow": true,
+    "spoken": "ovh-node-4",
+    "after_file": "ovh-node-4",
+    "after_spoken": "ovh-node-4"
+  }
+}

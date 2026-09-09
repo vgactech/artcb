@@ -1710,5 +1710,11 @@ N04 50 % FAIL (`not_primary` sous netem replicas). A4–A8 / TPM (`/dev/tpm0` ab
 `logs/277_issue77_20260908T233012Z.json` MANIFEST `951e16fd…` `rapports/277_issue77_live_identity_newview_20260908.md`. T-E62 [x].
 **CERTIFIED_100=false.** Production ready = false. Jamais wipe. HPC interdit. AWS t3.small.
 
+## [2026-09-09T00:24:00Z] 278 — analog plateforme VM + overlay live A4–A8 (pas CERTIFIED_100)
+
+TPM matériel absent ×4 (KVM/amazon). Analog mesuré : OVH metadata uuid + AWS IMDS `i-085b74abd1aaf04ee` t3.small. Chemin bare-metal `/dev/tpm0` implémenté, inactif. Overlay `/etc/artcb/replica_overlay.json` relu par l’API : A4 revoked / A5 expired / A6 require_pqc / A8 rotation = 409 live sur ovh-4. Rollback v29 rejeté après `6715b6f`. Tamper official_node : env ombre le fichier, id parlé = propriétaire de la clé. N04 50 % FAIL. C04 NOT_PROVEN. Height **1133**.
+`logs/278_adversarial_20260909T000908Z.json` `logs/278_reprobe.json` `rapports/278_adversarial_post_r273_20260909.md`. T-E63 [x].
+**CERTIFIED_100=false.**
+
 
 

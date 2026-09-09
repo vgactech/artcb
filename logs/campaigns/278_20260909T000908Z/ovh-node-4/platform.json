@@ -1,0 +1,39 @@
+{
+  "platform_class": "cloud_instance_identity",
+  "tpm": {
+    "present": false,
+    "tpm0": false,
+    "tpmrm0": false,
+    "tpm2_tools": false,
+    "quote": null,
+    "pcrs": null,
+    "verdict": "ABSENT",
+    "note": "device presence ≠ attested quote. swtpm is not hardware TPM."
+  },
+  "virt": {
+    "systemd_detect_virt": "kvm",
+    "is_vm": true,
+    "dmi_sys_vendor": "OpenStack Foundation",
+    "dmi_product": "OpenStack Nova",
+    "dmi_uuid": "",
+    "machine_id": "22dc6a475b79408482d7eabb4f5b2680",
+    "hostname": "node-artcb-ovh-4"
+  },
+  "aws_imds": {
+    "reachable": false,
+    "document_ok": false,
+    "pkcs7_present": false,
+    "instance_id": null,
+    "instance_type": null,
+    "region": null,
+    "note": "AWS instance-identity document is a cloud analog, not a TPM quote."
+  },
+  "ovh_metadata": {
+    "reachable": true,
+    "document_ok": true,
+    "uuid": "22dc6a47-5b79-4084-82d7-eabb4f5b2680",
+    "name": "node-artcb-ovh-4",
+    "note": "OpenStack/OVH metadata is a cloud analog, not a TPM quote."
+  },
+  "http": 200
+}

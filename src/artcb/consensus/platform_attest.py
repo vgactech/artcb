@@ -119,8 +119,7 @@ def aws_imds_probe() -> dict[str, Any]:
         "instance_id": (parsed or {}).get("instanceId"),
         "instance_type": (parsed or {}).get("instanceType"),
         "region": (parsed or {}).get("region"),
-        "account": (parsed or {}).get("accountId"),
-        "note": "AWS instance-identity document is a cloud analog, not a TPM quote.",
+        "note": "AWS instance-identity document is a cloud analog, not a TPM quote. accountId omitted.",
     }
 
 
@@ -138,8 +137,7 @@ def ovh_metadata_probe() -> dict[str, Any]:
         "document_ok": bool(parsed),
         "uuid": (parsed or {}).get("uuid"),
         "name": (parsed or {}).get("name"),
-        "project_id": (parsed or {}).get("project_id"),
-        "note": "OpenStack/OVH metadata is a cloud analog, not a TPM quote.",
+        "note": "OpenStack/OVH metadata is a cloud analog, not a TPM quote. project_id omitted.",
     }
 
 
