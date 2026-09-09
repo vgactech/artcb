@@ -49,3 +49,11 @@ Perte de mémoire : **chaque nouveau tour**. Le chat n’est pas le protocole. R
 - Pytest T-E76 : `test_e2e299` + 297 + 298 + 296 = **10 passed**.
 
 Les timers `artcb-follow-main` des 4 VMs doivent tirer `origin/main` après ce push. Ne pas inventer leur `git_sha`.
+
+## [2026-09-10T23:48:00Z] mesures après commit `369b5ec`
+
+- `git push origin HEAD:main` : `c6dc204..369b5ec`. `HEAD` = `origin/main` = **`369b5ec6d0c9c9ffd56cef68d9105c591360bbb7`**.
+- Mac `:8001` **200** SHA **`369b5ec`** (clone local, même SHA que GitHub).
+- Ingest : `key_present=true` (`env_or_local_file`), `ingest_attempted=true`, `ingest_http=0`, `ingest_error=URLError`, `ingest_skipped=true`. Prompt **pas** on-chain. Archive locale sha256 `cfb2db03…` chars 2873.
+- Follow-main SSH depuis ce Mac : `ssh: connect to host … port 22: Operation timed out` **rc=255 ×4** (ConnectTimeout=8s). SHA VM **non mesuré**. Timers `artcb-follow-main` sur les VMs restent le chemin de pull.
+- `CERTIFIED_100=false`. Health Mac `certified_distributed_mainnet=true` **n’est pas** CERTIFIED_100.

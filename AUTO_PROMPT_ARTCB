@@ -1802,3 +1802,8 @@ Ce que l'opérateur avait oublié de figer, ajouté ici :
 5. Mac = même classe que OVH/AWS (clone GitHub + launchd). ~~`live_enrolled=False` / FOLLOW_MAIN = 4 VMs only.~~ Isolation refusée 2026-09-09T21:55:00Z. Complet = push + follow-main ×4 + SHA mesuré + mêmes tests live.
 **CERTIFIED_100=false.**
 
+## [2026-09-10T23:48:00Z] 299c — push `369b5ec` ; ingest URLError ; VM SHA non mesuré
+
+`origin/main` = `369b5ec6d0c9c9ffd56cef68d9105c591360bbb7`. Mac `:8001` même SHA. Ingest attempted, HTTP 0, prompt pas on-chain. SSH/HTTP vers les 4 VMs timeout depuis ce LAN. Timers VM doivent tirer `main`. N04 last FAIL.
+**CERTIFIED_100=false.**
+
