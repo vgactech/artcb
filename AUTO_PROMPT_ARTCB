@@ -1737,5 +1737,11 @@ Live SHA **`2c9c1d502e0089031ccddc508d477575cdb621c9`** ×4. `/dev/tpm0` ABSENT 
 `logs/281_vtpm_quote_20260909T103402Z.json` `logs/campaigns/281_20260909T103402Z/` MANIFEST `7c87a911…` `rapports/281_vtpm_quote_live_20260909.md`. T-E66 [x].
 **CERTIFIED_100=false.**
 
+## [2026-09-09T11:01:00Z] 282 — NitroTPM AMI aws-node-3, quote L3 (pas CERTIFIED_100)
+
+GO opérateur : AMI UEFI+TPM, pas swtpm recasté. Snapshot `snap-0621d1c686307f311` → `ami-0b82a9f93189c018e` boot=uefi tpm=v2.0. Instance **`i-06c9404e42798ff76`** EIP **`13.38.209.25`** t3.small. Quote verified manufacturer AMZN NitroTPM v1.0. Live SHA **`d5e0c66441714faa251269ca8779f19b2bc9ad80`** ×4 : AWS3 L3 `VTPM_ATTESTED` crypto PASS hardware NOT_AVAILABLE certification FAIL `certified_hardware_identity=false`. OVH ×3 DEVICE_ABSENT L2. Ancienne `i-085b74abd1aaf04ee` stopped (retired). DNS zone n3 PUT 13.38.209.25. Livre **1133**. N04 last FAIL.
+`logs/282_nitrotpm_live.json` `rapports/282_nitrotpm_ami_aws3_20260909.md`. T-E67 [x].
+**CERTIFIED_100=false.**
+
 
 
