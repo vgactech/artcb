@@ -1,0 +1,20 @@
+{
+  "sha": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+  "probe_stdout": "TPM0=no\nTPMRM=no\nNSM=no\nVIRT=amazon\nTOOLS=no\nNO_TPM_MOD\n",
+  "class": "cloud_instance_identity",
+  "trust_level": 2,
+  "overall": "CLOUD_ATTESTED",
+  "split": {
+    "platform_level_observed": "PASS",
+    "platform_crypto_attestation": "NOT_PROVEN",
+    "hardware_tpm": "NOT_AVAILABLE",
+    "certification": "FAIL",
+    "aws_iid_rsa2048_pin": "PASS",
+    "note": "platform_level_observed PASS = classification + registry binding, not a CA-verified attestation. platform_crypto_attestation stays NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is a pin of the AWS IID signature only (no freshness, no Ed25519 bind). certification FAIL until CERTIFIED_100."
+  },
+  "quote_reason": "DEVICE_ABSENT",
+  "quote_verified": false,
+  "quote_kind": "vtpm",
+  "crypto_verified": false,
+  "certified_hardware": false
+}

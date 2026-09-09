@@ -1,0 +1,22 @@
+{
+  "ovh-node-1": {
+    "rc": 0,
+    "stdout": "===HOST artcb-node-1 NODE=ovh-node-1 ===\nVIRT=kvm\nDMI_VENDOR=OpenStack Foundation\nDMI_PRODUCT=OpenStack Nova\nDMI_UUID=\nNO_TPM_DEV\nLS_TPMDIR\ntotal 0\ndrwxr-xr-x  2 root root 0 Sep  9 10:28 .\ndrwxr-xr-x 68 root root 0 Aug 19 13:11 ..\nMODULES\nNO_TPM_MOD\nCMDLINE=BOOT_IMAGE=/vmlinuz-6.8.0-106-generic root=LABEL=cloudimg-rootfs ro console=tty1 console=ttyS0\nTPM2=\nSWTPM=libtss2-tcti-swtpm0t64:amd64 4.0.1-7.1ubuntu5.1\nNITRO\nSeaBIOS\nCLOUD\nAWS_DOC\nAWS_TPM\n404\nKERN_TPM\n",
+    "stderr": ".raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n"
+  },
+  "ovh-node-2": {
+    "rc": 0,
+    "stdout": "===HOST node-artcb-ovh-2 NODE=ovh-node-2 ===\nVIRT=kvm\nDMI_VENDOR=OpenStack Foundation\nDMI_PRODUCT=OpenStack Nova\nDMI_UUID=\nNO_TPM_DEV\nLS_TPMDIR\ntotal 0\ndrwxr-xr-x  2 root root 0 Sep  9 10:28 .\ndrwxr-xr-x 68 root root 0 Sep  2 18:58 ..\nMODULES\nNO_TPM_MOD\nCMDLINE=BOOT_IMAGE=/vmlinuz-6.8.0-138-generic root=UUID=bd538862-c78b-47a7-a5b0-63ba5b68ac12 ro console=tty1 console=ttyS0\nTPM2=\nSWTPM=libtss2-tcti-swtpm0t64:amd64 4.0.1-7.1ubuntu5.1\nNITRO\nSeaBIOS\nCLOUD\nAWS_DOC\nAWS_TPM\n404\nKERN_TPM\n",
+    "stderr": ".raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n"
+  },
+  "aws-node-3": {
+    "rc": 0,
+    "stdout": "===HOST ip-172-31-8-93 NODE=aws-node-3 ===\nVIRT=amazon\nDMI_VENDOR=Amazon EC2\nDMI_PRODUCT=t3.small\nDMI_UUID=\nNO_TPM_DEV\nLS_TPMDIR\ntotal 0\ndrwxr-xr-x  2 root root 0 Sep  9 10:28 .\ndrwxr-xr-x 73 root root 0 Sep  1 19:46 ..\nMODULES\nNO_TPM_MOD\nCMDLINE=BOOT_IMAGE=/vmlinuz-7.0.0-1011-aws root=PARTUUID=73bd7ec1-d6c9-46ce-a53f-c5b9abac3007 ro console=tty1 console=ttyS0 nvme_core.io_timeout=4294967295 panic=-1\nTPM2=\nSWTPM=libtss2-tcti-swtpm0t64:amd64 4.0.1-7.1ubuntu5.1\nNITRO\nAmazon EC2\nCLOUD\nAWS_DOC\n{'instanceId': 'i-085b74abd1aaf04ee', 'instanceType': 't3.small', 'region': 'eu-west-3'}\nAWS_TPM\n200\nKERN_TPM\n",
+    "stderr": "bash: line 7: /sys/class/dmi/id/product_uuid: Permission denied\n"
+  },
+  "ovh-node-4": {
+    "rc": 0,
+    "stdout": "===HOST node-artcb-ovh-4 NODE=ovh-node-4 ===\nVIRT=kvm\nDMI_VENDOR=OpenStack Foundation\nDMI_PRODUCT=OpenStack Nova\nDMI_UUID=\nNO_TPM_DEV\nLS_TPMDIR\ntotal 0\ndrwxr-xr-x  2 root root 0 Sep  9 10:28 .\ndrwxr-xr-x 68 root root 0 Aug 31 19:49 ..\nMODULES\nNO_TPM_MOD\nCMDLINE=BOOT_IMAGE=/vmlinuz-6.8.0-136-generic root=LABEL=cloudimg-rootfs ro console=tty1 console=ttyS0\nTPM2=\nSWTPM=libtss2-tcti-swtpm0t64:amd64 4.0.1-7.1ubuntu5.1\nNITRO\nSeaBIOS\nCLOUD\nAWS_DOC\nAWS_TPM\n404\nKERN_TPM\n",
+    "stderr": ".raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/json/decoder.py\", line 355, in raw_decode\n    raise JSONDecodeError(\"Expecting value\", s, err.value) from None\njson.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)\n"
+  }
+}

@@ -1730,5 +1730,12 @@ Live SHA **`0d7546c09ddd3b5f3ce3235d6ed69927263ea4bf`** ×4. AWS3 pin RSA-2048 e
 `logs/280_split_verdicts_20260909T013417Z.json` `rapports/280_split_verdicts_l2_crypto_20260909.md`. T-E65 [x].
 **CERTIFIED_100=false.**
 
+## [2026-09-09T10:34:02Z] 281 — quote TPM/vTPM fail-closed sur l’environnement actuel (pas CERTIFIED_100)
+
+Priorité opérateur : vTPM / équivalent TPM **sur les 4 VM live**. Pas de machine hors accès. N04 **dernier**. Guest swtpm n’est pas L3. L4 bare-metal = user/serveur futur.
+Live SHA **`2c9c1d502e0089031ccddc508d477575cdb621c9`** ×4. `/dev/tpm0` ABSENT ×4 (OVH KVM SeaBIOS ; AWS t3.small sans NitroTPM activable sans remplacer `i-085b74abd1aaf04ee`). Quote `DEVICE_ABSENT` `verified=false`. L2 `CLOUD_ATTESTED`. crypto NOT_PROVEN. hardware NOT_AVAILABLE. certification FAIL. honesty_guard PASS. Pin AWS3 reste un sous-verdict. CI GitHub combined status vide = **NOT_PROVEN** (pas PASS). Ingest 409 equivocation. Height **1133**.
+`logs/281_vtpm_quote_20260909T103402Z.json` `logs/campaigns/281_20260909T103402Z/` MANIFEST `7c87a911…` `rapports/281_vtpm_quote_live_20260909.md`. T-E66 [x].
+**CERTIFIED_100=false.**
+
 
 

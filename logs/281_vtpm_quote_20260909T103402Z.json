@@ -1,0 +1,107 @@
+{
+  "stamp": "20260909T103402Z",
+  "shas": {
+    "ovh-node-1": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+    "ovh-node-2": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+    "aws-node-3": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+    "ovh-node-4": "2c9c1d502e0089031ccddc508d477575cdb621c9"
+  },
+  "results": {
+    "hypervisor_vtpm_device": "NOT_AVAILABLE",
+    "vtpm_quote": "NOT_PROVEN",
+    "platform_crypto_attestation": "NOT_PROVEN",
+    "hardware_tpm": "NOT_AVAILABLE",
+    "certification": "FAIL",
+    "honesty_guard": "PASS",
+    "n04_50": "FAIL",
+    "c04_thousands": "NOT_PROVEN",
+    "ci_github": "NOT_PROVEN",
+    "certified_100": false,
+    "production_ready": false,
+    "note": "Current four VMs have no /dev/tpm0. Quote path is implemented and fail-closed. Guest swtpm is not claimed as vTPM. Bare-metal L4 is for user/bare-metal servers, not invented here."
+  },
+  "compact": {
+    "ovh-node-1": {
+      "sha": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+      "probe_stdout": "TPM0=no\nTPMRM=no\nNSM=no\nVIRT=kvm\nTOOLS=no\nNO_TPM_MOD\n",
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "split": {
+        "platform_level_observed": "PASS",
+        "platform_crypto_attestation": "NOT_PROVEN",
+        "hardware_tpm": "NOT_AVAILABLE",
+        "certification": "FAIL",
+        "aws_iid_rsa2048_pin": "NOT_APPLICABLE",
+        "note": "platform_level_observed PASS = classification + registry binding, not a CA-verified attestation. platform_crypto_attestation stays NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is a pin of the AWS IID signature only (no freshness, no Ed25519 bind). certification FAIL until CERTIFIED_100."
+      },
+      "quote_reason": "DEVICE_ABSENT",
+      "quote_verified": false,
+      "quote_kind": "vtpm",
+      "crypto_verified": false,
+      "certified_hardware": false
+    },
+    "ovh-node-2": {
+      "sha": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+      "probe_stdout": "TPM0=no\nTPMRM=no\nNSM=no\nVIRT=kvm\nTOOLS=no\nNO_TPM_MOD\n",
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "split": {
+        "platform_level_observed": "PASS",
+        "platform_crypto_attestation": "NOT_PROVEN",
+        "hardware_tpm": "NOT_AVAILABLE",
+        "certification": "FAIL",
+        "aws_iid_rsa2048_pin": "NOT_APPLICABLE",
+        "note": "platform_level_observed PASS = classification + registry binding, not a CA-verified attestation. platform_crypto_attestation stays NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is a pin of the AWS IID signature only (no freshness, no Ed25519 bind). certification FAIL until CERTIFIED_100."
+      },
+      "quote_reason": "DEVICE_ABSENT",
+      "quote_verified": false,
+      "quote_kind": "vtpm",
+      "crypto_verified": false,
+      "certified_hardware": false
+    },
+    "aws-node-3": {
+      "sha": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+      "probe_stdout": "TPM0=no\nTPMRM=no\nNSM=no\nVIRT=amazon\nTOOLS=no\nNO_TPM_MOD\n",
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "split": {
+        "platform_level_observed": "PASS",
+        "platform_crypto_attestation": "NOT_PROVEN",
+        "hardware_tpm": "NOT_AVAILABLE",
+        "certification": "FAIL",
+        "aws_iid_rsa2048_pin": "PASS",
+        "note": "platform_level_observed PASS = classification + registry binding, not a CA-verified attestation. platform_crypto_attestation stays NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is a pin of the AWS IID signature only (no freshness, no Ed25519 bind). certification FAIL until CERTIFIED_100."
+      },
+      "quote_reason": "DEVICE_ABSENT",
+      "quote_verified": false,
+      "quote_kind": "vtpm",
+      "crypto_verified": false,
+      "certified_hardware": false
+    },
+    "ovh-node-4": {
+      "sha": "2c9c1d502e0089031ccddc508d477575cdb621c9",
+      "probe_stdout": "TPM0=no\nTPMRM=no\nNSM=no\nVIRT=kvm\nTOOLS=no\nNO_TPM_MOD\n",
+      "class": "cloud_instance_identity",
+      "trust_level": 2,
+      "overall": "CLOUD_ATTESTED",
+      "split": {
+        "platform_level_observed": "PASS",
+        "platform_crypto_attestation": "NOT_PROVEN",
+        "hardware_tpm": "NOT_AVAILABLE",
+        "certification": "FAIL",
+        "aws_iid_rsa2048_pin": "NOT_APPLICABLE",
+        "note": "platform_level_observed PASS = classification + registry binding, not a CA-verified attestation. platform_crypto_attestation stays NOT_PROVEN until a TPM/vTPM quote verifies. aws_iid_rsa2048_pin is a pin of the AWS IID signature only (no freshness, no Ed25519 bind). certification FAIL until CERTIFIED_100."
+      },
+      "quote_reason": "DEVICE_ABSENT",
+      "quote_verified": false,
+      "quote_kind": "vtpm",
+      "crypto_verified": false,
+      "certified_hardware": false
+    }
+  },
+  "artefact": "/workspace/logs/campaigns/281_20260909T103402Z",
+  "certified_100": false
+}
