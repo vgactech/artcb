@@ -91,17 +91,21 @@ def main() -> int:
                 last_memo_chars = len(text)
                 last_memo_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
 
+    prompt_file = (os.environ.get("ARTCB_INGEST_PROMPT_FILE") or "").strip()
     ingest: dict = {
         "ingest_platform_hook": False,
         "ingest_attempted": False,
         "ingest_skipped": True,
-        "ingest_reason": prompt_file_skipped_reason(""),
+        "ingest_reason": prompt_file_skipped_reason(prompt_file),
         "includes_thinking": False,
         "includes_system_prompt": False,
         "token_count_known": False,
     }
-    prompt_file = (os.environ.get("ARTCB_INGEST_PROMPT_FILE") or "").strip()
-    if prompt_file and key:
+    if prompt_file:
+        ingest["ingest_path"] = prompt_file
+    if prompt_file and not key:
+        ingest["ingest_reason"] = "api_key_missing"
+    elif prompt_file and key:
         ingest["ingest_attempted"] = True
         p = Path(prompt_file)
         if p.is_file():

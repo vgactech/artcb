@@ -1782,5 +1782,10 @@ GO : promouvoir le Mac au 5ᵉ replica. **Pas** `OFFICIAL_COMPUTE_NODE_IDS += ma
 ~~Sas `live_enrolled=False` / `ARTCB_MAC_PBFT_ENROLLED`.~~ L’opérateur refuse l’isolation. `official_pbft_replica_ids()` = tous les `pbft_replica=True` (Mac inclus). N/f/Q adaptatifs. Chemin clone GitHub + launchd. Seeds IPv4 ×4 restent la topologie SSH, pas une exclusion PBFT. T-E74 mis à jour.
 **CERTIFIED_100=false.**
 
+## [2026-09-10T00:00:00Z] 298 — ingest honnête + push live obligatoire
+
+Règle 16 enfreinte au tour précédent : fichier écrit, mais skip reason = « FILE unset » alors que la cause était `api_key_missing` / health 0. Corrigé. Complet = `HEAD:main` + follow-main ×4 + SHA mesuré. Thinking Machine = transcripts jsonl, pas CoT, pas ARTCB.
+**CERTIFIED_100=false.**
+
 
 
