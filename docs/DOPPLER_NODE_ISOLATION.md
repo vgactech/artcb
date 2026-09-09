@@ -51,3 +51,13 @@ Le mot de passe console n’entre **pas** dans Doppler / git / chat.
 - Ne redéploie **pas** `main` sur `:34` sans ordre explicite.
 - Ne mélange **pas** Stripe/Bob dans `artcb-2` / `artcb3`.
 - Ne certifie **pas** 4 nœuds WAN ni V-01…V-07.
+
+## mac-node-local (R285/R286 — 2026-09-09)
+
+Observateur LAN, **pas** un replica PBFT. Ne pas l’ajouter à `OFFICIAL_COMPUTE_NODE_IDS`.
+
+| node_id | Doppler | Token Cursor | Compute |
+|---------|---------|--------------|---------|
+| `mac-node-local` | `artcb-1` / `prd` | `KEY_API_ARTCB_DOPPLER_MAC` | RFC1918 `10.234.49.2:8001` SSH `deyi@` |
+
+Le `DOPPLER_TOKEN` des agents Cursor cloud lit `artcb-blockchain` / **`dev`**. Un secret poussé seulement dans `artcb-blockchain/prd` n’est **pas** visible. Même motif que `_2`/`_3`/`_4` : injecter `KEY_API_ARTCB_DOPPLER_MAC` comme secret d’environnement Cursor. Ne pas afficher `CURSOR_SSH_PRIVATE_KEY`.

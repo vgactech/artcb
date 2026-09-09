@@ -1750,5 +1750,18 @@ Live SHA **`667742087f143b6a0271f3075da2fdf58c539dd6`** ×4 = origin/main. OVH �
 `logs/283_profile_cert_live.json` `rapports/283_profile_cert_environment_20260909.md`. T-E68 [x].
 **CERTIFIED_100=false.**
 
+## [2026-09-09T16:11:06Z] 284 — Phase A classification (pas CERTIFIED_100)
+
+UNKNOWN ≠ BARE_METAL. swtpm / `/dev/tpm0` seuls ≠ L3. NitroTPM = AMZN + vendor. theo ≠ verified. CERTIFIED_100 : NOT_APPLICABLE hors dénominateur ; NOT_REACHABLE non satisfait. L2 précis `CLOUD_IDENTITY_OBSERVED`. Ledger agent = hashes, pas thinking privé.
+Live SHA **`b848428899d3c209a551299414e03e8beef15107`** ×4. OVH VM_PROVEN L2 ABSENT. AWS3 NITROTPM L3 PARTIAL missing `ek_ak_provenance`. Retry : getcap trunc 16:07 UNKNOWN_TPM (fail-closed) ; restart 16:10 OVH down. PRE_R273 GAP conservé. N04 last FAIL. Mac RFC1918 NOT_REACHABLE.
+`logs/284_classify_live.json` `rapports/284_classify_unknown_not_baremetal_20260909.md`. T-E69 [x].
+**CERTIFIED_100=false.**
+
+## [2026-09-09T18:20:00Z] 286 — Cursor → mac-node-local (pas CERTIFIED_100)
+
+Observateur R285. `KEY_API_ARTCB_DOPPLER_MAC` n’est **pas** dans l’env Cursor cloud (contrairement à `_2/_3/_4`) ni dans `artcb-blockchain/dev` (67 noms). Poussé dans `prd` = invisible au `DOPPLER_TOKEN` cloud (HTTP 400). TCP `10.234.49.2:22` et `:8001` = TimeoutError. Ne pas inventer un SHA health Mac. Ne pas ajouter à OFFICIAL_COMPUTE. Clef jamais affichée.
+`logs/286_mac_ssh_live.json` `rapports/286_mac_ssh_cursor_doppler_20260909.md`. T-E70.
+**CERTIFIED_100=false.**
+
 
 

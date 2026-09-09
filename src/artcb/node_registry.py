@@ -226,6 +226,7 @@ NODES: dict[str, NodeSpec] = {
         display_name="MacBook Air local — dev/observer",
         provider="local-macos",
         doppler_project="artcb-1",
+        doppler_config="prd",
         doppler_token_env="KEY_API_ARTCB_DOPPLER_MAC",
         health_http="http://10.234.49.2:8001",
         api_https=None,
@@ -233,14 +234,17 @@ NODES: dict[str, NodeSpec] = {
         ssh_user="deyi",
         public_notes=(
             "MacBook Air deyi@luxiufengdeMacBook-Air.local — LAN 10.234.49.2. "
-            "RFC1918: injoignable depuis les VMs cloud sans tunnel. "
+            "RFC1918: injoignable depuis les VMs cloud / agents Cursor cloud "
+            "sans tunnel (WireGuard/Tailscale/ngrok). "
             "Rôle: observateur PBFT local, dev, replay de campagnes. "
-            "Doppler project artcb-1 (config prd). Service token Cursor: "
-            "KEY_API_ARTCB_DOPPLER_MAC dans artcb-blockchain. "
-            "SSH: clef cursor_mac_node (ed25519) gérée par Cursor via Doppler — "
-            "jamais la clef cursor_agent révoquée le 2026-09-09. "
-            "Port ARTCB: 8001 (évite conflit avec OVH1 mirror éventuel sur 8000). "
-            "Launchd plist: ~/Library/LaunchAgents/me.artcb.node.plist. "
+            "Doppler project artcb-1 (config prd). "
+            "Token service KEY_API_ARTCB_DOPPLER_MAC : doit être un secret "
+            "Cursor d’environnement (comme KEY_API_ARTCB_DOPPLER_2/3/4) ET "
+            "présent dans artcb-blockchain/dev — le DOPPLER_TOKEN cloud ne "
+            "lit que config=dev, pas prd. "
+            "SSH: CURSOR_SSH_PRIVATE_KEY via Doppler artcb-1/prd ; "
+            "jamais afficher la clef. cursor_agent révoquée 2026-09-09. "
+            "Port ARTCB: 8001. Launchd: me.artcb.node KeepAlive. "
             "Pas un nœud PBFT officiel (pas dans OFFICIAL_COMPUTE_NODE_IDS)."
         ),
     ),

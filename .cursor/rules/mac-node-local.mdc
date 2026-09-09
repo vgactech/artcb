@@ -1,0 +1,26 @@
+---
+description: MacBook Air local observer — Doppler artcb-1, RFC1918, not PBFT official
+alwaysApply: false
+---
+
+# mac-node-local — observateur LAN (pas un replica PBFT)
+
+- `node_id` **`mac-node-local`**. Provider `local-macos`. Health `http://10.234.49.2:8001`. SSH `deyi@10.234.49.2`.
+- Doppler projet **`artcb-1`** / config **`prd`**. Token Cursor **`KEY_API_ARTCB_DOPPLER_MAC`**.
+- SSH : secret Doppler `CURSOR_SSH_PRIVATE_KEY` (ed25519 `cursor_mac_node`). Jamais afficher la clef. Jamais git. `cursor_agent` révoquée 2026-09-09.
+- Launchd `me.artcb.node` KeepAlive, port **8001**.
+
+## Isolation
+
+- **Pas** dans `OFFICIAL_COMPUTE_NODE_IDS`. Ne pas follow-main ce Mac comme replica.
+- Ne pas copier Stripe / Bob / GitHub dans `artcb-1`.
+- Le `DOPPLER_TOKEN` des agents cloud Cursor lit `artcb-blockchain` / **`dev`**, pas `prd`. Mettre `KEY_API_ARTCB_DOPPLER_MAC` :
+  1. comme secret d’environnement Cursor (comme `_2` / `_3` / `_4`) ;
+  2. **et** dans `artcb-blockchain/dev` si on veut le lire via le token partagé.
+- `10.234.49.2` est RFC1918 : Timeout depuis OVH/AWS/agents cloud sans tunnel. Ne **pas** inventer un `git_sha` health Mac.
+
+## Interdits
+
+- Ne pas coller PEM / `dp.st.…` / mot de passe sudo dans le chat, git, ou un rapport.
+- Ne pas recaster un timeout LAN en PASS SSH.
+- N04 50 % reste FAIL et **dernier**. `CERTIFIED_100=false`.
