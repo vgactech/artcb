@@ -46,6 +46,51 @@ from src.artcb.wallet.encryption import (
 logger = logging.getLogger("artcb.chain.manager")
 
 
+def encode_jsonl_with_converged_size(payload: dict) -> str:
+    """Serialize a block so ``block_size_bytes`` equals the final UTF-8 line.
+
+    Measuring *before* inserting the field makes the engraved size strictly
+    smaller than the written line (digit-width of the field itself). Converge
+    until ``len(line.encode('utf-8')) == block_size_bytes``. This is the JSON
+    line only — not the on-disk newline, not HTTP/TLS wire bytes.
+    """
+    size = 0
+    line = ""
+    for _ in range(12):
+        payload["block_size_bytes"] = size
+        line = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        measured = len(line.encode("utf-8"))
+        if measured == size:
+            return line
+        size = measured
+    payload["block_size_bytes"] = len(line.encode("utf-8"))
+    return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+
+
+def measure_jsonl_sizes(line: str) -> dict[str, int]:
+    """Four size views for one JSONL record (line may include a trailing newline)."""
+    raw = line.encode("utf-8") if isinstance(line, str) else line
+    has_nl = raw.endswith(b"\n")
+    json_part = raw[:-1] if has_nl else raw
+    claimed = 0
+    try:
+        obj = json.loads(json_part.decode("utf-8"))
+        if isinstance(obj, dict) and obj.get("block_size_bytes") is not None:
+            claimed = int(obj["block_size_bytes"])
+        payload = dict(obj) if isinstance(obj, dict) else {}
+        payload.pop("block_size_bytes", None)
+        payload_bytes = len(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+    except (json.JSONDecodeError, TypeError, ValueError):
+        payload_bytes = len(json_part)
+    return {
+        "payload_bytes": payload_bytes,
+        "line_bytes": len(json_part),
+        "file_bytes": len(raw),
+        "claimed_block_size_bytes": claimed,
+        "claimed_matches_line": int(claimed == len(json_part)),
+    }
+
+
 @dataclass
 class ChainBlock:
     index: int
@@ -92,11 +137,7 @@ class ChainBlock:
             payload["public_symbols"] = self.public_symbols
         if self.hash_sha3:
             payload["hash_sha3"] = self.hash_sha3
-        line = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-        # Stocker la taille réelle du bloc (en octets UTF-8) dans le payload lui-même
-        # Utile pour les analyses tokenomics et l'audit de la chaîne
-        payload["block_size_bytes"] = len(line.encode("utf-8"))
-        return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        return encode_jsonl_with_converged_size(payload)
 
     @classmethod
     def from_payload(cls, payload: dict) -> "ChainBlock":

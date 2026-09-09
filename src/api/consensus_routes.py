@@ -357,7 +357,7 @@ def consensus_replica_identity() -> dict:
 
 @router.get("/platform-attest")
 def consensus_platform_attest() -> dict:
-    """TPM if present; otherwise the closest VM analog. Never a fake quote."""
+    """Best available platform proof (TPM / vTPM / cloud / observed). Never recast."""
     from src.artcb.consensus.platform_attest import collect_platform_attestation
 
     return collect_platform_attestation()

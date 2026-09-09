@@ -254,12 +254,14 @@ def main() -> int:
     rb_post = _post_one(TARGET, honest["row"]) if honest.get("row") else {}
     _rm_remote(TARGET, OVERLAY)
     _rm_remote(TARGET, OVERLAY_VER)
-    results["registry_rollback"] = _row(
-        "PASS" if rb_reason == "overlay_rollback_rejected" else "FAIL",
+    rollback_pass = rb_reason == "overlay_rollback_rejected"
+    results["rollback_attack_rejected"] = _row(
+        "PASS" if rollback_pass else "FAIL",
         overlay=ident_rb.get("overlay"),
         post=rb_post,
-        note="version 19 after 20 must not apply",
+        note="attack rejected = PASS. Do not read a rejected rollback as 'registry vulnerable'.",
     )
+    results["registry_rollback"] = results["rollback_attack_rejected"]
 
     print("overlay corrupt json", flush=True)
     _write_remote(TARGET, OVERLAY, "{not json")
@@ -398,6 +400,7 @@ def main() -> int:
         "downgrade": results["a6_live_downgrade"]["status"],
         "rotation": results["a8_live_rotation_old_key"]["status"],
         "official_node_integrity": results["official_node_tamper"]["status"],
+        "rollback_attack_rejected": results["rollback_attack_rejected"]["status"],
         "registry_rollback": results["registry_rollback"]["status"],
         "registry_corrupt": results["registry_corrupt"]["status"],
         "reboot_identity": results["reboot_identity"]["status"],

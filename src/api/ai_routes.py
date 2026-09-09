@@ -873,11 +873,18 @@ def chain_block_sizes(
         "p50_bytes": int(percentile(sorted_sizes, 50)),
         "p75_bytes": int(percentile(sorted_sizes, 75)),
         "p90_bytes": int(percentile(sorted_sizes, 90)),
+        "p95_bytes": int(percentile(sorted_sizes, 95)),
         "p99_bytes": int(percentile(sorted_sizes, 99)),
         "max_bytes": sorted_sizes[-1],
         "avg_bytes": int(total_bytes / n),
+        "stdev_bytes": int(
+            (sum((s - (total_bytes / n)) ** 2 for s in all_sizes) / n) ** 0.5
+        )
+        if n
+        else 0,
         "total_kb": round(total_bytes / 1024, 1),
         "total_mb": round(total_bytes / (1024 * 1024), 3),
+        "unit": "file_bytes_including_newline",
     }
 
     # ── Buckets par tranche de taille ────────────────────────────────────────
@@ -955,9 +962,22 @@ def chain_block_sizes(
         "tokenomics": tokenomics,
         "top_largest": top_largest,
         "top_smallest": top_smallest,
+        "claimed_vs_measured_sample": [
+            {
+                "index": s["index"],
+                "file_bytes": s["size_bytes"],
+                "line_bytes_approx": max(0, s["size_bytes"] - 1),
+                "claimed_block_size_bytes": (state.chain.get_block(s["index"]) or {}).get("block_size_bytes"),
+            }
+            for s in (sizes[:2] + sizes[-2:] if n >= 4 else sizes)
+        ],
         "note": (
-            "block_size_bytes dans chaque bloc = taille réelle de la ligne JSONL en octets UTF-8. "
-            "Les blocs antérieurs au Rapport 078 n'ont pas ce champ — taille recalculée à la volée."
+            "size_bytes ici = octets fichier (ligne JSON + newline) via offsets. "
+            "Ce n'est pas wire_bytes (HTTP/TLS/TCP). "
+            "Le champ gravé block_size_bytes des blocs anciens était mesuré AVANT "
+            "l'insertion du champ lui-même (trop petit). Les écritures R279 "
+            "convergent jusqu'à égalité UTF-8 de la ligne JSON (sans newline). "
+            "1 s/bloc ≠ finalité réseau. 22,61 TPS n'est pas une capacité universelle."
         ),
     }
 

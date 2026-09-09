@@ -1,0 +1,31 @@
+{
+  "protocol": "279-platform-node-binding",
+  "network_id": "artcb-official",
+  "note": "Public provider instance IDs only. Not a TPM quote. accountId / project_id omitted. A NodeID label (env or /etc/artcb/official_node) is not this identity.",
+  "replicas": {
+    "ovh-node-1": {
+      "provider": "ovh",
+      "provider_instance_id": "f2642e42-323c-4621-b0e8-a82ffb20f184",
+      "ipv4": "152.228.144.34",
+      "ed25519_b64": "u3WrGfKSYatkntc6ctlZqDyHI/98yV2PfJ8FTC/IXSU="
+    },
+    "ovh-node-2": {
+      "provider": "ovh",
+      "provider_instance_id": "6470522e-1561-4741-9254-5f58b909eeb9",
+      "ipv4": "151.80.107.29",
+      "ed25519_b64": "sTLG+A4+n2iKHYMZzsPw2WxzNj5+B12c23A8ykt4BzE="
+    },
+    "aws-node-3": {
+      "provider": "aws",
+      "provider_instance_id": "i-085b74abd1aaf04ee",
+      "ipv4": "51.44.222.232",
+      "ed25519_b64": "eJsXlnBP1o1/Oq1v9zQ0z8n1Al3jBtJ4M/KLSESb34Q="
+    },
+    "ovh-node-4": {
+      "provider": "ovh",
+      "provider_instance_id": "22dc6a47-5b79-4084-82d7-eabb4f5b2680",
+      "ipv4": "91.134.45.8",
+      "ed25519_b64": "fiXJqTRUFuDYPQkh8q8UuzilVyK8sshJANQkDmfjNBs="
+    }
+  }
+}

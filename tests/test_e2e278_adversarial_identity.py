@@ -134,7 +134,14 @@ def test_platform_class_does_not_recast_absent_tpm() -> None:
         aws={"document_ok": True},
         ovh={"document_ok": False},
     )
-    assert klass3 == "tpm_hardware"
+    assert klass3 == "vtpm"
+    klass4 = classify(
+        tpm={"present": True},
+        virt={"is_vm": False},
+        aws={"document_ok": False},
+        ovh={"document_ok": False},
+    )
+    assert klass4 == "tpm_hardware"
 
 
 def test_official_consensus_prefers_key_owner(monkeypatch) -> None:

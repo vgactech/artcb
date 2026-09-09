@@ -461,18 +461,39 @@ def public_registry_view() -> dict[str, Any]:
     active = active_registry()
     _overlay, overlay_meta = load_overlay()
     local = local_identity_status()
+    platform_binding = {}
+    try:
+        from src.artcb.consensus.platform_attest import collect_platform_attestation
+
+        snap = collect_platform_attestation(
+            declared_node_id=str(local.get("env_node_id") or local.get("official_node_file") or ""),
+            attestation_public_key=str(local.get("local_ed25519_b64") or ""),
+        )
+        platform_binding = {
+            "trust_level": snap.get("trust_level"),
+            "overall_platform_trust": snap.get("overall_platform_trust"),
+            "hardware_tpm_attestation": snap.get("hardware_tpm_attestation"),
+            "platform_identity_attestation": snap.get("platform_identity_attestation"),
+            "certified_hardware_identity": snap.get("certified_hardware_identity"),
+            "binding": snap.get("binding"),
+        }
+    except Exception as exc:
+        platform_binding = {"error": type(exc).__name__}
     return {
-        "protocol": "278-replica-identity-binding",
+        "protocol": "279-replica-identity-binding",
         "binding_enforced": binding_enforced(),
         "test_override": _test_override is not None,
         "official_replica_ids": list(OFFICIAL_COMPUTE_NODE_IDS),
         "local_replica_id": official_consensus_node_id(),
         "local_identity": local,
+        "platform_binding": platform_binding,
         "overlay": overlay_meta,
         "replicas": {nid: row.to_public_dict() for nid, row in (active or official).items()},
         "note": (
             "IP / hostname / ARTCB_NODE_ID / official_node label a machine. "
             "Only the registered public key proves the consensus role. "
-            "A live overlay can revoke/expire/rotate without rewriting git."
+            "Provider instance id is a separate platform identity; a mismatch "
+            "is IDENTITY_MISMATCH. A live overlay can revoke/expire/rotate "
+            "without rewriting git."
         ),
     }
