@@ -15,6 +15,7 @@ alwaysApply: false
 - Pas de **rescue** OVH4. Pas de `reinstall`. Pas de wipe `blocks.jsonl`.
 - Ne **pas** coller un PEM / `dp.st.…` dans le chat. `ARTCB_OVH_NODE_4` Cursor est une clé **publique**.
 - Les 4 nœuds officiels suivent `origin/main` via `artcb-follow-main.timer` (keep-book). Ne plus demander un redeploy à la main.
+- **2026-09-10T00:05:00Z** : les 4 VMs restent les seeds SSH. Le Mac suit `origin/main` en clone local (R297b). ~~Mac observateur.~~ Replica PBFT. N adaptatif.
 - Les jetons Doppler 1/2/3 **refusent** `artcb-4` (HTTP 400).
 
 ## Si `SSH_PRIVATE_KEY` manque dans Doppler

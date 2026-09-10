@@ -1807,3 +1807,8 @@ Ce que l'opérateur avait oublié de figer, ajouté ici :
 `origin/main` = `369b5ec6d0c9c9ffd56cef68d9105c591360bbb7`. Mac `:8001` même SHA. Ingest attempted, HTTP 0, prompt pas on-chain. SSH/HTTP vers les 4 VMs timeout depuis ce LAN. Timers VM doivent tirer `main`. N04 last FAIL.
 **CERTIFIED_100=false.**
 
+## [2026-09-10T00:05:00Z] 300 — thinking local + TOUTES les règles + Bob §4 barré
+
+Cursor n'a pas de mode « thinking fichier à la place du chat ». CoT privé = backend Cursor, pas le disque. Hook officiel `afterAgentThought` → `data/trace/agent_thoughts.jsonl`. Journal `artcb_reason_log.py`. `preCompact` = perte mémoire dans le tour. Relire **tous** les fichiers listés dans `.cursor/rules/artcb-read-all.mdc` première→dernière ligne, chaque tour et à l'intérieur. Oubli : rules `alwaysApply: false` + AUTO_PROMPT hors `.mdc`. ~~Bob Mac observateur.~~ Replica R297b. Jamais thinking on-chain.
+**CERTIFIED_100=false.**
+

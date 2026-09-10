@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterAgentThought": [
+      {
+        "command": "python3 .cursor/hooks/after_agent_thought.py",
+        "matcher": "AgentThought"
+      }
+    ],
+    "preCompact": [
+      {
+        "command": "python3 .cursor/hooks/pre_compact.py"
+      }
+    ],
+    "sessionStart": [
+      {
+        "command": "python3 .cursor/hooks/session_start.py"
+      }
+    ]
+  }
+}

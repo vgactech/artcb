@@ -63,3 +63,15 @@ Un agent **sur le Mac** peut joindre `127.0.0.1:8001` et l’IPv4 LAN **actuelle
 ## [2026-09-10T23:05:00Z] R299 — ne jamais supprimer (code + règles)
 
 Règles 11–15 s’appliquent aussi au **code** : commenter / barrer l’ancien, horodater, ajouter le nouveau **après**. Interdit de réécrire un fichier en place en effaçant l’historique. Violation 2026-09-09/10 : ce fichier et `node_registry.py` avaient été compactés — texte original rétabli ici.
+
+## [2026-09-10T00:05:00Z] R300 — texte Bob (session 285) conservé, §4 barré
+
+Bob, même Mac, **sans rien toucher** :
+
+1. Dépôt `/Users/deyi/.bob/playground` = code du nœud. uvicorn natif **:8001**. Pas de container.
+2. launchd `~/Library/LaunchAgents/me.artcb.node.plist` KeepAlive + RunAtLoad ; `doppler run --project artcb-1 --config prd -- uvicorn :8001`.
+3. Secrets Doppler `artcb-1`/`prd`, token CLI `~/.doppler`. Pas un `.env` git.
+4. LAN RFC1918 `10.234.49.2:8001` injoignable depuis les VMs. ~~Ce nœud est **observateur**, pas membre PBFT.~~ **Barré 2026-09-10T00:05:00Z** — replica officiel R297b. Transport ≠ rôle.
+5. SSH `cursor_mac_node` : pub `authorized_keys`, priv Doppler `CURSOR_SSH_PRIVATE_KEY`. Jamais afficher.
+
+Résumé Bob conservé : 5ᵉ nœud local, git natif, Doppler, IP privée, SSH possible depuis un agent **sur ce Mac**. Membership PBFT = R297b, pas le §4.

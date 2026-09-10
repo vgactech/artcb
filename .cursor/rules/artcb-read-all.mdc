@@ -1,0 +1,42 @@
+---
+description: Index — relire TOUS les fichiers de règles/protocole à chaque tour et à l'intérieur
+alwaysApply: true
+---
+
+# Index de relecture obligatoire (R300 — 2026-09-10T00:05:00Z)
+
+Ce fichier **n’efface rien**. Il liste où sont éparpillées les règles.  
+À **chaque tour** et **à l’intérieur du tour** (après compaction, après une étape majeure) : ouvrir chaque fichier **de la première à la dernière ligne**.
+
+## Fichiers Cursor rules
+
+- `.cursor/rules/artcb-live-node.mdc` (`alwaysApply: true`)
+- `.cursor/rules/artcb-read-all.mdc` (ce fichier)
+- `.cursor/rules/mac-node-local.mdc` (~~`alwaysApply: false`~~ — trop d’agents l’ignoraient ; ce fichier-ci force la relecture)
+- `.cursor/rules/aws-node-3.mdc`
+- `.cursor/rules/ovh-node-4.mdc`
+
+## Fichiers protocole repo (pas des `.mdc`)
+
+- `AUTO_PROMPT_ARTCB`
+- `PROTOCOLE_ARTCB` (déjà : « première à la dernière ligne »)
+- `LEÇONS_APPRISES_ARTCB`
+- `STANDARD_NAMES_ARTCB`
+- `ROADMAP_GENERAL_ARTCB`
+- `INDEX_ARTCB`
+- `CONFIGURATION_ARTCB`
+- `CHECKLIST_PRE_DEV_ARTCB`
+- `QUESTIONS_OUVERTES_ARTCB`
+- `CAHIER_DES_CHARGES_ARTCB`
+
+## Thinking (local, avant ARTCB)
+
+- Hook Cursor `afterAgentThought` → `data/trace/agent_thoughts.jsonl` (append-only, gitignored).
+- Journal processus agent → `data/trace/agent_reasoning.jsonl` via `scripts/artcb_reason_log.py`.
+- Compaction (perte mémoire **dans** le tour) → hook `preCompact` → `data/trace/precompact.jsonl`.
+- Ce n’est **pas** le CoT privé du modèle. Cursor génère le thinking sur le backend d’abord. Le hook copie le thinking **surfacé**.
+- `includes_thinking=false`. Interdit de POST thinking / system / tokens sur ARTCB.
+
+## Mac
+
+~~Bob §4 : observateur, pas PBFT.~~ **Barré 2026-09-10T00:05:00Z.** Replica officiel (R297b). Même machine que Bob ≠ même discipline de relecture.
