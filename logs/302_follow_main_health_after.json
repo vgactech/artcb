@@ -1,0 +1,33 @@
+{
+  "stamp": "20260910T114231Z",
+  "want": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+  "all_eq": true,
+  "health": {
+    "ovh-node-1": {
+      "http": 200,
+      "git_sha": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+      "dur_ns": 218979506
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "git_sha": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+      "dur_ns": 465815484
+    },
+    "aws-node-3": {
+      "http": 200,
+      "git_sha": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+      "dur_ns": 221834500
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "git_sha": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+      "dur_ns": 554705676
+    },
+    "mac-node-local": {
+      "http": 200,
+      "git_sha": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+      "dur_ns": 304246285
+    }
+  },
+  "certified_100": false
+}

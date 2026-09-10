@@ -1847,5 +1847,9 @@ Doppler `artcb-1`/`prd` : nom `MAC_SUDO_PASSWORD` **présent** (CLI local, token
 Ingest ce tour : HTTP **409** `equivocation`, `ingest_skipped=true`, prompt **pas** on-chain. `includes_thinking=false`.
 Run Everything Cursor ≠ identité PBFT. **CERTIFIED_100=false.** Mac replica live = **NON PROUVÉ**.
 
+## [2026-09-10T11:36:00Z] 302b — follow-main ×4 SHA `07ed590`
+
+Push `origin HEAD:main` = `07ed59000139e81c7cffcd4d2fb810927c05f1b2`. SSH follow-main rc=0 ×4. BOOK 1133. AWS3 rattrapé `bc0a9b9`→`07ed590`. Health 200 `git_sha=07ed590` ×4 + Mac `:8001`. CERTIFIED_100=false. Mac P2P NON PROUVÉ.
+
 
 

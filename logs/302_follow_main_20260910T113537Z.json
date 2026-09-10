@@ -1,0 +1,55 @@
+{
+  "stamp": "20260910T113537Z",
+  "ts_ns": 1789040137712770000,
+  "dur_ns": 12926577000,
+  "want": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+  "follow": [
+    {
+      "node_id": "ovh-node-1",
+      "returncode": 0,
+      "stdout_tail": "follow-main start repo=/home/ubuntu/artcb before=e58dc2809495b0352174ed9db34efae2ee728e90 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 07ed5900 fix(302): keep live N from PBFT membership, not n_f_q(4)\nkeep-book reset --hard 07ed59000139e81c7cffcd4d2fb810927c05f1b2\nrelease.env sha=07ed59000139e81c7cffcd4d2fb810927c05f1b2 branch=main\nartcb restarted old=e58dc2809495b0352174ed9db34efae2ee728e90 new=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nDEPLOYED_BRANCH=main\nfollow-main done\nHEAD=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nBOOK=1133\n",
+      "stderr_tail": "Reset branch 'main'\n"
+    },
+    {
+      "node_id": "ovh-node-2",
+      "returncode": 0,
+      "stdout_tail": "follow-main start repo=/home/ubuntu/artcb before=07ed59000139e81c7cffcd4d2fb810927c05f1b2 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 07ed5900 fix(302): keep live N from PBFT membership, not n_f_q(4)\nkeep-book reset --hard 07ed59000139e81c7cffcd4d2fb810927c05f1b2\nrelease.env sha=07ed59000139e81c7cffcd4d2fb810927c05f1b2 branch=main\nno restart (sha unchanged)\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nDEPLOYED_BRANCH=main\nfollow-main done\nHEAD=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nBOOK=1133\n",
+      "stderr_tail": "Reset branch 'main'\n"
+    },
+    {
+      "node_id": "aws-node-3",
+      "returncode": 0,
+      "stdout_tail": "follow-main start repo=/home/ubuntu/artcb before=bc0a9b9661d32a5756f1bfadf81bfd82120681e4 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 07ed5900 fix(302): keep live N from PBFT membership, not n_f_q(4)\nkeep-book reset --hard 07ed59000139e81c7cffcd4d2fb810927c05f1b2\nrelease.env sha=07ed59000139e81c7cffcd4d2fb810927c05f1b2 branch=main\nartcb restarted old=bc0a9b9661d32a5756f1bfadf81bfd82120681e4 new=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nDEPLOYED_BRANCH=main\nfollow-main done\nHEAD=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nBOOK=1133\n",
+      "stderr_tail": "Reset branch 'main'\n"
+    },
+    {
+      "node_id": "ovh-node-4",
+      "returncode": 0,
+      "stdout_tail": "follow-main start repo=/home/ubuntu/artcb before=e58dc2809495b0352174ed9db34efae2ee728e90 branch=main\nMODE=official\nFETCH_METHOD=origin\ntarget origin/main=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nbranch 'main' set up to track 'origin/main'.\nYour branch is up to date with 'origin/main'.\nHEAD is now at 07ed5900 fix(302): keep live N from PBFT membership, not n_f_q(4)\nkeep-book reset --hard 07ed59000139e81c7cffcd4d2fb810927c05f1b2\nrelease.env sha=07ed59000139e81c7cffcd4d2fb810927c05f1b2 branch=main\nartcb restarted old=e58dc2809495b0352174ed9db34efae2ee728e90 new=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nblocks.jsonl not emptied lines=1133\ninstall.sh not executed\ninit_genesis.py not executed\ninit-node not executed\nrescue not used\nDEPLOYED_SHA=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nDEPLOYED_BRANCH=main\nfollow-main done\nHEAD=07ed59000139e81c7cffcd4d2fb810927c05f1b2\nBOOK=1133\n",
+      "stderr_tail": "Reset branch 'main'\n"
+    }
+  ],
+  "health_after": {
+    "ovh-node-1": {
+      "http": 0,
+      "error": "URLError"
+    },
+    "ovh-node-2": {
+      "http": 0,
+      "error": "URLError"
+    },
+    "aws-node-3": {
+      "http": 0,
+      "error": "URLError"
+    },
+    "ovh-node-4": {
+      "http": 0,
+      "error": "URLError"
+    },
+    "mac-node-local": {
+      "http": 200,
+      "git_sha": "07ed59000139e81c7cffcd4d2fb810927c05f1b2"
+    }
+  },
+  "wipe": false
+}
