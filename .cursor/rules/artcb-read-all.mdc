@@ -40,3 +40,19 @@ Ce fichier **n’efface rien**. Il liste où sont éparpillées les règles.
 ## Mac
 
 ~~Bob §4 : observateur, pas PBFT.~~ **Barré 2026-09-10T00:05:00Z.** Replica officiel (R297b). Même machine que Bob ≠ même discipline de relecture.
+
+## Chemins absolus (2026-09-10T10:40:00Z)
+
+- `/Users/deyi/.bob/playground/.cursor/rules/artcb-live-node.mdc`
+- `/Users/deyi/.bob/playground/.cursor/rules/artcb-read-all.mdc`
+- `/Users/deyi/.bob/playground/.cursor/rules/mac-node-local.mdc`
+- `/Users/deyi/.bob/playground/.cursor/rules/aws-node-3.mdc`
+- `/Users/deyi/.bob/playground/.cursor/rules/ovh-node-4.mdc`
+- `/Users/deyi/.bob/playground/.cursor/hooks.json`
+- `/Users/deyi/.bob/playground/.cursor/hooks/after_agent_thought.py`
+- `/Users/deyi/.bob/playground/.cursor/hooks/pre_compact.py`
+- `/Users/deyi/.bob/playground/.cursor/hooks/session_start.py`
+- `/Users/deyi/.bob/playground/AUTO_PROMPT_ARTCB`
+- `/Users/deyi/.bob/playground/PROTOCOLE_ARTCB`
+- `/Users/deyi/.bob/playground/LEÇONS_APPRISES_ARTCB`
+- Mot de passe sudo Mac : **interdit** git / chat / Doppler. Noms Doppler `artcb-1/prd` 2026-09-10 : pas de secret SUDO/ROOT. Fuite historique dans d’anciens rapports 285/288 — rotation `passwd`, ne plus coller la valeur.

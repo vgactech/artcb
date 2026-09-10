@@ -166,3 +166,7 @@ Un agent Cursor local (sur ce Mac ou sur le même LAN) peut s'y connecter direct
 | `cursor_agent` (ancienne) | **RÉVOQUÉE** 2026-09-09, fichiers supprimés |
 | `cursor_mac_node` (nouvelle) | Active, dans Doppler uniquement |
 | Mot de passe `amelie92` | **À CHANGER** — exposé en session chat |
+
+## [2026-09-10T10:40:00Z] R301 — ne plus recoller
+
+Le mot de passe sudo en clair **reste** dans l’historique de ce fichier (règles 11–15 : on ne l’efface pas). **Ne plus** le coller dans le chat, git, ou Doppler. Noms `artcb-1/prd` mesurés 2026-09-10 : **pas** de secret SUDO/ROOT. Rotation : `passwd` sur le Mac. Agent : **interdit** d’afficher la valeur.

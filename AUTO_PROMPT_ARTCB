@@ -1817,3 +1817,8 @@ Cursor n'a pas de mode « thinking fichier à la place du chat ». CoT privé = 
 Follow-main SSH rc=0 ×4. Health 200 SHA `c24f097fb9fc9cde979ee5497c736229ecd2c43d` = origin/main sur OVH1/2/4, AWS3 (était `05d7030`), Mac `:8001`. Ingest 409 `not_prepared`. N04 last FAIL.
 **CERTIFIED_100=false.**
 
+## [2026-09-10T10:40:00Z] 301 — glossaire .mdc / hooks + mot de passe sudo
+
+`.mdc` = Markdown Cursor rule. `alwaysApply: true` = injecté à chaque tour. AUTO_PROMPT / PROTOCOLE = fichiers repo, pas injectés tout seuls. Hooks = scripts déclenchés par Cursor (thought / compact / start). Mot de passe sudo Mac **interdit** Doppler/chat ; `artcb-1/prd` n’a pas de nom SUDO/ROOT. Fuite 285/288 conservée, ne plus recoller. Agent ≠ accès root automatique.
+**CERTIFIED_100=false.**
+
