@@ -74,3 +74,9 @@ Action ce tour : dispatch manuel run **34503344277** sur SHA `32a0ab0…` (queue
 | CERTIFIED_100 | Toujours false (N04, chaos, Mac tip, etc.) |
 
 Je continue le possible (SSM AWS, CI dispatch, mesures). Je ne invente pas un PASS SSH.
+
+## 7. CI run 34503344277
+
+`workflow_dispatch` lancé sur `32a0ab0…` → **failure** : `pytest --timeout=120` sans plugin `pytest-timeout`.
+Correctif : ajout `pytest-timeout>=2.3.1` dans `requirements.txt`, redispatch.
+
