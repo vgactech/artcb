@@ -12,6 +12,11 @@
 
   SSH : clef cursor_mac_node (ed25519) dans ~/.ssh/ — gérée par Cursor uniquement.
   Port ARTCB : 8001 (pas 8000 pour éviter conflit avec mirror OVH1 éventuel).
+
+  2026-09-10T14:50:00Z — `doppler run` sans filtre échoue si un secret restricted
+  existe (MAC_SUDO_PASSWORD). Wrapper : scripts/artcb_mac_doppler_run.sh
+  (`--only-secrets` hors restricted). Ancien argv conservé ci-dessous en commentaire.
+  ~~ /usr/local/bin/doppler run --project artcb-1 --config prd -- .venv/bin/python -m uvicorn … ~~
 -->
 <plist version="1.0">
 <dict>
@@ -20,25 +25,7 @@
 
   <key>ProgramArguments</key>
   <array>
-    <string>/usr/local/bin/doppler</string>
-    <string>run</string>
-    <string>--project</string>
-    <string>artcb-1</string>
-    <string>--config</string>
-    <string>prd</string>
-    <string>--</string>
-    <string>/Users/deyi/.bob/playground/.venv/bin/python</string>
-    <string>-m</string>
-    <string>uvicorn</string>
-    <string>src.api.main:app</string>
-    <string>--host</string>
-    <string>0.0.0.0</string>
-    <string>--port</string>
-    <string>8001</string>
-    <string>--limit-concurrency</string>
-    <string>16</string>
-    <string>--timeout-keep-alive</string>
-    <string>5</string>
+    <string>/Users/deyi/.bob/playground/scripts/artcb_mac_doppler_run.sh</string>
   </array>
 
   <key>WorkingDirectory</key>

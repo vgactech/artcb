@@ -1,0 +1,26 @@
+{
+  "ovh-node-1": {
+    "rc": 255,
+    "dur_ns": 35428259,
+    "stdout": "",
+    "stderr": "ssh: connect to host 152.228.144.34 port 22: Connection refused\n"
+  },
+  "ovh-node-2": {
+    "rc": 255,
+    "dur_ns": 1031518060,
+    "stdout": "",
+    "stderr": "ssh: connect to host 151.80.107.29 port 22: Connection refused\n"
+  },
+  "aws-node-3": {
+    "rc": 255,
+    "dur_ns": 32167881,
+    "stdout": "",
+    "stderr": "ssh: connect to host 13.38.209.25 port 22: Connection refused\n"
+  },
+  "ovh-node-4": {
+    "rc": 255,
+    "dur_ns": 15184321,
+    "stdout": "",
+    "stderr": "ssh: connect to host 91.134.45.8 port 22: Connection refused\n"
+  }
+}

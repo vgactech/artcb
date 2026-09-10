@@ -1,0 +1,391 @@
+{
+  "stamp": "20260910T144759Z",
+  "origin_main": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+  "head": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+  "certified_100": false,
+  "mac_live_pbft": false,
+  "includes_thinking": false,
+  "not_pbft_prepare_commit": true,
+  "wipe": false,
+  "genesis": false,
+  "rescue": false,
+  "sha_layers": {
+    "github_302b_documents_deploy": "07ed59000139e81c7cffcd4d2fb810927c05f1b2",
+    "github_302b_commit": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+    "note": "852f0e2 is the docs commit; 07ed590 is the applicative SHA 302b proves. Later runtime 852f0e2 is a new layer."
+  },
+  "domain": {
+    "ovh-node-1": {
+      "base": "https://artcb.me",
+      "health_http": 200,
+      "health_dur_ns": 115011988,
+      "health": {
+        "status": "healthy",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+        "git_branch": "main",
+        "certified_distributed_mainnet": true
+      },
+      "chain_http": 200,
+      "chain": {
+        "height": 1133,
+        "block_count": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true
+      },
+      "pbft_view_http": 200,
+      "pbft_view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "ovh-node-1",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "finality_http": 200,
+      "finality": {
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "view": 15,
+        "primary": "ovh-node-1",
+        "replica_id": "ovh-node-1",
+        "prepared_count": 0,
+        "committed_count": 45,
+        "certificate_count": 45
+      },
+      "tip_http": 200,
+      "tip": {
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "node_id": "ovh-node-1",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0"
+      },
+      "sha_eq_origin": true
+    },
+    "ovh-node-2": {
+      "base": "https://n2.artcb.me",
+      "health_http": 200,
+      "health_dur_ns": 131145838,
+      "health": {
+        "status": "healthy",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+        "git_branch": "main",
+        "certified_distributed_mainnet": true
+      },
+      "chain_http": 200,
+      "chain": {
+        "height": 1133,
+        "block_count": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true
+      },
+      "pbft_view_http": 200,
+      "pbft_view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "ovh-node-2",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "finality_http": 200,
+      "finality": {
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "view": 15,
+        "primary": "ovh-node-1",
+        "replica_id": "ovh-node-2",
+        "prepared_count": 0,
+        "committed_count": 44,
+        "certificate_count": 44
+      },
+      "tip_http": 200,
+      "tip": {
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "node_id": "ovh-node-2",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0"
+      },
+      "sha_eq_origin": true
+    },
+    "aws-node-3": {
+      "base": "https://n3.artcb.me",
+      "health_http": 200,
+      "health_dur_ns": 104051009,
+      "health": {
+        "status": "healthy",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+        "git_branch": "main",
+        "certified_distributed_mainnet": true
+      },
+      "chain_http": 200,
+      "chain": {
+        "height": 1133,
+        "block_count": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true
+      },
+      "pbft_view_http": 200,
+      "pbft_view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "aws-node-3",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "finality_http": 200,
+      "finality": {
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "view": 15,
+        "primary": "ovh-node-1",
+        "replica_id": "aws-node-3",
+        "prepared_count": 0,
+        "committed_count": 44,
+        "certificate_count": 44
+      },
+      "tip_http": 200,
+      "tip": {
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "node_id": "aws-node-3",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0"
+      },
+      "sha_eq_origin": true
+    },
+    "ovh-node-4": {
+      "base": "https://n4.artcb.me",
+      "health_http": 200,
+      "health_dur_ns": 109978805,
+      "health": {
+        "status": "healthy",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+        "git_branch": "main",
+        "certified_distributed_mainnet": true
+      },
+      "chain_http": 200,
+      "chain": {
+        "height": 1133,
+        "block_count": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "chain_valid": true
+      },
+      "pbft_view_http": 200,
+      "pbft_view": {
+        "view": 15,
+        "primary": "ovh-node-4",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "ovh-node-4",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "finality_http": 200,
+      "finality": {
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "view": 15,
+        "primary": "ovh-node-1",
+        "replica_id": "ovh-node-4",
+        "prepared_count": 0,
+        "committed_count": 43,
+        "certificate_count": 43
+      },
+      "tip_http": 200,
+      "tip": {
+        "height": 1133,
+        "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+        "node_id": "ovh-node-4",
+        "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0"
+      },
+      "sha_eq_origin": true
+    }
+  },
+  "ipv4_direct": {
+    "ovh-node-1": {
+      "http": 0,
+      "dur_ns": 28238491,
+      "error": "URLError",
+      "msg": "<urlopen error [Errno 61] Connection refused>"
+    },
+    "ovh-node-2": {
+      "http": 0,
+      "dur_ns": 3648083,
+      "error": "URLError",
+      "msg": "<urlopen error [Errno 61] Connection refused>"
+    },
+    "aws-node-3": {
+      "http": 0,
+      "dur_ns": 7052073,
+      "error": "URLError",
+      "msg": "<urlopen error [Errno 61] Connection refused>"
+    },
+    "ovh-node-4": {
+      "http": 0,
+      "dur_ns": 3953449,
+      "error": "URLError",
+      "msg": "<urlopen error [Errno 61] Connection refused>"
+    }
+  },
+  "mac_before": {
+    "label": "before_restart",
+    "health_http": 200,
+    "health": {
+      "status": "healthy",
+      "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+      "git_branch": "cursor/pbft-r297-mac-replica-568e",
+      "certified_distributed_mainnet": true
+    },
+    "pbft_view": {
+      "view": 0,
+      "primary": "ovh-node-1",
+      "n": 4,
+      "f": 1,
+      "q": 3,
+      "replica_id": "mac-node-local",
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4"
+      ]
+    },
+    "finality": {
+      "n": 4,
+      "f": 1,
+      "q": 3,
+      "view": 0,
+      "primary": "ovh-node-1",
+      "replica_id": "mac-node-local",
+      "prepared_count": 0,
+      "committed_count": 0,
+      "certificate_count": 0
+    },
+    "chain": {
+      "height": 6,
+      "block_count": 6,
+      "last_hash": "01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884",
+      "chain_valid": true
+    },
+    "launchctl_pid_lines": [
+      "\tpid = 4397"
+    ],
+    "code_n_f_q_on_disk": null
+  },
+  "mac_after": {
+    "health_http": 200,
+    "health_dur_ns": 320070315,
+    "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+    "git_branch": "cursor/pbft-r297-mac-replica-568e",
+    "pbft_view_http": 200,
+    "pbft_view_dur_ns": 17256410,
+    "pbft_view": {
+      "view": 0,
+      "primary": "ovh-node-1",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replica_id": "mac-node-local",
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ]
+    },
+    "finality": {
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "view": 0,
+      "primary": "ovh-node-1",
+      "replica_id": "mac-node-local",
+      "prepared_count": 0,
+      "committed_count": 0,
+      "certificate_count": 0
+    },
+    "chain": {
+      "height": 6,
+      "last_hash": "01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884",
+      "chain_valid": true
+    },
+    "status_n": 4,
+    "ps": " 7457 Thu Sep 10 16:50:34 2026       00:26 /usr/local/bin/doppler run --project artcb-1 --config prd --only-secrets ARTCB_API_KEY,ARTCB_API_URL,ARTCB_DATA_DIR,ARTCB_DEBUG,ARTCB_HOST,ARTCB_KEM_STORAGE_",
+    "book_lines": 6,
+    "restarted": true,
+    "doppler_restricted_skipped": true
+  },
+  "code_on_disk": {
+    "n_f_q": [
+      5,
+      1,
+      3
+    ],
+    "replicas": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4",
+      "mac-node-local"
+    ],
+    "seeds": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4"
+    ],
+    "mac_in_seeds": false,
+    "reachable_http": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4"
+    ],
+    "replica_peer_rfc1918": false,
+    "tunnel": {
+      "ok": false,
+      "reason": "rfc1918_requires_tunnel",
+      "tunnel_required": true
+    }
+  },
+  "mac_restarted": true,
+  "github_status_852f0e2": {
+    "state": "pending",
+    "total_count": 0,
+    "statuses": [],
+    "check_runs_total": 0
+  },
+  "stamp_after": "20260910T145100Z"
+}

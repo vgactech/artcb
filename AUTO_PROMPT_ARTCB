@@ -1851,5 +1851,14 @@ Run Everything Cursor ≠ identité PBFT. **CERTIFIED_100=false.** Mac replica l
 
 Push `origin HEAD:main` = `07ed59000139e81c7cffcd4d2fb810927c05f1b2`. SSH follow-main rc=0 ×4. BOOK 1133. AWS3 rattrapé `bc0a9b9`→`07ed590`. Health 200 `git_sha=07ed590` ×4 + Mac `:8001`. CERTIFIED_100=false. Mac P2P NON PROUVÉ.
 
+## [2026-09-10T14:51:00Z] 303 — couches SHA + Mac n=5 local ≠ quorum
+
+Audit GitHub confirmé : **852f0e2** = commit documentaire 302b ; **07ed590** = SHA applicatif que 302b prouve. Runtime ultérieur `git_sha=852f0e2` = **nouvel état**, pas une preuve GitHub 302b.
+Combined GitHub `852f0e2` : `statuses=[]` `total_count=0` check-runs 0 — **pas** CI verte.
+Ce tour HTTPS domaines : SHA `852f0e2` ×4, height **1133** tip `cc0bf8a1…`, `/pbft/view` **n=5** replicas incluent le Mac. IPv4 `:22/:8000/:8443` filtrés sur ce LAN ≠ VM mortes.
+Mac avant reload : health SHA `852f0e2` mais process du **9 sept 20:00** servait encore **n=4**. `git_sha` health = `rev-parse HEAD`, pas les modules en mémoire.
+Kickstart : `doppler run` cassé par secret restricted `MAC_SUDO_PASSWORD`. Wrapper `scripts/artcb_mac_doppler_run.sh` (`--only-secrets` hors restricted). Mac UP, n=5 local, view **0**, height **6**, prepare/commit **0**. Pas de P2P. Ingest 409 equivocation, prompt pas on-chain.
+**CERTIFIED_100=false.** Mac replica live = **NON PROUVÉ**.
+
 
 

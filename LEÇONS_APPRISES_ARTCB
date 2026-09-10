@@ -200,4 +200,9 @@
 **Leçon :** La formule `n_f_q(4)=(4,1,3)` reste vraie historiquement. Un runner de certification qui l’affiche comme N live conclut à tort « quatre replicas ». Seeds IPv4 (`OFFICIAL_COMPUTE_NODE_IDS`) ≠ membership PBFT. Health 200 ≠ participation au quorum. Ne jamais ajouter le Mac aux seeds publiques pour « réparer » N.
 **Action :** Rapport 302. `official_pbft_n_f_q()` + `n_f_q_historical_four` dans 270/271. `pbft_reachable_http_map()`. `primary_unreachable_transport`. Live 2026-09-10T11:33:20Z : Mac `:8001` height 6 ≠ livre officiel 1133 ; AWS3 SHA lag ; tunnel absent. Health 200 ≠ quorum.
 
+### L-043 — SHA documentaire ≠ SHA chargé ; `doppler run` vs secret restricted (10 sept. 2026)
+**Contexte :** Audit GitHub : 302b prouve `07ed590` ; le commit `852f0e2` est l’audit. Health Mac `852f0e2` avec uvicorn du 9 sept. servait encore n=4. Kickstart : Doppler refuse `run` à cause de `MAC_SUDO_PASSWORD` restricted.
+**Leçon :** (1) Couches SHA distinctes : commit d’audit / SHA déployé documenté / runtime postérieur. (2) `git_sha` health = `rev-parse HEAD`, pas la mémoire du process. (3) Un secret restricted dans `artcb-1/prd` casse tout `doppler run` sans `--only-secrets`. (4) IPv4 filtré + HTTPS domaine 200 ≠ panne VM. (5) JSON n=5 ≠ quorum PREPARE/COMMIT.
+**Action :** Rapport 303. Wrapper `scripts/artcb_mac_doppler_run.sh`. Jamais wipe. CERTIFIED_100=false.
+
 

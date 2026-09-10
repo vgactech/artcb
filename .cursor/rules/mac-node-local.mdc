@@ -76,3 +76,7 @@ Bob, même Mac, **sans rien toucher** :
 5. SSH `cursor_mac_node` : pub `authorized_keys`, priv Doppler `CURSOR_SSH_PRIVATE_KEY`. Jamais afficher.
 
 Résumé Bob conservé : 5ᵉ nœud local, git natif, Doppler, IP privée, SSH possible depuis un agent **sur ce Mac**. Membership PBFT = R297b, pas le §4.
+
+## [2026-09-10T14:51:00Z] R303 — `doppler run` vs secret restricted
+
+`MAC_SUDO_PASSWORD` restricted dans `artcb-1`/`prd` fait échouer `doppler run` sans filtre (KeepAlive crash). Wrapper `scripts/artcb_mac_doppler_run.sh` : `--only-names` puis `--only-secrets` **hors** ce nom. Jamais `--plain`. launchd `ProgramArguments` = ce script. Health SHA ≠ uvicorn chargé. HTTP 200 n=5 ≠ quorum PBFT. CERTIFIED_100=false.
