@@ -51,3 +51,16 @@ def book_pdf_path() -> Path:
     if not path.is_file():
         pytest.skip(f"Book PDF not found: {path}")
     return path
+
+
+def pytest_configure(config) -> None:
+    """R310 — before test module imports pull in api.main eager app.
+    Force non-bootstrap + isolated defaults early; per-test tmp_path still wins later.
+    """
+    import os
+
+    os.environ.setdefault("ARTCB_BOOTSTRAP_NODE", "false")
+    os.environ.setdefault("ARTCB_SKIP_SEED_DISCOVERY", "1")
+    os.environ.setdefault("ARTCB_SKIP_CLOUD_METADATA", "1")
+    os.environ.setdefault("ARTCB_ALLOW_LOCAL_PEERS", "1")
+

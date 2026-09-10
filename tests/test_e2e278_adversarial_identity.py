@@ -139,9 +139,10 @@ def test_platform_class_does_not_recast_absent_tpm() -> None:
         ovh={"document_ok": False},
     )
     assert klass3 == "vtpm"
+    # R284/R310: present alone ≠ HARDWARE_TPM. Need explicit kind + BARE_METAL_PROVEN.
     klass4 = classify(
-        tpm={"present": True},
-        virt={"is_vm": False},
+        tpm={"present": True, "device_kind": "HARDWARE_TPM"},
+        virt={"is_vm": False, "environment_certainty": "BARE_METAL_PROVEN"},
         aws={"document_ok": False},
         ovh={"document_ok": False},
     )

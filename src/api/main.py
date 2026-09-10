@@ -503,4 +503,12 @@ def create_app() -> FastAPI:
     return app
 
 
-app = create_app()
+# ~~app = create_app()~~ 2026-09-10T19:20:00Z R310 — under pytest, eager create_app()
+# runs before fixtures set ARTCB_DATA_DIR / BOOTSTRAP_NODE and can decrypt
+# production KEM blobs with the wrong key (InvalidTag) or stick bootstrap 503.
+import sys as _sys
+_UNDER_PYTEST = ("pytest" in _sys.modules) or bool(__import__("os").environ.get("PYTEST_CURRENT_TEST"))
+if _UNDER_PYTEST:
+    app = None  # tests call create_app() after env fixtures
+else:
+    app = create_app()

@@ -61,29 +61,29 @@ def test_sdk_refuses_remote_http_with_key(monkeypatch: pytest.MonkeyPatch) -> No
         ArtcbClient("http://152.228.144.34:8000", api_key="artcb_deadbeef")
 
 
-def test_api_key_list_and_revoke_require_session(monkeypatch: pytest.MonkeyPatch) -> None:
-    # ARTCB_BOOTSTRAP_NODE=true sur CI → toutes les routes retournent 503 sauf /health.
-    # On désactive le bootstrap pour ce test d'auth.
+def test_api_key_list_and_revoke_require_session(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Auth must return 401, never treat bootstrap 503 as a skip/pass (R310)."""
     monkeypatch.setenv("ARTCB_BOOTSTRAP_NODE", "false")
+    monkeypatch.setenv("ARTCB_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("ARTCB_NODE_WALLET_ADDRESS", "artcb1testnode000000000000000000000000000")
+    monkeypatch.setenv("ARTCB_WALLET_PASSPHRASE", "test-passphrase-artcb-dev-32chars!")
+    # Fresh create_app after env — module-level app is None under pytest.
     from src.api.main import create_app
 
     client = TestClient(create_app())
     status_list = client.get("/api/v1/api-keys/list").status_code
     status_del = client.delete("/api/v1/api-keys/kid_x").status_code
-    # 503 = bootstrap non désactivé dans ce contexte (app déjà créée) — skip
-    if status_list == 503:
-        pytest.skip("app already in bootstrap mode — monkeypatch arrived too late")
-    assert status_list == 401
-    assert status_del == 401
+    assert status_list == 401, f"list expected 401 got {status_list}"
+    assert status_del == 401, f"delete expected 401 got {status_del}"
 
 
 def test_expired_key_rejected(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    from src.api import api_keys_routes as keys
     from src.api.main import create_app
 
     monkeypatch.setenv("ARTCB_BOOTSTRAP_NODE", "false")
     monkeypatch.setenv("ARTCB_DATA_DIR", str(tmp_path))
-    # store an expired key hash
+    monkeypatch.setenv("ARTCB_NODE_WALLET_ADDRESS", "artcb1testnode000000000000000000000000000")
+    monkeypatch.setenv("ARTCB_WALLET_PASSPHRASE", "test-passphrase-artcb-dev-32chars!")
     raw = "artcb_" + ("ab" * 32)
     import hashlib
     import json
@@ -99,10 +99,7 @@ def test_expired_key_rejected(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
         "last_used_at": None,
         "active": True,
     }
-    (tmp_path / "api_keys.json").write_text(json.dumps([rec]))
-    # App may use settings.data_dir — skip if not wired to tmp
+    (tmp_path / "api_keys.json").write_text(json.dumps([rec]), encoding="utf-8")
     client = TestClient(create_app())
     r = client.get("/api/v1/api-keys/me", headers={"Authorization": f"Bearer {raw}"})
-    assert r.status_code in {401, 200}  # 200 only if app ignores our tmp file
-    if r.status_code == 200:
-        pytest.skip("api_keys path not using ARTCB_DATA_DIR in this app state")
+    assert r.status_code == 401, f"expired key must be 401, got {r.status_code} body={r.text[:200]}"

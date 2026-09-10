@@ -1885,3 +1885,8 @@ Branches : ~19 remotes non mergées. Langage IA ConceptID **non** finalisé. Tip
 
 SHA ×5 `32a0ab0`. AWS3 SSM Online : sshd écoute, pub22_ok interne ; Mac→IP:22 refused ×4. CI tests.yml manuel (pas push) ; dispatch run 34503344277. ConceptID non « final ». Rapport 309. CERTIFIED_100=false.
 
+## [2026-09-10T19:35:00Z] 310 — thinking→fichier ; scopes ARTCB ; CI 7 FAIL fix
+
+Thinking surfacé → `data/trace/thinking/`. `ARTCB_INGEST_THINKING=1` → mémo private. Bundle fin de tour public/org/group/private + `LAST_ARTCB_SEND.md`.
+pytest : eager app disabled ; 7 FAIL auth/P2P/TPM corrigés localement 7 passed. CERTIFIED_100=false.
+
