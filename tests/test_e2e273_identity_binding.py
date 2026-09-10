@@ -178,10 +178,19 @@ def test_binding_enforced_by_official_marker_not_ip(tmp_path: Path, monkeypatch)
 
 
 def test_official_ids_still_four() -> None:
-    from artcb.node_registry import official_pbft_replica_ids
+    """Seeds stay four public VMs. PBFT membership is a different tuple.
+
+    The name is historical (R273). It does **not** mean « the live network
+    has four replicas ». Mac is in official_pbft_replica_ids(); Mac is not
+    in OFFICIAL_COMPUTE_NODE_IDS.
+    """
+    from artcb.node_registry import MAC_NODE_ID, official_pbft_replica_ids
 
     assert OFFICIAL_COMPUTE_NODE_IDS == ("ovh-node-1", "ovh-node-2", "aws-node-3", "ovh-node-4")
     ids = official_pbft_replica_ids()
+    assert MAC_NODE_ID in ids
+    assert MAC_NODE_ID not in OFFICIAL_COMPUTE_NODE_IDS
+    assert len(ids) >= 5
     assert primary_of(15) == ids[15 % len(ids)]
 
 

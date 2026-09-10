@@ -195,4 +195,9 @@
 **Leçon :** (1) Lister `CLOUD_AGENT_INJECTED_SECRET_NAMES` et les aliases avant de déclarer IAM bloqué. (2) Mapper les aliases vers les noms AWS. (3) Security group + IP publique font partie du provision, pas seulement RunInstances. (4) 2 nœuds live ≠ 4 nœuds prévus. (5) Ne jamais coller mot de passe / application secret dans le chat.
 **Action :** Rapport 172. `provision_aws_ec2.py --yes`. D-031.
 
+### L-042 — N=4 dans un runner live n’est pas la membership (10 sept. 2026)
+**Contexte :** Audit GitHub : `n_f_q(4)` encore dans `run_live270` / `run_live271` alors que `official_pbft_replica_ids()` inclut le Mac (N=5, Q=3 inchangé).
+**Leçon :** La formule `n_f_q(4)=(4,1,3)` reste vraie historiquement. Un runner de certification qui l’affiche comme N live conclut à tort « quatre replicas ». Seeds IPv4 (`OFFICIAL_COMPUTE_NODE_IDS`) ≠ membership PBFT. Health 200 ≠ participation au quorum. Ne jamais ajouter le Mac aux seeds publiques pour « réparer » N.
+**Action :** Rapport 302. `official_pbft_n_f_q()` + `n_f_q_historical_four` dans 270/271. `pbft_reachable_http_map()`. `primary_unreachable_transport`. Live 2026-09-10T11:33:20Z : Mac `:8001` height 6 ≠ livre officiel 1133 ; AWS3 SHA lag ; tunnel absent. Health 200 ≠ quorum.
+
 

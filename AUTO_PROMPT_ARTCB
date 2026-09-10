@@ -1827,3 +1827,25 @@ Follow-main SSH rc=0 ×4. Health 200 SHA `c24f097fb9fc9cde979ee5497c736229ecd2c4
 Correction opérateur : stocker `MAC_SUDO_PASSWORD` dans `artcb-1`/`prd`. Interdit machine plaintext, rapports nouveaux, thinking, chat, `artcb-blockchain`. Vérifier le nom seulement. Fuite 285/288 non effacée.
 **CERTIFIED_100=false.**
 
+## [2026-09-10T11:20:00Z] 302 — seeds ≠ membership ; Mac P2P pas prouvé
+
+Audit opérateur validé : R300/R301b réels ; thinking privé non garanti ; `artcb-read-all.mdc` alwaysApply ; Mac `pbft_replica=true` ; N adaptatif ; primary via `official_pbft_replica_ids()`.
+**Ne pas** ajouter le Mac à `OFFICIAL_COMPUTE_NODE_IDS`. Les live 270/271 affichaient `n_f_q(4)` comme si N live = 4 — corrigé : `official_pbft_n_f_q()` + `n_f_q_historical_four`. HTTP fan-out = 4 seeds. `n_f_q(4)` dans les tests 188/263/270 = formule historique, pas « le réseau a 4 replicas ».
+`test_official_ids_still_four` = seeds restent 4, membership ≥5 avec Mac.
+`pbft_reachable_http_map()` n'ajoute le Mac que via tunnel public mesuré (jamais RFC1918). Exclusive PBFT : `primary_unreachable_transport` si le primary est le Mac sans tunnel (évite KeyError view%5==4).
+Run Everything Cursor ≠ droits ARTCB/Doppler/PBFT. Ingest 409 = prompt pas on-chain. **CERTIFIED_100=false.** Mac replica live = **NON PROUVÉ** tant que P2P bidirectionnel + quorum N=5 non mesurés.
+
+## [2026-09-10T11:33:20Z] 302 live — membership N=5 mesurée ; Mac P2P NON PROUVÉ
+
+pytest **13 passed** (`test_e2e302` + 297 + `test_official_ids_still_four` + formules historiques 188/270).
+Live `logs/302_mac_n5_transport_20260910T113320Z.json`.
+`official_pbft_n_f_q()=(5,1,3)` ; seeds IPv4 restent 4 ; Mac **pas** dans `OFFICIAL_COMPUTE_NODE_IDS`.
+SHA code : OVH1/OVH2/OVH4/Mac `:8001` = `e58dc2809495b0352174ed9db34efae2ee728e90` = origin/main du run. AWS3 encore `bc0a9b9661d32a5756f1bfadf81bfd82120681e4` (lag follow-main).
+Livre officiel height **1133** tip `cc0bf8a1…` ×4. Mac local height **6** tip `01a5f743…` ; `tip_node_id` = adresse wallet, **pas** `mac-node-local`.
+`replica_peer_allowed("10.234.49.2")=false`. Tunnel `rfc1918_requires_tunnel`. HTTP Mac→seeds `/consensus/status` + `tip-attest` 200 ≠ PREPARE/COMMIT/quorum.
+Doppler `artcb-1`/`prd` : nom `MAC_SUDO_PASSWORD` **présent** (CLI local, token partagé env retiré). Jamais `--plain`.
+Ingest ce tour : HTTP **409** `equivocation`, `ingest_skipped=true`, prompt **pas** on-chain. `includes_thinking=false`.
+Run Everything Cursor ≠ identité PBFT. **CERTIFIED_100=false.** Mac replica live = **NON PROUVÉ**.
+
+
+

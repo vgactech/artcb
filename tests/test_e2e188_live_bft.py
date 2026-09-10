@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_n_f_q_four_nodes_is_f1_q3() -> None:
+    """Historical 4-node formula (campaign 188). Live N uses official_pbft_n_f_q()."""
     n, f, q = n_f_q(4)
     assert n == 4
     assert f == FOUR_NODE_BFT_F == 1

@@ -1,0 +1,197 @@
+{
+  "certified_100": false,
+  "doppler_mac_sudo_name_only": {
+    "name_count": 0,
+    "name_present": false,
+    "ok": false,
+    "plain_invoked": false,
+    "rc": 1
+  },
+  "head": "e58dc2809495b0352174ed9db34efae2ee728e90",
+  "inbound_from_seeds_note": {
+    "13.38.209.25": {
+      "note": "seed source IPs are public; Mac RFC1918 is never an official replica peer",
+      "replica_peer_allowed_to_mac_lan": false
+    },
+    "151.80.107.29": {
+      "note": "seed source IPs are public; Mac RFC1918 is never an official replica peer",
+      "replica_peer_allowed_to_mac_lan": false
+    },
+    "152.228.144.34": {
+      "note": "seed source IPs are public; Mac RFC1918 is never an official replica peer",
+      "replica_peer_allowed_to_mac_lan": false
+    },
+    "91.134.45.8": {
+      "note": "seed source IPs are public; Mac RFC1918 is never an official replica peer",
+      "replica_peer_allowed_to_mac_lan": false
+    }
+  },
+  "includes_thinking": false,
+  "mac_key_registered": true,
+  "mac_lan_health": {
+    "dur_ns": 4002164644,
+    "http": 0,
+    "url_is_lan": true
+  },
+  "mac_live_pbft_replica": false,
+  "mac_local_health": {
+    "chain_valid": null,
+    "dur_ns": 562526723,
+    "git_sha": "e58dc2809495b0352174ed9db34efae2ee728e90",
+    "height": null,
+    "http": 200,
+    "last_hash": null,
+    "node_id": null,
+    "primary": null,
+    "view": null
+  },
+  "mac_to_seed_pbft": {
+    "aws-node-3": {
+      "ok": true,
+      "status_dur_ns": 211876340,
+      "status_http": 404,
+      "tip_attest_dur_ns": 301469581,
+      "tip_attest_http": 200
+    },
+    "ovh-node-1": {
+      "ok": true,
+      "status_dur_ns": 142047275,
+      "status_http": 404,
+      "tip_attest_dur_ns": 338524858,
+      "tip_attest_http": 200
+    },
+    "ovh-node-2": {
+      "ok": true,
+      "status_dur_ns": 195570870,
+      "status_http": 404,
+      "tip_attest_dur_ns": 324324238,
+      "tip_attest_http": 200
+    },
+    "ovh-node-4": {
+      "ok": true,
+      "status_dur_ns": 173127124,
+      "status_http": 404,
+      "tip_attest_dur_ns": 380542779,
+      "tip_attest_http": 200
+    }
+  },
+  "membership_vs_transport": {
+    "certified_100": false,
+    "mac_in_membership": true,
+    "mac_in_reachable_http": false,
+    "mac_in_seed_ids": false,
+    "n_f_q": [
+      5,
+      1,
+      3
+    ],
+    "n_f_q_historical_four": [
+      4,
+      1,
+      3
+    ],
+    "official_compute_node_ids": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4"
+    ],
+    "official_pbft_replica_ids": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4",
+      "mac-node-local"
+    ],
+    "reachable_http_ids": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4"
+    ]
+  },
+  "n_f_q": [
+    5,
+    1,
+    3
+  ],
+  "official_compute_seeds": [
+    "ovh-node-1",
+    "ovh-node-2",
+    "aws-node-3",
+    "ovh-node-4"
+  ],
+  "official_pbft_replica_ids": [
+    "ovh-node-1",
+    "ovh-node-2",
+    "aws-node-3",
+    "ovh-node-4",
+    "mac-node-local"
+  ],
+  "origin_main": "e58dc2809495b0352174ed9db34efae2ee728e90",
+  "protocol": "302-mac-n5-transport",
+  "reachable_http_ids": [
+    "ovh-node-1",
+    "ovh-node-2",
+    "aws-node-3",
+    "ovh-node-4"
+  ],
+  "replica_peer_rfc1918": false,
+  "seeds_health": {
+    "aws-node-3": {
+      "chain_valid": null,
+      "dur_ns": 237180610,
+      "git_sha": "bc0a9b9661d32a5756f1bfadf81bfd82120681e4",
+      "height": null,
+      "http": 200,
+      "last_hash": null,
+      "node_id": null,
+      "primary": null,
+      "view": null
+    },
+    "ovh-node-1": {
+      "chain_valid": null,
+      "dur_ns": 264759591,
+      "git_sha": "e58dc2809495b0352174ed9db34efae2ee728e90",
+      "height": null,
+      "http": 200,
+      "last_hash": null,
+      "node_id": null,
+      "primary": null,
+      "view": null
+    },
+    "ovh-node-2": {
+      "chain_valid": null,
+      "dur_ns": 195726788,
+      "git_sha": "e58dc2809495b0352174ed9db34efae2ee728e90",
+      "height": null,
+      "http": 200,
+      "last_hash": null,
+      "node_id": null,
+      "primary": null,
+      "view": null
+    },
+    "ovh-node-4": {
+      "chain_valid": null,
+      "dur_ns": 250279583,
+      "git_sha": "e58dc2809495b0352174ed9db34efae2ee728e90",
+      "height": null,
+      "http": 200,
+      "last_hash": null,
+      "node_id": null,
+      "primary": null,
+      "view": null
+    }
+  },
+  "sha_mac_eq_origin": true,
+  "sha_seeds_eq_origin": false,
+  "stamp": "20260910T112920Z",
+  "ts_ns": 1789039760321695000,
+  "tunnel": {
+    "health_http": null,
+    "reason": "rfc1918_requires_tunnel",
+    "select_cloud_remote_ok": false,
+    "tunnel_required": true
+  },
+  "verdict": "TRANSPORT_GAP"
+}

@@ -199,6 +199,75 @@ def on_official_compute() -> bool:
     """True only on one of the four live VMs. Pytest/agents must not HTTP-fanout."""
     return bool(_local_ipv4s() & set(OFFICIAL_COMPUTE_IPV4))
 
+
+def seed_http_map() -> dict[str, str]:
+    """Public IPv4 seed HTTP bases (:8000). Topology, not PBFT membership."""
+    return {
+        nid: f"http://{ip}:{OFFICIAL_COMPUTE_HTTP_PORT}"
+        for nid, ip in zip(OFFICIAL_COMPUTE_NODE_IDS, OFFICIAL_COMPUTE_IPV4)
+    }
+
+
+def _mac_public_tunnel_http() -> str | None:
+    """Measured public Mac tunnel only. RFC1918 / .local never returned."""
+    import ipaddress
+    from urllib.parse import urlparse
+
+    raw = (os.getenv("ARTCB_MAC_TUNNEL_HEALTH_HTTP") or "").strip()
+    if not raw:
+        spec = NODES.get(MAC_NODE_ID)
+        raw = str((getattr(spec, "tunnel_health_http", None) or "")).strip() if spec else ""
+    if not raw:
+        return None
+    parsed = urlparse(raw if "://" in raw else f"http://{raw}")
+    host = (parsed.hostname or "").strip().lower()
+    if not host or host.endswith(".local") or host.endswith(".lan"):
+        return None
+    if host in {"localhost", "127.0.0.1", "::1", "0.0.0.0"}:
+        return None
+    try:
+        addr = ipaddress.ip_address(host)
+        if addr.is_private or addr.is_loopback:
+            return None
+    except ValueError:
+        pass
+    return raw.rstrip("/")
+
+
+def pbft_reachable_http_map() -> dict[str, str]:
+    """HTTP targets a coordinator can actually dial.
+
+    Always includes the four public seeds. Includes mac-node-local only if a
+    measured public tunnel URL is set. Never RFC1918. Never append Mac to
+    OFFICIAL_COMPUTE_NODE_IDS.
+    """
+    out = seed_http_map()
+    tunnel = _mac_public_tunnel_http()
+    if tunnel:
+        out[MAC_NODE_ID] = tunnel
+    return out
+
+
+def pbft_membership_vs_transport() -> dict[str, Any]:
+    """Split live membership (N adaptive) from seed HTTP fan-out (always 4)."""
+    from src.artcb.consensus.live_bft import n_f_q
+
+    n, f, q = official_pbft_n_f_q()
+    ids = official_pbft_replica_ids()
+    reachable = pbft_reachable_http_map()
+    hist_n, hist_f, hist_q = n_f_q(4)
+    return {
+        "official_compute_node_ids": list(OFFICIAL_COMPUTE_NODE_IDS),
+        "official_pbft_replica_ids": list(ids),
+        "n_f_q": [n, f, q],
+        "n_f_q_historical_four": [hist_n, hist_f, hist_q],
+        "reachable_http_ids": list(reachable.keys()),
+        "mac_in_membership": MAC_NODE_ID in ids,
+        "mac_in_seed_ids": MAC_NODE_ID in OFFICIAL_COMPUTE_NODE_IDS,
+        "mac_in_reachable_http": MAC_NODE_ID in reachable,
+        "certified_100": False,
+    }
+
 # Public HTTPS health (nginx + Let's Encrypt). IP :8000 remains the compute probe.
 PUBLIC_HEALTH_URLS: dict[str, str] = {
     "ovh-node-1": "https://artcb.me/health",

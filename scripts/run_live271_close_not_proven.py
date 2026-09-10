@@ -40,7 +40,11 @@ from artcb.consensus.pbft_finality import verify_certificate, verify_preprepare 
 from artcb.consensus.pbft_view import primary_of  # noqa: E402
 from artcb.economics.economic_snapshot import settlement_id  # noqa: E402
 from artcb.live import http_json, resolve_api_key, resolve_api_url  # noqa: E402
-from artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS  # noqa: E402
+from artcb.node_registry import (  # noqa: E402
+    OFFICIAL_COMPUTE_NODE_IDS,
+    official_pbft_n_f_q,
+    official_pbft_replica_ids,
+)
 
 HTTP = l265.HTTP
 HTTPS = l266.HTTPS
@@ -169,7 +173,12 @@ def main() -> int:
         "hpc": False,
         "wipe": False,
         "aws": "t3.small",
-        "n_f_q": list(n_f_q(4)),
+        # ~~n_f_q(4)~~ 2026-09-10T11:20:00Z — formule historique, pas la membership live.
+        "n_f_q_historical_four": list(n_f_q(4)),
+        "n_f_q": list(official_pbft_n_f_q()),
+        "official_pbft_replica_ids": list(official_pbft_replica_ids()),
+        "official_compute_seeds": list(OFFICIAL_COMPUTE_NODE_IDS),
+        "http_fanout": list(OFFICIAL_COMPUTE_NODE_IDS),
         "long_rounds": LONG_ROUNDS,
         "tests": {},
     }

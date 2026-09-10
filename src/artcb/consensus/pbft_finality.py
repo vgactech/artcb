@@ -10,6 +10,10 @@ PRE-PREPARE → PREPARE → COMMIT → commit certificate → write the same
 block on honest replicas. Finalized indices cannot be replaced by
 longest-chain import.
 
+~~2026-09-10T11:20:00Z the sentence « N=4 F=1 Q=3 » above is campaign
+history (R265). Live N/f/Q = official_pbft_n_f_q() (Mac included → N=5).
+Seeds remain four public IPv4s.~~
+
 R264 view-change (settlement) is the shared view counter. This module
 adds the log, P-set, and certificates. Nanosecond traces on every phase.
 """

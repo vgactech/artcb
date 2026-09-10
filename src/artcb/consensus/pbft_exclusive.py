@@ -14,13 +14,24 @@ from urllib.request import Request, urlopen
 
 from src.artcb.consensus.pbft_finality import verify_certificate, verify_preprepare
 from src.artcb.consensus.pbft_view import primary_of
-from src.artcb.node_registry import OFFICIAL_COMPUTE_IPV4, OFFICIAL_COMPUTE_NODE_IDS, on_official_compute
+from src.artcb.node_registry import (
+    OFFICIAL_COMPUTE_IPV4,
+    OFFICIAL_COMPUTE_NODE_IDS,
+    on_official_compute,
+    pbft_reachable_http_map,
+)
 from src.artcb.trace.ns import emit_pbft, now_mono_ns
 
 HTTP_TIMEOUT = 15.0
 
 
 def official_http_map() -> dict[str, str]:
+    """Seed IPv4 HTTP map (follow-main / book fan-out). Not PBFT membership.
+
+    ~~2026-09-10T11:20:00Z zip(OFFICIAL_COMPUTE_NODE_IDS) was used as if N=4 replicas.~~
+    Keep seeds here. Live membership is official_pbft_replica_ids(). Reachable
+    Mac tunnel (if any) is pbft_reachable_http_map().
+    """
     return {nid: f"http://{ip}:8000" for nid, ip in zip(OFFICIAL_COMPUTE_NODE_IDS, OFFICIAL_COMPUTE_IPV4)}
 
 
@@ -56,7 +67,26 @@ def coordinate_public_finality(engine: Any, chain: Any, block: dict[str, Any]) -
         return {"ok": False, "wrote": False, "reason": "not_on_official_compute"}
     view = int(getattr(engine.pbft, "view", 0) or 0)
     primary = primary_of(view)
-    hosts = official_http_map()
+    # ~~2026-09-10T11:20:00Z hosts = official_http_map() then hosts[primary]~~
+    # KeyError when primary is mac-node-local (view % 5 == 4). Fail closed.
+    hosts = pbft_reachable_http_map()
+    if primary not in hosts and engine.node_id != primary:
+        if data_dir is not None:
+            emit_pbft(
+                data_dir,
+                phase="exclusive",
+                replica_id=engine.node_id,
+                ok=False,
+                dur_ns=now_mono_ns() - t0,
+                reason="primary_unreachable_transport",
+            )
+        return {
+            "ok": False,
+            "wrote": False,
+            "reason": "primary_unreachable_transport",
+            "primary": primary,
+            "reachable": sorted(hosts),
+        }
     log = engine.pbft_log
     if engine.node_id == primary:
         try:

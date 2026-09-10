@@ -33,6 +33,7 @@ def test_rule_and_autoprompt_require_completeness_a_to_z() -> None:
 
 
 def test_n_f_q_still_four_is_q3() -> None:
+    """Historical N=4 → Q=3. Live membership is official_pbft_n_f_q()."""
     n, f, q = n_f_q(4)
     assert (n, f, q) == (4, 1, 3)
 

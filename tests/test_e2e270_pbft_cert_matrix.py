@@ -14,6 +14,7 @@ from artcb.consensus.pbft_certification_matrix import (
 
 
 def test_n_f_q_four() -> None:
+    """Historical formula: a 4-replica set is f=1 Q=3. Not live membership."""
     n, f, q = n_f_q(4)
     assert (n, f, q) == (4, 1, 3)
 

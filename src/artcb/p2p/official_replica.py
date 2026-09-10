@@ -2,12 +2,12 @@
 
 Mac is never added here via RFC1918. Live P2P to mac-node-local needs a
 measured non-LAN endpoint (MAC-3). Membership is official_pbft_replica_ids().
-"""
 
 Anonymous P2P stays public-only. That path cannot rebuild a mixed
 public/private hash chain (a public block's prev_hash often points at a
-private predecessor). The four official nodes are the operator set, not
-anonymous peers: they receive every visibility, plus graphs / KCG / ingest
+private predecessor). ~~The four official nodes are the operator set, not
+anonymous peers~~ (2026-09-10T11:30:00Z R302: four public IPv4 seeds, not
+PBFT membership): they receive every visibility, plus graphs / KCG / ingest
 index, so height 1074 is the same book everywhere.
 
 Never accept a replica envelope from a non-official host.
