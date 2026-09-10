@@ -10,6 +10,7 @@ from artcb.mac_node_access import mac_is_official_compute, mac_spec
 from artcb.node_registry import (
     FOLLOW_MAIN_REMOTE_NODE_IDS,
     MAC_NODE_ID,
+    NODE_SECRET_ALLOWLIST,
     NODES,
     OFFICIAL_COMPUTE_IPV4,
     OFFICIAL_COMPUTE_NODE_IDS,
@@ -91,3 +92,9 @@ def test_context_contract_mac_is_replica_no_thinking() -> None:
     assert registry["mac_in_pbft_membership"] is True
     assert registry["official_pbft_replica_ids"][-1] == MAC_NODE_ID
     assert registry["pbft"]["n"] == 5
+
+
+def test_mac_sudo_password_is_doppler_allowlisted_name_only() -> None:
+    names = NODE_SECRET_ALLOWLIST[MAC_NODE_ID]
+    assert "MAC_SUDO_PASSWORD" in names
+    assert "KEY_API_STRIPE" not in names

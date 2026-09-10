@@ -109,4 +109,4 @@ SHA ×4 = `75836c7` au moment du probe, maintenant `41109a3` = `origin/main`.
 
 ## [2026-09-10T10:40:00Z] R301 — ne plus recoller
 
-Mot de passe sudo en clair **conservé** plus haut (jamais supprimer l’historique). Interdit de le recoller. Pas dans Doppler `artcb-1/prd` (noms 2026-09-10). Rotation `passwd`. Agent : ne pas afficher la valeur.
+Mot de passe sudo en clair **conservé** plus haut (jamais supprimer l’historique). Interdit de le recoller. ~~Pas dans Doppler `artcb-1/prd` (noms 2026-09-10).~~ **Barré 2026-09-10T10:43:00Z** : Doppler `artcb-1`/`prd` `MAC_SUDO_PASSWORD`. Agent : ne pas afficher la valeur.

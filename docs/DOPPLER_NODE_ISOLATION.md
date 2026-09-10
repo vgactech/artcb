@@ -54,7 +54,7 @@ Le mot de passe console n’entre **pas** dans Doppler / git / chat.
 
 ## mac-node-local (R285/R286 — 2026-09-09)
 
-Observateur LAN, **pas** un replica PBFT. Ne pas l’ajouter à `OFFICIAL_COMPUTE_NODE_IDS`.
+~~Observateur LAN, **pas** un replica PBFT. Ne pas l’ajouter à `OFFICIAL_COMPUTE_NODE_IDS`.~~ **Barré 2026-09-10T00:00Z / précisé 2026-09-10T10:43:00Z** : Mac = replica PBFT (R297b). Seeds IPv4 ×4 ≠ exclusion. Sudo Mac = Doppler `artcb-1`/`prd` `MAC_SUDO_PASSWORD` uniquement (jamais git / chat / thinking). Le mot de passe **console AWS** (ligne ci-dessus) reste hors Doppler — ce n’est pas le sudo Mac.
 
 | node_id | Doppler | Token Cursor | Compute |
 |---------|---------|--------------|---------|

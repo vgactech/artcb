@@ -169,4 +169,4 @@ Un agent Cursor local (sur ce Mac ou sur le même LAN) peut s'y connecter direct
 
 ## [2026-09-10T10:40:00Z] R301 — ne plus recoller
 
-Le mot de passe sudo en clair **reste** dans l’historique de ce fichier (règles 11–15 : on ne l’efface pas). **Ne plus** le coller dans le chat, git, ou Doppler. Noms `artcb-1/prd` mesurés 2026-09-10 : **pas** de secret SUDO/ROOT. Rotation : `passwd` sur le Mac. Agent : **interdit** d’afficher la valeur.
+Le mot de passe sudo en clair **reste** dans l’historique de ce fichier (règles 11–15 : on ne l’efface pas). ~~**Ne plus** le coller dans le chat, git, ou Doppler. Noms `artcb-1/prd` mesurés 2026-09-10 : **pas** de secret SUDO/ROOT.~~ **Barré 2026-09-10T10:43:00Z** : la valeur opérationnelle va dans Doppler `artcb-1`/`prd` `MAC_SUDO_PASSWORD`. Jamais la réécrire ici. Agent : **interdit** d’afficher la valeur.

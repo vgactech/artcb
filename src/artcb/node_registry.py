@@ -482,6 +482,9 @@ NODE_SECRET_ALLOWLIST = {
             "ARTCB_NODE_SSH_USER",
             "CURSOR_SSH_PUBLIC_KEY",
             "CURSOR_SSH_PRIVATE_KEY",
+            # 2026-09-10T10:43:00Z R301b : sudo Mac = Doppler artcb-1/prd ONLY.
+            # Never git, never reports, never thinking, never plaintext on disk.
+            "MAC_SUDO_PASSWORD",
         }
     ),
 }

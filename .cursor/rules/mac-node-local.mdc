@@ -33,6 +33,7 @@ Les blocs ~~barrés~~ restent lisibles. Horodatage UTC sur chaque révocation.
 ### Interdits (texte original conservé)
 
 - Ne pas coller PEM / `dp.st.…` / mot de passe sudo dans le chat, git, ou un rapport.
+- **2026-09-10T10:43:00Z** : sudo Mac = Doppler `artcb-1`/`prd` `MAC_SUDO_PASSWORD` uniquement. Jamais la valeur ici.
 - Ne pas recaster un timeout LAN en PASS SSH.
 - Ne pas traiter `10.234.49.2` comme un tunnel. N04 50 % reste FAIL et **dernier**. `CERTIFIED_100=false`.
 
