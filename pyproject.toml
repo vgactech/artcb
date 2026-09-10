@@ -65,6 +65,8 @@ pythonpath = ["src"]
 filterwarnings = [
     "error::DeprecationWarning",
     "ignore::DeprecationWarning:faiss.*",
+    # anyio>=4 still exposes abc.BlockingPortal alias; httpx/starlette import path triggers it at collection
+    "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
 ]
 
 [tool.ruff]
