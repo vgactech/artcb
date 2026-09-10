@@ -1881,5 +1881,7 @@ Mac : health+SHA oui ; tip/view/tunnel/PREPARE **non** → **pas** nœud PBFT fo
 Thinking : journal local 510 lignes, `artcb_bound=false` ×510, **pas** transmis ARTCB.
 Branches : ~19 remotes non mergées. Langage IA ConceptID **non** finalisé. Tip seeds 1136 `9b887495…` ×4 SHA `c8fa132…` ×5. Rapport 308.
 
+## [2026-09-10T16:40:00Z] 309 — SSH = filtre Mac/LAN ; CI workflow_dispatch ; SSM AWS3
 
+SHA ×5 `32a0ab0`. AWS3 SSM Online : sshd écoute, pub22_ok interne ; Mac→IP:22 refused ×4. CI tests.yml manuel (pas push) ; dispatch run 34503344277. ConceptID non « final ». Rapport 309. CERTIFIED_100=false.
 
