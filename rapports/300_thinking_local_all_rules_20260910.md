@@ -38,6 +38,10 @@ Voir JSON health Mac et pytest T-E77 de ce tour. Ingest : dire `ingest_skipped` 
 
 - OVH1 `:8443` **200** `git_sha=4fe76ddc8ff739b0de69950d7c865ce897217896` branch `main` height **1133** tip `cc0bf8a1…` `chain_valid=true`.
 - SHA live mesurés 2026-09-10T00:22:00Z : OVH1/OVH2/OVH4/Mac = `4fe76dd`. **AWS3 = `05d7030` (en retard)**. Ne pas inventer l’égalité ×4.
+
+## [2026-09-10T00:25:00Z] follow-main mesuré ×4 + Mac
+
+SSH `ARTCB_FOLLOW_MODE=official bash scripts/artcb_follow_main.sh` rc=0 ×4. Health **200** SHA **`c24f097fb9fc9cde979ee5497c736229ecd2c43d`** = `origin/main` sur OVH1, OVH2, AWS3 (rattrapé depuis `05d7030`), OVH4, Mac `:8001`. Ingest 409 `not_prepared` inchangé. `CERTIFIED_100=false`.
 - Ingest ce prompt : `ingest_http=409` `commit:not_prepared` — `ingest_skipped=true`. Prompt **pas** on-chain. `includes_thinking=false`. Archive sha256 `e2cf58d1…` chars 2674.
 - Mac `:8001` même SHA `4fe76dd`. Pytest T-E77 10 passed.
 - `CERTIFIED_100=false`. N04 last FAIL.

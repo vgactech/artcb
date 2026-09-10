@@ -1812,3 +1812,8 @@ Ce que l'opérateur avait oublié de figer, ajouté ici :
 Cursor n'a pas de mode « thinking fichier à la place du chat ». CoT privé = backend Cursor, pas le disque. Hook officiel `afterAgentThought` → `data/trace/agent_thoughts.jsonl`. Journal `artcb_reason_log.py`. `preCompact` = perte mémoire dans le tour. Relire **tous** les fichiers listés dans `.cursor/rules/artcb-read-all.mdc` première→dernière ligne, chaque tour et à l'intérieur. Oubli : rules `alwaysApply: false` + AUTO_PROMPT hors `.mdc`. ~~Bob Mac observateur.~~ Replica R297b. Jamais thinking on-chain.
 **CERTIFIED_100=false.**
 
+## [2026-09-10T00:25:00Z] 300b — SHA live `c24f097` ×5
+
+Follow-main SSH rc=0 ×4. Health 200 SHA `c24f097fb9fc9cde979ee5497c736229ecd2c43d` = origin/main sur OVH1/2/4, AWS3 (était `05d7030`), Mac `:8001`. Ingest 409 `not_prepared`. N04 last FAIL.
+**CERTIFIED_100=false.**
+
