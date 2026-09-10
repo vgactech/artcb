@@ -1874,5 +1874,12 @@ SHA ×5 = `8acbbdee…` (AWS3 rattrapé après reboot EC2 ; SSH IPv4 toujours re
 PREPARE/COMMIT **4/4** Q=3 ; writes ×4 ; height **1134** tip `577fff7e…` ×4 seeds. Mac height **6** tip distinct — tip×5 FAIL ; Mac PBFT NOT_PROVEN ; chaos NOT_RUN.
 Doppler `artcb3` : `AWS_INSTANCE_ID=i-06c9404e42798ff76`, `AWS_SERVER_IP=13.38.209.25`. Script `run_live307_p0_primary_repair.py`. Rapport 307. Ingest 409 skipped. **CERTIFIED_100=false.**
 
+## [2026-09-10T16:25:00Z] 308 — Mac NON PBFT-ops ; thinking local≠ARTCB ; gaps ouverts
+
+Audit GitHub Q=3 PASS seeds retenu ; `CERTIFIED_100=false` retenu. Correction : membership **N=5** ; PASS 307 = **4 seeds**.
+Mac : health+SHA oui ; tip/view/tunnel/PREPARE **non** → **pas** nœud PBFT fonctionnel.
+Thinking : journal local 510 lignes, `artcb_bound=false` ×510, **pas** transmis ARTCB.
+Branches : ~19 remotes non mergées. Langage IA ConceptID **non** finalisé. Tip seeds 1136 `9b887495…` ×4 SHA `c8fa132…` ×5. Rapport 308.
+
 
 
