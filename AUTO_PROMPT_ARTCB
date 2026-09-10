@@ -1860,5 +1860,11 @@ Mac avant reload : health SHA `852f0e2` mais process du **9 sept 20:00** servait
 Kickstart : `doppler run` cassé par secret restricted `MAC_SUDO_PASSWORD`. Wrapper `scripts/artcb_mac_doppler_run.sh` (`--only-secrets` hors restricted). Mac UP, n=5 local, view **0**, height **6**, prepare/commit **0**. Pas de P2P. Ingest 409 equivocation, prompt pas on-chain.
 **CERTIFIED_100=false.** Mac replica live = **NON PROUVÉ**.
 
+## [2026-09-10T15:20:00Z] 306 — mode preuve P0 ; primary divergence bloque PREPARE
+
+Audit opérateur retenu : pas de features ; `CERTIFIED_100=false` ; identité ≠ participation ≠ certification.
+Live : SHA PARTIAL (AWS3 `852f0e2` lag) ; membership JSON n=5 PASS_IDENTITY ; **primary stored ovh-4 ≠ primary_of(15)=ovh-1** FAIL_DIVERGENCE ; propose calc=409 equivocation, stored=409 not_primary ; livre 1133 inchangé ; Mac hors quorum ; SSH 22 NOT_REACHABLE ; CI HEAD `statuses=[]`.
+Script `scripts/run_live306_p0_proof_matrix.py`. Rapport 306. **CERTIFIED_100=false.**
+
 
 

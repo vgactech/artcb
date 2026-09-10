@@ -1,0 +1,341 @@
+{
+  "stamp": "20260910T152044Z",
+  "origin_main": "404b1766a12b73a50126a356524c7d8906d53d6c",
+  "head": "404b1766a12b73a50126a356524c7d8906d53d6c",
+  "certified_100": false,
+  "mac_live_pbft": false,
+  "includes_thinking": false,
+  "wipe": false,
+  "n_f_q": [
+    5,
+    1,
+    3
+  ],
+  "membership": [
+    "ovh-node-1",
+    "ovh-node-2",
+    "aws-node-3",
+    "ovh-node-4",
+    "mac-node-local"
+  ],
+  "seeds": [
+    "ovh-node-1",
+    "ovh-node-2",
+    "aws-node-3",
+    "ovh-node-4"
+  ],
+  "mac_in_seeds": false,
+  "reachable_http": [
+    "ovh-node-1",
+    "ovh-node-2",
+    "aws-node-3",
+    "ovh-node-4"
+  ],
+  "replica_peer_rfc1918": false,
+  "tunnel": {
+    "ok": false,
+    "reason": "rfc1918_requires_tunnel",
+    "tunnel_required": true
+  },
+  "nodes": {
+    "ovh-node-1": {
+      "base": "https://artcb.me",
+      "health_http": 200,
+      "git_sha": "404b1766a12b73a50126a356524c7d8906d53d6c",
+      "sha_eq_origin": true,
+      "pqc": "ML-DSA-65",
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "primary_stored": "ovh-node-4",
+      "primary_of_view": "ovh-node-1",
+      "primary_matches_calc": false,
+      "finality": {
+        "prepared_count": 0,
+        "committed_count": 45,
+        "certificate_count": 45
+      }
+    },
+    "ovh-node-2": {
+      "base": "https://n2.artcb.me",
+      "health_http": 200,
+      "git_sha": "404b1766a12b73a50126a356524c7d8906d53d6c",
+      "sha_eq_origin": true,
+      "pqc": "ML-DSA-65",
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "primary_stored": "ovh-node-4",
+      "primary_of_view": "ovh-node-1",
+      "primary_matches_calc": false,
+      "finality": {
+        "prepared_count": 0,
+        "committed_count": 44,
+        "certificate_count": 44
+      }
+    },
+    "aws-node-3": {
+      "base": "https://n3.artcb.me",
+      "health_http": 200,
+      "git_sha": "852f0e24134c15315bf29f2477af5fbbcfc67dd0",
+      "sha_eq_origin": false,
+      "pqc": "ML-DSA-65",
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "primary_stored": "ovh-node-4",
+      "primary_of_view": "ovh-node-1",
+      "primary_matches_calc": false,
+      "finality": {
+        "prepared_count": 0,
+        "committed_count": 44,
+        "certificate_count": 44
+      }
+    },
+    "ovh-node-4": {
+      "base": "https://n4.artcb.me",
+      "health_http": 200,
+      "git_sha": "404b1766a12b73a50126a356524c7d8906d53d6c",
+      "sha_eq_origin": true,
+      "pqc": "ML-DSA-65",
+      "height": 1133,
+      "last_hash": "cc0bf8a1053c7ae75c3c00b0a4ebf72da311efbf1f13e3164a95f159fc7d71b3",
+      "chain_valid": true,
+      "view": 15,
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "primary_stored": "ovh-node-4",
+      "primary_of_view": "ovh-node-1",
+      "primary_matches_calc": false,
+      "finality": {
+        "prepared_count": 0,
+        "committed_count": 43,
+        "certificate_count": 43
+      }
+    },
+    "mac-node-local": {
+      "base": "http://127.0.0.1:8001",
+      "health_http": 200,
+      "git_sha": "404b1766a12b73a50126a356524c7d8906d53d6c",
+      "sha_eq_origin": true,
+      "pqc": "ML-DSA-65",
+      "height": 6,
+      "last_hash": "01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884",
+      "chain_valid": true,
+      "view": 0,
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "primary_stored": "ovh-node-1",
+      "primary_of_view": "ovh-node-1",
+      "primary_matches_calc": true,
+      "finality": {
+        "prepared_count": 0,
+        "committed_count": 0,
+        "certificate_count": 0
+      }
+    }
+  },
+  "propose_probe": {
+    "view": 15,
+    "primary_stored": "ovh-node-4",
+    "primary_of_view": "ovh-node-1",
+    "primary_divergence": true,
+    "height_before": 1133,
+    "tip_before_prefix": "cc0bf8a1053c7ae7",
+    "attempts": {
+      "calc_primary": {
+        "primary": "ovh-node-1",
+        "propose_http": 409,
+        "propose_ok": null,
+        "propose_reason": "equivocation",
+        "has_preprepare": false
+      },
+      "stored_primary": {
+        "primary": "ovh-node-4",
+        "propose_http": 409,
+        "propose_ok": null,
+        "propose_reason": "not_primary",
+        "has_preprepare": false
+      }
+    },
+    "book_unchanged": true,
+    "mac_in_fanout": false,
+    "mac_participated": false,
+    "verdict": "FAIL_OR_BLOCKED",
+    "note": "409 equivocation on calc primary + 409 not_primary on stored = membership/primary divergence blocks new PREPARE"
+  },
+  "p0": {
+    "1_sha_exact_5_runtimes": {
+      "origin_main": "404b1766a12b73a50126a356524c7d8906d53d6c",
+      "shas_prefix": {
+        "ovh-node-1": "404b1766a12b",
+        "ovh-node-2": "404b1766a12b",
+        "aws-node-3": "852f0e24134c",
+        "ovh-node-4": "404b1766a12b",
+        "mac-node-local": "404b1766a12b"
+      },
+      "all_eq_origin": false,
+      "verdict": "PARTIAL"
+    },
+    "2_membership_n5": {
+      "code_n_f_q": [
+        5,
+        1,
+        3
+      ],
+      "live_n": {
+        "ovh-node-1": 5,
+        "ovh-node-2": 5,
+        "aws-node-3": 5,
+        "ovh-node-4": 5,
+        "mac-node-local": 5
+      },
+      "mac_in_replicas": {
+        "ovh-node-1": true,
+        "ovh-node-2": true,
+        "aws-node-3": true,
+        "ovh-node-4": true,
+        "mac-node-local": true
+      },
+      "verdict": "PASS_IDENTITY",
+      "note": "Identity JSON \u2260 PREPARE participation"
+    },
+    "3_primary_calculated": {
+      "rows": {
+        "ovh-node-1": {
+          "view": 15,
+          "stored": "ovh-node-4",
+          "calc": "ovh-node-1",
+          "match": false
+        },
+        "ovh-node-2": {
+          "view": 15,
+          "stored": "ovh-node-4",
+          "calc": "ovh-node-1",
+          "match": false
+        },
+        "aws-node-3": {
+          "view": 15,
+          "stored": "ovh-node-4",
+          "calc": "ovh-node-1",
+          "match": false
+        },
+        "ovh-node-4": {
+          "view": 15,
+          "stored": "ovh-node-4",
+          "calc": "ovh-node-1",
+          "match": false
+        },
+        "mac-node-local": {
+          "view": 0,
+          "stored": "ovh-node-1",
+          "calc": "ovh-node-1",
+          "match": true
+        }
+      },
+      "verdict": "FAIL_DIVERGENCE"
+    },
+    "4_prepare_commit_real": {
+      "verdict": "FAIL_OR_BLOCKED",
+      "mac_participated": false,
+      "detail": {
+        "view": 15,
+        "primary_stored": "ovh-node-4",
+        "primary_of_view": "ovh-node-1",
+        "primary_divergence": true,
+        "height_before": 1133,
+        "tip_before_prefix": "cc0bf8a1053c7ae7",
+        "attempts": {
+          "calc_primary": {
+            "primary": "ovh-node-1",
+            "propose_http": 409,
+            "propose_ok": null,
+            "propose_reason": "equivocation",
+            "has_preprepare": false
+          },
+          "stored_primary": {
+            "primary": "ovh-node-4",
+            "propose_http": 409,
+            "propose_ok": null,
+            "propose_reason": "not_primary",
+            "has_preprepare": false
+          }
+        },
+        "book_unchanged": true,
+        "mac_in_fanout": false,
+        "mac_participated": false,
+        "verdict": "FAIL_OR_BLOCKED",
+        "note": "409 equivocation on calc primary + 409 not_primary on stored = membership/primary divergence blocks new PREPARE"
+      }
+    },
+    "5_quorum_q3": {
+      "verdict": "NOT_REACHED",
+      "mac_in_quorum": false
+    },
+    "6_same_block_tip_state": {
+      "seed_tips_same": true,
+      "mac_same_as_seeds": false,
+      "verdict": "PASS_SEEDS_ONLY"
+    },
+    "7_10_chaos_L_M_N": {
+      "verdict": "NOT_RUN",
+      "reason": "SSH port 22 connection refused from this LAN"
+    }
+  },
+  "crypto_observed": {
+    "ovh-node-1": "ML-DSA-65",
+    "ovh-node-2": "ML-DSA-65",
+    "aws-node-3": "ML-DSA-65",
+    "ovh-node-4": "ML-DSA-65",
+    "mac-node-local": "ML-DSA-65"
+  }
+}

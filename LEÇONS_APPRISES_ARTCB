@@ -205,4 +205,9 @@
 **Leçon :** (1) Couches SHA distinctes : commit d’audit / SHA déployé documenté / runtime postérieur. (2) `git_sha` health = `rev-parse HEAD`, pas la mémoire du process. (3) Un secret restricted dans `artcb-1/prd` casse tout `doppler run` sans `--only-secrets`. (4) IPv4 filtré + HTTPS domaine 200 ≠ panne VM. (5) JSON n=5 ≠ quorum PREPARE/COMMIT.
 **Action :** Rapport 303. Wrapper `scripts/artcb_mac_doppler_run.sh`. Jamais wipe. CERTIFIED_100=false.
 
+### L-044 — Membership N=5 + primary stocké N=4-era bloque PREPARE (10 sept. 2026)
+**Contexte :** Mode preuve P0. view=15, `primary_of(15)=ovh-node-1`, stored=`ovh-node-4`. Propose calc → 409 equivocation ; propose stored → 409 not_primary. Livre 1133 inchangé. Mac n=5 JSON hors fan-out.
+**Leçon :** (1) Identité N=5 ≠ autorité de consensus alignée. (2) Le primary affiché/stocké et `primary_of` doivent être mesurés séparément. (3) Un mismatch bloque la chaîne PREPARE→COMMIT→quorum. (4) Chaos L/M/N exige SSH ; filtre LAN ≠ nœuds morts (HTTPS domaine 200). (5) CI vide sur HEAD ≠ tests locaux verts.
+**Action :** Rapport 306 + `run_live306_p0_proof_matrix.py`. CERTIFIED_100=false.
+
 
