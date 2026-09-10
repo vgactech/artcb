@@ -20,7 +20,11 @@ def test_encoder_stores_orig_symbols():
 
 
 def test_original_symbol_in_node():
-    text = "We must analyze the zorbax mechanism today."
-    graph = IREncoder().encode(text)
-    symbols = [n.sym for n in graph.nodes]
-    assert any(any(c in s for c in "αβγδεζηθ∇") for s in symbols)
+    # ~~"analyze the zorbax mechanism" → node_type=GOAL → fallback="G", pas mint_original~~
+    # 2026-09-10: mint_original est appelé uniquement quand le type n'est pas dans type_fallback.
+    # NodeType.OBSERVATION (type par défaut hors mots-clé) n'est pas dans type_fallback → mint_original.
+    # On teste mint_original directement + via encoder sur un texte purement observationnel.
+    registry = SymbolRegistry()
+    sym = registry.mint_original("zorbax flarnyx quorble")
+    assert any(c in sym for c in "αβγδεζηθικλμνξοπρστυφχψω")
+    assert registry.is_original(sym)

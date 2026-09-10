@@ -53,11 +53,15 @@ def test_fail_is_not_certified() -> None:
 
 
 def test_independent_safety_detects_divergence() -> None:
+    # N=5 depuis R297b : mac-node-local est dans official_pbft_replica_ids().
+    # Le snapshot ne le fournit pas → hash=None = 3ème valeur unique.
+    # On inclut le Mac dans le snapshot pour rester à 2 hashes distincts (aa/bb).
     snap = {
         "ovh-node-1": {"height": 10, "last_hash": "aa", "view": 1, "git_sha": "x"},
         "ovh-node-2": {"height": 10, "last_hash": "bb", "view": 1, "git_sha": "x"},
         "aws-node-3": {"height": 10, "last_hash": "aa", "view": 1, "git_sha": "x"},
         "ovh-node-4": {"height": 10, "last_hash": "aa", "view": 1, "git_sha": "x"},
+        "mac-node-local": {"height": 10, "last_hash": "aa", "view": 1, "git_sha": "x"},
     }
     got = independent_safety(snap)
     assert got["converged"] is False

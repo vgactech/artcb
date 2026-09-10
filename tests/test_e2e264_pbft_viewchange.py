@@ -30,11 +30,14 @@ def test_rule_requires_pbft_view_change_and_processes_stay() -> None:
 
 
 def test_primary_rotates_on_official_set() -> None:
+    # N=5 membership (4 seeds + mac-node-local) depuis R297b.
+    # view % 5 : 0→ovh1, 1→ovh2, 2→aws3, 3→ovh4, 4→mac, 5→ovh1
     assert primary_of(0) == "ovh-node-1"
     assert primary_of(1) == "ovh-node-2"
     assert primary_of(2) == "aws-node-3"
     assert primary_of(3) == "ovh-node-4"
-    assert primary_of(4) == "ovh-node-1"
+    assert primary_of(4) == "mac-node-local"   # ~~ovh-node-1~~ 2026-09-10 R297b N=5
+    assert primary_of(5) == "ovh-node-1"       # cycle N=5
 
 
 def test_three_view_changes_install_new_view(tmp_path: Path) -> None:

@@ -128,8 +128,12 @@ def test_platform_class_does_not_recast_absent_tpm() -> None:
         ovh={"document_ok": False},
     )
     assert klass2 == "vm_unattested"
+    # ~~klass3: tpm.present=True + aws.document_ok=True → attendait "vtpm"~~
+    # 2026-09-10 R284: present=True sans device_kind prouvé sur VM → KIND_UNKNOWN
+    # → hypervisor_vtpm_proven=False → cloud_instance_identity (aws.document_ok).
+    # Pour obtenir "vtpm" il faut device_kind=NITROTPM ou HYPERVISOR_VTPM explicite.
     klass3 = classify(
-        tpm={"present": True},
+        tpm={"present": True, "device_kind": "NITROTPM"},
         virt={"is_vm": True},
         aws={"document_ok": True},
         ovh={"document_ok": False},

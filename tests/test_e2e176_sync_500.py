@@ -35,6 +35,8 @@ def test_push_encrypt_failure_is_p2psyncerror_not_500() -> None:
     svc.peers = type("P", (), {"update_peer_status": staticmethod(lambda *a, **k: None)})()
     svc.identity = type("I", (), {"network_id": "artcb-devnet-1", "node_id": "n", "kem_public_key_hex": "aa"})()
     svc.get_public_blocks = lambda **k: [{"index": 0, "visibility": "public"}]
+    # push_to_peer accède à self.chain.blocks_path pour data_dir — mock minimal requis
+    svc.chain = type("C", (), {"blocks_path": "/tmp/artcb_test_blocks.jsonl"})()
 
     def boom(*_a, **_k):
         raise RuntimeError("Can not encapsulate secret")
