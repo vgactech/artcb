@@ -9,6 +9,19 @@ Notification: data/trace/LAST_ARTCB_SEND.md + artcb_send_notifications.jsonl
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+_ROOT = Path(__file__).resolve().parents[1]
+if str(_ROOT / "scripts") not in sys.path:
+    sys.path.insert(0, str(_ROOT / "scripts"))
+
+try:
+    from artcb_dns_fix import install as _artcb_dns_install
+    _artcb_dns_install()
+except Exception:
+    pass
+
 import hashlib
 import json
 import os

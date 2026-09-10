@@ -16,6 +16,11 @@
       {
         "command": "python3 .cursor/hooks/session_start.py"
       }
+    ],
+    "stop": [
+      {
+        "command": "python3 .cursor/hooks/stop_turn_bundle.py"
+      }
     ]
   }
 }
