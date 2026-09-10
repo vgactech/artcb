@@ -1,0 +1,217 @@
+{
+  "clear_vc": {
+    "new_v": 17,
+    "primary": "aws-node-3",
+    "vc": 4,
+    "nv_http": 200,
+    "nv_ok": true,
+    "detail": null,
+    "emit": {
+      "ovh-node-1": 200,
+      "ovh-node-2": 200,
+      "aws-node-3": 200,
+      "ovh-node-4": 200
+    },
+    "fan": {
+      "ovh-node-1": 200,
+      "ovh-node-2": 200,
+      "ovh-node-4": 200
+    }
+  },
+  "propose": {
+    "http": 200,
+    "ok": true,
+    "detail": null,
+    "seq": null,
+    "digest": "577fff7e5982d70ad0159b954636d890f25abdf71225fce02ad8652773bfaa67",
+    "view": null
+  },
+  "fan_pp": {
+    "ovh-node-1": {
+      "http": 200,
+      "detail": null,
+      "ok": true
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "detail": null,
+      "ok": true
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "detail": null,
+      "ok": true
+    }
+  },
+  "prepare_ok": 4,
+  "commit_ok": 4,
+  "prepares": {
+    "ovh-node-1": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    },
+    "aws-node-3": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    }
+  },
+  "commits": {
+    "ovh-node-1": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    },
+    "aws-node-3": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "has": true
+    }
+  },
+  "cert": true,
+  "writes": {
+    "ovh-node-1": {
+      "http": 200,
+      "wrote": true,
+      "detail": null
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "wrote": true,
+      "detail": null
+    },
+    "aws-node-3": {
+      "http": 200,
+      "wrote": true,
+      "detail": null
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "wrote": true,
+      "detail": null
+    }
+  },
+  "status": {
+    "ovh-node-1": {
+      "http": 200,
+      "height": 1134,
+      "last_hash": "577fff7e5982d70a",
+      "keys": [
+        "height",
+        "block_count",
+        "last_hash",
+        "last_timestamp",
+        "last_index",
+        "chain_valid",
+        "verify_mode"
+      ]
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "height": 1134,
+      "last_hash": "577fff7e5982d70a",
+      "keys": [
+        "height",
+        "block_count",
+        "last_hash",
+        "last_timestamp",
+        "last_index",
+        "chain_valid",
+        "verify_mode"
+      ]
+    },
+    "aws-node-3": {
+      "http": 200,
+      "height": 1134,
+      "last_hash": "577fff7e5982d70a",
+      "keys": [
+        "height",
+        "block_count",
+        "last_hash",
+        "last_timestamp",
+        "last_index",
+        "chain_valid",
+        "verify_mode"
+      ]
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "height": 1134,
+      "last_hash": "577fff7e5982d70a",
+      "keys": [
+        "height",
+        "block_count",
+        "last_hash",
+        "last_timestamp",
+        "last_index",
+        "chain_valid",
+        "verify_mode"
+      ]
+    },
+    "mac-node-local": {
+      "http": 200,
+      "height": 6,
+      "last_hash": "01a5f7435759ead8",
+      "keys": [
+        "height",
+        "block_count",
+        "last_hash",
+        "last_timestamp",
+        "last_index",
+        "chain_valid",
+        "verify_mode"
+      ]
+    }
+  },
+  "q3_prepare": true,
+  "q3_commit": true,
+  "aligned": true,
+  "views": {
+    "ovh-node-1": {
+      "view": 17,
+      "primary": "aws-node-3"
+    },
+    "ovh-node-2": {
+      "view": 17,
+      "primary": "aws-node-3"
+    },
+    "aws-node-3": {
+      "view": 17,
+      "primary": "aws-node-3"
+    },
+    "ovh-node-4": {
+      "view": 17,
+      "primary": "aws-node-3"
+    }
+  },
+  "ts_ns": 1789055179614878000
+}

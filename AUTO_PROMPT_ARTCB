@@ -1866,5 +1866,13 @@ Audit opérateur retenu : pas de features ; `CERTIFIED_100=false` ; identité �
 Live : SHA PARTIAL (AWS3 `852f0e2` lag) ; membership JSON n=5 PASS_IDENTITY ; **primary stored ovh-4 ≠ primary_of(15)=ovh-1** FAIL_DIVERGENCE ; propose calc=409 equivocation, stored=409 not_primary ; livre 1133 inchangé ; Mac hors quorum ; SSH 22 NOT_REACHABLE ; CI HEAD `statuses=[]`.
 Script `scripts/run_live306_p0_proof_matrix.py`. Rapport 306. **CERTIFIED_100=false.**
 
+## [2026-09-10T15:50:00Z] 307 — P0 repair primary_of + VC/NV + Q=3 seeds
+
+Audit opérateur confirmé : pas de features ; `CERTIFIED_100=false` ; wipe=false.
+**Canonique :** `primary_of(view)` (N=5). view 15 stored ovh-4 ≠ of ovh-1 → VC **16** primary **ovh-2** ; clear → VC **17** primary **aws-3**.
+SHA ×5 = `8acbbdee…` (AWS3 rattrapé après reboot EC2 ; SSH IPv4 toujours refused ; HTTPS OK).
+PREPARE/COMMIT **4/4** Q=3 ; writes ×4 ; height **1134** tip `577fff7e…` ×4 seeds. Mac height **6** tip distinct — tip×5 FAIL ; Mac PBFT NOT_PROVEN ; chaos NOT_RUN.
+Doppler `artcb3` : `AWS_INSTANCE_ID=i-06c9404e42798ff76`, `AWS_SERVER_IP=13.38.209.25`. Script `run_live307_p0_primary_repair.py`. Rapport 307. Ingest 409 skipped. **CERTIFIED_100=false.**
+
 
 

@@ -210,4 +210,9 @@
 **Leçon :** (1) Identité N=5 ≠ autorité de consensus alignée. (2) Le primary affiché/stocké et `primary_of` doivent être mesurés séparément. (3) Un mismatch bloque la chaîne PREPARE→COMMIT→quorum. (4) Chaos L/M/N exige SSH ; filtre LAN ≠ nœuds morts (HTTPS domaine 200). (5) CI vide sur HEAD ≠ tests locaux verts.
 **Action :** Rapport 306 + `run_live306_p0_proof_matrix.py`. CERTIFIED_100=false.
 
+### L-045 — Réparer primary via VIEW-CHANGE, pas en écrasant le stocké (10 sept. 2026)
+**Contexte :** P0-B. Divergence view 15. Norme = `primary_of`. VC→16 (ovh-2) puis 17 (aws-3). PREPARE/COMMIT Q=3 seeds PASS ; height 1134. AWS3 SHA rattrapé sans SSH (reboot + timer). Mac tip≠seeds.
+**Leçon :** (1) Ne pas « corriger » le JSON primary pour faire passer le test. (2) NEW-VIEW doit installer `primary_of(new_view)`. (3) Un propose orphelin → 409 equivocation jusqu’au prochain VC. (4) SHA×5 via health domaine ≠ SSH ops. (5) Q=3 seeds ≠ tip×5 Mac.
+**Action :** Rapport 307 + `run_live307_p0_primary_repair.py`. CERTIFIED_100=false.
+
 

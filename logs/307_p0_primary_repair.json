@@ -1,0 +1,492 @@
+{
+  "stamp": "20260910T154342Z",
+  "protocol": "307-p0-primary-repair",
+  "certified_100": false,
+  "wipe": false,
+  "origin_main": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+  "canonical_rule": "primary_of(view) over official_pbft_replica_ids(); stored primary is not normative",
+  "membership": {
+    "n": 5,
+    "f": 1,
+    "q": 3,
+    "replicas": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4",
+      "mac-node-local"
+    ]
+  },
+  "primary_of_table": {
+    "15": "ovh-node-1",
+    "16": "ovh-node-2",
+    "17": "aws-node-3"
+  },
+  "before": {
+    "ovh-node-1": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "ovh-node-2": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "aws-node-3": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "ovh-node-4": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "mac-node-local": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 0,
+      "primary_stored": "ovh-node-1",
+      "n": 5,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200,
+      "note": "local_only_not_public_pbft_transport"
+    }
+  },
+  "before_alignment": {
+    "ovh-node-1": {
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "primary_of": "ovh-node-1",
+      "aligned": false
+    },
+    "ovh-node-2": {
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "primary_of": "ovh-node-1",
+      "aligned": false
+    },
+    "aws-node-3": {
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "primary_of": "ovh-node-1",
+      "aligned": false
+    },
+    "ovh-node-4": {
+      "view": 15,
+      "primary_stored": "ovh-node-4",
+      "primary_of": "ovh-node-1",
+      "aligned": false
+    }
+  },
+  "divergence": true,
+  "aws3_tcp": {
+    "22": {
+      "ok": false,
+      "error": "[Errno 61] Connection refused",
+      "dur_ns": 3235851
+    },
+    "8000": {
+      "ok": false,
+      "error": "[Errno 61] Connection refused",
+      "dur_ns": 5374326
+    },
+    "8443": {
+      "ok": false,
+      "error": "[Errno 61] Connection refused",
+      "dur_ns": 2954978
+    },
+    "443_domain": {
+      "ok": true,
+      "dur_ns": 6348424
+    }
+  },
+  "ts_ns": 1789055029202333000,
+  "repair": {
+    "new_view_target": 16,
+    "canonical_primary": "ovh-node-2",
+    "vc_count": 4,
+    "vc_replicas": [
+      "ovh-node-1",
+      "ovh-node-2",
+      "aws-node-3",
+      "ovh-node-4"
+    ],
+    "emit": {
+      "ovh-node-1": {
+        "http": 200,
+        "ok": true,
+        "detail": null
+      },
+      "ovh-node-2": {
+        "http": 200,
+        "ok": true,
+        "detail": null
+      },
+      "aws-node-3": {
+        "http": 200,
+        "ok": true,
+        "detail": null
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "ok": true,
+        "detail": null
+      }
+    },
+    "receive": {
+      "ovh-node-1": [
+        {
+          "from": "ovh-node-2",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "aws-node-3",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "ovh-node-4",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        }
+      ],
+      "ovh-node-2": [
+        {
+          "from": "ovh-node-1",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "aws-node-3",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "ovh-node-4",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        }
+      ],
+      "aws-node-3": [
+        {
+          "from": "ovh-node-1",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "ovh-node-2",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "ovh-node-4",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        }
+      ],
+      "ovh-node-4": [
+        {
+          "from": "ovh-node-1",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "ovh-node-2",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        },
+        {
+          "from": "aws-node-3",
+          "http": 200,
+          "ok": true,
+          "detail": null
+        }
+      ]
+    },
+    "new_view_http": 200,
+    "new_view_ok": true,
+    "new_view_detail": null,
+    "new_view_primary": "ovh-node-2",
+    "enter_view": {
+      "ok": true,
+      "view": 16,
+      "dropped": [
+        "15:1129",
+        "15:1130",
+        "15:1131",
+        "15:1132",
+        "15:1133"
+      ],
+      "bound": {
+        "ok": false,
+        "reason": "no_prepared"
+      },
+      "new_view_certificate": {
+        "kind": "NEW_VIEW_CERTIFICATE",
+        "view": null,
+        "primary": null,
+        "quorum_view_changes": 0,
+        "q": 3,
+        "quorum_ok": false,
+        "replica_ids": [],
+        "claimed_prepared": false,
+        "reconstructable": false,
+        "selected": null,
+        "reason": "ok"
+      }
+    },
+    "fanout": {
+      "ovh-node-1": {
+        "http": 200,
+        "ok": true,
+        "detail": null
+      },
+      "aws-node-3": {
+        "http": 200,
+        "ok": true,
+        "detail": null
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "ok": true,
+        "detail": null
+      }
+    },
+    "nv_obj_present": true
+  },
+  "after": {
+    "ovh-node-1": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "ovh-node-2": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "aws-node-3": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "ovh-node-4": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "n": 5,
+      "f": 1,
+      "q": 3,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200
+    },
+    "mac-node-local": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "status": "healthy",
+      "view": 0,
+      "primary_stored": "ovh-node-1",
+      "n": 5,
+      "replicas": [
+        "ovh-node-1",
+        "ovh-node-2",
+        "aws-node-3",
+        "ovh-node-4",
+        "mac-node-local"
+      ],
+      "health_http": 200,
+      "view_http": 200,
+      "note": "local_only_not_public_pbft_transport"
+    }
+  },
+  "after_alignment": {
+    "ovh-node-1": {
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "primary_of": "ovh-node-2",
+      "aligned": true
+    },
+    "ovh-node-2": {
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "primary_of": "ovh-node-2",
+      "aligned": true
+    },
+    "aws-node-3": {
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "primary_of": "ovh-node-2",
+      "aligned": true
+    },
+    "ovh-node-4": {
+      "view": 16,
+      "primary_stored": "ovh-node-2",
+      "primary_of": "ovh-node-2",
+      "aligned": true
+    }
+  },
+  "aligned_seeds": true,
+  "sha_homogeneity": {
+    "ovh-node-1": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "equals_origin_main": true
+    },
+    "ovh-node-2": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "equals_origin_main": true
+    },
+    "aws-node-3": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "equals_origin_main": true
+    },
+    "ovh-node-4": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "equals_origin_main": true
+    },
+    "mac-node-local": {
+      "git_sha": "8acbbdee060a0c0c81e186d4e2b6fe5cd022581c",
+      "equals_origin_main": true
+    }
+  },
+  "sha_x5_pass": true,
+  "propose_probe": {
+    "primary": "ovh-node-2",
+    "result": {
+      "http": 200,
+      "ok": true,
+      "detail": null,
+      "seq": null,
+      "digest": "7f4e96cf43552f6b82d175ecd471ecf5d0678b57f60f3d8a2b12c72a729effa7"
+    }
+  },
+  "verdict": {
+    "CERTIFIED_100": false,
+    "book_continuity_seeds": true,
+    "primary_alignment": true,
+    "sha_x5": true,
+    "aws3_ssh": false,
+    "prepare_commit": "PROBE_ONLY",
+    "mac_pbft_transport": "NOT_PROVEN",
+    "chaos": "NOT_RUN",
+    "wipe": false
+  }
+}

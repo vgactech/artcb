@@ -12,6 +12,7 @@ alwaysApply: false
 - Probe 2026-08-31 session 172 : instance `i-085b74abd1aaf04ee` IP `51.44.222.232` (t3.small). Health HTTP 8000 + HTTPS 8443.
 - R282 2026-09-09 : NitroTPM AMI `ami-0b82a9f93189c018e`. Compute officiel = `i-06c9404e42798ff76` EIP `13.38.209.25` (t3.small). Ex-`i-085b74abd1aaf04ee` retired, not terminated. L3 vTPM, never L4.
 - R283 2026-09-09 : SSH known_hosts `deploy/aws_artcb_node_3.known_hosts` pins `13.38.209.25` of `i-06c9404e42798ff76` (host key of the retired instance is invalid). Profile certification L3 PARTIAL (EK not manufacturer-proven). L4 NOT_APPLICABLE.
+- R307 2026-09-10T15:50:00Z : Doppler `artcb3`/`dev` `AWS_INSTANCE_ID` / `AWS_SERVER_IP` alignés sur `i-06c9404e42798ff76` / `13.38.209.25` (plus l’id retired). IAM instance profile absent → SSM 0. SSH IPv4 Connection refused malgré SG `0.0.0.0/0` ; HTTPS `n3.artcb.me` OK. Reboot EC2 a permis follow-main SHA sans wipe.
 - Scripts : `scripts/provision_aws_ec2.py --yes` (idempotent, SG 22/8000/8443, IP publique) ; `scripts/deploy_aws.sh IP BRANCH`.
 - Ne pas toucher au nœud OVH 1 (`152.228.144.34`) sans ordre de déploiement explicite. Pas de VM OVH 2 tant que Public Cloud n'est pas validé.
 - Tags : `Name=node-artcb-3`, `artcb-node-id=aws-node-3`. Pas d'em dash dans les noms de ressources.
