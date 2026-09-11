@@ -141,18 +141,44 @@ def main() -> int:
         action="" if ok else "check DNS poison / captive portal / artcb_dns_fix",
     )
 
-    # P2P outbound modes
+    # Transport layers (R316): API :8000 ≠ native P2P :18444 ≠ HTTPS :443 relay
+    _row(
+        "transport_model",
+        "INFO",
+        detail="API HTTP :8000 | native P2P :18444 | HTTPS :443 relay | overlay future",
+        impact="IPv4:8000 timeout ≠ proof that native P2P protocol is :8000",
+    )
     ok8000, d8000 = _tcp("152.228.144.34", 8000, timeout=4.0)
     _row(
-        "p2p_tcp_outbound_8000",
+        "api_tcp_outbound_8000",
         "PASS" if ok8000 else "FAIL",
         detail=d8000,
-        impact="" if ok8000 else "IPv4:8000 blocked — use HTTPS seeds (R314)",
-        action="" if ok8000 else "scripts/artcb_mac_p2p_https_peers.py",
+        impact="" if ok8000 else "seed API IPv4:8000 blocked (hybrid sync path)",
+        action="" if ok8000 else "use HTTPS *.artcb.me:443 (R314) — not a native :18444 failure alone",
     )
+    ok18444, d18444 = _tcp("152.228.144.34", 18444, timeout=4.0)
+    _row(
+        "p2p_native_tcp_18444",
+        "PASS" if ok18444 else "FAIL",
+        detail=d18444,
+        impact="" if ok18444 else "native P2P port not reachable from this network",
+        action="multi-transport: IPv6 → IPv4:18444 → overlay → HTTPS relay",
+    )
+    # IPv6 presence (not proof of inbound reachability)
+    try:
+        infos = socket.getaddrinfo("artcb.me", 443, socket.AF_INET6, socket.SOCK_STREAM)
+        _row(
+            "ipv6_dns_aaaa",
+            "PASS" if infos else "FAIL",
+            detail=f"aaaa_records={len(infos)}",
+            impact="AAAA present ≠ inbound P2P open",
+        )
+    except Exception as exc:  # noqa: BLE001
+        _row("ipv6_dns_aaaa", "FAIL", detail=f"{type(exc).__name__}:{exc}", impact="no IPv6 path measured")
+
     ok443, d443 = _http_ok(f"{args.seed.rstrip('/')}/api/v1/p2p/status", auth=True, timeout=25.0)
     _row(
-        "p2p_https_outbound_443",
+        "https_relay_outbound_443",
         "PASS" if ok443 else "FAIL",
         detail=d443,
         impact="" if ok443 else "HTTPS seed unreachable",
@@ -162,9 +188,10 @@ def main() -> int:
         "FAIL",
         detail="no measured public tunnel to this host (R287)",
         impact="Does NOT block outbound sync; blocks seed→Mac PBFT fan-in",
-        action="Continue HTTPS_OUTBOUND / RELAY; add measured tunnel if validator reachability required",
+        action="Continue HTTPS_RELAY; overlay/VPN multi-VPS later — never IP=identity",
     )
 
+    # ~~R315 names kept as aliases in profile below~~
     # Local node
     ok, detail = _http_ok(f"{args.mac.rstrip('/')}/health", timeout=8.0)
     _row("local_node_health", "PASS" if ok else "FAIL", detail=detail)
@@ -218,11 +245,18 @@ def main() -> int:
     profile = {
         "internet": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "internet"), False),
         "https_outbound": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "artcb_https"), False),
-        "p2p_tcp_outbound": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "p2p_tcp_outbound_8000"), False),
-        "p2p_https_outbound": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "p2p_https_outbound_443"), False),
+        "api_tcp_8000": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "api_tcp_outbound_8000"), False),
+        "p2p_native_18444": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "p2p_native_tcp_18444"), False),
+        # ~~R315 key~~ kept for readers:
+        "p2p_tcp_outbound": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "api_tcp_outbound_8000"), False),
+        "p2p_https_outbound": next((c["status"] == "PASS" for c in CHECKS if c["name"] == "https_relay_outbound_443"), False),
         "p2p_inbound": False,
         "nat": "restricted_or_unknown",
-        "mode": "HTTPS_RELAY" if not ok8000 and ok443 else ("DIRECT_P2P" if ok8000 else "OFFLINE_OR_DEGRADED"),
+        "mode": (
+            "HTTPS_RELAY"
+            if (not ok8000 and ok443)
+            else ("DIRECT_API_OR_P2P" if (ok8000 or ok18444) else "OFFLINE_OR_DEGRADED")
+        ),
     }
 
     report = {

@@ -36,6 +36,12 @@ BOOTSTRAP_NODES: list[str] = [
     "http://151.80.107.29:8000",
     "http://13.38.209.25:8000",
     "http://91.134.45.8:8000",
+    # ~~2026-09-11T18:20:00Z R316~~ — IPv4:8000 = API HTTP seeds (not native P2P :18444).
+    # Mac / Wi-Fi public often times out on :8000; HTTPS:443 is the measured fallback (R314).
+    "https://artcb.me",
+    "https://n2.artcb.me",
+    "https://n3.artcb.me",
+    "https://n4.artcb.me",
 ]
 
 
