@@ -1,0 +1,114 @@
+{
+  "ts_ns": 1789148246904619000,
+  "dur_ns": 12938942000,
+  "certified_100": false,
+  "checks": [
+    {
+      "name": "operating_system",
+      "status": "PASS",
+      "detail": "Darwin 21.6.0 x86_64",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "tpm_detection",
+      "status": "FAIL",
+      "detail": "libtpms present; swtpm missing",
+      "impact": "SOFTWARE_TPM incomplete",
+      "action": "finish brew install swtpm; never recast as hardware TPM"
+    },
+    {
+      "name": "api_key",
+      "status": "PASS",
+      "detail": "present (value not printed)",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "internet",
+      "status": "FAIL",
+      "detail": "HTTPError:HTTP Error 403: Forbidden",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "artcb_https",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "p2p_tcp_outbound_8000",
+      "status": "FAIL",
+      "detail": "TimeoutError:timed out",
+      "impact": "IPv4:8000 blocked \u2014 use HTTPS seeds (R314)",
+      "action": "scripts/artcb_mac_p2p_https_peers.py"
+    },
+    {
+      "name": "p2p_https_outbound_443",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "p2p_inbound",
+      "status": "FAIL",
+      "detail": "no measured public tunnel to this host (R287)",
+      "impact": "Does NOT block outbound sync; blocks seed\u2192Mac PBFT fan-in",
+      "action": "Continue HTTPS_OUTBOUND / RELAY; add measured tunnel if validator reachability required"
+    },
+    {
+      "name": "local_node_health",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "blockchain_sync",
+      "status": "FAIL",
+      "detail": "verdict=FORK_AT_BLOCK0 tip_index=8",
+      "impact": "anonymous public P2P cannot heal a private divergent tip",
+      "action": "quarantine local divergent book then official/bootstrap catch-up \u2014 never wipe seeds"
+    },
+    {
+      "name": "pbft_eligibility",
+      "status": "INFO",
+      "detail": "membership JSON \u2260 measured reachability; inbound FAIL \u21d2 not a full validator dependency",
+      "impact": "CERTIFIED_100 remains false until tip\u00d7N + quorum measured",
+      "action": ""
+    }
+  ],
+  "network_capability_profile": {
+    "internet": false,
+    "https_outbound": true,
+    "p2p_tcp_outbound": false,
+    "p2p_https_outbound": true,
+    "p2p_inbound": false,
+    "nat": "restricted_or_unknown",
+    "mode": "HTTPS_RELAY"
+  },
+  "fork": {
+    "verdict": "FORK_AT_BLOCK0",
+    "block0": {
+      "mac": "8ee26e84324036bdfa7784eda69159e27663719823cd2ebe6a2cf796b110c2e8",
+      "seed": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "equal": false,
+      "label_network_id_equal": true,
+      "label_genesis_hash_equal": true,
+      "note": "Same genesis_hash LABEL \u2260 same block-0 content hash"
+    },
+    "decide_tally": {
+      "reject:wrong_index": 7,
+      "reject:wrong_prev_hash": 1
+    },
+    "path": "logs/315_fork_diagnose_latest.json"
+  },
+  "states": {
+    "identity": "stable_expected",
+    "network": "HTTPS_RELAY",
+    "sync": "FORK_AT_BLOCK0"
+  }
+}

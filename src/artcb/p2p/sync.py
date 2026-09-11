@@ -367,6 +367,11 @@ class P2PSyncService:
                     logger.debug("P2P pull en clair de %s (ancien pair) : %d blocs", peer.peer_id, len(blocks))
 
             imported = self.import_public_blocks(blocks, from_node_id=from_node)
+            # R315 2026-09-11T17:40:00Z — expose why received≠imported (tally only).
+            decision_tally: dict[str, int] = {}
+            for d in self.last_import_decisions or []:
+                key = f"{d.action}:{d.reason}"
+                decision_tally[key] = int(decision_tally.get(key) or 0) + 1
             self.peers.update_peer_status(
                 peer.peer_id,
                 last_sync_ok=True,
@@ -384,6 +389,7 @@ class P2PSyncService:
                     "http_ms": http_ms,
                     "rtt_ms": http_ms,
                     "encrypted": encrypted,
+                    "decision_tally": decision_tally,
                     "ok": True,
                 },
             )
@@ -393,6 +399,9 @@ class P2PSyncService:
                 "imported": imported,
                 "encrypted": encrypted,
                 "http_ms": http_ms,
+                "decision_tally": decision_tally,
+                "local_tip": self.chain.last_hash(),
+                "local_height": int(self.chain.height()) if hasattr(self.chain, "height") else None,
             }
         except P2PSyncError as exc:
             append_flux(
