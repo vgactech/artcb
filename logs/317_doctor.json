@@ -1,0 +1,136 @@
+{
+  "ts_ns": 1789151348779191000,
+  "dur_ns": 23929060000,
+  "certified_100": false,
+  "checks": [
+    {
+      "name": "operating_system",
+      "status": "PASS",
+      "detail": "Darwin 21.6.0 x86_64",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "tpm_detection",
+      "status": "FAIL",
+      "detail": "libtpms present; swtpm missing",
+      "impact": "SOFTWARE_TPM incomplete",
+      "action": "finish brew install swtpm; never recast as hardware TPM"
+    },
+    {
+      "name": "api_key",
+      "status": "PASS",
+      "detail": "present (value not printed)",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "internet",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "artcb_https",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "transport_model",
+      "status": "INFO",
+      "detail": "API HTTP :8000 | native P2P :18444 | HTTPS :443 relay | overlay future",
+      "impact": "IPv4:8000 timeout \u2260 proof that native P2P protocol is :8000",
+      "action": ""
+    },
+    {
+      "name": "api_tcp_outbound_8000",
+      "status": "FAIL",
+      "detail": "TimeoutError:timed out",
+      "impact": "seed API IPv4:8000 blocked (hybrid sync path)",
+      "action": "use HTTPS *.artcb.me:443 (R314) \u2014 not a native :18444 failure alone"
+    },
+    {
+      "name": "p2p_native_tcp_18444",
+      "status": "FAIL",
+      "detail": "TimeoutError:timed out",
+      "impact": "native P2P port not reachable from this network",
+      "action": "multi-transport: IPv6 \u2192 IPv4:18444 \u2192 overlay \u2192 HTTPS relay"
+    },
+    {
+      "name": "ipv6_dns_aaaa",
+      "status": "PASS",
+      "detail": "aaaa_records=1",
+      "impact": "AAAA present \u2260 inbound P2P open",
+      "action": ""
+    },
+    {
+      "name": "https_relay_outbound_443",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "p2p_inbound",
+      "status": "FAIL",
+      "detail": "no measured public tunnel to this host (R287)",
+      "impact": "Does NOT block outbound sync; blocks seed\u2192Mac PBFT fan-in",
+      "action": "Continue HTTPS_RELAY; overlay/VPN multi-VPS later \u2014 never IP=identity"
+    },
+    {
+      "name": "local_node_health",
+      "status": "PASS",
+      "detail": "HTTP 200",
+      "impact": "",
+      "action": ""
+    },
+    {
+      "name": "blockchain_sync",
+      "status": "PASS",
+      "detail": "verdict=BEHIND_SAME_CHAIN tip_index=716",
+      "impact": "anonymous public P2P cannot heal a private divergent tip",
+      "action": "quarantine local divergent book then official/bootstrap catch-up \u2014 never wipe seeds"
+    },
+    {
+      "name": "pbft_eligibility",
+      "status": "INFO",
+      "detail": "membership JSON \u2260 measured reachability; inbound FAIL \u21d2 not a full validator dependency",
+      "impact": "CERTIFIED_100 remains false until tip\u00d7N + quorum measured",
+      "action": ""
+    }
+  ],
+  "network_capability_profile": {
+    "internet": true,
+    "https_outbound": true,
+    "api_tcp_8000": false,
+    "p2p_native_18444": false,
+    "p2p_tcp_outbound": false,
+    "p2p_https_outbound": true,
+    "p2p_inbound": false,
+    "nat": "restricted_or_unknown",
+    "mode": "HTTPS_RELAY"
+  },
+  "fork": {
+    "verdict": "BEHIND_SAME_CHAIN",
+    "block0": {
+      "mac": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "seed": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "equal": true,
+      "label_network_id_equal": true,
+      "label_genesis_hash_equal": true,
+      "note": "Same genesis_hash LABEL \u2260 same block-0 content hash"
+    },
+    "decide_tally": {
+      "duplicate:already_on_chain": 6
+    },
+    "path": "logs/315_fork_diagnose_latest.json"
+  },
+  "states": {
+    "identity": "stable_expected",
+    "network": "HTTPS_RELAY",
+    "sync": "BEHIND_SAME_CHAIN"
+  }
+}

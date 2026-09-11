@@ -1,0 +1,199 @@
+{
+  "ts_ns": 1789150524726409000,
+  "dur_ns": 10759550000,
+  "verdict": "FORK_AT_BLOCK0",
+  "certified_100": false,
+  "blocks_path": "/Users/deyi/.bob/playground/data/chain/blocks.jsonl",
+  "local_lines": 10,
+  "local_tip_index": 8,
+  "local_tip_hash": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+  "local_visibility_counts": {
+    "private": 10
+  },
+  "duplicate_indices": {
+    "8": 2
+  },
+  "mac_status": {
+    "network_id": "artcb-mainnet-1",
+    "genesis_hash": "genesis-artcb-mainnet-1",
+    "last_hash": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+    "public_blocks_local": 0,
+    "public_blocks_incoming": 0,
+    "anonymous_p2p_public_only": true,
+    "official_replica_full_book": true
+  },
+  "seed_status": {
+    "network_id": "artcb-mainnet-1",
+    "genesis_hash": "genesis-artcb-mainnet-1",
+    "last_hash": "904147ec39a1a3758054d332b4026b850c79744881a5c7782291c4664e6f6441",
+    "public_blocks_local": 783
+  },
+  "block0": {
+    "mac": "8ee26e84324036bdfa7784eda69159e27663719823cd2ebe6a2cf796b110c2e8",
+    "seed": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "equal": false,
+    "label_network_id_equal": true,
+    "label_genesis_hash_equal": true,
+    "note": "Same genesis_hash LABEL \u2260 same block-0 content hash"
+  },
+  "index_compare": [
+    {
+      "index": 0,
+      "mac_hash": "8ee26e84324036bdfa7784eda69159e27663719823cd2ebe6a2cf796b110c2e8",
+      "seed_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 1,
+      "mac_hash": "1876aa3e4f61af554e4d7566c81a967ed163369e54e7dc74478fa0317f1410a7",
+      "seed_hash": "5c952df62b0cc2c80bfdb55be526da3dd33b9466d1a5c64797bdd5d04f2d9a70",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 2,
+      "mac_hash": "abfa52876e5e692442dff744623a7207ee8c3c7049fae654065c06dd3affe181",
+      "seed_hash": "93eab711365a59c32f88df51dda0556a13f8de70cd8b9e2621006d50b02b8799",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 3,
+      "mac_hash": "46bea3d9b6e7ab93e1c0f8e7bbb920489828a841edc09e68a93b1a8a5bb274de",
+      "seed_hash": "5e4dbb406d34e7f32a4c9c770d4d50afe4ddc42e0968ee9d542f4038acf74e0a",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 4,
+      "mac_hash": "d3f8af4d7a70b39c14d0b670beb8c050983723c2a488fa2fd77864b32912b182",
+      "seed_hash": "273500247292233c91535cc6a7bdbd86d1f5dde4fc862f4cefc2b7fd13056764",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 5,
+      "mac_hash": "01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884",
+      "seed_hash": "cbff6e66eb2ff78beed3049406448ce099a7c5d57aa803e83408f210a1654d48",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 6,
+      "mac_hash": "3308baffc56a100c1117c60d84f67c7d243214cf7606b0fe63abfceaf288ad89",
+      "seed_hash": "a9e411c3109e924347eca16d642e2f3060e35a4ab2301dadcc253861c8b4c1cc",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 7,
+      "mac_hash": "08a889fc7bc390b4a0cd186ea3b543713bfd757af4e36c1449b07c29d3002201",
+      "seed_hash": "f646c510db980a843b55efa9ab93d1f64406a5147305a74d60b4424fbcc467ed",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    },
+    {
+      "index": 8,
+      "mac_hash": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "seed_hash": "623d6e7875e5ab24ffc12d2d7978aa0485ab77aa63070217f0438144df93a69a",
+      "equal": false,
+      "mac_visibility": "private",
+      "seed_visibility": "public"
+    }
+  ],
+  "decide_public_import_sample": [
+    {
+      "index": 0,
+      "action": "reject",
+      "reason": "wrong_index",
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    },
+    {
+      "index": 1,
+      "action": "reject",
+      "reason": "wrong_index",
+      "prev_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    },
+    {
+      "index": 2,
+      "action": "reject",
+      "reason": "wrong_index",
+      "prev_hash": "5c952df62b0cc2c80bfdb55be526da3dd33b9466d1a5c64797bdd5d04f2d9a70",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    },
+    {
+      "index": 3,
+      "action": "reject",
+      "reason": "wrong_index",
+      "prev_hash": "93eab711365a59c32f88df51dda0556a13f8de70cd8b9e2621006d50b02b8799",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    },
+    {
+      "index": 4,
+      "action": "reject",
+      "reason": "wrong_index",
+      "prev_hash": "5e4dbb406d34e7f32a4c9c770d4d50afe4ddc42e0968ee9d542f4038acf74e0a",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    },
+    {
+      "index": 8,
+      "action": "reject",
+      "reason": "wrong_index",
+      "prev_hash": "f646c510db980a843b55efa9ab93d1f64406a5147305a74d60b4424fbcc467ed",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    },
+    {
+      "index": 9,
+      "action": "reject",
+      "reason": "wrong_prev_hash",
+      "prev_hash": "623d6e7875e5ab24ffc12d2d7978aa0485ab77aa63070217f0438144df93a69a",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    },
+    {
+      "index": 10,
+      "action": "reject",
+      "reason": "wrong_index",
+      "prev_hash": "9d8cb3dbdabb5d2c438cc61816f36bc185ea9f0d3c90ea6a8fced2527c7ab2ea",
+      "expected_prev": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "expected_index": 9
+    }
+  ],
+  "decide_tally": {
+    "reject:wrong_index": 7,
+    "reject:wrong_prev_hash": 1
+  },
+  "sync": null,
+  "recovery_without_wipe": {
+    "do_not": [
+      "force_import",
+      "rewrite_prev_hash",
+      "wipe_seed_books",
+      "new_genesis"
+    ],
+    "do": [
+      "quarantine_local_divergent_book",
+      "preserve_private_sandbox_offline",
+      "bootstrap_empty_or_official_replica_from_seed",
+      "only_append_when_prev_hash_and_index_extend_tip"
+    ],
+    "why_imported_0": "Anonymous P2P imports public blocks only via decide_public_import. A private divergent Mac tip cannot be extended by seed public blocks whose prev_hash belongs to the seed chain."
+  }
+}

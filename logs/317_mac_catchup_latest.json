@@ -1,0 +1,12 @@
+{
+  "ts_ns": 1789151371102309000,
+  "certified_100": false,
+  "quarantine": "data/quarantine/divergent_book_20260911T181528Z/blocks.jsonl",
+  "local_height": 717,
+  "block0": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+  "tip_index": 716,
+  "tip_hash": "f79f6a1a71896e619f6d66cc998bbc918b2eb1d4649f3dcad2d6349cb6c9dd37",
+  "aligned_with_seed_716": true,
+  "seed_extends_beyond_716": false,
+  "reason_stop": "no_seed_child_of_tip_716"
+}

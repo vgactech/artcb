@@ -1,0 +1,187 @@
+{
+  "ts_ns": 1789150527836533000,
+  "dur_ns": 879670000,
+  "certified_100": false,
+  "blocks_path": "/Users/deyi/.bob/playground/data/chain/blocks.jsonl",
+  "local_lines": 10,
+  "visibility_counts": {
+    "private": 10
+  },
+  "kind_counts": {
+    "private_local_graph_bootstrap": 5,
+    "private_bob_agent_memo": 1,
+    "private_ai_thought_memo": 4
+  },
+  "duplicate_indices": {
+    "8": 2
+  },
+  "timeline": [
+    {
+      "line": 0,
+      "index": 0,
+      "hash": "8ee26e84324036bdfa7784eda69159e27663719823cd2ebe6a2cf796b110c2e8",
+      "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "timestamp": "2026-09-05T22:48:10Z",
+      "visibility": "private",
+      "graph_id": "g_38c95570b8f1",
+      "kind": "private_local_graph_bootstrap",
+      "memo_type": null,
+      "agent_id": null,
+      "tags": null
+    },
+    {
+      "line": 1,
+      "index": 1,
+      "hash": "1876aa3e4f61af554e4d7566c81a967ed163369e54e7dc74478fa0317f1410a7",
+      "prev_hash": "8ee26e84324036bdfa7784eda69159e27663719823cd2ebe6a2cf796b110c2e8",
+      "timestamp": "2026-09-05T22:48:17Z",
+      "visibility": "private",
+      "graph_id": "g_fd2671a7ea75",
+      "kind": "private_local_graph_bootstrap",
+      "memo_type": null,
+      "agent_id": null,
+      "tags": null
+    },
+    {
+      "line": 2,
+      "index": 2,
+      "hash": "abfa52876e5e692442dff744623a7207ee8c3c7049fae654065c06dd3affe181",
+      "prev_hash": "1876aa3e4f61af554e4d7566c81a967ed163369e54e7dc74478fa0317f1410a7",
+      "timestamp": "2026-09-05T22:48:27Z",
+      "visibility": "private",
+      "graph_id": "g_6a1d0680b6ef",
+      "kind": "private_local_graph_bootstrap",
+      "memo_type": null,
+      "agent_id": null,
+      "tags": null
+    },
+    {
+      "line": 3,
+      "index": 3,
+      "hash": "46bea3d9b6e7ab93e1c0f8e7bbb920489828a841edc09e68a93b1a8a5bb274de",
+      "prev_hash": "abfa52876e5e692442dff744623a7207ee8c3c7049fae654065c06dd3affe181",
+      "timestamp": "2026-09-05T22:48:36Z",
+      "visibility": "private",
+      "graph_id": "g_2ec0060fcc73",
+      "kind": "private_local_graph_bootstrap",
+      "memo_type": null,
+      "agent_id": null,
+      "tags": null
+    },
+    {
+      "line": 4,
+      "index": 4,
+      "hash": "d3f8af4d7a70b39c14d0b670beb8c050983723c2a488fa2fd77864b32912b182",
+      "prev_hash": "46bea3d9b6e7ab93e1c0f8e7bbb920489828a841edc09e68a93b1a8a5bb274de",
+      "timestamp": "2026-09-05T22:48:45Z",
+      "visibility": "private",
+      "graph_id": "g_eeef593633ce",
+      "kind": "private_local_graph_bootstrap",
+      "memo_type": null,
+      "agent_id": null,
+      "tags": null
+    },
+    {
+      "line": 5,
+      "index": 5,
+      "hash": "01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884",
+      "prev_hash": "d3f8af4d7a70b39c14d0b670beb8c050983723c2a488fa2fd77864b32912b182",
+      "timestamp": "2026-09-07T09:49:43Z",
+      "visibility": "private",
+      "graph_id": "ai_memo_9344bad6d8b0",
+      "kind": "private_bob_agent_memo",
+      "memo_type": "pol_work",
+      "agent_id": "bob_agent_235",
+      "tags": ""
+    },
+    {
+      "line": 6,
+      "index": 6,
+      "hash": "3308baffc56a100c1117c60d84f67c7d243214cf7606b0fe63abfceaf288ad89",
+      "prev_hash": "01a5f7435759ead82986336a3544fd477d7dfcf85651809368b5edf08ab93884",
+      "timestamp": "2026-09-10T22:59:11Z",
+      "visibility": "private",
+      "graph_id": "ai_memo_447d0d7de9ea",
+      "kind": "private_ai_thought_memo",
+      "memo_type": "agent_thought_surfaced",
+      "agent_id": "operator",
+      "tags": "thinking,cursor,r310"
+    },
+    {
+      "line": 7,
+      "index": 7,
+      "hash": "08a889fc7bc390b4a0cd186ea3b543713bfd757af4e36c1449b07c29d3002201",
+      "prev_hash": "3308baffc56a100c1117c60d84f67c7d243214cf7606b0fe63abfceaf288ad89",
+      "timestamp": "2026-09-11T16:12:28Z",
+      "visibility": "private",
+      "graph_id": "ai_memo_c6070ea05870",
+      "kind": "private_ai_thought_memo",
+      "memo_type": "agent_thought_surfaced",
+      "agent_id": "operator",
+      "tags": "thinking,cursor,r310,r313"
+    },
+    {
+      "line": 8,
+      "index": 8,
+      "hash": "83c3515d1f063418c43c18ae2e93c0f5f68fb7a6220ed23e7572505d4c32af75",
+      "prev_hash": "08a889fc7bc390b4a0cd186ea3b543713bfd757af4e36c1449b07c29d3002201",
+      "timestamp": "2026-09-11T16:29:37Z",
+      "visibility": "private",
+      "graph_id": "ai_memo_9e16e20260ca",
+      "kind": "private_ai_thought_memo",
+      "memo_type": "agent_thought_surfaced",
+      "agent_id": "operator",
+      "tags": "thinking,cursor,r310,r313"
+    },
+    {
+      "line": 9,
+      "index": 8,
+      "hash": "366a6d259ea0206b4bdcac1dfc09f2745f214ba42f5585d178d4b7144b62f74a",
+      "prev_hash": "08a889fc7bc390b4a0cd186ea3b543713bfd757af4e36c1449b07c29d3002201",
+      "timestamp": "2026-09-11T16:29:37Z",
+      "visibility": "private",
+      "graph_id": "ai_memo_54f09bb1675f",
+      "kind": "private_ai_thought_memo",
+      "memo_type": "agent_thought_surfaced",
+      "agent_id": "operator",
+      "tags": "thinking,cursor,r310,r313"
+    }
+  ],
+  "mac_block0": {
+    "hash": "8ee26e84324036bdfa7784eda69159e27663719823cd2ebe6a2cf796b110c2e8",
+    "timestamp": "2026-09-05T22:48:10Z",
+    "visibility": "private",
+    "graph_id": "g_38c95570b8f1"
+  },
+  "seed_block0": {
+    "hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+    "timestamp": "2026-09-01T18:34:30Z",
+    "visibility": "public",
+    "graph_id": "g_29b131e92c84",
+    "error": null
+  },
+  "block0_equal": false,
+  "origin_hypothesis": {
+    "code": "LOCAL_PRIVATE_SANDBOX_THEN_PRIVATE_MEMOS",
+    "not": [
+      "mainnet_public_book",
+      "p2p_import_corruption",
+      "wifi_caused_fork"
+    ],
+    "evidence": [
+      "block0..4 timestamps 2026-09-05T22:48Z private graphs g_* (Bob local era)",
+      "seed block0 2026-09-01 public g_29b131e92c84 \u2014 different hash and day",
+      "later rows are private ai_memo / bob / agent_thought_surfaced on THAT tip",
+      "duplicate index 8 = two concurrent private thought memos same prev/ts",
+      "wifi loss does not rewrite block0; this book predates R314 HTTPS peers"
+    ],
+    "recommended_before_quarantine": "preserve forensic copy; treat as private sandbox context, not mainnet",
+    "architectural_gap": "node used single blocks.jsonl for local private activity without chain_identity=block0.hash gate vs canonical mainnet"
+  },
+  "ports_note": {
+    "api_http": 8000,
+    "p2p_native_documented": 18444,
+    "hybrid_sync_today": "HTTP(S) API peers often used for public block pull (not native :18444 path from Mac)"
+  },
+  "no_quarantine_this_run": true
+}

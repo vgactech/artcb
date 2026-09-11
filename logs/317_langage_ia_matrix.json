@@ -1,0 +1,464 @@
+{
+  "ts_ns": 1789151322298596000,
+  "dur_ns": 11537496000,
+  "certified_100": false,
+  "langage_ia_final": false,
+  "verdict": {
+    "unit_tests_this_tour": "run_separately",
+    "live_probe_fr_en_es_overlap": "PASS",
+    "live_universal_voiture_car_coche": "FAIL_OR_NOT_PROVEN",
+    "agent_ab_without_text": "NOT_PROVEN",
+    "ledger_anchor_x4": "NOT_PROVEN",
+    "native_language_e2e_r253": "NOT_PROVEN"
+  },
+  "seeds": {
+    "https://artcb.me": {
+      "ok": true,
+      "probe": {
+        "fr": {
+          "q": "Le serveur doit verifier la signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 494619120,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "The server must verify the signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 626850092,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "El servidor debe verificar la firma.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 849342193,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "probe_overlap": 1,
+      "universal": {
+        "fr": {
+          "q": "voiture",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 911647994,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "car",
+          "ids": [
+            "K95754350c8a27930"
+          ],
+          "dur_ns": 357752521,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "coche",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 174686281,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "universal_overlap": 0,
+      "unknown": {
+        "q": "zzzxqyt_artcb_nonce_316_not_a_word",
+        "ids": [
+          "K9638f146df59253d"
+        ],
+        "dur_ns": 272563095,
+        "raw_keys": [
+          "concept_ids",
+          "lexicon",
+          "query",
+          "symbols",
+          "types"
+        ]
+      },
+      "unknown_false_converge": false
+    },
+    "https://n2.artcb.me": {
+      "ok": true,
+      "probe": {
+        "fr": {
+          "q": "Le serveur doit verifier la signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 239894457,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "The server must verify the signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 369828198,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "El servidor debe verificar la firma.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 200213076,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "probe_overlap": 1,
+      "universal": {
+        "fr": {
+          "q": "voiture",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 209972935,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "car",
+          "ids": [
+            "K95754350c8a27930"
+          ],
+          "dur_ns": 141592846,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "coche",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 143638576,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "universal_overlap": 0,
+      "unknown": {
+        "q": "zzzxqyt_artcb_nonce_316_not_a_word",
+        "ids": [
+          "K9638f146df59253d"
+        ],
+        "dur_ns": 145198537,
+        "raw_keys": [
+          "concept_ids",
+          "lexicon",
+          "query",
+          "symbols",
+          "types"
+        ]
+      },
+      "unknown_false_converge": false
+    },
+    "https://n3.artcb.me": {
+      "ok": true,
+      "probe": {
+        "fr": {
+          "q": "Le serveur doit verifier la signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 121102666,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "The server must verify the signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 149749757,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "El servidor debe verificar la firma.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 333426096,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "probe_overlap": 1,
+      "universal": {
+        "fr": {
+          "q": "voiture",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 226445585,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "car",
+          "ids": [
+            "K95754350c8a27930"
+          ],
+          "dur_ns": 149685848,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "coche",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 414190365,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "universal_overlap": 0,
+      "unknown": {
+        "q": "zzzxqyt_artcb_nonce_316_not_a_word",
+        "ids": [
+          "K9638f146df59253d"
+        ],
+        "dur_ns": 221076724,
+        "raw_keys": [
+          "concept_ids",
+          "lexicon",
+          "query",
+          "symbols",
+          "types"
+        ]
+      },
+      "unknown_false_converge": false
+    },
+    "https://n4.artcb.me": {
+      "ok": true,
+      "probe": {
+        "fr": {
+          "q": "Le serveur doit verifier la signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 540608458,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "The server must verify the signature.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 380972390,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "El servidor debe verificar la firma.",
+          "ids": [
+            "Kc55d3ab3505178da"
+          ],
+          "dur_ns": 324482726,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "probe_overlap": 1,
+      "universal": {
+        "fr": {
+          "q": "voiture",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 325553602,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "en": {
+          "q": "car",
+          "ids": [
+            "K95754350c8a27930"
+          ],
+          "dur_ns": 836516805,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        },
+        "es": {
+          "q": "coche",
+          "ids": [
+            "K9638f146df59253d"
+          ],
+          "dur_ns": 271563737,
+          "raw_keys": [
+            "concept_ids",
+            "lexicon",
+            "query",
+            "symbols",
+            "types"
+          ]
+        }
+      },
+      "universal_overlap": 0,
+      "unknown": {
+        "q": "zzzxqyt_artcb_nonce_316_not_a_word",
+        "ids": [
+          "K9638f146df59253d"
+        ],
+        "dur_ns": 231360950,
+        "raw_keys": [
+          "concept_ids",
+          "lexicon",
+          "query",
+          "symbols",
+          "types"
+        ]
+      },
+      "unknown_false_converge": false
+    }
+  },
+  "local_encoder": {
+    "ok": true,
+    "probe": {
+      "fr": [],
+      "en": [],
+      "es": []
+    },
+    "probe_overlap": 0,
+    "universal": {
+      "fr": [],
+      "en": [],
+      "es": []
+    },
+    "universal_overlap": 0
+  },
+  "sha256_report": "4e368673aabbfd44967d9fbade51f4758fe504585840738aedbd55055d030c1b"
+}
