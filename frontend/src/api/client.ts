@@ -77,12 +77,12 @@ export async function storeGraph(
 }
 
 export async function fetchWallets() {
-  const { data } = await api.get("/wallet/list");
+  const { data } = await api.get("/wallet/list", { headers: sessionHeaders() });
   return data.wallets as Array<{ address: string; name: string }>;
 }
 
 export async function fetchWalletBalance(address: string) {
-  const { data } = await api.get(`/wallet/balance/${address}`);
+  const { data } = await api.get(`/wallet/balance/${address}`, { headers: sessionHeaders() });
   return data as { balance_satoshi: number; balance_artcb: number };
 }
 
@@ -97,9 +97,38 @@ export interface GroupData {
 }
 
 function sessionHeaders(): Record<string, string> {
-  const token = typeof localStorage !== "undefined" ? localStorage.getItem("artcb_session_token") : null;
+  // R318: session lives in sessionStorage (Wallets/WebAuthn). Prefer it.
+  // ~~localStorage-only~~ caused ghost "logged in" after tab restore mismatches.
+  let token: string | null = null;
+  if (typeof sessionStorage !== "undefined") {
+    token = sessionStorage.getItem("artcb_session_token");
+  }
+  if (!token && typeof localStorage !== "undefined") {
+    token = localStorage.getItem("artcb_session_token");
+    // Migrate legacy localStorage → sessionStorage once, then clear local.
+    if (token && typeof sessionStorage !== "undefined") {
+      sessionStorage.setItem("artcb_session_token", token);
+      try {
+        localStorage.removeItem("artcb_session_token");
+      } catch {
+        /* ignore */
+      }
+    }
+  }
   if (!token) return {};
   return { Authorization: `Bearer ${token}` };
+}
+
+export async function authMe() {
+  const { data } = await api.get("/auth/me", { headers: sessionHeaders() });
+  return data as {
+    authenticated: boolean;
+    kind: string;
+    address: string | null;
+    wallet_name?: string | null;
+    is_user?: boolean;
+    is_operator?: boolean;
+  };
 }
 
 export async function createGroup(name: string, founderAddress: string) {

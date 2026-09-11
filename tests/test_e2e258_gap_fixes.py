@@ -40,6 +40,17 @@ def test_encoder_fr_en_es_probe_overlap() -> None:
     assert ids["fr"] == ids["en"] == ids["es"]
 
 
+def test_encoder_voiture_car_coche_overlap() -> None:
+    """R318 — vehicle lemma FR/EN/ES must share ConceptID (was live FAIL)."""
+    enc = IREncoder()
+    ids = {
+        lang: concept_id_from_node(enc.encode(word).nodes[0])
+        for lang, word in (("fr", "voiture"), ("en", "car"), ("es", "coche"))
+    }
+    assert ids["fr"] == ids["en"] == ids["es"], ids
+    assert "C2" in enc.encode("voiture").nodes[0].sym
+
+
 def test_unknown_sentence_does_not_false_converge() -> None:
     enc = IREncoder()
     a = concept_id_from_node(enc.encode("Un kiwi violet danse la java.").nodes[0])

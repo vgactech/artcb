@@ -65,13 +65,13 @@ export function Groups() {
   };
 
   useEffect(() => {
+    // R318: list only when session can authorize; never auto-set actor from list.
     fetchWallets()
       .then((list) => {
         setWallets(list);
-        if (list.length && !actorAddress) setActorAddress(list[0].address);
       })
       .catch(() => setWallets([]));
-  }, [actorAddress, setActorAddress]);
+  }, []);
 
   const loadDomains = async () => {
     try {

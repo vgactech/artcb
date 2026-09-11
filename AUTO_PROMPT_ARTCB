@@ -1894,3 +1894,9 @@ pytest : eager app disabled ; 7 FAIL auth/P2P/TPM corrigés localement 7 passed.
 
 Opérateur : **ne jamais attendre un GO** pour quarantine, catch-up, deploy, partition restore, memo, follow-main — sauf demande explicite « attendre ».
 R317 : quarantine Mac divergent exécutée ; catch-up public 0..716 (= seed) ; trou seed après 716 = STOP honnête (pas d'import forcé). CERTIFIED_100=false.
+
+## [2026-09-11T19:45:00Z] R318 — portée autonomie GO (clarification)
+
+Rapport 263 = liste fermée (follow-main/stop/partition/probe/replica/mémo).
+Opérateur 2026-09-11 : « ne pas attendre mes GO » = exécuter les tâches demandées / P0 live **sans pause**, y compris quarantine/catch-up/fix auth — **pas** un blanc-seing pour muter tokenomics/consensus hors demande.
+R318 : incident wallet anonyme + lexique véhicule. CERTIFIED_100=false.

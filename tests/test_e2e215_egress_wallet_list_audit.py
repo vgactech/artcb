@@ -142,7 +142,15 @@ def test_llm_router_redacts_prompt_before_provider(monkeypatch: pytest.MonkeyPat
 #  /wallet/list projection (rapport 210 §9.6)
 # --------------------------------------------------------------------------- #
 
-def test_wallet_list_anonymous_is_public_projection(client: TestClient) -> None:
+def test_wallet_list_anonymous_denied_by_default(client: TestClient) -> None:
+    """R318: fail-closed — anonymous list requires explicit opt-in public."""
+    anon = client.get("/api/v1/wallet/list")
+    assert anon.status_code == 401
+    assert anon.json()["detail"] == "wallet_list_requires_bearer"
+
+
+def test_wallet_list_opt_in_public_projection(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ARTCB_WALLET_LIST_PUBLIC", "1")
     sess = _session(client, "listme")
     anon = client.get("/api/v1/wallet/list")
     assert anon.status_code == 200
@@ -158,9 +166,11 @@ def test_wallet_list_anonymous_is_public_projection(client: TestClient) -> None:
     assert "public_key_hex" in next(w for w in full.json()["wallets"] if w["name"] == "listme")
 
 
-def test_wallet_list_can_be_made_private(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("ARTCB_WALLET_LIST_PUBLIC", "0")
-    assert client.get("/api/v1/wallet/list").status_code == 401
+# ~~test_wallet_list_anonymous_is_public_projection~~ barred 2026-09-11T19:40:00Z (default was public).
+# ~~test_wallet_list_can_be_made_private~~ replaced by default deny + opt-in public above.
+
+
+def test_wallet_list_authenticated_still_works(client: TestClient) -> None:
     sess = _session(client, "privlist")
     assert client.get("/api/v1/wallet/list", headers={"Authorization": f"Bearer {sess}"}).status_code == 200
 

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   fetchGraph,
   fetchWaillyExcerpt,
-  fetchWallets,
   runAgents,
   runMiningPipeline,
   storeGraph,
@@ -22,7 +21,6 @@ export function Memorize() {
     useLlm,
     setUseLlm,
     actorAddress,
-    setActorAddress,
     text,
     setText,
     graph,
@@ -51,14 +49,6 @@ export function Memorize() {
       .then(setText)
       .catch(() => setText("Collez votre texte ici — extrait Wailly indisponible."));
   }, [text, setText]);
-
-  useEffect(() => {
-    fetchWallets()
-      .then((w) => {
-        if (w.length && !actorAddress) setActorAddress(w[0].address);
-      })
-      .catch(() => {});
-  }, [actorAddress, setActorAddress]);
 
   const animateViaWebSocket = (inputText: string): Promise<void> =>
     new Promise((resolve, reject) => {

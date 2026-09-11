@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   authLogin,
   authLogout,
+  authMe,
   createWallet,
   fetchFoundersAllocation,
   fetchWalletBalance,
@@ -95,11 +96,35 @@ export function Wallets() {
   };
 
   useEffect(() => {
+    // R318: prove session with /auth/me — address alone is never "logged in".
+    authMe()
+      .then((me) => {
+        if (!me.authenticated) {
+          setSessionToken(null);
+          setSessionWallet(null);
+          sessionStorage.removeItem(SESSION_TOKEN_KEY);
+          sessionStorage.removeItem(SESSION_WALLET_KEY);
+          try {
+            localStorage.removeItem(SESSION_TOKEN_KEY);
+          } catch {
+            /* ignore */
+          }
+          setActorAddress("");
+          return;
+        }
+        if (me.address) setActorAddress(me.address);
+        if (me.wallet_name) setSessionWallet(me.wallet_name);
+      })
+      .catch(() => {
+        setSessionToken(null);
+        setSessionWallet(null);
+        setActorAddress("");
+      });
     reload().catch(() => setWallets([]));
     fetchFoundersAllocation()
       .then((f) => setFounders(f.balances ?? []))
       .catch(() => {});
-  }, []);
+  }, [setActorAddress]);
 
   // ── Créer un nouveau wallet ────────────────────────────────────────
   const handleCreate = async () => {
@@ -248,6 +273,11 @@ export function Wallets() {
     setSessionWallet(null);
     sessionStorage.removeItem(SESSION_TOKEN_KEY);
     sessionStorage.removeItem(SESSION_WALLET_KEY);
+    try {
+      localStorage.removeItem(SESSION_TOKEN_KEY);
+    } catch {
+      /* ignore */
+    }
     setActorAddress("");
   };
 
@@ -256,21 +286,11 @@ export function Wallets() {
     const addr = importAddress.trim();
     if (!addr) return;
     setImportError(null);
-    try {
-      const b = await fetchWalletBalance(addr);
-      setActorAddress(addr);
-      setImportError(null);
-      setImportAddress("");
-      // Ajouter à la liste locale si pas déjà présent
-      if (!wallets.find((w) => w.address === addr)) {
-        setWallets((prev) => [
-          ...prev,
-          { address: addr, name: `Import (${addr.slice(0, 8)}…)`, balance: b.balance_artcb, rewards: 0 },
-        ]);
-      }
-    } catch {
-      setImportError("Adresse introuvable sur la blockchain — vérifiez l'adresse.");
-    }
+    // R318: knowing an address ≠ authentication. Do not set Wallet actif.
+    setImportError(
+      "L’import d’adresse ne vous connecte pas. Utilisez login / biométrie pour authentifier un wallet."
+    );
+    setImportAddress("");
   };
 
   const showRewards = async (address: string) => {
@@ -293,8 +313,8 @@ export function Wallets() {
         </Link>
       </div>
 
-      {/* ── Wallet actif affiché en haut — avec bouton déconnexion ── */}
-      {actorAddress ? (
+      {/* ── Wallet actif = session authentifiée uniquement (R318) ── */}
+      {sessionToken && actorAddress ? (
         <div className="panel" style={{ borderColor: "var(--mc-grass, #56c426)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
           <div>
             <span style={{ color: "var(--mc-grass, #56c426)", fontWeight: 700, marginRight: 8 }}>◇ Wallet actif :</span>
@@ -309,7 +329,6 @@ export function Wallets() {
             <button onClick={() => copyAddress(actorAddress)}>
               {copied ? "[OK] Copié !" : "Copier"}
             </button>
-            {/* SÉCURITÉ : déconnexion invalide la session côté serveur */}
             <button onClick={handleDisconnect} style={{ color: "var(--mc-redstone, #c0392b)", borderColor: "var(--mc-redstone, #c0392b)" }}>
               ✕ Se déconnecter
             </button>
@@ -318,7 +337,7 @@ export function Wallets() {
       ) : (
         <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)", background: "rgba(255,215,0,0.05)" }}>
           <p style={{ margin: 0, color: "var(--mc-gold, #ffd700)", fontWeight: 700 }}>
-            ◇ Pas encore de wallet actif — créez-en un ci-dessous ou connectez-vous.
+            ◇ Non authentifié — données publiques seulement. Créez un wallet ou connectez-vous (mot de passe / biométrie).
           </p>
         </div>
       )}

@@ -61,6 +61,13 @@ OBJECT_ALIASES: dict[str, str] = {
     "signatures": "S2",
     "firma": "S2",
     "firmas": "S2",
+    # R318 2026-09-11T19:40:00Z — voiture/car/coche same lemma (was FAIL live matrix).
+    "voitures": "C2",
+    "voiture": "C2",
+    "cars": "C2",
+    "car": "C2",
+    "coches": "C2",
+    "coche": "C2",
     "servidor": "N1",
     "serveurs": "N1",
     "serveur": "N1",
@@ -122,9 +129,22 @@ ACTION_KEYS = _sorted_keys(ACTION_ALIASES)
 OBJECT_KEYS = _sorted_keys(OBJECT_ALIASES)
 
 
+def _tokens(text_lower: str) -> set[str]:
+    """Whole-word tokens only — R318: 'car' must not hit inside 'verificar'."""
+    import re
+
+    return {m.group(0) for m in re.finditer(r"[a-zàâäéèêëïîôùûüçñ]+", text_lower)}
+
+
 def action_code(text_lower: str) -> str | None:
+    toks = _tokens(text_lower)
+    # Prefer exact token match; fall back to substring for multi-word stems
+    # like "vérifi" only when key length >= 4 (avoids 'car' ⊂ 'verificar').
     for key in ACTION_KEYS:
-        if key in text_lower:
+        if key in toks:
+            return ACTION_ALIASES[key]
+    for key in ACTION_KEYS:
+        if len(key) >= 4 and key in text_lower:
             return ACTION_ALIASES[key]
     return None
 
@@ -132,10 +152,16 @@ def action_code(text_lower: str) -> str | None:
 def object_codes(text_lower: str) -> list[str]:
     found: list[str] = []
     seen: set[str] = set()
+    toks = _tokens(text_lower)
     for key in OBJECT_KEYS:
-        if key in text_lower:
-            code = OBJECT_ALIASES[key]
-            if code not in seen:
-                seen.add(code)
-                found.append(code)
+        hit = key in toks or (len(key) >= 4 and key in text_lower)
+        if not hit:
+            continue
+        # R318: FR conjunction "car" inside a clause must not mint vehicle C2.
+        if key in {"car", "cars"} and len(toks) > 1 and "voiture" not in toks and "coche" not in toks:
+            continue
+        code = OBJECT_ALIASES[key]
+        if code not in seen:
+            seen.add(code)
+            found.append(code)
     return sorted(found)

@@ -768,14 +768,16 @@ def _bearer_present(request: Request) -> bool:
 def wallet_list(request: Request) -> dict:
     """List wallets.
 
-    Anonymous: public projection only (name, address, hybrid, created_at,
-    has_key_file). With a valid Bearer: full metadata. Set
-    ARTCB_WALLET_LIST_PUBLIC=0 to require a Bearer for any listing.
+    Default fail-closed (R318 2026-09-11T19:40:00Z): anonymous callers get
+    HTTP 401. Opt-in public projection with ARTCB_WALLET_LIST_PUBLIC=1.
+    With a valid Bearer: full metadata for the operator/session path.
+    ~~ARTCB_WALLET_LIST_PUBLIC default "1"~~ (barred — leaked addresses to anon).
     """
     from src.artcb.wallet.manager import WalletManager
 
     authenticated = _bearer_present(request)
-    public_allowed = os.getenv("ARTCB_WALLET_LIST_PUBLIC", "1").strip().lower() not in {"0", "false", "no"}
+    # ~~default "1"~~ → default "0" (fail-closed). Explicit "1" restores old public projection.
+    public_allowed = os.getenv("ARTCB_WALLET_LIST_PUBLIC", "0").strip().lower() in {"1", "true", "yes"}
     if not authenticated and not public_allowed:
         raise HTTPException(status_code=401, detail="wallet_list_requires_bearer")
 

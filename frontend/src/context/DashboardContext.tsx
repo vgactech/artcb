@@ -68,7 +68,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [sessionId, setSessionId] = useState("");
   const [useLlm, setUseLlm] = useState(false);
   const [actorAddress, setActorAddress] = useState("");
-  const [visibility, setVisibility] = useState<NetworkVisibility>("private");
+  // R318: anonymous visitors default to PUBLIC network — not PRIVE.
+  // ~~useState("private")~~ made every fresh visit look like a private account.
+  const [visibility, setVisibility] = useState<NetworkVisibility>("public");
   const [groupId, setGroupId] = useState<string | null>(null);
   const [text, setText] = useState("");
   const [graph, setGraph] = useState<IRGraph | null>(null);
