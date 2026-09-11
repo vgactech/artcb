@@ -1,0 +1,300 @@
+{
+  "measurement_id": "R323_20260912T004733Z_cb1dc417d2e5",
+  "ts_ns": 1789166854244710000,
+  "commit_sha": "cb1dc417d2e50d0471dba5bb3c1810aa68d9b565",
+  "script": "scripts/artcb_compression_benchmark.py",
+  "script_sha256": "ed06567d215991271a762e8c57b90edda43644dc8fb055f9904ffdde4f5f8f81",
+  "certified_100": false,
+  "suites": [
+    {
+      "suite": "L4_8lang_same_meaning",
+      "langs": [
+        "fr",
+        "en",
+        "es",
+        "pt",
+        "it",
+        "ru",
+        "la",
+        "zh"
+      ],
+      "artcb": {
+        "per_phrase": [
+          {
+            "utf8": 40,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 5
+          },
+          {
+            "utf8": 33,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 7
+          },
+          {
+            "utf8": 32,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 5
+          },
+          {
+            "utf8": 30,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 5
+          },
+          {
+            "utf8": 29,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 4
+          },
+          {
+            "utf8": 68,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 4
+          },
+          {
+            "utf8": 35,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 4
+          },
+          {
+            "utf8": 27,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 1
+          }
+        ],
+        "unique_concept_ids": [
+          "Ke410ef3b8d2bddd5"
+        ],
+        "packet_bytes": 44,
+        "bundle_bytes": 2383,
+        "packet_sha256": "0128a07fcb4e8b2b555ca584425f2e8c8983cfdd653d550202dc336b7a483d73",
+        "bundle_sha256": "d135bab5ac16012619e6fbb3509c4f344bc16d05a575500d3c9d413cd8e276de",
+        "n_phrases": 8,
+        "n_unique_concepts": 1,
+        "sum_utf8": 294,
+        "sum_tokens_ws": 35,
+        "sum_packets_naive": 352
+      },
+      "baselines_joined_utf8": {
+        "raw_bytes": 301,
+        "gzip": 252,
+        "zlib": 240,
+        "utf8": 301,
+        "json_utf8": 320
+      },
+      "C_physique_packet_vs_sum_utf8": {
+        "ref_bytes": 294,
+        "cand_bytes": 44,
+        "reduction_pct": 85.034
+      },
+      "C_physique_bundle_vs_sum_utf8": {
+        "ref_bytes": 294,
+        "cand_bytes": 2383,
+        "reduction_pct": -710.5442
+      },
+      "C_packet_vs_gzip_joined": {
+        "ref_bytes": 252,
+        "cand_bytes": 44,
+        "reduction_pct": 82.5397
+      },
+      "C_semantic_concepts_vs_tokens": {
+        "ref_bytes": 35,
+        "cand_bytes": 1,
+        "reduction_pct": 97.1429
+      },
+      "note": "Negative reduction_pct means ARTCB payload is larger than the reference. Short single phrases often expand; multilingual bags compress conceptually."
+    },
+    {
+      "suite": "LONG_2lang_redundant",
+      "langs": [
+        "fr",
+        "en"
+      ],
+      "artcb": {
+        "per_phrase": [
+          {
+            "utf8": 190,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5",
+              "Kf63292900372e5b3",
+              "K487d2c422ba005f4"
+            ],
+            "packet_bytes": 108,
+            "tokens_ws": 26
+          },
+          {
+            "utf8": 154,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5",
+              "Kf63292900372e5b3",
+              "Kb85a61659097d46a"
+            ],
+            "packet_bytes": 108,
+            "tokens_ws": 24
+          }
+        ],
+        "unique_concept_ids": [
+          "Ke410ef3b8d2bddd5",
+          "Kf63292900372e5b3",
+          "K487d2c422ba005f4",
+          "Kb85a61659097d46a"
+        ],
+        "packet_bytes": 140,
+        "bundle_bytes": 1164,
+        "packet_sha256": "e3f274334b02e4ce3f6893feab9326bb3f82e91fc2cf114d2b8842257b5ff31c",
+        "bundle_sha256": "8c81cff195186cabd274af1c70273137c494f363f4983119bcdaa741fd546ea3",
+        "n_phrases": 2,
+        "n_unique_concepts": 4,
+        "sum_utf8": 344,
+        "sum_tokens_ws": 50,
+        "sum_packets_naive": 216
+      },
+      "baselines_joined_utf8": {
+        "raw_bytes": 345,
+        "gzip": 209,
+        "zlib": 197,
+        "utf8": 345,
+        "json_utf8": 358
+      },
+      "C_physique_packet_vs_sum_utf8": {
+        "ref_bytes": 344,
+        "cand_bytes": 140,
+        "reduction_pct": 59.3023
+      },
+      "C_physique_bundle_vs_sum_utf8": {
+        "ref_bytes": 344,
+        "cand_bytes": 1164,
+        "reduction_pct": -238.3721
+      },
+      "C_packet_vs_gzip_joined": {
+        "ref_bytes": 209,
+        "cand_bytes": 140,
+        "reduction_pct": 33.0144
+      },
+      "C_semantic_concepts_vs_tokens": {
+        "ref_bytes": 50,
+        "cand_bytes": 4,
+        "reduction_pct": 92.0
+      },
+      "note": "Negative reduction_pct means ARTCB payload is larger than the reference. Short single phrases often expand; multilingual bags compress conceptually."
+    },
+    {
+      "suite": "SINGLE_fr_short",
+      "langs": [
+        "fr"
+      ],
+      "artcb": {
+        "per_phrase": [
+          {
+            "utf8": 40,
+            "concept_ids": [
+              "Ke410ef3b8d2bddd5"
+            ],
+            "packet_bytes": 44,
+            "tokens_ws": 5
+          }
+        ],
+        "unique_concept_ids": [
+          "Ke410ef3b8d2bddd5"
+        ],
+        "packet_bytes": 44,
+        "bundle_bytes": 309,
+        "packet_sha256": "0128a07fcb4e8b2b555ca584425f2e8c8983cfdd653d550202dc336b7a483d73",
+        "bundle_sha256": "38c1e697d8136edaa5a96ea8fefcccfb38cfc8a917b56b75f5f970e9d6e31533",
+        "n_phrases": 1,
+        "n_unique_concepts": 1,
+        "sum_utf8": 40,
+        "sum_tokens_ws": 5,
+        "sum_packets_naive": 44
+      },
+      "baselines_joined_utf8": {
+        "raw_bytes": 40,
+        "gzip": 60,
+        "zlib": 48,
+        "utf8": 40,
+        "json_utf8": 52
+      },
+      "C_physique_packet_vs_sum_utf8": {
+        "ref_bytes": 40,
+        "cand_bytes": 44,
+        "reduction_pct": -10.0
+      },
+      "C_physique_bundle_vs_sum_utf8": {
+        "ref_bytes": 40,
+        "cand_bytes": 309,
+        "reduction_pct": -672.5
+      },
+      "C_packet_vs_gzip_joined": {
+        "ref_bytes": 60,
+        "cand_bytes": 44,
+        "reduction_pct": 26.6667
+      },
+      "C_semantic_concepts_vs_tokens": {
+        "ref_bytes": 5,
+        "cand_bytes": 1,
+        "reduction_pct": 80.0
+      },
+      "note": "Negative reduction_pct means ARTCB payload is larger than the reference. Short single phrases often expand; multilingual bags compress conceptually."
+    }
+  ],
+  "publisher_death_matrix": {
+    "publish_to_artcb_me": {
+      "graphs": 1,
+      "concept_ids": [
+        "K9638f146df59253d"
+      ],
+      "bundle_sha256": "26936262395aa1422b2b816c7f17a97a1918b0bfb947f510b2eac0bf96281983",
+      "bundle_bytes": 328,
+      "published_by": "human",
+      "ts_ns": 1789166853862237225,
+      "dur_ns": 6760944
+    },
+    "A_federated_resolve_via_n2": {
+      "ok": true,
+      "via": "https://artcb.me",
+      "meaning": "federation PASS"
+    },
+    "B_n2_only_no_fallback": {
+      "empty_or_missing": true,
+      "ok_independent_replica": false,
+      "meaning": "FAIL expected if native replication OPEN"
+    },
+    "C_offline_after_federated_ingest": {
+      "ok": true,
+      "meaning": "local persistence after fetch PASS"
+    },
+    "verdict": {
+      "federation_level_A": true,
+      "replication_level_B": false,
+      "local_persist_level_C": true,
+      "publisher_death_resilience": false,
+      "note": "Did not stop production publisher; B isolates dependence on fallback."
+    }
+  },
+  "dur_ns": 1148650422,
+  "official_compression_pct": null,
+  "official_compression_note": "No single official % — see per-suite C_physique_* and C_semantic_*. Do not quote a global X% without naming suite+reference."
+}

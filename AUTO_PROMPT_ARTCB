@@ -1936,3 +1936,11 @@ Clone : `bash scripts/artcb_bootstrap.sh` (OS + install.sh).
 Sessions : `data/auth/sessions.json` survivent au restart process.
 C2-D : WAN Mac→artcb.me PASS ; fédération one-hop resolve pour n2–n4.
 SSH:22 seeds timeout depuis ce LAN. Trou 716 / swtpm / HBP / CERTIFIED_100=false restent.
+
+## [2026-09-12T00:50:00Z] R323 — compression mesurée + matrice publisher-death
+
+Benchmark `scripts/artcb_compression_benchmark.py` : artefacts liés (measurement.json + report.md + commit_sha).
+Mesure live : L4×8 packet vs sum UTF-8 ≈ **85 %** ; phrase courte peut **dilater** (−10 %).
+Bundle .arcb ≠ packet ConceptID (bundle plus gros — définitions).
+Publisher-death simulé : A fédération PASS ; B n2 sans fallback FAIL (= réplication native OPEN) ; C offline PASS.
+CERTIFIED_100=false. Pas de % officiel unique.
