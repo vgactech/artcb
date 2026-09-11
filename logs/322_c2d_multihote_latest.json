@@ -1,5 +1,5 @@
 {
-  "ts_ns": 1789163225164109000,
+  "ts_ns": 1789163855845940000,
   "certified_100": false,
   "publisher": "https://artcb.me",
   "hosts": {
@@ -10,7 +10,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "324d07025bb587fbd3444ff8c02fa6ab0c76db82",
+        "git_sha": "fc1cad43f7c4bdbb0d39e0e3bb014d547b2f4aa7",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -97,18 +97,19 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "324d07025bb5",
+      "git_sha": "fc1cad43f7c4",
       "publish": {
         "graphs": 1,
-        "bundle_sha256": "a3a379f8e7ef6f59a821f841129631f40d67838a07ae5baf7c393de4e89b1039"
+        "bundle_sha256": "8819364e51704423d3f3889c2375dea64852c8263eb4571e9221bf7ebafffec0"
       },
       "publish_ok": true,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "36b7e00a7fa045969a7a8f21bd084e0d8a921987db1dc4a04795beb76354d3cd",
+        "bundle_sha256": "69a0c648299f877f4f28772a2a6ad3396119fb27f52ccadafa0850696d06767e",
         "missing_after": [],
         "found": 2,
         "ok": true,
+        "federated_from": null,
         "transport": "WAN_HTTPS"
       },
       "self_resolve_ok": true,
@@ -123,7 +124,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "324d07025bb587fbd3444ff8c02fa6ab0c76db82",
+        "git_sha": "fc1cad43f7c4bdbb0d39e0e3bb014d547b2f4aa7",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -210,7 +211,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "324d07025bb5",
+      "git_sha": "fc1cad43f7c4",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -219,16 +220,17 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "b1413d1d031b2b1aab135e5840713b8dd8f1bc03c534ee6bc404dab64d4cd936",
-        "missing_after": [
-          "K05336c50b14ee52d",
-          "K6773930a8ad4f8f3"
-        ],
-        "found": 0,
-        "ok": false,
+        "bundle_sha256": "69a0c648299f877f4f28772a2a6ad3396119fb27f52ccadafa0850696d06767e",
+        "missing_after": [],
+        "found": 2,
+        "ok": true,
+        "federated_from": "https://artcb.me",
         "transport": "WAN_HTTPS"
       },
-      "self_resolve_ok": false
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      }
     },
     "aws-node-3": {
       "base": "https://n3.artcb.me",
@@ -237,7 +239,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "324d07025bb587fbd3444ff8c02fa6ab0c76db82",
+        "git_sha": "fc1cad43f7c4bdbb0d39e0e3bb014d547b2f4aa7",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -324,7 +326,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "324d07025bb5",
+      "git_sha": "fc1cad43f7c4",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -333,16 +335,17 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "b1413d1d031b2b1aab135e5840713b8dd8f1bc03c534ee6bc404dab64d4cd936",
-        "missing_after": [
-          "K05336c50b14ee52d",
-          "K6773930a8ad4f8f3"
-        ],
-        "found": 0,
-        "ok": false,
+        "bundle_sha256": "69a0c648299f877f4f28772a2a6ad3396119fb27f52ccadafa0850696d06767e",
+        "missing_after": [],
+        "found": 2,
+        "ok": true,
+        "federated_from": "https://artcb.me",
         "transport": "WAN_HTTPS"
       },
-      "self_resolve_ok": false
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      }
     },
     "ovh-node-4": {
       "base": "https://n4.artcb.me",
@@ -351,7 +354,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "324d07025bb587fbd3444ff8c02fa6ab0c76db82",
+        "git_sha": "fc1cad43f7c4bdbb0d39e0e3bb014d547b2f4aa7",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -438,7 +441,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "324d07025bb5",
+      "git_sha": "fc1cad43f7c4",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -447,16 +450,17 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "b1413d1d031b2b1aab135e5840713b8dd8f1bc03c534ee6bc404dab64d4cd936",
-        "missing_after": [
-          "K05336c50b14ee52d",
-          "K6773930a8ad4f8f3"
-        ],
-        "found": 0,
-        "ok": false,
+        "bundle_sha256": "69a0c648299f877f4f28772a2a6ad3396119fb27f52ccadafa0850696d06767e",
+        "missing_after": [],
+        "found": 2,
+        "ok": true,
+        "federated_from": "https://artcb.me",
         "transport": "WAN_HTTPS"
       },
-      "self_resolve_ok": false
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      }
     },
     "mac-node-local": {
       "base": "http://127.0.0.1:8001",
@@ -465,7 +469,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "324d07025bb587fbd3444ff8c02fa6ab0c76db82",
+        "git_sha": "fc1cad43f7c4bdbb0d39e0e3bb014d547b2f4aa7",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -552,18 +556,19 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "324d07025bb5",
+      "git_sha": "fc1cad43f7c4",
       "publish": {
         "graphs": 1,
-        "bundle_sha256": "a3a379f8e7ef6f59a821f841129631f40d67838a07ae5baf7c393de4e89b1039"
+        "bundle_sha256": "8819364e51704423d3f3889c2375dea64852c8263eb4571e9221bf7ebafffec0"
       },
       "publish_ok": true,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "7a15ba02624a05357e18956fa0e6146610efe998994a3980d7c200df055a872d",
+        "bundle_sha256": "d5aee0ce1e7da14915be670958541895cf0a355956ba20fef5fc1cc06f9a6760",
         "missing_after": [],
-        "found": 1,
+        "found": 2,
         "ok": true,
+        "federated_from": null,
         "transport": "LOCAL_HTTP"
       },
       "self_resolve_ok": true,
@@ -577,9 +582,9 @@
       "K05336c50b14ee52d",
       "K6773930a8ad4f8f3"
     ],
-    "graph_id": "g_5d81ea37029e",
+    "graph_id": "g_6facb37a6b1a",
     "packet_sha256": "5aae12d29fd7b99ec0bb1ecbca1bdb8b38a4b3e993496d8c081bcf4c3ac943aa",
-    "bundle_sha256": "a3a379f8e7ef6f59a821f841129631f40d67838a07ae5baf7c393de4e89b1039",
+    "bundle_sha256": "8819364e51704423d3f3889c2375dea64852c8263eb4571e9221bf7ebafffec0",
     "bundle_bytes": 548
   },
   "keys_present": {
@@ -601,11 +606,11 @@
   "summary": {
     "healthy_hosts": 5,
     "unique_git_shas": [
-      "324d07025bb5"
+      "fc1cad43f7c4"
     ],
     "sha_aligned_5": true,
     "publish_ok_hosts": 2,
-    "self_resolve_ok_hosts": 2,
+    "self_resolve_ok_hosts": 5,
     "wan_publisher_ok": true,
     "wan_offline_ok": true,
     "c2d_multihote_pass": true,
@@ -615,6 +620,6 @@
       "seed hole after 716 still blocks Mac tip catch-up (not invented)",
       "CERTIFIED_100 remains false"
     ],
-    "dur_ns": 7073268977
+    "dur_ns": 6869829178
   }
 }

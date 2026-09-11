@@ -159,6 +159,7 @@ def main() -> int:
             "missing_after": rec.missing_concept_ids,
             "found": len(rec.found_graphs),
             "ok": bool(rec.found_graphs) and not rec.missing_concept_ids,
+            "federated_from": resolver.last_federated_from,
             "transport": "WAN_HTTPS" if base.startswith("https://") else "LOCAL_HTTP",
         }
         row["self_resolve_ok"] = row["self_resolve"]["ok"]

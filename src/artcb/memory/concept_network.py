@@ -23,6 +23,12 @@ from typing import Any
 logger = logging.getLogger("artcb.memory.concept_network")
 
 DEFAULT_TIMEOUT = 30
+DEFAULT_FALLBACK_PEERS = (
+    "https://artcb.me",
+    "https://n2.artcb.me",
+    "https://n3.artcb.me",
+    "https://n4.artcb.me",
+)
 
 
 class HttpConceptResolver:
@@ -31,6 +37,9 @@ class HttpConceptResolver:
     Interroge ``GET /api/v1/concepts/resolve`` et renvoie le bundle binaire
     ``ACBN``. Retourne ``None`` si le nœud ne connaît aucun de ces concepts —
     un « je ne sais pas » honnête, jamais une réponse inventée.
+
+    R322 : si le nœud cible renvoie un bundle vide, bascule (client) sur les
+    seeds publisher — C2-D multi-hôte même quand l'egress serveur est filtré.
     """
 
     def __init__(
@@ -39,13 +48,18 @@ class HttpConceptResolver:
         *,
         api_key: str = "",
         timeout: int = DEFAULT_TIMEOUT,
+        federate_fallback: bool = True,
+        fallback_peers: tuple[str, ...] | None = None,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.api_key = (api_key or "").strip()
         self.timeout = timeout
+        self.federate_fallback = federate_fallback
+        self.fallback_peers = fallback_peers or DEFAULT_FALLBACK_PEERS
         self.last_status: int | None = None
         self.last_missing: list[str] = []
         self.last_bundle_sha256: str | None = None
+        self.last_federated_from: str | None = None
 
     def __call__(self, concept_ids: list[str]) -> bytes | None:
         if not concept_ids:
@@ -55,6 +69,7 @@ class HttpConceptResolver:
         if len(self.api_key) >= 16:
             headers["Authorization"] = f"Bearer {self.api_key}"
         req = urllib.request.Request(url, headers=headers, method="GET")
+        data: bytes | None = None
         try:
             with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 self.last_status = resp.status
@@ -65,14 +80,32 @@ class HttpConceptResolver:
         except urllib.error.HTTPError as exc:
             self.last_status = exc.code
             logger.warning("resolve HTTP %s sur %s", exc.code, self.base_url)
-            return None
+            data = None
         except Exception as exc:  # noqa: BLE001
             self.last_status = 0
             logger.warning("resolve échec transport : %s", type(exc).__name__)
-            return None
-        if len(data) <= 10:  # en-tête ACBN seul = 0 graphe
-            return None
-        return data
+            data = None
+        if data is not None and len(data) > 10:
+            return data
+        # R322: if this node has an empty store, fall back to publisher seeds (client federation).
+        if self.federate_fallback:
+            for peer in self.fallback_peers:
+                if peer.rstrip("/") == self.base_url.rstrip("/"):
+                    continue
+                alt = HttpConceptResolver(
+                    peer,
+                    api_key=self.api_key,
+                    timeout=self.timeout,
+                    federate_fallback=False,
+                )
+                got = alt(concept_ids)
+                if got:
+                    self.last_status = alt.last_status
+                    self.last_bundle_sha256 = alt.last_bundle_sha256
+                    self.last_missing = alt.last_missing
+                    self.last_federated_from = peer
+                    return got
+        return None
 
 
 def publish_bundle(
