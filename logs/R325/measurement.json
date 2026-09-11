@@ -1,7 +1,7 @@
 {
-  "measurement_id": "R325_20260912T014423Z_63fdf7138012",
-  "ts_ns": 1789170282335439000,
-  "commit_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
+  "measurement_id": "R325_20260912T015048Z_4a64254a09a8",
+  "ts_ns": 1789170669606265000,
+  "commit_sha": "4a64254a09a85471a7a5ca052539f02dd3679ddc",
   "code_fix_attributed": "f739a6b",
   "script": "scripts/artcb_r325_parallel_measure.py",
   "script_sha256": "0cabbff176f3087ee04591e82390efd518bcb5463042e74a8e74c2af821ca58d",
@@ -11,21 +11,21 @@
       "https://artcb.me": {
         "health_http": 200,
         "status_http": 200,
-        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
-        "git_sha12": "63fdf7138012",
+        "git_sha": "4a64254a09a85471a7a5ca052539f02dd3679ddc",
+        "git_sha12": "4a64254a09a8",
         "contains_r324_fix": false,
         "protocol_version": "189-mainnet-1",
         "genesis_hash": "genesis-artcb-mainnet-1",
         "network_id": "artcb-mainnet-1",
-        "height": 1816,
-        "last_hash": "a12bd977c079c1380296e8ea9f12b629910aae97546ebb33f69b37d5a1a45eae",
+        "height": 1832,
+        "last_hash": "9c92c93dc0d78ce75de1a87b277ea096326ba55ecdaf9cb9a595d8c0926802fd",
         "chain_valid": true
       },
       "https://n2.artcb.me": {
         "health_http": 200,
         "status_http": 200,
-        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
-        "git_sha12": "63fdf7138012",
+        "git_sha": "4a64254a09a85471a7a5ca052539f02dd3679ddc",
+        "git_sha12": "4a64254a09a8",
         "contains_r324_fix": false,
         "protocol_version": "189-mainnet-1",
         "genesis_hash": "genesis-artcb-mainnet-1",
@@ -37,8 +37,8 @@
       "https://n3.artcb.me": {
         "health_http": 200,
         "status_http": 200,
-        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
-        "git_sha12": "63fdf7138012",
+        "git_sha": "4a64254a09a85471a7a5ca052539f02dd3679ddc",
+        "git_sha12": "4a64254a09a8",
         "contains_r324_fix": false,
         "protocol_version": "189-mainnet-1",
         "genesis_hash": "genesis-artcb-mainnet-1",
@@ -50,8 +50,8 @@
       "https://n4.artcb.me": {
         "health_http": 200,
         "status_http": 200,
-        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
-        "git_sha12": "63fdf7138012",
+        "git_sha": "4a64254a09a85471a7a5ca052539f02dd3679ddc",
+        "git_sha12": "4a64254a09a8",
         "contains_r324_fix": false,
         "protocol_version": "189-mainnet-1",
         "genesis_hash": "genesis-artcb-mainnet-1",
@@ -62,24 +62,24 @@
       }
     },
     "git_sha_unique": [
-      "63fdf7138012"
+      "4a64254a09a8"
     ],
     "height_unique": [
       "1141",
-      "1816"
+      "1832"
     ],
     "tip16_unique": [
       "013f327cb76bef8b",
-      "a12bd977c079c138"
+      "9c92c93dc0d78ce7"
     ],
     "all_same_sha": true,
     "all_same_tip": false,
-    "all_have_r324_fix_ancestor_or_sha": true,
+    "all_have_r324_fix_ancestor_or_sha": false,
     "ci_note": "Empty GitHub status checks ≠ CI PASS (operator audit).",
-    "verdict": "PARTIAL_SHA_OK_TIP_DIVERGE"
+    "verdict": "PARTIAL_OR_DIVERGE"
   },
   "axis_b_publisher_death_hard": {
-    "concept_id": "K5e2a3dd35adef9dc",
+    "concept_id": "Ke1927f207834c026",
     "publish_ok": true,
     "publish_keys": [
       "bundle_bytes",
@@ -190,8 +190,8 @@
     "seeds": {
       "https://artcb.me": {
         "base": "https://artcb.me",
-        "height": 1816,
-        "last_hash": "a12bd977c079c138",
+        "height": 1832,
+        "last_hash": "9c92c93dc0d78ce7",
         "chain_valid": true,
         "b716": {
           "http": 200,
@@ -330,10 +330,10 @@
     },
     "dictionary_amortization_bundle_vs_utf8": {
       "ref_bytes": 294,
-      "cand_bytes": 2410,
-      "reduction_pct": -719.7279
+      "cand_bytes": 2415,
+      "reduction_pct": -721.4286
     },
-    "install_overhead_bytes": 2366,
+    "install_overhead_bytes": 2371,
     "semantic_convergence_L4": {
       "n_phrases": 8,
       "n_unique_concepts": 1,
@@ -395,8 +395,8 @@
     ],
     "fidelity_beaucoup_neq_peu": true,
     "fidelity_case_distinct_bags": 4,
-    "encode_medianish_ns_fr_L4": 1410305,
-    "decode_packet_ns": 454501,
+    "encode_medianish_ns_fr_L4": 483793,
+    "decode_packet_ns": 520005,
     "official_global_pct": null,
     "verdict": {
       "byte_packet_L4_ok": true,
@@ -404,7 +404,7 @@
       "global_compression_claimed": false
     }
   },
-  "dur_ns": 18926824652,
+  "dur_ns": 21727178600,
   "distinctions": {
     "federation_ne_replication_ne_resilience": true,
     "r324_pass_ne_certified_100": true,
