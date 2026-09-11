@@ -217,16 +217,22 @@ class IREncoder:
     def _classify_sentence(self, sentence: str) -> NodeType:
         lowered = sentence.lower()
         # R318: lone EN "car" (vehicle / C2) must not become French conjunction REASON.
-        from src.artcb.ir.concept_lexicon import _tokens, object_codes
+        # R319: English "the/a/… car …" must not hit REASON via grammar keyword "car ".
+        from src.artcb.ir.concept_lexicon import (
+            _car_is_english_vehicle,
+            _tokens,
+            object_codes,
+        )
 
         toks = _tokens(lowered.strip())
         if len(toks) == 1 and object_codes(lowered):
             return NodeType.FACT
+        en_vehicle = _car_is_english_vehicle(lowered) and "C2" in object_codes(lowered)
         if self._keyword_hit(lowered, DECISION_KEYWORDS + DECISION_EXTRA):
             return NodeType.DECISION
         if self._keyword_hit(lowered, HYPOTHESIS_KEYWORDS + HYPOTHESIS_EXTRA):
             return NodeType.HYPOTHESIS
-        if self._keyword_hit(lowered, REASON_KEYWORDS + REASON_EXTRA):
+        if not en_vehicle and self._keyword_hit(lowered, REASON_KEYWORDS + REASON_EXTRA):
             return NodeType.REASON
         if self._keyword_hit(lowered, GOAL_KEYWORDS + GOAL_EXTRA):
             return NodeType.GOAL

@@ -1907,3 +1907,11 @@ Citation opérateur (2026-09-11) :
 > JE TE DEJA DIT DE NE PAS ATTENDRE MES GO! SAUF QUQND JE LE DEMANDE DATTENDRE ! DANS GO GENERAL TU DOIT RESTER 100% AUTONOME! TU REGLER TOUT CELA SANS AUCUNE EXCEPTION!
 
 Portée : exécuter sans pause les tâches P0 / demandées (catch-up, auth fix, probes, follow-main…). R263 reste la liste de routine. Interdit d’inférer un droit nouveau sur tokenomics/consensus sans demande. CERTIFIED_100=false.
+
+## [2026-09-11T20:20:00Z] R319 — C2 ladder + balance authz
+
+C2 redéfini : C2-A lexical → C2-B phrases → C2-C raisonnement packet → C2-D A→ARTCB→B.
+Mesure : A/B/C PASS local ; D PARTIAL (pas de sync .arcb réseau ; cold B missing).
+Namespaces : `C2`=code lexique ; `K3e7dc01…`=ConceptID ; `C2-A…D`=niveaux test.
+Balance anonyme → 401 (fail-closed) ; session A≠adresse B → 403.
+Session TTL code = 1800s. CERTIFIED_100=false.

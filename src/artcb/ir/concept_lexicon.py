@@ -8,6 +8,13 @@ and FACT fallback minted a unique original per sentence.
 This table is the first production layer: same semantic lemma → same code.
 Unknown words still mint (honest non-convergence). Do not claim universal
 translation. The probe triple (server / verify / signature) is in the table.
+
+Naming (R319 2026-09-11T20:10:00Z) — do not confuse:
+  - ``C2`` = lexicon *object code* / scenario symbol for vehicle lemmas
+    (voiture/car/coche → code ``C2`` → IR sym ``O1C2``).
+  - ``K3e7dc01c5cf83cd8`` = concrete *ConceptID* hash derived from type+sym.
+  - Scenario battery id ``C2-A``…``C2-D`` = test ladder, not a ConceptID.
+These are three namespaces. Lexical PASS on C2≠C2-D E2E PASS.
 """
 
 from __future__ import annotations
@@ -129,11 +136,34 @@ ACTION_KEYS = _sorted_keys(ACTION_ALIASES)
 OBJECT_KEYS = _sorted_keys(OBJECT_ALIASES)
 
 
-def _tokens(text_lower: str) -> set[str]:
-    """Whole-word tokens only — R318: 'car' must not hit inside 'verificar'."""
+def _token_list(text_lower: str) -> list[str]:
+    """Ordered whole-word tokens — R318: 'car' must not hit inside 'verificar'."""
     import re
 
-    return {m.group(0) for m in re.finditer(r"[a-zàâäéèêëïîôùûüçñ]+", text_lower)}
+    return [m.group(0) for m in re.finditer(r"[a-zàâäéèêëïîôùûüçñ]+", text_lower)]
+
+
+def _tokens(text_lower: str) -> set[str]:
+    return set(_token_list(text_lower))
+
+
+# English NP heads: "the car" / "a car" are vehicles, not FR conjunction "car".
+_EN_CAR_DETERMINERS = frozenset(
+    {"the", "a", "an", "my", "your", "his", "her", "their", "this", "that", "our", "one"}
+)
+
+
+def _car_is_english_vehicle(text_lower: str) -> bool:
+    """True when 'car'/'cars' is an English noun phrase head (R319)."""
+    toks = _token_list(text_lower)
+    for i, tok in enumerate(toks):
+        if tok not in {"car", "cars"}:
+            continue
+        if i > 0 and toks[i - 1] in _EN_CAR_DETERMINERS:
+            return True
+        if len(toks) == 1:
+            return True
+    return False
 
 
 def action_code(text_lower: str) -> str | None:
@@ -157,9 +187,15 @@ def object_codes(text_lower: str) -> list[str]:
         hit = key in toks or (len(key) >= 4 and key in text_lower)
         if not hit:
             continue
-        # R318: FR conjunction "car" inside a clause must not mint vehicle C2.
-        if key in {"car", "cars"} and len(toks) > 1 and "voiture" not in toks and "coche" not in toks:
-            continue
+        # R318: FR conjunction "car" must not mint vehicle C2.
+        # ~~R318 multi-token blanket skip~~ barred R319 2026-09-11T20:15:00Z —
+        # it also dropped English "The car consumes…" (false negative).
+        # Keep skip only when "car" is NOT an English NP head and not voiture/coche.
+        if key in {"car", "cars"} and len(toks) > 1:
+            if "voiture" in toks or "coche" in toks or _car_is_english_vehicle(text_lower):
+                pass
+            else:
+                continue
         code = OBJECT_ALIASES[key]
         if code not in seen:
             seen.add(code)

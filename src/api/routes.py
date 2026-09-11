@@ -787,11 +787,45 @@ def wallet_list(request: Request) -> dict:
     return {"wallets": wallets, "count": len(wallets), "projection": "full" if authenticated else "public"}
 
 
+def _authorize_wallet_balance(request: Request, address: str) -> None:
+    """R319 2026-09-11T20:10:00Z — balance is not anonymous metadata.
+
+    - Anon → 401 (unless ARTCB_WALLET_BALANCE_PUBLIC=1 explicit opt-in).
+    - sess_ → address must equal the session-bound address (no wallet B probe).
+    - artcb_ API key → operator path allowed (full node tooling).
+    """
+    from src.api.api_keys_routes import verify_api_key
+    from src.api.auth_routes import require_session
+
+    public_allowed = os.getenv("ARTCB_WALLET_BALANCE_PUBLIC", "0").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+    authorization = request.headers.get("authorization")
+    if not authorization:
+        if public_allowed:
+            return
+        raise HTTPException(status_code=401, detail="wallet_balance_requires_bearer")
+    if authorization.startswith("Bearer sess_"):
+        record = require_session(request, authorization)
+        session_addr = str(record.get("address") or "")
+        if not session_addr or session_addr != address:
+            raise HTTPException(
+                status_code=403,
+                detail="wallet_balance_address_not_owned_by_session",
+            )
+        return
+    if verify_api_key(request, authorization) is None:
+        raise HTTPException(status_code=401, detail="wallet_balance_requires_bearer")
+
+
 @router.post("/wallet/balance")
 def wallet_balance(body: WalletBalanceRequest, request: Request) -> dict:
-    """Get wallet balance from blockchain."""
+    """Get wallet balance from blockchain (authz R319)."""
     from src.artcb.wallet.manager import WalletManager
 
+    _authorize_wallet_balance(request, body.address)
     state = _state(request)
     wallet_mgr = WalletManager()
 
@@ -805,9 +839,10 @@ def wallet_balance(body: WalletBalanceRequest, request: Request) -> dict:
 
 @router.get("/wallet/balance/{address}")
 def wallet_balance_get(address: str, request: Request) -> dict:
-    """Get wallet balance from blockchain (GET variant)."""
+    """Get wallet balance from blockchain (GET variant, authz R319)."""
     from src.artcb.wallet.manager import WalletManager
 
+    _authorize_wallet_balance(request, address)
     state = _state(request)
     wallet_mgr = WalletManager()
 

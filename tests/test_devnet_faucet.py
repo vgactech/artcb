@@ -51,7 +51,18 @@ def test_wallet_balance_includes_faucet(client: TestClient) -> None:
     address = w.json()["address"]
     denied = client.post("/api/v1/devnet/faucet", json={"address": address})
     assert denied.status_code == 403
-    bal = client.get(f"/api/v1/wallet/balance/{address}")
+    # R319: anonymous balance is 401; session must own the address.
+    assert client.get(f"/api/v1/wallet/balance/{address}").status_code == 401
+    login = client.post(
+        "/api/v1/auth/login",
+        json={"name": "bal_wallet", "password": "test_pwd_123"},
+    )
+    assert login.status_code == 200
+    token = login.json()["session_token"]
+    bal = client.get(
+        f"/api/v1/wallet/balance/{address}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
     assert bal.status_code == 200
     assert int(bal.json().get("faucet_satoshi") or 0) == 0
 

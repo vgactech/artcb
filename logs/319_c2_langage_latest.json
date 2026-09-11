@@ -1,0 +1,168 @@
+{
+  "ts_ns": 1789157558772754000,
+  "git_hint": "R319",
+  "certified_100": false,
+  "ui_locales": [
+    "fr",
+    "en",
+    "zh",
+    "es",
+    "pt",
+    "it",
+    "ru"
+  ],
+  "C2-A": {
+    "level": "C2-A",
+    "status": "PASS",
+    "lexicon_object_code": "C2",
+    "concept_id": "K3e7dc01c5cf83cd8",
+    "expected_concept_id": "K3e7dc01c5cf83cd8",
+    "namespace_note": "C2=lexicon code; K…=ConceptID; C2-A=test level",
+    "vehicle_ids": {
+      "fr": "K3e7dc01c5cf83cd8",
+      "en": "K3e7dc01c5cf83cd8",
+      "es": "K3e7dc01c5cf83cd8"
+    },
+    "object_codes": {
+      "fr": [
+        "C2"
+      ],
+      "en": [
+        "C2"
+      ],
+      "es": [
+        "C2"
+      ]
+    },
+    "adversarial": {
+      "avion_ne_vehicle": true,
+      "verificar_no_car_substring": true,
+      "automobile_synonym_converges": false,
+      "automobile_note": "GAP if false — lexicon incomplete, not silent PASS"
+    },
+    "ui_locales_in_frontend": [
+      "fr",
+      "en",
+      "zh",
+      "es",
+      "pt",
+      "it",
+      "ru"
+    ],
+    "ui_locales_semantically_probed": [
+      "fr",
+      "en",
+      "es"
+    ],
+    "dur_ns": 11994587
+  },
+  "C2-B": {
+    "level": "C2-B",
+    "status": "PASS",
+    "phrases": {
+      "fr": "La voiture consomme beaucoup.",
+      "en": "The car consumes a lot.",
+      "es": "El coche consume mucho."
+    },
+    "ids": {
+      "fr": [
+        "K3e7dc01c5cf83cd8"
+      ],
+      "en": [
+        "K3e7dc01c5cf83cd8"
+      ],
+      "es": [
+        "K3e7dc01c5cf83cd8"
+      ]
+    },
+    "vehicle_in_each": {
+      "fr": true,
+      "en": true,
+      "es": true
+    },
+    "intersection": [
+      "K3e7dc01c5cf83cd8"
+    ],
+    "note": "Phrase overlap via lexicon hits — not a translation-chain proof",
+    "dur_ns": 583812
+  },
+  "C2-C": {
+    "level": "C2-C",
+    "status": "PASS",
+    "learned": [
+      {
+        "lang": "fr",
+        "concept_ids": [
+          "Kea9fac4a9374a49c"
+        ],
+        "graph_id": "g_4ea5345b16cb"
+      },
+      {
+        "lang": "en",
+        "concept_ids": [
+          "K6773930a8ad4f8f3"
+        ],
+        "graph_id": "g_57826760b18a"
+      },
+      {
+        "lang": "es",
+        "concept_ids": [
+          "Kea9fac4a9374a49c"
+        ],
+        "graph_id": "g_9894bf2b32ac"
+      }
+    ],
+    "packet_sha256": "1616dc2b4bf53aabeca307368972beed4a5d831bd225a46f2767bae2a91f3cba",
+    "packet_bytes": 108,
+    "known_from_packet": 3,
+    "graphs_recalled": 3,
+    "derived_concept_ids": [
+      "K05336c50b14ee52d"
+    ],
+    "derived_graph_id": "g_05d3c838fb0b",
+    "note": "Local AgentChannel — proves IR+store+packet, not yet multi-node network",
+    "dur_ns": 9841251
+  },
+  "C2-D": {
+    "level": "C2-D",
+    "status": "PARTIAL",
+    "a_concept_ids": [
+      "K9638f146df59253d",
+      "K05336c50b14ee52d"
+    ],
+    "a_graph_id": "g_80a978c539a1",
+    "a_output_hash": "0133e1f637af3e758ee87f91a3c95bf7c3b0febc4f9d23e22470b7de48d6876f",
+    "b_cold_found": 0,
+    "b_cold_missing": [
+      "K9638f146df59253d",
+      "K05336c50b14ee52d"
+    ],
+    "b_warm_ok": true,
+    "b_own_concept_ids": [
+      "K0bdc117857fb01ee"
+    ],
+    "b_combined_k9_ids": [
+      "K05336c50b14ee52d"
+    ],
+    "b_combined_graph_id": "g_23f80e957fdb",
+    "arcb_sync_sim_ok": true,
+    "live_memo": null,
+    "live_memo_error": "HTTP Error 409: Conflict",
+    "honest_gaps": [
+      "cold B without prior/store sync cannot reconstruct graphs from packet alone",
+      "live memo anchors hashes/ids — does not yet ship .arcb concept blobs over P2P",
+      "C2-D PASS only if cold path OR full concept-store sync over network is proven"
+    ],
+    "dur_ns": 507769504
+  },
+  "ladder_summary": {
+    "statuses": [
+      "PASS",
+      "PASS",
+      "PASS",
+      "PARTIAL"
+    ],
+    "serious_e2e_claim": false,
+    "note": "Only C2-D PASS is a serious E2E langage claim; lexical alone is insufficient"
+  }
+}

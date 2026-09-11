@@ -1,0 +1,52 @@
+{
+  "ts_ns": 1789157578410206000,
+  "base": "https://artcb.me",
+  "session_ttl_seconds_code": 1800,
+  "certified_100": false,
+  "auth_me_anon": {
+    "status": 200,
+    "dur_ns": 123900528,
+    "body": {
+      "authenticated": false,
+      "kind": "anonymous",
+      "address": null,
+      "wallet_name": null,
+      "agent_id": null,
+      "is_user": false,
+      "is_operator": false
+    }
+  },
+  "wallet_list_anon": {
+    "status": 401,
+    "dur_ns": 111604698,
+    "body": {
+      "detail": "wallet_list_requires_bearer"
+    }
+  },
+  "wallet_balance_anon": {
+    "status": 200,
+    "dur_ns": 204760296,
+    "body": {
+      "address": "artcb10pj2gty9u02hl5xwpa2wkhfdyass6fq8kdp3q0",
+      "balance_satoshi": 0,
+      "balance_artcb": 0.0,
+      "block_count": 0,
+      "rewards": [],
+      "faucet_satoshi": 0,
+      "faucet_artcb": 0.0
+    }
+  },
+  "wallet_balance_apikey": {
+    "status": 200,
+    "dur_ns": 257802787,
+    "body": {
+      "address": "artcb10pj2gty9u02hl5xwpa2wkhfdyass6fq8kdp3q0",
+      "balance_satoshi": 0,
+      "balance_artcb": 0.0,
+      "block_count": 0,
+      "rewards": [],
+      "faucet_satoshi": 0,
+      "faucet_artcb": 0.0
+    }
+  }
+}
