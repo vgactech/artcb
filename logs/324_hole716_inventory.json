@@ -1,11 +1,11 @@
 {
-  "ts_ns": 1789168490846524000,
+  "ts_ns": 1789169103075642000,
   "tip716_hash": "f79f6a1a71896e619f6d66cc998bbc918b2eb1d4649f3dcad2d6349cb6c9dd37",
   "seeds": {
     "https://artcb.me": {
       "base": "https://artcb.me",
       "health_http": 200,
-      "git_sha": "ac18e93502a4",
+      "git_sha": "f739a6b5f25f",
       "height": null,
       "block_716": {
         "hash": "f79f6a1a71896e61",
@@ -33,7 +33,7 @@
     "https://n2.artcb.me": {
       "base": "https://n2.artcb.me",
       "health_http": 200,
-      "git_sha": "ac18e93502a4",
+      "git_sha": "f739a6b5f25f",
       "height": null,
       "block_716": {
         "hash": "f79f6a1a71896e61",
@@ -61,7 +61,7 @@
     "https://n3.artcb.me": {
       "base": "https://n3.artcb.me",
       "health_http": 200,
-      "git_sha": "ac18e93502a4",
+      "git_sha": "f739a6b5f25f",
       "height": null,
       "block_716": {
         "hash": "f79f6a1a71896e61",
@@ -89,7 +89,7 @@
     "https://n4.artcb.me": {
       "base": "https://n4.artcb.me",
       "health_http": 200,
-      "git_sha": "ac18e93502a4",
+      "git_sha": "f739a6b5f25f",
       "height": null,
       "block_716": {
         "hash": "f79f6a1a71896e61",
@@ -119,5 +119,5 @@
   "717_exists_anywhere": false,
   "child_of_tip716_found": false,
   "verdict": "HOLE_CONFIRMED_NO_CHILD",
-  "dur_ns": 11579785715
+  "dur_ns": 8576695260
 }

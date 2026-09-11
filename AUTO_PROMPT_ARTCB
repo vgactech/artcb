@@ -1956,3 +1956,12 @@ Bug R323→R324 : `resolve_concepts` sautait `https://artcb.me` car `n2.artcb.me
 
 Mesure : `scripts/artcb_r324_parallel_measure.py` (fidélité beaucoup/peu, coût dictionnaire, B=hop1 après warm, inventaire 716).
 Jamais inventer un bloc 717. CERTIFIED_100=false.
+
+
+## R324 live mesuré (2026-09-12T01:25:00Z) — SHA `f739a6b5f25f` ×4
+
+Fédération apex fix + QH/QL déployés. Live `artcb_r324_parallel_measure.py` :
+- fidélité beaucoup/peu **PASS_DISTINCT** (`K493…` ≠ `K1b35…`)
+- B n2 hop=1 après warm **PASS** ; multi n2/n3/n4 **PASS** ; `publisher_death_resilience=true` (store local après fédération serveur — publisher non arrêté)
+- trou 716 : **HOLE_CONFIRMED_NO_CHILD** (717 absent)
+CERTIFIED_100=false. Packet L4 toujours ~85% vs sum UTF-8 ; bundle overhead ~2.4kB.
