@@ -371,5 +371,29 @@ def main() -> int:
     return 0
 
 
+# --- R324 append (2026-09-12T01:12:00Z) — fidelity helper; do not erase R323 above ---
+CORPUS_FIDELITY_PAIR = {
+    "beaucoup": "La voiture consomme beaucoup d'énergie.",
+    "peu": "La voiture consomme peu d'énergie.",
+}
+
+
+def fidelity_beaucoup_peu(tmp: Path) -> dict:
+    a = CORPUS_FIDELITY_PAIR["beaucoup"]
+    b = CORPUS_FIDELITY_PAIR["peu"]
+    store = ConceptStore(tmp / "fid_r324")
+    ch = AgentChannel(agent_id="fid", store=store)
+    ra = ch.learn_from_text(a)
+    rb = ch.learn_from_text(b)
+    same = set(ra.concept_ids) == set(rb.concept_ids)
+    return {
+        "ids_a": ra.concept_ids,
+        "ids_b": rb.concept_ids,
+        "identical_bags": same,
+        "verdict": "FAIL_COLLAPSE" if same else "PASS_DISTINCT",
+        "metric_note": "Not byte compression — information preservation check.",
+    }
+
+
 if __name__ == "__main__":
     raise SystemExit(main())

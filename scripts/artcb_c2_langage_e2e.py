@@ -86,8 +86,9 @@ RELATION = {
 }
 LEXICON_CODE_VEHICLE = "C2"
 EXPECTED_VEHICLE_KID = "K3e7dc01c5cf83cd8"
-# L4 bag: consume(U1) + vehicle(C2) + energy(E3) → same ConceptID ×8
-EXPECTED_L4_KID = "Ke410ef3b8d2bddd5"
+# L4 bag: consume(U1)+vehicle(C2)+energy(E3)+high(QH) → same ConceptID ×8
+# ~~EXPECTED_L4_KID = "Ke410ef3b8d2bddd5"~~ barred R324 — missing QH; fidelity FAIL.
+EXPECTED_L4_KID = "K493b83061fa228b9"
 
 
 def _ids(text: str) -> list[str]:

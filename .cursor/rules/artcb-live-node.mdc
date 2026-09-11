@@ -122,3 +122,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 63. **R321 merge R320 + 8 langues (2026-09-11T21:05:00Z).** PR #85 mergée (`a27f1c2`). C2-D PASS local-socket ACBN ; WAN/4 nœuds OPEN. Lexique véhicule FR EN ES PT IT RU LA ZH + `automobile` ; phrases L4 → `Ke410ef3b…`. Session in-memory restart OPEN. CERTIFIED_100=false.
 64. **R322 bootstrap + session + C2-D multi-hôte (2026-09-11T21:55:00Z).** Clone → `scripts/artcb_bootstrap.sh`. Sessions disque `auth/sessions.json`. C2-D WAN publisher PASS ; `/concepts/resolve` fédération one-hop (`ARTCB_CONCEPT_FEDERATE`). Fan-out write n2–n4 sans Doppler local = 401. Trou 716 OPEN. CERTIFIED_100=false.
 65. **R323 compression + publisher-death (2026-09-12T00:50:00Z).** Pas de % compression unique. Suite L4×8 : packet vs sum UTF-8 ~85 % mesuré ; courte phrase peut dilater. Matrice A/B/C : fédération≠réplication≠résilience publisher. Artefacts `logs/R323/` liés au même `measurement_id`. CERTIFIED_100=false.
+
+63. **R324 parallèle + fédération apex (2026-09-12T01:12:00Z).** Ne pas s'arrêter sur un seul axe. ~~endswith(".artcb.me")~~ barré pour skip peer. CERTIFIED_100=false.

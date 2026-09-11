@@ -15,7 +15,10 @@ from artcb.memory.agent_channel import AgentChannel
 from artcb.memory.concept_store import ConceptStore
 
 VEHICLE_K = "K3e7dc01c5cf83cd8"
-L4_K = "Ke410ef3b8d2bddd5"
+# ~~L4_K = "Ke410ef3b8d2bddd5"~~ barred R324 2026-09-12T01:20:00Z — was U1C2E3
+# without intensity; collapsed beaucoup/peu. Now U1C2E3QH.
+L4_K = "K493b83061fa228b9"
+L4_K_LOW = "K1b3569768e79c9ef"  # U1C2E3QL — peu
 
 VEHICLE_WORDS = {
     "fr": "voiture",
@@ -118,3 +121,15 @@ def test_c2_e_cross_lang_agents_same_concept(tmp_path: Path) -> None:
     rb = b.learn_from_text("汽车")
     rc = c.learn_from_text("автомобиль")
     assert set(ra.concept_ids) == set(rb.concept_ids) == set(rc.concept_ids) == {VEHICLE_K}
+
+
+def test_r324_fidelity_beaucoup_neq_peu() -> None:
+    """R324: intensity must change ConceptID (information preserved)."""
+    hi = [concept_id_from_node(n) for n in IREncoder().encode(L4_PHRASES["fr"]).nodes]
+    lo = [
+        concept_id_from_node(n)
+        for n in IREncoder().encode("La voiture consomme peu d'énergie.").nodes
+    ]
+    assert L4_K in hi
+    assert L4_K_LOW in lo
+    assert set(hi) != set(lo)

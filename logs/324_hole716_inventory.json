@@ -1,0 +1,123 @@
+{
+  "ts_ns": 1789168490846524000,
+  "tip716_hash": "f79f6a1a71896e619f6d66cc998bbc918b2eb1d4649f3dcad2d6349cb6c9dd37",
+  "seeds": {
+    "https://artcb.me": {
+      "base": "https://artcb.me",
+      "health_http": 200,
+      "git_sha": "ac18e93502a4",
+      "height": null,
+      "block_716": {
+        "hash": "f79f6a1a71896e61",
+        "prev": "fa9e48db27e21a46",
+        "prev_is_tip716": false
+      },
+      "block_717": {
+        "http": 404
+      },
+      "block_1073": {
+        "http": 404
+      },
+      "block_1074": {
+        "hash": "ce82d755af954947",
+        "prev": "3d1231cde101b70f",
+        "prev_is_tip716": false
+      },
+      "block_1140": {
+        "hash": "013f327cb76bef8b",
+        "prev": "e5d190370246d128",
+        "prev_is_tip716": false
+      },
+      "present_in_717_729": []
+    },
+    "https://n2.artcb.me": {
+      "base": "https://n2.artcb.me",
+      "health_http": 200,
+      "git_sha": "ac18e93502a4",
+      "height": null,
+      "block_716": {
+        "hash": "f79f6a1a71896e61",
+        "prev": "fa9e48db27e21a46",
+        "prev_is_tip716": false
+      },
+      "block_717": {
+        "http": 404
+      },
+      "block_1073": {
+        "http": 404
+      },
+      "block_1074": {
+        "hash": "ce82d755af954947",
+        "prev": "3d1231cde101b70f",
+        "prev_is_tip716": false
+      },
+      "block_1140": {
+        "hash": "013f327cb76bef8b",
+        "prev": "e5d190370246d128",
+        "prev_is_tip716": false
+      },
+      "present_in_717_729": []
+    },
+    "https://n3.artcb.me": {
+      "base": "https://n3.artcb.me",
+      "health_http": 200,
+      "git_sha": "ac18e93502a4",
+      "height": null,
+      "block_716": {
+        "hash": "f79f6a1a71896e61",
+        "prev": "fa9e48db27e21a46",
+        "prev_is_tip716": false
+      },
+      "block_717": {
+        "http": 404
+      },
+      "block_1073": {
+        "http": 404
+      },
+      "block_1074": {
+        "hash": "ce82d755af954947",
+        "prev": "3d1231cde101b70f",
+        "prev_is_tip716": false
+      },
+      "block_1140": {
+        "hash": "013f327cb76bef8b",
+        "prev": "e5d190370246d128",
+        "prev_is_tip716": false
+      },
+      "present_in_717_729": []
+    },
+    "https://n4.artcb.me": {
+      "base": "https://n4.artcb.me",
+      "health_http": 200,
+      "git_sha": "ac18e93502a4",
+      "height": null,
+      "block_716": {
+        "hash": "f79f6a1a71896e61",
+        "prev": "fa9e48db27e21a46",
+        "prev_is_tip716": false
+      },
+      "block_717": {
+        "http": 404
+      },
+      "block_1073": {
+        "http": 404
+      },
+      "block_1074": {
+        "hash": "ce82d755af954947",
+        "prev": "3d1231cde101b70f",
+        "prev_is_tip716": false
+      },
+      "block_1140": {
+        "hash": "013f327cb76bef8b",
+        "prev": "e5d190370246d128",
+        "prev_is_tip716": false
+      },
+      "present_in_717_729": []
+    }
+  },
+  "certified_100": false,
+  "717_exists_anywhere": false,
+  "child_of_tip716_found": false,
+  "verdict": "HOLE_CONFIRMED_NO_CHILD",
+  "dur_ns": 11579785715
+}

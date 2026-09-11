@@ -15,6 +15,7 @@ from src.artcb.ir.concept_lexicon import (
     PROOF_EXTRA,
     REASON_EXTRA,
     action_code,
+    modifier_codes,
     object_codes,
 )
 from src.artcb.ir.grammar import (
@@ -254,6 +255,7 @@ class IREncoder:
         lowered = sentence.lower()
         action = action_code(lowered) or "O1"
         objs = object_codes(lowered)
+        mods = modifier_codes(lowered)
         if not objs:
             type_fallback = {
                 NodeType.DECISION: "K1",
@@ -265,7 +267,8 @@ class IREncoder:
                 NodeType.CONTEXT: "M2",
             }
             objs = [type_fallback.get(node_type, self._registry.mint_original(sentence))]
-        return f"{action}{''.join(objs)}"
+        # R324: append sorted modifiers so beaucoup (QH) ≠ peu (QL).
+        return f"{action}{''.join(objs)}{''.join(mods)}"
 
     @staticmethod
     def _has_causal_link(previous: str, current: str) -> bool:

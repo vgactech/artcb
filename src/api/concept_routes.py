@@ -165,11 +165,13 @@ def resolve_concepts(
             "https://n3.artcb.me",
             "https://n4.artcb.me",
         ]
-        # Avoid self if Host matches
+        # Avoid self only on exact Host match (R324 2026-09-12T01:05:00Z).
+        # ~~host.endswith("." + peer_host)~~ barred: n2.artcb.me.endswith(".artcb.me")
+        # skipped the apex publisher https://artcb.me → federation never persisted.
         host = (request.headers.get("host") or "").split(":")[0].lower()
         for peer in peers:
             peer_host = peer.split("//", 1)[-1].split("/")[0].lower()
-            if host and (host == peer_host or host.endswith("." + peer_host)):
+            if host and host == peer_host:
                 continue
             url = f"{peer}/api/v1/concepts/resolve?ids={','.join(missing)}"
             req = urllib.request.Request(

@@ -188,6 +188,36 @@ OBJECT_ALIASES: dict[str, str] = {
     "contexto": "M2",
 }
 
+# R324 2026-09-12T01:20:00Z — intensity/quantity modifiers (fidelity beaucoup≠peu).
+# Without these, L4 bag U1C2E3 collapsed opposite adverbs → FAIL_COLLAPSE.
+MODIFIER_ALIASES: dict[str, str] = {
+    # high — L4 multilingual “a lot / mucha / …”
+    "beaucoup": "QH",
+    "lots": "QH",
+    "lot": "QH",
+    "mucha": "QH",
+    "mucho": "QH",
+    "muita": "QH",
+    "muito": "QH",
+    "molta": "QH",
+    "molto": "QH",
+    "много": "QH",
+    "multam": "QH",
+    "multa": "QH",
+    "大量": "QH",
+    # low — must diverge from QH
+    "peu": "QL",
+    "little": "QL",
+    "few": "QL",
+    "poca": "QL",
+    "poco": "QL",
+    "pouca": "QL",
+    "pouco": "QL",
+    "мало": "QL",
+    "parum": "QL",
+    "少量": "QL",
+}
+
 # Classification keywords — keep French originals and add EN/ES.
 DECISION_EXTRA = ("decid", "choose", "chosen", "elegir", "elegid", "decidir")
 HYPOTHESIS_EXTRA = ("perhaps", "maybe", "hypothesis", "tal vez", "quizá", "hipótes")
@@ -204,6 +234,7 @@ def _sorted_keys(table: dict[str, str]) -> list[str]:
 
 ACTION_KEYS = _sorted_keys(ACTION_ALIASES)
 OBJECT_KEYS = _sorted_keys(OBJECT_ALIASES)
+MODIFIER_KEYS = _sorted_keys(MODIFIER_ALIASES)
 
 # Latin + Cyrillic + CJK (R321). Short ASCII lemmas stay token-exact to avoid
 # auto⊂autonomie / car⊂cartography false hits.
@@ -279,6 +310,28 @@ def object_codes(text_lower: str) -> list[str]:
             else:
                 continue
         code = OBJECT_ALIASES[key]
+        if code not in seen:
+            seen.add(code)
+            found.append(code)
+    return sorted(found)
+
+
+def modifier_codes(text_lower: str) -> list[str]:
+    """R324 — quantity/intensity codes (QH/QL) for fidelity of adverbs."""
+    found: list[str] = []
+    seen: set[str] = set()
+    toks = _tokens(text_lower)
+    for key in MODIFIER_KEYS:
+        if not _key_hits(key, toks, text_lower):
+            continue
+        # EN "lot" is short — require vehicle/energy context to avoid noise
+        if key == "lot" and not (
+            toks & {"car", "cars", "energy", "energie", "énergie"}
+            or "C2" in object_codes(text_lower)
+            or "E3" in object_codes(text_lower)
+        ):
+            continue
+        code = MODIFIER_ALIASES[key]
         if code not in seen:
             seen.add(code)
             found.append(code)
