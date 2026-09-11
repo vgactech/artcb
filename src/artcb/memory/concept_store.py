@@ -252,6 +252,46 @@ class ConceptStore:
     def concept_count(self) -> int:
         return len(self._index)
 
+    # ── R320 (2026-09-11T21:30:00Z) — transport réseau des blobs .arcb ───────
+    # Ajout, rien de supprimé : R319 ne savait pas sortir les octets du store,
+    # donc un agent B « froid » ne pouvait jamais résoudre un ConceptID reçu.
+
+    def iter_graph_blobs_for(self, concept_ids: list[str]) -> list[tuple[str, bytes]]:
+        """Retourne les blobs binaires ``.arcb`` couvrant ces ConceptID.
+
+        Un blob est renvoyé tel quel (octet pour octet) : c'est ce qui circule
+        sur le réseau ARTCB, jamais du texte humain.
+        """
+        wanted = {cid for cid in concept_ids if cid in self._index}
+        out: list[tuple[str, bytes]] = []
+        if not wanted:
+            return out
+        for arcb_path in sorted(self._root.glob("*.arcb")):
+            try:
+                binary = arcb_path.read_bytes()
+                graph = graph_from_bytes(binary)
+            except Exception:  # noqa: BLE001 — un blob corrompu ne bloque pas l'export
+                continue
+            node_cids = {concept_id_from_node(n) for n in graph.nodes}
+            if node_cids & wanted:
+                out.append((graph.graph_id, binary))
+        return out
+
+    def all_graph_blobs(self) -> list[tuple[str, bytes]]:
+        """Tous les blobs binaires du store (export complet)."""
+        out: list[tuple[str, bytes]] = []
+        for arcb_path in sorted(self._root.glob("*.arcb")):
+            try:
+                out.append((arcb_path.stem, arcb_path.read_bytes()))
+            except Exception:  # noqa: BLE001
+                continue
+        return out
+
+    def ingest_graph_bytes(self, blob: bytes, *, agent_id: str = "network") -> list[str]:
+        """Ingère un blob ``.arcb`` reçu du réseau. Retourne les ConceptID appris."""
+        graph = graph_from_bytes(blob)
+        return self.store_graph(graph, agent_id=agent_id)
+
     def stats(self) -> dict[str, Any]:
         """Vue humaine uniquement — le stockage interne reste binaire."""
         manifest = self._read_manifest()

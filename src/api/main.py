@@ -396,6 +396,10 @@ def create_app() -> FastAPI:
     from src.api.trace_routes import router as trace_router
 
     app.include_router(trace_router)
+    # R320 (2026-09-11T21:30:00Z) — sync réseau du ConceptStore (C2-D cold path)
+    from src.api.concept_routes import router as concept_router
+
+    app.include_router(concept_router)
     logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
 
     @app.get("/live")

@@ -122,6 +122,8 @@ class AgentChannel:
         self.agent_id = agent_id
         self.store = store
         self._encoder = encoder or IREncoder()
+        # R320 — nombre de graphes récupérés du réseau au dernier receive_packet
+        self.last_resolved_from_network = 0
 
     def learn_from_text(self, text: str) -> LearnResult:
         """Point d'entrée humain → binaire ARTCB.
@@ -161,7 +163,24 @@ class AgentChannel:
             agent_id=self.agent_id,
         )
 
-    def receive_packet(self, packet: bytes) -> RecallResult:
+    def export_bundle(self, concept_ids: list[str]) -> bytes:
+        """R320 — bundle binaire ``ACBN`` transportant les graphes ``.arcb``.
+
+        Le ConceptPacket (``ACPT``) ne transporte que des identifiants ; ce bundle
+        transporte la définition binaire elle-même, donc un agent froid peut
+        comprendre sans jamais recevoir de texte humain.
+        """
+        from src.artcb.memory.concept_sync import export_bundle
+
+        return export_bundle(self.store, concept_ids)
+
+    def ingest_bundle(self, data: bytes) -> dict:
+        """R320 — ingère un bundle ``ACBN`` reçu du réseau dans le store local."""
+        from src.artcb.memory.concept_sync import import_bundle
+
+        return import_bundle(self.store, data, agent_id=self.agent_id)
+
+    def receive_packet(self, packet: bytes, resolver: Any = None) -> RecallResult:
         """Réception d'un ConceptPacket depuis un autre agent.
 
         Rapport 238 §29 : "B doit comprendre directement sans demander
@@ -183,6 +202,27 @@ class AgentChannel:
             for node in graph.nodes:
                 found_ids.add(concept_id_from_node(node))
         missing = [cid for cid in concept_ids if cid not in found_ids]
+
+        # R320 (2026-09-11T21:30:00Z) — résolution réseau des concepts manquants.
+        # `resolver(missing) -> bytes | None` va chercher le bundle .arcb sur ARTCB.
+        # Sans ce maillon, C2-D « cold B » était structurellement impossible.
+        resolved_from_network = 0
+        if missing and resolver is not None:
+            try:
+                bundle = resolver(list(missing))
+            except Exception as exc:  # noqa: BLE001 — un réseau indisponible n'est pas un crash
+                logger.warning("resolver réseau en échec : %s", type(exc).__name__)
+                bundle = None
+            if bundle:
+                report = self.ingest_bundle(bundle)
+                resolved_from_network = int(report.get("graphs", 0))
+                graphs = self.store.recall_by_concept_ids(concept_ids)
+                found_ids = set()
+                for graph in graphs:
+                    for node in graph.nodes:
+                        found_ids.add(concept_id_from_node(node))
+                missing = [cid for cid in concept_ids if cid not in found_ids]
+        self.last_resolved_from_network = resolved_from_network
 
         logger.info(
             "Agent %s : reçu paquet %d concepts → %d graphes trouvés, %d manquants",

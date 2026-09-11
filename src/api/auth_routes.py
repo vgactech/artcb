@@ -33,22 +33,76 @@ router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 _CHALLENGE_TTL = 300
 _SESSION_TTL = 1800
 
+# R320 (2026-09-11T21:30:00Z) — durcissement session.
+# Ajout, rien de supprimé : _SESSION_TTL reste la durée absolue (30 min).
+#
+# 1. Inactivité (« idle ») : un token volé et laissé de côté meurt plus vite que
+#    la durée absolue. Le compteur repart à chaque appel authentifié valide.
+# 2. Empreinte d'appareil : le token est lié au couple (User-Agent, en-tête
+#    X-ARTCB-Device-Id) observé à la connexion. Rejouer le token depuis un autre
+#    appareil → 401 session_device_mismatch.
+# Les deux sont réglables par variable d'environnement pour ne jamais bloquer un
+# agent autonome en phase de développement réel.
+_SESSION_IDLE_TTL = int(os.getenv("ARTCB_SESSION_IDLE_TTL", "900"))
+
+
+def _bind_device_enforced() -> bool:
+    return (os.getenv("ARTCB_SESSION_BIND_DEVICE", "1").strip().lower()
+            not in {"0", "false", "no", "off"})
+
+
+def device_fingerprint(request: Request | None) -> str:
+    """Empreinte d'appareil stable et non secrète (jamais d'IP seule).
+
+    On hache User-Agent + X-ARTCB-Device-Id. L'IP change (4G ↔ Wi-Fi, NAT,
+    proxy) : la lier casserait des sessions légitimes sans gain réel.
+    """
+    if request is None:
+        return ""
+    ua = (request.headers.get("user-agent") or "").strip()
+    dev = (request.headers.get("x-artcb-device-id") or "").strip()
+    if not ua and not dev:
+        return ""
+    return hashlib.sha256(f"{ua}|{dev}".encode()).hexdigest()[:32]
+
+
 # Stockage en mémoire des challenges actifs et des sessions
 # (en production : Redis ou table SQL)
 _challenges: dict[str, float] = {}   # nonce_hex → expires_at
 _sessions: dict[str, dict] = {}       # token_hash → {wallet_name, address, created_at, expires_at}
 
 
-def issue_session(*, wallet_name: str, address: str) -> dict:
+def _prune_sessions() -> int:
+    """R320 — retire les sessions expirées (fuite mémoire + surface d'attaque)."""
+    now = time.time()
+    dead = [h for h, r in _sessions.items() if now > r.get("expires_at", 0)]
+    for h in dead:
+        _sessions.pop(h, None)
+    return len(dead)
+
+
+def issue_session(
+    *,
+    wallet_name: str,
+    address: str,
+    request: Request | None = None,
+) -> dict:
     """Create a sess_ token (password login, WebAuthn, or face-unlock)."""
+    _prune_sessions()
     raw_token = "sess_" + secrets.token_hex(32)
     token_hash = hashlib.sha256(raw_token.encode()).hexdigest()
     now = time.time()
+    fp = device_fingerprint(request)
     record = {
         "wallet_name": wallet_name,
         "address": address,
         "created_at": now,
         "expires_at": now + _SESSION_TTL,
+        # R320
+        "session_id": token_hash[:16],
+        "device_fp": fp,
+        "last_seen": now,
+        "idle_ttl": _SESSION_IDLE_TTL,
     }
     _sessions[token_hash] = record
     return {
@@ -56,6 +110,9 @@ def issue_session(*, wallet_name: str, address: str) -> dict:
         "wallet_name": wallet_name,
         "address": address,
         "expires_in": _SESSION_TTL,
+        "idle_expires_in": _SESSION_IDLE_TTL,
+        "session_id": record["session_id"],
+        "device_bound": bool(fp) and _bind_device_enforced(),
     }
 
 
@@ -119,9 +176,25 @@ def require_session(
     record = _sessions.get(token_hash)
     if not record:
         raise HTTPException(status_code=401, detail="Session expirée ou invalide. Reconnectez-vous.")
-    if time.time() > record["expires_at"]:
+    now = time.time()
+    if now > record["expires_at"]:
         del _sessions[token_hash]
         raise HTTPException(status_code=401, detail="Session expirée. Reconnectez-vous.")
+    # R320 (2026-09-11T21:30:00Z) — inactivité + appareil.
+    idle_ttl = int(record.get("idle_ttl") or _SESSION_IDLE_TTL)
+    last_seen = float(record.get("last_seen") or record["created_at"])
+    if idle_ttl > 0 and (now - last_seen) > idle_ttl:
+        del _sessions[token_hash]
+        raise HTTPException(status_code=401, detail="session_idle_timeout")
+    bound_fp = record.get("device_fp") or ""
+    if bound_fp and _bind_device_enforced():
+        current_fp = device_fingerprint(request)
+        if current_fp and current_fp != bound_fp:
+            logger.warning(
+                "Session %s rejouée depuis un autre appareil", record.get("session_id"),
+            )
+            raise HTTPException(status_code=401, detail="session_device_mismatch")
+    record["last_seen"] = now
     return record
 
 
@@ -172,7 +245,7 @@ def login(body: LoginRequest, request: Request) -> dict:
     address = _addr(signing_key)
 
     logger.info("Login successful: wallet=%s address=%s", body.name, address)
-    issued = issue_session(wallet_name=body.name, address=address)
+    issued = issue_session(wallet_name=body.name, address=address, request=request)
     issued["message"] = "Connecté. Utilisez session_token dans Authorization: Bearer <token>"
     return issued
 
@@ -246,7 +319,7 @@ def verify_signature(body: VerifyRequest, request: Request) -> dict:
     del _challenges[body.challenge]
 
     logger.info("Verify OK: address=%s wallet=%s", body.address[:16], wallet_name)
-    return issue_session(wallet_name=wallet_name, address=body.address)
+    return issue_session(wallet_name=wallet_name, address=body.address, request=request)
 
 
 @router.get("/me", summary="Identité de la session courante (user, pas opérateur)")
@@ -315,3 +388,83 @@ def logout(
         token_hash = hashlib.sha256(raw.encode()).hexdigest()
         _sessions.pop(token_hash, None)
     return {"logged_out": True}
+
+
+# --------------------------------------------------------------------------- #
+#  R320 (2026-09-11T21:30:00Z) — inventaire et révocation des sessions
+# --------------------------------------------------------------------------- #
+
+@router.get("/sessions", summary="Lister mes sessions actives (jamais les tokens)")
+def list_my_sessions(
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> dict:
+    """Un utilisateur doit pouvoir voir d'où il est connecté.
+
+    Ne renvoie jamais un token ni son hash complet : seulement un ``session_id``
+    court, l'empreinte d'appareil tronquée et les horodatages.
+    """
+    record = require_session(request, authorization)
+    _prune_sessions()
+    address = record.get("address")
+    rows = [
+        {
+            "session_id": r.get("session_id"),
+            "wallet_name": r.get("wallet_name"),
+            "created_at": r.get("created_at"),
+            "last_seen": r.get("last_seen"),
+            "expires_at": r.get("expires_at"),
+            "device_fp_prefix": (r.get("device_fp") or "")[:8],
+            "current": r.get("session_id") == record.get("session_id"),
+        }
+        for r in _sessions.values()
+        if r.get("address") == address
+    ]
+    return {
+        "address": address,
+        "active_sessions": len(rows),
+        "sessions": sorted(rows, key=lambda x: x["created_at"] or 0),
+        "absolute_ttl_s": _SESSION_TTL,
+        "idle_ttl_s": _SESSION_IDLE_TTL,
+        "device_binding_enforced": _bind_device_enforced(),
+    }
+
+
+class RevokeRequest(BaseModel):
+    session_id: str = Field(min_length=4, description="session_id retourné par GET /auth/sessions")
+
+
+@router.post("/revoke", summary="Révoquer une de mes sessions par session_id")
+def revoke_session(
+    body: RevokeRequest,
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> dict:
+    """Révocation ciblée : on ne peut révoquer que ses propres sessions."""
+    record = require_session(request, authorization)
+    address = record.get("address")
+    target = [
+        h for h, r in _sessions.items()
+        if r.get("session_id") == body.session_id and r.get("address") == address
+    ]
+    if not target:
+        raise HTTPException(status_code=404, detail="session_not_found_for_this_address")
+    for h in target:
+        _sessions.pop(h, None)
+    logger.info("Session %s révoquée par son propriétaire", body.session_id)
+    return {"revoked": len(target), "session_id": body.session_id}
+
+
+@router.post("/logout-all", summary="Révoquer toutes mes sessions (appareil perdu)")
+def logout_all(
+    request: Request,
+    authorization: Annotated[str | None, Header()] = None,
+) -> dict:
+    """Déconnecte partout : le geste à faire quand un appareil est perdu."""
+    record = require_session(request, authorization)
+    address = record.get("address")
+    victims = [h for h, r in _sessions.items() if r.get("address") == address]
+    for h in victims:
+        _sessions.pop(h, None)
+    logger.info("logout-all : %d sessions révoquées pour %s", len(victims), str(address)[:16])
+    return {"revoked": len(victims), "address": address}
