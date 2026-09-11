@@ -27,15 +27,25 @@ class SymbolRegistry:
         return f"{normalized}|{digest}"
 
     def mint_original(self, concept: str) -> str:
-        """Return a stable original symbol for a novel concept."""
+        """Return a stable original symbol for a novel concept.
+
+        R325 2026-09-12T01:45:00Z — symbol embeds content digest so ConceptID
+        differs across distinct unknown texts. ~~counter-only α1/β2~~ barred:
+        every fresh IREncoder minted ``α1`` for the first unknown → cross-run
+        ConceptID collision (R325 publisher-death cold falsely non-empty).
+        Counter greek form kept only as secondary disambiguator inside one registry.
+        """
         key = self.concept_key(concept)
         if key in self._concept_to_symbol:
             return self._concept_to_symbol[key]
 
+        digest = key.rsplit("|", 1)[-1]
         index = self._symbol_counter
         self._symbol_counter += 1
-        symbol = f"{ORIGIN_ALPHABET[index - 1]}{index}" if index <= len(ORIGIN_ALPHABET) else f"{ORIGIN_PREFIX}{index}"
-
+        # Content-addressed original — stable across process restarts for same text.
+        symbol = f"{ORIGIN_PREFIX}{digest[:12]}"
+        # Keep legacy counter mapping exportable for debugging (not used in ConceptID path alone).
+        _ = index  # reserved; do not restore α1-only mint
         self._concept_to_symbol[key] = symbol
         return symbol
 

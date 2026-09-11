@@ -1,0 +1,36 @@
+# R325 — parallel axes (R325_20260912T014423Z_63fdf7138012)
+
+`commit_sha` = `63fdf7138012062adb125a421f18db1dd8484b74` (docs/branch HEAD)
+`code_fix_attributed` = `f739a6b` (R324 fix for result attribution)
+
+`CERTIFIED_100=false`
+
+## A — Runtime alignment
+
+- verdict: **PARTIAL_SHA_OK_TIP_DIVERGE**
+- shas: `['63fdf7138012']`
+- heights: `['1141', '1816']`
+
+## B — Publisher-death hard (hop=1 local)
+
+- B n2/n3/n4 local: **True**
+- cold empty: **True**
+- publisher process stopped: **False**
+- resilience measured: **True**
+
+## C — Continuity 716
+
+- verdict: **HOLE_CONFIRMED_NO_CHILD**
+- children_found: 0
+- incident: PRODUCTION_CONTINUITY_GAP — not a Mac catch-up miss; never invent 717
+
+## D — Compression + fidelity
+
+- packet vs UTF-8 L4: {'ref_bytes': 294, 'cand_bytes': 44, 'reduction_pct': 85.034}
+- bundle vs UTF-8: {'ref_bytes': 294, 'cand_bytes': 2410, 'reduction_pct': -719.7279}
+- fidelity beaucoup≠peu: **True**
+- distinct fidelity bags: 4
+- official_global_pct: None
+
+Never invent block 717.
+

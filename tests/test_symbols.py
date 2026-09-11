@@ -24,7 +24,10 @@ def test_original_symbol_in_node():
     # 2026-09-10: mint_original est appelé uniquement quand le type n'est pas dans type_fallback.
     # NodeType.OBSERVATION (type par défaut hors mots-clé) n'est pas dans type_fallback → mint_original.
     # On teste mint_original directement + via encoder sur un texte purement observationnel.
+    # R325: mint is content-addressed ∇{digest12} (~~α1 counter-only~~ barred — ConceptID collisions).
     registry = SymbolRegistry()
     sym = registry.mint_original("zorbax flarnyx quorble")
-    assert any(c in sym for c in "αβγδεζηθικλμνξοπρστυφχψω")
+    assert sym.startswith("∇")
     assert registry.is_original(sym)
+    other = registry.mint_original("completely different flarnick quux")
+    assert sym != other

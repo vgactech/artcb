@@ -1,0 +1,414 @@
+{
+  "measurement_id": "R325_20260912T014423Z_63fdf7138012",
+  "ts_ns": 1789170282335439000,
+  "commit_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
+  "code_fix_attributed": "f739a6b",
+  "script": "scripts/artcb_r325_parallel_measure.py",
+  "script_sha256": "0cabbff176f3087ee04591e82390efd518bcb5463042e74a8e74c2af821ca58d",
+  "certified_100": false,
+  "axis_a_runtime": {
+    "seeds": {
+      "https://artcb.me": {
+        "health_http": 200,
+        "status_http": 200,
+        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
+        "git_sha12": "63fdf7138012",
+        "contains_r324_fix": false,
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "network_id": "artcb-mainnet-1",
+        "height": 1816,
+        "last_hash": "a12bd977c079c1380296e8ea9f12b629910aae97546ebb33f69b37d5a1a45eae",
+        "chain_valid": true
+      },
+      "https://n2.artcb.me": {
+        "health_http": 200,
+        "status_http": 200,
+        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
+        "git_sha12": "63fdf7138012",
+        "contains_r324_fix": false,
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "network_id": "artcb-mainnet-1",
+        "height": 1141,
+        "last_hash": "013f327cb76bef8bd50f09935850452fc3c8bae1be7c7128f92f1ad835595539",
+        "chain_valid": true
+      },
+      "https://n3.artcb.me": {
+        "health_http": 200,
+        "status_http": 200,
+        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
+        "git_sha12": "63fdf7138012",
+        "contains_r324_fix": false,
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "network_id": "artcb-mainnet-1",
+        "height": 1141,
+        "last_hash": "013f327cb76bef8bd50f09935850452fc3c8bae1be7c7128f92f1ad835595539",
+        "chain_valid": true
+      },
+      "https://n4.artcb.me": {
+        "health_http": 200,
+        "status_http": 200,
+        "git_sha": "63fdf7138012062adb125a421f18db1dd8484b74",
+        "git_sha12": "63fdf7138012",
+        "contains_r324_fix": false,
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "network_id": "artcb-mainnet-1",
+        "height": 1141,
+        "last_hash": "013f327cb76bef8bd50f09935850452fc3c8bae1be7c7128f92f1ad835595539",
+        "chain_valid": true
+      }
+    },
+    "git_sha_unique": [
+      "63fdf7138012"
+    ],
+    "height_unique": [
+      "1141",
+      "1816"
+    ],
+    "tip16_unique": [
+      "013f327cb76bef8b",
+      "a12bd977c079c138"
+    ],
+    "all_same_sha": true,
+    "all_same_tip": false,
+    "all_have_r324_fix_ancestor_or_sha": true,
+    "ci_note": "Empty GitHub status checks ≠ CI PASS (operator audit).",
+    "verdict": "PARTIAL_SHA_OK_TIP_DIVERGE"
+  },
+  "axis_b_publisher_death_hard": {
+    "concept_id": "K5e2a3dd35adef9dc",
+    "publish_ok": true,
+    "publish_keys": [
+      "bundle_bytes",
+      "bundle_sha256",
+      "concept_ids",
+      "dur_ns",
+      "graphs",
+      "published_by",
+      "ts_ns"
+    ],
+    "peers": {
+      "n2": {
+        "cold_hop1": {
+          "http": 200,
+          "known": 0,
+          "federated": "0",
+          "bytes": 10
+        },
+        "warm_hop0": {
+          "http": 200,
+          "known": 1,
+          "federated": "1",
+          "bytes": 350
+        },
+        "local_hop1": {
+          "http": 200,
+          "known": 1,
+          "federated": "0",
+          "bytes": 350
+        },
+        "local_hop1_repeat": {
+          "http": 200,
+          "known": 1,
+          "federated": "0",
+          "bytes": 350
+        },
+        "native_ok": true,
+        "cold_was_empty": true
+      },
+      "n3": {
+        "cold_hop1": {
+          "http": 200,
+          "known": 0,
+          "federated": "0",
+          "bytes": 10
+        },
+        "warm_hop0": {
+          "http": 200,
+          "known": 1,
+          "federated": "1",
+          "bytes": 350
+        },
+        "local_hop1": {
+          "http": 200,
+          "known": 1,
+          "federated": "0",
+          "bytes": 350
+        },
+        "local_hop1_repeat": {
+          "http": 200,
+          "known": 1,
+          "federated": "0",
+          "bytes": 350
+        },
+        "native_ok": true,
+        "cold_was_empty": true
+      },
+      "n4": {
+        "cold_hop1": {
+          "http": 200,
+          "known": 0,
+          "federated": "0",
+          "bytes": 10
+        },
+        "warm_hop0": {
+          "http": 200,
+          "known": 1,
+          "federated": "1",
+          "bytes": 350
+        },
+        "local_hop1": {
+          "http": 200,
+          "known": 1,
+          "federated": "0",
+          "bytes": 350
+        },
+        "local_hop1_repeat": {
+          "http": 200,
+          "known": 1,
+          "federated": "0",
+          "bytes": 350
+        },
+        "native_ok": true,
+        "cold_was_empty": true
+      }
+    },
+    "verdict": {
+      "B_hard_hop1_local_n2_n3_n4": true,
+      "cold_empty_before_warm": true,
+      "publisher_process_stopped": false,
+      "federation_cut_method": "X-ARTCB-Federation-Hop:1 (per-request)",
+      "publisher_death_resilience_measured": true,
+      "note": "Production publisher not killed. Hard B = local resolve with federation hop cut after warm. Killing artcb.me left for controlled ops window — not claimed here."
+    }
+  },
+  "axis_c_continuity_716": {
+    "tip716": "f79f6a1a71896e619f6d66cc998bbc918b2eb1d4649f3dcad2d6349cb6c9dd37",
+    "seeds": {
+      "https://artcb.me": {
+        "base": "https://artcb.me",
+        "height": 1816,
+        "last_hash": "a12bd977c079c138",
+        "chain_valid": true,
+        "b716": {
+          "http": 200,
+          "hash16": "f79f6a1a71896e61",
+          "prev16": "fa9e48db27e21a46",
+          "prev_is_tip716": false
+        },
+        "b717": {
+          "http": 404
+        },
+        "b1073": {
+          "http": 404
+        },
+        "b1074": {
+          "http": 200,
+          "hash16": "ce82d755af954947",
+          "prev16": "3d1231cde101b70f",
+          "prev_is_tip716": false
+        },
+        "b1140": {
+          "http": 200,
+          "hash16": "013f327cb76bef8b",
+          "prev16": "e5d190370246d128",
+          "prev_is_tip716": false
+        },
+        "scan_700_50_hits": [],
+        "present_sampled": []
+      },
+      "https://n2.artcb.me": {
+        "base": "https://n2.artcb.me",
+        "height": 1141,
+        "last_hash": "013f327cb76bef8b",
+        "chain_valid": true,
+        "b716": {
+          "http": 200,
+          "hash16": "f79f6a1a71896e61",
+          "prev16": "fa9e48db27e21a46",
+          "prev_is_tip716": false
+        },
+        "b717": {
+          "http": 404
+        },
+        "b1073": {
+          "http": 404
+        },
+        "b1074": {
+          "http": 200,
+          "hash16": "ce82d755af954947",
+          "prev16": "3d1231cde101b70f",
+          "prev_is_tip716": false
+        },
+        "b1140": {
+          "http": 200,
+          "hash16": "013f327cb76bef8b",
+          "prev16": "e5d190370246d128",
+          "prev_is_tip716": false
+        },
+        "scan_700_50_hits": [],
+        "present_sampled": []
+      },
+      "https://n3.artcb.me": {
+        "base": "https://n3.artcb.me",
+        "height": 1141,
+        "last_hash": "013f327cb76bef8b",
+        "chain_valid": true,
+        "b716": {
+          "http": 200,
+          "hash16": "f79f6a1a71896e61",
+          "prev16": "fa9e48db27e21a46",
+          "prev_is_tip716": false
+        },
+        "b717": {
+          "http": 404
+        },
+        "b1073": {
+          "http": 404
+        },
+        "b1074": {
+          "http": 200,
+          "hash16": "ce82d755af954947",
+          "prev16": "3d1231cde101b70f",
+          "prev_is_tip716": false
+        },
+        "b1140": {
+          "http": 200,
+          "hash16": "013f327cb76bef8b",
+          "prev16": "e5d190370246d128",
+          "prev_is_tip716": false
+        },
+        "scan_700_50_hits": [],
+        "present_sampled": []
+      },
+      "https://n4.artcb.me": {
+        "base": "https://n4.artcb.me",
+        "height": 1141,
+        "last_hash": "013f327cb76bef8b",
+        "chain_valid": true,
+        "b716": {
+          "http": 200,
+          "hash16": "f79f6a1a71896e61",
+          "prev16": "fa9e48db27e21a46",
+          "prev_is_tip716": false
+        },
+        "b717": {
+          "http": 404
+        },
+        "b1073": {
+          "http": 404
+        },
+        "b1074": {
+          "http": 200,
+          "hash16": "ce82d755af954947",
+          "prev16": "3d1231cde101b70f",
+          "prev_is_tip716": false
+        },
+        "b1140": {
+          "http": 200,
+          "hash16": "013f327cb76bef8b",
+          "prev16": "e5d190370246d128",
+          "prev_is_tip716": false
+        },
+        "scan_700_50_hits": [],
+        "present_sampled": []
+      }
+    },
+    "children_found": [],
+    "717_exists": false,
+    "verdict": "HOLE_CONFIRMED_NO_CHILD",
+    "incident": "PRODUCTION_CONTINUITY_GAP — not a Mac catch-up miss; never invent 717"
+  },
+  "axis_d_compression_fidelity": {
+    "byte_compression_L4_packet_vs_utf8": {
+      "ref_bytes": 294,
+      "cand_bytes": 44,
+      "reduction_pct": 85.034
+    },
+    "dictionary_amortization_bundle_vs_utf8": {
+      "ref_bytes": 294,
+      "cand_bytes": 2410,
+      "reduction_pct": -719.7279
+    },
+    "install_overhead_bytes": 2366,
+    "semantic_convergence_L4": {
+      "n_phrases": 8,
+      "n_unique_concepts": 1,
+      "unique_ids": [
+        "K493b83061fa228b9"
+      ]
+    },
+    "information_fidelity_cases": [
+      {
+        "name": "beaucoup",
+        "text": "La voiture consomme beaucoup d'énergie.",
+        "syms": [
+          "U1C2E3QH"
+        ],
+        "ids": [
+          "K493b83061fa228b9"
+        ]
+      },
+      {
+        "name": "peu",
+        "text": "La voiture consomme peu d'énergie.",
+        "syms": [
+          "U1C2E3QL"
+        ],
+        "ids": [
+          "K1b3569768e79c9ef"
+        ]
+      },
+      {
+        "name": "neg_pas",
+        "text": "La voiture ne consomme pas d'énergie.",
+        "syms": [
+          "U1C2E3NEG"
+        ],
+        "ids": [
+          "K1f4b9f3d56d09aa1"
+        ]
+      },
+      {
+        "name": "modal_peut",
+        "text": "La voiture peut consommer de l'énergie.",
+        "syms": [
+          "U1C2E3MOD"
+        ],
+        "ids": [
+          "Ke32ef9351498e801"
+        ]
+      },
+      {
+        "name": "pluriel",
+        "text": "Les voitures consomment beaucoup d'énergie.",
+        "syms": [
+          "U1C2E3QH"
+        ],
+        "ids": [
+          "K493b83061fa228b9"
+        ]
+      }
+    ],
+    "fidelity_beaucoup_neq_peu": true,
+    "fidelity_case_distinct_bags": 4,
+    "encode_medianish_ns_fr_L4": 1410305,
+    "decode_packet_ns": 454501,
+    "official_global_pct": null,
+    "verdict": {
+      "byte_packet_L4_ok": true,
+      "fidelity_intensity_ok": true,
+      "global_compression_claimed": false
+    }
+  },
+  "dur_ns": 18926824652,
+  "distinctions": {
+    "federation_ne_replication_ne_resilience": true,
+    "r324_pass_ne_certified_100": true,
+    "deployed_ne_native_replication_without_hop1_proof": true,
+    "empty_ci_statuses_ne_ci_pass": true
+  }
+}

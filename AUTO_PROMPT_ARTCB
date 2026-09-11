@@ -1965,3 +1965,16 @@ Fédération apex fix + QH/QL déployés. Live `artcb_r324_parallel_measure.py` 
 - B n2 hop=1 après warm **PASS** ; multi n2/n3/n4 **PASS** ; `publisher_death_resilience=true` (store local après fédération serveur — publisher non arrêté)
 - trou 716 : **HOLE_CONFIRMED_NO_CHILD** (717 absent)
 CERTIFIED_100=false. Packet L4 toujours ~85% vs sum UTF-8 ; bundle overhead ~2.4kB.
+
+
+## R325 — parallele runtime + hard B + continuite 716 + fidelite (2026-09-12T01:55:00Z)
+
+R324 PASS ≠ CERTIFIED_100. f739a6b = code mesure; 63fdf71+ = docs/branche; empty CI statuses ≠ CI PASS.
+
+Axes (meme tour) :
+- A runtime: SHA ×4 + tip/height (tip diverge artcb.me vs n2–n4 = PARTIAL)
+- B hard: hop=1 apres warm; publisher process non tue (honnete); cold vide exige ConceptID unique
+- C: enfant crypto de tip716 — HOLE_CONFIRMED_NO_CHILD = incident continuite production
+- D: byte + dictionary + fidelity (QH/QL/NEG/MOD); pluriel encore OPEN
+
+Bug mint: ~~α1 counter-only~~ → `∇{digest12}` (collisions ConceptID cross-run). CERTIFIED_100=false.

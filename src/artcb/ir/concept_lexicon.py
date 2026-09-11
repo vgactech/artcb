@@ -216,6 +216,18 @@ MODIFIER_ALIASES: dict[str, str] = {
     "мало": "QL",
     "parum": "QL",
     "少量": "QL",
+    # R325 2026-09-12T01:50:00Z — modality (negation handled in modifier_codes)
+    "peut": "MOD",
+    "peux": "MOD",
+    "pouvoir": "MOD",
+    "can": "MOD",
+    "may": "MOD",
+    "might": "MOD",
+    "could": "MOD",
+    "doesn't": "NEG",
+    "does not": "NEG",
+    "cannot": "NEG",
+    "can't": "NEG",
 }
 
 # Classification keywords — keep French originals and add EN/ES.
@@ -317,10 +329,17 @@ def object_codes(text_lower: str) -> list[str]:
 
 
 def modifier_codes(text_lower: str) -> list[str]:
-    """R324 — quantity/intensity codes (QH/QL) for fidelity of adverbs."""
+    """R324 — quantity/intensity codes (QH/QL) for fidelity of adverbs.
+
+    R325 — also NEG (ne…pas / not) and MOD (peut/can) when token-hit.
+    """
     found: list[str] = []
     seen: set[str] = set()
     toks = _tokens(text_lower)
+    # FR ne…pas / EN not — before alias table so "pas" alone is not enough
+    if ("ne" in toks and "pas" in toks) or ("not" in toks):
+        seen.add("NEG")
+        found.append("NEG")
     for key in MODIFIER_KEYS:
         if not _key_hits(key, toks, text_lower):
             continue

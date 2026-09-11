@@ -124,3 +124,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 65. **R323 compression + publisher-death (2026-09-12T00:50:00Z).** Pas de % compression unique. Suite L4×8 : packet vs sum UTF-8 ~85 % mesuré ; courte phrase peut dilater. Matrice A/B/C : fédération≠réplication≠résilience publisher. Artefacts `logs/R323/` liés au même `measurement_id`. CERTIFIED_100=false.
 
 63. **R324 parallèle + fédération apex (2026-09-12T01:12:00Z).** Ne pas s'arrêter sur un seul axe. ~~endswith(".artcb.me")~~ barré pour skip peer. CERTIFIED_100=false.
+
+64. **R325 parallele (2026-09-12T01:55:00Z).** Runtime SHA≠tip; mint original content-addressed; hard B=hop1 local (publisher non kill); 716=incident continuite. CERTIFIED_100=false.
