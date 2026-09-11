@@ -48,3 +48,14 @@ PYTHONPATH=src uvicorn src.api.main:app --host 0.0.0.0 --port 8000
 ## Artefacts
 - `logs/322_c2d_multihote_latest.json`
 - tests `test_e2e322_session_persist.py`, `test_e2e322_concept_federation.py`
+
+## Update 2026-09-11T22:00:00Z — client federation
+
+SHA `9e2dbde`. Live re-mesure :
+
+- `sha_aligned_5` = true (`fc1cad4` puis follow vers `9e2dbde` en cours)
+- `self_resolve_ok_hosts` = **5/5** (n2/n3/n4 via fallback client → artcb.me)
+- `offline_persist` = true ×5
+- `c2d_multihote_pass` = true
+- write fan-out natif n2–n4 stores = encore OPEN (401 / SSH timeout)
+- CERTIFIED_100=false

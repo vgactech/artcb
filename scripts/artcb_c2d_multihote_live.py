@@ -209,9 +209,10 @@ def main() -> int:
             and healthy >= 5
             and self_resolve_ok >= 1
         ),
-        "c2d_five_store_fanout_pass": self_resolve_ok >= 5 and publish_ok >= 5,
+        "c2d_five_agent_resolve_pass": self_resolve_ok >= 5 and healthy >= 5,
+        "c2d_five_store_fanout_pass": publish_ok >= 5 and self_resolve_ok >= 5,
         "honest_gaps": [
-            "fan-out self-store on n2/n3/n4 needs per-node Doppler ARTCB_API_KEY in this agent env",
+            "native write fan-out to n2/n3/n4 ConceptStores needs per-node API keys or SSH",
             "seed hole after 716 still blocks Mac tip catch-up (not invented)",
             "CERTIFIED_100 remains false",
         ],
