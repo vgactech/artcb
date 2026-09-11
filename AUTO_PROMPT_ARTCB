@@ -1929,3 +1929,10 @@ PR #85 R320 FF-mergée dans `main` (`a27f1c2`). C2-D = PASS socket TCP locale, p
 R321 : lexique FR EN ES PT IT RU LA ZH + automobile synonym ; L4 bag U1C2E3 → même ConceptID ×8.
 Tokenizer Cyrillic/CJK. Session persist/restart et C2-D multi-hôte restent OPEN.
 CERTIFIED_100=false.
+
+## [2026-09-11T21:55:00Z] R322 — bootstrap + session disque + C2-D multi-hôte
+
+Clone : `bash scripts/artcb_bootstrap.sh` (OS + install.sh).
+Sessions : `data/auth/sessions.json` survivent au restart process.
+C2-D : WAN Mac→artcb.me PASS ; fédération one-hop resolve pour n2–n4.
+SSH:22 seeds timeout depuis ce LAN. Trou 716 / swtpm / HBP / CERTIFIED_100=false restent.

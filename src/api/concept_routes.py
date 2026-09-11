@@ -132,7 +132,15 @@ def resolve_concepts(
 
     Un ConceptID inconnu de ce nœud est simplement absent du bundle ; l'agent
     appelant voit alors un ``missing`` honnête plutôt qu'une réponse inventée.
+
+    R322 (2026-09-11T21:50:00Z) — fédération one-hop optionnelle :
+    si le store local rate et ``ARTCB_CONCEPT_FEDERATE=1`` (défaut), le nœud
+    interroge les seeds HTTPS publics **une seule fois** (header hop) puis
+    ingère le bundle avant de répondre. Pas de boucle (hop≥1 = local only).
     """
+    import os
+    import urllib.request
+
     t0 = now_mono_ns()
     wanted = [x.strip() for x in ids.split(",") if x.strip()]
     if not wanted:
@@ -141,8 +149,55 @@ def resolve_concepts(
         raise HTTPException(status_code=413, detail="too_many_concept_ids")
     store = _store(request)
     known = [cid for cid in wanted if store.knows_concept(cid)]
-    bundle = export_bundle(store, known) if known else encode_concept_bundle([])
     missing = [cid for cid in wanted if cid not in known]
+    federated = False
+    hop = int(request.headers.get("x-artcb-federation-hop") or "0")
+    federate_on = os.getenv("ARTCB_CONCEPT_FEDERATE", "1").strip().lower() not in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
+    if missing and federate_on and hop < 1:
+        peers = [
+            "https://artcb.me",
+            "https://n2.artcb.me",
+            "https://n3.artcb.me",
+            "https://n4.artcb.me",
+        ]
+        # Avoid self if Host matches
+        host = (request.headers.get("host") or "").split(":")[0].lower()
+        for peer in peers:
+            peer_host = peer.split("//", 1)[-1].split("/")[0].lower()
+            if host and (host == peer_host or host.endswith("." + peer_host)):
+                continue
+            url = f"{peer}/api/v1/concepts/resolve?ids={','.join(missing)}"
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "Accept": "application/octet-stream",
+                    "X-ARTCB-Federation-Hop": "1",
+                },
+                method="GET",
+            )
+            try:
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    data = resp.read()
+            except Exception:  # noqa: BLE001
+                continue
+            if len(data) <= 10:
+                continue
+            try:
+                import_bundle(store, data, agent_id="federation")
+                federated = True
+            except ConceptBundleError:
+                continue
+            known = [cid for cid in wanted if store.knows_concept(cid)]
+            missing = [cid for cid in wanted if cid not in known]
+            if not missing:
+                break
+
+    bundle = export_bundle(store, known) if known else encode_concept_bundle([])
     _trace(
         request,
         kind="concept_resolve",
@@ -151,6 +206,8 @@ def resolve_concepts(
         known=len(known),
         missing=len(missing),
         bundle_bytes=len(bundle),
+        federated=federated,
+        federation_hop=hop,
     )
     return Response(
         content=bundle,
@@ -160,6 +217,7 @@ def resolve_concepts(
             "X-ARTCB-Concept-Known": str(len(known)),
             "X-ARTCB-Concept-Missing": ",".join(missing)[:2000],
             "X-ARTCB-Bundle-Sha256": bundle_sha256(bundle),
+            "X-ARTCB-Concept-Federated": "1" if federated else "0",
             "X-ARTCB-Trace-Ns": str(now_mono_ns() - t0),
         },
     )

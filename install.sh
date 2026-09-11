@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ══════════════════════════════════════════════════════════════════
 #  ARTCB — Installation complète en une seule commande
-#  Usage :
-#    git clone https://github.com/vgactech/artcb.git && cd artcb && bash install.sh
-#  Ou sur une installation existante :
+#  Usage (recommandé pour clone frais) :
+#    git clone https://github.com/vgactech/artcb.git && cd artcb && bash scripts/artcb_bootstrap.sh
+#  Ou runtime seul (OS déjà prêt) :
 #    bash install.sh
 #
 #  Ce script installe TOUT ce qui est nécessaire au runtime :
@@ -16,6 +16,7 @@
 #    - installe le suivi automatique de GitHub origin/main (timer / cron)
 #    - NE démarre PAS le serveur — utilisez `bash scripts/replit_start.sh`
 #      ou `uvicorn src.api.main:app --port 8000` après
+#  R322 : pour apt/brew auto → scripts/artcb_bootstrap.sh
 # ══════════════════════════════════════════════════════════════════
 set -Eeuo pipefail
 

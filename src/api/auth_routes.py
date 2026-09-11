@@ -66,18 +66,24 @@ def device_fingerprint(request: Request | None) -> str:
     return hashlib.sha256(f"{ua}|{dev}".encode()).hexdigest()[:32]
 
 
-# Stockage en mémoire des challenges actifs et des sessions
-# (en production : Redis ou table SQL)
+# Stockage sessions : mémoire + disque (R322). Challenges restent en mémoire (TTL court).
+# ~~(en production : Redis ou table SQL)~~ — sessions.json sous ARTCB_DATA_DIR/auth/
+from src.api.session_store import ensure_loaded as _sessions_ensure_loaded
+from src.api.session_store import save_sessions as _sessions_save
+
 _challenges: dict[str, float] = {}   # nonce_hex → expires_at
 _sessions: dict[str, dict] = {}       # token_hash → {wallet_name, address, created_at, expires_at}
 
 
 def _prune_sessions() -> int:
     """R320 — retire les sessions expirées (fuite mémoire + surface d'attaque)."""
+    _sessions_ensure_loaded(_sessions)
     now = time.time()
     dead = [h for h, r in _sessions.items() if now > r.get("expires_at", 0)]
     for h in dead:
         _sessions.pop(h, None)
+    if dead:
+        _sessions_save(_sessions)
     return len(dead)
 
 
@@ -105,6 +111,7 @@ def issue_session(
         "idle_ttl": _SESSION_IDLE_TTL,
     }
     _sessions[token_hash] = record
+    _sessions_save(_sessions)
     return {
         "session_token": raw_token,
         "wallet_name": wallet_name,
@@ -173,18 +180,21 @@ def require_session(
             detail="Token de session invalide (format sess_xxx attendu). Utilisez /auth/login.",
         )
     token_hash = hashlib.sha256(raw.encode()).hexdigest()
+    _sessions_ensure_loaded(_sessions)
     record = _sessions.get(token_hash)
     if not record:
         raise HTTPException(status_code=401, detail="Session expirée ou invalide. Reconnectez-vous.")
     now = time.time()
     if now > record["expires_at"]:
         del _sessions[token_hash]
+        _sessions_save(_sessions)
         raise HTTPException(status_code=401, detail="Session expirée. Reconnectez-vous.")
     # R320 (2026-09-11T21:30:00Z) — inactivité + appareil.
     idle_ttl = int(record.get("idle_ttl") or _SESSION_IDLE_TTL)
     last_seen = float(record.get("last_seen") or record["created_at"])
     if idle_ttl > 0 and (now - last_seen) > idle_ttl:
         del _sessions[token_hash]
+        _sessions_save(_sessions)
         raise HTTPException(status_code=401, detail="session_idle_timeout")
     bound_fp = record.get("device_fp") or ""
     if bound_fp and _bind_device_enforced():
@@ -195,6 +205,7 @@ def require_session(
             )
             raise HTTPException(status_code=401, detail="session_device_mismatch")
     record["last_seen"] = now
+    _sessions_save(_sessions)
     return record
 
 
@@ -386,7 +397,9 @@ def logout(
     if authorization and authorization.startswith("Bearer sess_"):
         raw = authorization.removeprefix("Bearer ").strip()
         token_hash = hashlib.sha256(raw.encode()).hexdigest()
+        _sessions_ensure_loaded(_sessions)
         _sessions.pop(token_hash, None)
+        _sessions_save(_sessions)
     return {"logged_out": True}
 
 
@@ -451,6 +464,7 @@ def revoke_session(
         raise HTTPException(status_code=404, detail="session_not_found_for_this_address")
     for h in target:
         _sessions.pop(h, None)
+    _sessions_save(_sessions)
     logger.info("Session %s révoquée par son propriétaire", body.session_id)
     return {"revoked": len(target), "session_id": body.session_id}
 
@@ -466,5 +480,6 @@ def logout_all(
     victims = [h for h, r in _sessions.items() if r.get("address") == address]
     for h in victims:
         _sessions.pop(h, None)
+    _sessions_save(_sessions)
     logger.info("logout-all : %d sessions révoquées pour %s", len(victims), str(address)[:16])
     return {"revoked": len(victims), "address": address}

@@ -26,7 +26,8 @@ ARTCB résout la perte de contexte des LLM via :
 
 ```bash
 git clone https://github.com/vgactech/artcb.git && cd artcb
-bash install.sh
+bash scripts/artcb_bootstrap.sh
+# (équivalent OS déjà prêt : bash install.sh)
 bash scripts/verify_installation.sh
 uvicorn src.api.main:app --port 8000 --reload
 cd frontend && npm install && npm run dev
@@ -88,7 +89,8 @@ cd frontend && npm install && npm run dev
 
 ```bash
 git clone https://github.com/vgactech/artcb.git && cd artcb
-bash install.sh
+bash scripts/artcb_bootstrap.sh
+# (équivalent OS déjà prêt : bash install.sh)
 bash scripts/verify_installation.sh
 uvicorn src.api.main:app --port 8000 --reload
 ```
