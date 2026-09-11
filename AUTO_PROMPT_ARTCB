@@ -1900,3 +1900,10 @@ R317 : quarantine Mac divergent exécutée ; catch-up public 0..716 (= seed) ; t
 Rapport 263 = liste fermée (follow-main/stop/partition/probe/replica/mémo).
 Opérateur 2026-09-11 : « ne pas attendre mes GO » = exécuter les tâches demandées / P0 live **sans pause**, y compris quarantine/catch-up/fix auth — **pas** un blanc-seing pour muter tokenomics/consensus hors demande.
 R318 : incident wallet anonyme + lexique véhicule. CERTIFIED_100=false.
+
+## [2026-09-11T19:55:00Z] Citation GO opérateur (mot pour mot)
+
+Citation opérateur (2026-09-11) :
+> JE TE DEJA DIT DE NE PAS ATTENDRE MES GO! SAUF QUQND JE LE DEMANDE DATTENDRE ! DANS GO GENERAL TU DOIT RESTER 100% AUTONOME! TU REGLER TOUT CELA SANS AUCUNE EXCEPTION!
+
+Portée : exécuter sans pause les tâches P0 / demandées (catch-up, auth fix, probes, follow-main…). R263 reste la liste de routine. Interdit d’inférer un droit nouveau sur tokenomics/consensus sans demande. CERTIFIED_100=false.
