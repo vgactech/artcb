@@ -1922,3 +1922,10 @@ C2-D PASS sur socket TCP réelle (B froid → resolve → apprend → persiste h
 Portée : local-socket ; live /concepts/resolve = 404 (pas déployé) → aucun PASS live.
 Session : TTL 1800s + idle 900s + device binding + revoke/logout-all. 28 tests verts.
 Copier un dossier n'est pas une preuve réseau. CERTIFIED_100=false.
+
+## [2026-09-11T21:05:00Z] R321 — merge R320 + C2 8 langues
+
+PR #85 R320 FF-mergée dans `main` (`a27f1c2`). C2-D = PASS socket TCP locale, pas WAN.
+R321 : lexique FR EN ES PT IT RU LA ZH + automobile synonym ; L4 bag U1C2E3 → même ConceptID ×8.
+Tokenizer Cyrillic/CJK. Session persist/restart et C2-D multi-hôte restent OPEN.
+CERTIFIED_100=false.

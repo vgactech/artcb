@@ -58,11 +58,26 @@ from src.artcb.memory.concept_store import ConceptStore
 from src.artcb.memory.concept_sync import bundle_sha256
 
 UI_LOCALES = ("fr", "en", "zh", "es", "pt", "it", "ru")
-VEHICLE = {"fr": "voiture", "en": "car", "es": "coche"}
+# R321: philological L1 set (UI locales + Latin). Not a translation chain.
+VEHICLE = {
+    "fr": "voiture",
+    "en": "car",
+    "es": "coche",
+    "pt": "carro",
+    "it": "auto",
+    "ru": "автомобиль",
+    "la": "vehiculum",
+    "zh": "汽车",
+}
 PHRASES = {
-    "fr": "La voiture consomme beaucoup.",
-    "en": "The car consumes a lot.",
-    "es": "El coche consume mucho.",
+    "fr": "La voiture consomme beaucoup d'énergie.",
+    "en": "The car consumes a lot of energy.",
+    "es": "El coche consume mucha energía.",
+    "pt": "O carro consome muita energia.",
+    "it": "L'auto consuma molta energia.",
+    "ru": "Автомобиль потребляет много энергии.",
+    "la": "Vehiculum multam energiam consumit.",
+    "zh": "汽车消耗大量能源。",
 }
 RELATION = {
     "fr": "Si la charge augmente, la consommation augmente.",
@@ -71,6 +86,8 @@ RELATION = {
 }
 LEXICON_CODE_VEHICLE = "C2"
 EXPECTED_VEHICLE_KID = "K3e7dc01c5cf83cd8"
+# L4 bag: consume(U1) + vehicle(C2) + energy(E3) → same ConceptID ×8
+EXPECTED_L4_KID = "Ke410ef3b8d2bddd5"
 
 
 def _ids(text: str) -> list[str]:
@@ -209,10 +226,14 @@ def run_c2_a() -> dict:
     false_equiv = EXPECTED_VEHICLE_KID not in avion and vehicle_ids.get("fr") not in avion
     verificar = _ids("verificar")
     substring_ok = EXPECTED_VEHICLE_KID not in verificar
-    # Honest synonym gap: automobile not yet in lexicon → must NOT silently PASS
+    # R321: automobile synonym closed (was GAP in R319).
     automobile = _ids("automobile")
     synonym_converges = EXPECTED_VEHICLE_KID in automobile
-    status = "PASS" if (same_k and same_code and false_equiv and substring_ok) else "FAIL"
+    status = (
+        "PASS"
+        if (same_k and same_code and false_equiv and substring_ok and synonym_converges)
+        else "FAIL"
+    )
     return {
         "level": "C2-A",
         "status": status,
@@ -226,10 +247,12 @@ def run_c2_a() -> dict:
             "avion_ne_vehicle": false_equiv,
             "verificar_no_car_substring": substring_ok,
             "automobile_synonym_converges": synonym_converges,
-            "automobile_note": "GAP if false — lexicon incomplete, not silent PASS",
+            "automobile_note": "R321: synonym layer closed; still not full ontology",
+            "auto_not_in_autonomie": "C2" not in object_codes("autonomie"),
         },
         "ui_locales_in_frontend": list(UI_LOCALES),
         "ui_locales_semantically_probed": list(VEHICLE.keys()),
+        "philology_langs": list(VEHICLE.keys()),
         "dur_ns": time.perf_counter_ns() - t0,
     }
 
@@ -237,20 +260,21 @@ def run_c2_a() -> dict:
 def run_c2_b() -> dict:
     t0 = time.perf_counter_ns()
     per = {lang: _ids(text) for lang, text in PHRASES.items()}
-    # Require vehicle ConceptID present in each phrase encode
-    vehicle_in = {lang: EXPECTED_VEHICLE_KID in ids for lang, ids in per.items()}
+    # L4 bag ConceptID (U1C2E3) — not the bare vehicle O1C2 id
+    l4_in = {lang: EXPECTED_L4_KID in ids for lang, ids in per.items()}
     overlap = set.intersection(*(set(v) for v in per.values())) if per else set()
-    status = "PASS" if all(vehicle_in.values()) and EXPECTED_VEHICLE_KID in overlap else "PARTIAL"
-    if not all(vehicle_in.values()):
+    status = "PASS" if all(l4_in.values()) and EXPECTED_L4_KID in overlap else "PARTIAL"
+    if not all(l4_in.values()):
         status = "FAIL"
     return {
         "level": "C2-B",
         "status": status,
         "phrases": PHRASES,
         "ids": per,
-        "vehicle_in_each": vehicle_in,
+        "l4_in_each": l4_in,
+        "expected_l4_concept_id": EXPECTED_L4_KID,
         "intersection": sorted(overlap),
-        "note": "Phrase overlap via lexicon hits — not a translation-chain proof",
+        "note": "8-lang L4 bag via lexicon hits — not a translation-chain proof",
         "dur_ns": time.perf_counter_ns() - t0,
     }
 

@@ -1,4 +1,4 @@
-"""Language-neutral ConceptID lexicon — FR / EN / ES aliases → ARTCB codes.
+"""Language-neutral ConceptID lexicon — multi-locale aliases → ARTCB codes.
 
 Rapport 238 §30 + probe 254/257: ConceptID must not be a text hash.
 The live gap was not ConceptID itself (type+sym) — it was the encoder
@@ -13,8 +13,14 @@ Naming (R319 2026-09-11T20:10:00Z) — do not confuse:
   - ``C2`` = lexicon *object code* / scenario symbol for vehicle lemmas
     (voiture/car/coche → code ``C2`` → IR sym ``O1C2``).
   - ``K3e7dc01c5cf83cd8`` = concrete *ConceptID* hash derived from type+sym.
-  - Scenario battery id ``C2-A``…``C2-D`` = test ladder, not a ConceptID.
+  - Scenario battery id ``C2-A``…``C2-E`` = test ladder, not a ConceptID.
 These are three namespaces. Lexical PASS on C2≠C2-D E2E PASS.
+
+R321 2026-09-11T21:00:00Z — UI locales + Latin:
+  FR EN ES PT IT RU ZH (+ LA philological). Tokenizer accepts Latin,
+  Cyrillic and CJK so ``автомобиль`` / ``汽车`` can hit the table.
+  Synonym layer closes the R319 ``automobile`` GAP for vehicle C2.
+  Energy ``E3`` + consume action ``U1`` support L4 phrase bags.
 """
 
 from __future__ import annotations
@@ -61,6 +67,18 @@ ACTION_ALIASES: dict[str, str] = {
     "deduire": "D1",
     "deduce": "D1",
     "deducir": "D1",
+    # R321 consume / use — L4 phrases (FR…ZH + LA).
+    "потребляет": "U1",
+    "потреблять": "U1",
+    "consomme": "U1",
+    "consommer": "U1",
+    "consumes": "U1",
+    "consume": "U1",
+    "consumit": "U1",
+    "consuma": "U1",
+    "consome": "U1",
+    "consumir": "U1",
+    "消耗": "U1",
 }
 
 OBJECT_ALIASES: dict[str, str] = {
@@ -69,12 +87,64 @@ OBJECT_ALIASES: dict[str, str] = {
     "firma": "S2",
     "firmas": "S2",
     # R318 2026-09-11T19:40:00Z — voiture/car/coche same lemma (was FAIL live matrix).
+    # R321 2026-09-11T21:00:00Z — FR EN ES PT IT RU LA ZH vehicle synonyms → C2.
+    "транспортное": "C2",  # partial of транспортное средство — token hit
+    "автомобиль": "C2",
+    "автомобили": "C2",
+    "automobiles": "C2",
+    "automobile": "C2",
+    "automóveis": "C2",
+    "automóvel": "C2",
+    "automóviles": "C2",
+    "automóvil": "C2",
+    "automobili": "C2",
+    "vehiculum": "C2",
+    "véhicules": "C2",
+    "véhicule": "C2",
+    "vehicules": "C2",
+    "vehicule": "C2",
+    "vehicles": "C2",
+    "vehicle": "C2",
+    "vehículos": "C2",
+    "vehículo": "C2",
+    "veículos": "C2",
+    "veículo": "C2",
+    "veicoli": "C2",
+    "veicolo": "C2",
+    "vetture": "C2",
+    "vettura": "C2",
     "voitures": "C2",
     "voiture": "C2",
     "cars": "C2",
     "car": "C2",
     "coches": "C2",
     "coche": "C2",
+    "carros": "C2",
+    "carro": "C2",
+    "autos": "C2",
+    "auto": "C2",
+    "raeda": "C2",
+    "currus": "C2",
+    "машина": "C2",
+    "машины": "C2",
+    "轿车": "C2",
+    "汽车": "C2",
+    "车辆": "C2",
+    # Energy — L4 bag partner for vehicle consume phrases.
+    "энергией": "E3",
+    "энергии": "E3",
+    "энергия": "E3",
+    "énergies": "E3",
+    "énergie": "E3",
+    "energies": "E3",
+    "energie": "E3",
+    "energy": "E3",
+    "energías": "E3",
+    "energía": "E3",
+    "energias": "E3",
+    "energia": "E3",
+    "energiam": "E3",
+    "能源": "E3",
     "servidor": "N1",
     "serveurs": "N1",
     "serveur": "N1",
@@ -135,16 +205,34 @@ def _sorted_keys(table: dict[str, str]) -> list[str]:
 ACTION_KEYS = _sorted_keys(ACTION_ALIASES)
 OBJECT_KEYS = _sorted_keys(OBJECT_ALIASES)
 
+# Latin + Cyrillic + CJK (R321). Short ASCII lemmas stay token-exact to avoid
+# auto⊂autonomie / car⊂cartography false hits.
+_TOKEN_RE = __import__("re").compile(
+    r"[a-zàâäéèêëïîôùûüçñæœ]+"
+    r"|[а-яё]+"
+    r"|[\u4e00-\u9fff]+",
+)
+
 
 def _token_list(text_lower: str) -> list[str]:
     """Ordered whole-word tokens — R318: 'car' must not hit inside 'verificar'."""
-    import re
-
-    return [m.group(0) for m in re.finditer(r"[a-zàâäéèêëïîôùûüçñ]+", text_lower)]
+    return [m.group(0) for m in _TOKEN_RE.finditer(text_lower)]
 
 
 def _tokens(text_lower: str) -> set[str]:
     return set(_token_list(text_lower))
+
+
+def _key_hits(key: str, toks: set[str], text_lower: str) -> bool:
+    """Match lexicon key without ASCII false-substring collisions (R321)."""
+    if key in toks:
+        return True
+    if len(key) < 2:
+        return False
+    if any(ord(c) > 127 for c in key):
+        return key in text_lower
+    # ASCII stems: substring only when long enough (avoids auto/car collisions).
+    return len(key) >= 5 and key in text_lower
 
 
 # English NP heads: "the car" / "a car" are vehicles, not FR conjunction "car".
@@ -168,13 +256,8 @@ def _car_is_english_vehicle(text_lower: str) -> bool:
 
 def action_code(text_lower: str) -> str | None:
     toks = _tokens(text_lower)
-    # Prefer exact token match; fall back to substring for multi-word stems
-    # like "vérifi" only when key length >= 4 (avoids 'car' ⊂ 'verificar').
     for key in ACTION_KEYS:
-        if key in toks:
-            return ACTION_ALIASES[key]
-    for key in ACTION_KEYS:
-        if len(key) >= 4 and key in text_lower:
+        if _key_hits(key, toks, text_lower):
             return ACTION_ALIASES[key]
     return None
 
@@ -184,8 +267,7 @@ def object_codes(text_lower: str) -> list[str]:
     seen: set[str] = set()
     toks = _tokens(text_lower)
     for key in OBJECT_KEYS:
-        hit = key in toks or (len(key) >= 4 and key in text_lower)
-        if not hit:
+        if not _key_hits(key, toks, text_lower):
             continue
         # R318: FR conjunction "car" must not mint vehicle C2.
         # ~~R318 multi-token blanket skip~~ barred R319 2026-09-11T20:15:00Z —

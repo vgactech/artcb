@@ -1,0 +1,271 @@
+{
+  "ts_ns": 1789160356062576000,
+  "git_hint": "R320",
+  "certified_100": false,
+  "ui_locales": [
+    "fr",
+    "en",
+    "zh",
+    "es",
+    "pt",
+    "it",
+    "ru"
+  ],
+  "C2-A": {
+    "level": "C2-A",
+    "status": "PASS",
+    "lexicon_object_code": "C2",
+    "concept_id": "K3e7dc01c5cf83cd8",
+    "expected_concept_id": "K3e7dc01c5cf83cd8",
+    "namespace_note": "C2=lexicon code; K…=ConceptID; C2-A=test level",
+    "vehicle_ids": {
+      "fr": "K3e7dc01c5cf83cd8",
+      "en": "K3e7dc01c5cf83cd8",
+      "es": "K3e7dc01c5cf83cd8",
+      "pt": "K3e7dc01c5cf83cd8",
+      "it": "K3e7dc01c5cf83cd8",
+      "ru": "K3e7dc01c5cf83cd8",
+      "la": "K3e7dc01c5cf83cd8",
+      "zh": "K3e7dc01c5cf83cd8"
+    },
+    "object_codes": {
+      "fr": [
+        "C2"
+      ],
+      "en": [
+        "C2"
+      ],
+      "es": [
+        "C2"
+      ],
+      "pt": [
+        "C2"
+      ],
+      "it": [
+        "C2"
+      ],
+      "ru": [
+        "C2"
+      ],
+      "la": [
+        "C2"
+      ],
+      "zh": [
+        "C2"
+      ]
+    },
+    "adversarial": {
+      "avion_ne_vehicle": true,
+      "verificar_no_car_substring": true,
+      "automobile_synonym_converges": true,
+      "automobile_note": "R321: synonym layer closed; still not full ontology",
+      "auto_not_in_autonomie": true
+    },
+    "ui_locales_in_frontend": [
+      "fr",
+      "en",
+      "zh",
+      "es",
+      "pt",
+      "it",
+      "ru"
+    ],
+    "ui_locales_semantically_probed": [
+      "fr",
+      "en",
+      "es",
+      "pt",
+      "it",
+      "ru",
+      "la",
+      "zh"
+    ],
+    "philology_langs": [
+      "fr",
+      "en",
+      "es",
+      "pt",
+      "it",
+      "ru",
+      "la",
+      "zh"
+    ],
+    "dur_ns": 72706286
+  },
+  "C2-B": {
+    "level": "C2-B",
+    "status": "PASS",
+    "phrases": {
+      "fr": "La voiture consomme beaucoup d'énergie.",
+      "en": "The car consumes a lot of energy.",
+      "es": "El coche consume mucha energía.",
+      "pt": "O carro consome muita energia.",
+      "it": "L'auto consuma molta energia.",
+      "ru": "Автомобиль потребляет много энергии.",
+      "la": "Vehiculum multam energiam consumit.",
+      "zh": "汽车消耗大量能源。"
+    },
+    "ids": {
+      "fr": [
+        "Ke410ef3b8d2bddd5"
+      ],
+      "en": [
+        "Ke410ef3b8d2bddd5"
+      ],
+      "es": [
+        "Ke410ef3b8d2bddd5"
+      ],
+      "pt": [
+        "Ke410ef3b8d2bddd5"
+      ],
+      "it": [
+        "Ke410ef3b8d2bddd5"
+      ],
+      "ru": [
+        "Ke410ef3b8d2bddd5"
+      ],
+      "la": [
+        "Ke410ef3b8d2bddd5"
+      ],
+      "zh": [
+        "Ke410ef3b8d2bddd5"
+      ]
+    },
+    "l4_in_each": {
+      "fr": true,
+      "en": true,
+      "es": true,
+      "pt": true,
+      "it": true,
+      "ru": true,
+      "la": true,
+      "zh": true
+    },
+    "expected_l4_concept_id": "Ke410ef3b8d2bddd5",
+    "intersection": [
+      "Ke410ef3b8d2bddd5"
+    ],
+    "note": "8-lang L4 bag via lexicon hits — not a translation-chain proof",
+    "dur_ns": 13296369
+  },
+  "C2-C": {
+    "level": "C2-C",
+    "status": "PASS",
+    "learned": [
+      {
+        "lang": "fr",
+        "concept_ids": [
+          "Kea9fac4a9374a49c"
+        ],
+        "graph_id": "g_cfc990006e62"
+      },
+      {
+        "lang": "en",
+        "concept_ids": [
+          "K6773930a8ad4f8f3"
+        ],
+        "graph_id": "g_82fcf9e71be4"
+      },
+      {
+        "lang": "es",
+        "concept_ids": [
+          "Kea9fac4a9374a49c"
+        ],
+        "graph_id": "g_b40e958fe1f4"
+      }
+    ],
+    "packet_sha256": "1616dc2b4bf53aabeca307368972beed4a5d831bd225a46f2767bae2a91f3cba",
+    "packet_bytes": 108,
+    "known_from_packet": 3,
+    "graphs_recalled": 3,
+    "derived_concept_ids": [
+      "K05336c50b14ee52d"
+    ],
+    "derived_graph_id": "g_78758593ba49",
+    "note": "Local AgentChannel — proves IR+store+packet, not yet multi-node network",
+    "dur_ns": 40455840
+  },
+  "C2-D": {
+    "level": "C2-D",
+    "status": "PASS",
+    "a_concept_ids": [
+      "K8a9b3f08f2f23759",
+      "K05336c50b14ee52d"
+    ],
+    "a_graph_id": "g_e1cb7941482d",
+    "a_output_hash": "f34e6a3a593ea9504298c40630d75c19c61b2ac7d49925a328d97960f29114fb",
+    "b_cold_found": 0,
+    "b_cold_missing": [
+      "K8a9b3f08f2f23759",
+      "K05336c50b14ee52d"
+    ],
+    "b_warm_ok": true,
+    "b_own_concept_ids": [
+      "K6773930a8ad4f8f3"
+    ],
+    "b_combined_k9_ids": [
+      "K05336c50b14ee52d"
+    ],
+    "b_combined_graph_id": "g_c496724b64b4",
+    "arcb_sync_sim_ok": true,
+    "live_memo": null,
+    "live_memo_error": null,
+    "live_memo_readback": null,
+    "network_sync": {
+      "attempted": true,
+      "b_missing_before_network": [
+        "K8a9b3f08f2f23759",
+        "K05336c50b14ee52d"
+      ],
+      "base": "http://127.0.0.1:51503",
+      "bundle_bytes": 535,
+      "bundle_sha256": "e76f66576f9cfbd991b616923166246d83b5966fa79a7d73f3b2f06c959630b6",
+      "bundle_has_no_human_text": true,
+      "publish": {
+        "graphs": 1,
+        "concept_ids": [
+          "K05336c50b14ee52d",
+          "K8a9b3f08f2f23759"
+        ],
+        "bundle_sha256": "e76f66576f9cfbd991b616923166246d83b5966fa79a7d73f3b2f06c959630b6",
+        "bundle_bytes": 535,
+        "published_by": "human",
+        "ts_ns": 1789160363307349000,
+        "dur_ns": 5249625
+      },
+      "resolve_http_status": 200,
+      "resolve_bundle_sha256": "f73ffeecb229f89c757dd2e9596df0363351f9311a78adb0718c540548378900",
+      "resolve_missing_reported": [],
+      "graphs_ingested_from_network": 1,
+      "b_missing_after_network": [],
+      "b_found_graphs": 1,
+      "b_persists_without_network": true,
+      "ok": true,
+      "dur_ns": 7123368422
+    },
+    "live_node_concepts_api": {
+      "base": "https://artcb.me",
+      "resolve_http_status": 200,
+      "deployed": true,
+      "note": "routes /concepts présentes sur le nœud live"
+    },
+    "network_proof_scope": "HTTP réel (socket TCP 127.0.0.1) entre deux ConceptStore séparés ; multi-hôte à re-mesurer après déploiement des routes /concepts",
+    "honest_gaps": [
+      "cold B without prior/store sync cannot reconstruct graphs from packet alone",
+      "live memo anchors hashes/ids — does not yet ship .arcb concept blobs over P2P",
+      "C2-D PASS only if cold path OR full concept-store sync over network is proven",
+      "R320: chemin réseau prouvé sur une socket locale ; nœuds live à re-prober après deploy"
+    ],
+    "dur_ns": 7456571660
+  },
+  "ladder_summary": {
+    "statuses": [
+      "PASS",
+      "PASS",
+      "PASS",
+      "PASS"
+    ],
+    "serious_e2e_claim": true,
+    "note": "Only C2-D PASS is a serious E2E langage claim; lexical alone is insufficient"
+  }
+}
