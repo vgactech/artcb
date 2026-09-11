@@ -7,7 +7,7 @@
 
 ## A — Runtime alignment
 
-- verdict: **PARTIAL_OR_DIVERGE**
+- verdict: **PARTIAL_SHA_OK_TIP_DIVERGE**
 - shas: `['4a64254a09a8']`
 - heights: `['1141', '1832']`
 

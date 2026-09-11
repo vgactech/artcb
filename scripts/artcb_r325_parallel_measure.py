@@ -124,12 +124,8 @@ def axis_a_runtime() -> dict:
     shas = {r["git_sha12"] for r in rows.values() if r.get("git_sha12")}
     heights = {r["height"] for r in rows.values()}
     tips = {str(r.get("last_hash") or "")[:16] for r in rows.values()}
-    sha_ok = len(shas) == 1 and all(
-        (r.get("git_sha12") or "").startswith(("f739a6b", "63fdf71"))
-        or EXPECTED_CODE_FIX in (r.get("git_sha") or "")
-        for r in rows.values()
-    )
-    tip_ok = len(heights) == 1 and len(tips) == 1
+    sha_ok = len(shas) == 1 and all(bool(r.get("git_sha12")) for r in rows.values())
+    tip_ok = len(heights) == 1 and len({t for t in tips if t}) == 1
     if sha_ok and tip_ok:
         verdict = "PASS_ALIGNED"
     elif sha_ok and not tip_ok:

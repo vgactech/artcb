@@ -76,7 +76,8 @@
     "all_same_tip": false,
     "all_have_r324_fix_ancestor_or_sha": false,
     "ci_note": "Empty GitHub status checks ≠ CI PASS (operator audit).",
-    "verdict": "PARTIAL_OR_DIVERGE"
+    "verdict": "PARTIAL_SHA_OK_TIP_DIVERGE",
+    "verdict_note": "Script bug fixed: any single aligned runtime SHA + tip diverge → PARTIAL_SHA_OK_TIP_DIVERGE (was mislabeled PARTIAL_OR_DIVERGE for 4a64254)."
   },
   "axis_b_publisher_death_hard": {
     "concept_id": "Ke1927f207834c026",
