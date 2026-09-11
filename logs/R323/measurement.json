@@ -1,7 +1,7 @@
 {
-  "measurement_id": "R323_20260912T004733Z_cb1dc417d2e5",
-  "ts_ns": 1789166854244710000,
-  "commit_sha": "cb1dc417d2e50d0471dba5bb3c1810aa68d9b565",
+  "measurement_id": "R323_20260912T004812Z_3465aa06c450",
+  "ts_ns": 1789166892813316000,
+  "commit_sha": "3465aa06c4504a949f98088fa0502e14b9d90abb",
   "script": "scripts/artcb_compression_benchmark.py",
   "script_sha256": "ed06567d215991271a762e8c57b90edda43644dc8fb055f9904ffdde4f5f8f81",
   "certified_100": false,
@@ -89,9 +89,9 @@
           "Ke410ef3b8d2bddd5"
         ],
         "packet_bytes": 44,
-        "bundle_bytes": 2383,
+        "bundle_bytes": 2384,
         "packet_sha256": "0128a07fcb4e8b2b555ca584425f2e8c8983cfdd653d550202dc336b7a483d73",
-        "bundle_sha256": "d135bab5ac16012619e6fbb3509c4f344bc16d05a575500d3c9d413cd8e276de",
+        "bundle_sha256": "90b5c58ec6750155d6b8668d471596f6370b2e2a51ca3fc95fb171bb224e6c3f",
         "n_phrases": 8,
         "n_unique_concepts": 1,
         "sum_utf8": 294,
@@ -112,8 +112,8 @@
       },
       "C_physique_bundle_vs_sum_utf8": {
         "ref_bytes": 294,
-        "cand_bytes": 2383,
-        "reduction_pct": -710.5442
+        "cand_bytes": 2384,
+        "reduction_pct": -710.8844
       },
       "C_packet_vs_gzip_joined": {
         "ref_bytes": 252,
@@ -163,9 +163,9 @@
           "Kb85a61659097d46a"
         ],
         "packet_bytes": 140,
-        "bundle_bytes": 1164,
+        "bundle_bytes": 1163,
         "packet_sha256": "e3f274334b02e4ce3f6893feab9326bb3f82e91fc2cf114d2b8842257b5ff31c",
-        "bundle_sha256": "8c81cff195186cabd274af1c70273137c494f363f4983119bcdaa741fd546ea3",
+        "bundle_sha256": "0c254c85890d93ad4de80ea7ce59e20e0099844bb7e87eb76a85eca1d1d1d043",
         "n_phrases": 2,
         "n_unique_concepts": 4,
         "sum_utf8": 344,
@@ -186,8 +186,8 @@
       },
       "C_physique_bundle_vs_sum_utf8": {
         "ref_bytes": 344,
-        "cand_bytes": 1164,
-        "reduction_pct": -238.3721
+        "cand_bytes": 1163,
+        "reduction_pct": -238.0814
       },
       "C_packet_vs_gzip_joined": {
         "ref_bytes": 209,
@@ -221,9 +221,9 @@
           "Ke410ef3b8d2bddd5"
         ],
         "packet_bytes": 44,
-        "bundle_bytes": 309,
+        "bundle_bytes": 308,
         "packet_sha256": "0128a07fcb4e8b2b555ca584425f2e8c8983cfdd653d550202dc336b7a483d73",
-        "bundle_sha256": "38c1e697d8136edaa5a96ea8fefcccfb38cfc8a917b56b75f5f970e9d6e31533",
+        "bundle_sha256": "e1912987ba91f236a63dbcff7c836096ab65b135779736a16ac090c0f1c75177",
         "n_phrases": 1,
         "n_unique_concepts": 1,
         "sum_utf8": 40,
@@ -244,8 +244,8 @@
       },
       "C_physique_bundle_vs_sum_utf8": {
         "ref_bytes": 40,
-        "cand_bytes": 309,
-        "reduction_pct": -672.5
+        "cand_bytes": 308,
+        "reduction_pct": -670.0
       },
       "C_packet_vs_gzip_joined": {
         "ref_bytes": 60,
@@ -266,11 +266,11 @@
       "concept_ids": [
         "K9638f146df59253d"
       ],
-      "bundle_sha256": "26936262395aa1422b2b816c7f17a97a1918b0bfb947f510b2eac0bf96281983",
+      "bundle_sha256": "e33f4b0952e418c0209fe7174f6d02eedaf12c572b907cd3bc7d441829e62fbe",
       "bundle_bytes": 328,
       "published_by": "human",
-      "ts_ns": 1789166853862237225,
-      "dur_ns": 6760944
+      "ts_ns": 1789166892479538881,
+      "dur_ns": 3791427
     },
     "A_federated_resolve_via_n2": {
       "ok": true,
@@ -294,7 +294,7 @@
       "note": "Did not stop production publisher; B isolates dependence on fallback."
     }
   },
-  "dur_ns": 1148650422,
+  "dur_ns": 818566620,
   "official_compression_pct": null,
   "official_compression_note": "No single official % — see per-suite C_physique_* and C_semantic_*. Do not quote a global X% without naming suite+reference."
 }
