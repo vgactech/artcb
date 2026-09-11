@@ -14,6 +14,7 @@ B n'a jamais vu le texte humain, et son store était vide au départ.
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import urllib.error
 import urllib.request
@@ -102,10 +103,8 @@ def publish_bundle(
             return json.loads(resp.read().decode())
     except urllib.error.HTTPError as exc:
         body = ""
-        try:
+        with contextlib.suppress(Exception):
             body = exc.read().decode()[:400]
-        except Exception:  # noqa: BLE001
-            pass
         return {"error": "http_error", "http": exc.code, "body": body}
     except Exception as exc:  # noqa: BLE001
         return {"error": type(exc).__name__, "http": 0}

@@ -1915,3 +1915,10 @@ Mesure : A/B/C PASS local ; D PARTIAL (pas de sync .arcb réseau ; cold B missin
 Namespaces : `C2`=code lexique ; `K3e7dc01…`=ConceptID ; `C2-A…D`=niveaux test.
 Balance anonyme → 401 (fail-closed) ; session A≠adresse B → 403.
 Session TTL code = 1800s. CERTIFIED_100=false.
+
+R320 (2026-09-11T22:05:00Z) — sync ConceptStore réseau.
+Bundle binaire ACBN ; publish (Bearer) + resolve ; receive_packet(resolver=…).
+C2-D PASS sur socket TCP réelle (B froid → resolve → apprend → persiste hors réseau).
+Portée : local-socket ; live /concepts/resolve = 404 (pas déployé) → aucun PASS live.
+Session : TTL 1800s + idle 900s + device binding + revoke/logout-all. 28 tests verts.
+Copier un dossier n'est pas une preuve réseau. CERTIFIED_100=false.

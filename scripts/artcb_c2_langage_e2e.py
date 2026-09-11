@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 """R319 — C2 langage IA battery (honest, CERTIFIED_100=false).
 
+R320 (2026-09-11T21:55:00Z) — ajout, rien de supprimé : C2-D ne se contente plus
+d'une copie de répertoire (``shutil.copytree``, conservée comme sous-mesure
+``arcb_sync_sim_ok``). Un vrai nœud ARTCB est démarré sur une socket TCP locale ;
+A publie un bundle binaire ACBN via ``POST /api/v1/concepts/publish`` et B, dont
+le ConceptStore est vide, le récupère via ``GET /api/v1/concepts/resolve``.
+Le hash du paquet est ancré par mémo puis **relu** pour vérification.
+
 Namespaces (do not mix):
   C2          = lexicon object code for vehicle lemmas
   K3e7dc01…   = concrete ConceptID from type+sym O1C2
@@ -46,7 +53,9 @@ from src.artcb.ir.concept import concept_id_from_node, decode_concept_packet, en
 from src.artcb.ir.concept_lexicon import object_codes
 from src.artcb.ir.encoder import IREncoder
 from src.artcb.memory.agent_channel import AgentChannel
+from src.artcb.memory.concept_network import HttpConceptResolver, publish_bundle
 from src.artcb.memory.concept_store import ConceptStore
+from src.artcb.memory.concept_sync import bundle_sha256
 
 UI_LOCALES = ("fr", "en", "zh", "es", "pt", "it", "ru")
 VEHICLE = {"fr": "voiture", "en": "car", "es": "coche"}
@@ -97,6 +106,97 @@ def _post_memo(base: str, content: str, *, private: bool = False) -> dict:
     req = urllib.request.Request(url, data=body, headers=headers, method="POST")
     with urllib.request.urlopen(req, timeout=60) as resp:
         return json.loads(resp.read().decode())
+
+
+def _get_memo(base: str, index: int) -> dict:
+    """R320 — relire un mémo gravé, pour vérifier l'ancre au lieu de la supposer."""
+    url = f"{base.rstrip('/')}/api/v1/ai/memo/{index}"
+    headers = {"Accept": "application/json"}
+    k = _key()
+    if len(k) >= 16:
+        headers["Authorization"] = f"Bearer {k}"
+    req = urllib.request.Request(url, headers=headers, method="GET")
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return json.loads(resp.read().decode())
+
+
+class LocalNode:
+    """R320 — nœud ARTCB réel sur une socket TCP locale (pas un stub en mémoire).
+
+    On veut une **vraie** requête HTTP : socket, en-têtes, corps binaire. Le fait
+    que la machine soit la même que celle du test est dit explicitement dans le
+    rapport (``network_proof_scope``) : ce n'est pas revendiqué comme une preuve
+    multi-hôte.
+    """
+
+    def __init__(self, data_dir: Path) -> None:
+        self.data_dir = data_dir
+        self.base = ""
+        self._server = None
+        self._thread = None
+
+    def start(self) -> str:
+        import socket
+        import threading
+
+        import uvicorn
+
+        os.environ["ARTCB_DATA_DIR"] = str(self.data_dir)
+        os.environ["ARTCB_LOG_DIR"] = str(self.data_dir / "logs")
+        os.environ.setdefault("ARTCB_WALLET_PASSPHRASE", "c2d-r320-local-node-passphrase!")
+        os.environ.setdefault(
+            "ARTCB_NODE_WALLET_ADDRESS", "artcb1testnode000000000000000000000000000"
+        )
+        os.environ["ARTCB_BOOTSTRAP_NODE"] = "false"
+        os.environ["ARTCB_SKIP_SEED_DISCOVERY"] = "1"
+        os.environ["ARTCB_SKIP_CLOUD_METADATA"] = "1"
+        os.environ["ARTCB_ALLOW_LOCAL_PEERS"] = "1"
+        os.environ["ARTCB_ALLOW_MULTI_WALLET"] = "true"
+        os.environ["ARTCB_MIN_BLOCK_INTERVAL_SEC"] = "0"
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind(("127.0.0.1", 0))
+        port = sock.getsockname()[1]
+
+        from src.api.main import create_app
+
+        config = uvicorn.Config(create_app(), log_level="warning")
+        self._server = uvicorn.Server(config)
+        self._thread = threading.Thread(
+            target=self._server.run, kwargs={"sockets": [sock]}, daemon=True
+        )
+        self._thread.start()
+        self.base = f"http://127.0.0.1:{port}"
+        for _ in range(200):
+            try:
+                with urllib.request.urlopen(f"{self.base}/live", timeout=2):
+                    break
+            except Exception:  # noqa: BLE001
+                time.sleep(0.05)
+        return self.base
+
+    def stop(self) -> None:
+        if self._server is not None:
+            self._server.should_exit = True
+        if self._thread is not None:
+            self._thread.join(timeout=10)
+
+    def session_token(self, name: str) -> str:
+        """Wallet + login sur le nœud local → Bearer de session pour publier."""
+        pwd = "pwd_r320_c2d_publisher"
+        for path, body in (
+            ("/api/v1/wallet/create", {"name": name, "password": pwd}),
+            ("/api/v1/auth/login", {"name": name, "password": pwd}),
+        ):
+            req = urllib.request.Request(
+                f"{self.base}{path}",
+                data=json.dumps(body).encode(),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=60) as resp:
+                payload = json.loads(resp.read().decode())
+        return str(payload["session_token"])
 
 
 def run_c2_a() -> dict:
@@ -246,6 +346,65 @@ def run_c2_d(tmp: Path, *, live_memo: bool, base: str) -> dict:
         except Exception as exc:  # noqa: BLE001
             memo_err = str(exc)[:200]
 
+    # ── R320 : chemin RÉSEAU réel (socket TCP) ───────────────────────────────
+    # C'est le maillon qui manquait à R319. B part d'un ConceptStore vide et ne
+    # reçoit AUCUN texte humain : il n'a que le paquet ACPT + le réseau.
+    net: dict = {"attempted": True}
+    node = LocalNode(tmp / "node")
+    store_cold = ConceptStore(tmp / "agent_b_cold_net")
+    b_net = AgentChannel(agent_id="agent_b_cold_net", store=store_cold)
+    net_cold_before = b_net.receive_packet(packet)
+    net["b_missing_before_network"] = list(net_cold_before.missing_concept_ids)
+    try:
+        t_net = time.perf_counter_ns()
+        net["base"] = node.start()
+        token = node.session_token("c2d_publisher")
+        bundle = a.export_bundle(learn_a.concept_ids)
+        net["bundle_bytes"] = len(bundle)
+        net["bundle_sha256"] = bundle_sha256(bundle)
+        net["bundle_has_no_human_text"] = (
+            b"consomme" not in bundle and b"machine" not in bundle
+        )
+        net["publish"] = publish_bundle(node.base, bundle, api_key=token)
+        resolver = HttpConceptResolver(node.base)
+        recall_net = b_net.receive_packet(packet, resolver=resolver)
+        net["resolve_http_status"] = resolver.last_status
+        net["resolve_bundle_sha256"] = resolver.last_bundle_sha256
+        net["resolve_missing_reported"] = resolver.last_missing
+        net["graphs_ingested_from_network"] = b_net.last_resolved_from_network
+        net["b_missing_after_network"] = list(recall_net.missing_concept_ids)
+        net["b_found_graphs"] = len(recall_net.found_graphs)
+        # Deuxième réception SANS résolveur : B a-t-il vraiment appris ?
+        persisted = b_net.receive_packet(packet)
+        net["b_persists_without_network"] = not persisted.missing_concept_ids
+        net["ok"] = (
+            not recall_net.missing_concept_ids
+            and len(recall_net.found_graphs) > 0
+            and net["b_persists_without_network"]
+        )
+        net["dur_ns"] = time.perf_counter_ns() - t_net
+    except Exception as exc:  # noqa: BLE001
+        net["ok"] = False
+        net["error"] = f"{type(exc).__name__}: {str(exc)[:200]}"
+    finally:
+        node.stop()
+
+    # ── R320 : le nœud LIVE distant connaît-il déjà ces routes ? ─────────────
+    live_net: dict = {"base": base}
+    try:
+        probe = HttpConceptResolver(base, api_key=_key(), timeout=20)
+        probe(learn_a.concept_ids)
+        live_net["resolve_http_status"] = probe.last_status
+        live_net["deployed"] = probe.last_status == 200
+        live_net["note"] = (
+            "routes /concepts présentes sur le nœud live"
+            if probe.last_status == 200
+            else "nœud live pas encore sur ce SHA — honnête, pas de PASS revendiqué"
+        )
+    except Exception as exc:  # noqa: BLE001
+        live_net["deployed"] = False
+        live_net["error"] = f"{type(exc).__name__}: {str(exc)[:200]}"
+
     # Copy A's arcb into B as simulated network concept sync (measured separately)
     sync_dir = tmp / "agent_b_synced"
     if (tmp / "agent_a").exists():
@@ -255,10 +414,26 @@ def run_c2_d(tmp: Path, *, live_memo: bool, base: str) -> dict:
     recall_synced = ch_sync.receive_packet(packet)
     synced_ok = len(recall_synced.found_graphs) > 0
 
-    if cold_ok:
+    # R320 — relecture du mémo : une ancre non relue n'est pas une preuve.
+    memo_readback = None
+    if memo:
+        idx = memo.get("block_index", memo.get("index"))
+        if isinstance(idx, int):
+            try:
+                read = _get_memo(base, idx)
+                blob = json.dumps(read, ensure_ascii=False)
+                memo_readback = {
+                    "block_index": idx,
+                    "http": 200,
+                    "packet_sha256_found": packet_sha in blob,
+                    "concept_ids_found": all(cid in blob for cid in learn_a.concept_ids),
+                }
+            except Exception as exc:  # noqa: BLE001
+                memo_readback = {"block_index": idx, "error": str(exc)[:200]}
+
+    # R320 — le verdict suit la mesure réseau, plus la copie disque.
+    if net.get("ok") or cold_ok:
         net_status = "PASS"
-    elif warm_ok and synced_ok and memo and not memo_err:
-        net_status = "PARTIAL"
     elif warm_ok:
         net_status = "PARTIAL"
     else:
@@ -279,10 +454,19 @@ def run_c2_d(tmp: Path, *, live_memo: bool, base: str) -> dict:
         "arcb_sync_sim_ok": synced_ok,
         "live_memo": memo,
         "live_memo_error": memo_err,
+        "live_memo_readback": memo_readback,
+        # R320
+        "network_sync": net,
+        "live_node_concepts_api": live_net,
+        "network_proof_scope": (
+            "HTTP réel (socket TCP 127.0.0.1) entre deux ConceptStore séparés ; "
+            "multi-hôte à re-mesurer après déploiement des routes /concepts"
+        ),
         "honest_gaps": [
             "cold B without prior/store sync cannot reconstruct graphs from packet alone",
             "live memo anchors hashes/ids — does not yet ship .arcb concept blobs over P2P",
             "C2-D PASS only if cold path OR full concept-store sync over network is proven",
+            "R320: chemin réseau prouvé sur une socket locale ; nœuds live à re-prober après deploy",
         ],
         "dur_ns": time.perf_counter_ns() - t0,
     }
@@ -300,7 +484,7 @@ def main() -> int:
     try:
         report = {
             "ts_ns": time.time_ns(),
-            "git_hint": "R319",
+            "git_hint": "R320",
             "certified_100": False,
             "ui_locales": list(UI_LOCALES),
             "C2-A": run_c2_a(),
@@ -319,7 +503,7 @@ def main() -> int:
 
     text = json.dumps(report, indent=2, ensure_ascii=False)
     print(text)
-    out = Path(args.out) if args.out else ROOT / "logs" / f"319_c2_langage_{time.strftime('%Y%m%dT%H%M%SZ')}.json"
+    out = Path(args.out) if args.out else ROOT / "logs" / f"320_c2_langage_{time.strftime('%Y%m%dT%H%M%SZ')}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text + "\n", encoding="utf-8")
     print(f"wrote {out}", file=sys.stderr)
