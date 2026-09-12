@@ -2003,3 +2003,5 @@ Fix code: construct public + client-request sur tip public. SSH journals NOT_REA
 Watchdog `public_tip_watchdog` : hypothèse (a) pending PRE-PREPARE vs (b) entry-path ; auto VC opt-in.
 Mac non retiré sans preuve. Trou 717 non inventé. n/f/q non modifié arbitrairement.
 CERTIFIED_100=false tant que critères A–O Issue #86 non mesurés live ×4.
+
+67. **R329 four-layer audit (2026-09-12T19:50:00Z).** Issue #86 étendu. PUBLIC|ORG|GROUP|PRIVATE = vocabulaire domaine + tip public indépendant ; ORG ≠ visibility chaîne. Matrice `logs/R329/flow_matrix.json`. Auto VC + restart live OPEN. CERTIFIED_100=false.

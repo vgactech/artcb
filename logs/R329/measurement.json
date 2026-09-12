@@ -1,0 +1,230 @@
+{
+  "measurement_id": "R329_20260912T214706Z_0e177b6c1aae",
+  "ts_ns": 1789242426372684000,
+  "commit_sha": "0e177b6c1aae4aadb5f535bb181a090243a0e226",
+  "certified_100": false,
+  "issue": 86,
+  "scope": "PUBLIC\u2192ORG\u2192GROUP\u2192PRIVATE audit + open R328 E/H/J",
+  "vocabulary": {
+    "chain_visibility": [
+      "public",
+      "private",
+      "group"
+    ],
+    "logical_domain": [
+      "global",
+      "org",
+      "group",
+      "user/resource/private"
+    ],
+    "note": "ORG is domain+commitment, not a fourth ChainBlock.visibility value"
+  },
+  "flow_matrix": [
+    {
+      "object": "GLOBAL_GENESIS",
+      "layer": "global",
+      "replication": "all_consensus_nodes",
+      "content": "full_protocol_rules",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "ORG_GENESIS_HASH",
+      "layer": "global",
+      "replication": "all_consensus_nodes",
+      "content": "kind+id+content_hash",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "ORG_GENESIS_BODY",
+      "layer": "org",
+      "replication": "org_domain_nodes",
+      "content": "constitution_without_documents",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "GROUP_GENESIS_HASH",
+      "layer": "global",
+      "replication": "all_consensus_nodes",
+      "content": "kind+id+parent+content_hash",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "GROUP_MEMBERS",
+      "layer": "group",
+      "replication": "group_domain_nodes",
+      "content": "membership_list",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "POLICY_TX",
+      "layer": "org",
+      "replication": "org_domain_nodes",
+      "content": "grant_revoke_delegate",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "PRIVATE_RESOURCE",
+      "layer": "resource",
+      "replication": "never_p2p",
+      "content": "ciphertext_or_local_file",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "USER_DOMAIN",
+      "layer": "user",
+      "replication": "owner_only",
+      "content": "identity_keys_mandates_resources",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "DOMAIN_MANIFEST",
+      "layer": "global",
+      "replication": "all_consensus_nodes",
+      "content": "id+founder+genesis_hash+authorized_nodes",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "DOMAIN_BODY",
+      "layer": "org",
+      "replication": "org_domain_nodes",
+      "content": "genesis_body_on_authorized_hosts",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "DOMAIN_COMMITMENT_BLOCK",
+      "layer": "global",
+      "replication": "all_consensus_nodes",
+      "content": "public_block_kind+id+hash_only",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "ORG_AUTHORITY",
+      "layer": "org",
+      "replication": "org_domain_nodes",
+      "content": "legal_owner+controller_not_genesis",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "ORG_CONTROL_TRANSFER",
+      "layer": "global",
+      "replication": "all_consensus_nodes",
+      "content": "tx+subject+reason+old_new_controller_no_body",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "NODE_AUTHORIZATION_CERT",
+      "layer": "org",
+      "replication": "org_domain_nodes",
+      "content": "domain_id+node_id+node_pubkey+role+founder_sig",
+      "source": "src/artcb/authz/domains.py:REPLICATION_MATRIX",
+      "status": "CODE"
+    },
+    {
+      "object": "CHAIN_VISIBILITY",
+      "layer": "note",
+      "replication": "n/a",
+      "content": "append_block accepts any string; HTTP /store allows public|private|group only; ORG is NOT a chain visibility",
+      "source": "manager.py + routes.py + repo_scope.py",
+      "status": "CODE"
+    },
+    {
+      "object": "R328_LEDGERS",
+      "layer": "storage",
+      "replication": "public book vs private book",
+      "content": "visibility=public \u2192 chain/public/blocks.jsonl; else (private|group|\u2026) \u2192 chain/private/blocks.jsonl; legacy forensic",
+      "source": "split_ledger.py + manager.py",
+      "status": "CODE"
+    },
+    {
+      "object": "ORG_ACL_IMPLICIT",
+      "layer": "org",
+      "replication": "n/a",
+      "content": "No implicit org-membership READ on chain blocks; organization_id is ResourceIndex sidecar",
+      "source": "authz/engine.py",
+      "status": "GAP"
+    }
+  ],
+  "nodes": {
+    "ovh-node-1": {
+      "health_http": 200,
+      "git_sha": "0e177b6c1aae4aadb5f535bb181a090243a0e226",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 1253,
+      "private_height": 1253,
+      "ledger_mode": "split_v1",
+      "watchdog_hypothesis": "b_no_pending_pre_prepare_entry_path",
+      "watchdog_pending": 0
+    },
+    "ovh-node-2": {
+      "health_http": 200,
+      "git_sha": "0e177b6c1aae4aadb5f535bb181a090243a0e226",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 358,
+      "private_height": 358,
+      "ledger_mode": "split_v1",
+      "watchdog_hypothesis": "b_no_pending_pre_prepare_entry_path",
+      "watchdog_pending": 0
+    },
+    "aws-node-3": {
+      "health_http": 200,
+      "git_sha": "0e177b6c1aae4aadb5f535bb181a090243a0e226",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 358,
+      "private_height": 358,
+      "ledger_mode": "split_v1",
+      "watchdog_hypothesis": "b_no_pending_pre_prepare_entry_path",
+      "watchdog_pending": 0
+    },
+    "ovh-node-4": {
+      "health_http": 200,
+      "git_sha": "0e177b6c1aae4aadb5f535bb181a090243a0e226",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 358,
+      "private_height": 358,
+      "ledger_mode": "split_v1",
+      "watchdog_hypothesis": "b_no_pending_pre_prepare_entry_path",
+      "watchdog_pending": 0
+    }
+  },
+  "criteria": {
+    "M_sha_aligned": true,
+    "I_public_tip_equal": true,
+    "K_split_ledger": true,
+    "O_certified_100": false,
+    "four_layer_certified": false
+  },
+  "open": {
+    "E_H_auto_view_change_live": "NOT_PROVEN",
+    "J_restart_live_node": "NOT_PROVEN_ssh_timeout",
+    "org_multi_tenant_acl_by_org_id": "GAP_policy_only",
+    "group_third_ledger": "NOT_APPLICABLE_r328_maps_group_to_private_book"
+  },
+  "public_tips": [
+    1142,
+    1142,
+    1142,
+    1142
+  ],
+  "dur_ns": 4093946413
+}
