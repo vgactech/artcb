@@ -1,7 +1,7 @@
 # Rapport 330 — Pilotage parallèle + height() audit + ORG commitment probe
 
 **Date:** 2026-09-12T20:15:00Z  
-**SHA code:** *(après push)*  
+**SHA code:** `b4a93145553ad4a0812dee900fddb660a3077482`  
 **CERTIFIED_100:** `false`  
 **Issues:** #77 OPEN · #86 OPEN (ne pas clôturer)
 
