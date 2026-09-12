@@ -70,3 +70,14 @@ Issues GitHub (état API 2026-09-12) : **#77 OPEN** (R273) · **#86 OPEN** (R328
 
 Artefacts: `logs/277_issue77_20260912T212653Z.json`, `logs/R331/measurement.json`.
 
+## R332 append (2026-09-12T22:50:00Z) — langage IA + ingest sélectif
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R332 ingest | répété vs nouveau | POLICY | full bootstrap + memo `new_only` ; script `artcb_ingest_new_only.py` |
+| R332 langage | probe/universal/agent_ab/anchor | PASS | tip 1153×4 ; `logs/332_langage_ia_matrix_latest.json` |
+| R332 C2-D WAN | resolve ×5 | PASS | `c2d_multihote_pass=true` |
+| R332 C2-D fanout | write n2–n4 | OPEN | 401 token invalide Doppler nœud |
+| R332 Rule Telemetry | compteurs règles | NOT_STARTED | design ChatGPT — pas moteur |
+| CERTIFIED_100 | — | **false** | langage_ia_final=false |
+

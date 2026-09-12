@@ -137,3 +137,6 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 68. **R329 four-layer (2026-09-12T19:50:00Z).** Audit CODE matrice flux ; tests isolation ORG/GROUP ; tip public ≠ private/group growth. CERTIFIED_100=false.
 
 69. **R330 (2026-09-12T20:15:00Z).** Matrice certification globale; height audit; ORG commitment probe≠body replication. CERTIFIED_100=false.
+
+
+70. **R332 ingest sélectif des collages (2026-09-12T22:50:00Z).** Règle 16 reste : `/tmp/artcb_turn_prompt.txt` = `user_query` **brut intégral**. En plus : classer RÉPÉTÉ vs NOUVEAU via `scripts/artcb_ingest_new_only.py` → `/tmp/artcb_turn_prompt_new_only.txt` + mémo `operator_turn_new_only`. Interdit de ré-encoder un audit ChatGPT déjà scellé (R328–R331 / matrice) comme fait nouveau. **Langage IA** = chantier parallèle non abandonné quand un autre Rxxx avance.

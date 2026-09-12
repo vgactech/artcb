@@ -43,6 +43,15 @@ UNIVERSAL = {
     "en": "car",
     "es": "coche",
 }
+# R332 2026-09-12T22:45:00Z — agent A/B without shared human text (FR vs ZH)
+AGENT_AB = {
+    "fr": "La voiture consomme beaucoup d'energie.",
+    "zh": "汽车消耗大量能源。",
+    "ru": "Автомобиль потребляет много энергии.",
+}
+EXPECTED_VEHICLE = "K3e7dc01c5cf83cd8"
+# L4 bag consume+vehicle+energy (R321/R324) — same ConceptID across FR/ZH/RU phrases
+EXPECTED_L4_BAG = "K493b83061fa228b9"
 UNKNOWN = "zzzxqyt_artcb_nonce_316_not_a_word"
 
 
@@ -161,19 +170,138 @@ def main() -> int:
         (r.get("ok") and int(r.get("universal_overlap") or 0) >= 1) for r in seed_results.values()
     ) if seed_results else False
 
+    # R332 — measure agent A/B ConceptID overlap without shared surface text
+    agent_ab: dict = {"status": "NOT_PROVEN"}
+    try:
+        from src.artcb.ir.concept import concept_id_from_node
+        from src.artcb.ir.encoder import IREncoder
+
+        enc = IREncoder()
+        ab_ids = {lang: [concept_id_from_node(n) for n in enc.encode(text).nodes] for lang, text in AGENT_AB.items()}
+        lemma = {
+            "fr": [concept_id_from_node(n) for n in enc.encode("voiture").nodes],
+            "zh": [concept_id_from_node(n) for n in enc.encode("汽车").nodes],
+            "ru": [concept_id_from_node(n) for n in enc.encode("автомобиль").nodes],
+        }
+        sets = [set(v) for v in ab_ids.values()]
+        inter = set.intersection(*sets) if sets else set()
+        lemma_inter = set.intersection(*(set(v) for v in lemma.values())) if lemma else set()
+        phrase_ok = EXPECTED_L4_BAG in inter or bool(inter)
+        lemma_ok = EXPECTED_VEHICLE in lemma_inter
+        agent_ab = {
+            "status": "PASS" if phrase_ok and lemma_ok else "FAIL",
+            "ids": ab_ids,
+            "lemma_ids": lemma,
+            "intersection": sorted(inter),
+            "lemma_intersection": sorted(lemma_inter),
+            "vehicle_kid": EXPECTED_VEHICLE,
+            "l4_bag_kid": EXPECTED_L4_BAG,
+            "phrase_shared": phrase_ok,
+            "lemma_shared": lemma_ok,
+            "note": "FR/ZH/RU same ConceptIDs without shared UTF-8 surface forms",
+        }
+    except Exception as exc:  # noqa: BLE001
+        agent_ab = {"status": "NOT_PROVEN", "error": f"{type(exc).__name__}:{exc}"}
+
+    # R332 — anchor concept packet hash on public chain; tip public ×4 must agree
+    ledger: dict = {"status": "NOT_PROVEN"}
+    try:
+        import json as _json
+        import urllib.request as _ur
+
+        key = _key()
+        packet = {
+            "kind": "langage_ia_anchor_r332",
+            "vehicle_kid": EXPECTED_VEHICLE,
+            "agent_ab_intersection": agent_ab.get("intersection") or [],
+            "ts_ns": time.time_ns(),
+        }
+        body = _json.dumps(
+            {
+                "content": _json.dumps(packet, sort_keys=True),
+                "visibility": "public",
+                "memo_type": "langage_ia_concept_anchor",
+                "graph_id": f"lang_anchor_{int(time.time())}",
+            }
+        ).encode()
+        req = _ur.Request(
+            f"{seeds[0].rstrip('/')}/api/v1/ai/memo",
+            data=body,
+            method="POST",
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        with _ur.urlopen(req, timeout=60) as resp:
+            memo = _json.loads(resp.read().decode())
+        tips = {}
+        for base in seeds:
+            with _ur.urlopen(f"{base.rstrip('/')}/api/v1/chain/status", timeout=30) as resp:
+                st = _json.loads(resp.read().decode())
+            tips[base] = {
+                "public_last_index": st.get("public_last_index"),
+                "public_last_hash": str(st.get("public_last_hash") or "")[:16],
+            }
+        idxs = {t["public_last_index"] for t in tips.values()}
+        hashes = {t["public_last_hash"] for t in tips.values()}
+        tip_ok = len(idxs) == 1 and len(hashes) == 1 and None not in idxs
+        memo_ok = memo.get("block_index") is not None
+        ledger = {
+            "status": "PASS" if memo_ok and tip_ok else "FAIL",
+            "memo_block_index": memo.get("block_index"),
+            "memo_block_hash": str(memo.get("block_hash") or "")[:16],
+            "tips": tips,
+            "tips_equal": tip_ok,
+        }
+    except Exception as exc:  # noqa: BLE001
+        ledger = {"status": "NOT_PROVEN", "error": f"{type(exc).__name__}:{str(exc)[:200]}"}
+
+    # Load latest C2-D multihote summary if present (do not invent)
+    c2d_path = ROOT / "logs" / "322_c2d_multihote_latest.json"
+    c2d = {}
+    if c2d_path.is_file():
+        try:
+            c2d = json.loads(c2d_path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            c2d = {}
+    c2d_sum = (c2d.get("summary") or {}) if isinstance(c2d, dict) else {}
+    native_e2e = (
+        "PASS_MULTIIHOTE"
+        if c2d_sum.get("c2d_multihote_pass") and c2d_sum.get("c2d_five_agent_resolve_pass")
+        else "NOT_PROVEN"
+    )
+    if c2d_sum.get("c2d_multihote_pass") and not c2d_sum.get("c2d_five_store_fanout_pass"):
+        native_e2e = "PARTIAL_RESOLVE_NO_FANOUT"
+
+    langage_final = bool(
+        probe_pass
+        and universal_pass
+        and agent_ab.get("status") == "PASS"
+        and ledger.get("status") == "PASS"
+        and c2d_sum.get("c2d_multihote_pass")
+        and c2d_sum.get("c2d_five_store_fanout_pass")
+    )
+
     report = {
         "ts_ns": time.time_ns(),
         "dur_ns": time.time_ns() - t0,
         "certified_100": False,
-        "langage_ia_final": False,
+        "langage_ia_final": langage_final,
         "verdict": {
             "unit_tests_this_tour": "run_separately",
             "live_probe_fr_en_es_overlap": "PASS" if probe_pass else "FAIL",
             "live_universal_voiture_car_coche": "PASS" if universal_pass else "FAIL_OR_NOT_PROVEN",
-            "agent_ab_without_text": "NOT_PROVEN",
-            "ledger_anchor_x4": "NOT_PROVEN",
-            "native_language_e2e_r253": "NOT_PROVEN",
+            "agent_ab_without_text": agent_ab.get("status") or "NOT_PROVEN",
+            "ledger_anchor_x4": ledger.get("status") or "NOT_PROVEN",
+            "native_language_e2e_r253": native_e2e,
+            "c2d_multihote_pass": bool(c2d_sum.get("c2d_multihote_pass")),
+            "c2d_five_store_fanout_pass": bool(c2d_sum.get("c2d_five_store_fanout_pass")),
         },
+        "agent_ab": agent_ab,
+        "ledger_anchor": ledger,
+        "c2d_multihote_summary": c2d_sum,
         "seeds": seed_results,
         "local_encoder": local,
         "sha256_report": "",
