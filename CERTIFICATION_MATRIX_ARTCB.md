@@ -1,0 +1,43 @@
+# CERTIFICATION_MATRIX_ARTCB — registre maître (2026-09-12T20:10:00Z)
+
+**Règle R330 :** un nouveau chantier **s’ajoute** ; il ne remplace jamais un FAIL/GAP/NOT_PROVEN historique.  
+**PASS = PASS sur SHA X, conditions Y, artefacts Z** — jamais « pour toujours ».  
+**CERTIFIED_100 = false** tant que les branches critiques ci-dessous ne sont pas toutes `PASS_LIVE` sur le même `origin/main`.
+
+Issues GitHub (état API 2026-09-12) : **#77 OPEN** (R273) · **#86 OPEN** (R328/R329/R330).
+
+| ID | Domaine | Dernier état | Correction code | Déployé SHA | Preuve attendue | Code | Test | Live | Notes |
+|----|---------|--------------|-----------------|-------------|-----------------|------|------|------|-------|
+| R273/#77 | NodeID↔clé / NEW-VIEW / N04 | OPEN / FAIL partiel | partiel historique | rejouer sur SHA courant | 409 binding, Q VC, adversarial | ? | ? | NOT_PROVEN_current_SHA | Ne pas fermer via R328 |
+| R328/#86 A–B | Construct + import public tip | PASS_LIVE | `7069405`+ | `0e177b6`/`ed9259f` | tip public vs private | PASS | PASS | PASS | not_extending fermé sur chemin mesuré |
+| R328/#86 C | Auto VIEW-CHANGE | NOT_PROVEN | watchdog présent | — | timeout→NV→PREPARE→COMMIT | PARTIAL | — | NOT_PROVEN | Hypothèse b souvent |
+| R328/#86 D–E | Tip×4 + métriques split | PASS_LIVE | split_v1 | `ed9259f` | status×4 | PASS | PASS | PASS | ovh1 suffixe ≠ peers |
+| R328/#86 F | Restart/catch-up live | NOT_PROVEN | restart unitaire PASS | — | restart process seed | PASS_unit | PASS | NOT_PROVEN | SSH :22 timeout |
+| R329 | Audit 4 couches vocabulaire | PASS_AUDIT | docs+tests | `ed9259f` | matrix+isolation | PASS | PASS | PARTIAL | ORG≠visibility chaîne |
+| R330-A | ORG body multi-node | NOT_PROVEN | — | — | export/import hash | — | — | OPEN | authorized≠copied |
+| R330-B | GROUP isolation distribuée | PARTIAL | tests locaux | — | A≠B live | PASS_local | PASS | OPEN | |
+| R330-C | PRIVATE ACL exhaustive | PARTIAL | e2e216… | — | 403+no side-effect | PARTIAL | PARTIAL | OPEN | |
+| R330-D | Pollution croisée ΔPUBLIC | PARTIAL | test_r329 | — | 10k private → tip stable | PASS_local | PASS | OPEN | |
+| R330-E | Tous appels `height()` | IN_PROGRESS | tip_attest+client-req | R330 | audit json | — | — | — | voir logs/R330 |
+| R330-F | Auto VC live | = R328 C | — | — | — | — | — | NOT_PROVEN | parallèle |
+| PUBLIC consensus tip | — | PASS_LIVE 1142+ | R328 | live | tip égal ×4 | PASS | PASS | PASS | |
+| ORG domain | — | CODE+local | domains/anchor | — | réplication body | PASS | PARTIAL | NOT_PROVEN | |
+| GROUP | — | private book | R328 map | — | 3ᵉ ledger N/A | PASS | PARTIAL | NOT_PROVEN | |
+| PRIVATE | — | never_p2p matrix | — | — | — | PASS | PARTIAL | PARTIAL | |
+| PUBLIC↔ORG anchor | — | PASS_local | anchor.py | — | commitment sans body | PASS | PASS | OPEN_live_create | |
+| TPM/hardware | — | NOT_PROVEN/PARTIAL | R281–284 | — | quote | — | — | PARTIAL | profil |
+| CERTIFIED_100 | — | **FALSE** | — | — | tous PASS_LIVE critiques | — | — | FALSE | |
+
+## Méthode obligatoire (chaque tour)
+
+1. Mise à jour `origin/main` + SHA health ×4  
+2. Relire cette matrice (ne pas oublier #77 / #86)  
+3. Nouveau problème **ajoute** une ligne  
+4. Rejouer les PASS sensibles après changement ChainManager/PBFT  
+5. Séparer `PASS_CODE` / `PASS_TEST` / `PASS_LIVE` / `FAIL` / `GAP` / `NOT_PROVEN`  
+6. Ne jamais clôturer #86/#77 sans preuves A–F / critères #77
+
+## Artefacts liés
+
+- `logs/R328/measurement.json` · `logs/R329/measurement.json` · `logs/R330/`  
+- `rapports/328_*` · `329_*` · `330_*`

@@ -135,3 +135,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 67. **R328 dual ledger + public import + stall watchdog (2026-09-12T19:20:00Z).** Issue #86. Public/private ledgers; write_certified on public tip; watchdog a/b; Mac non retiré; CERTIFIED_100=false.
 
 68. **R329 four-layer (2026-09-12T19:50:00Z).** Audit CODE matrice flux ; tests isolation ORG/GROUP ; tip public ≠ private/group growth. CERTIFIED_100=false.
+
+69. **R330 (2026-09-12T20:15:00Z).** Matrice certification globale; height audit; ORG commitment probe≠body replication. CERTIFIED_100=false.

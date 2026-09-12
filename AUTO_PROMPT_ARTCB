@@ -2005,3 +2005,5 @@ Mac non retiré sans preuve. Trou 717 non inventé. n/f/q non modifié arbitrair
 CERTIFIED_100=false tant que critères A–O Issue #86 non mesurés live ×4.
 
 67. **R329 four-layer audit (2026-09-12T19:50:00Z).** Issue #86 étendu. PUBLIC|ORG|GROUP|PRIVATE = vocabulaire domaine + tip public indépendant ; ORG ≠ visibility chaîne. Matrice `logs/R329/flow_matrix.json`. Auto VC + restart live OPEN. CERTIFIED_100=false.
+
+68. **R330 parallel matrix (2026-09-12T20:15:00Z).** Registre `CERTIFICATION_MATRIX_ARTCB.md`. #77+#86 restent OPEN. height() audit; tip_attest=public tip; nouveau chantier n’efface pas l’ancien. CERTIFIED_100=false.

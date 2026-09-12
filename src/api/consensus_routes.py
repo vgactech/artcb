@@ -439,13 +439,19 @@ def pbft_client_request(body: ClientRequestBody, request: Request) -> dict:
         idx = -1
     # R327 2026-09-12T02:25:00Z — validate extension against public tip, not total height
     # (private suffix on another replica must not poison primary not_extending checks).
+    # R330 2026-09-12T20:10:00Z — fallback also uses public tip fields when split active
+    # (~~expected_idx = height()~~ barred even when public_found is false on empty public book).
     split = state.chain.tip_public_private()
     if split.get("public_found") and split.get("public_last_hash"):
         try:
             expected_idx = int(split["public_last_index"]) + 1
         except (TypeError, ValueError):
-            expected_idx = int(state.chain.height())
+            expected_idx = 0
         expected_prev = str(split["public_last_hash"])
+    elif hasattr(state.chain, "_public_tip_fields"):
+        pub_idx, pub_hash = state.chain._public_tip_fields()
+        expected_idx = int(pub_idx) + 1 if int(pub_idx) >= 0 else 0
+        expected_prev = str(pub_hash)
     else:
         expected_idx = int(state.chain.height())
         expected_prev = str(state.chain.last_hash() or "")

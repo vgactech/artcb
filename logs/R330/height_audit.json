@@ -1,0 +1,317 @@
+{
+  "measurement_id": "R330E_20260912T220750Z",
+  "ts_ns": 1789243670349760000,
+  "commit_sha": "ed9259f86f7bc667d2dba1c7263cbaa5f728332d",
+  "certified_100": false,
+  "summary": {
+    "SAFE_METRICS": 14,
+    "RISK_CONSENSUS": 9,
+    "NEEDS_REVIEW": 17,
+    "LEGACY_FORENSIC": 1
+  },
+  "sites": [
+    {
+      "file": "src/api/agent_protocol_routes.py",
+      "line": 57,
+      "code": "\"height\": chain.height() if hasattr(chain, \"height\") else None,",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/api/agent_protocol_routes.py",
+      "line": 58,
+      "code": "\"last_hash\": chain.last_hash() if hasattr(chain, \"last_hash\") else None,",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/api/ai_routes.py",
+      "line": 1548,
+      "code": "last_height = state.chain.height()",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/api/ai_routes.py",
+      "line": 1572,
+      "code": "height = state.chain.height()",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/api/consensus_routes.py",
+      "line": 456,
+      "code": "expected_idx = int(state.chain.height())",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/api/consensus_routes.py",
+      "line": 457,
+      "code": "expected_prev = str(state.chain.last_hash() or \"\")",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/api/devnet_routes.py",
+      "line": 54,
+      "code": "height = state.chain.height()",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/api/p2p_routes.py",
+      "line": 112,
+      "code": "\"last_hash\": state.chain.last_hash(),",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/api/p2p_routes.py",
+      "line": 412,
+      "code": "tip_before = sync.chain.last_hash()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/api/p2p_routes.py",
+      "line": 426,
+      "code": "\"tip_after\": sync.chain.last_hash(),",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/api/p2p_routes.py",
+      "line": 586,
+      "code": "\"last_hash\": sync.chain.last_hash(),",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/api/routes.py",
+      "line": 455,
+      "code": "\"truncated\": bool(use_limit is not None and state.chain.height() > from_index + len(blocks)),",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/api/routes.py",
+      "line": 567,
+      "code": "\"truncated\": bool(use_limit is not None and state.chain.height() > from_index + len(blocks)),",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/agent_context_contract.py",
+      "line": 86,
+      "code": "height = chain.height() if hasattr(chain, \"height\") else len(chain.list_blocks())",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/agent_context_contract.py",
+      "line": 90,
+      "code": "tip = chain.last_hash() if hasattr(chain, \"last_hash\") else None",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 265,
+      "code": "return self.height() - 1 if self.height() else -1, self.last_hash()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 377,
+      "code": "return self._book.height()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 397,
+      "code": "priv_h = int(self._private_book.height())  # type: ignore[union-attr]",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 398,
+      "code": "legacy_h = int(self._book.height())",
+      "class": "LEGACY_FORENSIC"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 432,
+      "code": "total = self.height()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 494,
+      "code": "h = self.height()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 578,
+      "code": "if self.height() == 0:",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 703,
+      "code": "if str(block.get(\"hash\") or \"\") and str(block.get(\"hash\") or \"\") == self.last_hash():",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 734,
+      "code": "expected_index = self.height()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 737,
+      "code": "if str(block.get(\"prev_hash\") or \"\") != self.last_hash():",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 852,
+      "code": "index = self.height()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 853,
+      "code": "prev_hash = self.last_hash()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/chain/manager.py",
+      "line": 1226,
+      "code": "\"block_count\": self.height(),",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/consensus/tip_attest.py",
+      "line": 39,
+      "code": "height = int(chain.height())",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/consensus/tip_attest.py",
+      "line": 40,
+      "code": "last_hash = str(chain.last_hash() or \"\")",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/economics/audit_log.py",
+      "line": 42,
+      "code": "prev = self.last_hash()",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/economics/audit_log.py",
+      "line": 59,
+      "code": "return self.last_hash()",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/economics/distributed.py",
+      "line": 52,
+      "code": "return self.engine.chain.last_hash() or (\"0\" * 64)",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/economics/distributed.py",
+      "line": 65,
+      "code": "((n.height(), n.tip_hash(), n.node_id) for n in nodes),",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/economics/distributed.py",
+      "line": 240,
+      "code": "\"heights\": {n.node_id: n.height() for n in nodes},",
+      "class": "SAFE_METRICS"
+    },
+    {
+      "file": "src/artcb/mining/protocol.py",
+      "line": 323,
+      "code": "parent_root = self.chain.last_hash()",
+      "class": "NEEDS_REVIEW"
+    },
+    {
+      "file": "src/artcb/p2p/official_replica.py",
+      "line": 125,
+      "code": "\"last_hash\": sync.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/official_replica.py",
+      "line": 513,
+      "code": "\"local_last_hash\": sync.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/sync.py",
+      "line": 162,
+      "code": "local_tip=self.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/sync.py",
+      "line": 403,
+      "code": "\"local_tip\": self.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/sync.py",
+      "line": 404,
+      "code": "\"local_height\": int(self.chain.height()) if hasattr(self.chain, \"height\") else None,",
+      "class": "RISK_CONSENSUS"
+    }
+  ],
+  "risk_open": [
+    {
+      "file": "src/api/consensus_routes.py",
+      "line": 456,
+      "code": "expected_idx = int(state.chain.height())",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/api/consensus_routes.py",
+      "line": 457,
+      "code": "expected_prev = str(state.chain.last_hash() or \"\")",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/consensus/tip_attest.py",
+      "line": 39,
+      "code": "height = int(chain.height())",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/consensus/tip_attest.py",
+      "line": 40,
+      "code": "last_hash = str(chain.last_hash() or \"\")",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/official_replica.py",
+      "line": 125,
+      "code": "\"last_hash\": sync.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/official_replica.py",
+      "line": 513,
+      "code": "\"local_last_hash\": sync.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/sync.py",
+      "line": 162,
+      "code": "local_tip=self.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/sync.py",
+      "line": 403,
+      "code": "\"local_tip\": self.chain.last_hash(),",
+      "class": "RISK_CONSENSUS"
+    },
+    {
+      "file": "src/artcb/p2p/sync.py",
+      "line": 404,
+      "code": "\"local_height\": int(self.chain.height()) if hasattr(self.chain, \"height\") else None,",
+      "class": "RISK_CONSENSUS"
+    }
+  ],
+  "note": "RISK_CONSENSUS sites must not drive public PBFT index; prefer tip_public_private()"
+}

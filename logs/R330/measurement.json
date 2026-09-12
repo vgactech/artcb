@@ -1,0 +1,98 @@
+{
+  "measurement_id": "R330A_20260912T220750Z",
+  "ts_ns": 1789243670671629000,
+  "commit_sha": "ed9259f86f7bc667d2dba1c7263cbaa5f728332d",
+  "certified_100": false,
+  "four_layer_certified": false,
+  "issues_still_open": [
+    "#77",
+    "#86"
+  ],
+  "nodes": {
+    "ovh-node-1": {
+      "health_http": 200,
+      "git_sha": "ed9259f86f7bc667d2dba1c7263cbaa5f728332d",
+      "public_last_index": 1143,
+      "public_last_hash": "ffe4b4942bc22580",
+      "private_suffix_lines": 1271,
+      "ledger_mode": "split_v1",
+      "orgs_http": 200,
+      "org_count": 3,
+      "org_hash_prefix_set": [
+        "4d64e1f7cb402296",
+        "7966e97361216a6f",
+        "c8011e65cf7066f4"
+      ],
+      "org_projection_leak_founder": false,
+      "sample_projection": "public_commitment"
+    },
+    "ovh-node-2": {
+      "health_http": 200,
+      "git_sha": "ed9259f86f7bc667d2dba1c7263cbaa5f728332d",
+      "public_last_index": 1143,
+      "public_last_hash": "ffe4b4942bc22580",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1",
+      "orgs_http": 200,
+      "org_count": 0,
+      "org_hash_prefix_set": [],
+      "org_projection_leak_founder": false,
+      "sample_projection": null
+    },
+    "aws-node-3": {
+      "health_http": 200,
+      "git_sha": "ed9259f86f7bc667d2dba1c7263cbaa5f728332d",
+      "public_last_index": 1143,
+      "public_last_hash": "ffe4b4942bc22580",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1",
+      "orgs_http": 200,
+      "org_count": 0,
+      "org_hash_prefix_set": [],
+      "org_projection_leak_founder": false,
+      "sample_projection": null
+    },
+    "ovh-node-4": {
+      "health_http": 200,
+      "git_sha": "ed9259f86f7bc667d2dba1c7263cbaa5f728332d",
+      "public_last_index": 1143,
+      "public_last_hash": "ffe4b4942bc22580",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1",
+      "orgs_http": 200,
+      "org_count": 0,
+      "org_hash_prefix_set": [],
+      "org_projection_leak_founder": false,
+      "sample_projection": null
+    }
+  },
+  "criteria": {
+    "I_public_tip_equal": true,
+    "K_split": true,
+    "org_list_http_ok": true,
+    "org_no_founder_leak": true,
+    "org_commitment_sets_equal": false,
+    "org_body_replicated": false,
+    "O_certified_100": false
+  },
+  "open": {
+    "org_body_multi_node_replication": "NOT_PROVEN",
+    "authorized_nodes_implies_copy": false,
+    "auto_view_change": "NOT_PROVEN",
+    "restart_live": "NOT_PROVEN"
+  },
+  "public_tips": [
+    1143,
+    1143,
+    1143,
+    1143
+  ],
+  "dur_ns": 2610333930,
+  "height_audit_summary": {
+    "SAFE_METRICS": 14,
+    "RISK_CONSENSUS": 9,
+    "NEEDS_REVIEW": 17,
+    "LEGACY_FORENSIC": 1
+  },
+  "height_risk_count": 9
+}
