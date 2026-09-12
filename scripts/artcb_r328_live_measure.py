@@ -110,10 +110,12 @@ def main() -> int:
     )
     cert = (d_cert or {}).get("certificate") if c_cert == 200 else None
     c_blk, d_blk = get("https://n3.artcb.me/api/v1/chain/block/1141")
-    block = d_blk if c_blk == 200 and isinstance(d_blk, dict) and d_blk.get("hash") else None
-    # some APIs nest under "block"
-    if block and "block" in block and isinstance(block["block"], dict):
+    block = d_blk if c_blk == 200 and isinstance(d_blk, dict) else None
+    # API nests under "block"
+    if block and isinstance(block.get("block"), dict):
         block = block["block"]
+    if not (isinstance(block, dict) and block.get("hash")):
+        block = None
     out["import_1141"]["cert_http"] = c_cert
     out["import_1141"]["block_http"] = c_blk
     if cert and block:

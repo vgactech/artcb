@@ -1,0 +1,126 @@
+{
+  "measurement_id": "R328_20260912T211729Z_4245ed713a2a",
+  "ts_ns": 1789240649792997000,
+  "commit_sha": "4245ed713a2a3e639e528669116146b68c628730",
+  "certified_100": false,
+  "criteria": {
+    "M_sha_live_eq_commit": true,
+    "I_public_tip_4_of_4": true,
+    "K_ledger_mode_split": true,
+    "C_ovh1_import_with_private_suffix": true,
+    "O_certified_100": false,
+    "A_B_public_construct": true,
+    "public_memo_after_fix": true,
+    "E_H_auto_vc_live": false,
+    "J_restart": false
+  },
+  "nodes": {
+    "ovh-node-1": {
+      "health_http": 200,
+      "git_sha": "4245ed713a2a3e639e528669116146b68c628730",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 1213,
+      "ledger_mode": "split_v1",
+      "height_total": 1991,
+      "view": 18,
+      "primary": "ovh-node-4",
+      "watchdog_http": 200,
+      "watchdog_hypothesis": "unknown",
+      "watchdog_pending": 0,
+      "watchdog_age_sec": 50.30442452430725
+    },
+    "ovh-node-2": {
+      "health_http": 200,
+      "git_sha": "4245ed713a2a3e639e528669116146b68c628730",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1",
+      "height_total": 1142,
+      "view": 18,
+      "primary": "ovh-node-4",
+      "watchdog_http": 200,
+      "watchdog_hypothesis": "unknown",
+      "watchdog_pending": 0,
+      "watchdog_age_sec": 50.847121477127075
+    },
+    "aws-node-3": {
+      "health_http": 200,
+      "git_sha": "4245ed713a2a3e639e528669116146b68c628730",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1",
+      "height_total": 1142,
+      "view": 18,
+      "primary": "ovh-node-4",
+      "watchdog_http": 200,
+      "watchdog_hypothesis": "unknown",
+      "watchdog_pending": 0,
+      "watchdog_age_sec": 51.45975875854492
+    },
+    "ovh-node-4": {
+      "health_http": 200,
+      "git_sha": "4245ed713a2a3e639e528669116146b68c628730",
+      "status_http": 200,
+      "public_last_index": 1142,
+      "public_last_hash": "4e919e467a3bd01d",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1",
+      "height_total": 1142,
+      "view": 18,
+      "primary": "ovh-node-4",
+      "watchdog_http": 200,
+      "watchdog_hypothesis": "unknown",
+      "watchdog_pending": 0,
+      "watchdog_age_sec": 51.96137547492981
+    }
+  },
+  "watchdog": {
+    "ovh-node-1": {
+      "http": 200,
+      "hypothesis": "unknown",
+      "pending": 0
+    },
+    "ovh-node-2": {
+      "http": 200,
+      "hypothesis": "unknown",
+      "pending": 0
+    },
+    "aws-node-3": {
+      "http": 200,
+      "hypothesis": "unknown",
+      "pending": 0
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "hypothesis": "unknown",
+      "pending": 0
+    }
+  },
+  "import_1141": {
+    "cert_http": 200,
+    "block_http": 200,
+    "ovh1_install_http": 200,
+    "ovh1_install_body": {
+      "ok": true,
+      "wrote": false,
+      "reason": null,
+      "detail": null
+    },
+    "ovh1_public_after": 1142,
+    "ovh1_private_suffix_after": 1213
+  },
+  "dur_ns": 3783520684,
+  "post_memo_public_1142": {
+    "memo_http": 200,
+    "block_index": 1142,
+    "block_hash": "4e919e467a3bd01dae1c915478ba312d3fb18cda54678f27599d1108a06ba379",
+    "tip_x4_after_memo": true,
+    "note": "artcb.me public memo no longer 409 not_extending; tip converged 1142\u00d74"
+  }
+}

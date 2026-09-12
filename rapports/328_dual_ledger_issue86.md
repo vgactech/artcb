@@ -35,11 +35,16 @@ Hypothèse timer vs entry-path : à trancher via `GET /pbft/public-tip-watchdog`
 | N rapport + `logs/R328/measurement.json` | ce fichier + script |
 | O CERTIFIED_100 | **false** jusqu’à preuves complètes |
 
-## Mesure
+## Mesure live (2026-09-12T21:16Z)
 
-```bash
-PYTHONPATH=src python3 scripts/artcb_r328_live_measure.py
-```
+- SHA live ×4 = `4245ed713a2a…` = `origin/main` du run → critère **M PASS**
+- `ledger_mode=split_v1` ×4 → **K PASS**
+- Après install certificat 1141 sur ovh1 : `wrote=true`, `public_last_index=1141`, `public_last_hash=32a80547…`, `private_suffix_lines=1199` (inchangé) → **C PASS**, **D PASS**
+- Tip public ×4 = 1141 → **I PASS**
+- Watchdog live : peers = hypothèse **b** (pas de pending PRE-PREPARE) ; ovh1 avait pending=1 avant catch-up puis **b**
+- Auto VIEW-CHANGE bout-en-bout (E–H) : **OPEN** (routes + watchdog déployés ; pas encore un run timeout→NEW-VIEW→PREPARE/COMMIT mesuré sans manuel)
+- Restart reconverge (J) : **OPEN**
+- `CERTIFIED_100` : **false** (O)
 
 Artefact : `logs/R328/measurement.json`
 
@@ -49,3 +54,8 @@ Artefact : `logs/R328/measurement.json`
 - Pas d’invention du bloc 717
 - Pas de retrait Mac
 - Pas de changement arbitraire n/f/q
+
+## Preuve supplémentaire (mémo public live)
+
+Après import 1141 sur ovh1 : `POST /api/v1/ai/memo` visibility=public via `artcb.me` → **HTTP 200** bloc **1142** hash `4e919e46…` ; tip public **1142** ×4 (n1–n4).  
+Le `409 not_extending` R327 est **levé** pour ce chemin. Suffixe privé ovh1 conservé (`ledger_mode=split_v1`).
