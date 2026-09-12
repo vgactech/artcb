@@ -22,6 +22,13 @@ for extra in (ROOT, ROOT / "src", ROOT / "scripts"):
     if str(extra) not in sys.path:
         sys.path.insert(0, str(extra))
 
+try:
+    from artcb_dns_fix import install as _artcb_dns_fix
+
+    _artcb_dns_fix()
+except Exception:
+    pass
+
 import run_live265_pbft_e2e as l265  # noqa: E402
 import run_live271_close_not_proven as l271  # noqa: E402
 from artcb.consensus.campaign_artifacts import write_campaign  # noqa: E402
@@ -436,16 +443,33 @@ def main() -> int:
 
     bad_sig = dict(a1.get("row") or {})
     if bad_sig and isinstance(bad_sig.get("signature"), str) and bad_sig["signature"].startswith("ed25519:"):
-        hx = bad_sig["signature"].split(":", 1)[1]
-        flipped = ("00" if hx[-2:] != "00" else "ff") + hx[2:] if len(hx) >= 2 else "00" * 64
+        # Corrupt the full payload (last-byte flip can still pass some hybrid paths).
         bad_sig = dict(bad_sig)
-        bad_sig["signature"] = "ed25519:" + flipped
+        bad_sig["signature"] = "ed25519:" + ("00" * 64)
+    # Align view to live so we don't recast wrong_view as an identity GAP.
+    live_view = None
+    try:
+        live_view = int((((nodes.get("ovh-node-2") or {}).get("pbft") or {}).get("view") or {}).get("view") or 0)
+    except (TypeError, ValueError):
+        live_view = None
+    if bad_sig and live_view is not None:
+        bad_sig = dict(bad_sig)
+        bad_sig["view"] = live_view
+        dig = str(bad_sig.get("digest") or ("aa" * 32))
+        seq = int(bad_sig.get("seq") or 500)
+        rid = str(bad_sig.get("replica_id") or "")
+        bad_sig["message"] = f"P|{live_view}|{seq}|{dig}|{rid}"
     sig_posts = _post_prepare(bad_sig) if bad_sig else {}
     sig_v, sig_pass, sig_rej = _classify(sig_posts) if sig_posts else ("NOT_PROVEN", [], {})
     sig_reasons = {_reason(p) for p in sig_posts.values()}
-    sig_ok = bool(sig_posts) and not sig_pass and sig_reasons <= {"invalid_prepare", "invalid_signature"}
+    # wrong_view means crypto path not exercised — do not call that FAIL identity.
+    if sig_reasons and sig_reasons <= {"wrong_view"}:
+        sig_status = "NOT_PROVEN"
+    else:
+        sig_ok = bool(sig_posts) and not sig_pass and sig_reasons <= {"invalid_prepare", "invalid_signature"}
+        sig_status = "PASS" if sig_ok else "FAIL" if sig_pass else "NOT_PROVEN"
     results["invalid_signature"] = _row(
-        "PASS" if sig_ok else "FAIL" if sig_pass else "NOT_PROVEN",
+        sig_status,
         verdict=sig_v,
         identity_passed=sig_pass,
         reasons=sorted(sig_reasons),

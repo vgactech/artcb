@@ -54,3 +54,19 @@ Issues GitHub (état API 2026-09-12) : **#77 OPEN** (R273) · **#86 OPEN** (R328
 
 - `logs/R328/measurement.json` · `logs/R329/measurement.json` · `logs/R330/`  
 - `rapports/328_*` · `329_*` · `330_*`
+
+## R331b live measure (2026-09-12T21:35:00Z) — SHA `6627d05` → push suivant
+
+| ID | Live | Notes |
+|----|------|-------|
+| #77 A3/A7 | **PASS_LIVE** | 409 `invalid_replica_key_binding` ×3 via HTTPS audit-sign |
+| #77 NV Q | **PASS_LIVE** | nv0..nv_same + combo PASS; `new_view_live_pass=true` |
+| #77 N04 50% | FAIL | SSH netem unreachable — not recast PASS |
+| #86 auto VC | **PASS_LIVE** | view→22 reachable; Mac restart live PASS public 716 preserved |
+| R330-D pollution | **PASS_LIVE** | tip public 1149×4 |
+| R330-A ORG body | NOT_PROVEN_acl | export 403 controller_mismatch |
+| P2P tip RISK | fixed code | height_audit risk_count→0 attendu après push |
+| CERTIFIED_100 | **false** | N04/TPM/C04/ORG body ouverts |
+
+Artefacts: `logs/277_issue77_20260912T212653Z.json`, `logs/R331/measurement.json`.
+

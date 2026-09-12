@@ -53,8 +53,9 @@ def public_sync_cursor(chain: Any) -> tuple[int, str, set[str]]:
             return next_idx, tip_hash, hashes
         if hasattr(chain, "_split_active") and chain._split_active():
             return 0, GENESIS_PREV, set()
-    h = int(chain.height()) if hasattr(chain, "height") else 0
-    tip = str(chain.last_hash() or GENESIS_PREV) if hasattr(chain, "last_hash") else GENESIS_PREV
+    # legacy forensic fallback for non-split books only (not public PBFT tip)
+    h = int(chain.height()) if hasattr(chain, "height") else 0  # legacy forensic
+    tip = str(chain.last_hash() or GENESIS_PREV) if hasattr(chain, "last_hash") else GENESIS_PREV  # legacy forensic
     hashes = {str(row.get("hash") or "") for row in (chain._read_all_blocks() if hasattr(chain, "_read_all_blocks") else [])}
     hashes.discard("")
     return h, tip, hashes

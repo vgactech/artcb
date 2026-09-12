@@ -465,8 +465,9 @@ def pbft_client_request(body: ClientRequestBody, request: Request) -> dict:
         expected_idx = int(pub_idx) + 1 if int(pub_idx) >= 0 else 0
         expected_prev = str(pub_hash)
     else:
-        expected_idx = int(state.chain.height())
-        expected_prev = str(state.chain.last_hash() or "")
+        # R331 2026-09-12T21:35:00Z — never fall back to height() for public PBFT tip.
+        expected_idx = 0
+        expected_prev = "0" * 64
     if idx != expected_idx or str(block.get("prev_hash") or "") != expected_prev:
         raise HTTPException(status_code=409, detail="not_extending")
     if str(block.get("visibility") or "") != "public":

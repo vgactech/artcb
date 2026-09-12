@@ -24,3 +24,10 @@
 2. Relancer `scripts/run_live277_issue77.py` (skip N04 si SSH netem impossible).
 3. Relancer `scripts/artcb_r331_execute_open_p0.py` + height audit P2P.
 4. Mettre à jour cette matrice avec SHA déployé + verdicts A3/A7.
+
+## Live after deploy `6627d05` (2026-09-12T21:30Z)
+
+- #77: A3/A7/NV **PASS**; `ok=true`; `certified_100=false`; N04 SKIP/FAIL (SSH).
+- #86: auto VC + Mac restart **PASS**; tip public **1149×4**.
+- R330-A: ORG export **403** ACL (NOT_PROVEN body multi-nœud).
+- Follow-up commit: clear remaining `height()` RISK sites + DNS fix in live277/265.

@@ -36,10 +36,10 @@ def sign_message(chain: Any, message: str) -> str:
 def attest_tip(chain: Any, *, git_sha: str, node_id: str) -> dict[str, Any]:
     # R330 2026-09-12T20:10:00Z — never present legacy height() alone as the PBFT tip.
     # Keep height/last_hash for forensic/legacy callers; add public_* for consensus.
-    height = int(chain.height())
-    last_hash = str(chain.last_hash() or "")
+    height_total_legacy = int(chain.height())  # legacy forensic total lines
+    last_hash_legacy = str(chain.last_hash() or "")  # legacy forensic tip
     public_tip_index = -1
-    public_last_hash = last_hash
+    public_last_hash = last_hash_legacy
     if hasattr(chain, "tip_public_private"):
         try:
             split = chain.tip_public_private()
@@ -49,7 +49,7 @@ def attest_tip(chain: Any, *, git_sha: str, node_id: str) -> dict[str, Any]:
         except Exception:  # noqa: BLE001
             pass
     # Sign public tip *index* (not legacy line count, not index+1).
-    tip_height = public_tip_index if public_tip_index >= 0 else height
+    tip_height = public_tip_index if public_tip_index >= 0 else height_total_legacy
     message = canonical_message(
         height=tip_height, last_hash=public_last_hash, git_sha=git_sha, node_id=node_id
     )
@@ -61,8 +61,8 @@ def attest_tip(chain: Any, *, git_sha: str, node_id: str) -> dict[str, Any]:
         "height": tip_height,
         "last_hash": public_last_hash,
         "public_last_index": public_tip_index,
-        "height_total_legacy": height,
-        "last_hash_legacy": last_hash,
+        "height_total_legacy": height_total_legacy,
+        "last_hash_legacy": last_hash_legacy,
         "git_sha": git_sha,
         "message": message,
         "signature": signature,

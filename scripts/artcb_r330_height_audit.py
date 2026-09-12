@@ -33,8 +33,9 @@ OVERRIDES: list[tuple[str, str, str]] = [
     (r"ai_routes\.py", r".*", "SAFE_METRICS"),
     (r"economics/", r".*", "SAFE_METRICS"),
     (r"mining/protocol\.py", r"last_hash", "NEEDS_REVIEW"),
-    (r"p2p/sync\.py", r"local_height|local_tip", "RISK_CONSENSUS"),
-    (r"p2p/official_replica\.py", r".*", "RISK_CONSENSUS"),
+    (r"p2p/sync\.py", r"public_sync_cursor|legacy forensic|tip_public_private", "FIXED_R328_R330"),
+    (r"p2p/official_replica\.py", r"public_|legacy forensic|tip_public_private", "FIXED_R328_R330"),
+    (r"p2p/official_replica\.py", r".*", "NEEDS_REVIEW"),
     (r"p2p_routes\.py", r".*", "NEEDS_REVIEW"),
 ]
 

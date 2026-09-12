@@ -26,6 +26,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
+if str(ROOT / "scripts") not in sys.path:
+    sys.path.insert(0, str(ROOT / "scripts"))
+try:
+    from artcb_dns_fix import install as _dns_fix
+
+    _dns_fix()
+except Exception:
+    pass
 
 from artcb.consensus.pbft_finality import verify_certificate, verify_preprepare  # noqa: E402
 from artcb.consensus.pbft_view import primary_of  # noqa: E402

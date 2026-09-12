@@ -121,8 +121,10 @@ def import_replica_blocks(
         "duplicates": duplicates,
         "rejected": rejected,
         "received": len(blocks),
-        "height": len(sync.chain._read_all_blocks()),
-        "last_hash": sync.chain.last_hash(),
+        "height_total_legacy": len(sync.chain._read_all_blocks()),  # legacy forensic
+        "last_hash": (sync.chain.tip_public_private() or {}).get("public_last_hash")
+        if hasattr(sync.chain, "tip_public_private")
+        else None,
         # R330 — public tip metrics (do not confuse with legacy height)
         "public_last_index": (sync.chain.tip_public_private() or {}).get("public_last_index")
         if hasattr(sync.chain, "tip_public_private")
@@ -516,8 +518,10 @@ def run_official_replica(sync: P2PSyncService, *, include_files: bool = True) ->
         )
     return {
         "official_ipv4": list(OFFICIAL_COMPUTE_IPV4),
-        "local_height": len(sync.chain._read_all_blocks()),
-        "local_last_hash": sync.chain.last_hash(),
+        "local_height_total_legacy": len(sync.chain._read_all_blocks()),  # legacy forensic
+        "local_last_hash": (sync.chain.tip_public_private() or {}).get("public_last_hash")
+        if hasattr(sync.chain, "tip_public_private")
+        else None,
         "public_last_index": (sync.chain.tip_public_private() or {}).get("public_last_index")
         if hasattr(sync.chain, "tip_public_private")
         else None,
