@@ -357,6 +357,18 @@ class AnalyzeNewViewBody(BaseModel):
     view_changes: list[dict]
 
 
+class AuditSignBody(BaseModel):
+    """Issue #77 — forge signed PREPARE/VC265 with local key + claimed NodeID (no state)."""
+
+    kind: str = Field(default="prepare", max_length=32)
+    claimed_replica_id: str = Field(min_length=3, max_length=64)
+    view: int = Field(default=15, ge=0, le=10_000_000)
+    seq: int = Field(default=500, ge=0, le=10_000_000)
+    digest: str | None = Field(default=None, max_length=128)
+    from_view: int = Field(default=15, ge=0, le=10_000_000)
+    prepared: list[dict] | None = None
+
+
 class BindPreparedBody(BaseModel):
     chosen: dict
 
@@ -538,6 +550,46 @@ def pbft_view_change_265(body: ViewChange265Body, request: Request) -> dict:
     except ValueError as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     return {"ok": True, "view_change": row}
+
+
+@router.post("/pbft/audit-sign")
+def pbft_audit_sign(body: AuditSignBody, request: Request) -> dict:
+    """R331 2026-09-12T20:55:00Z — Issue #77 identity forge without SSH.
+
+    Signs with this node's chain.key while claiming ``claimed_replica_id``.
+    Does not accept/store the message. Recipients must reject mismatched NodeID↔clé.
+    """
+    from src.artcb.consensus.pbft_finality import audit_sign_prepare, audit_sign_view_change_265
+
+    state = request.app.state.artcb
+    kind = (body.kind or "prepare").strip().lower()
+    try:
+        if kind in ("prepare", "p"):
+            row = audit_sign_prepare(
+                state.chain,
+                claimed_replica_id=body.claimed_replica_id,
+                view=int(body.view),
+                seq=int(body.seq),
+                digest=body.digest,
+            )
+        elif kind in ("view-change-265", "vc265"):
+            row = audit_sign_view_change_265(
+                state.chain,
+                claimed_replica_id=body.claimed_replica_id,
+                view=int(body.view),
+                from_view=int(body.from_view),
+                prepared=list(body.prepared or []),
+            )
+        else:
+            raise HTTPException(status_code=422, detail="unsupported_audit_sign_kind")
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {
+        "ok": True,
+        "row": row,
+        "signer_local_replica_id": getattr(state, "node_id", None) or getattr(state.settings, "node_id", None),
+        "note": "audit_only_no_state_mutate",
+    }
 
 
 @router.post("/pbft/analyze-new-view")

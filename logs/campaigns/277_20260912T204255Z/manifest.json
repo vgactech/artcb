@@ -1,0 +1,458 @@
+{
+  "campaign_id": "277_20260912T204255Z",
+  "code_sha": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+  "runner": "scripts/run_live277_issue77.py",
+  "timestamp": "2026-09-12T20:49:23Z",
+  "node_ids": [
+    "aws-node-3",
+    "ovh-node-1",
+    "ovh-node-2",
+    "ovh-node-4"
+  ],
+  "results": {
+    "phase1_sha_x4": {
+      "status": "PASS",
+      "certified_100": false,
+      "shas": {
+        "ovh-node-1": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+        "ovh-node-2": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+        "aws-node-3": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+        "ovh-node-4": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b"
+      },
+      "origin_main": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+      "want": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b"
+    },
+    "phase1_binding_enforced_x4": {
+      "status": "PASS",
+      "certified_100": false,
+      "bindings": {
+        "ovh-node-1": true,
+        "ovh-node-2": true,
+        "aws-node-3": true,
+        "ovh-node-4": true
+      }
+    },
+    "a1_k1_as_node1": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "binding_rejected": {},
+      "posts": {}
+    },
+    "a3_k1_as_node2": {
+      "status": "FAIL",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "binding_rejected": {},
+      "posts": {},
+      "note": "200 not_accepted after verify_prepare = GAP, not PASS"
+    },
+    "a7_k2_as_node1": {
+      "status": "FAIL",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "binding_rejected": {},
+      "posts": {}
+    },
+    "unknown_key": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "binding_rejected": {},
+      "posts": {}
+    },
+    "invalid_signature": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "reasons": [],
+      "note": "correct NodeID+key + bad sig → invalid_prepare, not identity GAP",
+      "posts": {}
+    },
+    "producer_star_forged": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "binding_rejected": {},
+      "note": "producer_* is not authority; K2 pubkey on a Node1 message must not authenticate",
+      "posts": {}
+    },
+    "replay_old_sig_new_nodeid": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "verdict": "NOT_PROVEN",
+      "identity_passed": [],
+      "binding_rejected": {},
+      "posts": {}
+    },
+    "new_view_0vc": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "empty set cannot select"
+    },
+    "new_view_1vc": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "select": {
+        "http": 200,
+        "ok": false,
+        "chosen_is_none": true,
+        "bound": {
+          "ok": false,
+          "reason": "no_prepared"
+        },
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        },
+        "error": null
+      },
+      "note": "1 honest VC is not Q"
+    },
+    "new_view_2vc": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "2 honest VC is not Q"
+    },
+    "new_view_3vc_honest_empty_prepared": {
+      "status": "FAIL",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "select": {
+        "http": 200,
+        "ok": false,
+        "chosen_is_none": true,
+        "bound": {
+          "ok": false,
+          "reason": "no_prepared"
+        },
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        },
+        "error": null
+      },
+      "honest": [
+        {
+          "signer": "ovh-node-1",
+          "ssh_rc": 255,
+          "has_row": false
+        },
+        {
+          "signer": "ovh-node-2",
+          "ssh_rc": 255,
+          "has_row": false
+        },
+        {
+          "signer": "aws-node-3",
+          "ssh_rc": 255,
+          "has_row": false
+        }
+      ],
+      "note": "Q=3 honest VCs are admissible; empty prepared → no_prepared, no bind"
+    },
+    "new_view_1vc_state_incomplete": {
+      "status": "FAIL",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "claimed prepared, not reconstructable → state_incomplete"
+    },
+    "new_view_3vc_state_incomplete": {
+      "status": "FAIL",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "Q=3 + claimed unreconstructable prepared stays fail-closed"
+    },
+    "new_view_3vc_same_key_not_quorum": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "3 VCs signed by K1 claiming 3 NodeIDs must not count as Q"
+    },
+    "combo_forged_identity_plus_view_change": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "posts": {}
+    },
+    "combo_forged_identity_plus_new_view": {
+      "status": "PASS",
+      "certified_100": false,
+      "analyze": {
+        "http": 200,
+        "ok": true,
+        "error": null,
+        "selected_is_none": true,
+        "bound": false,
+        "analysis": {
+          "kind": "NEW_VIEW_CERTIFICATE",
+          "view": null,
+          "primary": null,
+          "quorum_view_changes": 0,
+          "q": 3,
+          "quorum_ok": false,
+          "replica_ids": [],
+          "claimed_prepared": false,
+          "reconstructable": false,
+          "selected": null,
+          "reason": "ok"
+        }
+      },
+      "note": "forged identities cannot form a NEW-VIEW quorum"
+    },
+    "n04_50": {
+      "status": "FAIL",
+      "error": "Timeout",
+      "note": "50% isolated wall timeout. Not recast PASS."
+    },
+    "a4_a8_live": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "live service registry was not revoked/expired/downgraded. Overlay is process-local on OVH1, not the running API.",
+      "live_revoked_flags": {
+        "ovh-node-1": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false,
+          "mac-node-local": false
+        },
+        "ovh-node-2": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false,
+          "mac-node-local": false
+        },
+        "aws-node-3": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false,
+          "mac-node-local": false
+        },
+        "ovh-node-4": {
+          "ovh-node-1": false,
+          "ovh-node-2": false,
+          "aws-node-3": false,
+          "ovh-node-4": false,
+          "mac-node-local": false
+        }
+      },
+      "software_overlay_on_vm": {
+        "ssh_rc": 255,
+        "stderr": "ssh: connect to host 152.228.144.34 port 22: Operation timed out\n",
+        "result": null
+      },
+      "software_overlay_pass": false,
+      "a7_live": "FAIL"
+    },
+    "tpm_quote": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "registry public keys ≠ TPM quote. Device presence recorded only.",
+      "nodes": {
+        "ovh-node-1": {
+          "ssh_rc": 255,
+          "stdout": "",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        },
+        "ovh-node-2": {
+          "ssh_rc": 255,
+          "stdout": "",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        },
+        "aws-node-3": {
+          "ssh_rc": 255,
+          "stdout": "",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        },
+        "ovh-node-4": {
+          "ssh_rc": 255,
+          "stdout": "",
+          "has_tpm0": false,
+          "has_tpm2_tools": false,
+          "quote": null,
+          "note": "device presence ≠ attested quote"
+        }
+      },
+      "any_tpm0": false
+    },
+    "c04_thousands": {
+      "status": "NOT_PROVEN",
+      "certified_100": false,
+      "note": "thousands of blocks not run this campaign; a short substitute is forbidden"
+    },
+    "certified_100": false,
+    "n04_row_not_recast_pass": true,
+    "production_ready": false
+  }
+}

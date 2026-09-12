@@ -28,6 +28,19 @@ Issues GitHub (état API 2026-09-12) : **#77 OPEN** (R273) · **#86 OPEN** (R328
 | TPM/hardware | — | NOT_PROVEN/PARTIAL | R281–284 | — | quote | — | — | PARTIAL | profil |
 | CERTIFIED_100 | — | **FALSE** | — | — | tous PASS_LIVE critiques | — | — | FALSE | |
 
+## R331 append (2026-09-12T20:55:00Z) — exécution ouverte, pas liste d’attente
+
+| ID | Domaine | Dernier état | Correction code | Déployé SHA | Preuve attendue | Code | Test | Live | Notes |
+|----|---------|--------------|-----------------|-------------|-----------------|------|------|------|-------|
+| R331/#77 | audit-sign HTTPS forge | IN_PROGRESS | `POST /pbft/audit-sign` | pending push | A3/A7 409 binding sans SSH | PASS | PASS | pending_deploy | SSH :22 filtré LAN |
+| R331/#86 C | auto VC reachable | PASS_LIVE partiel | `next_reachable_view` | pending | VC→NV skip Mac | PASS | PASS | PASS view 20→21 | Mac reste membership |
+| R331/#86 F | Mac restart live | IN_PROGRESS | kickstart+wait health | local | public tip preserved | — | — | remeasure | |
+| R331 P2P tip | public_sync_cursor | CODE+TEST | `sync.py` | pending | RISK_CONSENSUS→PASS | PASS | PASS | pending_deploy | private suffix ignoré |
+| R331 R330-D | pollution live | PASS_LIVE | — | `c4ca2ed` tip 1147 | private≠public tip | — | PASS | PASS | logs/R331 |
+| R331 R330-A | ORG body multi-nœud | OPEN ACL | probe export | — | session controller | PASS_unit | PASS | NOT_PROVEN_acl | |
+
+~~Ne pas s’arrêter pour lister l’ouvert~~ — exécuter, pousser, follow-main, rejouer live277.
+
 ## Méthode obligatoire (chaque tour)
 
 1. Mise à jour `origin/main` + SHA health ×4  

@@ -78,6 +78,63 @@ def pset_digest(prepared: list[dict[str, Any]]) -> str:
     return hashlib.sha256(material.encode("utf-8")).hexdigest()
 
 
+def audit_sign_prepare(
+    chain: Any,
+    *,
+    claimed_replica_id: str,
+    view: int = 15,
+    seq: int = 500,
+    digest: str | None = None,
+) -> dict[str, Any]:
+    """R331 2026-09-12T20:55:00Z — sign a PREPARE with *local* key + claimed NodeID.
+
+    Does not mutate PBFT state. Used by Issue #77 live when SSH :22 is filtered:
+    HTTPS to the signer node replaces sudo+doppler on-VM forge.
+    """
+    claimed = str(claimed_replica_id or "").strip()
+    if claimed not in official_pbft_replica_ids():
+        raise ValueError("unknown_replica_id")
+    dig = (digest or ("aa" * 32)).strip()
+    msg = prepare_message(view=int(view), seq=int(seq), digest=dig, replica_id=claimed)
+    return _sign_row(
+        chain,
+        kind="prepare",
+        message=msg,
+        replica_id=claimed,
+        extra={"view": int(view), "seq": int(seq), "digest": dig, "audit_sign": True},
+    )
+
+
+def audit_sign_view_change_265(
+    chain: Any,
+    *,
+    claimed_replica_id: str,
+    view: int = 16,
+    from_view: int = 15,
+    prepared: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    """R331 2026-09-12T20:55:00Z — audit VC265 forge via HTTPS (no state mutate)."""
+    claimed = str(claimed_replica_id or "").strip()
+    if claimed not in official_pbft_replica_ids():
+        raise ValueError("unknown_replica_id")
+    prepared_list = list(prepared or [])
+    digest = pset_digest(prepared_list)
+    msg = vc265_message(view=int(view), from_view=int(from_view), replica_id=claimed, pset_digest=digest)
+    return _sign_row(
+        chain,
+        kind="view-change-265",
+        message=msg,
+        replica_id=claimed,
+        extra={
+            "view": int(view),
+            "from_view": int(from_view),
+            "prepared": prepared_list,
+            "pset_digest": digest,
+            "audit_sign": True,
+        },
+    )
+
+
 def _sign_row(chain: Any, *, kind: str, message: str, replica_id: str, extra: dict[str, Any]) -> dict[str, Any]:
     ed, pqc = producer_key_b64(chain)
     row = {

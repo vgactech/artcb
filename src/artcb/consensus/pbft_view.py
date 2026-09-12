@@ -38,6 +38,41 @@ def primary_of(view: int) -> str:
     return ids[int(view) % len(ids)]
 
 
+def next_reachable_view(from_view: int, *, max_skip: int = 16) -> dict[str, Any]:
+    """R331 2026-09-12T20:35:00Z — skip views whose primary has no dialable HTTP.
+
+    Mac may be in membership (N=5) but without a public tunnel it cannot
+    emit NEW-VIEW. Liveness must advance past that view without removing Mac
+    from membership. Does not change primary_of() identity math.
+    """
+    from src.artcb.node_registry import pbft_reachable_http_map
+
+    reachable = pbft_reachable_http_map()
+    start = int(from_view) + 1
+    skipped: list[dict[str, Any]] = []
+    for i in range(max(1, int(max_skip))):
+        view = start + i
+        primary = primary_of(view)
+        if primary in reachable:
+            return {
+                "ok": True,
+                "from_view": int(from_view),
+                "target_view": view,
+                "primary": primary,
+                "skipped": skipped,
+                "reachable_http_ids": list(reachable.keys()),
+            }
+        skipped.append({"view": view, "primary": primary, "reason": "primary_unreachable_transport"})
+    return {
+        "ok": False,
+        "from_view": int(from_view),
+        "target_view": None,
+        "primary": None,
+        "skipped": skipped,
+        "reason": "no_reachable_primary_in_window",
+        "reachable_http_ids": list(reachable.keys()),
+    }
+
 def vc_message(*, view: int, from_view: int, height: int, last_hash: str, replica_id: str, reason: str) -> str:
     return (
         f"VC|{int(view)}|{int(from_view)}|{int(height)}|"

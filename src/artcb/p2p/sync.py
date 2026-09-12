@@ -28,6 +28,37 @@ logger = logging.getLogger("artcb.p2p.sync")
 
 ImportAction = Literal["reject", "archive_only", "append", "duplicate"]
 
+GENESIS_PREV = "0" * 64
+
+
+def public_sync_cursor(chain: Any) -> tuple[int, str, set[str]]:
+    """R330 2026-09-12T20:20:00Z — P2P public import uses PUBLIC tip, not legacy height().
+
+    Returns (expected_next_index, public_last_hash, public_hashes).
+    """
+    if hasattr(chain, "tip_public_private"):
+        split = chain.tip_public_private()
+        if split.get("public_found") and split.get("public_last_hash"):
+            try:
+                next_idx = int(split["public_last_index"]) + 1
+            except (TypeError, ValueError):
+                next_idx = 0
+            tip_hash = str(split["public_last_hash"])
+            hashes: set[str] = set()
+            if hasattr(chain, "list_blocks"):
+                for row in chain.list_blocks(visibility="public"):
+                    h = str(row.get("hash") or "")
+                    if h:
+                        hashes.add(h)
+            return next_idx, tip_hash, hashes
+        if hasattr(chain, "_split_active") and chain._split_active():
+            return 0, GENESIS_PREV, set()
+    h = int(chain.height()) if hasattr(chain, "height") else 0
+    tip = str(chain.last_hash() or GENESIS_PREV) if hasattr(chain, "last_hash") else GENESIS_PREV
+    hashes = {str(row.get("hash") or "") for row in (chain._read_all_blocks() if hasattr(chain, "_read_all_blocks") else [])}
+    hashes.discard("")
+    return h, tip, hashes
+
 
 @dataclass(frozen=True)
 class ImportDecision:
@@ -145,21 +176,35 @@ class P2PSyncService:
         offered_at: dict[int, str] = {}
         ordered = sorted(blocks, key=lambda row: int(row.get("index") or 0) if str(row.get("index") or "").isdigit() or isinstance(row.get("index"), int) else 0)
         for block in ordered:
-            local = self.chain._read_all_blocks()
-            local_hashes = {str(row.get("hash") or "") for row in local}
+            expected_next, local_tip, local_hashes = public_sync_cursor(self.chain)
             try:
                 idx = int(block.get("index", -1))
             except (TypeError, ValueError):
                 idx = -1
-            existing = next((row for row in local if int(row.get("index", -1)) == idx), None) if idx >= 0 else None
+            existing = None
+            if idx >= 0:
+                if hasattr(self.chain, "public_book") and getattr(self.chain, "_split_active", lambda: False)():
+                    try:
+                        existing = self.chain.public_book().get_by_consensus_index(idx)
+                    except Exception:  # noqa: BLE001
+                        existing = None
+                if existing is None:
+                    existing = next(
+                        (
+                            row
+                            for row in self.chain.list_blocks(visibility="public")
+                            if int(row.get("index", -1)) == idx
+                        ),
+                        None,
+                    )
             offered_hash = str(block.get("hash") or "")
             if idx >= 0 and idx in offered_at and offered_at[idx] and offered_hash and offered_at[idx] != offered_hash:
                 decision = ImportDecision("reject", "equivocation")
             else:
                 decision = decide_public_import(
                     block,
-                    local_len=len(local),
-                    local_tip=self.chain.last_hash(),
+                    local_len=expected_next,
+                    local_tip=local_tip,
                     local_hashes=local_hashes,
                     structure_ok=self.verify_block_structure(block) if block.get("visibility") == "public" else False,
                     existing_at_index=existing,
@@ -400,8 +445,9 @@ class P2PSyncService:
                 "encrypted": encrypted,
                 "http_ms": http_ms,
                 "decision_tally": decision_tally,
-                "local_tip": self.chain.last_hash(),
-                "local_height": int(self.chain.height()) if hasattr(self.chain, "height") else None,
+                "local_tip": public_sync_cursor(self.chain)[1],
+                "local_height": public_sync_cursor(self.chain)[0],
+                "attests_public_tip": True,
             }
         except P2PSyncError as exc:
             append_flux(

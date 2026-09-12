@@ -1,0 +1,16 @@
+{
+  "origin_main": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+  "want_sha": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+  "shas": {
+    "ovh-node-1": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+    "ovh-node-2": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+    "aws-node-3": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b",
+    "ovh-node-4": "c4ca2ed8df0ed958954c1d724dba2762d8cf060b"
+  },
+  "bindings": {
+    "ovh-node-1": true,
+    "ovh-node-2": true,
+    "aws-node-3": true,
+    "ovh-node-4": true
+  }
+}

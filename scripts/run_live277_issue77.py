@@ -27,6 +27,13 @@ import run_live271_close_not_proven as l271  # noqa: E402
 from artcb.consensus.campaign_artifacts import write_campaign  # noqa: E402
 from artcb.node_registry import OFFICIAL_COMPUTE_NODE_IDS  # noqa: E402
 
+# R331 — prefer public HTTPS; IPv4 :8000 often filtered from this LAN.
+l265.HTTP = {
+    "ovh-node-1": "https://artcb.me",
+    "ovh-node-2": "https://n2.artcb.me",
+    "aws-node-3": "https://n3.artcb.me",
+    "ovh-node-4": "https://n4.artcb.me",
+}
 HTTP = l265.HTTP
 BINDING_REJECT = {
     "invalid_replica_key_binding",
@@ -56,11 +63,14 @@ def _classify(posts: dict[str, dict]) -> tuple[str, list[str], dict[str, str]]:
 
 
 def _collect(nid: str) -> dict:
-    health = l265._http("GET", f"{HTTP[nid]}/health")
-    view = l265._http("GET", f"{HTTP[nid]}/api/v1/consensus/pbft/view")
-    finality = l265._http("GET", f"{HTTP[nid]}/api/v1/consensus/pbft/finality")
-    attest = l265._http("GET", f"{HTTP[nid]}/api/v1/consensus/tip-attest")
-    ident = l265._http("GET", f"{HTTP[nid]}/api/v1/consensus/replica-identity")
+    base = l265.HTTP[nid]
+    health = l265._http("GET", f"{base}/health")
+    if health.get("git_sha") is None:
+        health = l265._http("GET", f"{base}/api/v1/health")
+    view = l265._http("GET", f"{base}/api/v1/consensus/pbft/view")
+    finality = l265._http("GET", f"{base}/api/v1/consensus/pbft/finality")
+    attest = l265._http("GET", f"{base}/api/v1/consensus/tip-attest")
+    ident = l265._http("GET", f"{base}/api/v1/consensus/replica-identity")
     return {
         "health": health,
         "pbft": {"view": view, "finality": finality},
@@ -91,6 +101,31 @@ def _pset_digest(prepared: list) -> str:
 
 
 def _forge(signer: str, claimed: str, *, kind: str = "prepare", prepared: list | None = None) -> dict:
+    """Forge via HTTPS audit-sign first (SSH :22 often filtered from LAN). SSH fallback kept."""
+    # R331 2026-09-12T20:55:00Z — prefer POST /pbft/audit-sign on signer HTTPS.
+    audit_body: dict = {
+        "kind": kind,
+        "claimed_replica_id": claimed,
+        "view": 16 if kind == "view-change-265" else 15,
+        "seq": 500,
+        "digest": "aa" * 32,
+        "from_view": 15,
+        "prepared": list(prepared or []),
+    }
+    base = l265.HTTP.get(signer) or HTTP.get(signer)
+    got_http: dict = {}
+    if base:
+        got_http = l265._http("POST", f"{base}/api/v1/consensus/pbft/audit-sign", audit_body, timeout=30)
+        row_http = got_http.get("row") if isinstance(got_http.get("row"), dict) else None
+        if got_http.get("ok") and row_http and row_http.get("replica_id"):
+            return {
+                "ssh_rc": None,
+                "via": "https_audit_sign",
+                "http": got_http.get("http"),
+                "stderr": "",
+                "row": row_http,
+            }
+
     if kind == "view-change-265":
         prepared = list(prepared or [])
         digest = _pset_digest(prepared)
@@ -140,7 +175,13 @@ PY
             except json.JSONDecodeError:
                 continue
             break
-    return {"ssh_rc": got.get("returncode"), "stderr": (got.get("stderr") or "")[-180:], "row": forged}
+    return {
+        "ssh_rc": got.get("returncode"),
+        "via": "ssh",
+        "stderr": (got.get("stderr") or "")[-180:],
+        "row": forged,
+        "https_fallback_detail": (got_http.get("detail") or got_http.get("reason") or got_http.get("error") or got_http.get("http")),
+    }
 
 
 def _post_prepare(row: dict) -> dict[str, dict]:

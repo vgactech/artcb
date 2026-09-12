@@ -123,6 +123,13 @@ def import_replica_blocks(
         "received": len(blocks),
         "height": len(sync.chain._read_all_blocks()),
         "last_hash": sync.chain.last_hash(),
+        # R330 — public tip metrics (do not confuse with legacy height)
+        "public_last_index": (sync.chain.tip_public_private() or {}).get("public_last_index")
+        if hasattr(sync.chain, "tip_public_private")
+        else None,
+        "public_last_hash": (sync.chain.tip_public_private() or {}).get("public_last_hash")
+        if hasattr(sync.chain, "tip_public_private")
+        else None,
     }
 
 
@@ -511,9 +518,16 @@ def run_official_replica(sync: P2PSyncService, *, include_files: bool = True) ->
         "official_ipv4": list(OFFICIAL_COMPUTE_IPV4),
         "local_height": len(sync.chain._read_all_blocks()),
         "local_last_hash": sync.chain.last_hash(),
+        "public_last_index": (sync.chain.tip_public_private() or {}).get("public_last_index")
+        if hasattr(sync.chain, "tip_public_private")
+        else None,
+        "public_last_hash": (sync.chain.tip_public_private() or {}).get("public_last_hash")
+        if hasattr(sync.chain, "tip_public_private")
+        else None,
         "peers": peers_out,
         "note": (
             "Anonymous P2P stays public-only. This path is the four official "
-            "compute IPv4s only. Ingest 1065 had no inter-node flux."
+            "compute IPv4s only. Ingest 1065 had no inter-node flux. "
+            "R330: public_* fields are the consensus tip; local_height is forensic."
         ),
     }

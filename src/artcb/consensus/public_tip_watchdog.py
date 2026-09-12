@@ -132,12 +132,17 @@ def maybe_trigger_view_change(
     chain: Any,
     reason: str,
 ) -> dict[str, Any]:
-    """Emit local VIEW-CHANGE for view+1. Does not wipe. Best-effort fan-out."""
+    """Emit local VIEW-CHANGE for next *reachable* view. Does not wipe. Best-effort fan-out."""
+    from src.artcb.consensus.pbft_view import next_reachable_view
+
     code, view_body = _http_json("GET", f"{local_base}/api/v1/consensus/pbft/view")
     if code != 200:
         return {"ok": False, "reason": f"view_http_{code}", "body": view_body}
     cur = int((view_body or {}).get("view") or 0)
-    target = cur + 1
+    plan = next_reachable_view(cur)
+    if not plan.get("ok"):
+        return {"ok": False, "reason": "no_reachable_primary", "plan": plan}
+    target = int(plan["target_view"])
     split = chain.tip_public_private()
     height = int(split.get("public_last_index") or -1) + 1
     last_hash = str(split.get("public_last_hash") or "")
@@ -146,7 +151,7 @@ def maybe_trigger_view_change(
         f"{local_base}/api/v1/consensus/pbft/view-change",
         {
             "view": target,
-            "reason": reason[:200],
+            "reason": (reason + f":skip_unreachable:{plan.get('skipped')}")[:200],
         },
     )
     return {
@@ -154,6 +159,8 @@ def maybe_trigger_view_change(
         "http": vc_code,
         "from_view": cur,
         "to_view": target,
+        "primary": plan.get("primary"),
+        "skipped_unreachable": plan.get("skipped"),
         "height_public_next": height,
         "last_hash_public": last_hash[:16],
         "body": vc_body,
