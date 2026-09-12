@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-12T19:20:00Z  
 **Issue:** [#86](https://github.com/vgactech/artcb/issues/86)  
-**Commit (code):** *(à remplir après push)*  
+**Commit (code):** `70694050b4db7efac8e7a12bdc21e59b26b6637a`  
 **CERTIFIED_100:** `false`
 
 ## Problème
