@@ -1988,3 +1988,11 @@ Mesure: tip public aligne @1140 `013f327c…` × seeds UP; suffixe ovh1 = blocs 
 Risques restants: PBFT public stall depuis 2026-09-10, trou 717, index prives dupliques, n4 502 intermittent.
 Publisher-death B hard (kill process) toujours non revendique. Pluriel → modifier PL.
 CERTIFIED_100=false. Jamais wipe/inventer 717.
+
+
+## R327 — causal stall PBFT @1140 (2026-09-12T02:30:00Z)
+
+Mac+n4 cause = **NOT_ESTABLISHED**. Cert 1140 Q=3 sans Mac. Aucun prepared/cert 1141 avant probe. Pas de VC auto >=18 pendant le stall.
+Cause etablie du FAIL public via artcb.me: `409 not_extending` (suffixe prive ovh1 vs tip public primary).
+Liveness: VC manuel 17→18 + propose ovh-4 → cert 1141 `32a80547…` wrote n2/n3/n4 ; ovh1 wrote=false.
+Fix code: construct public + client-request sur tip public. SSH journals NOT_REACHABLE. Jamais wipe. CERTIFIED_100=false.

@@ -641,9 +641,24 @@ class ChainManager:
         from src.artcb.trace.ns import emit, now_mono_ns
 
         t_append = now_mono_ns()
-        index = self.height()
+        # R327 2026-09-12T02:25:00Z — public blocks extend the *public* tip, not the
+        # total book height. Private-only suffixes on one seed (OVH1) were making
+        # constructed public blocks fail primary ``not_extending`` (height 18xx vs 1141).
+        if str(visibility) == "public":
+            split = self.tip_public_private()
+            if split.get("public_found") and split.get("public_last_hash"):
+                try:
+                    index = int(split["public_last_index"]) + 1
+                except (TypeError, ValueError):
+                    index = self.height()
+                prev_hash = str(split["public_last_hash"])
+            else:
+                index = self.height()
+                prev_hash = self.last_hash()
+        else:
+            index = self.height()
+            prev_hash = self.last_hash()
         timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
-        prev_hash = self.last_hash()
         merkle = merkle_root or graph_root
 
         if self.enable_security and self.anti_sybil and contributors:

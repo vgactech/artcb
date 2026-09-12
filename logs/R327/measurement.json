@@ -1,0 +1,141 @@
+{
+  "measurement_id": "R327_20260912T022024Z_a0e9f58e877e",
+  "ts_ns": 1789172424872930000,
+  "commit_sha": "a0e9f58e877ef286805ca8393eafe9b5695d95ff",
+  "certified_100": false,
+  "facts": {
+    "cert_1140": {
+      "http": 200,
+      "q": 3,
+      "replica_ids": [
+        "aws-node-3",
+        "ovh-node-1",
+        "ovh-node-2",
+        "ovh-node-4"
+      ],
+      "mac_in_cert": false
+    },
+    "cert_1141_http": 200,
+    "view_changes": {
+      "17": {
+        "http": 200,
+        "count": 4,
+        "ok": true
+      },
+      "18": {
+        "http": 200,
+        "count": 4,
+        "ok": true
+      },
+      "19": {
+        "http": 200,
+        "count": 0,
+        "ok": false
+      }
+    },
+    "ssh_journal_aws3": "NOT_REACHABLE_port22_timeout",
+    "ssh_journal_ovh1": "NOT_REACHABLE_port22_timeout"
+  },
+  "hypotheses": {
+    "mac_plus_n4_caused_stall": {
+      "status": "NOT_ESTABLISHED",
+      "why": "cert 1140 already Q=3 with only aws3+ovh1+ovh2+ovh4 (no Mac). No prepared/cert for 1141 before probe. No automatic VC 18+ for 30h. Primary can propose 1141 extending public tip. artcb.me public memo fails 409 not_extending due to private suffix desync."
+    },
+    "private_suffix_blocks_public_via_ovh1": {
+      "status": "ESTABLISHED_FOR_CURRENT_FAILURE_MODE",
+      "why": "client_request_failed:409:not_extending when constructing from ovh1 total tip"
+    },
+    "no_automatic_view_change_on_idle": {
+      "status": "ESTABLISHED_OBSERVATION",
+      "why": "view stayed 17 with zero VC for views>=18 until manual R327 VC; then VC+NV worked"
+    }
+  },
+  "liveness_probe": {
+    "artcb_me_public_memo": {
+      "http": 409,
+      "detail": {
+        "detail": "Block append failed: client_request_failed:409:not_extending"
+      }
+    },
+    "manual_vc_and_1141": {
+      "note": "R327 live: manual VIEW-CHANGE→18 + NEW-VIEW (primary ovh-node-4) + propose/prepare/commit produced cert seq=1141 digest 32a80547… ; wrote=true on n2/n3/n4 ; wrote=false on ovh1 (private suffix).",
+      "public_tip_after": {
+        "ovh-node-1": {
+          "status_http": 200,
+          "public_last_index": 1140,
+          "public_last_hash": "013f327cb76bef8b",
+          "height_total": 1906,
+          "view": 18,
+          "primary": "ovh-node-4"
+        },
+        "ovh-node-2": {
+          "status_http": 200,
+          "public_last_index": 1141,
+          "public_last_hash": "32a80547dbbfb693",
+          "height_total": 1142,
+          "view": 18,
+          "primary": "ovh-node-4"
+        },
+        "aws-node-3": {
+          "status_http": 200,
+          "public_last_index": 1141,
+          "public_last_hash": "32a80547dbbfb693",
+          "height_total": 1142,
+          "view": 18,
+          "primary": "ovh-node-4"
+        },
+        "ovh-node-4": {
+          "status_http": 200,
+          "public_last_index": 1141,
+          "public_last_hash": "32a80547dbbfb693",
+          "height_total": 1142,
+          "view": 18,
+          "primary": "ovh-node-4"
+        }
+      }
+    }
+  },
+  "status_now": {
+    "ovh-node-1": {
+      "status_http": 200,
+      "public_last_index": 1140,
+      "public_last_hash": "013f327cb76bef8b",
+      "height_total": 1906,
+      "view": 18,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-2": {
+      "status_http": 200,
+      "public_last_index": 1141,
+      "public_last_hash": "32a80547dbbfb693",
+      "height_total": 1142,
+      "view": 18,
+      "primary": "ovh-node-4"
+    },
+    "aws-node-3": {
+      "status_http": 200,
+      "public_last_index": 1141,
+      "public_last_hash": "32a80547dbbfb693",
+      "height_total": 1142,
+      "view": 18,
+      "primary": "ovh-node-4"
+    },
+    "ovh-node-4": {
+      "status_http": 200,
+      "public_last_index": 1141,
+      "public_last_hash": "32a80547dbbfb693",
+      "height_total": 1142,
+      "view": 18,
+      "primary": "ovh-node-4"
+    }
+  },
+  "actions": [
+    "Do not wipe OVH1 private suffix (forensic).",
+    "Do not remove Mac from n solely to unblock — formalize observer later with evidence.",
+    "Fix public construct + client-request to use public tip (code).",
+    "Add/verify automatic view-change timer on primary idle / stuck propose.",
+    "Separate investigation: why no public client requests completed after 1140 until R327.",
+    "Hole 717 remains PRODUCTION_CONTINUITY_GAP — never invent."
+  ],
+  "dur_ns": 5279780827
+}

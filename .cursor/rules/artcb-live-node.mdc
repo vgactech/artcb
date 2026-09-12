@@ -128,3 +128,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 64. **R325 parallele (2026-09-12T01:55:00Z).** Runtime SHA≠tip; mint original content-addressed; hard B=hop1 local (publisher non kill); 716=incident continuite. CERTIFIED_100=false.
 
 65. **R326 tip diverge P0 (2026-09-12T02:05:00Z).** height total ≠ tip public; private suffix ovh1. CERTIFIED_100=false.
+
+66. **R327 causal stall (2026-09-12T02:30:00Z).** not_extending private≠public tip; VC manuel OK; Mac cause NOT_ESTABLISHED. CERTIFIED_100=false.

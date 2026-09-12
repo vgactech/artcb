@@ -423,7 +423,19 @@ def pbft_client_request(body: ClientRequestBody, request: Request) -> dict:
         idx = int(block.get("index", -1))
     except (TypeError, ValueError):
         idx = -1
-    if idx != int(state.chain.height()) or str(block.get("prev_hash") or "") != str(state.chain.last_hash() or ""):
+    # R327 2026-09-12T02:25:00Z — validate extension against public tip, not total height
+    # (private suffix on another replica must not poison primary not_extending checks).
+    split = state.chain.tip_public_private()
+    if split.get("public_found") and split.get("public_last_hash"):
+        try:
+            expected_idx = int(split["public_last_index"]) + 1
+        except (TypeError, ValueError):
+            expected_idx = int(state.chain.height())
+        expected_prev = str(split["public_last_hash"])
+    else:
+        expected_idx = int(state.chain.height())
+        expected_prev = str(state.chain.last_hash() or "")
+    if idx != expected_idx or str(block.get("prev_hash") or "") != expected_prev:
         raise HTTPException(status_code=409, detail="not_extending")
     if str(block.get("visibility") or "") != "public":
         raise HTTPException(status_code=409, detail="not_public")
