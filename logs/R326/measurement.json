@@ -1,0 +1,205 @@
+{
+  "measurement_id": "R326_20260912T015951Z_a79685493370",
+  "ts_ns": 1789171191489606000,
+  "commit_sha": "a7968549337064c5bea28baa79e0542d3c226901",
+  "certified_100": false,
+  "seeds": {
+    "https://artcb.me": {
+      "base": "https://artcb.me",
+      "health_http": 200,
+      "status_http": 200,
+      "view_http": 200,
+      "git_sha12": "a79685493370",
+      "height": 1855,
+      "last_index": 1853,
+      "last_hash": "9ed12a5fb509818d25884d66b4297bea193534076172592a0d23dc3b86c6e520",
+      "last_timestamp": "2026-09-11T23:59:26Z",
+      "public_tip_match_1140": false,
+      "pbft": {
+        "view": 17,
+        "primary": "aws-node-3",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "ovh-node-1",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "anon_idxs": [
+        1135,
+        1136,
+        1137,
+        1138,
+        1139,
+        1140
+      ]
+    },
+    "https://n2.artcb.me": {
+      "base": "https://n2.artcb.me",
+      "health_http": 200,
+      "status_http": 200,
+      "view_http": 200,
+      "git_sha12": "a79685493370",
+      "height": 1141,
+      "last_index": 1140,
+      "last_hash": "013f327cb76bef8bd50f09935850452fc3c8bae1be7c7128f92f1ad835595539",
+      "last_timestamp": "2026-09-10T19:21:46Z",
+      "public_tip_match_1140": true,
+      "pbft": {
+        "view": 17,
+        "primary": "aws-node-3",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "ovh-node-2",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "anon_idxs": [
+        1135,
+        1136,
+        1137,
+        1138,
+        1139,
+        1140
+      ]
+    },
+    "https://n3.artcb.me": {
+      "base": "https://n3.artcb.me",
+      "health_http": 200,
+      "status_http": 200,
+      "view_http": 200,
+      "git_sha12": "a79685493370",
+      "height": 1141,
+      "last_index": 1140,
+      "last_hash": "013f327cb76bef8bd50f09935850452fc3c8bae1be7c7128f92f1ad835595539",
+      "last_timestamp": "2026-09-10T19:21:46Z",
+      "public_tip_match_1140": true,
+      "pbft": {
+        "view": 17,
+        "primary": "aws-node-3",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "aws-node-3",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "anon_idxs": [
+        1135,
+        1136,
+        1137,
+        1138,
+        1139,
+        1140
+      ]
+    },
+    "https://n4.artcb.me": {
+      "base": "https://n4.artcb.me",
+      "health_http": 200,
+      "status_http": 200,
+      "view_http": 200,
+      "git_sha12": "a79685493370",
+      "height": 1141,
+      "last_index": 1140,
+      "last_hash": "013f327cb76bef8bd50f09935850452fc3c8bae1be7c7128f92f1ad835595539",
+      "last_timestamp": "2026-09-10T19:21:46Z",
+      "public_tip_match_1140": true,
+      "pbft": {
+        "view": 17,
+        "primary": "aws-node-3",
+        "n": 5,
+        "f": 1,
+        "q": 3,
+        "replica_id": "ovh-node-4",
+        "replicas": [
+          "ovh-node-1",
+          "ovh-node-2",
+          "aws-node-3",
+          "ovh-node-4",
+          "mac-node-local"
+        ]
+      },
+      "anon_idxs": [
+        1135,
+        1136,
+        1137,
+        1138,
+        1139,
+        1140
+      ]
+    }
+  },
+  "classification": {
+    "classic_pbft_split_brain_675_public": false,
+    "reason": "ovh1 height inflation is almost entirely visibility=private blocks without pbft_cert after public tip 1140; n2/n3/n4 public tip still 1140 hash 013f327cb76bef8b…",
+    "public_tip_aligned_at_1140": true,
+    "public_pbft_stalled_since": "2026-09-10T19:21:46Z",
+    "heights_raw": {
+      "https://artcb.me": 1855,
+      "https://n2.artcb.me": 1141,
+      "https://n3.artcb.me": 1141,
+      "https://n4.artcb.me": 1141
+    },
+    "severity_risks": [
+      "status.height conflates private+public → false split-brain alarms",
+      "duplicate block.index values in private suffix",
+      "717 still absent (PRODUCTION_CONTINUITY_GAP)",
+      "n4 intermittent 502",
+      "no new public pbft_cert after 1140"
+    ],
+    "verdict": "P0_STATUS_SEMANTICS_AND_PUBLIC_STALL",
+    "action": "Do not rewind/wipe. Report public_tip separately from total height. Investigate why public PBFT append stopped at 1140. Hole 716 remains secondary to public stall + private-only ovh1 growth."
+  },
+  "ovh1_after_1140": {
+    "private_blocks_seen": 710,
+    "public_blocks_seen": 0,
+    "with_pbft_cert": 0,
+    "without_pbft_cert": 710,
+    "duplicate_index_count": 231,
+    "note": "Auth Bearer required to see private suffix on ovh1"
+  },
+  "hole_http_anon": {
+    "716": {
+      "ovh1": 200,
+      "n2": 200,
+      "n3": 200
+    },
+    "717": {
+      "ovh1": 404,
+      "n2": 404,
+      "n3": 404
+    },
+    "1074": {
+      "ovh1": 200,
+      "n2": 200,
+      "n3": 200
+    },
+    "1140": {
+      "ovh1": 200,
+      "n2": 200,
+      "n3": 200
+    },
+    "1141": {
+      "ovh1": 404,
+      "n2": 404,
+      "n3": 404
+    }
+  },
+  "dur_ns": 8063991355
+}

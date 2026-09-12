@@ -126,3 +126,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 63. **R324 parallèle + fédération apex (2026-09-12T01:12:00Z).** Ne pas s'arrêter sur un seul axe. ~~endswith(".artcb.me")~~ barré pour skip peer. CERTIFIED_100=false.
 
 64. **R325 parallele (2026-09-12T01:55:00Z).** Runtime SHA≠tip; mint original content-addressed; hard B=hop1 local (publisher non kill); 716=incident continuite. CERTIFIED_100=false.
+
+65. **R326 tip diverge P0 (2026-09-12T02:05:00Z).** height total ≠ tip public; private suffix ovh1. CERTIFIED_100=false.

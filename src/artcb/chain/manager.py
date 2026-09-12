@@ -297,6 +297,61 @@ class ChainManager:
         self._book.ensure()
         return self._book.tip()
 
+    def tip_public_private(self, *, max_scan: int = 4096) -> dict:
+        """R326 2026-09-12T02:00:00Z — split total height vs last public tip.
+
+        Reverse-scan up to ``max_scan`` lines from the end. Private-only growth on
+        one seed must not be read as a PBFT public split-brain.
+        """
+        self._book.ensure()
+        total = self.height()
+        if total <= 0:
+            return {
+                "height_total": 0,
+                "public_last_line": -1,
+                "public_last_index": -1,
+                "public_last_hash": "0" * 64,
+                "public_last_timestamp": None,
+                "private_suffix_lines": 0,
+                "scanned": 0,
+            }
+        scanned = 0
+        public = None
+        for line in range(total - 1, -1, -1):
+            if scanned >= max_scan:
+                break
+            scanned += 1
+            blk = self._book.read_index(line)
+            if not isinstance(blk, dict):
+                continue
+            vis = str(blk.get("visibility") or "private").lower()
+            if vis == "public" or isinstance(blk.get("pbft_cert"), dict):
+                public = {"line": line, **blk}
+                break
+        if public is None:
+            tip = self.tip()
+            return {
+                "height_total": total,
+                "public_last_line": -1,
+                "public_last_index": -1,
+                "public_last_hash": tip.get("last_hash"),
+                "public_last_timestamp": tip.get("last_timestamp"),
+                "private_suffix_lines": total,
+                "scanned": scanned,
+                "public_found": False,
+            }
+        return {
+            "height_total": total,
+            "public_last_line": public["line"],
+            "public_last_index": public.get("index"),
+            "public_last_hash": public.get("hash"),
+            "public_last_timestamp": public.get("timestamp"),
+            "private_suffix_lines": (total - 1) - int(public["line"]),
+            "scanned": scanned,
+            "public_found": True,
+            "public_has_pbft_cert": isinstance(public.get("pbft_cert"), dict),
+        }
+
     def get_block(self, index: int) -> dict | None:
         self._book.ensure()
         return self._book.get_block(int(index))

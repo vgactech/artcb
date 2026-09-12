@@ -1978,3 +1978,13 @@ Axes (meme tour) :
 - D: byte + dictionary + fidelity (QH/QL/NEG/MOD); pluriel encore OPEN
 
 Bug mint: ~~α1 counter-only~~ → `∇{digest12}` (collisions ConceptID cross-run). CERTIFIED_100=false.
+
+
+## R326 — tip diverge P0 (2026-09-12T02:05:00Z)
+
+Hauteurs brutes artcb.me ~1855 vs n2/n3/n4 1141 **ne sont pas** un split-brain PBFT de 675 blocs publics.
+Mesure: tip public aligne @1140 `013f327c…` × seeds UP; suffixe ovh1 = blocs `visibility=private` **sans** pbft_cert.
+`/chain/status` expose desormais `public_last_*` + `private_suffix_lines`.
+Risques restants: PBFT public stall depuis 2026-09-10, trou 717, index prives dupliques, n4 502 intermittent.
+Publisher-death B hard (kill process) toujours non revendique. Pluriel → modifier PL.
+CERTIFIED_100=false. Jamais wipe/inventer 717.

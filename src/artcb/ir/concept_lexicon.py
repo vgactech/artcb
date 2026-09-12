@@ -228,6 +228,25 @@ MODIFIER_ALIASES: dict[str, str] = {
     "does not": "NEG",
     "cannot": "NEG",
     "can't": "NEG",
+    # R326 2026-09-12T02:05:00Z — grammatical number (pluriel ≠ intensité QH)
+    "voitures": "PL",
+    "cars": "PL",
+    "coches": "PL",
+    "carros": "PL",
+    "autos": "PL",
+    "automobiles": "PL",
+    "automóveis": "PL",
+    "automóviles": "PL",
+    "automobili": "PL",
+    "vehicules": "PL",
+    "véhicules": "PL",
+    "vehicles": "PL",
+    "vehículos": "PL",
+    "veículos": "PL",
+    "veicoli": "PL",
+    "машины": "PL",
+    "автомобили": "PL",
+    "车辆": "PL",
 }
 
 # Classification keywords — keep French originals and add EN/ES.

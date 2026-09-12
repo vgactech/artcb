@@ -133,3 +133,13 @@ def test_r324_fidelity_beaucoup_neq_peu() -> None:
     assert L4_K in hi
     assert L4_K_LOW in lo
     assert set(hi) != set(lo)
+
+
+def test_r326_fidelity_pluriel_neq_singulier() -> None:
+    """R326: grammatical number must not collapse into intensity-only bag."""
+    sg = [concept_id_from_node(n) for n in IREncoder().encode(L4_PHRASES["fr"]).nodes]
+    pl = [
+        concept_id_from_node(n)
+        for n in IREncoder().encode("Les voitures consomment beaucoup d'énergie.").nodes
+    ]
+    assert set(sg) != set(pl)

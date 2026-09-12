@@ -507,9 +507,13 @@ def chain_status(request: Request, verify: int = Query(0, ge=0, le=1)) -> dict:
 
     Default is O(1) tip + last-block hash. Full file verify is ``?verify=1``
     or GET /chain/verify (rapport 256: do not scan the book for status).
+
+    R326 2026-09-12T02:00:00Z — also reports ``public_*`` vs ``height`` total so
+    private-only suffixes are not misread as PBFT tip divergence.
     """
     state = _state(request)
     tip = state.chain.tip()
+    split = state.chain.tip_public_private()
     if verify:
         valid = bool(state.chain.verify().get("valid", False))
         mode = "full"
@@ -524,6 +528,13 @@ def chain_status(request: Request, verify: int = Query(0, ge=0, le=1)) -> dict:
         "last_index": tip.get("last_index", -1),
         "chain_valid": valid,
         "verify_mode": mode,
+        "height_total": split.get("height_total"),
+        "public_last_index": split.get("public_last_index"),
+        "public_last_hash": split.get("public_last_hash"),
+        "public_last_timestamp": split.get("public_last_timestamp"),
+        "private_suffix_lines": split.get("private_suffix_lines"),
+        "public_found": split.get("public_found"),
+        "public_has_pbft_cert": split.get("public_has_pbft_cert"),
     }
 
 
