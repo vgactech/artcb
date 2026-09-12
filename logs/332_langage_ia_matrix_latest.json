@@ -1,6 +1,6 @@
 {
-  "ts_ns": 1789253291850962000,
-  "dur_ns": 37368235000,
+  "ts_ns": 1789256933263188000,
+  "dur_ns": 39312448000,
   "certified_100": false,
   "langage_ia_final": false,
   "verdict": {
@@ -51,24 +51,24 @@
   },
   "ledger_anchor": {
     "status": "PASS",
-    "memo_block_index": 1154,
-    "memo_block_hash": "75e1be12f5f5aab7",
+    "memo_block_index": 1160,
+    "memo_block_hash": "de3d29f2a0fd1b02",
     "tips": {
       "https://artcb.me": {
-        "public_last_index": 1154,
-        "public_last_hash": "75e1be12f5f5aab7"
+        "public_last_index": 1160,
+        "public_last_hash": "de3d29f2a0fd1b02"
       },
       "https://n2.artcb.me": {
-        "public_last_index": 1154,
-        "public_last_hash": "75e1be12f5f5aab7"
+        "public_last_index": 1160,
+        "public_last_hash": "de3d29f2a0fd1b02"
       },
       "https://n3.artcb.me": {
-        "public_last_index": 1154,
-        "public_last_hash": "75e1be12f5f5aab7"
+        "public_last_index": 1160,
+        "public_last_hash": "de3d29f2a0fd1b02"
       },
       "https://n4.artcb.me": {
-        "public_last_index": 1154,
-        "public_last_hash": "75e1be12f5f5aab7"
+        "public_last_index": 1160,
+        "public_last_hash": "de3d29f2a0fd1b02"
       }
     },
     "tips_equal": true
@@ -102,7 +102,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 149542320,
+          "dur_ns": 264077247,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -116,7 +116,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 345565898,
+          "dur_ns": 170293482,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -130,7 +130,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 191180149,
+          "dur_ns": 181706648,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -147,7 +147,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 171927022,
+          "dur_ns": 249011112,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -161,7 +161,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 159421945,
+          "dur_ns": 186460869,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -175,7 +175,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 117754324,
+          "dur_ns": 198184005,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -191,7 +191,7 @@
         "ids": [
           "K8e49ad3e63c7bd0c"
         ],
-        "dur_ns": 127539479,
+        "dur_ns": 287161783,
         "raw_keys": [
           "concept_ids",
           "lexicon",
@@ -210,7 +210,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 126817231,
+          "dur_ns": 275713689,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -224,7 +224,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 169117021,
+          "dur_ns": 149090629,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -238,7 +238,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 187564708,
+          "dur_ns": 125814160,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -255,7 +255,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 128799739,
+          "dur_ns": 152891942,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -269,7 +269,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 136575988,
+          "dur_ns": 133881948,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -283,7 +283,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 142329824,
+          "dur_ns": 132150319,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -299,7 +299,7 @@
         "ids": [
           "K8e49ad3e63c7bd0c"
         ],
-        "dur_ns": 164699151,
+        "dur_ns": 114126862,
         "raw_keys": [
           "concept_ids",
           "lexicon",
@@ -318,7 +318,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 155221540,
+          "dur_ns": 156936650,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -332,7 +332,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 241332407,
+          "dur_ns": 136682483,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -346,7 +346,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 145548423,
+          "dur_ns": 183764710,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -363,7 +363,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 1116561316,
+          "dur_ns": 134996720,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -377,7 +377,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 102340904,
+          "dur_ns": 148385700,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -391,7 +391,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 97965695,
+          "dur_ns": 149195718,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -407,7 +407,7 @@
         "ids": [
           "K8e49ad3e63c7bd0c"
         ],
-        "dur_ns": 125138164,
+        "dur_ns": 166956859,
         "raw_keys": [
           "concept_ids",
           "lexicon",
@@ -426,7 +426,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 208478956,
+          "dur_ns": 182905852,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -440,7 +440,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 138733267,
+          "dur_ns": 183418256,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -454,7 +454,7 @@
           "ids": [
             "Kc55d3ab3505178da"
           ],
-          "dur_ns": 142207263,
+          "dur_ns": 166264765,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -471,7 +471,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 139209980,
+          "dur_ns": 219087462,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -485,7 +485,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 143772425,
+          "dur_ns": 183436087,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -499,7 +499,7 @@
           "ids": [
             "K3e7dc01c5cf83cd8"
           ],
-          "dur_ns": 136618029,
+          "dur_ns": 163831749,
           "raw_keys": [
             "concept_ids",
             "lexicon",
@@ -515,7 +515,7 @@
         "ids": [
           "K8e49ad3e63c7bd0c"
         ],
-        "dur_ns": 146205064,
+        "dur_ns": 172887784,
         "raw_keys": [
           "concept_ids",
           "lexicon",
@@ -542,5 +542,5 @@
     },
     "universal_overlap": 0
   },
-  "sha256_report": "dd5537f57fefe6f97f90996629782af89b6c2fbd59ff5b0963b7542f121aefb9"
+  "sha256_report": "9eb93a666830d15de228fbc792f9c3d02ee6f77bea360c9324d8156a03dc0f63"
 }

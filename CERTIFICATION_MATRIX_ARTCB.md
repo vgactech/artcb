@@ -81,3 +81,13 @@ Artefacts: `logs/277_issue77_20260912T212653Z.json`, `logs/R331/measurement.json
 | R332 Rule Telemetry | compteurs règles | NOT_STARTED | design ChatGPT — pas moteur |
 | CERTIFIED_100 | — | **false** | langage_ia_final=false |
 
+## R333 append (2026-09-12T23:50:00Z) — ReasoningID + parallèle
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R333/R-01 | CanonicalReasoning / ReasoningID | PASS_PARTIAL | T1/T3/T4 ; texte≠identité ; ancre 1158 |
+| R333 #77 | rejoué SHA `598e43a` | PASS partiel | N04/TPM/C04 ouverts |
+| R333 #86 | tip/VC/restart/pollution | PASS | ORG body ACL ouvert |
+| R333 langage | matrix + C2-D | PASS partiel | fan-out 401 |
+| CERTIFIED_100 | — | **false** | — |
+

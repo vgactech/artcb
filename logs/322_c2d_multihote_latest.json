@@ -1,5 +1,5 @@
 {
-  "ts_ns": 1789253010934126000,
+  "ts_ns": 1789256934581348000,
   "certified_100": false,
   "publisher": "https://artcb.me",
   "hosts": {
@@ -10,7 +10,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "e2537c99d8a0de9276c5bd1bd32765ac0da07e09",
+        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -97,15 +97,15 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "e2537c99d8a0",
+      "git_sha": "598e43a7402b",
       "publish": {
         "graphs": 1,
-        "bundle_sha256": "b50270fb52c3009d42c2ec1dfc9113f1171605d513db993d5f8e093c74bf6ce0"
+        "bundle_sha256": "ab3b8781d96dab5ea97fdc10d52c12daffef78a00ca2f2852881b167684e3257"
       },
       "publish_ok": true,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "2fb2bd41d3d608550d71d75dc5ad12088276b0166787863ad262682ca06e281d",
+        "bundle_sha256": "c99dbabfbdc02f19bf6e5440fc486c3cbcd4abfa89a26b43737b7e29e337ec26",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -124,7 +124,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "e2537c99d8a0de9276c5bd1bd32765ac0da07e09",
+        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -211,7 +211,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "e2537c99d8a0",
+      "git_sha": "598e43a7402b",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -220,7 +220,7 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "def6a7446580ae2083aa626713cc3922aa1351bd2c455b854650d3b3dc96d590",
+        "bundle_sha256": "96a69d967997c42d2623141fb2594a24f6578ab5aa25b258969a778e1f9f9325",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -239,7 +239,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "e2537c99d8a0de9276c5bd1bd32765ac0da07e09",
+        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -326,7 +326,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "e2537c99d8a0",
+      "git_sha": "598e43a7402b",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -335,7 +335,7 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "a1e524bb18ba7ec9051b6a885529fe612daa5574d2774dae9b5122b14d24bf2b",
+        "bundle_sha256": "bef8a5b03a1e1d2804754d70ac1120ff49a164c064b89775dde35b233bf13439",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -354,7 +354,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "e2537c99d8a0de9276c5bd1bd32765ac0da07e09",
+        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -441,7 +441,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "e2537c99d8a0",
+      "git_sha": "598e43a7402b",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -450,7 +450,7 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "a1e524bb18ba7ec9051b6a885529fe612daa5574d2774dae9b5122b14d24bf2b",
+        "bundle_sha256": "bef8a5b03a1e1d2804754d70ac1120ff49a164c064b89775dde35b233bf13439",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -469,7 +469,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "e2537c99d8a0de9276c5bd1bd32765ac0da07e09",
+        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -556,15 +556,15 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "e2537c99d8a0",
+      "git_sha": "598e43a7402b",
       "publish": {
         "graphs": 1,
-        "bundle_sha256": "b50270fb52c3009d42c2ec1dfc9113f1171605d513db993d5f8e093c74bf6ce0"
+        "bundle_sha256": "ab3b8781d96dab5ea97fdc10d52c12daffef78a00ca2f2852881b167684e3257"
       },
       "publish_ok": true,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "db58752f0b962a6d8d1ba2851b83322553778c83a2cb9d43f5e0df6c4975f243",
+        "bundle_sha256": "0a1bd0e3eeabc8b26023356b3a0578b169731c42a74f26e4750269cbbbf6fac4",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -580,12 +580,12 @@
   "a": {
     "concept_ids": [
       "K05336c50b14ee52d",
-      "K10a531ddaa21aae1"
+      "K3993f036c69d06bc"
     ],
-    "graph_id": "g_fcae9f959635",
-    "packet_sha256": "7a8d80a2dc7cbe1a82b7579d2f6cd7163c752f9cf3703c90474dd181fbf989f8",
-    "bundle_sha256": "b50270fb52c3009d42c2ec1dfc9113f1171605d513db993d5f8e093c74bf6ce0",
-    "bundle_bytes": 550
+    "graph_id": "g_541a48bd764a",
+    "packet_sha256": "9eb5009c6d1e83f35562f86c20bc2a76270f40394c42e47ff1b78f817eab7c91",
+    "bundle_sha256": "ab3b8781d96dab5ea97fdc10d52c12daffef78a00ca2f2852881b167684e3257",
+    "bundle_bytes": 547
   },
   "keys_present": {
     "ovh-node-1": true,
@@ -606,7 +606,7 @@
   "summary": {
     "healthy_hosts": 5,
     "unique_git_shas": [
-      "e2537c99d8a0"
+      "598e43a7402b"
     ],
     "sha_aligned_5": true,
     "publish_ok_hosts": 2,
@@ -621,6 +621,6 @@
       "seed hole after 716 still blocks Mac tip catch-up (not invented)",
       "CERTIFIED_100 remains false"
     ],
-    "dur_ns": 5990829898
+    "dur_ns": 6666350312
   }
 }

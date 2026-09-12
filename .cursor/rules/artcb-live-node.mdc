@@ -140,3 +140,6 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 70. **R332 ingest sélectif des collages (2026-09-12T22:50:00Z).** Règle 16 reste : `/tmp/artcb_turn_prompt.txt` = `user_query` **brut intégral**. En plus : classer RÉPÉTÉ vs NOUVEAU via `scripts/artcb_ingest_new_only.py` → `/tmp/artcb_turn_prompt_new_only.txt` + mémo `operator_turn_new_only`. Interdit de ré-encoder un audit ChatGPT déjà scellé (R328–R331 / matrice) comme fait nouveau. **Langage IA** = chantier parallèle non abandonné quand un autre Rxxx avance.
+
+
+71. **R333 ReasoningID canonique (2026-09-12T23:50:00Z).** Le texte humain (FR/EN/ZH…) est une **vue**, jamais l’identité du raisonnement. Identité = `CanonicalReasoning` / `ReasoningID` dérivé des ConceptID IR (`src/artcb/reasoning/canonical.py`). Interdit de revendiquer égalité du CoT privé modèle. Round-trip traducteur FR↔EN↔canonical = NOT_PROVEN tant que non mesuré. Nouveau chantier R-01 **s’ajoute** ; ne ferme pas #77/#86/langage.

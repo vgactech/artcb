@@ -1,7 +1,7 @@
 {
-  "measurement_id": "R331_20260912T232828Z_6627d05ce79b",
-  "ts_ns": 1789248508997276000,
-  "commit_sha": "6627d05ce79b17888c2788c2cd92055f9af0d637",
+  "measurement_id": "R331_20260913T014558Z_598e43a7402b",
+  "ts_ns": 1789256758567909000,
+  "commit_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
   "certified_100": false,
   "issues": {
     "77": "OPEN_until_live277",
@@ -10,11 +10,12 @@
   "orgs": {
     "ovh-node-1": {
       "http": 200,
-      "count": 3,
+      "count": 4,
       "hashes": [
         "4d64e1f7cb402296",
         "7966e97361216a6f",
-        "c8011e65cf7066f4"
+        "c8011e65cf7066f4",
+        "f69ef13fb5f3c280"
       ],
       "leak_founder": false
     },
@@ -40,11 +41,12 @@
   "org_body_multinode": {
     "pass": false,
     "note": "export_requires_session_controller",
-    "ovh1_org_count": 3,
+    "ovh1_org_count": 4,
     "ovh1_hashes": [
       "4d64e1f7cb402296",
       "7966e97361216a6f",
-      "c8011e65cf7066f4"
+      "c8011e65cf7066f4",
+      "f69ef13fb5f3c280"
     ],
     "ovh2_org_count": 0,
     "ovh2_hashes": [],
@@ -56,48 +58,48 @@
   },
   "pollution": {
     "before": {
-      "ovh-node-1": 1148,
-      "ovh-node-2": 1148,
-      "aws-node-3": 1148,
-      "ovh-node-4": 1148
+      "ovh-node-1": 1158,
+      "ovh-node-2": 1158,
+      "aws-node-3": 1158,
+      "ovh-node-4": 1158
     },
     "after_private_memo": {
-      "ovh-node-1": 1148,
-      "ovh-node-2": 1148,
-      "aws-node-3": 1148,
-      "ovh-node-4": 1148
+      "ovh-node-1": 1158,
+      "ovh-node-2": 1158,
+      "aws-node-3": 1158,
+      "ovh-node-4": 1158
     },
     "private_memo": {
       "http": 200,
-      "block_index": 2131
+      "block_index": 2171
     },
     "public_memo": {
       "http": 200,
-      "block_index": 1149,
-      "hash": "17b55baf69ed0b93"
+      "block_index": 1159,
+      "hash": "e4fe40f64cad68cd"
     },
     "after": {
       "ovh-node-1": {
-        "public_last_index": 1149,
-        "public_last_hash": "17b55baf69ed0b93",
-        "private_suffix_lines": 1403,
+        "public_last_index": 1159,
+        "public_last_hash": "e4fe40f64cad68cd",
+        "private_suffix_lines": 1465,
         "ledger_mode": "split_v1"
       },
       "ovh-node-2": {
-        "public_last_index": 1149,
-        "public_last_hash": "17b55baf69ed0b93",
+        "public_last_index": 1159,
+        "public_last_hash": "e4fe40f64cad68cd",
         "private_suffix_lines": 358,
         "ledger_mode": "split_v1"
       },
       "aws-node-3": {
-        "public_last_index": 1149,
-        "public_last_hash": "17b55baf69ed0b93",
+        "public_last_index": 1159,
+        "public_last_hash": "e4fe40f64cad68cd",
         "private_suffix_lines": 358,
         "ledger_mode": "split_v1"
       },
       "ovh-node-4": {
-        "public_last_index": 1149,
-        "public_last_hash": "17b55baf69ed0b93",
+        "public_last_index": 1159,
+        "public_last_hash": "e4fe40f64cad68cd",
         "private_suffix_lines": 358,
         "ledger_mode": "split_v1"
       }
@@ -107,13 +109,13 @@
     "tips_equal": true
   },
   "auto_vc": {
-    "from_view": 21,
-    "to_view": 22,
+    "from_view": 22,
+    "to_view": 23,
     "plan": {
       "ok": true,
-      "from_view": 21,
-      "target_view": 22,
-      "primary": "aws-node-3",
+      "from_view": 22,
+      "target_view": 23,
+      "primary": "ovh-node-4",
       "skipped": [],
       "reachable_http_ids": [
         "ovh-node-1",
@@ -122,8 +124,8 @@
         "ovh-node-4"
       ]
     },
-    "expected_primary": "aws-node-3",
-    "primary_of_check": "aws-node-3",
+    "expected_primary": "ovh-node-4",
+    "primary_of_check": "ovh-node-4",
     "vc_rows_collected": 4,
     "emits": {
       "ovh-node-1": {
@@ -190,25 +192,25 @@
         "ok": true,
         "detail": null
       },
-      "ovh-node-4": {
+      "aws-node-3": {
         "http": 200,
         "ok": true,
         "detail": null
       }
     },
-    "view_after": 22,
-    "primary_after": "aws-node-3",
-    "dur_ns": 40537520500,
+    "view_after": 23,
+    "primary_after": "ovh-node-4",
+    "dur_ns": 75896849411,
     "pass_auto_vc": true
   },
   "mac_restart": {
     "attempted": true,
     "ok": true,
     "print_rc": 0,
-    "before_sha": "6627d05ce79b",
+    "before_sha": "598e43a7402b",
     "before_public": 716,
     "after_http": 200,
-    "after_sha": "6627d05ce79b",
+    "after_sha": "598e43a7402b",
     "after_public": 716,
     "public_preserved": true
   },

@@ -1,0 +1,32 @@
+{
+  "measurement_id": "R333_20260913T014427Z_598e43a7402b",
+  "ts_ns": 1789256667639301000,
+  "dur_ns": 33333065181,
+  "commit_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
+  "certified_100": false,
+  "claims": {
+    "private_model_cot_equal": false,
+    "human_text_is_canonical": false,
+    "canonical_is_conceptid_bag": true
+  },
+  "T1_determinism": true,
+  "T3_multilingual": {
+    "same_reasoning_id": true,
+    "intersection_nonempty": true,
+    "unique_ids": [
+      "Ra3bdb58002a05393"
+    ],
+    "concept_intersection": [
+      "K493b83061fa228b9"
+    ]
+  },
+  "T4_different_premises": true,
+  "views_text_hashes_distinct": true,
+  "anchor": {
+    "http": 200,
+    "block_index": 1158,
+    "block_hash": "53a01704d9c4730f"
+  },
+  "pass_partial": true,
+  "note": "PASS_PARTIAL \u2260 CERTIFIED_100; no FR\u2194EN translator round-trip claimed"
+}
