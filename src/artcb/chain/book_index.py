@@ -38,6 +38,8 @@ class BookIndex:
         self.meta_path = self.blocks_path.with_name(self.blocks_path.name + ".off.meta")
         self._offsets: list[int] = []
         self._graph_index: dict[str, int] = {}
+        # R328 2026-09-12T19:05:00Z — consensus index → line (holes/duplicates safe lookups).
+        self._by_consensus: dict[int, int] = {}
         self._meta: dict[str, Any] = {}
         self._issued_satoshi = 0
         self._recent_ts: list[str] = []
@@ -58,9 +60,16 @@ class BookIndex:
             if len(offsets) == int(meta.get("count") or 0):
                 self._offsets = offsets
                 self._graph_index = {str(k): int(v) for k, v in (meta.get("graphs") or {}).items()}
+                self._by_consensus = {
+                    int(k): int(v) for k, v in (meta.get("by_consensus") or {}).items()
+                }
                 self._meta = meta
                 self._issued_satoshi = int(meta.get("issued_satoshi") or 0)
                 self._recent_ts = [str(t) for t in (meta.get("recent_ts") or [])][-13:]
+                # Older meta without by_consensus → full rebuild once.
+                if size > 0 and not self._by_consensus and int(meta.get("count") or 0) > 0:
+                    self.rebuild()
+                    return
                 return
         self.rebuild()
 
@@ -70,6 +79,7 @@ class BookIndex:
         t0 = now_mono_ns()
         self._offsets = []
         self._graph_index = {}
+        self._by_consensus = {}
         self._issued_satoshi = 0
         self._recent_ts = []
         last: dict[str, Any] = {}
@@ -91,9 +101,18 @@ class BookIndex:
                     if not isinstance(row, dict):
                         continue
                     last = row
+                    line_no = len(self._offsets) - 1
+                    try:
+                        cidx = int(row.get("index"))
+                        # First wins — duplicate consensus indices stay forensic; public
+                        # ledger must not let a later private collide on lookup.
+                        if cidx not in self._by_consensus:
+                            self._by_consensus[cidx] = line_no
+                    except (TypeError, ValueError):
+                        pass
                     gid = str(row.get("graph_id") or "")
                     if gid and gid not in self._graph_index:
-                        self._graph_index[gid] = int(row.get("index") or len(self._offsets) - 1)
+                        self._graph_index[gid] = int(row.get("index") or line_no)
                     self._issued_satoshi += int(row.get("block_reward") or 0)
                     ts = row.get("timestamp")
                     if ts:
@@ -133,11 +152,20 @@ class BookIndex:
             "issued_satoshi": self._issued_satoshi,
             "recent_ts": self._recent_ts[-13:],
             "graphs": self._graph_index,
+            "by_consensus": {str(k): v for k, v in self._by_consensus.items()},
         }
         self.meta_path.write_text(json.dumps(self._meta, ensure_ascii=False), encoding="utf-8")
 
     def height(self) -> int:
         return len(self._offsets)
+
+    def get_by_consensus_index(self, consensus_index: int) -> dict[str, Any] | None:
+        """Lookup by block['index'], not physical line (R328)."""
+        self.ensure()
+        line = self._by_consensus.get(int(consensus_index))
+        if line is None:
+            return None
+        return self.read_index(int(line))
 
     def issued_satoshi(self) -> int:
         return int(self._issued_satoshi)
@@ -254,9 +282,16 @@ class BookIndex:
             self.rebuild()
             return
         self._offsets.append(offset)
+        line_no = len(self._offsets) - 1
+        try:
+            cidx = int(block.get("index"))
+            if cidx not in self._by_consensus:
+                self._by_consensus[cidx] = line_no
+        except (TypeError, ValueError):
+            pass
         gid = str(block.get("graph_id") or "")
         if gid and gid not in self._graph_index:
-            self._graph_index[gid] = int(block.get("index") or len(self._offsets) - 1)
+            self._graph_index[gid] = int(block.get("index") or line_no)
         self._issued_satoshi += int(block.get("block_reward") or 0)
         ts = block.get("timestamp")
         if ts:

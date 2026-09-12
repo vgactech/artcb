@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -313,4 +314,16 @@ def build_app_state() -> AppState:
         seed_known_nodes(p2p_peers, p2p_identity, settings.data_dir)
     except Exception as exc:  # noqa: BLE001 — discovery must never block API start
         logger.warning("seed_known_nodes failed: %s", type(exc).__name__)
+    # R328 2026-09-12T19:10:00Z — public tip stall watchdog (daemon; no wipe).
+    try:
+        from src.artcb.consensus.public_tip_watchdog import start_background
+
+        pbft_log = getattr(live_bft, "log", None) or getattr(protocol_engine, "pbft_log", None)
+        start_background(
+            chain,
+            local_base=os.environ.get("ARTCB_LOCAL_BASE") or "http://127.0.0.1:8000",
+            pbft_log=pbft_log,
+        )
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("public_tip_watchdog start skipped: %s", type(exc).__name__)
     return state

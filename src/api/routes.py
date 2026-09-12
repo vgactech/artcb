@@ -535,6 +535,10 @@ def chain_status(request: Request, verify: int = Query(0, ge=0, le=1)) -> dict:
         "private_suffix_lines": split.get("private_suffix_lines"),
         "public_found": split.get("public_found"),
         "public_has_pbft_cert": split.get("public_has_pbft_cert"),
+        "ledger_mode": split.get("ledger_mode"),
+        "public_height": split.get("public_height"),
+        "private_height": split.get("private_height"),
+        "legacy_preserved": split.get("legacy_preserved"),
     }
 
 

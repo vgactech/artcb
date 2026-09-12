@@ -12,6 +12,7 @@ from nacl import encoding, signing
 
 from src.artcb.chain import ffi
 from src.artcb.chain.book_index import BookIndex
+from src.artcb.chain.split_ledger import open_split_books
 from src.artcb.config import load_settings
 from src.artcb.crypto.hashing import sha3_256_hex
 from src.artcb.crypto.hybrid import sign_hybrid, verify_hybrid_and_or_window
@@ -177,6 +178,29 @@ class ChainManager:
         self.blocks_path = blocks_path
         self.blocks_path.parent.mkdir(parents=True, exist_ok=True)
         self._book = BookIndex(self.blocks_path)
+        # R328 2026-09-12T19:05:00Z — PublicLedger + PrivateLedger. Legacy jsonl is
+        # forensic archive only (never wiped). ~~height() as PBFT public sequence~~
+        # barred for public certified writes.
+        import os as _os
+
+        self._split_enabled = str(_os.environ.get("ARTCB_SPLIT_LEDGER", "1")).strip() not in (
+            "0",
+            "false",
+            "False",
+            "no",
+        )
+        self._public_book: BookIndex | None = None
+        self._private_book: BookIndex | None = None
+        self._split_report: dict = {}
+        if self._split_enabled:
+            try:
+                pub, priv, report = open_split_books(self.blocks_path)
+                self._public_book = pub
+                self._private_book = priv
+                self._split_report = report
+            except Exception as exc:  # noqa: BLE001
+                logger.warning("R328 split ledger init failed, legacy-only: %s", exc)
+                self._split_enabled = False
         self.key_path = key_path or (settings.data_dir / "chain.key")
         self._pqc_key_path = self.key_path.with_suffix(".pqc")
         self._signing_key, self._pqc_secret_key, self._pqc_public_key = self._load_or_create_keys()
@@ -193,6 +217,65 @@ class ChainManager:
             self.anti_sybil = None
             self.slashing = None
             logger.warning("Security modules DISABLED")
+
+    def _split_active(self) -> bool:
+        return bool(self._split_enabled and self._public_book is not None and self._private_book is not None)
+
+    def public_book(self) -> BookIndex:
+        if self._public_book is None:
+            raise RuntimeError("public_book_unavailable")
+        return self._public_book
+
+    def private_book(self) -> BookIndex:
+        if self._private_book is None:
+            raise RuntimeError("private_book_unavailable")
+        return self._private_book
+
+    def _public_tip_fields(self) -> tuple[int, str]:
+        """Return (public_last_index, public_last_hash) for consensus sequencing."""
+        if self._split_active():
+            self._public_book.ensure()  # type: ignore[union-attr]
+            tip = self._public_book.tip()  # type: ignore[union-attr]
+            last_idx = tip.get("last_index")
+            try:
+                idx = int(last_idx) if last_idx is not None else -1
+            except (TypeError, ValueError):
+                idx = -1
+            if tip.get("height", 0) <= 0 or idx < 0:
+                return -1, GENESIS_PREV_HASH
+            return idx, str(tip.get("last_hash") or GENESIS_PREV_HASH)
+        split = self.tip_public_private()
+        if split.get("public_found") and split.get("public_last_hash"):
+            try:
+                return int(split["public_last_index"]), str(split["public_last_hash"])
+            except (TypeError, ValueError):
+                pass
+        return -1, GENESIS_PREV_HASH
+
+    def _private_tip_fields(self) -> tuple[int, str]:
+        if self._split_active():
+            self._private_book.ensure()  # type: ignore[union-attr]
+            tip = self._private_book.tip()  # type: ignore[union-attr]
+            if int(tip.get("height") or 0) <= 0:
+                return -1, GENESIS_PREV_HASH
+            try:
+                return int(tip.get("last_index")), str(tip.get("last_hash") or GENESIS_PREV_HASH)
+            except (TypeError, ValueError):
+                return -1, GENESIS_PREV_HASH
+        return self.height() - 1 if self.height() else -1, self.last_hash()
+
+    def _append_line_to_book(self, book: BookIndex, block: dict) -> None:
+        line = encode_jsonl_with_converged_size(block)
+        book.blocks_path.parent.mkdir(parents=True, exist_ok=True)
+        with book.blocks_path.open("a", encoding="utf-8") as handle:
+            handle.write(line + "\n")
+        book.note_appended(line, block)
+        try:
+            from src.artcb.chain.binary_log import append_record
+
+            append_record(book.blocks_path, block)
+        except Exception:
+            logger.debug("binary sidecar skipped", exc_info=True)
 
     def bind_identity(
         self,
@@ -302,7 +385,49 @@ class ChainManager:
 
         Reverse-scan up to ``max_scan`` lines from the end. Private-only growth on
         one seed must not be read as a PBFT public split-brain.
+
+        R328 2026-09-12T19:05:00Z — when split ledgers are active, public tip comes
+        from ``public/blocks.jsonl`` (not mixed-file reverse scan).
         """
+        if self._split_active():
+            self._public_book.ensure()  # type: ignore[union-attr]
+            self._private_book.ensure()  # type: ignore[union-attr]
+            self._book.ensure()
+            pub_tip = self._public_book.tip()  # type: ignore[union-attr]
+            priv_h = int(self._private_book.height())  # type: ignore[union-attr]
+            legacy_h = int(self._book.height())
+            pub_h = int(pub_tip.get("height") or 0)
+            if pub_h <= 0:
+                return {
+                    "height_total": legacy_h if legacy_h else priv_h,
+                    "public_last_line": -1,
+                    "public_last_index": -1,
+                    "public_last_hash": GENESIS_PREV_HASH,
+                    "public_last_timestamp": None,
+                    "private_suffix_lines": priv_h,
+                    "private_height": priv_h,
+                    "public_height": 0,
+                    "scanned": 0,
+                    "public_found": False,
+                    "ledger_mode": "split_v1",
+                    "split_report": dict(self._split_report or {}),
+                }
+            return {
+                "height_total": legacy_h if legacy_h else (pub_h + priv_h),
+                "public_last_line": pub_h - 1,
+                "public_last_index": pub_tip.get("last_index"),
+                "public_last_hash": pub_tip.get("last_hash"),
+                "public_last_timestamp": pub_tip.get("last_timestamp"),
+                "private_suffix_lines": priv_h,
+                "private_height": priv_h,
+                "public_height": pub_h,
+                "scanned": 0,
+                "public_found": True,
+                "public_has_pbft_cert": True,
+                "ledger_mode": "split_v1",
+                "split_report": dict(self._split_report or {}),
+                "legacy_preserved": True,
+            }
         self._book.ensure()
         total = self.height()
         if total <= 0:
@@ -403,9 +528,28 @@ class ChainManager:
         limit: int | None = None,
     ) -> list[dict]:
         start = max(0, int(from_index or 0))
+        # R328 — prefer split ledgers for visibility-filtered reads.
+        if self._split_active() and visibility == "public":
+            out: list[dict] = []
+            for block in self.public_book().iter_blocks(from_index=start):
+                if group_id and block.get("group_id") != group_id:
+                    continue
+                out.append(block)
+                if limit is not None and len(out) >= int(limit):
+                    break
+            return out
+        if self._split_active() and visibility == "private":
+            out = []
+            for block in self.private_book().iter_blocks(from_index=start):
+                if group_id and block.get("group_id") != group_id:
+                    continue
+                out.append(block)
+                if limit is not None and len(out) >= int(limit):
+                    break
+            return out
         if start == 0 and limit is None and not visibility and not group_id:
             return self._read_all_blocks()
-        out: list[dict] = []
+        out = []
         for block in self.iter_blocks(from_index=start):
             if visibility and block.get("visibility") != visibility:
                 continue
@@ -512,21 +656,52 @@ class ChainManager:
                 )
                 return False
             # Sidecar: hash does not include pbft_cert. Binding is (seq, digest==hash).
-        existing = self.get_block(idx)
-        if existing is not None:
-            held = str(existing.get("hash") or "")
-            offered = str(block.get("hash") or "")
-            if held and offered and held != offered:
-                record_reject(
-                    self.blocks_path,
-                    reason="equivocation",
-                    block=block,
-                    from_node_id=from_node_id,
-                    hash_held=held,
-                )
-            return False
-        if str(block.get("hash") or "") and str(block.get("hash") or "") == self.last_hash():
-            return False
+        # R328 2026-09-12T19:05:00Z — public/certified writes use PUBLIC ledger tip
+        # and consensus-index lookup. ~~expected_index = height()~~ barred: private
+        # suffix / same-index private lines must not block public finality.
+        is_public_path = (
+            str(block.get("visibility") or "").lower() == "public"
+            or isinstance(block.get("pbft_cert"), dict)
+            or require_public
+        )
+        if is_public_path and self._split_active():
+            pub = self.public_book()
+            pub.ensure()
+            existing = pub.get_by_consensus_index(idx)
+            if existing is not None:
+                held = str(existing.get("hash") or "")
+                offered = str(block.get("hash") or "")
+                if held and offered and held != offered:
+                    record_reject(
+                        self.blocks_path,
+                        reason="equivocation",
+                        block=block,
+                        from_node_id=from_node_id,
+                        hash_held=held,
+                    )
+                return False
+            pub_last_idx, pub_last_hash = self._public_tip_fields()
+            expected_index = pub_last_idx + 1
+            if int(block.get("index", -1)) != expected_index:
+                return False
+            if str(block.get("prev_hash") or "") != pub_last_hash:
+                return False
+        else:
+            existing = self.get_block(idx)
+            if existing is not None:
+                held = str(existing.get("hash") or "")
+                offered = str(block.get("hash") or "")
+                if held and offered and held != offered:
+                    record_reject(
+                        self.blocks_path,
+                        reason="equivocation",
+                        block=block,
+                        from_node_id=from_node_id,
+                        hash_held=held,
+                    )
+                return False
+            if str(block.get("hash") or "") and str(block.get("hash") or "") == self.last_hash():
+                return False
         try:
             eco = None
             version = int(block.get("hash_version") or HASH_VERSION_V1)
@@ -555,11 +730,12 @@ class ChainManager:
                 from_node_id=from_node_id,
             )
             return False
-        expected_index = self.height()
-        if int(block.get("index", -1)) != expected_index:
-            return False
-        if str(block.get("prev_hash") or "") != self.last_hash():
-            return False
+        if not (is_public_path and self._split_active()):
+            expected_index = self.height()
+            if int(block.get("index", -1)) != expected_index:
+                return False
+            if str(block.get("prev_hash") or "") != self.last_hash():
+                return False
         if require_public and not signature_envelope_ok(str(block.get("signature") or "")):
             record_reject(
                 self.blocks_path,
@@ -578,21 +754,27 @@ class ChainManager:
             )
             return False
         # Re-converge after pbft_cert / any post-hash sidecar is attached.
-        line = encode_jsonl_with_converged_size(block)
-        with self.blocks_path.open("a", encoding="utf-8") as handle:
-            handle.write(line + "\n")
-        self._book.note_appended(line, block)
-        try:
-            from src.artcb.chain.binary_log import append_record
+        if is_public_path and self._split_active():
+            self._append_line_to_book(self.public_book(), block)
+        elif (not is_public_path) and self._split_active():
+            self._append_line_to_book(self.private_book(), block)
+        else:
+            line = encode_jsonl_with_converged_size(block)
+            with self.blocks_path.open("a", encoding="utf-8") as handle:
+                handle.write(line + "\n")
+            self._book.note_appended(line, block)
+            try:
+                from src.artcb.chain.binary_log import append_record
 
-            append_record(self.blocks_path, block)
-        except Exception:
-            logger.debug("binary sidecar skipped on import", exc_info=True)
+                append_record(self.blocks_path, block)
+            except Exception:
+                logger.debug("binary sidecar skipped on import", exc_info=True)
         logger.info(
-            "Imported extending block index=%s vis=%s hash=%s",
+            "Imported extending block index=%s vis=%s hash=%s split=%s",
             block.get("index"),
             block.get("visibility"),
             str(block.get("hash") or "")[:16],
+            self._split_active(),
         )
         try:
             from src.artcb.trace.ns import emit, now_mono_ns
@@ -605,6 +787,7 @@ class ChainManager:
                     "visibility": block.get("visibility"),
                     "dur_ns": now_mono_ns() - t_import,
                     "ok": True,
+                    "ledger_mode": "split_v1" if self._split_active() else "legacy",
                 },
             )
         except Exception:
@@ -616,9 +799,13 @@ class ChainManager:
         return self.import_extending_block(block, require_public=True)
 
     def write_certified_block(self, block: dict, cert: dict, *, from_node_id: str = "pbft") -> bool:
-        """Write a PBFT-finalized block. Certificate is sidecar to the hash."""
+        """Write a PBFT-finalized block. Certificate is sidecar to the hash.
+
+        R328: always routes through public ledger when split is active.
+        """
         payload = dict(block)
         payload["pbft_cert"] = cert
+        payload["visibility"] = "public"
         return self.import_extending_block(payload, require_public=False, from_node_id=from_node_id)
 
     def append_block(
@@ -644,17 +831,23 @@ class ChainManager:
         # R327 2026-09-12T02:25:00Z — public blocks extend the *public* tip, not the
         # total book height. Private-only suffixes on one seed (OVH1) were making
         # constructed public blocks fail primary ``not_extending`` (height 18xx vs 1141).
+        # R328 2026-09-12T19:05:00Z — split ledgers: public/private tips are independent.
         if str(visibility) == "public":
-            split = self.tip_public_private()
-            if split.get("public_found") and split.get("public_last_hash"):
-                try:
-                    index = int(split["public_last_index"]) + 1
-                except (TypeError, ValueError):
-                    index = self.height()
-                prev_hash = str(split["public_last_hash"])
+            pub_idx, pub_hash = self._public_tip_fields()
+            if pub_idx >= 0:
+                index = pub_idx + 1
+                prev_hash = pub_hash
             else:
-                index = self.height()
-                prev_hash = self.last_hash()
+                index = 0
+                prev_hash = GENESIS_PREV_HASH
+        elif self._split_active():
+            priv_idx, priv_hash = self._private_tip_fields()
+            if priv_idx >= 0:
+                index = priv_idx + 1
+                prev_hash = priv_hash
+            else:
+                index = 0
+                prev_hash = GENESIS_PREV_HASH
         else:
             index = self.height()
             prev_hash = self.last_hash()
@@ -876,16 +1069,24 @@ class ChainManager:
                         return ChainBlock.from_payload(certified)
                     raise ValueError(str((result or {}).get("reason") or "pbft_finalize_failed"))
                 raise ValueError("pbft_required_for_public_append")
-        with self.blocks_path.open("a", encoding="utf-8") as handle:
-            handle.write(line + "\n")
+        # R328 — append to the matching ledger; never grow the mixed forensic file
+        # for new public writes when split is active.
         parsed = json.loads(line)
-        self._book.note_appended(line, parsed)
-        try:
-            from src.artcb.chain.binary_log import append_record
+        if self._split_active():
+            if str(visibility) == "public":
+                self._append_line_to_book(self.public_book(), parsed)
+            else:
+                self._append_line_to_book(self.private_book(), parsed)
+        else:
+            with self.blocks_path.open("a", encoding="utf-8") as handle:
+                handle.write(line + "\n")
+            self._book.note_appended(line, parsed)
+            try:
+                from src.artcb.chain.binary_log import append_record
 
-            append_record(self.blocks_path, parsed)
-        except Exception:
-            logger.debug("binary sidecar skipped on append", exc_info=True)
+                append_record(self.blocks_path, parsed)
+            except Exception:
+                logger.debug("binary sidecar skipped on append", exc_info=True)
 
         if self.enable_security and self.anti_sybil and contributors:
             self.anti_sybil.record_valid_block(contributors, pol_score, index)

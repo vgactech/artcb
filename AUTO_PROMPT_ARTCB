@@ -1996,3 +1996,10 @@ Mac+n4 cause = **NOT_ESTABLISHED**. Cert 1140 Q=3 sans Mac. Aucun prepared/cert 
 Cause etablie du FAIL public via artcb.me: `409 not_extending` (suffixe prive ovh1 vs tip public primary).
 Liveness: VC manuel 17→18 + propose ovh-4 → cert 1141 `32a80547…` wrote n2/n3/n4 ; ovh1 wrote=false.
 Fix code: construct public + client-request sur tip public. SSH journals NOT_REACHABLE. Jamais wipe. CERTIFIED_100=false.
+
+66. **R328 dual ledger + public import + stall watchdog (2026-09-12T19:20:00Z).** Issue #86 P0.
+`data/chain/public/blocks.jsonl` + `private/blocks.jsonl` ; legacy `blocks.jsonl` forensic **jamais wipe**.
+`write_certified_block` / public import = tip **public** (`public_last_index+1`), pas `height()` mixte.
+Watchdog `public_tip_watchdog` : hypothèse (a) pending PRE-PREPARE vs (b) entry-path ; auto VC opt-in.
+Mac non retiré sans preuve. Trou 717 non inventé. n/f/q non modifié arbitrairement.
+CERTIFIED_100=false tant que critères A–O Issue #86 non mesurés live ×4.

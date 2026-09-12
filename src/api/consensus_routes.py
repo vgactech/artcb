@@ -232,6 +232,20 @@ def pbft_view(request: Request) -> dict:
     return _pbft(request).snapshot()
 
 
+@router.get("/pbft/public-tip-watchdog")
+def pbft_public_tip_watchdog(request: Request) -> dict:
+    """R328 diagnose: stall age + hypothesis a/b (pending PRE-PREPARE vs entry-path)."""
+    from src.artcb.consensus.public_tip_watchdog import diagnose
+
+    state = request.app.state.artcb
+    log = None
+    try:
+        log = _pbft_log(request)
+    except HTTPException:
+        log = None
+    return {"ok": True, **diagnose(state.chain, pbft_log=log)}
+
+
 @router.post("/pbft/view-change")
 def pbft_view_change(body: ViewChangeBody, request: Request) -> dict:
     """This replica signs a VIEW-CHANGE. Process stays up. Does not wipe the book."""
@@ -241,8 +255,8 @@ def pbft_view_change(body: ViewChangeBody, request: Request) -> dict:
         row = store.emit_view_change(
             state.chain,
             view=body.view,
-            height=int(state.chain.height()),
-            last_hash=str(state.chain.last_hash() or ""),
+            height=int(state.chain.tip_public_private().get("public_last_index") or -1) + 1,
+            last_hash=str(state.chain.tip_public_private().get("public_last_hash") or ""),
             reason=body.reason,
         )
     except ValueError as exc:

@@ -130,3 +130,6 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 65. **R326 tip diverge P0 (2026-09-12T02:05:00Z).** height total ≠ tip public; private suffix ovh1. CERTIFIED_100=false.
 
 66. **R327 causal stall (2026-09-12T02:30:00Z).** not_extending private≠public tip; VC manuel OK; Mac cause NOT_ESTABLISHED. CERTIFIED_100=false.
+
+~~63. **R328…** (mauvais numéro 2026-09-12T19:20:00Z — barré)~~
+67. **R328 dual ledger + public import + stall watchdog (2026-09-12T19:20:00Z).** Issue #86. Public/private ledgers; write_certified on public tip; watchdog a/b; Mac non retiré; CERTIFIED_100=false.
