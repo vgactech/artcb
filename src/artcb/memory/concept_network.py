@@ -141,3 +141,38 @@ def publish_bundle(
         return {"error": "http_error", "http": exc.code, "body": body}
     except Exception as exc:  # noqa: BLE001
         return {"error": type(exc).__name__, "http": 0}
+
+
+def fanout_bundle(
+    base_url: str,
+    bundle: bytes,
+    *,
+    api_key: str,
+    timeout: int = 90,
+) -> dict[str, Any]:
+    """R334-C — POST ``/api/v1/concepts/fanout`` (local publish + replica-signed peer ingest).
+
+    Uses the publisher node's API key only. Peers authenticate the *replica*
+    signature, not the caller's API key. ORG/GROUP private ACL is out of scope.
+    """
+    import json
+
+    url = f"{base_url.rstrip('/')}/api/v1/concepts/fanout"
+    headers = {
+        "Content-Type": "application/octet-stream",
+        "Accept": "application/json",
+    }
+    key = (api_key or "").strip()
+    if len(key) >= 16:
+        headers["Authorization"] = f"Bearer {key}"
+    req = urllib.request.Request(url, data=bundle, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode())
+    except urllib.error.HTTPError as exc:
+        body = ""
+        with contextlib.suppress(Exception):
+            body = exc.read().decode()[:400]
+        return {"error": "http_error", "http": exc.code, "body": body}
+    except Exception as exc:  # noqa: BLE001
+        return {"error": type(exc).__name__, "http": 0}

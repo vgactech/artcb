@@ -26,10 +26,13 @@ C2-D exige qu'un agent tiers puisse résoudre sans clé.
 
 from __future__ import annotations
 
+import contextlib
 import logging
+import urllib.error
+import urllib.request
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, Response
 
 from src.api.api_keys_routes import require_write_actor
 from src.artcb.memory.concept_store import ConceptStore
@@ -46,6 +49,19 @@ logger = logging.getLogger("artcb.api.concepts")
 router = APIRouter(prefix="/api/v1/concepts", tags=["concepts"])
 
 MAX_BUNDLE_BYTES = 8 * 1024 * 1024  # 8 MiB — un bundle de concepts reste petit
+# R334-C 2026-09-13T00:25:00Z — peer fan-out uses replica identity, not a shared API key.
+PEER_INGEST_PROTOCOL = "concept-peer-ingest-v1"
+PEER_INGEST_MAX_AGE_NS = 600 * 1_000_000_000
+DEFAULT_SEED_PEERS = (
+    "https://artcb.me",
+    "https://n2.artcb.me",
+    "https://n3.artcb.me",
+    "https://n4.artcb.me",
+)
+
+
+def peer_ingest_message(*, sha: str, from_replica_id: str, ts_ns: int) -> str:
+    return f"{PEER_INGEST_PROTOCOL}|{sha}|{from_replica_id}|{int(ts_ns)}"
 
 
 def _state(request: Request):
@@ -121,6 +137,184 @@ async def publish_concepts(
         report["graphs"], len(report["concept_ids"]), report["bundle_sha256"][:12],
     )
     return report
+
+
+@router.post(
+    "/peer-ingest",
+    summary="Ingérer un bundle signé par une replica officielle (fan-out write)",
+)
+async def peer_ingest_concepts(
+    request: Request,
+    x_artcb_replica_id: Annotated[str | None, Header()] = None,
+    x_artcb_replica_sig: Annotated[str | None, Header()] = None,
+    x_artcb_producer_ed25519: Annotated[str | None, Header()] = None,
+    x_artcb_concept_ts_ns: Annotated[str | None, Header()] = None,
+) -> dict:
+    """R334-C — write path between seeds without sharing per-node API keys.
+
+    Auth = official replica key binding + signature over
+    ``concept-peer-ingest-v1|{sha256}|{from}|{ts_ns}``. Knowing a ConceptID
+    alone never authorizes ingest. API Bearer is intentionally not enough.
+    """
+    t0 = now_mono_ns()
+    replica_id = (x_artcb_replica_id or "").strip()
+    signature = (x_artcb_replica_sig or "").strip()
+    ed = (x_artcb_producer_ed25519 or "").strip()
+    try:
+        ts_ns = int((x_artcb_concept_ts_ns or "0").strip() or "0")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="invalid_ts_ns") from exc
+    if not replica_id or not signature:
+        raise HTTPException(status_code=401, detail="peer_ingest_requires_replica_signature")
+    now = now_wall_ns()
+    if ts_ns <= 0 or abs(now - ts_ns) > PEER_INGEST_MAX_AGE_NS:
+        raise HTTPException(status_code=401, detail="peer_ingest_ts_stale_or_missing")
+
+    data = await request.body()
+    if not data:
+        raise HTTPException(status_code=400, detail="empty_bundle")
+    if len(data) > MAX_BUNDLE_BYTES:
+        raise HTTPException(status_code=413, detail="bundle_too_large")
+    sha = bundle_sha256(data)
+    message = peer_ingest_message(sha=sha, from_replica_id=replica_id, ts_ns=ts_ns)
+
+    from src.artcb.consensus.replica_identity import (
+        expected_binding,
+        official_pbft_replica_ids,
+        verify_bound_signature,
+    )
+
+    if replica_id not in set(official_pbft_replica_ids()):
+        raise HTTPException(status_code=403, detail="peer_ingest_replica_not_official")
+    expected = expected_binding(replica_id)
+    if expected is None or expected.revoked:
+        raise HTTPException(status_code=403, detail="peer_ingest_replica_unregistered")
+    # Prefer registry key; header ed is only a hint / forensic field.
+    ed_use = (expected.ed25519_b64 or ed or "").strip()
+    ok, reason = verify_bound_signature(
+        replica_id=replica_id,
+        message=message,
+        signature=signature,
+        producer_ed25519_b64=ed_use,
+        producer_pqc_b64="",
+    )
+    if not ok:
+        raise HTTPException(status_code=403, detail=f"peer_ingest_rejected:{reason}")
+
+    try:
+        report = import_bundle(_store(request), data, agent_id=f"peer:{replica_id}")
+    except ConceptBundleError as exc:
+        raise HTTPException(status_code=400, detail=f"invalid_bundle:{exc}") from exc
+    report["published_by"] = "official_replica"
+    report["from_replica_id"] = replica_id
+    report["protocol"] = PEER_INGEST_PROTOCOL
+    report["ts_ns"] = now_wall_ns()
+    report["dur_ns"] = now_mono_ns() - t0
+    _trace(
+        request,
+        kind="concept_peer_ingest",
+        t0=t0,
+        from_replica_id=replica_id,
+        graphs=report["graphs"],
+        concepts=len(report["concept_ids"]),
+        bundle_sha256=report["bundle_sha256"],
+    )
+    return report
+
+
+@router.post(
+    "/fanout",
+    summary="Publier localement puis pousser le bundle signé vers les seeds pairs",
+)
+async def fanout_concepts(
+    request: Request,
+    actor: Annotated[dict | None, Depends(require_write_actor)] = None,
+) -> dict:
+    """R334-C — operator/agent write on this node → replica-signed peer-ingest × seeds.
+
+    Does not replace per-node ACL for ORG/GROUP private bodies. Public ConceptStore only.
+    """
+    t0 = now_mono_ns()
+    if actor is None:
+        raise HTTPException(status_code=401, detail="concept_fanout_requires_bearer")
+    data = await request.body()
+    if not data:
+        raise HTTPException(status_code=400, detail="empty_bundle")
+    if len(data) > MAX_BUNDLE_BYTES:
+        raise HTTPException(status_code=413, detail="bundle_too_large")
+
+    local = import_bundle(
+        _store(request),
+        data,
+        agent_id=str(actor.get("label") or actor.get("agent_id") or "fanout"),
+    )
+    state = _state(request)
+    chain = state.chain
+    from src.artcb.consensus.replica_identity import official_consensus_node_id
+    from src.artcb.consensus.tip_attest import producer_key_b64, sign_message
+
+    replica_id = official_consensus_node_id()
+    if not replica_id:
+        raise HTTPException(status_code=503, detail="local_replica_id_unknown")
+    ts_ns = now_wall_ns()
+    sha = local["bundle_sha256"]
+    message = peer_ingest_message(sha=sha, from_replica_id=replica_id, ts_ns=ts_ns)
+    signature = sign_message(chain, message)
+    ed_b64, _pqc = producer_key_b64(chain)
+
+    import os
+
+    host = (request.headers.get("host") or "").split(":")[0].lower()
+    peers_env = (os.getenv("ARTCB_CONCEPT_FANOUT_PEERS") or "").strip()
+    peers = [p.strip() for p in peers_env.split(",") if p.strip()] or list(DEFAULT_SEED_PEERS)
+    peer_rows: dict[str, Any] = {}
+    ok_peers = 0
+    for peer in peers:
+        peer_host = peer.split("//", 1)[-1].split("/")[0].lower()
+        if host and host == peer_host:
+            peer_rows[peer] = {"skipped": "self"}
+            continue
+        url = f"{peer.rstrip('/')}/api/v1/concepts/peer-ingest"
+        req = urllib.request.Request(
+            url,
+            data=data,
+            method="POST",
+            headers={
+                "Content-Type": "application/octet-stream",
+                "Accept": "application/json",
+                "X-ARTCB-Replica-Id": replica_id,
+                "X-ARTCB-Replica-Sig": signature,
+                "X-ARTCB-Producer-Ed25519": ed_b64,
+                "X-ARTCB-Concept-Ts-Ns": str(ts_ns),
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=45) as resp:
+                body = resp.read().decode()
+                peer_rows[peer] = {"http": int(resp.status), "ok": True, "body_preview": body[:200]}
+                ok_peers += 1
+        except urllib.error.HTTPError as exc:
+            err_body = ""
+            with contextlib.suppress(Exception):
+                err_body = exc.read().decode()[:300]
+            peer_rows[peer] = {"http": int(exc.code), "ok": False, "body": err_body}
+        except Exception as exc:  # noqa: BLE001
+            peer_rows[peer] = {"http": 0, "ok": False, "error": type(exc).__name__, "detail": str(exc)[:160]}
+
+    out = {
+        "local": local,
+        "from_replica_id": replica_id,
+        "protocol": PEER_INGEST_PROTOCOL,
+        "peers": peer_rows,
+        "peers_ok": ok_peers,
+        "fanout_pass": ok_peers >= 3,
+        "ts_ns": now_wall_ns(),
+        "dur_ns": now_mono_ns() - t0,
+        "published_by": actor.get("kind"),
+        "note": "replica-signed peer ingest; not ORG body ACL; CERTIFIED_100 unchanged",
+    }
+    _trace(request, kind="concept_fanout", t0=t0, peers_ok=ok_peers, bundle_sha256=sha)
+    return out
 
 
 @router.get("/resolve", summary="Récupérer les blobs .arcb d'une liste de ConceptID")

@@ -143,3 +143,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 71. **R333 ReasoningID canonique (2026-09-12T23:50:00Z).** Le texte humain (FR/EN/ZH…) est une **vue**, jamais l’identité du raisonnement. Identité = `CanonicalReasoning` / `ReasoningID` dérivé des ConceptID IR (`src/artcb/reasoning/canonical.py`). Interdit de revendiquer égalité du CoT privé modèle. Round-trip traducteur FR↔EN↔canonical = NOT_PROVEN tant que non mesuré. Nouveau chantier R-01 **s’ajoute** ; ne ferme pas #77/#86/langage.
+
+72. **R334 ReasoningID structurel + fan-out replica (2026-09-13T00:25:00Z).** ~~R333 set-dedup + premises=conclusions~~ barré. Multiset + prémisses/conclusions/relations distincts (`r334-canonical-reasoning-v2`). Fan-out ConceptStore = `POST /concepts/fanout` → peer-ingest signé replica (pas une API key globale partagée). ORG body : connaître ReasoningID/ConceptID/domain_id ≠ accès export. N04/TPM/C04 / CERTIFIED_100 restent ouverts.

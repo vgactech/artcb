@@ -155,6 +155,35 @@ def test_org_a_group_isolation_from_org_b(client: TestClient) -> None:
     assert ok.status_code == 200, ok.text
 
 
+def test_org_export_acl_knowing_id_is_not_access(client: TestClient) -> None:
+    """R334-D — knowing org/domain id must not yield genesis body to outsider."""
+    _user("founderExpA")
+    _user("founderExpB")
+    ha, hb = _login(client, "founderExpA"), _login(client, "founderExpB")
+    org = client.post("/api/v1/authz/orgs", json={"name": "ORG-EXPORT-ACL"}, headers=ha)
+    assert org.status_code == 200, org.text
+    domains = client.get("/api/v1/authz/domains")
+    assert domains.status_code == 200
+    dom = next(
+        (
+            d
+            for d in (domains.json().get("domains") or [])
+            if d.get("subject_id") == org.json()["organization_id"]
+        ),
+        None,
+    )
+    assert dom and dom.get("domain_id")
+    did = dom["domain_id"]
+    # Outsider B knows domain_id
+    denied = client.post(f"/api/v1/authz/domains/{did}/export", headers=hb)
+    assert denied.status_code in (401, 403), denied.text
+    assert "genesis_body" not in (denied.json() if denied.headers.get("content-type", "").startswith("application/json") else {})
+    # Owner A can export
+    ok = client.post(f"/api/v1/authz/domains/{did}/export", headers=ha)
+    assert ok.status_code == 200, ok.text
+    assert ok.json().get("genesis_body") or ok.json().get("manifest")
+
+
 def test_org_commitment_advances_public_tip_not_private_body(client: TestClient) -> None:
     """ORG body stays local; public tip may move only via commitment block."""
     _user("founderC")

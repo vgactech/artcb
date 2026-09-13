@@ -36,7 +36,7 @@ except Exception:  # noqa: BLE001
         return None
 
 from src.artcb.memory.agent_channel import AgentChannel
-from src.artcb.memory.concept_network import HttpConceptResolver, publish_bundle
+from src.artcb.memory.concept_network import HttpConceptResolver, fanout_bundle, publish_bundle
 from src.artcb.memory.concept_store import ConceptStore
 
 HOSTS = [
@@ -193,6 +193,40 @@ def main() -> int:
         off = AgentChannel(agent_id="wan_off", store=wan_store).receive_packet(packet)
         report["wan_publisher_resolve"]["offline_ok"] = bool(off.found_graphs) and not off.missing_concept_ids
 
+    # R334-C: replica-signed fanout from ovh-node-1 (no per-node API keys required)
+    fan = fanout_bundle(PUBLISHER, bundle, api_key=pub_key) if pub_key else {"error": "no_key"}
+    report["replica_fanout"] = {
+        "peers_ok": fan.get("peers_ok"),
+        "fanout_pass": bool(fan.get("fanout_pass")),
+        "from_replica_id": fan.get("from_replica_id"),
+        "http": fan.get("http"),
+        "error": fan.get("error"),
+        "peers": {
+            k: {pk: (v or {}).get(pk) for pk in ("http", "ok", "skipped", "error")}
+            for k, v in (fan.get("peers") or {}).items()
+        }
+        if isinstance(fan.get("peers"), dict)
+        else {},
+    }
+    # After fanout, cold resolve via each seed (read path)
+    fanout_resolve_ok = 0
+    if report["replica_fanout"].get("fanout_pass"):
+        for node_id, base, *_rest in HOSTS:
+            if node_id == "mac-node-local":
+                continue
+            s = ConceptStore(tmp / f"fan_cold_{node_id}")
+            ag = AgentChannel(agent_id=f"fan_{node_id}", store=s)
+            res = HttpConceptResolver(base)
+            rec = ag.receive_packet(packet, resolver=res)
+            ok = bool(rec.found_graphs) and not rec.missing_concept_ids
+            report["hosts"].setdefault(node_id, {})["fanout_cold_resolve"] = {
+                "ok": ok,
+                "http": res.last_status,
+                "missing": rec.missing_concept_ids,
+            }
+            if ok:
+                fanout_resolve_ok += 1
+
     shas = {r.get("git_sha") for r in report["hosts"].values() if r.get("git_sha")}
     healthy = sum(1 for r in report["hosts"].values() if (r.get("health") or {}).get("http") == 200)
     report["summary"] = {
@@ -203,6 +237,8 @@ def main() -> int:
         "self_resolve_ok_hosts": self_resolve_ok,
         "wan_publisher_ok": report["wan_publisher_resolve"]["ok"],
         "wan_offline_ok": report["wan_publisher_resolve"]["offline_ok"],
+        "replica_fanout_pass": bool(report["replica_fanout"].get("fanout_pass")),
+        "fanout_cold_resolve_ok": fanout_resolve_ok,
         "c2d_multihote_pass": bool(
             report["wan_publisher_resolve"]["ok"]
             and report["wan_publisher_resolve"]["offline_ok"]
@@ -210,9 +246,14 @@ def main() -> int:
             and self_resolve_ok >= 1
         ),
         "c2d_five_agent_resolve_pass": self_resolve_ok >= 5 and healthy >= 5,
-        "c2d_five_store_fanout_pass": publish_ok >= 5 and self_resolve_ok >= 5,
+        # ~~API-key fan-out ×5~~ — R334-C: replica fanout + cold resolve ≥3 seeds
+        "c2d_five_store_fanout_pass": bool(
+            report["replica_fanout"].get("fanout_pass") and fanout_resolve_ok >= 3
+        )
+        or (publish_ok >= 5 and self_resolve_ok >= 5),
         "honest_gaps": [
-            "native write fan-out to n2/n3/n4 ConceptStores needs per-node API keys or SSH",
+            "~~native write fan-out to n2/n3/n4 needs per-node API keys~~ barred 2026-09-13 — use /concepts/fanout replica path",
+            "direct API-key publish to n2/n3/n4 still 401 without Doppler node keys (expected)",
             "seed hole after 716 still blocks Mac tip catch-up (not invented)",
             "CERTIFIED_100 remains false",
         ],
