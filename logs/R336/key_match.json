@@ -1,0 +1,92 @@
+{
+  "ovh-node-2": {
+    "local_sha16": "55fc2f1f6b2bcd5f",
+    "/api/v1/ops/key-fingerprint": {
+      "http": 200,
+      "body": {
+        "node_id": "ovh-node-2",
+        "doppler_project": "artcb-2",
+        "doppler_config": "dev",
+        "key": {
+          "present": true,
+          "sha256_16": "55fc2f1f6b2bcd5f",
+          "len": 70
+        },
+        "ts_ns": 1789325162749200519,
+        "note": "compare sha256_16 to local ~/.artcb/nodes/*.env without shipping secrets"
+      }
+    },
+    "/api/v1/api-keys/me": {
+      "http": 401,
+      "body": "{\"detail\":\"Token Bearer artcb_xxx manquant ou invalide\"}"
+    },
+    "stats": {
+      "http": 200
+    },
+    "match": true,
+    "doppler": [
+      "artcb-2",
+      "dev"
+    ]
+  },
+  "aws-node-3": {
+    "local_sha16": "2f0140640a839c91",
+    "/api/v1/ops/key-fingerprint": {
+      "http": 200,
+      "body": {
+        "node_id": "aws-node-3",
+        "doppler_project": "artcb3",
+        "doppler_config": "dev",
+        "key": {
+          "present": true,
+          "sha256_16": "2f0140640a839c91",
+          "len": 70
+        },
+        "ts_ns": 1789325162906220387,
+        "note": "compare sha256_16 to local ~/.artcb/nodes/*.env without shipping secrets"
+      }
+    },
+    "/api/v1/api-keys/me": {
+      "http": 401,
+      "body": "{\"detail\":\"Token Bearer artcb_xxx manquant ou invalide\"}"
+    },
+    "stats": {
+      "http": 200
+    },
+    "match": true,
+    "doppler": [
+      "artcb3",
+      "dev"
+    ]
+  },
+  "ovh-node-4": {
+    "local_sha16": "6c8b8097a8b43e0d",
+    "/api/v1/ops/key-fingerprint": {
+      "http": 200,
+      "body": {
+        "node_id": "ovh-node-4",
+        "doppler_project": "artcb-4",
+        "doppler_config": "dev",
+        "key": {
+          "present": true,
+          "sha256_16": "6c8b8097a8b43e0d",
+          "len": 70
+        },
+        "ts_ns": 1789325163051322771,
+        "note": "compare sha256_16 to local ~/.artcb/nodes/*.env without shipping secrets"
+      }
+    },
+    "/api/v1/api-keys/me": {
+      "http": 401,
+      "body": "{\"detail\":\"Token Bearer artcb_xxx manquant ou invalide\"}"
+    },
+    "stats": {
+      "http": 200
+    },
+    "match": true,
+    "doppler": [
+      "artcb-4",
+      "dev"
+    ]
+  }
+}

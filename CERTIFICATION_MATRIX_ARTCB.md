@@ -118,3 +118,8 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 | R336 ops | peer-restart HTTPS | CODE | déployer puis mesurer fanout-restart |
 | Révocation anciennes clés | — | **BLOQUÉ** | attendre match fingerprint post-restart |
 | CERTIFIED_100 | — | **false** | — |
+
+### R336b live (2026-09-13T18:47:23Z)
+- fingerprint match ×3 + **direct publish OK** n2/n3/n4 (clés Doppler `dev` synchronisées)
+- peer-restart HTTPS fonctionne (cercle :22 cassé pour reload)
+- révocation anciennes : N/A (projets étaient vides) ; `artcb-blockchain` intact

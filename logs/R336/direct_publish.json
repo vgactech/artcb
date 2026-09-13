@@ -1,0 +1,35 @@
+{
+  "ovh-node-2": {
+    "graphs": 1,
+    "concept_ids": [
+      "K3e7dc01c5cf83cd8"
+    ],
+    "bundle_sha256": "8f5a6773d45f298fdb1b946f2dccb7d9d026191c3f4bbfbbbd21340f9bf99b1a",
+    "bundle_bytes": 291,
+    "published_by": "operator",
+    "ts_ns": 1789325227430015545,
+    "dur_ns": 3475833
+  },
+  "aws-node-3": {
+    "graphs": 1,
+    "concept_ids": [
+      "K3e7dc01c5cf83cd8"
+    ],
+    "bundle_sha256": "8f5a6773d45f298fdb1b946f2dccb7d9d026191c3f4bbfbbbd21340f9bf99b1a",
+    "bundle_bytes": 291,
+    "published_by": "operator",
+    "ts_ns": 1789325227540175878,
+    "dur_ns": 1961046
+  },
+  "ovh-node-4": {
+    "graphs": 1,
+    "concept_ids": [
+      "K3e7dc01c5cf83cd8"
+    ],
+    "bundle_sha256": "8f5a6773d45f298fdb1b946f2dccb7d9d026191c3f4bbfbbbd21340f9bf99b1a",
+    "bundle_bytes": 291,
+    "published_by": "operator",
+    "ts_ns": 1789325227700174973,
+    "dur_ns": 3985029
+  }
+}

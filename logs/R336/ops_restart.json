@@ -1,0 +1,73 @@
+{
+  "ts": 1789325110.059221,
+  "sha_local": {
+    "ovh-node-2": "55fc2f1f6b2bcd5f",
+    "aws-node-3": "2f0140640a839c91",
+    "ovh-node-4": "6c8b8097a8b43e0d"
+  },
+  "fingerprint": {
+    "ovh-node-2": {
+      "http": 502,
+      "body": {
+        "detail": "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+      },
+      "matches_local_cache": null
+    },
+    "aws-node-3": {
+      "http": 502,
+      "body": {
+        "detail": "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+      },
+      "matches_local_cache": null
+    },
+    "ovh-node-4": {
+      "http": 200,
+      "body": {
+        "node_id": "ovh-node-4",
+        "doppler_project": "artcb-4",
+        "doppler_config": "dev",
+        "key": {
+          "present": true,
+          "sha256_16": "6c8b8097a8b43e0d",
+          "len": 70
+        },
+        "ts_ns": 1789325123480071522,
+        "note": "compare sha256_16 to local ~/.artcb/nodes/*.env without shipping secrets"
+      },
+      "matches_local_cache": true
+    }
+  },
+  "restart": {
+    "http": 200,
+    "body": {
+      "from_replica_id": "ovh-node-1",
+      "protocol": "ops-peer-restart-v1",
+      "peers": {
+        "https://artcb.me": {
+          "skipped": "self"
+        },
+        "https://n2.artcb.me": {
+          "http": 200,
+          "ok": true,
+          "body_preview": "{\"accepted\":true,\"action\":\"peer_restart\",\"delay_s\":1.5,\"from_replica_id\":\"ovh-node-1\",\"target_host\":\"n2.artcb.me\",\"protocol\":\"ops-peer-restart-v1\",\"key_before\":{\"present\":true,\"sha256_16\":\"55fc2f1f6b2bcd5f\",\"len\":70},\"doppler_project\":\"artc"
+        },
+        "https://n3.artcb.me": {
+          "http": 200,
+          "ok": true,
+          "body_preview": "{\"accepted\":true,\"action\":\"peer_restart\",\"delay_s\":1.5,\"from_replica_id\":\"ovh-node-1\",\"target_host\":\"n3.artcb.me\",\"protocol\":\"ops-peer-restart-v1\",\"key_before\":{\"present\":true,\"sha256_16\":\"2f0140640a839c91\",\"len\":70},\"doppler_project\":\"artc"
+        },
+        "https://n4.artcb.me": {
+          "http": 502,
+          "ok": false,
+          "body": "<html>\r\n<head><title>502 Bad Gateway</title></head>\r\n<body>\r\n<center><h1>502 Bad Gateway</h1></center>\r\n<hr><center>nginx/1.24.0 (Ubuntu)</center>\r\n</body>\r\n</html>\r\n"
+        }
+      },
+      "peers_ok": 2,
+      "fanout_restart_pass": false,
+      "ts_ns": 1789325110724192370,
+      "dur_ns": 446618039,
+      "published_by": "human",
+      "note": "HTTPS :443 peer restart; keys reload only if doppler run injects ARTCB_API_KEY"
+    }
+  }
+}

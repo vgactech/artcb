@@ -64,3 +64,19 @@ Pas un produit nommé ainsi. Dans le tour précédent je parlais de **deux chant
 **Ne pas** coller les valeurs `ARTCB_API_KEY` / `dp.st…` dans le chat.
 
 `CERTIFIED_100=false`
+
+## Remesure live post-deploy (`b8da76e`) — 2026-09-13T18:47:23Z
+
+| Nœud | fingerprint match | `doppler` | publish direct |
+|------|-------------------|-----------|----------------|
+| ovh-node-2 | **true** sha `55fc2f1f…` | artcb-2/dev | **OK** |
+| aws-node-3 | **true** sha `2f014064…` | artcb3/dev | **OK** |
+| ovh-node-4 | **true** sha `6c8b8097…` | artcb-4/dev | **OK** |
+
+`POST /api/v1/ops/fanout-restart` : n2+n3 accepted 200 (n4 était en 502 mid-deploy puis rattrapé).
+
+`/api/v1/api-keys/me` reste 401 pour une clé **env-only** (pas dans `api_keys.json`) — **attendu**, ce n’est pas le chemin write.
+
+**Révocation** : les projets n2–n4 étaient **vides** avant provision — pas d’ancienne `ARTCB_API_KEY` Doppler à révoquer. Ne **pas** toucher `artcb-blockchain` (clé ovh1/opérateur partagée).
+
+HTTPS restart = la « porte » déjà ouverte (:443), pas un port inventé.
