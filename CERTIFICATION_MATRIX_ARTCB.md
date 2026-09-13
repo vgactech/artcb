@@ -108,3 +108,13 @@ Artefacts: `logs/277_issue77_20260912T212653Z.json`, `logs/R331/measurement.json
 | CERTIFIED_100 | — | **false** | N04/TPM/C04/hole716 still open |
 
 Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-pass or pass-partial; **CERTIFIED_100 = 0%**.
+
+## R336 append (2026-09-13T18:39:35Z) — HTTPS restart + key honesty
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| Ports LAN | :22 vs :443 | mesuré | OPEN only 80/443 ×4 ; pas de port admin alternatif |
+| Doppler n2–n4 | ARTCB_API_KEY | provisionné + prd=dev | VM inject encore NOT_PROVEN (401 direct) |
+| R336 ops | peer-restart HTTPS | CODE | déployer puis mesurer fanout-restart |
+| Révocation anciennes clés | — | **BLOQUÉ** | attendre match fingerprint post-restart |
+| CERTIFIED_100 | — | **false** | — |

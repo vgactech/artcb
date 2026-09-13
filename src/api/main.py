@@ -47,6 +47,7 @@ from src.api.setup_routes import router as setup_router
 from src.api.network_routes import router as network_router
 from src.api.kcg_routes import router as kcg_router
 from src.api.agent_protocol_routes import router as agent_protocol_router
+from src.api.ops_routes import router as ops_router
 
 # Any Replit account — never a named Autoscale hostname in git.
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
@@ -400,6 +401,8 @@ def create_app() -> FastAPI:
     from src.api.concept_routes import router as concept_router
 
     app.include_router(concept_router)
+    # R336 (2026-09-13T18:40:00Z) — HTTPS ops restart (LAN :22 CLOSED; :443 OPEN)
+    app.include_router(ops_router)
     logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
 
     @app.get("/live")
