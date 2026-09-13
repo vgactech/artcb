@@ -91,3 +91,20 @@ Artefacts: `logs/277_issue77_20260912T212653Z.json`, `logs/R331/measurement.json
 | R333 langage | matrix + C2-D | PASS partiel | fan-out 401 |
 | CERTIFIED_100 | — | **false** | — |
 
+
+## R334b append (2026-09-13T17:41:26Z) — keys/SSH/wake + fanout PASS_LIVE
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R334-C fanout | replica peer-ingest ×3 | **PASS_LIVE** | n2/n3/n4 HTTP 200; `peers_ok=3`; SHA `25faa42102a4` |
+| R334 C2-D | `c2d_five_store_fanout_pass` | **PASS_LIVE** | via `/concepts/fanout` not per-node Bearer |
+| R334-A ReasoningID v2 | anchor | **PASS_LIVE** | block 1167 |
+| R334-D ORG ACL export | closed path | **PASS_LIVE** | 403 `controller_mismatch` / 401 no auth |
+| Doppler n2/n3/n4 | `ARTCB_API_KEY` | **PROVISIONED** | was EMPTY; set in `artcb-2`/`artcb3`/`artcb-4` prd+dev; VM reload needs process restart (SSH:22 CLOSED) |
+| Direct publish n2–n4 | Bearer env key | still **401** until VM `doppler run` reload | expected; not a protocol FAIL for C2-D anymore |
+| SSH :22 LAN | artcb IPs + github | **CLOSED** | HTTPS :443 OPEN — GitHub/Doppler/Cursor/Chrome use :443 |
+| Mac wake | en0 IP | **CHANGED** | was `10.234.49.2` → now `10.5.21.208`; local health `127.0.0.1:8001` OK |
+| swtpm brew macOS12 | install | **FAIL** | gobject-introspection pip break; guest swtpm ≠ NitroTPM |
+| CERTIFIED_100 | — | **false** | N04/TPM/C04/hole716 still open |
+
+Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-pass or pass-partial; **CERTIFIED_100 = 0%**.

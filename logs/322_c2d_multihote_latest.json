@@ -1,5 +1,5 @@
 {
-  "ts_ns": 1789256934581348000,
+  "ts_ns": 1789321117800466000,
   "certified_100": false,
   "publisher": "https://artcb.me",
   "hosts": {
@@ -10,7 +10,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
+        "git_sha": "25faa42102a40f7b7106f0b3191b13f44f170036",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -97,15 +97,15 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "598e43a7402b",
+      "git_sha": "25faa42102a4",
       "publish": {
         "graphs": 1,
-        "bundle_sha256": "ab3b8781d96dab5ea97fdc10d52c12daffef78a00ca2f2852881b167684e3257"
+        "bundle_sha256": "6566069fccc30f81b9583cf5a26d0e7853076e1e954e41510f4341d5630c9268"
       },
       "publish_ok": true,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "c99dbabfbdc02f19bf6e5440fc486c3cbcd4abfa89a26b43737b7e29e337ec26",
+        "bundle_sha256": "a2ac917a93bd6f03d648d9932ab6a9850b27cc9d284eb2c236456578cb9aa234",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -115,6 +115,11 @@
       "self_resolve_ok": true,
       "offline_persist": {
         "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
       }
     },
     "ovh-node-2": {
@@ -124,7 +129,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
+        "git_sha": "25faa42102a40f7b7106f0b3191b13f44f170036",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -211,7 +216,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "598e43a7402b",
+      "git_sha": "25faa42102a4",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -220,7 +225,7 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "96a69d967997c42d2623141fb2594a24f6578ab5aa25b258969a778e1f9f9325",
+        "bundle_sha256": "006551b8d59a9067cdfd52ebfb0ec685b730d6357dae2c34bb7ed94d2b8dd961",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -230,6 +235,11 @@
       "self_resolve_ok": true,
       "offline_persist": {
         "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
       }
     },
     "aws-node-3": {
@@ -239,7 +249,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
+        "git_sha": "25faa42102a40f7b7106f0b3191b13f44f170036",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -326,7 +336,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "598e43a7402b",
+      "git_sha": "25faa42102a4",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -335,7 +345,7 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "bef8a5b03a1e1d2804754d70ac1120ff49a164c064b89775dde35b233bf13439",
+        "bundle_sha256": "18c812ee491ef12597532a1f616161061944328b9d42be2fdbe9a5fe4d44793c",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -345,6 +355,11 @@
       "self_resolve_ok": true,
       "offline_persist": {
         "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
       }
     },
     "ovh-node-4": {
@@ -354,7 +369,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
+        "git_sha": "25faa42102a40f7b7106f0b3191b13f44f170036",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -441,7 +456,7 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "598e43a7402b",
+      "git_sha": "25faa42102a4",
       "publish": {
         "http": 401,
         "error": "http_error",
@@ -450,7 +465,7 @@
       "publish_ok": false,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "bef8a5b03a1e1d2804754d70ac1120ff49a164c064b89775dde35b233bf13439",
+        "bundle_sha256": "18c812ee491ef12597532a1f616161061944328b9d42be2fdbe9a5fe4d44793c",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -460,6 +475,11 @@
       "self_resolve_ok": true,
       "offline_persist": {
         "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
       }
     },
     "mac-node-local": {
@@ -469,7 +489,7 @@
         "status": "healthy",
         "service": "ARTCB API",
         "version": "0.3.0",
-        "git_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
+        "git_sha": "25faa42102a40f7b7106f0b3191b13f44f170036",
         "git_branch": "main",
         "release_integrity": "ok",
         "pin_sha": null,
@@ -556,15 +576,15 @@
         "producer_failover_will_append": false
       },
       "key_present": true,
-      "git_sha": "598e43a7402b",
+      "git_sha": "25faa42102a4",
       "publish": {
         "graphs": 1,
-        "bundle_sha256": "ab3b8781d96dab5ea97fdc10d52c12daffef78a00ca2f2852881b167684e3257"
+        "bundle_sha256": "6566069fccc30f81b9583cf5a26d0e7853076e1e954e41510f4341d5630c9268"
       },
       "publish_ok": true,
       "self_resolve": {
         "http": 200,
-        "bundle_sha256": "0a1bd0e3eeabc8b26023356b3a0578b169731c42a74f26e4750269cbbbf6fac4",
+        "bundle_sha256": "6a90e95d158e25fcd3ed030e7ba7a881cf9b1af2b3dec2847485276d7baa2d1c",
         "missing_after": [],
         "found": 2,
         "ok": true,
@@ -580,12 +600,12 @@
   "a": {
     "concept_ids": [
       "K05336c50b14ee52d",
-      "K3993f036c69d06bc"
+      "K37656d5e34e4c95f"
     ],
-    "graph_id": "g_541a48bd764a",
-    "packet_sha256": "9eb5009c6d1e83f35562f86c20bc2a76270f40394c42e47ff1b78f817eab7c91",
-    "bundle_sha256": "ab3b8781d96dab5ea97fdc10d52c12daffef78a00ca2f2852881b167684e3257",
-    "bundle_bytes": 547
+    "graph_id": "g_9b3aa1d13974",
+    "packet_sha256": "5ace8497166ba17c6bb2bb7f7d8c82bd97be2c9a79afbf16f7a7cff052aecc6a",
+    "bundle_sha256": "6566069fccc30f81b9583cf5a26d0e7853076e1e954e41510f4341d5630c9268",
+    "bundle_bytes": 551
   },
   "keys_present": {
     "ovh-node-1": true,
@@ -603,24 +623,60 @@
     "found": 2,
     "offline_ok": true
   },
+  "replica_fanout": {
+    "peers_ok": 3,
+    "fanout_pass": true,
+    "from_replica_id": "ovh-node-1",
+    "http": null,
+    "error": null,
+    "peers": {
+      "https://artcb.me": {
+        "http": null,
+        "ok": null,
+        "skipped": "self",
+        "error": null
+      },
+      "https://n2.artcb.me": {
+        "http": 200,
+        "ok": true,
+        "skipped": null,
+        "error": null
+      },
+      "https://n3.artcb.me": {
+        "http": 200,
+        "ok": true,
+        "skipped": null,
+        "error": null
+      },
+      "https://n4.artcb.me": {
+        "http": 200,
+        "ok": true,
+        "skipped": null,
+        "error": null
+      }
+    }
+  },
   "summary": {
     "healthy_hosts": 5,
     "unique_git_shas": [
-      "598e43a7402b"
+      "25faa42102a4"
     ],
     "sha_aligned_5": true,
     "publish_ok_hosts": 2,
     "self_resolve_ok_hosts": 5,
     "wan_publisher_ok": true,
     "wan_offline_ok": true,
+    "replica_fanout_pass": true,
+    "fanout_cold_resolve_ok": 4,
     "c2d_multihote_pass": true,
     "c2d_five_agent_resolve_pass": true,
-    "c2d_five_store_fanout_pass": false,
+    "c2d_five_store_fanout_pass": true,
     "honest_gaps": [
-      "native write fan-out to n2/n3/n4 ConceptStores needs per-node API keys or SSH",
+      "~~native write fan-out to n2/n3/n4 needs per-node API keys~~ barred 2026-09-13 — use /concepts/fanout replica path",
+      "direct API-key publish to n2/n3/n4 still 401 without Doppler node keys (expected)",
       "seed hole after 716 still blocks Mac tip catch-up (not invented)",
       "CERTIFIED_100 remains false"
     ],
-    "dur_ns": 6666350312
+    "dur_ns": 8527612121
   }
 }

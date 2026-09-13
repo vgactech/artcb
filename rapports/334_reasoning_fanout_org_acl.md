@@ -46,3 +46,12 @@ Batterie T1–T12 locale **PASS** (pytest).
 - `src/api/concept_routes.py` (`/fanout`, `/peer-ingest`)
 - `scripts/artcb_r334_execute_open_p0.py`
 - `logs/R334/measurement.json` (après live)
+
+## R334b remesure (2026-09-13T19:40:05Z) — Mac wake
+
+- SHA `25faa42102a4` ×4 (+ Mac local)
+- `fanout_writes_x4=true` · peers_ok=3 · n2/n3/n4 HTTP 200
+- ORG ACL export closed PASS (`controller_mismatch`)
+- ReasoningID anchor block **1167**
+- Direct publish n2–n4 still 401 (Doppler keys provisioned, VM not reloaded without SSH)
+- CERTIFIED_100=false

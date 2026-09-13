@@ -1,0 +1,101 @@
+{
+  "measurement_id": "R334_20260913T194005Z_25faa42102a4",
+  "ts_ns": 1789321205018683000,
+  "commit_sha": "25faa42102a40f7b7106f0b3191b13f44f170036",
+  "certified_100": false,
+  "reasoning_v2": {
+    "protocol": "r334-canonical-reasoning-v2",
+    "multiset_distinct": true,
+    "premises_ne_conclusions": true,
+    "t3_intersection": true,
+    "t3_same_id": true,
+    "anchor": {
+      "http": 200,
+      "block_index": 1167
+    },
+    "pass": true
+  },
+  "fanout_authz": {
+    "rows": {
+      "ovh-node-1": {
+        "bad_key_rejected": true,
+        "empty_key_rejected": true,
+        "operator_key_http": 200,
+        "operator_key_ok": true
+      },
+      "ovh-node-2": {
+        "bad_key_rejected": true,
+        "empty_key_rejected": true,
+        "operator_key_http": 401,
+        "operator_key_ok": false
+      },
+      "aws-node-3": {
+        "bad_key_rejected": true,
+        "empty_key_rejected": true,
+        "operator_key_http": 401,
+        "operator_key_ok": false
+      },
+      "ovh-node-4": {
+        "bad_key_rejected": true,
+        "empty_key_rejected": true,
+        "operator_key_http": 401,
+        "operator_key_ok": false
+      }
+    },
+    "replica_fanout": {
+      "http": null,
+      "error": null,
+      "peers_ok": 3,
+      "fanout_pass": true,
+      "from_replica_id": "ovh-node-1",
+      "peers": {
+        "https://artcb.me": {
+          "skipped": "self"
+        },
+        "https://n2.artcb.me": {
+          "http": 200,
+          "ok": true
+        },
+        "https://n3.artcb.me": {
+          "http": 200,
+          "ok": true
+        },
+        "https://n4.artcb.me": {
+          "http": 200,
+          "ok": true
+        }
+      }
+    },
+    "note": "direct API-key write to n2\u2013n4 may stay 401; R334-C fanout uses replica-signed peer-ingest",
+    "pass_authz_rejects": true,
+    "pass_fanout_writes": true
+  },
+  "org_acl": {
+    "pass": true,
+    "org_count": 4,
+    "hashes": [
+      "4d64e1f7cb402296",
+      "7966e97361216a6f",
+      "c8011e65cf7066f4",
+      "f69ef13fb5f3c280"
+    ],
+    "domain_id": "domain_bd0289984a25",
+    "export_no_auth": {
+      "http": 401,
+      "detail": "authentication_required"
+    },
+    "export_api_key": {
+      "http": 403,
+      "detail": "controller_mismatch"
+    },
+    "body_leaked": false,
+    "note": "export denied without org controller session (ACL closed for this path)"
+  },
+  "criteria": {
+    "reasoning_v2_pass": true,
+    "fanout_authz_rejects": true,
+    "fanout_writes_x4": true,
+    "org_acl_export_closed": true,
+    "O_certified_100": false
+  }
+}
