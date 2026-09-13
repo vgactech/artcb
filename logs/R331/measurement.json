@@ -1,7 +1,7 @@
 {
-  "measurement_id": "R331_20260913T014558Z_598e43a7402b",
-  "ts_ns": 1789256758567909000,
-  "commit_sha": "598e43a7402b4ae63fe68869d21f63c505238ae3",
+  "measurement_id": "R331_20260913T215907Z_cbd114d3c754",
+  "ts_ns": 1789329547573810000,
+  "commit_sha": "cbd114d3c7549cfbf584c06a6d3b2592b98bc199",
   "certified_100": false,
   "issues": {
     "77": "OPEN_until_live277",
@@ -58,48 +58,48 @@
   },
   "pollution": {
     "before": {
-      "ovh-node-1": 1158,
-      "ovh-node-2": 1158,
-      "aws-node-3": 1158,
-      "ovh-node-4": 1158
+      "ovh-node-1": 1172,
+      "ovh-node-2": 1172,
+      "aws-node-3": 1172,
+      "ovh-node-4": 1172
     },
     "after_private_memo": {
-      "ovh-node-1": 1158,
-      "ovh-node-2": 1158,
-      "aws-node-3": 1158,
-      "ovh-node-4": 1158
+      "ovh-node-1": 1172,
+      "ovh-node-2": 1172,
+      "aws-node-3": 1172,
+      "ovh-node-4": 1172
     },
     "private_memo": {
       "http": 200,
-      "block_index": 2171
+      "block_index": 2323
     },
     "public_memo": {
       "http": 200,
-      "block_index": 1159,
-      "hash": "e4fe40f64cad68cd"
+      "block_index": 1173,
+      "hash": "ca9a38df7261fe1d"
     },
     "after": {
       "ovh-node-1": {
-        "public_last_index": 1159,
-        "public_last_hash": "e4fe40f64cad68cd",
-        "private_suffix_lines": 1465,
+        "public_last_index": 1173,
+        "public_last_hash": "ca9a38df7261fe1d",
+        "private_suffix_lines": 1713,
         "ledger_mode": "split_v1"
       },
       "ovh-node-2": {
-        "public_last_index": 1159,
-        "public_last_hash": "e4fe40f64cad68cd",
+        "public_last_index": 1173,
+        "public_last_hash": "ca9a38df7261fe1d",
         "private_suffix_lines": 358,
         "ledger_mode": "split_v1"
       },
       "aws-node-3": {
-        "public_last_index": 1159,
-        "public_last_hash": "e4fe40f64cad68cd",
+        "public_last_index": 1173,
+        "public_last_hash": "ca9a38df7261fe1d",
         "private_suffix_lines": 358,
         "ledger_mode": "split_v1"
       },
       "ovh-node-4": {
-        "public_last_index": 1159,
-        "public_last_hash": "e4fe40f64cad68cd",
+        "public_last_index": 1173,
+        "public_last_hash": "ca9a38df7261fe1d",
         "private_suffix_lines": 358,
         "ledger_mode": "split_v1"
       }
@@ -109,14 +109,20 @@
     "tips_equal": true
   },
   "auto_vc": {
-    "from_view": 22,
-    "to_view": 23,
+    "from_view": 23,
+    "to_view": 25,
     "plan": {
       "ok": true,
-      "from_view": 22,
-      "target_view": 23,
-      "primary": "ovh-node-4",
-      "skipped": [],
+      "from_view": 23,
+      "target_view": 25,
+      "primary": "ovh-node-1",
+      "skipped": [
+        {
+          "view": 24,
+          "primary": "mac-node-local",
+          "reason": "primary_unreachable_transport"
+        }
+      ],
       "reachable_http_ids": [
         "ovh-node-1",
         "ovh-node-2",
@@ -124,8 +130,8 @@
         "ovh-node-4"
       ]
     },
-    "expected_primary": "ovh-node-4",
-    "primary_of_check": "ovh-node-4",
+    "expected_primary": "ovh-node-1",
+    "primary_of_check": "ovh-node-1",
     "vc_rows_collected": 4,
     "emits": {
       "ovh-node-1": {
@@ -182,11 +188,6 @@
       "has_new_view": true
     },
     "new_view_fanout": {
-      "ovh-node-1": {
-        "http": 200,
-        "ok": true,
-        "detail": null
-      },
       "ovh-node-2": {
         "http": 200,
         "ok": true,
@@ -196,21 +197,26 @@
         "http": 200,
         "ok": true,
         "detail": null
+      },
+      "ovh-node-4": {
+        "http": 200,
+        "ok": true,
+        "detail": null
       }
     },
-    "view_after": 23,
-    "primary_after": "ovh-node-4",
-    "dur_ns": 75896849411,
+    "view_after": 25,
+    "primary_after": "ovh-node-1",
+    "dur_ns": 47822926121,
     "pass_auto_vc": true
   },
   "mac_restart": {
     "attempted": true,
     "ok": true,
     "print_rc": 0,
-    "before_sha": "598e43a7402b",
+    "before_sha": "cbd114d3c754",
     "before_public": 716,
     "after_http": 200,
-    "after_sha": "598e43a7402b",
+    "after_sha": "cbd114d3c754",
     "after_public": 716,
     "public_preserved": true
   },

@@ -1,8 +1,9 @@
 {
-  "version": 1,
+  "version": 2,
   "protocol": "r337-rule-registry-v1",
   "created_at_utc": "2026-09-13T19:05:00Z",
-  "note": "Append-only lineage. Revocation = status superseded/deprecated, never delete. CERTIFIED_100=false.",
+  "updated_at_utc": "2026-09-13T20:05:00Z",
+  "note": "Append-only lineage. Revocation = status superseded/deprecated, never delete. CERTIFIED_100=false. R338: capability-first C04.",
   "rules": [
     {
       "rule_id": "RT-002",
@@ -136,6 +137,43 @@
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T19:05:00Z"
+    },
+    {
+      "rule_id": "RT-CAPABILITY-FIRST",
+      "version": 1,
+      "severity": "critical",
+      "title": "Hardware capability discovery before C04/TPM work",
+      "prevents": "fake-positive RoT / install software to simulate missing hardware",
+      "source_incident": "MacBookAir7,1 C04 false positive then NOT_AVAILABLE",
+      "scope": ["platform", "c04", "tpm"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-13T20:05:00Z"
+    },
+    {
+      "rule_id": "RT-077-C04",
+      "version": 1,
+      "severity": "critical",
+      "title": "C04 hardware-backed identity (not TPM-string chase)",
+      "prevents": "recasting software keys as hardware RoT; forcing C04 on UNSUPPORTED hardware",
+      "source_incident": "#77 C04 / MacBookAir7,1",
+      "scope": ["identity", "c04"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-13T20:05:00Z",
+      "note": "Verdicts: PASS|FAIL|NOT_PROVEN|UNSUPPORTED_HARDWARE|NOT_APPLICABLE"
+    },
+    {
+      "rule_id": "RT-ISSUE-87",
+      "version": 1,
+      "severity": "critical",
+      "title": "Master execution #87 — no historical drop",
+      "prevents": "closing OPEN/NOT_PROVEN by starting a new topic",
+      "source_incident": "GitHub #87",
+      "scope": ["agent-runtime", "certification"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-13T20:05:00Z"
     }
   ]
 }

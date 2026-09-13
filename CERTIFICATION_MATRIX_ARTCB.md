@@ -133,3 +133,14 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 | R337 C2-D/langage | remesure | PASS | fanout+matrix |
 | R337 #77 N04 | chaos SSH | not_proven | :22 CLOSED |
 | CERTIFIED_100 | — | **false** | — |
+
+## R338 append (2026-09-13T20:01:44Z) — capability-first C04 + #87
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R338 C04 Mac | capability discovery | **UNSUPPORTED_HARDWARE** | MacBookAir7,1 ; pas de fake TPM |
+| R338 policy | CAPABILITY_FIRST | CODE | stop before workaround |
+| #87 | master execution | OPEN | GitHub issue open |
+| #86 remesure | tip/VC/pollution | PASS partiel | org_body_multinode NOT_PROVEN_acl |
+| #77 N04 | SSH netem | not_proven | :22 CLOSED |
+| CERTIFIED_100 | — | **false** | — |

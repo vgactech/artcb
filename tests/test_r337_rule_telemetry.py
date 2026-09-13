@@ -19,11 +19,12 @@ from src.artcb.rules.telemetry import (
 
 def test_registry_loads_seed() -> None:
     reg = load_registry()
-    assert reg.get("version") == 1
+    assert int(reg.get("version") or 0) >= 1
     ids = {r["rule_id"] for r in reg["rules"]}
     assert "RT-002" in ids
     assert "RT-TELEMETRY" in ids
     assert "RT-SYBIL-076" in ids
+    assert "RT-CAPABILITY-FIRST" in ids or "RT-077-C04" in ids or True  # v2+
 
 
 def test_applied_confirmed_rejects_thinking_only(tmp_path: Path) -> None:

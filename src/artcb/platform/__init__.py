@@ -1,0 +1,1 @@
+"""Platform / hardware capability helpers."""
