@@ -24,7 +24,8 @@ def test_registry_loads_seed() -> None:
     assert "RT-002" in ids
     assert "RT-TELEMETRY" in ids
     assert "RT-SYBIL-076" in ids
-    assert "RT-CAPABILITY-FIRST" in ids or "RT-077-C04" in ids or True  # v2+
+    assert "RT-CAPABILITY-FIRST" in ids
+    assert "RT-077-C04" in ids
 
 
 def test_applied_confirmed_rejects_thinking_only(tmp_path: Path) -> None:
