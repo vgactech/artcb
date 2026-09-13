@@ -1,0 +1,314 @@
+{
+  "protocol": "r337-rule-telemetry-v1",
+  "registry_version": 1,
+  "rules_total": 11,
+  "counts": {
+    "RT-002": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 1,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-003": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 0,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-004": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 0,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-009": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 0,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-011": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 0,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-013": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 0,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-016": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 1,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-039": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 0,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    },
+    "RT-077-N04": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 0,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 1,
+      "waived": 0
+    },
+    "RT-SYBIL-076": {
+      "seen": 1,
+      "checked": 1,
+      "applied": 0,
+      "applied_confirmed": 1,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 1,
+      "waived": 0
+    },
+    "RT-TELEMETRY": {
+      "seen": 1,
+      "checked": 0,
+      "applied": 0,
+      "applied_confirmed": 1,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 0,
+      "waived": 0
+    }
+  },
+  "top_by_usage": [
+    {
+      "rule_id": "RT-SYBIL-076",
+      "applied_confirmed": 1,
+      "applied": 0,
+      "checked": 1,
+      "violated": 0,
+      "severity": "high"
+    },
+    {
+      "rule_id": "RT-002",
+      "applied_confirmed": 1,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "critical"
+    },
+    {
+      "rule_id": "RT-016",
+      "applied_confirmed": 1,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "critical"
+    },
+    {
+      "rule_id": "RT-TELEMETRY",
+      "applied_confirmed": 1,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "high"
+    },
+    {
+      "rule_id": "RT-003",
+      "applied_confirmed": 0,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "critical"
+    },
+    {
+      "rule_id": "RT-004",
+      "applied_confirmed": 0,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "critical"
+    },
+    {
+      "rule_id": "RT-009",
+      "applied_confirmed": 0,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "high"
+    },
+    {
+      "rule_id": "RT-011",
+      "applied_confirmed": 0,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "critical"
+    },
+    {
+      "rule_id": "RT-013",
+      "applied_confirmed": 0,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "high"
+    },
+    {
+      "rule_id": "RT-039",
+      "applied_confirmed": 0,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "high"
+    },
+    {
+      "rule_id": "RT-077-N04",
+      "applied_confirmed": 0,
+      "applied": 0,
+      "checked": 0,
+      "violated": 0,
+      "severity": "critical"
+    }
+  ],
+  "top_by_risk": [
+    {
+      "rule_id": "RT-077-N04",
+      "priority": 103.00098337013888,
+      "severity": "critical",
+      "violated": 0,
+      "applied_confirmed": 0,
+      "last_ts_ns": 1789326241818462000
+    },
+    {
+      "rule_id": "RT-003",
+      "priority": 100.00099786900464,
+      "severity": "critical",
+      "violated": 0,
+      "applied_confirmed": 0,
+      "last_ts_ns": 1789326241192119000
+    },
+    {
+      "rule_id": "RT-004",
+      "priority": 100.00099783157407,
+      "severity": "critical",
+      "violated": 0,
+      "applied_confirmed": 0,
+      "last_ts_ns": 1789326241193756000
+    },
+    {
+      "rule_id": "RT-011",
+      "priority": 100.00099777590277,
+      "severity": "critical",
+      "violated": 0,
+      "applied_confirmed": 0,
+      "last_ts_ns": 1789326241196189000
+    },
+    {
+      "rule_id": "RT-016",
+      "priority": 100.00099432969907,
+      "severity": "critical",
+      "violated": 0,
+      "applied_confirmed": 1,
+      "last_ts_ns": 1789326241344999000
+    },
+    {
+      "rule_id": "RT-002",
+      "priority": 100.00099057777778,
+      "severity": "critical",
+      "violated": 0,
+      "applied_confirmed": 1,
+      "last_ts_ns": 1789326241507055000
+    },
+    {
+      "rule_id": "RT-SYBIL-076",
+      "priority": 63.05097158590277,
+      "severity": "high",
+      "violated": 0,
+      "applied_confirmed": 1,
+      "last_ts_ns": 1789326242327525000
+    },
+    {
+      "rule_id": "RT-009",
+      "priority": 60.00099778870371,
+      "severity": "high",
+      "violated": 0,
+      "applied_confirmed": 0,
+      "last_ts_ns": 1789326241195595000
+    },
+    {
+      "rule_id": "RT-013",
+      "priority": 60.0009977655787,
+      "severity": "high",
+      "violated": 0,
+      "applied_confirmed": 0,
+      "last_ts_ns": 1789326241196573000
+    },
+    {
+      "rule_id": "RT-039",
+      "priority": 60.00099774835648,
+      "severity": "high",
+      "violated": 0,
+      "applied_confirmed": 0,
+      "last_ts_ns": 1789326241197327000
+    },
+    {
+      "rule_id": "RT-TELEMETRY",
+      "priority": 60.00098686849537,
+      "severity": "high",
+      "violated": 0,
+      "applied_confirmed": 1,
+      "last_ts_ns": 1789326241667354000
+    }
+  ],
+  "conflicts": [],
+  "coverage_gaps": [
+    {
+      "rule_id": "COVERAGE",
+      "kind": "coverage_gap",
+      "ts_ns": 1789326241973421000,
+      "turn_id": "R337_1789326241055529000",
+      "task_type": "r337_parallel",
+      "evidence_kind": "",
+      "evidence_ref": "",
+      "note": "{\"expected\": [\"RT-002\", \"RT-003\", \"RT-013\", \"RT-016\", \"RT-SYBIL-076\", \"RT-077-N04\"], \"checked\": [\"RT-002\", \"RT-016\", \"RT-TELEMETRY\"], \"missing\": [\"RT-003\", \"RT-013\", \"RT-SYBIL-076\", \"RT-077-N04\"]}",
+      "agent_claim_only": false,
+      "protocol": "r337-rule-telemetry-v1"
+    }
+  ],
+  "note": "absence_of_violation_is_not_applied; thinking_alone_never_applied_confirmed",
+  "certified_100": false
+}

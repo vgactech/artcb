@@ -220,10 +220,39 @@ def main() -> int:
 
     # Visible badge for humans/future users (Cursor accordion label stays
     # "Thought briefly" — product UI cannot be renamed via hooks).
+    # R337: optional RULE COMPLIANCE header from rule_usage.jsonl — display only.
+    # Never infer applied/applied_confirmed from thinking text here.
+    rule_block = ""
+    try:
+        sys.path.insert(0, str(ROOT / "src"))
+        from artcb.rules.telemetry import badge_snapshot  # noqa: WPS433
+
+        snap = badge_snapshot()
+        agg = snap.get("aggregate") or {}
+        rule_block = (
+            "## RULE COMPLIANCE — LIVE (R337 display)\n\n"
+            f"status: `{snap.get('status')}` · registry_v: `{snap.get('rule_registry_version')}` · "
+            f"rules_total: `{snap.get('rules_total')}`\n\n"
+            f"- seen/checked/applied/applied_confirmed/violated/corrected: "
+            f"`{agg.get('seen')}`/`{agg.get('checked')}`/`{agg.get('applied')}`/"
+            f"`{agg.get('applied_confirmed')}`/`{agg.get('violated')}`/`{agg.get('corrected')}`\n"
+            f"- conflicts: `{snap.get('conflicts')}` · coverage_gaps: `{snap.get('coverage_gaps')}`\n"
+            f"- evidence: `rules/rule_registry.json` + `data/trace/rule_usage.jsonl`\n"
+            f"- honest: thinking_alone_never_applied_confirmed=true · CERTIFIED_100=false\n\n"
+            "---\n\n"
+        )
+    except Exception:  # noqa: BLE001 — fail open
+        rule_block = (
+            "## RULE COMPLIANCE — LIVE\n\n"
+            "status: `NOT_LOADED` · (telemetry import failed — fail open)\n\n---\n\n"
+        )
+
     badge = ROOT / "data" / "trace" / "ARTCB_THINKING.md"
     badge.write_text(
         (
             "# ARTCB thinking\n\n"
+            f"{rule_block}"
+            "## CURRENT TURN\n\n"
             f"**capture=ACTIVE** · layer=3 (afterAgentThought) · ts_ns=`{ts_ns}`\n\n"
             f"- sha256_raw: `{sha}`\n"
             f"- chars: `{len(text)}`\n"

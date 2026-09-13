@@ -123,3 +123,13 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 - fingerprint match ×3 + **direct publish OK** n2/n3/n4 (clés Doppler `dev` synchronisées)
 - peer-restart HTTPS fonctionne (cercle :22 cassé pour reload)
 - révocation anciennes : N/A (projets étaient vides) ; `artcb-blockchain` intact
+
+## R337 append (2026-09-13T19:05:16Z) — Rule Telemetry + Anti-Sybil baseline
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R337 telemetry | registry+usage+badge | **CODE+local tests** | ~~NOT_STARTED~~ → moteur v1 ; thinking≠applied_confirmed |
+| R337 Anti-Sybil | campagne statistique | **BASELINE** | sample_count=25 <50 ; campaign_certified=false |
+| R337 C2-D/langage | remesure | PASS | fanout+matrix |
+| R337 #77 N04 | chaos SSH | not_proven | :22 CLOSED |
+| CERTIFIED_100 | — | **false** | — |

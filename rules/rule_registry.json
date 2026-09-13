@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "protocol": "r337-rule-registry-v1",
+  "created_at_utc": "2026-09-13T19:05:00Z",
+  "note": "Append-only lineage. Revocation = status superseded/deprecated, never delete. CERTIFIED_100=false.",
+  "rules": [
+    {
+      "rule_id": "RT-002",
+      "version": 1,
+      "severity": "critical",
+      "title": "SHA live == origin/main",
+      "prevents": "claiming live proof on undeployed SHA",
+      "source_incident": "PR38/R169 inequality",
+      "scope": ["live", "deploy"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-08T00:00:00Z"
+    },
+    {
+      "rule_id": "RT-003",
+      "version": 1,
+      "severity": "critical",
+      "title": "Never invent live measures",
+      "prevents": "fabricated tip/height/balance/settlement",
+      "source_incident": "operator standing order",
+      "scope": ["live", "report"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-08T00:00:00Z"
+    },
+    {
+      "rule_id": "RT-004",
+      "version": 1,
+      "severity": "critical",
+      "title": "Secrets never in git/chat/rapport",
+      "prevents": "token/password leakage",
+      "source_incident": "285/288 sudo leak historical",
+      "scope": ["all"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-10T00:00:00Z"
+    },
+    {
+      "rule_id": "RT-009",
+      "version": 1,
+      "severity": "high",
+      "title": "Nanosecond tracing on exercised path",
+      "prevents": "ms-only traces / NOT_VALIDATED",
+      "source_incident": "operator rule 10",
+      "scope": ["live", "test"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-08T00:00:00Z"
+    },
+    {
+      "rule_id": "RT-011",
+      "version": 1,
+      "severity": "critical",
+      "title": "Never erase rules — strike + timestamp",
+      "prevents": "history rewrite of protocol",
+      "source_incident": "R299 compaction",
+      "scope": ["rules", "code"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-08T15:48:00Z"
+    },
+    {
+      "rule_id": "RT-013",
+      "version": 1,
+      "severity": "high",
+      "title": "Resume prior open tasks in parallel",
+      "prevents": "dropping #77/#86/langage when new Rxxx starts",
+      "source_incident": "operator continuity",
+      "scope": ["agent-runtime"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-11T00:00:00Z"
+    },
+    {
+      "rule_id": "RT-016",
+      "version": 1,
+      "severity": "critical",
+      "title": "Ingest user_query at turn start",
+      "prevents": "prompt not on-chain / false FILE unset",
+      "source_incident": "rule 16/38",
+      "scope": ["agent-runtime"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-08T16:21:30Z"
+    },
+    {
+      "rule_id": "RT-039",
+      "version": 1,
+      "severity": "high",
+      "title": "Complete = live push + follow-main + SHA",
+      "prevents": "pytest-only fake completion",
+      "source_incident": "rule 39",
+      "scope": ["live"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-10T00:00:00Z"
+    },
+    {
+      "rule_id": "RT-077-N04",
+      "version": 1,
+      "severity": "critical",
+      "title": "Issue #77 N04 netem/SSH chaos",
+      "prevents": "recasting N04 FAIL as PASS without measure",
+      "source_incident": "#77",
+      "scope": ["consensus", "chaos"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-08T23:36:00Z"
+    },
+    {
+      "rule_id": "RT-SYBIL-076",
+      "version": 1,
+      "severity": "high",
+      "title": "Anti-Sybil statistical calibration campaign",
+      "prevents": "treating code engine as certified limit",
+      "source_incident": "rapport 076",
+      "scope": ["security", "mainnet"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-07-01T00:00:00Z",
+      "note": "sample_count>=50 is quantity gate not final rule value"
+    },
+    {
+      "rule_id": "RT-TELEMETRY",
+      "version": 1,
+      "severity": "high",
+      "title": "Rule telemetry itself — no false applied from thinking",
+      "prevents": "UI/thinking keyword → fake RuleApplied",
+      "source_incident": "ChatGPT Rule Telemetry audit 2026-09-13",
+      "scope": ["agent-runtime"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-13T19:05:00Z"
+    }
+  ]
+}
