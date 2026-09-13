@@ -1,0 +1,30 @@
+{
+  "assurance_h": "H1",
+  "native_c04": "UNSUPPORTED_HARDWARE",
+  "fingerprint_v2_16": "8dc65fe353a2b6f4",
+  "platform": {
+    "vendor": "Apple",
+    "model": "MacBookAir7,1",
+    "arch": "x86_64",
+    "macos": "12.7.6",
+    "serial_hash": "293f923c9baa18156f663cf851857019967c533d3fc89d90e5ad210057297bd5",
+    "platform_uuid_hash": "2d40d8dd2c7157d3808defb6d8201afd3155d0fed104bdaaf9a26fbe781017ba",
+    "board_id_hash": "371bcc6aab44ca5cb7253138e3f3cadb88b2d13ef8c340d8f936ded1975e77fc",
+    "serial_present": true,
+    "uuid_present": true,
+    "board_present": true
+  },
+  "security": {
+    "tpm": false,
+    "t2": false,
+    "secure_enclave_native": false,
+    "apple_silicon": false,
+    "tee": false,
+    "external_authenticator": false,
+    "native_attestation_proven": false
+  },
+  "node_pub_16": "tiPkdgAIqkJzRW9K",
+  "inventory_path": "/Users/deyi/.artcb/mac_hardware_inventory.json",
+  "certified_100": false,
+  "c04_pass": false
+}

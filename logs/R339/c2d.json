@@ -1,0 +1,679 @@
+{
+  "ts_ns": 1789332366315587000,
+  "certified_100": false,
+  "publisher": "https://artcb.me",
+  "hosts": {
+    "ovh-node-1": {
+      "base": "https://artcb.me",
+      "health": {
+        "http": 200,
+        "status": "healthy",
+        "service": "ARTCB API",
+        "version": "0.3.0",
+        "git_sha": "9724811b06beabe867763ea8c7f7adb7545dae52",
+        "git_branch": "main",
+        "release_integrity": "ok",
+        "pin_sha": null,
+        "bootstrap_mode": false,
+        "network_id": "artcb-mainnet-1",
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "pqc": {
+          "available": true,
+          "algorithm": "ML-DSA-65",
+          "policy": {
+            "policy_id": "B-preferred-pqc",
+            "policy_version": "189-mainnet-crypto-b",
+            "network_id": "artcb-mainnet-1",
+            "protocol_version": "189-mainnet-1",
+            "genesis_hash": "genesis-artcb-mainnet-1",
+            "preferred": "ML-DSA-65",
+            "temporary_allowed": "Ed25519",
+            "ed25519_only_until": "2026-12-31T00:00:00Z",
+            "fallback_open": true,
+            "local_suite": "hybrid:ed25519+ML-DSA-65",
+            "hybrid_when_pqc": true,
+            "hybrid_verify_mode": "AND",
+            "identity_bind": "kem_public_sha256",
+            "high_value_messages": [
+              "block_append",
+              "node_identity",
+              "settlement",
+              "peer_handshake"
+            ],
+            "anti_downgrade": true,
+            "silent_downgrade_forbidden": true,
+            "unsigned_pqc_not_trusted": true
+          },
+          "availability_is_not_enforcement": true,
+          "high_value_hybrid_enforced": false,
+          "hybrid_and_function": "verify_hybrid_and",
+          "hybrid_and_call_sites_wired": true,
+          "legacy_verify_hybrid_still_accepts_ed25519_only": true,
+          "ed25519_only_still_accepted": true,
+          "action_required": null
+        },
+        "certified_distributed_mainnet": true,
+        "certification_reason": "",
+        "operator_certification_go": true,
+        "machine": {
+          "tpm_device_present": false,
+          "tpm_resource_manager": false,
+          "tpm_version_major": null,
+          "tpm_attestation": "absent",
+          "tpm_available": false,
+          "tpm_kind": "absent",
+          "tpm_type": "absent",
+          "attestation_available": false,
+          "nitro_tpm": false,
+          "nsm_device_present": false,
+          "attestation_quote": null,
+          "attestation_nonce": {
+            "nonce_hex": null,
+            "purpose": "future_tpm_quote",
+            "quote": null,
+            "quote_invented": false,
+            "note": "Nonce anti-rejeu (32 octets hex) pour une quote TPM future. Aucune quote n'est fabriquée ici."
+          },
+          "hardware_assurance_level": "E",
+          "hardware_kind": "software",
+          "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hashés). Pas de puce.",
+          "chassis_virtual": true,
+          "virt_tech": "kvm",
+          "tee_detected": false,
+          "tee_kind": null,
+          "hsm_bound": false,
+          "tpm2_tools_present": false,
+          "pcr0_sha256": null,
+          "env_type": "linux_headless",
+          "platform_system": "Linux",
+          "cloud_provider": "ovh",
+          "binding_hash": "5bf760a959019f715e99388b19a740656d0d45a0710643fc1d35b71c135e0031",
+          "machine_id_hash": "e963d522205832e324afc57a02a8636b7644958c1bc89a21ca07a1df3eff3be7",
+          "device_fingerprint_prefix": "a6fce8a864ecee5c",
+          "note": "Niveaux A–E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. On n’invente pas NitroTPM/SEV si /dev/tpm0 est absent. Niveau mesuré ici : E (software). tpm_type=absent. attestation_available=False."
+        },
+        "producer_failover_live": false,
+        "producer_failover_will_append": false
+      },
+      "key_present": true,
+      "git_sha": "9724811b06be",
+      "publish": {
+        "graphs": 1,
+        "bundle_sha256": "a46bf73b0f8e4a4f86fb67b5b3a75bcb45900cc8c147921c3225eaed54b673f6"
+      },
+      "publish_ok": true,
+      "self_resolve": {
+        "http": 200,
+        "bundle_sha256": "b41b1f93ad1a86a10c33bf9c0f35e23286a0d2ecc75da3a8ba044d9036ed74d7",
+        "missing_after": [],
+        "found": 1,
+        "ok": true,
+        "federated_from": null,
+        "transport": "WAN_HTTPS"
+      },
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
+      }
+    },
+    "ovh-node-2": {
+      "base": "https://n2.artcb.me",
+      "health": {
+        "http": 200,
+        "status": "healthy",
+        "service": "ARTCB API",
+        "version": "0.3.0",
+        "git_sha": "9724811b06beabe867763ea8c7f7adb7545dae52",
+        "git_branch": "main",
+        "release_integrity": "ok",
+        "pin_sha": null,
+        "bootstrap_mode": false,
+        "network_id": "artcb-mainnet-1",
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "pqc": {
+          "available": true,
+          "algorithm": "ML-DSA-65",
+          "policy": {
+            "policy_id": "B-preferred-pqc",
+            "policy_version": "189-mainnet-crypto-b",
+            "network_id": "artcb-mainnet-1",
+            "protocol_version": "189-mainnet-1",
+            "genesis_hash": "genesis-artcb-mainnet-1",
+            "preferred": "ML-DSA-65",
+            "temporary_allowed": "Ed25519",
+            "ed25519_only_until": "2026-12-31T00:00:00Z",
+            "fallback_open": true,
+            "local_suite": "hybrid:ed25519+ML-DSA-65",
+            "hybrid_when_pqc": true,
+            "hybrid_verify_mode": "AND",
+            "identity_bind": "kem_public_sha256",
+            "high_value_messages": [
+              "block_append",
+              "node_identity",
+              "settlement",
+              "peer_handshake"
+            ],
+            "anti_downgrade": true,
+            "silent_downgrade_forbidden": true,
+            "unsigned_pqc_not_trusted": true
+          },
+          "availability_is_not_enforcement": true,
+          "high_value_hybrid_enforced": false,
+          "hybrid_and_function": "verify_hybrid_and",
+          "hybrid_and_call_sites_wired": true,
+          "legacy_verify_hybrid_still_accepts_ed25519_only": true,
+          "ed25519_only_still_accepted": true,
+          "action_required": null
+        },
+        "certified_distributed_mainnet": true,
+        "certification_reason": "",
+        "operator_certification_go": true,
+        "machine": {
+          "tpm_device_present": false,
+          "tpm_resource_manager": false,
+          "tpm_version_major": null,
+          "tpm_attestation": "absent",
+          "tpm_available": false,
+          "tpm_kind": "absent",
+          "tpm_type": "absent",
+          "attestation_available": false,
+          "nitro_tpm": false,
+          "nsm_device_present": false,
+          "attestation_quote": null,
+          "attestation_nonce": {
+            "nonce_hex": null,
+            "purpose": "future_tpm_quote",
+            "quote": null,
+            "quote_invented": false,
+            "note": "Nonce anti-rejeu (32 octets hex) pour une quote TPM future. Aucune quote n'est fabriquée ici."
+          },
+          "hardware_assurance_level": "E",
+          "hardware_kind": "software",
+          "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hashés). Pas de puce.",
+          "chassis_virtual": true,
+          "virt_tech": "kvm",
+          "tee_detected": false,
+          "tee_kind": null,
+          "hsm_bound": false,
+          "tpm2_tools_present": false,
+          "pcr0_sha256": null,
+          "env_type": "linux_headless",
+          "platform_system": "Linux",
+          "cloud_provider": "ovh",
+          "binding_hash": "7f064329ec12e0a126447c3b96c87db9b3a6d534c840a298dff84dd4e05bf6d6",
+          "machine_id_hash": "b4d9debb7e0477e958e808c37d6bdef04f58b05ba3dace866bbe311846e00d60",
+          "device_fingerprint_prefix": "e03586f358a76215",
+          "note": "Niveaux A–E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. On n’invente pas NitroTPM/SEV si /dev/tpm0 est absent. Niveau mesuré ici : E (software). tpm_type=absent. attestation_available=False."
+        },
+        "producer_failover_live": false,
+        "producer_failover_will_append": false
+      },
+      "key_present": true,
+      "git_sha": "9724811b06be",
+      "publish": {
+        "graphs": 1,
+        "bundle_sha256": "a46bf73b0f8e4a4f86fb67b5b3a75bcb45900cc8c147921c3225eaed54b673f6"
+      },
+      "publish_ok": true,
+      "self_resolve": {
+        "http": 200,
+        "bundle_sha256": "9619830afb5a85396770a215eebe7675202ba9b6e41ac074997a88b905b3f92b",
+        "missing_after": [],
+        "found": 1,
+        "ok": true,
+        "federated_from": null,
+        "transport": "WAN_HTTPS"
+      },
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
+      }
+    },
+    "aws-node-3": {
+      "base": "https://n3.artcb.me",
+      "health": {
+        "http": 200,
+        "status": "healthy",
+        "service": "ARTCB API",
+        "version": "0.3.0",
+        "git_sha": "9724811b06beabe867763ea8c7f7adb7545dae52",
+        "git_branch": "main",
+        "release_integrity": "ok",
+        "pin_sha": null,
+        "bootstrap_mode": false,
+        "network_id": "artcb-mainnet-1",
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "pqc": {
+          "available": true,
+          "algorithm": "ML-DSA-65",
+          "policy": {
+            "policy_id": "B-preferred-pqc",
+            "policy_version": "189-mainnet-crypto-b",
+            "network_id": "artcb-mainnet-1",
+            "protocol_version": "189-mainnet-1",
+            "genesis_hash": "genesis-artcb-mainnet-1",
+            "preferred": "ML-DSA-65",
+            "temporary_allowed": "Ed25519",
+            "ed25519_only_until": "2026-12-31T00:00:00Z",
+            "fallback_open": true,
+            "local_suite": "hybrid:ed25519+ML-DSA-65",
+            "hybrid_when_pqc": true,
+            "hybrid_verify_mode": "AND",
+            "identity_bind": "kem_public_sha256",
+            "high_value_messages": [
+              "block_append",
+              "node_identity",
+              "settlement",
+              "peer_handshake"
+            ],
+            "anti_downgrade": true,
+            "silent_downgrade_forbidden": true,
+            "unsigned_pqc_not_trusted": true
+          },
+          "availability_is_not_enforcement": true,
+          "high_value_hybrid_enforced": false,
+          "hybrid_and_function": "verify_hybrid_and",
+          "hybrid_and_call_sites_wired": true,
+          "legacy_verify_hybrid_still_accepts_ed25519_only": true,
+          "ed25519_only_still_accepted": true,
+          "action_required": null
+        },
+        "certified_distributed_mainnet": true,
+        "certification_reason": "",
+        "operator_certification_go": true,
+        "machine": {
+          "tpm_device_present": true,
+          "tpm_resource_manager": true,
+          "tpm_version_major": "2",
+          "tpm_attestation": "device_present_no_ek",
+          "tpm_available": false,
+          "tpm_kind": "virtual",
+          "tpm_type": "virtual",
+          "attestation_available": true,
+          "nitro_tpm": true,
+          "nsm_device_present": false,
+          "attestation_quote": null,
+          "attestation_nonce": {
+            "nonce_hex": null,
+            "purpose": "future_tpm_quote",
+            "quote": null,
+            "quote_invented": false,
+            "note": "Nonce anti-rejeu (32 octets hex) pour une quote TPM future. Aucune quote n'est fabriquée ici."
+          },
+          "hardware_assurance_level": "B",
+          "hardware_kind": "virtual_tpm",
+          "hardware_assurance_fr": "TPM émulé par l’hyperviseur (vTPM / NitroTPM) : /dev/tpm0 existe ET la machine est virtuelle.",
+          "chassis_virtual": true,
+          "virt_tech": "amazon",
+          "tee_detected": false,
+          "tee_kind": null,
+          "hsm_bound": false,
+          "tpm2_tools_present": true,
+          "pcr0_sha256": null,
+          "env_type": "linux_headless",
+          "platform_system": "Linux",
+          "cloud_provider": "aws",
+          "binding_hash": "64090278d962748427d09d1ad32191a76bf313a808e02f9206aa1bad9338d0f5",
+          "machine_id_hash": "7a5448dd505ade69ebe351455adb9fc307cace4b9ecadb0616b7c9ae242957fb",
+          "device_fingerprint_prefix": "19d8fde2f7a78d09",
+          "note": "Niveaux A–E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. On n’invente pas NitroTPM/SEV si /dev/tpm0 est absent. Niveau mesuré ici : B (virtual_tpm). tpm_type=virtual. attestation_available=True."
+        },
+        "producer_failover_live": false,
+        "producer_failover_will_append": false
+      },
+      "key_present": true,
+      "git_sha": "9724811b06be",
+      "publish": {
+        "graphs": 1,
+        "bundle_sha256": "a46bf73b0f8e4a4f86fb67b5b3a75bcb45900cc8c147921c3225eaed54b673f6"
+      },
+      "publish_ok": true,
+      "self_resolve": {
+        "http": 200,
+        "bundle_sha256": "1dd221b322c28c0d38808411d13c91c8aeb716dcac870fe24f630d1302fa950b",
+        "missing_after": [],
+        "found": 1,
+        "ok": true,
+        "federated_from": null,
+        "transport": "WAN_HTTPS"
+      },
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
+      }
+    },
+    "ovh-node-4": {
+      "base": "https://n4.artcb.me",
+      "health": {
+        "http": 200,
+        "status": "healthy",
+        "service": "ARTCB API",
+        "version": "0.3.0",
+        "git_sha": "9724811b06beabe867763ea8c7f7adb7545dae52",
+        "git_branch": "main",
+        "release_integrity": "ok",
+        "pin_sha": null,
+        "bootstrap_mode": false,
+        "network_id": "artcb-mainnet-1",
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "pqc": {
+          "available": true,
+          "algorithm": "ML-DSA-65",
+          "policy": {
+            "policy_id": "B-preferred-pqc",
+            "policy_version": "189-mainnet-crypto-b",
+            "network_id": "artcb-mainnet-1",
+            "protocol_version": "189-mainnet-1",
+            "genesis_hash": "genesis-artcb-mainnet-1",
+            "preferred": "ML-DSA-65",
+            "temporary_allowed": "Ed25519",
+            "ed25519_only_until": "2026-12-31T00:00:00Z",
+            "fallback_open": true,
+            "local_suite": "hybrid:ed25519+ML-DSA-65",
+            "hybrid_when_pqc": true,
+            "hybrid_verify_mode": "AND",
+            "identity_bind": "kem_public_sha256",
+            "high_value_messages": [
+              "block_append",
+              "node_identity",
+              "settlement",
+              "peer_handshake"
+            ],
+            "anti_downgrade": true,
+            "silent_downgrade_forbidden": true,
+            "unsigned_pqc_not_trusted": true
+          },
+          "availability_is_not_enforcement": true,
+          "high_value_hybrid_enforced": false,
+          "hybrid_and_function": "verify_hybrid_and",
+          "hybrid_and_call_sites_wired": true,
+          "legacy_verify_hybrid_still_accepts_ed25519_only": true,
+          "ed25519_only_still_accepted": true,
+          "action_required": null
+        },
+        "certified_distributed_mainnet": true,
+        "certification_reason": "",
+        "operator_certification_go": true,
+        "machine": {
+          "tpm_device_present": false,
+          "tpm_resource_manager": false,
+          "tpm_version_major": null,
+          "tpm_attestation": "absent",
+          "tpm_available": false,
+          "tpm_kind": "absent",
+          "tpm_type": "absent",
+          "attestation_available": false,
+          "nitro_tpm": false,
+          "nsm_device_present": false,
+          "attestation_quote": null,
+          "attestation_nonce": {
+            "nonce_hex": null,
+            "purpose": "future_tpm_quote",
+            "quote": null,
+            "quote_invented": false,
+            "note": "Nonce anti-rejeu (32 octets hex) pour une quote TPM future. Aucune quote n'est fabriquée ici."
+          },
+          "hardware_assurance_level": "E",
+          "hardware_kind": "software",
+          "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hashés). Pas de puce.",
+          "chassis_virtual": true,
+          "virt_tech": "kvm",
+          "tee_detected": false,
+          "tee_kind": null,
+          "hsm_bound": false,
+          "tpm2_tools_present": false,
+          "pcr0_sha256": null,
+          "env_type": "linux_headless",
+          "platform_system": "Linux",
+          "cloud_provider": "ovh",
+          "binding_hash": "f4c36fc28f6026df8109713d328d90e598ad9018571809bc9992000b318817a9",
+          "machine_id_hash": "e77b8e0c5ef567a866d6bf0331f12976892d3e545c85664bdf97cfbfce119308",
+          "device_fingerprint_prefix": "224af0ed024f7070",
+          "note": "Niveaux A–E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. On n’invente pas NitroTPM/SEV si /dev/tpm0 est absent. Niveau mesuré ici : E (software). tpm_type=absent. attestation_available=False."
+        },
+        "producer_failover_live": false,
+        "producer_failover_will_append": false
+      },
+      "key_present": true,
+      "git_sha": "9724811b06be",
+      "publish": {
+        "graphs": 1,
+        "bundle_sha256": "a46bf73b0f8e4a4f86fb67b5b3a75bcb45900cc8c147921c3225eaed54b673f6"
+      },
+      "publish_ok": true,
+      "self_resolve": {
+        "http": 200,
+        "bundle_sha256": "7469a8d8b416767777ebe216bae588260d6229c36aad38c8dce7bec299d807fc",
+        "missing_after": [],
+        "found": 1,
+        "ok": true,
+        "federated_from": null,
+        "transport": "WAN_HTTPS"
+      },
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      },
+      "fanout_cold_resolve": {
+        "ok": true,
+        "http": 200,
+        "missing": []
+      }
+    },
+    "mac-node-local": {
+      "base": "http://127.0.0.1:8001",
+      "health": {
+        "http": 200,
+        "status": "healthy",
+        "service": "ARTCB API",
+        "version": "0.3.0",
+        "git_sha": "9724811b06beabe867763ea8c7f7adb7545dae52",
+        "git_branch": "main",
+        "release_integrity": "ok",
+        "pin_sha": null,
+        "bootstrap_mode": false,
+        "network_id": "artcb-mainnet-1",
+        "protocol_version": "189-mainnet-1",
+        "genesis_hash": "genesis-artcb-mainnet-1",
+        "pqc": {
+          "available": true,
+          "algorithm": "ML-DSA-65",
+          "policy": {
+            "policy_id": "B-preferred-pqc",
+            "policy_version": "189-mainnet-crypto-b",
+            "network_id": "artcb-mainnet-1",
+            "protocol_version": "189-mainnet-1",
+            "genesis_hash": "genesis-artcb-mainnet-1",
+            "preferred": "ML-DSA-65",
+            "temporary_allowed": "Ed25519",
+            "ed25519_only_until": "2026-12-31T00:00:00Z",
+            "fallback_open": true,
+            "local_suite": "hybrid:ed25519+ML-DSA-65",
+            "hybrid_when_pqc": true,
+            "hybrid_verify_mode": "AND",
+            "identity_bind": "kem_public_sha256",
+            "high_value_messages": [
+              "block_append",
+              "node_identity",
+              "settlement",
+              "peer_handshake"
+            ],
+            "anti_downgrade": true,
+            "silent_downgrade_forbidden": true,
+            "unsigned_pqc_not_trusted": true
+          },
+          "availability_is_not_enforcement": true,
+          "high_value_hybrid_enforced": false,
+          "hybrid_and_function": "verify_hybrid_and",
+          "hybrid_and_call_sites_wired": true,
+          "legacy_verify_hybrid_still_accepts_ed25519_only": true,
+          "ed25519_only_still_accepted": true,
+          "action_required": null
+        },
+        "certified_distributed_mainnet": true,
+        "certification_reason": "",
+        "operator_certification_go": true,
+        "machine": {
+          "tpm_device_present": false,
+          "tpm_resource_manager": false,
+          "tpm_version_major": null,
+          "tpm_attestation": "absent",
+          "tpm_available": false,
+          "tpm_kind": "absent",
+          "tpm_type": "absent",
+          "attestation_available": false,
+          "nitro_tpm": false,
+          "nsm_device_present": false,
+          "attestation_quote": null,
+          "attestation_nonce": {
+            "nonce_hex": null,
+            "purpose": "future_tpm_quote",
+            "quote": null,
+            "quote_invented": false,
+            "note": "Nonce anti-rejeu (32 octets hex) pour une quote TPM future. Aucune quote n'est fabriquée ici."
+          },
+          "hardware_assurance_level": "E",
+          "hardware_kind": "software",
+          "hardware_assurance_fr": "Empreinte logicielle (machine-id + instance cloud hashés). Pas de puce.",
+          "chassis_virtual": false,
+          "virt_tech": null,
+          "tee_detected": false,
+          "tee_kind": null,
+          "hsm_bound": false,
+          "tpm2_tools_present": false,
+          "pcr0_sha256": null,
+          "env_type": "local",
+          "platform_system": "Darwin",
+          "cloud_provider": "unknown",
+          "binding_hash": "b23a6a8439c0dde5515893e7c90c1e3233b8616e634470f20dc4928bcf3609bc",
+          "machine_id_hash": "2d40d8dd2c7157d3808defb6d8201afd3155d0fed104bdaaf9a26fbe781017ba",
+          "device_fingerprint_prefix": "2d8dc493887b76fe",
+          "note": "Niveaux A–E : A TPM physique, B vTPM, C TEE, D HSM, E logiciel. On n’invente pas NitroTPM/SEV si /dev/tpm0 est absent. Niveau mesuré ici : E (software). tpm_type=absent. attestation_available=False."
+        },
+        "producer_failover_live": false,
+        "producer_failover_will_append": false
+      },
+      "key_present": true,
+      "git_sha": "9724811b06be",
+      "publish": {
+        "graphs": 1,
+        "bundle_sha256": "a46bf73b0f8e4a4f86fb67b5b3a75bcb45900cc8c147921c3225eaed54b673f6"
+      },
+      "publish_ok": true,
+      "self_resolve": {
+        "http": 200,
+        "bundle_sha256": "3d94e111ed5485a8228fc1bb004140a559b6334cae946c757a8ffc42b4d459f1",
+        "missing_after": [],
+        "found": 1,
+        "ok": true,
+        "federated_from": null,
+        "transport": "LOCAL_HTTP"
+      },
+      "self_resolve_ok": true,
+      "offline_persist": {
+        "ok": true
+      }
+    }
+  },
+  "a": {
+    "concept_ids": [
+      "K05336c50b14ee52d",
+      "K69ac1cbfe446a0a9"
+    ],
+    "graph_id": "g_462302f05e00",
+    "packet_sha256": "1587d0f2edded6249ed667011b14db9c44793ec202d6439610d4e119647397d0",
+    "bundle_sha256": "a46bf73b0f8e4a4f86fb67b5b3a75bcb45900cc8c147921c3225eaed54b673f6",
+    "bundle_bytes": 549
+  },
+  "keys_present": {
+    "ovh-node-1": true,
+    "ovh-node-2": true,
+    "aws-node-3": true,
+    "ovh-node-4": true,
+    "mac-node-local": true
+  },
+  "wan_publisher_resolve": {
+    "from": "cold_local_store",
+    "via": "https://artcb.me",
+    "http": 200,
+    "ok": true,
+    "missing_after": [],
+    "found": 1,
+    "offline_ok": true
+  },
+  "replica_fanout": {
+    "peers_ok": 3,
+    "fanout_pass": true,
+    "from_replica_id": "ovh-node-1",
+    "http": null,
+    "error": null,
+    "peers": {
+      "https://artcb.me": {
+        "http": null,
+        "ok": null,
+        "skipped": "self",
+        "error": null
+      },
+      "https://n2.artcb.me": {
+        "http": 200,
+        "ok": true,
+        "skipped": null,
+        "error": null
+      },
+      "https://n3.artcb.me": {
+        "http": 200,
+        "ok": true,
+        "skipped": null,
+        "error": null
+      },
+      "https://n4.artcb.me": {
+        "http": 200,
+        "ok": true,
+        "skipped": null,
+        "error": null
+      }
+    }
+  },
+  "summary": {
+    "healthy_hosts": 5,
+    "unique_git_shas": [
+      "9724811b06be"
+    ],
+    "sha_aligned_5": true,
+    "publish_ok_hosts": 5,
+    "self_resolve_ok_hosts": 5,
+    "wan_publisher_ok": true,
+    "wan_offline_ok": true,
+    "replica_fanout_pass": true,
+    "fanout_cold_resolve_ok": 4,
+    "c2d_multihote_pass": true,
+    "c2d_five_agent_resolve_pass": true,
+    "c2d_five_store_fanout_pass": true,
+    "honest_gaps": [
+      "~~native write fan-out to n2/n3/n4 needs per-node API keys~~ barred 2026-09-13 — use /concepts/fanout replica path",
+      "direct API-key publish to n2/n3/n4 still 401 without Doppler node keys (expected)",
+      "seed hole after 716 still blocks Mac tip catch-up (not invented)",
+      "CERTIFIED_100 remains false"
+    ],
+    "dur_ns": 8457423955
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "protocol": "r339-node-enrollment-v1",
+  "ts_ns": 1789332785733921000,
+  "hardware": {
+    "protocol": "r339-mac-hardware-inventory-v1",
+    "ts_ns": 1789332779716814000,
+    "platform": {
+      "vendor": "Apple",
+      "model": "MacBookAir7,1",
+      "arch": "x86_64",
+      "macos": "12.7.6",
+      "serial_hash": "293f923c9baa18156f663cf851857019967c533d3fc89d90e5ad210057297bd5",
+      "platform_uuid_hash": "2d40d8dd2c7157d3808defb6d8201afd3155d0fed104bdaaf9a26fbe781017ba",
+      "board_id_hash": "371bcc6aab44ca5cb7253138e3f3cadb88b2d13ef8c340d8f936ded1975e77fc",
+      "serial_present": true,
+      "uuid_present": true,
+      "board_present": true
+    },
+    "firmware": {
+      "boot_rom_hash": null,
+      "smc_hash": "2804f511d62b92ea46dcd6bd1a431d41d6a444238b6eb5a46f1daacc54c020c2",
+      "boot_rom_present": false,
+      "smc_present": true
+    },
+    "cpu": {
+      "brand_hash": "b4b8ac3b17ff5c3e4122e26fc12efe1703882d2a123e204642c15b5d647e74cb",
+      "brand_present": true,
+      "arch": "x86_64",
+      "note": "CPU is characteristic not unique identity"
+    },
+    "memory": {
+      "size_bytes": 8589934592,
+      "note": "RAM secondary; replacement must not destroy node identity alone"
+    },
+    "storage": [
+      {
+        "index": 0,
+        "profile_hash": "e957dde821d9bbed0c4dc2168cf5360ad1e01b4b318d83cd23e117bb74fa5a2f",
+        "present": true,
+        "note": "storage secondary; SSD replace \u2192 revalidation not automatic NEW DEVICE"
+      }
+    ],
+    "network": [
+      {
+        "type": "iface",
+        "mac_hash": "56248cf2e2e95099bf71399958059dbdb7de9c17c2d76a90d31c8cfbc85f6b50",
+        "note": "MAC spoofable complementary signal"
+      },
+      {
+        "type": "iface",
+        "mac_hash": "bed3abec27102403d22e40f6f4e4da905d3af2b7a93aa2622f10c28cb996d3cf",
+        "note": "MAC spoofable complementary signal"
+      },
+      {
+        "type": "iface",
+        "mac_hash": "bed3abec27102403d22e40f6f4e4da905d3af2b7a93aa2622f10c28cb996d3cf",
+        "note": "MAC spoofable complementary signal"
+      },
+      {
+        "type": "iface",
+        "mac_hash": "a84b504ffef126776ed6b04bd7fe6c151c4dc0f96c50679a2fda804857ecdc6f",
+        "note": "MAC spoofable complementary signal"
+      },
+      {
+        "type": "iface",
+        "mac_hash": "510f22d1c7638269882b3d1469c3dd24daaa9c48d7b67e627656d1d460ebb95b",
+        "note": "MAC spoofable complementary signal"
+      },
+      {
+        "type": "iface",
+        "mac_hash": "510f22d1c7638269882b3d1469c3dd24daaa9c48d7b67e627656d1d460ebb95b",
+        "note": "MAC spoofable complementary signal"
+      }
+    ],
+    "topology": {
+      "usb_present": true,
+      "thunderbolt_present": true,
+      "usb_blob_hash": "321092dd123c8f85eea33e028fc227a1c4229504e3d0a122217c07f7939ed6be",
+      "thunderbolt_blob_hash": "b1f3323ab8d3b43a2ba48ff819d674215aa87964c17dd48c446271075516c7f5",
+      "note": "topology descriptive; not RoT"
+    },
+    "security": {
+      "tpm": false,
+      "t2": false,
+      "secure_enclave_native": false,
+      "apple_silicon": false,
+      "tee": false,
+      "external_authenticator": false,
+      "native_attestation_proven": false,
+      "rot_kind": "NONE",
+      "note": "rot_kind presence \u2260 attestation; APPLE_T2 \u2260 TPM"
+    },
+    "evidence": [
+      {
+        "component": "serial",
+        "value_hash": "293f923c9baa18156f663cf851857019967c533d3fc89d90e5ad210057297bd5",
+        "source": "ioreg",
+        "stability": "high",
+        "confidence": "medium",
+        "present": true,
+        "raw_preview": "",
+        "ts_ns": 1789332780833758000
+      },
+      {
+        "component": "platform_uuid",
+        "value_hash": "2d40d8dd2c7157d3808defb6d8201afd3155d0fed104bdaaf9a26fbe781017ba",
+        "source": "ioreg",
+        "stability": "high",
+        "confidence": "medium",
+        "present": true,
+        "raw_preview": "",
+        "ts_ns": 1789332780833846000
+      },
+      {
+        "component": "board_id",
+        "value_hash": "371bcc6aab44ca5cb7253138e3f3cadb88b2d13ef8c340d8f936ded1975e77fc",
+        "source": "ioreg/sysctl",
+        "stability": "high",
+        "confidence": "medium_high",
+        "present": true,
+        "raw_preview": "",
+        "ts_ns": 1789332780833874000
+      },
+      {
+        "component": "model",
+        "value_hash": "fc115308f6c809f6400fa62f5fbd6517f500a7692e0a8cb9e29f60800e0924ea",
+        "source": "sysctl",
+        "stability": "high",
+        "confidence": "low",
+        "present": true,
+        "raw_preview": "",
+        "ts_ns": 1789332780833898000
+      }
+    ],
+    "fingerprint_v2": "8dc65fe353a2b6f4485d31fa3de13e7acc042c158b2c7684ba7b0fd10d8dcb95",
+    "assurance_h": "H1",
+    "assurance_legacy_ae": "E",
+    "native_c04": "UNSUPPORTED_HARDWARE",
+    "notes": [
+      "software_bound_fingerprint_plus_node_key_eligible",
+      "no_native_rot_do_not_claim_h3",
+      "missing_identifier_does_not_forbid_enrollment",
+      "100_fingerprints_neq_hardware_attestation"
+    ]
+  },
+  "node_key": {
+    "algorithm": "Ed25519",
+    "public_key_b64": "tiPkdgAIqkJzRW9Kx/dBiFTxEslF3l3ICV6kOcgOEm0=",
+    "exportable": true
+  },
+  "binding": {
+    "fingerprint_v2": "8dc65fe353a2b6f4485d31fa3de13e7acc042c158b2c7684ba7b0fd10d8dcb95",
+    "public_key_b64": "tiPkdgAIqkJzRW9Kx/dBiFTxEslF3l3ICV6kOcgOEm0=",
+    "assurance_h": "H1",
+    "native_c04": "UNSUPPORTED_HARDWARE"
+  },
+  "policy": {
+    "H0": "declared software ids only \u2014 limited",
+    "H1": "fingerprint + NodeKey + challenge \u2014 limited production",
+    "H2": "external non-exportable authenticator + Mac binding",
+    "H3": "native TPM/T2/SEP attested",
+    "H4": "H3 + measured boot / fresh attestation",
+    "never": "software_fallback => C04 PASS",
+    "ssd_replace": "revalidation_not_automatic_new_device",
+    "motherboard_replace": "revalidation_required",
+    "reinstall_os": "H1 needs recovery ceremony if software key lost"
+  },
+  "certified_100": false,
+  "c04_pass": false
+}

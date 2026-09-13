@@ -1,9 +1,9 @@
 {
-  "version": 2,
+  "version": 3,
   "protocol": "r337-rule-registry-v1",
   "created_at_utc": "2026-09-13T19:05:00Z",
-  "updated_at_utc": "2026-09-13T20:05:00Z",
-  "note": "Append-only lineage. Revocation = status superseded/deprecated, never delete. CERTIFIED_100=false. R338: capability-first C04.",
+  "updated_at_utc": "2026-09-13T20:55:00Z",
+  "note": "Append-only lineage. Revocation = status superseded/deprecated, never delete. CERTIFIED_100=false. R338: capability-first C04. R339: Hardware Identity v2 H0–H4.",
   "rules": [
     {
       "rule_id": "RT-002",
@@ -166,7 +166,7 @@
     {
       "rule_id": "RT-ISSUE-87",
       "version": 1,
-      "severity": "critical",
+      "priority": "critical",
       "title": "Master execution #87 — no historical drop",
       "prevents": "closing OPEN/NOT_PROVEN by starting a new topic",
       "source_incident": "GitHub #87",
@@ -174,6 +174,31 @@
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T20:05:00Z"
+    },
+    {
+      "rule_id": "RT-HW-H1",
+      "version": 1,
+      "priority": "critical",
+      "title": "Hardware Identity v2 — H0–H4; missing ID ≠ ban; H1 ≠ H3",
+      "prevents": "fake C04 PASS; treating inventory as attestation; forbidding old Mac solely for absent TPM",
+      "source_incident": "R339 MacBookAir7,1 Hardware Identity v2",
+      "scope": ["platform", "identity", "c04", "enrollment"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-13T20:55:00Z",
+      "note": "UNSUPPORTED_HARDWARE remains for native C04; NODE may still be AUTHORIZED at H1/H2"
+    },
+    {
+      "rule_id": "RT-HW-BINDING",
+      "version": 1,
+      "priority": "high",
+      "title": "External authenticator requires Mac↔key binding (H2 not H3)",
+      "prevents": "token moved to Mac B accepted as Mac A; external key alone as native RoT",
+      "source_incident": "R339 audit correction",
+      "scope": ["platform", "identity"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-13T20:55:00Z"
     }
   ]
 }

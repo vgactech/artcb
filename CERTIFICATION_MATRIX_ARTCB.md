@@ -144,3 +144,16 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 | #86 remesure | tip/VC/pollution | PASS partiel | org_body_multinode NOT_PROVEN_acl |
 | #77 N04 | SSH netem | not_proven | :22 CLOSED |
 | CERTIFIED_100 | — | **false** | — |
+
+## R339 append (2026-09-13T20:55:00Z) — Hardware Identity v2 + remesures
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R339 Mac inventory | H0–H4 enrollment | **H1** | MacBookAir7,1 ; C04 UNSUPPORTED_HARDWARE |
+| R339 NodeKey | Ed25519 challenge | CODE+local | ≠ attestation matérielle |
+| R339 public tip | ×4 HTTPS | PASS equal | index 1177 ; SHA `9724811…` |
+| R339 C2-D | fanout | PASS | remesure |
+| R339 #86 org body | ACL multi-node | NOT_PROVEN_acl_session | tips_equal / auto_vc PASS partiel |
+| R339 Anti-Sybil | sample | BASELINE | sample_count=45 <50 ; not certified |
+| #77 N04 | SSH | not_proven | :22 CLOSED |
+| CERTIFIED_100 | — | **false** | — |

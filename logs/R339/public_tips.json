@@ -1,0 +1,26 @@
+{
+  "https://artcb.me": {
+    "public_last_index": 1177,
+    "public_last_hash": "d428d7cc05410b56",
+    "height_total": 1991,
+    "git": "9724811b06beabe867763ea8c7f7adb7545dae52"
+  },
+  "https://n2.artcb.me": {
+    "public_last_index": 1177,
+    "public_last_hash": "d428d7cc05410b56",
+    "height_total": 1142,
+    "git": "9724811b06beabe867763ea8c7f7adb7545dae52"
+  },
+  "https://n3.artcb.me": {
+    "public_last_index": 1177,
+    "public_last_hash": "d428d7cc05410b56",
+    "height_total": 1142,
+    "git": "9724811b06beabe867763ea8c7f7adb7545dae52"
+  },
+  "https://n4.artcb.me": {
+    "public_last_index": 1177,
+    "public_last_hash": "d428d7cc05410b56",
+    "height_total": 1142,
+    "git": "9724811b06beabe867763ea8c7f7adb7545dae52"
+  }
+}

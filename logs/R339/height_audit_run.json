@@ -1,0 +1,10 @@
+{
+  "wrote": "/Users/deyi/.bob/playground/logs/R330/height_audit.json",
+  "summary": {
+    "SAFE_METRICS": 14,
+    "NEEDS_REVIEW": 17,
+    "LEGACY_FORENSIC": 3,
+    "FIXED_R328_R330": 2
+  },
+  "risk_count": 0
+}

@@ -15,7 +15,7 @@ que de faire des suppositions. Si, après avoir effectué des recherches
 approfondies et analysé les informations disponibles, 
 tu ne peux toujours pas conclure avec un niveau de confiance suffisant, 
 tu l’indiques clairement en expliquant ce qui reste incertain 
-et pourquoi.ajoute les détails que j’aurais oublié de précisé.
+et pourquoi. Ajoute les détails que j’aurais oublié de précisé a chaque fois.
 
 ---
 
@@ -2007,3 +2007,11 @@ CERTIFIED_100=false tant que critères A–O Issue #86 non mesurés live ×4.
 67. **R329 four-layer audit (2026-09-12T19:50:00Z).** Issue #86 étendu. PUBLIC|ORG|GROUP|PRIVATE = vocabulaire domaine + tip public indépendant ; ORG ≠ visibility chaîne. Matrice `logs/R329/flow_matrix.json`. Auto VC + restart live OPEN. CERTIFIED_100=false.
 
 68. **R330 parallel matrix (2026-09-12T20:15:00Z).** Registre `CERTIFICATION_MATRIX_ARTCB.md`. #77+#86 restent OPEN. height() audit; tip_attest=public tip; nouveau chantier n’efface pas l’ancien. CERTIFIED_100=false.
+
+73. **R339 Hardware Identity v2 + parallel OPEN live (2026-09-13T20:55:00Z).**
+MacBookAir7,1 : inventory disponible → fingerprint_v2 + NodeKey Ed25519 → **H1** ; `native_c04=UNSUPPORTED_HARDWARE` ; **interdit** software→C04 PASS.
+Manquant ID ≠ ban. Empreinte ≠ attestation. APPLE_T2/APPLE_SE ≠ TPM. H2 = external authenticator + binding.
+Code: `src/artcb/platform/mac_hardware_inventory.py`, `docs/ARTCB_HARDWARE_IDENTITY_V2.md`.
+Live parallèle du tour: public tip equal ×4 @1177 ; C2-D fanout PASS ; #86 org_body **NOT_PROVEN_acl_session** ; Anti-Sybil sample_count=45 (<50) campaign_certified=false ; SHA live `9724811…` ×4.
+Ouverts non abandonnés: #77 N04/C04 capable hosts, #86 ACL, certificate CA on-chain, H2 FIDO, telemetry depth, Genesis private, langage, V-01…V-07, #87.
+CERTIFIED_100=false. Jamais wipe.
