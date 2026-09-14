@@ -1,0 +1,40 @@
+{
+  "wrote": "/Users/deyi/.bob/playground/logs/R331/measurement.json",
+  "criteria": {
+    "pollution_private_no_public_move": true,
+    "public_memo_ok": true,
+    "tips_equal_after": true,
+    "org_no_founder_leak": true,
+    "org_body_multinode": "NOT_PROVEN_acl_session",
+    "auto_vc_measured": true,
+    "mac_restart_live": true,
+    "O_certified_100": false
+  },
+  "vc_view": 27,
+  "tips": {
+    "ovh-node-1": {
+      "public_last_index": 1182,
+      "public_last_hash": "66b9ed33457bcf6a",
+      "private_suffix_lines": 1853,
+      "ledger_mode": "split_v1"
+    },
+    "ovh-node-2": {
+      "public_last_index": 1182,
+      "public_last_hash": "66b9ed33457bcf6a",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1"
+    },
+    "aws-node-3": {
+      "public_last_index": 1182,
+      "public_last_hash": "66b9ed33457bcf6a",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1"
+    },
+    "ovh-node-4": {
+      "public_last_index": 1182,
+      "public_last_hash": "66b9ed33457bcf6a",
+      "private_suffix_lines": 358,
+      "ledger_mode": "split_v1"
+    }
+  }
+}
