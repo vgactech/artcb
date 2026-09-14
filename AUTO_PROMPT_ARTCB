@@ -2058,3 +2058,6 @@ CERTIFIED_100=false. BETA.
 
 
 81. **R347 identity layers (2026-09-14T17:45:00Z).** Cartographie User/Human ≠ Wallet ≠ Node ≠ DeviceHost ≠ DeviceClient ≠ Authenticator. Invariants I1–I8. Ne pas uploader UserPrivateKey. device_wallet_limit = anti-abus client (R345), pas HumanIdentity. HumanRegistry existe mais NON branché sur /wallet/create. R345=CLIENT_DEVICE_BINDING_PASS. UNIQUE_HUMAN=false. CERTIFIED_100=false.
+
+
+82. **R348 USER↔NODE (2026-09-14T17:50:00Z).** API challenge+signature `/api/v1/identity/user-node/*`; jamais privkey. Ne touche pas R345 device binding. HumanRegistry non requis. Association ≠ wallet bind (R349) ≠ UNIQUE_HUMAN. CERTIFIED_100=false.

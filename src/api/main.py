@@ -21,6 +21,7 @@ logger = logging.getLogger("artcb.api")
 from src.api.api_keys_routes import router as api_keys_router
 from src.api.auth_routes import router as auth_router
 from src.api.webauthn_routes import router as webauthn_router
+from src.api.user_node_routes import router as user_node_router
 from src.api.ai_routes import router_ai, router_chain_ext, router_webhooks
 from src.api.security_routes import router_security
 from src.api.pol_phase11_routes import router as pol_phase11_router
@@ -368,6 +369,7 @@ def create_app() -> FastAPI:
     # ── MODE NORMAL — toutes les routes ────────────────────────────────────
     app.include_router(auth_router)
     app.include_router(webauthn_router)
+    app.include_router(user_node_router)
     app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)

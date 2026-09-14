@@ -174,3 +174,6 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 81. **R347 (2026-09-14T17:45:00Z).** Identity layers map: Node≠User; keep device_wallet_limit scoped client; no privkey upload. CERTIFIED_100=false.
+
+
+82. **R348 (2026-09-14T17:50:00Z).** USER↔NODE association scaffold (sign locally). R345 untouched. UNIQUE_HUMAN=false. CERTIFIED_100=false.

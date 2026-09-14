@@ -1,0 +1,35 @@
+{
+  "protocol": "r348-cross-audit-v1",
+  "surfaces": {
+    "wallet_create": {
+      "file": "src/api/routes.py::wallet_create",
+      "binds": "DEVICE_CLIENT via check_and_bind",
+      "uses_human_registry": false,
+      "uses_user_node_association": false,
+      "r345_status": "UNTOUCHED"
+    },
+    "human_registry": {
+      "file": "src/artcb/economics/identity.py::HumanRegistry",
+      "wired_to_wallet_create": false,
+      "required_for_r348_associate": false
+    },
+    "node_identity": {
+      "file": "src/artcb/p2p/node_identity.py::NodeIdentity",
+      "supplies": ["node_id", "wallet_address"],
+      "role_in_r348": "challenge context"
+    },
+    "device_wallet_limit": {
+      "file": "src/artcb/security/wallet_device_binding.py",
+      "scope": "DEVICE_CLIENT anti-abuse",
+      "used_by_user_node_api": false
+    }
+  },
+  "api": {
+    "challenge": "GET /api/v1/identity/user-node/challenge",
+    "associate": "POST /api/v1/identity/user-node/associate",
+    "status": "GET /api/v1/identity/user-node/status",
+    "never_accepts": ["seed_hex", "private_key", "secret"]
+  },
+  "unique_human": false,
+  "certified_100": false
+}
