@@ -157,3 +157,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 74. **R339 Hardware Identity v2 (2026-09-13T20:55:00Z).** Inventaire Mac disponible → fingerprint_v2 + NodeKey Ed25519 → H0–H4 ; H1 ≠ H3 ; `UNSUPPORTED_HARDWARE` ≠ NODE_UNAUTHORIZED ; APPLE_T2/SE ≠ TPM ; missing ID ≠ ban. CERTIFIED_100=false.
 
 75. **R340 Rule corpus cartography (2026-09-14T07:55:00Z).** `registry_v` = version du registre télémétrie ; `registered_rules` (ex-`rules_total`) ≠ taille du corpus ARTCB. Cartographie `rules/rule_sources.json` + `rule_lineage.json` + `rule_conflicts.json` + `rule_coverage.json`. Long poll DNS poison MATCH0 = `INVALID_NO_SAMPLE`. Certifier le SHA live `/health` ×4, pas seulement le SHA du commit campagne. CERTIFIED_100=false.
+
+76. **R341 Divergence matrix (2026-09-14T09:05:00Z).** Pipeline à 6 niveaux jamais collapsé ; matrice registry + buckets SIMULATED_ONLY/OPEN ; `certified=0` ; tokenomics/PoL/V-01…V-07 hors auto-PASS. CERTIFIED_100=false.

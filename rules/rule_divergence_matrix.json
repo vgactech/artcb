@@ -1,0 +1,705 @@
+{
+  "protocol": "r341-rule-divergence-matrix-v1",
+  "ts_ns": 1789377006732620000,
+  "registry_version": 5,
+  "levels": [
+    "DECIDED",
+    "REGISTERED",
+    "CODED",
+    "TESTED",
+    "LIVE_MEASURED",
+    "CERTIFIED",
+    "SIMULATED_ONLY",
+    "OPEN",
+    "NOT_PROVEN",
+    "PARTIAL"
+  ],
+  "honest": {
+    "registered_neq_corpus": true,
+    "six_levels_not_collapsed": true,
+    "no_auto_certified_100": true,
+    "simulated_neq_live": true
+  },
+  "corpus_snapshot": {
+    "registered_rules": 18,
+    "numbered_entry_sum": 175,
+    "unmapped_estimate": 157
+  },
+  "matrix": [
+    {
+      "rule_id": "RT-002",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "SHA live == origin/main",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc",
+        "AUTO_PROMPT_ARTCB",
+        "rules/rule_registry.json"
+      ],
+      "code": [
+        "scripts/artcb_live_bootstrap.py",
+        "scripts/artcb_dns_fix.py"
+      ],
+      "tests": [
+        "tests/test_r340_rule_corpus.py"
+      ],
+      "live_evidence": [
+        "logs/R340/sha_live.json",
+        "logs/R341/sha_live.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "live /health \u00d74 vs origin/main; may lag follow-main after push",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-003",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Never invent live measures",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc",
+        "PROTOCOLE_ARTCB",
+        "rules/rule_registry.json"
+      ],
+      "code": [
+        "scripts/artcb_live_bootstrap.py"
+      ],
+      "tests": [
+        "tests/test_r337_rule_telemetry.py"
+      ],
+      "live_evidence": [
+        "logs/R340/dns_poison_long_poll_INVALID_NO_SAMPLE.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "discipline + INVALID_NO_SAMPLE; not a formal adversarial liar-agent test",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-004",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Secrets never in git/chat/rapport",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "code": [],
+      "tests": [],
+      "live_evidence": [],
+      "status_max": "REGISTERED",
+      "open": false,
+      "notes": "policy; historical 285/288 leak left; no automated secret scanner PASS claimed",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": false,
+        "tested": false,
+        "live_measured": false,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-009",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Nanosecond tracing on exercised path",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc"
+      ],
+      "code": [
+        "src/artcb"
+      ],
+      "tests": [],
+      "live_evidence": [
+        "data/trace/ns.jsonl",
+        "trace/ns.jsonl"
+      ],
+      "status_max": "CODED",
+      "open": false,
+      "notes": "ns tracing exists on some paths; full coverage of every exercised path NOT_PROVEN",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": false,
+        "live_measured": false,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-011",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Never erase rules \u2014 strike + timestamp",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "code": [],
+      "tests": [
+        "tests/test_r340_rule_corpus.py"
+      ],
+      "live_evidence": [],
+      "status_max": "REGISTERED",
+      "open": false,
+      "notes": "enforced by process (strike+timestamp); not a runtime gate",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": false,
+        "tested": true,
+        "live_measured": false,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-013",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Resume prior open tasks in parallel",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc",
+        "rules/rule_registry.json"
+      ],
+      "code": [],
+      "tests": [],
+      "live_evidence": [
+        "rapports/339_hardware_identity_v2.md",
+        "rapports/340_rule_corpus_cartography.md"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "parallel OPEN remesures practiced; not 100% of historical opens closed",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": false,
+        "tested": false,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-016",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Ingest user_query at turn start",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc"
+      ],
+      "code": [
+        "scripts/artcb_live_bootstrap.py",
+        "scripts/artcb_ingest_new_only.py"
+      ],
+      "tests": [],
+      "live_evidence": [
+        "logs/R341/bootstrap.json",
+        "logs/R340/bootstrap.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "ingest public memo when API key+HTTPS OK",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": false,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-039",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Complete = live push + follow-main + SHA",
+      "registry_status": "active",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "code": [
+        "scripts/artcb_follow_main.sh",
+        "scripts/artcb_r336_https_restart.py"
+      ],
+      "tests": [],
+      "live_evidence": [
+        "logs/R340/sha_live.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "complete=push+follow+SHA measured intermittently; SSH:22 often CLOSED",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": false,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-077-N04",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Issue #77 N04 netem/SSH chaos",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "code": [],
+      "tests": [],
+      "live_evidence": [],
+      "status_max": "REGISTERED",
+      "open": true,
+      "notes": "OPEN \u2014 SSH:22 CLOSED; N04 NOT_PROVEN",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": false,
+        "tested": false,
+        "live_measured": false,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-SYBIL-076",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Anti-Sybil statistical calibration campaign",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "code": [
+        "scripts/artcb_r337_anti_sybil_campaign.py"
+      ],
+      "tests": [
+        "tests/test_r337_rule_telemetry.py"
+      ],
+      "live_evidence": [
+        "logs/R339/sybil2.json",
+        "logs/R337/anti_sybil_baseline.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": true,
+      "notes": "sample_count typically <50; campaign_certified=false",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-TELEMETRY",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Rule telemetry itself \u2014 no false applied from thinking",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "code": [
+        "src/artcb/rules/telemetry.py",
+        ".cursor/hooks/after_agent_thought.py"
+      ],
+      "tests": [
+        "tests/test_r337_rule_telemetry.py"
+      ],
+      "live_evidence": [
+        "data/trace/ARTCB_THINKING.md",
+        "data/trace/rule_usage.jsonl"
+      ],
+      "status_max": "TESTED",
+      "open": false,
+      "notes": "engine v1; thinking\u2260applied_confirmed enforced in code; full conflict engine OPEN",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": false,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-CAPABILITY-FIRST",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "Hardware capability discovery before C04/TPM work",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        ".cursor/rules/artcb-live-node.mdc"
+      ],
+      "code": [
+        "src/artcb/platform/capability_discovery.py",
+        "scripts/artcb_r338_c04_capability_preflight.py"
+      ],
+      "tests": [
+        "tests/test_r338_capability_discovery.py"
+      ],
+      "live_evidence": [
+        "logs/R338/mac_c04_capability.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "MacBookAir7,1 UNSUPPORTED_HARDWARE measured",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-077-C04",
+      "kind": "RULE",
+      "priority": null,
+      "canonical_text": "C04 hardware-backed identity (not TPM-string chase)",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        ".cursor/rules/artcb-live-node.mdc"
+      ],
+      "code": [
+        "src/artcb/platform/capability_discovery.py",
+        "src/artcb/platform/mac_hardware_inventory.py"
+      ],
+      "tests": [
+        "tests/test_r338_capability_discovery.py",
+        "tests/test_r339_mac_hardware_inventory.py"
+      ],
+      "live_evidence": [
+        "logs/R338/mac_c04_capability.json",
+        "logs/R339/mac_inventory.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": true,
+      "notes": "C04 PASS on capable host still OPEN; this Mac = UNSUPPORTED",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-ISSUE-87",
+      "kind": "RULE",
+      "priority": "critical",
+      "canonical_text": "Master execution #87 \u2014 no historical drop",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        ".cursor/rules/artcb-live-node.mdc"
+      ],
+      "code": [],
+      "tests": [],
+      "live_evidence": [],
+      "status_max": "REGISTERED",
+      "open": true,
+      "notes": "master execution order; OPEN items still listed in rapports",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": false,
+        "tested": false,
+        "live_measured": false,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-HW-H1",
+      "kind": "RULE",
+      "priority": "critical",
+      "canonical_text": "Hardware Identity v2 \u2014 H0\u2013H4; missing ID \u2260 ban; H1 \u2260 H3",
+      "registry_status": "active",
+      "sources": [
+        "docs/ARTCB_HARDWARE_IDENTITY_V2.md",
+        "rules/rule_registry.json"
+      ],
+      "code": [
+        "src/artcb/platform/mac_hardware_inventory.py",
+        "scripts/artcb_r339_mac_hardware_enrollment.py"
+      ],
+      "tests": [
+        "tests/test_r339_mac_hardware_inventory.py"
+      ],
+      "live_evidence": [
+        "logs/R339/enrollment_summary.json",
+        "logs/R339/mac_inventory.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": true,
+      "notes": "H1 on MacBookAir7,1; H3/H4 not claimed; NodeCertificate CA OPEN",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-HW-BINDING",
+      "kind": "RULE",
+      "priority": "high",
+      "canonical_text": "External authenticator requires Mac\u2194key binding (H2 not H3)",
+      "registry_status": "active",
+      "sources": [
+        "docs/ARTCB_HARDWARE_IDENTITY_V2.md",
+        "rules/rule_registry.json"
+      ],
+      "code": [
+        "src/artcb/platform/mac_hardware_inventory.py"
+      ],
+      "tests": [
+        "tests/test_r339_mac_hardware_inventory.py"
+      ],
+      "live_evidence": [],
+      "status_max": "CODED",
+      "open": true,
+      "notes": "policy in enrollment bundle; FIDO/external H2 path NOT_PROVEN live",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": false,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-CORPUS-MAP",
+      "kind": "RULE",
+      "priority": "critical",
+      "canonical_text": "registered_rules \u2260 global ARTCB corpus; map sources first",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        "AUTO_PROMPT_ARTCB",
+        "rapports/340_rule_corpus_cartography.md"
+      ],
+      "code": [
+        "scripts/artcb_r340_rule_corpus_audit.py",
+        "src/artcb/rules/telemetry.py",
+        ".cursor/hooks/after_agent_thought.py"
+      ],
+      "tests": [
+        "tests/test_r340_rule_corpus.py"
+      ],
+      "live_evidence": [
+        "rules/rule_coverage.json",
+        "logs/R340/audit_summary.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "cartography PARTIAL; unmapped_estimate high",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-MEASURE-VALID",
+      "kind": "RULE",
+      "priority": "critical",
+      "canonical_text": "DNS/transport DOWN \u2192 INVALID_NO_SAMPLE; certify live /health SHA not campaign commit alone",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "code": [
+        "scripts/artcb_dns_fix.py",
+        "scripts/artcb_r340_rule_corpus_audit.py"
+      ],
+      "tests": [
+        "tests/test_r340_rule_corpus.py"
+      ],
+      "live_evidence": [
+        "logs/R340/dns_poison_long_poll_INVALID_NO_SAMPLE.json",
+        "logs/R340/sha_live.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "INVALID_NO_SAMPLE formalized; SHA campaign \u2260 SHA executed",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    },
+    {
+      "rule_id": "RT-DIVERGENCE-341",
+      "kind": "RULE",
+      "priority": "critical",
+      "canonical_text": "Six-level pipeline: decided\u2192registered\u2192coded\u2192tested\u2192live\u2192certified (never collapse)",
+      "registry_status": "active",
+      "sources": [
+        "rules/rule_registry.json",
+        "AUTO_PROMPT_ARTCB",
+        "rapports/341_rule_divergence_matrix.md"
+      ],
+      "code": [
+        "scripts/artcb_r341_rule_divergence_matrix.py"
+      ],
+      "tests": [
+        "tests/test_r341_rule_divergence.py"
+      ],
+      "live_evidence": [
+        "rules/rule_divergence_matrix.json",
+        "logs/R341/summary.json"
+      ],
+      "status_max": "LIVE_MEASURED",
+      "open": false,
+      "notes": "matrix for 18+ registry rows + unmapped buckets; certified always 0",
+      "pipeline": {
+        "decided": true,
+        "registered": true,
+        "coded": true,
+        "tested": true,
+        "live_measured": true,
+        "certified": false
+      }
+    }
+  ],
+  "unmapped_buckets": [
+    {
+      "bucket_id": "UB-TOKENOMICS-R-H",
+      "kind": "INVARIANT",
+      "canonical_text": "R(H) emission schedule / 21M / HBP / OwnerDecay",
+      "sources": [
+        "DECISIONS_UTILISATEUR_ARTCB",
+        "CAHIER_DES_CHARGES_ARTCB"
+      ],
+      "status_max": "SIMULATED_ONLY",
+      "notes": "simulations \u2260 mainnet enforcement; do not auto-register as RT-*"
+    },
+    {
+      "bucket_id": "UB-POL-TARGET",
+      "kind": "SPEC",
+      "canonical_text": "TargetPoL \u2248 70\u201380% \u00d7 Capacity_measured",
+      "sources": [
+        "DECISIONS_UTILISATEUR_ARTCB"
+      ],
+      "status_max": "SIMULATED_ONLY",
+      "notes": "spec/simulation; not proven on live settlement path"
+    },
+    {
+      "bucket_id": "UB-V01-V07",
+      "kind": "CHECK",
+      "canonical_text": "Validation ladder V-01\u2026V-07",
+      "sources": [
+        "AUTO_PROMPT_ARTCB",
+        "CERTIFICATION_MATRIX_ARTCB.md"
+      ],
+      "status_max": "OPEN",
+      "notes": "R340 did not close V-01\u2026V-07; mostly PARTIAL/NOT_VALIDATED"
+    },
+    {
+      "bucket_id": "UB-HUMAN-BIOMETRIC",
+      "kind": "SPEC",
+      "canonical_text": "HumanIdentity via verifiable credential; no raw biometrics on-chain",
+      "sources": [
+        "CAHIER_DES_CHARGES_ARTCB",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "status_max": "DECIDED",
+      "notes": "wallet creation \u2260 unique human proof"
+    },
+    {
+      "bucket_id": "UB-ISSUE-86-ACL",
+      "kind": "CHECK",
+      "canonical_text": "ORG body multi-node ACL / session",
+      "sources": [
+        "AUTO_PROMPT_ARTCB",
+        "logs/R331/measurement.json"
+      ],
+      "status_max": "NOT_PROVEN",
+      "notes": "NOT_PROVEN_acl_session measured"
+    },
+    {
+      "bucket_id": "UB-CONSENSUS-PBFT",
+      "kind": "INVARIANT",
+      "canonical_text": "PBFT PRE-PREPARE/PREPARE/COMMIT/VC/NV; no double finality",
+      "sources": [
+        ".cursor/rules/artcb-live-node.mdc",
+        "AUTO_PROMPT_ARTCB"
+      ],
+      "status_max": "PARTIAL",
+      "notes": "many live campaigns; CERTIFIED_100 still false; N04 last FAIL historically"
+    },
+    {
+      "bucket_id": "UB-PROTOCOLE-17",
+      "kind": "RULE",
+      "canonical_text": "PROTOCOLE_ARTCB ~17 explicit numbered obligations",
+      "sources": [
+        "PROTOCOLE_ARTCB"
+      ],
+      "status_max": "DECIDED",
+      "notes": "not 1:1 mapped into RT-* IDs"
+    }
+  ],
+  "summary": {
+    "registered_rules": 19,
+    "by_status_max": {
+      "LIVE_MEASURED": 12,
+      "REGISTERED": 4,
+      "CODED": 2,
+      "TESTED": 1
+    },
+    "coded": 14,
+    "tested": 12,
+    "live_measured": 12,
+    "certified": 0,
+    "open_flagged": 6,
+    "unmapped_buckets": 7,
+    "coverage_note": "18 registered rows mapped at lineage depth; corpus markers still unmapped (see R340)",
+    "certified_100": false
+  },
+  "missing_curation": [],
+  "certified_100": false
+}

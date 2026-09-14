@@ -1,0 +1,35 @@
+{
+  "measurement_id": "R337_SYBIL_20260914T090337Z",
+  "ts_ns": 1789376617096631000,
+  "http": 200,
+  "sample_count": 6,
+  "suggested_limit_s": 1,
+  "recommendation_status": "ready",
+  "quantity_gate_50": false,
+  "campaign_certified": false,
+  "honest": "engine_present_but_campaign_not_certified; sample_count=6 (need >=50 quantity then full statistical analysis)",
+  "totals": {
+    "attempts": 6,
+    "would_have_been_rejected": 4,
+    "bypassed_by_ai_mode": 4,
+    "hard_rejected": 0,
+    "bypass_rate_pct": 100.0
+  },
+  "interval_distribution": {
+    "min_s": 0.4,
+    "p50_s": 27.05,
+    "p90_s": 113.84,
+    "p99_s": 113.84,
+    "max_s": 113.84,
+    "sample_count": 6
+  },
+  "recommendation": {
+    "status": "ready",
+    "message": "Sur 6 intervalles observés : médiane=27s, p5=0.4s. Limite suggérée : 1s (rejetterait ~5% des blocs les plus rapides).",
+    "suggested_limit_s": 1,
+    "p5_interval_s": 0.4,
+    "p50_interval_s": 27.05,
+    "sample_count": 6
+  },
+  "certified_100": false
+}

@@ -1,0 +1,21 @@
+{
+  "summary": {
+    "registered_rules": 19,
+    "by_status_max": {
+      "LIVE_MEASURED": 12,
+      "REGISTERED": 4,
+      "CODED": 2,
+      "TESTED": 1
+    },
+    "coded": 14,
+    "tested": 12,
+    "live_measured": 12,
+    "certified": 0,
+    "open_flagged": 6,
+    "unmapped_buckets": 7,
+    "coverage_note": "18 registered rows mapped at lineage depth; corpus markers still unmapped (see R340)",
+    "certified_100": false
+  },
+  "missing_curation": [],
+  "out": "/Users/deyi/.bob/playground/rules/rule_divergence_matrix.json"
+}

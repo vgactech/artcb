@@ -2025,3 +2025,12 @@ Certifier le triplet: commit → déploiement → `/health.git_sha` ×4 (mesuré
 Sync: `artcb-live-node.mdc` append R339+R340 (ne plus finir à R338 seul).
 Catégories: RULE / DECISION / SPEC / INVARIANT / CHECK / EVIDENCE. Ne pas fusionner tokenomics/consensus dans un faux `rules_total:100`.
 CERTIFIED_100=false.
+
+
+75. **R341 Divergence matrix six levels (2026-09-14T09:05:00Z).**
+Matrice `rules/rule_divergence_matrix.json` : RULE→SOURCE→CODE→TEST→LIVE→STATUS.
+Niveaux : DECIDED→REGISTERED→CODED→TESTED→LIVE_MEASURED→CERTIFIED (jamais collapsés).
+`certified=0` toujours dans ce run. Buckets unmapped : tokenomics/PoL/V-01…V-07/biométrie/#86/PBFT/PROTOCOLE.
+SHA live mesuré `d8e67cd…` ×4 = origin/main (dns_fix) avant push R341.
+Accord opérateur : nouvelles règles R337–R340 OUI ; toutes anciennes fermées NON.
+CERTIFIED_100=false.

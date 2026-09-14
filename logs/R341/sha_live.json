@@ -1,0 +1,12 @@
+{
+  "ts_ns": 1789376547998834000,
+  "nodes": {
+    "https://artcb.me": "d8e67cd1f0f935f8512fcea293c1a9e4fcaaf15b",
+    "https://n2.artcb.me": "d8e67cd1f0f935f8512fcea293c1a9e4fcaaf15b",
+    "https://n3.artcb.me": "d8e67cd1f0f935f8512fcea293c1a9e4fcaaf15b",
+    "https://n4.artcb.me": "d8e67cd1f0f935f8512fcea293c1a9e4fcaaf15b"
+  },
+  "origin": "d8e67cd1f0f935f8512fcea293c1a9e4fcaaf15b",
+  "head": "d8e67cd1f0f935f8512fcea293c1a9e4fcaaf15b",
+  "live_eq_origin": true
+}

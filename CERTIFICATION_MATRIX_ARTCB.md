@@ -167,3 +167,13 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 | R340 DNS poll | MATCH0 | **INVALID_NO_SAMPLE** | ne pas compter |
 | R340 SHA live | `/health` ×4 | **d4afd60… = origin/main** | dns_fix |
 | CERTIFIED_100 | — | **false** | cartographie PARTIAL ; tokenomics/consensus encore hors registry |
+
+## R341 append (2026-09-14T09:05:00Z) — divergence matrix
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R341 matrix | 6-level pipeline | CODE+artefact | `rule_divergence_matrix.json` ; certified=0 |
+| R341 SHA | `/health` ×4 | **d8e67cd = origin/main** | dns_fix (pré-push R341) |
+| R341 tokenomics/PoL/V01-07 | buckets | SIMULATED/OPEN | pas auto-PASS |
+| #86 / Anti-Sybil | remesure parallèle | voir logs/R341 | org ACL / sample gate |
+| CERTIFIED_100 | — | **false** | — |
