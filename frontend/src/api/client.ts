@@ -851,7 +851,7 @@ export type ApiKeyRecord = {
 };
 
 export async function listApiKeys(): Promise<{ keys: ApiKeyRecord[]; count: number }> {
-  const { data } = await api.get("/api-keys/list");
+  const { data } = await api.get("/api-keys/list", { headers: sessionHeaders() });
   return data;
 }
 
@@ -869,12 +869,12 @@ export async function generateApiKey(body: {
   expires_at: number | null;
   message: string;
 }> {
-  const { data } = await api.post("/api-keys/generate", body);
+  const { data } = await api.post("/api-keys/generate", body, { headers: sessionHeaders() });
   return data;
 }
 
 export async function revokeApiKey(keyId: string): Promise<{ revoked: boolean; key_id: string }> {
-  const { data } = await api.delete(`/api-keys/${keyId}`);
+  const { data } = await api.delete(`/api-keys/${keyId}`, { headers: sessionHeaders() });
   return data;
 }
 

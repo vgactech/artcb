@@ -180,3 +180,6 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 83. **R348b (2026-09-14T17:55:00Z).** USER↔NODE: LOCAL_NODE now; REPLICATED_PROTOCOL decided target. Adversarial tests. CERTIFIED_100=false.
+
+
+84. **R349a (2026-09-14T18:10:00Z).** api-keys UX: 401≠empty list; session required. CERTIFIED_100=false.

@@ -2064,3 +2064,6 @@ CERTIFIED_100=false. BETA.
 
 
 83. **R348b USER↔NODE adversarial + persistence decision (2026-09-14T17:55:00Z).** Store = LOCAL_NODE (upsert JSON), cible = REPLICATED_PROTOCOL. Tests replay/expiry/tamper; raw-body refuse seed_hex. R345 untouched. UNIQUE_HUMAN=false. CERTIFIED_100=false. Ingest 409 not_extending ≠ API association fail.
+
+
+84. **R349a api-keys session gate (2026-09-14T18:10:00Z).** Fix /api-keys: sessionHeaders on list/generate/revoke; UI distinguishes 401≠0 keys; generate gated until sess_ valid. Soften Cursor wording. R348b accepted. CERTIFIED_100=false.
