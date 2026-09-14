@@ -1,0 +1,110 @@
+{
+  "audit_id": "V-PQC-vgactech2",
+  "ts_ns": 1789410666141594000,
+  "main_ref_measured": "612691f3103d2ce94ec1983f007e95a987a0aa89",
+  "certified_100": false,
+  "controls": {
+    "hex64_is_git_object": {
+      "status": "FAIL_AS_GIT",
+      "note": "git cat-file: not a valid object name; treat as Ed25519 seed material only",
+      "len_hex": 64,
+      "looks_like_sha256": true
+    },
+    "format_address_classic": {
+      "status": "PASS",
+      "prefix_ok": true,
+      "checksum_ok": true,
+      "addr_prefix": "artcb156553smzuy\u2026"
+    },
+    "format_address_pqc_v2": {
+      "status": "PASS",
+      "prefix_ok": true,
+      "checksum_ok": true,
+      "addr_prefix": "artcb21kw8unpvaj\u2026"
+    },
+    "pubkey_derives_classic_address": {
+      "status": "PASS",
+      "derived_prefix": "artcb156553smzuy\u2026",
+      "match_claimed": true,
+      "pubkey_prefix": "401cab0f94fec3ef\u2026"
+    },
+    "ed25519_signature_control": {
+      "status": "PASS",
+      "http": 200,
+      "wallet_name": "vgactech2",
+      "has_sess": true
+    },
+    "api_key_artcb_token": {
+      "status": "PASS",
+      "http": 200,
+      "label": "VGACTEST",
+      "scopes": [
+        "read",
+        "write",
+        "mining",
+        "admin"
+      ],
+      "key_id": "kid_12762ede9e8c5e70",
+      "note": "artcb_ token = API access credential, not wallet identity / not UNIQUE_HUMAN"
+    },
+    "classic_pqc_linkage": {
+      "status": "NOT_PROVEN",
+      "reason": "pqc_public_key not available via audited live endpoints; format-only for artcb2",
+      "format_v2_ok": true
+    },
+    "pqc_private_key_control": {
+      "status": "NOT_PROVEN",
+      "reason": "no live ML-DSA signature challenge exercised for address_v2"
+    },
+    "hardware_attestation_binding": {
+      "status": "NOT_PROVEN",
+      "reason": "software wallet seed in Doppler; no TPM/EK quote bound to this wallet identity"
+    },
+    "unique_human": {
+      "status": "FALSE",
+      "note": "UNIQUE_HUMAN=false by standing rule"
+    },
+    "live_code_sha": {
+      "status": "INFO",
+      "git_sha": "612691f3103d2ce94ec1983f007e95a987a0aa89",
+      "note": "live code SHA is not the wallet creation commit; hex64 seed \u2260 git"
+    },
+    "secret_isolation_logs_R349b": {
+      "status": "PASS",
+      "leaked_files": []
+    }
+  },
+  "meta_probes": {
+    "/api/v1/wallet/by-name/vgactech2": {
+      "http": 404
+    },
+    "/api/v1/wallets/vgactech2": {
+      "http": 404
+    },
+    "/api/v1/wallet/me": {
+      "http": 404
+    },
+    "/api/v1/auth/me": {
+      "http": 200,
+      "keys": [
+        "address",
+        "agent_id",
+        "authenticated",
+        "expires_at",
+        "is_operator",
+        "is_user",
+        "kind",
+        "parent_address",
+        "unique_human_proven",
+        "wallet_name"
+      ]
+    }
+  },
+  "verdict": {
+    "wallet_certified": false,
+    "ed25519_control_proven": true,
+    "pqc_control_proven": false,
+    "machine_bound_proven": false,
+    "summary": "IDENTITY_PARTIAL: classic Ed25519 control PASS; PQC linkage/control + hardware NOT_PROVEN"
+  }
+}

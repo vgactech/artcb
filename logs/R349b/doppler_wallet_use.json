@@ -1,0 +1,41 @@
+{
+  "ts_ns": 1789410464636080000,
+  "via": "doppler_run_artcb-1_prd",
+  "wallet_name": "vgactech2",
+  "addr_prefix": "artcb156553smzuy\u2026",
+  "user_api_key_ok": true,
+  "seed_ok": true,
+  "mac_sudo_in_env": false,
+  "api_keys_me": {
+    "http": 200,
+    "label": "VGACTEST",
+    "scopes": [
+      "read",
+      "write",
+      "mining",
+      "admin"
+    ],
+    "key_id": "kid_12762ede9e8c5e70"
+  },
+  "auth_verify": {
+    "http": 200,
+    "keys": [
+      "address",
+      "device_bound",
+      "expires_in",
+      "idle_expires_in",
+      "session_id",
+      "session_token",
+      "wallet_name"
+    ],
+    "authenticated": null,
+    "wallet_name": "vgactech2",
+    "has_sess": true,
+    "session_prefix": "sess_c9d\u2026"
+  },
+  "api_keys_list_via_sess": {
+    "http": 200,
+    "count": 3,
+    "keys_n": 3
+  }
+}
