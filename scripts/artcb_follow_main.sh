@@ -99,13 +99,15 @@ _tarball_overlay() {
   mkdir -p "$tmp/src"
   tar -xzf "$tmp/main.tgz" -C "$tmp/src" --strip-components=1
   # Overlay code only. Never touch the book, local secrets, venv, or git objects.
+  # ~~2026-09-14T10:15:00Z~~ was: --exclude 'frontend/dist/'
+  # Barré: that left stale SPA assets on nodes when FETCH used tarball overlay.
+  # frontend/dist is tracked in git for production SPA served by FastAPI.
   rsync -a --delete \
     --exclude '.git/' \
     --exclude 'data/' \
     --exclude '.env' \
     --exclude '.venv/' \
     --exclude 'frontend/node_modules/' \
-    --exclude 'frontend/dist/' \
     --exclude '*.pem' \
     --exclude '*.key' \
     --exclude 'data/follow_main/' \

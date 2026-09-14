@@ -1,0 +1,20 @@
+{
+  "https://artcb.me/": {
+    "status": 200,
+    "beta": false,
+    "len": 775,
+    "snippet": "<!doctype html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <link href=\"https://fonts.googleapis.com/css2?fa"
+  },
+  "https://artcb.me/assets/": {
+    "err": "HTTP Error 404: Not Found"
+  },
+  "assets_listed": [
+    "/assets/index-DfbuIJFE.js",
+    "/assets/vendor-C8w-UNLI.js",
+    "/assets/axios-DhXgJQ-f.js",
+    "/assets/cytoscape-DTSO7Bv0.js",
+    "/assets/index-avHAvxEf.css"
+  ],
+  "beta_in_served_assets": false,
+  "git": "ed159ff49fbc277c82c19e1d16fe073ee98403e8"
+}
