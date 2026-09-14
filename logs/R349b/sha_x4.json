@@ -1,0 +1,31 @@
+{
+  "ts_ns": 1789410112499152000,
+  "want": "c5806fd",
+  "nodes": {
+    "https://artcb.me": {
+      "error": "HTTP Error 502: Bad Gateway",
+      "code": 502
+    },
+    "https://n2.artcb.me": {
+      "error": "HTTP Error 502: Bad Gateway",
+      "code": 502
+    },
+    "https://n3.artcb.me": {
+      "error": "HTTP Error 502: Bad Gateway",
+      "code": 502
+    },
+    "https://n4.artcb.me": {
+      "http": 200,
+      "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+      "match": true
+    }
+  },
+  "index-C3-w2ovQ.js": {
+    "http": 502,
+    "err": "HTTP Error 502: Bad Gateway"
+  },
+  "index-DN_ymJF5.js": {
+    "http": 502,
+    "err": "HTTP Error 502: Bad Gateway"
+  }
+}

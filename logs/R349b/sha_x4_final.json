@@ -1,0 +1,107 @@
+{
+  "want": "c5806fd",
+  "propagated_all": true,
+  "final": {
+    "t_ns": 1789410145307701000,
+    "nodes": {
+      "https://artcb.me": {
+        "http": 200,
+        "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+        "match": true
+      },
+      "https://n2.artcb.me": {
+        "http": 200,
+        "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+        "match": true
+      },
+      "https://n3.artcb.me": {
+        "http": 200,
+        "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+        "match": true
+      },
+      "https://n4.artcb.me": {
+        "http": 200,
+        "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+        "match": true
+      }
+    },
+    "new_asset": 200
+  },
+  "history_n": 3,
+  "last3": [
+    {
+      "t_ns": 1789410126800392000,
+      "nodes": {
+        "https://artcb.me": {
+          "http": 502,
+          "err": "HTTP Error 502: Bad Gateway"
+        },
+        "https://n2.artcb.me": {
+          "http": 502,
+          "err": "HTTP Error 502: Bad Gateway"
+        },
+        "https://n3.artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        },
+        "https://n4.artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        }
+      },
+      "new_asset": 502
+    },
+    {
+      "t_ns": 1789410136394728000,
+      "nodes": {
+        "https://artcb.me": {
+          "http": 502,
+          "err": "HTTP Error 502: Bad Gateway"
+        },
+        "https://n2.artcb.me": {
+          "http": 502,
+          "err": "HTTP Error 502: Bad Gateway"
+        },
+        "https://n3.artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        },
+        "https://n4.artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        }
+      },
+      "new_asset": 502
+    },
+    {
+      "t_ns": 1789410145307701000,
+      "nodes": {
+        "https://artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        },
+        "https://n2.artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        },
+        "https://n3.artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        },
+        "https://n4.artcb.me": {
+          "http": 200,
+          "git_sha": "c5806fdc71cb84be3d189da2c14ca465c38dd2e9",
+          "match": true
+        }
+      },
+      "new_asset": 200
+    }
+  ]
+}

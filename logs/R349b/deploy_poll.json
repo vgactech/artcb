@@ -1,0 +1,23 @@
+{
+  "ts_ns": 1789409922185988000,
+  "propagated": false,
+  "live_sha": "aaadd3b5128e7545798bf2513cf1b5ac2624d916",
+  "samples_n": 22,
+  "last_samples": [
+    {
+      "t": 1789410078868930000,
+      "git_sha": "aaadd3b5128e7545798bf2513cf1b5ac2624d916"
+    },
+    {
+      "t": 1789410087032960000,
+      "git_sha": "aaadd3b5128e7545798bf2513cf1b5ac2624d916"
+    },
+    {
+      "t": 1789410095166224000,
+      "git_sha": "aaadd3b5128e7545798bf2513cf1b5ac2624d916"
+    }
+  ],
+  "asset_http": 404,
+  "asset_err": "HTTP Error 404: Not Found",
+  "old_asset_still": 200
+}

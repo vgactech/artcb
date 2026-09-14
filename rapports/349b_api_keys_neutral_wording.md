@@ -23,10 +23,13 @@ Aucune création automatique de wallet. Aucune modification de seed / clés.
 
 ## Live (mesuré)
 
-- `/health.git_sha` apex = `aaadd3b5128e7545798bf2513cf1b5ac2624d916` (pré-deploy R349b)
-- Clé utilisateur `artcb_…` (hors git) : `GET /api/v1/api-keys/me` → **HTTP 200**, label présent, scopes `read,write,mining,admin`
+- Push `main` = `c5806fdc71cb84be3d189da2c14ca465c38dd2e9`
+- `/health.git_sha` ×4 (`artcb.me`, n2, n3, n4) + Mac `:8001` = **c5806fd…** MATCH
+- Asset `https://artcb.me/assets/index-C3-w2ovQ.js` → **HTTP 200**
+- Clé utilisateur `artcb_…` (hors git) : `GET /api/v1/api-keys/me` → **HTTP 200**, scopes `read,write,mining,admin`
 - `GET /api/v1/api-keys/list` avec Bearer `artcb_` → **401** (session `sess_` requise) — correct
 - Prompt ingest : `409 not_extending` → `ingest_skipped=true` (honnête)
+- Fanout restart : nœuds brièvement 502 puis UP ×4 (pas de wipe)
 
 ## Non revendiqué
 

@@ -1,0 +1,25 @@
+{
+  "http": 200,
+  "peers": {
+    "https://artcb.me": {
+      "http": null,
+      "ok": null,
+      "skipped": "self"
+    },
+    "https://n2.artcb.me": {
+      "http": 200,
+      "ok": true,
+      "skipped": null
+    },
+    "https://n3.artcb.me": {
+      "http": 200,
+      "ok": true,
+      "skipped": null
+    },
+    "https://n4.artcb.me": {
+      "http": 502,
+      "ok": false,
+      "skipped": null
+    }
+  }
+}
