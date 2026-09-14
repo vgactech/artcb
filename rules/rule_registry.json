@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "protocol": "r337-rule-registry-v1",
   "created_at_utc": "2026-09-13T19:05:00Z",
   "updated_at_utc": "2026-09-14T09:05:00Z",
@@ -12,7 +12,10 @@
       "title": "SHA live == origin/main",
       "prevents": "claiming live proof on undeployed SHA",
       "source_incident": "PR38/R169 inequality",
-      "scope": ["live", "deploy"],
+      "scope": [
+        "live",
+        "deploy"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-08T00:00:00Z"
@@ -24,7 +27,10 @@
       "title": "Never invent live measures",
       "prevents": "fabricated tip/height/balance/settlement",
       "source_incident": "operator standing order",
-      "scope": ["live", "report"],
+      "scope": [
+        "live",
+        "report"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-08T00:00:00Z"
@@ -36,7 +42,9 @@
       "title": "Secrets never in git/chat/rapport",
       "prevents": "token/password leakage",
       "source_incident": "285/288 sudo leak historical",
-      "scope": ["all"],
+      "scope": [
+        "all"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-10T00:00:00Z"
@@ -48,7 +56,10 @@
       "title": "Nanosecond tracing on exercised path",
       "prevents": "ms-only traces / NOT_VALIDATED",
       "source_incident": "operator rule 10",
-      "scope": ["live", "test"],
+      "scope": [
+        "live",
+        "test"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-08T00:00:00Z"
@@ -60,7 +71,10 @@
       "title": "Never erase rules — strike + timestamp",
       "prevents": "history rewrite of protocol",
       "source_incident": "R299 compaction",
-      "scope": ["rules", "code"],
+      "scope": [
+        "rules",
+        "code"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-08T15:48:00Z"
@@ -72,7 +86,9 @@
       "title": "Resume prior open tasks in parallel",
       "prevents": "dropping #77/#86/langage when new Rxxx starts",
       "source_incident": "operator continuity",
-      "scope": ["agent-runtime"],
+      "scope": [
+        "agent-runtime"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-11T00:00:00Z"
@@ -84,7 +100,9 @@
       "title": "Ingest user_query at turn start",
       "prevents": "prompt not on-chain / false FILE unset",
       "source_incident": "rule 16/38",
-      "scope": ["agent-runtime"],
+      "scope": [
+        "agent-runtime"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-08T16:21:30Z"
@@ -96,7 +114,9 @@
       "title": "Complete = live push + follow-main + SHA",
       "prevents": "pytest-only fake completion",
       "source_incident": "rule 39",
-      "scope": ["live"],
+      "scope": [
+        "live"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-10T00:00:00Z"
@@ -108,7 +128,10 @@
       "title": "Issue #77 N04 netem/SSH chaos",
       "prevents": "recasting N04 FAIL as PASS without measure",
       "source_incident": "#77",
-      "scope": ["consensus", "chaos"],
+      "scope": [
+        "consensus",
+        "chaos"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-08T23:36:00Z"
@@ -120,7 +143,10 @@
       "title": "Anti-Sybil statistical calibration campaign",
       "prevents": "treating code engine as certified limit",
       "source_incident": "rapport 076",
-      "scope": ["security", "mainnet"],
+      "scope": [
+        "security",
+        "mainnet"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-07-01T00:00:00Z",
@@ -133,7 +159,9 @@
       "title": "Rule telemetry itself — no false applied from thinking",
       "prevents": "UI/thinking keyword → fake RuleApplied",
       "source_incident": "ChatGPT Rule Telemetry audit 2026-09-13",
-      "scope": ["agent-runtime"],
+      "scope": [
+        "agent-runtime"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T19:05:00Z"
@@ -145,7 +173,11 @@
       "title": "Hardware capability discovery before C04/TPM work",
       "prevents": "fake-positive RoT / install software to simulate missing hardware",
       "source_incident": "MacBookAir7,1 C04 false positive then NOT_AVAILABLE",
-      "scope": ["platform", "c04", "tpm"],
+      "scope": [
+        "platform",
+        "c04",
+        "tpm"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T20:05:00Z"
@@ -157,7 +189,10 @@
       "title": "C04 hardware-backed identity (not TPM-string chase)",
       "prevents": "recasting software keys as hardware RoT; forcing C04 on UNSUPPORTED hardware",
       "source_incident": "#77 C04 / MacBookAir7,1",
-      "scope": ["identity", "c04"],
+      "scope": [
+        "identity",
+        "c04"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T20:05:00Z",
@@ -170,7 +205,10 @@
       "title": "Master execution #87 — no historical drop",
       "prevents": "closing OPEN/NOT_PROVEN by starting a new topic",
       "source_incident": "GitHub #87",
-      "scope": ["agent-runtime", "certification"],
+      "scope": [
+        "agent-runtime",
+        "certification"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T20:05:00Z"
@@ -182,7 +220,12 @@
       "title": "Hardware Identity v2 — H0–H4; missing ID ≠ ban; H1 ≠ H3",
       "prevents": "fake C04 PASS; treating inventory as attestation; forbidding old Mac solely for absent TPM",
       "source_incident": "R339 MacBookAir7,1 Hardware Identity v2",
-      "scope": ["platform", "identity", "c04", "enrollment"],
+      "scope": [
+        "platform",
+        "identity",
+        "c04",
+        "enrollment"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T20:55:00Z",
@@ -195,7 +238,10 @@
       "title": "External authenticator requires Mac↔key binding (H2 not H3)",
       "prevents": "token moved to Mac B accepted as Mac A; external key alone as native RoT",
       "source_incident": "R339 audit correction",
-      "scope": ["platform", "identity"],
+      "scope": [
+        "platform",
+        "identity"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T20:55:00Z"
@@ -207,7 +253,11 @@
       "title": "registered_rules ≠ global ARTCB corpus; map sources first",
       "prevents": "reading rules_total/registry_v as total project rules; certifying without lineage",
       "source_incident": "R340 ChatGPT corpus audit",
-      "scope": ["agent-runtime", "telemetry", "governance"],
+      "scope": [
+        "agent-runtime",
+        "telemetry",
+        "governance"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-14T07:55:00Z",
@@ -220,7 +270,10 @@
       "title": "DNS/transport DOWN → INVALID_NO_SAMPLE; certify live /health SHA not campaign commit alone",
       "prevents": "MATCH0 DNS poison counted as PASS/FAIL distributed proof; SHA campaign ≠ SHA executed",
       "source_incident": "R340 remesure d4afd60 vs DNS poison poll",
-      "scope": ["live", "certification"],
+      "scope": [
+        "live",
+        "certification"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-14T07:55:00Z"
@@ -232,11 +285,23 @@
       "title": "Six-level pipeline: decided→registered→coded→tested→live→certified (never collapse)",
       "prevents": "treating REGISTERED as CERTIFIED; simulated tokenomics/PoL as live; closing V-01…V-07 without measure",
       "source_incident": "R341 divergence audit operator ask",
-      "scope": ["governance", "telemetry", "certification"],
+      "scope": [
+        "governance",
+        "telemetry",
+        "certification"
+      ],
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-14T09:05:00Z",
       "note": "Matrix: rules/rule_divergence_matrix.json"
+    },
+    {
+      "rule_id": "RT-IDENTITY-LAYERS",
+      "title": "Node≠User≠Device≠Wallet; no privkey upload; R345≠UNIQUE_HUMAN",
+      "severity": "critical",
+      "status": "active",
+      "source": "R347",
+      "note": "Cartography in src/artcb/identity/layers.py + docs/ARTCB_IDENTITY_LAYERS_V1.md"
     }
   ]
 }

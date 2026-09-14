@@ -2055,3 +2055,6 @@ CERTIFIED_100=false. BETA.
 
 
 80. **R345 registration identity (2026-09-14T17:25:00Z).** Classic create used SERVER DeviceIdentity → one host wallet blocked all users (cursor-cloud-agent). Fix: client FP UA+X-ARTCB-Device-Id. Bio vault password never shown → password login must use /register. Face/WebAuthn ≠ UNIQUE_HUMAN. KYB creator_may_self_validate inverted→fixed (A=A DENY). CERTIFIED_100=false.
+
+
+81. **R347 identity layers (2026-09-14T17:45:00Z).** Cartographie User/Human ≠ Wallet ≠ Node ≠ DeviceHost ≠ DeviceClient ≠ Authenticator. Invariants I1–I8. Ne pas uploader UserPrivateKey. device_wallet_limit = anti-abus client (R345), pas HumanIdentity. HumanRegistry existe mais NON branché sur /wallet/create. R345=CLIENT_DEVICE_BINDING_PASS. UNIQUE_HUMAN=false. CERTIFIED_100=false.

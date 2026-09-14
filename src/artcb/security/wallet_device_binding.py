@@ -18,6 +18,7 @@ Protocole :
     - Le nœud bootstrap (N1/N2)       : exemption par ARTCB_BOOTSTRAP_NODE=true
 
   Ce n'est PAS HumanIdentity / UNIQUE_HUMAN. WebAuthn ≠ unicité mondiale.
+  Couches : voir ``src/artcb/identity/layers.py`` (R347) — Node ≠ User ≠ DeviceHost ≠ DeviceClient.
 
 Référence : rapport 114 — 2026-08-07 ; R345 client-scope
 """

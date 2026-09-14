@@ -1,19 +1,19 @@
 {
   "protocol": "r340-rule-corpus-coverage-v1",
-  "ts_ns": 1789405782678101000,
+  "ts_ns": 1789407763525950000,
   "registry": {
-    "version": 5,
-    "registered_rules": 19,
-    "active_rules": 19,
+    "version": 6,
+    "registered_rules": 20,
+    "active_rules": 20,
     "note": "registered_rules \u2260 total ARTCB normative corpus"
   },
   "corpus_markers": {
-    "numbered_entry_sum": 183,
+    "numbered_entry_sum": 187,
     "by_authority": {
       "telemetry": 0,
       "protocol": 0,
-      "agent_instructions": 39,
-      "cursor": 107,
+      "agent_instructions": 41,
+      "cursor": 109,
       "operator": 0,
       "product": 37,
       "dev_gate": 0,
@@ -22,9 +22,9 @@
     "note": "markers are detections not unique semantic RULE count"
   },
   "registry_coverage": {
-    "registered": 19,
+    "registered": 20,
     "mapped_to_source": "PARTIAL",
-    "unmapped_estimate": 164,
+    "unmapped_estimate": 167,
     "live_node_includes_r339": true,
     "sync_gap_live_node_vs_registry": false
   },
