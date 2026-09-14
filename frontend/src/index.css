@@ -221,6 +221,49 @@ textarea {
   overflow: hidden;
 }
 
+/* R342 — BETA TEST banner (not official mainnet / validated coins) */
+.mc-beta-banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  padding: 0.45rem var(--grid);
+  background: #1a1208;
+  border-bottom: 3px solid var(--mc-gold, #ffd700);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: #ffe9a8;
+}
+
+.mc-beta-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--mc-gold, #ffd700);
+  background: #3a2a0a;
+  color: var(--mc-gold, #ffd700);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.mc-beta-text {
+  color: #ffe9a8;
+  flex: 1;
+  min-width: 12rem;
+}
+
+.mc-beta-inline {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid var(--mc-gold, #ffd700);
+  color: var(--mc-gold, #ffd700);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
 .mc-header {
   display: flex;
   justify-content: space-between;

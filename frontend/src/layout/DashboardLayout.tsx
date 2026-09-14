@@ -86,10 +86,15 @@ export function DashboardLayout() {
     <div className="mc-dashboard">
       {/* B12 FIX: Skip-to-content WCAG 2.4.1 Level A */}
       <a href="#main-content" className="skip-link">Aller au contenu principal</a>
+      <div className="mc-beta-banner" role="status" aria-live="polite">
+        <span className="mc-beta-badge">{t("beta_banner_label")}</span>
+        <span className="mc-beta-text">{t("beta_banner_detail")}</span>
+      </div>
       <header className="mc-header">
         {/* B10 FIX: min-height réservé pour éviter layout shift quand PoL charge async */}
         <div className="mc-header-left" style={{ minHeight: "56px" }}>
           <span className="mc-logo">ARTCB</span>
+          <span className="mc-beta-inline" title={t("beta_banner_detail")}>{t("beta_banner_label")}</span>
           <span className={`mc-api-badge${apiOk === false ? " mc-api-down" : ""}`}>
             {apiOk === null ? "…" : apiOk ? "+ API OK" : "X API DOWN"}
           </span>

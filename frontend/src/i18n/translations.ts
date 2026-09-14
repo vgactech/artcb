@@ -46,6 +46,8 @@ export interface Translations {
   layout_no_wallet: string;
   layout_create_wallet_first: string;
   layout_language: string;
+  beta_banner_label: string;
+  beta_banner_detail: string;
   
   // Encode
   encode_title: string;
@@ -355,6 +357,9 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     layout_no_wallet: 'Aucun wallet',
     layout_create_wallet_first: 'Créez un wallet d\'abord',
     layout_language: 'Langue',
+    beta_banner_label: 'BETA TEST',
+    beta_banner_detail:
+      'Version de test — pas encore la version officielle. L’inauguration avec les vrais coins validés aura lieu prochainement.',
     // Encode
     encode_title: 'Encoder du texte',
     encode_placeholder: 'Entrez votre texte ici...',
@@ -608,6 +613,9 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     layout_create_group_first: 'Create a group first', layout_select_wallet: 'Select a wallet',
     layout_no_wallet: 'No wallet', layout_create_wallet_first: 'Create a wallet first',
     layout_language: 'Language',
+    beta_banner_label: 'BETA TEST',
+    beta_banner_detail:
+      'Test version — not the official release yet. The inauguration with real validated coins is coming soon.',
     encode_title: 'Encode Text', encode_placeholder: 'Enter your text here...',
     encode_button: 'Encode', encode_success: 'Text encoded successfully',
     encode_error: 'Error encoding text',
@@ -739,6 +747,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     layout_create_group_first: '请先创建群组', layout_select_wallet: '选择钱包',
     layout_no_wallet: '无钱包', layout_create_wallet_first: '请先创建钱包',
     layout_language: '语言',
+    beta_banner_label: 'BETA TEST',
+    beta_banner_detail: '测试版 — 尚非正式版本。经验证的真实代币将于近期正式启用。',
     encode_title: '编码文本', encode_placeholder: '在此输入您的文本...',
     encode_button: '编码', encode_success: '文本编码成功', encode_error: '编码文本时出错',
     agents_title: 'AI代理', agents_run: '运行', agents_explorer: '探索者',
@@ -849,6 +859,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     layout_create_group_first: 'Crea un grupo primero', layout_select_wallet: 'Seleccionar wallet',
     layout_no_wallet: 'Sin wallet', layout_create_wallet_first: 'Crea un wallet primero',
     layout_language: 'Idioma',
+    beta_banner_label: 'BETA TEST',
+    beta_banner_detail: 'Versión de prueba — aún no es la versión oficial. La inauguración con monedas reales validadas será próximamente.',
     encode_title: 'Codificar texto', encode_placeholder: 'Ingrese su texto aquí...',
     encode_button: 'Codificar', encode_success: 'Texto codificado exitosamente',
     encode_error: 'Error al codificar el texto',
@@ -960,6 +972,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     layout_create_group_first: 'Crie um grupo primeiro', layout_select_wallet: 'Selecionar carteira',
     layout_no_wallet: 'Sem carteira', layout_create_wallet_first: 'Crie uma carteira primeiro',
     layout_language: 'Idioma',
+    beta_banner_label: 'BETA TEST',
+    beta_banner_detail: 'Versão de teste — ainda não é a versão oficial. A inauguração com moedas reais validadas ocorrerá em breve.',
     encode_title: 'Codificar texto', encode_placeholder: 'Digite seu texto aqui...',
     encode_button: 'Codificar', encode_success: 'Texto codificado com sucesso',
     encode_error: 'Erro ao codificar texto',
@@ -1071,6 +1085,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     layout_create_group_first: 'Crea prima un gruppo', layout_select_wallet: 'Seleziona portafoglio',
     layout_no_wallet: 'Nessun portafoglio', layout_create_wallet_first: 'Crea prima un portafoglio',
     layout_language: 'Lingua',
+    beta_banner_label: 'BETA TEST',
+    beta_banner_detail: 'Versione di test — non ancora la versione ufficiale. L’inaugurazione con monete validate reali avverrà a breve.',
     encode_title: 'Codifica testo', encode_placeholder: 'Inserisci il tuo testo qui...',
     encode_button: 'Codifica', encode_success: 'Testo codificato con successo',
     encode_error: 'Errore nella codifica del testo',
@@ -1182,6 +1198,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     layout_create_group_first: 'Сначала создайте группу', layout_select_wallet: 'Выбрать кошелёк',
     layout_no_wallet: 'Нет кошелька', layout_create_wallet_first: 'Сначала создайте кошелёк',
     layout_language: 'Язык',
+    beta_banner_label: 'BETA TEST',
+    beta_banner_detail: 'Тестовая версия — ещё не официальный релиз. Запуск с настоящими проверенными монетами скоро.',
     encode_title: 'Кодировать текст', encode_placeholder: 'Введите текст здесь...',
     encode_button: 'Кодировать', encode_success: 'Текст успешно закодирован',
     encode_error: 'Ошибка кодирования текста',
