@@ -2041,3 +2041,11 @@ CERTIFIED_100=false.
 Référence = `logs/R342/live_propagation_reprobe.json` : origin=`86f4dcb…` = `/health` ×4 ; SPA `index-BtHzgi7y.js` ; BETA in JS+CSS ; ancien DfbuIJFE absent.
 Propagation live BETA **prouvée maintenant** ≠ CERTIFIED_100 ≠ inauguration coins validés.
 CERTIFIED_100=false.
+
+
+77. **R343 P0 wallet/QR/ORG-KYB/langage (2026-09-14T16:55:00Z).**
+Wallet 409: `device_wallet_limit` ≠ `wallet_name_exists` (frontend n’affiche plus « nom existe » pour la limite appareil).
+ORG/KYB: spec `docs/ARTCB_ORG_KYB_V1.md` + `src/artcb/org/kyb.py` (statuts, anti self-validate, UBO/conflict, rewards gate).
+QR pairing scaffold `src/artcb/auth/qr_pairing.py` (TTL, single-use, capability matrix) — E2E phone NOT_PROVEN.
+Langage battery T1–T12 `langage_battery.py` — native live NOT_PROVEN.
+CERTIFIED_100=false. BETA.

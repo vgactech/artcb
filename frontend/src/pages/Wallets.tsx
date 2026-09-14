@@ -158,11 +158,38 @@ export function Wallets() {
       setNewPasswordConfirm("");
       await reload();
     } catch (err: unknown) {
-      const axErr = err as { response?: { data?: { detail?: string }; status?: number } };
+      const axErr = err as {
+        response?: { data?: { detail?: string | { code?: string; message?: string; hint?: string } }; status?: number };
+      };
+      const detail = axErr?.response?.data?.detail;
       if (axErr?.response?.status === 409) {
-        setError(`Wallet "${newName.trim()}" existe déjà — choisissez un autre nom.`);
+        // R343: do NOT map every 409 to "name already exists"
+        if (typeof detail === "object" && detail) {
+          if (detail.code === "device_wallet_limit") {
+            setError(
+              detail.message ||
+                "Un wallet existe déjà sur cet appareil (limite anti-fraude). Connectez-vous à celui-ci ou utilisez un autre appareil."
+            );
+          } else if (detail.code === "wallet_name_exists") {
+            setError(`Wallet "${newName.trim()}" existe déjà — choisissez un autre nom.`);
+          } else {
+            setError(detail.message || detail.hint || "Création refusée (409).");
+          }
+        } else if (typeof detail === "string" && /appareil|fingerprint|device|fraude/i.test(detail)) {
+          setError(detail);
+        } else if (typeof detail === "string" && /already exists|existe déjà/i.test(detail)) {
+          setError(`Wallet "${newName.trim()}" existe déjà — choisissez un autre nom.`);
+        } else {
+          setError(typeof detail === "string" ? detail : `Création refusée (409).`);
+        }
       } else {
-        setError(axErr?.response?.data?.detail ?? (err instanceof Error ? err.message : String(err)));
+        const msg =
+          typeof detail === "string"
+            ? detail
+            : detail && typeof detail === "object"
+              ? detail.message || detail.hint
+              : undefined;
+        setError(msg ?? (err instanceof Error ? err.message : String(err)));
       }
     } finally {
       setLoading(false);

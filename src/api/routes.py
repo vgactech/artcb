@@ -718,7 +718,19 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
                 env_type=state.device_identity.env_type,
             )
         except WalletDeviceBindingError as exc:
-            raise HTTPException(status_code=409, detail=str(exc)) from exc
+            # R343: structured code — frontend must NOT map this to "name already exists"
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "code": "device_wallet_limit",
+                    "message": str(exc),
+                    "hint": (
+                        "Un seul wallet par appareil (anti-fraude). "
+                        "Connectez-vous au wallet existant, ou utilisez un autre appareil / "
+                        "ARTCB_ALLOW_MULTI_WALLET=true en BETA lab uniquement."
+                    ),
+                },
+            ) from exc
 
     try:
         # PROTOCOLE : chiffrer la seed avec le MOT DE PASSE de l'utilisateur,
@@ -748,7 +760,14 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
         )
         return response
     except FileExistsError as exc:
-        raise HTTPException(status_code=409, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "wallet_name_exists",
+                "message": str(exc),
+                "hint": "Choisissez un autre nom de wallet (collision filesystem).",
+            },
+        ) from exc
 
 
 # Fields an anonymous caller may see (rapport 210 §9.6). Everything else in the

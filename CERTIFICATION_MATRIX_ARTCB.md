@@ -185,3 +185,13 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 | R342b chain | GitHub→health→HTTP→JS | **PASS** | `86f4dcb` ×4 ; `BtHzgi7y` ; BETA in assets |
 | R342b stale probe | `live_probe.json` | SUPERSEDED_STALE | DfbuIJFE/ed159ff = avant follow-main |
 | CERTIFIED_100 | — | **false** | BETA ≠ official inauguration |
+
+## R343 append (2026-09-14T16:55:00Z) — P0 wallet/ORG/QR/langage
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R343 wallet 409 | UX codes | CODE+tests | device_wallet_limit ≠ name_exists |
+| R343 ORG/KYB | spec+model | CODE | reward gate; no self-validate; NOT_PROVEN live |
+| R343 QR pair | scaffold | CODE | E2E phone NOT_PROVEN |
+| R343 langage T1–T12 | battery | CODE | native live NOT_PROVEN |
+| CERTIFIED_100 | — | **false** | BETA |

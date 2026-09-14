@@ -162,3 +162,6 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 77. **R342b BETA propagation (2026-09-14T16:28:44Z).** Ne pas mélanger `live_probe.json` STALE avec `deploy_poll`/`live_propagation_reprobe`. Référence HTTP = assets réellement servis + `/health.git_sha`. BETA UI ≠ inauguration. CERTIFIED_100=false.
+
+
+78. **R343 (2026-09-14T16:55:00Z).** 409 wallet: codes structurés; ORG KYB ≠ human KYC; QR≠UNIQUE_HUMAN; langage IR≠native certifié. CERTIFIED_100=false.
