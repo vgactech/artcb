@@ -1,0 +1,157 @@
+{
+  "protocol": "r342b-live-propagation-reprobe-v1",
+  "ts_ns": 1789403324208170000,
+  "origin_main": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67",
+  "local_head": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67",
+  "commits": {
+    "ui_beta": "ee570586e79c64f4de54a40cadd5c87250811f4d",
+    "follow_main_dist_fix": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67"
+  },
+  "health": {
+    "https://artcb.me": {
+      "git_sha": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67",
+      "ok": true
+    },
+    "https://n2.artcb.me": {
+      "git_sha": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67",
+      "ok": true
+    },
+    "https://n3.artcb.me": {
+      "git_sha": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67",
+      "ok": true
+    },
+    "https://n4.artcb.me": {
+      "git_sha": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67",
+      "ok": true
+    }
+  },
+  "spa": {
+    "https://artcb.me": {
+      "base": "https://artcb.me",
+      "ts_ns": 1789403320142582000,
+      "http": 200,
+      "cache_control": null,
+      "etag": "\"8435d49870236db4bf0cfb03279f3ed3\"",
+      "age": null,
+      "assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/vendor-C8w-UNLI.js",
+        "/assets/axios-DhXgJQ-f.js",
+        "/assets/cytoscape-DTSO7Bv0.js",
+        "/assets/index-BaQ-WNEh.css"
+      ],
+      "has_BtHzgi7y": true,
+      "has_DfbuIJFE": false,
+      "beta_in_js": true,
+      "beta_in_css": true,
+      "beta": true,
+      "beta_assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/index-BaQ-WNEh.css"
+      ]
+    },
+    "https://n2.artcb.me": {
+      "base": "https://n2.artcb.me",
+      "ts_ns": 1789403321215116000,
+      "http": 200,
+      "cache_control": null,
+      "etag": "\"9c6d7c49d0ff3d430f32a6f69b1e7b2d\"",
+      "age": null,
+      "assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/vendor-C8w-UNLI.js",
+        "/assets/axios-DhXgJQ-f.js",
+        "/assets/cytoscape-DTSO7Bv0.js",
+        "/assets/index-BaQ-WNEh.css"
+      ],
+      "has_BtHzgi7y": true,
+      "has_DfbuIJFE": false,
+      "beta_in_js": true,
+      "beta_in_css": true,
+      "beta": true,
+      "beta_assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/index-BaQ-WNEh.css"
+      ]
+    },
+    "https://n3.artcb.me": {
+      "base": "https://n3.artcb.me",
+      "ts_ns": 1789403322358209000,
+      "http": 200,
+      "cache_control": null,
+      "etag": "\"8f14b7d65d717bac264c81a124b3f5a9\"",
+      "age": null,
+      "assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/vendor-C8w-UNLI.js",
+        "/assets/axios-DhXgJQ-f.js",
+        "/assets/cytoscape-DTSO7Bv0.js",
+        "/assets/index-BaQ-WNEh.css"
+      ],
+      "has_BtHzgi7y": true,
+      "has_DfbuIJFE": false,
+      "beta_in_js": true,
+      "beta_in_css": true,
+      "beta": true,
+      "beta_assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/index-BaQ-WNEh.css"
+      ]
+    },
+    "https://n4.artcb.me": {
+      "base": "https://n4.artcb.me",
+      "ts_ns": 1789403323253993000,
+      "http": 200,
+      "cache_control": null,
+      "etag": "\"c5197ae29e1328600f329687ad6dbb2b\"",
+      "age": null,
+      "assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/vendor-C8w-UNLI.js",
+        "/assets/axios-DhXgJQ-f.js",
+        "/assets/cytoscape-DTSO7Bv0.js",
+        "/assets/index-BaQ-WNEh.css"
+      ],
+      "has_BtHzgi7y": true,
+      "has_DfbuIJFE": false,
+      "beta_in_js": true,
+      "beta_in_css": true,
+      "beta": true,
+      "beta_assets": [
+        "/assets/index-BtHzgi7y.js",
+        "/assets/index-BaQ-WNEh.css"
+      ]
+    }
+  },
+  "historical_artifacts": {
+    "live_probe_was": {
+      "beta": false,
+      "git": "ed159ff49fbc277c82c19e1d16fe073ee98403e8",
+      "note": "STALE_SNAPSHOT_pre_propagation"
+    },
+    "deploy_poll_was": [
+      {
+        "i": 0,
+        "git_sha": "ee570586e79c64f4de54a40cadd5c87250811f4d",
+        "index_assets": [
+          "/assets/index-BtHzgi7y.js",
+          "/assets/index-BaQ-WNEh.css"
+        ],
+        "has_new_js": true,
+        "beta": true
+      }
+    ]
+  },
+  "closure": {
+    "artcb_me_health_sha": "86f4dcb84bd26c5e3aeb075fe5b2e4533031eb67",
+    "artcb_me_serves_new_js": true,
+    "artcb_me_serves_old_js": false,
+    "artcb_me_beta_badge_in_assets": true,
+    "live_equals_origin": true,
+    "propagation_live_proven_now": true,
+    "historical_live_probe_json": "SUPERSEDED_STALE",
+    "certified_100": false,
+    "note": "BETA banner \u2260 official inauguration / validated coins"
+  },
+  "certified_100": false
+}

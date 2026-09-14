@@ -2034,3 +2034,10 @@ Niveaux : DECIDED→REGISTERED→CODED→TESTED→LIVE_MEASURED→CERTIFIED (jam
 SHA live mesuré `d8e67cd…` ×4 = origin/main (dns_fix) avant push R341.
 Accord opérateur : nouvelles règles R337–R340 OUI ; toutes anciennes fermées NON.
 CERTIFIED_100=false.
+
+
+76. **R342b BETA live propagation reprobe (2026-09-14T16:28:44Z).**
+`logs/R342/live_probe.json` = SUPERSEDED_STALE (DfbuIJFE / beta=false / ed159ff avant follow-main).
+Référence = `logs/R342/live_propagation_reprobe.json` : origin=`86f4dcb…` = `/health` ×4 ; SPA `index-BtHzgi7y.js` ; BETA in JS+CSS ; ancien DfbuIJFE absent.
+Propagation live BETA **prouvée maintenant** ≠ CERTIFIED_100 ≠ inauguration coins validés.
+CERTIFIED_100=false.

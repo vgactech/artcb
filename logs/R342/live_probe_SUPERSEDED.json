@@ -1,0 +1,8 @@
+{
+  "protocol": "r342b-artifact-status-v1",
+  "artifact": "logs/R342/live_probe.json",
+  "status": "SUPERSEDED_STALE",
+  "reason": "Captured before follow-main landed ee57058 SPA; contradicted by deploy_poll then by this reprobe",
+  "replaced_by": "logs/R342/live_propagation_reprobe.json",
+  "ts_ns": 1789403324210267000
+}
