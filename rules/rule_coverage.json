@@ -1,0 +1,48 @@
+{
+  "protocol": "r340-rule-corpus-coverage-v1",
+  "ts_ns": 1789372652440070000,
+  "registry": {
+    "version": 4,
+    "registered_rules": 18,
+    "active_rules": 18,
+    "note": "registered_rules \u2260 total ARTCB normative corpus"
+  },
+  "corpus_markers": {
+    "numbered_entry_sum": 175,
+    "by_authority": {
+      "telemetry": 0,
+      "protocol": 0,
+      "agent_instructions": 35,
+      "cursor": 103,
+      "operator": 0,
+      "product": 37,
+      "dev_gate": 0,
+      "history": 0
+    },
+    "note": "markers are detections not unique semantic RULE count"
+  },
+  "registry_coverage": {
+    "registered": 18,
+    "mapped_to_source": "PARTIAL",
+    "unmapped_estimate": 157,
+    "live_node_includes_r339": true,
+    "sync_gap_live_node_vs_registry": false
+  },
+  "categories": [
+    "RULE",
+    "DECISION",
+    "SPEC",
+    "INVARIANT",
+    "CHECK",
+    "EVIDENCE",
+    "QUESTION",
+    "LESSON",
+    "CONVENTION"
+  ],
+  "certified_100": false,
+  "honest": {
+    "rules_total_is_registry_only": true,
+    "no_honest_global_X_rules_without_canonical_map": true,
+    "dns_poison_match0_is_invalid_no_sample": true
+  }
+}

@@ -1,0 +1,350 @@
+{
+  "protocol": "r340-rule-lineage-v1",
+  "ts_ns": 1789372652440085000,
+  "entries": [
+    {
+      "rule_id": "RT-002",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "SHA live == origin/main",
+      "source_incident": "PR38/R169 inequality",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-003",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Never invent live measures",
+      "source_incident": "operator standing order",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-004",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Secrets never in git/chat/rapport",
+      "source_incident": "285/288 sudo leak historical",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-009",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Nanosecond tracing on exercised path",
+      "source_incident": "operator rule 10",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-011",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Never erase rules \u2014 strike + timestamp",
+      "source_incident": "R299 compaction",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-013",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Resume prior open tasks in parallel",
+      "source_incident": "operator continuity",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-016",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Ingest user_query at turn start",
+      "source_incident": "rule 16/38",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-039",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Complete = live push + follow-main + SHA",
+      "source_incident": "rule 39",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-077-N04",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Issue #77 N04 netem/SSH chaos",
+      "source_incident": "#77",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-SYBIL-076",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Anti-Sybil statistical calibration campaign",
+      "source_incident": "rapport 076",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-TELEMETRY",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Rule telemetry itself \u2014 no false applied from thinking",
+      "source_incident": "ChatGPT Rule Telemetry audit 2026-09-13",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-CAPABILITY-FIRST",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "Hardware capability discovery before C04/TPM work",
+      "source_incident": "MacBookAir7,1 C04 false positive then NOT_AVAILABLE",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-077-C04",
+      "status": "active",
+      "priority": null,
+      "canonical_text": "C04 hardware-backed identity (not TPM-string chase)",
+      "source_incident": "#77 C04 / MacBookAir7,1",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-ISSUE-87",
+      "status": "active",
+      "priority": "critical",
+      "canonical_text": "Master execution #87 \u2014 no historical drop",
+      "source_incident": "GitHub #87",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-HW-H1",
+      "status": "active",
+      "priority": "critical",
+      "canonical_text": "Hardware Identity v2 \u2014 H0\u2013H4; missing ID \u2260 ban; H1 \u2260 H3",
+      "source_incident": "R339 MacBookAir7,1 Hardware Identity v2",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-HW-BINDING",
+      "status": "active",
+      "priority": "high",
+      "canonical_text": "External authenticator requires Mac\u2194key binding (H2 not H3)",
+      "source_incident": "R339 audit correction",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-CORPUS-MAP",
+      "status": "active",
+      "priority": "critical",
+      "canonical_text": "registered_rules \u2260 global ARTCB corpus; map sources first",
+      "source_incident": "R340 ChatGPT corpus audit",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    },
+    {
+      "rule_id": "RT-MEASURE-VALID",
+      "status": "active",
+      "priority": "critical",
+      "canonical_text": "DNS/transport DOWN \u2192 INVALID_NO_SAMPLE; certify live /health SHA not campaign commit alone",
+      "source_incident": "R340 remesure d4afd60 vs DNS poison poll",
+      "authority": "telemetry_registry",
+      "source": {
+        "file": "rules/rule_registry.json"
+      },
+      "supersedes": null,
+      "superseded_by": null,
+      "enforcement": "agent_telemetry",
+      "tests": [],
+      "evidence": [
+        "data/trace/rule_usage.jsonl"
+      ],
+      "mapped": "registry_only"
+    }
+  ],
+  "note": "Fill RuleID\u2194source\u2194decision\u2194code\u2194test\u2194evidence over time; empty \u2260 zero corpus",
+  "seed_from_registry": true
+}

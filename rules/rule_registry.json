@@ -1,9 +1,9 @@
 {
-  "version": 3,
+  "version": 4,
   "protocol": "r337-rule-registry-v1",
   "created_at_utc": "2026-09-13T19:05:00Z",
-  "updated_at_utc": "2026-09-13T20:55:00Z",
-  "note": "Append-only lineage. Revocation = status superseded/deprecated, never delete. CERTIFIED_100=false. R338: capability-first C04. R339: Hardware Identity v2 H0–H4.",
+  "updated_at_utc": "2026-09-14T07:55:00Z",
+  "note": "Append-only lineage. Revocation = status superseded/deprecated, never delete. CERTIFIED_100=false. R338: capability-first C04. R339: Hardware Identity v2 H0–H4. R340: registered_rules≠corpus; INVALID_NO_SAMPLE for DNS poison MATCH0.",
   "rules": [
     {
       "rule_id": "RT-002",
@@ -199,6 +199,31 @@
       "status": "active",
       "created_by": "operator",
       "created_at_utc": "2026-09-13T20:55:00Z"
+    },
+    {
+      "rule_id": "RT-CORPUS-MAP",
+      "version": 1,
+      "priority": "critical",
+      "title": "registered_rules ≠ global ARTCB corpus; map sources first",
+      "prevents": "reading rules_total/registry_v as total project rules; certifying without lineage",
+      "source_incident": "R340 ChatGPT corpus audit",
+      "scope": ["agent-runtime", "telemetry", "governance"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-14T07:55:00Z",
+      "note": "registry_v=version of rule_registry.json; corpus in PROTOCOLE/AUTO_PROMPT/Cursor/DECISIONS/…"
+    },
+    {
+      "rule_id": "RT-MEASURE-VALID",
+      "version": 1,
+      "priority": "critical",
+      "title": "DNS/transport DOWN → INVALID_NO_SAMPLE; certify live /health SHA not campaign commit alone",
+      "prevents": "MATCH0 DNS poison counted as PASS/FAIL distributed proof; SHA campaign ≠ SHA executed",
+      "source_incident": "R340 remesure d4afd60 vs DNS poison poll",
+      "scope": ["live", "certification"],
+      "status": "active",
+      "created_by": "operator",
+      "created_at_utc": "2026-09-14T07:55:00Z"
     }
   ]
 }

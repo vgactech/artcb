@@ -1,0 +1,14 @@
+{
+  "protocol": "r340-measurement-validity-v1",
+  "measurement_id": "dns_poison_long_poll_984521",
+  "verdict": "INVALID_NO_SAMPLE",
+  "reason": "DNS LAN poison \u2192 *.artcb.me DOWN \u2192 MATCH0 \u2192 no distributed sample",
+  "must_not_count_as": [
+    "PASS",
+    "FAIL_distributed",
+    "CERTIFIED"
+  ],
+  "reference_remeasure": "artcb_dns_fix + /health \u00d74",
+  "ts_ns": 1789372603611384000,
+  "certified_100": false
+}

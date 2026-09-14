@@ -157,3 +157,13 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 | R339 Anti-Sybil | sample | BASELINE | sample_count=45 <50 ; not certified |
 | #77 N04 | SSH | not_proven | :22 CLOSED |
 | CERTIFIED_100 | — | **false** | — |
+
+## R340 append (2026-09-14T07:55:00Z) — corpus map + measure validity
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R340 labels | registry vs corpus | CODE | registered_rules=18 (v4) ≠ corpus ; markers_sum≈174 |
+| R340 sync | live-node R339/R340 | PASS | gap R338-only fermé |
+| R340 DNS poll | MATCH0 | **INVALID_NO_SAMPLE** | ne pas compter |
+| R340 SHA live | `/health` ×4 | **d4afd60… = origin/main** | dns_fix |
+| CERTIFIED_100 | — | **false** | cartographie PARTIAL ; tokenomics/consensus encore hors registry |

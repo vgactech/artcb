@@ -1,0 +1,19 @@
+{
+  "protocol": "r340-rule-conflicts-v1",
+  "ts_ns": 1789372652441239000,
+  "conflicts": [
+    {
+      "id": "SYNC_GAP_LIVE_NODE_R339",
+      "severity": "high",
+      "detail": "registry mentions R339 / RT-HW-* but artcb-live-node.mdc may lag at R338",
+      "status": "detected_if_gap"
+    },
+    {
+      "id": "LABEL_rules_total_MISREAD",
+      "severity": "critical",
+      "detail": "rules_total must be labeled registered_rules (telemetry), not global corpus size",
+      "status": "open_until_dashboard_fix"
+    }
+  ],
+  "certified_100": false
+}

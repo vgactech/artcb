@@ -230,15 +230,18 @@ def main() -> int:
         snap = badge_snapshot()
         agg = snap.get("aggregate") or {}
         rule_block = (
-            "## RULE COMPLIANCE — LIVE (R337 display)\n\n"
+            "## RULE COMPLIANCE — LIVE (R337/R340 display)\n\n"
             f"status: `{snap.get('status')}` · registry_v: `{snap.get('rule_registry_version')}` · "
-            f"rules_total: `{snap.get('rules_total')}`\n\n"
+            f"registered_rules: `{snap.get('registered_rules') or snap.get('rules_total')}` "
+            f"(≠ corpus ARTCB)\n\n"
+            f"- corpus_markers_sum: `{snap.get('corpus_numbered_entry_sum')}` · "
+            f"unmapped_estimate: `{snap.get('corpus_unmapped_estimate')}`\n"
             f"- seen/checked/applied/applied_confirmed/violated/corrected: "
             f"`{agg.get('seen')}`/`{agg.get('checked')}`/`{agg.get('applied')}`/"
             f"`{agg.get('applied_confirmed')}`/`{agg.get('violated')}`/`{agg.get('corrected')}`\n"
             f"- conflicts: `{snap.get('conflicts')}` · coverage_gaps: `{snap.get('coverage_gaps')}`\n"
-            f"- evidence: `rules/rule_registry.json` + `data/trace/rule_usage.jsonl`\n"
-            f"- honest: thinking_alone_never_applied_confirmed=true · CERTIFIED_100=false\n\n"
+            f"- evidence: `rules/rule_registry.json` + `rule_coverage.json` + `data/trace/rule_usage.jsonl`\n"
+            f"- honest: rules_total=registry_only · thinking≠applied_confirmed · CERTIFIED_100=false\n\n"
             "---\n\n"
         )
     except Exception:  # noqa: BLE001 — fail open

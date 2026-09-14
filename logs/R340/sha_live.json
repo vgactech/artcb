@@ -1,0 +1,16 @@
+{
+  "ts_ns": 1789372603610780000,
+  "nodes": {
+    "https://artcb.me": "d4afd603bfafc520b08260787c5b766731cae31f",
+    "https://n2.artcb.me": "d4afd603bfafc520b08260787c5b766731cae31f",
+    "https://n3.artcb.me": "d4afd603bfafc520b08260787c5b766731cae31f",
+    "https://n4.artcb.me": "d4afd603bfafc520b08260787c5b766731cae31f"
+  },
+  "head": "d4afd603bfafc520b08260787c5b766731cae31f",
+  "origin_main": "d4afd603bfafc520b08260787c5b766731cae31f",
+  "all_four_reachable": true,
+  "homogeneous_sha": true,
+  "live_equals_origin_main": true,
+  "certified_100": false,
+  "note": "certify /health git_sha \u00d74, not campaign commit alone"
+}

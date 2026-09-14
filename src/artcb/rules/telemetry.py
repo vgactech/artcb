@@ -173,16 +173,31 @@ def summarize(path: Path | None = None, registry: dict[str, Any] | None = None) 
         reverse=True,
     )
 
+    # Optional corpus coverage (R340) — never pretend registry == full corpus
+    coverage_path = ROOT / "rules" / "rule_coverage.json"
+    corpus: dict[str, Any] = {}
+    if coverage_path.is_file():
+        try:
+            corpus = json.loads(coverage_path.read_text(encoding="utf-8"))
+        except Exception:  # noqa: BLE001
+            corpus = {}
+
     return {
         "protocol": "r337-rule-telemetry-v1",
         "registry_version": reg.get("version"),
-        "rules_total": len(rules),
+        "rules_total": len(rules),  # legacy key = registered_rules only
+        "registered_rules": len(rules),
         "counts": counts,
         "top_by_usage": ranked_usage[:15],
         "top_by_risk": ranked_risk[:15],
         "conflicts": conflicts[-20:],
         "coverage_gaps": gaps[-20:],
-        "note": "absence_of_violation_is_not_applied; thinking_alone_never_applied_confirmed",
+        "corpus": {
+            "numbered_entry_sum": ((corpus.get("corpus_markers") or {}).get("numbered_entry_sum")),
+            "unmapped_estimate": ((corpus.get("registry_coverage") or {}).get("unmapped_estimate")),
+            "note": "registered_rules ≠ ARTCB total normative corpus",
+        },
+        "note": "absence_of_violation_is_not_applied; thinking_alone_never_applied_confirmed; rules_total=registry_only",
         "certified_100": False,
     }
 
@@ -213,10 +228,14 @@ def badge_snapshot(path: Path | None = None) -> dict[str, Any]:
     for row in counts.values():
         for c in COUNTERS:
             agg[c] += int(row.get(c) or 0)
+    corpus = s.get("corpus") or {}
     return {
         "status": "ACTIVE",
         "rule_registry_version": s.get("registry_version"),
-        "rules_total": s.get("rules_total"),
+        "rules_total": s.get("rules_total"),  # legacy alias
+        "registered_rules": s.get("registered_rules") or s.get("rules_total"),
+        "corpus_numbered_entry_sum": corpus.get("numbered_entry_sum"),
+        "corpus_unmapped_estimate": corpus.get("unmapped_estimate"),
         "aggregate": agg,
         "top_rules_by_risk": (s.get("top_by_risk") or [])[:5],
         "top_rules_by_usage": (s.get("top_by_usage") or [])[:5],
@@ -225,10 +244,13 @@ def badge_snapshot(path: Path | None = None) -> dict[str, Any]:
         "evidence": {
             "rule_registry": str(REGISTRY_PATH.relative_to(ROOT)) if REGISTRY_PATH.exists() else None,
             "rule_usage": str(USAGE_PATH.relative_to(ROOT)) if True else None,
+            "rule_coverage": "rules/rule_coverage.json",
         },
         "honest": {
             "thinking_alone_never_applied_confirmed": True,
             "absence_of_violation_not_applied": True,
+            "rules_total_is_registry_only": True,
+            "registered_neq_global_corpus": True,
             "certified_100": False,
         },
     }
