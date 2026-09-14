@@ -49,7 +49,7 @@ export function ApiKeys() {
       setSessionAddress(addr);
       if (!authed) {
         setAuthHint(
-          "Aucune session utilisateur (sess_…) — connectez d’abord le wallet (ex. vgactech2) sur la page Portefeuilles."
+          "Aucune session utilisateur (sess_…) — connectez d’abord le wallet sur la page Portefeuilles."
         );
         setKeys(null);
       } else {
@@ -151,9 +151,9 @@ export function ApiKeys() {
     <div className="mc-page">
       <h1 className="dashboard-title">{t("api_keys_title")}</h1>
       <p className="mc-hint">
-        Une clé <code>artcb_…</code> donne un <strong>accès API</strong> lié au wallet de la
-        session (ex. <code>vgactech2</code>). Ce n’est pas une preuve d’humain unique, ni
-        d’identité Cursor = wallet. Ne transmettez jamais le <code>seed_hex</code> à Cursor —
+        Une clé <code>artcb_…</code> donne un <strong>accès API</strong> lié au wallet
+        connecté (session). Ce n’est pas une preuve d’humain unique, ni d’identité
+        Cursor = wallet. Ne transmettez jamais le <code>seed_hex</code> à Cursor —
         uniquement le token <code>artcb_…</code>.
       </p>
 
@@ -210,7 +210,7 @@ export function ApiKeys() {
               <input
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
-                placeholder="Cursor vgactech2 test"
+                placeholder="Cursor / agent de développement"
               />
             </label>
 
@@ -308,7 +308,7 @@ export function ApiKeys() {
       <section className="mc-card">
         <h2>{t("api_keys_cursor_usage")}</h2>
         <ol style={{ lineHeight: "2" }}>
-          <li>Connecter le wallet (session <code>sess_…</code>) — ex. vgactech2</li>
+          <li>Connecter le wallet déjà existant (session <code>sess_…</code>)</li>
           <li>Générer une clé scopes <code>read,write,mining</code> (TTL court recommandé)</li>
           <li>
             Dans Cursor : <code>ARTCB_API_KEY=artcb_…</code> (jamais le seed)

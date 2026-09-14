@@ -1,0 +1,43 @@
+{
+  "ts_ns": 1789409825385321000,
+  "wallet": "vgactech2",
+  "address_prefix": "artcb156553smzuy\u2026",
+  "probes": {
+    "me": {
+      "http": 200,
+      "ctype": "application/json",
+      "sample": {
+        "label": "VGACTEST",
+        "scopes": [
+          "read",
+          "write",
+          "mining",
+          "admin"
+        ],
+        "key_id": "kid_12762ede9e8c5e70",
+        "expires_at": 1790014443.6682048
+      }
+    },
+    "list_with_artcb_key": {
+      "http": 401,
+      "sample": {
+        "detail": "Token de session invalide (format sess_xxx attendu). Utilisez /auth/login."
+      }
+    },
+    "auth_me": {
+      "http": 200,
+      "ctype": "application/json",
+      "sample": {
+        "authenticated": true,
+        "wallet_name": null,
+        "address": null
+      }
+    },
+    "wallet_balance": {
+      "http": 404,
+      "sample": {
+        "detail": "Not Found"
+      }
+    }
+  }
+}

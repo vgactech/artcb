@@ -183,3 +183,5 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 84. **R349a (2026-09-14T18:10:00Z).** api-keys UX: 401≠empty list; session required. CERTIFIED_100=false.
+
+85. **R349b (2026-09-14T18:20:00Z).** ApiKeys UI: remove concrete `vgactech2` examples → neutral « wallet connecté » / « Cursor / agent de développement ». No wallet recreate. Live `artcb_` `/api-keys/me` 200 (scopes). USER↔WALLET layer still OPEN. CERTIFIED_100=false.
