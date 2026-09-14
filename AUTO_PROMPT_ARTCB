@@ -2061,3 +2061,6 @@ CERTIFIED_100=false. BETA.
 
 
 82. **R348 USER↔NODE (2026-09-14T17:50:00Z).** API challenge+signature `/api/v1/identity/user-node/*`; jamais privkey. Ne touche pas R345 device binding. HumanRegistry non requis. Association ≠ wallet bind (R349) ≠ UNIQUE_HUMAN. CERTIFIED_100=false.
+
+
+83. **R348b USER↔NODE adversarial + persistence decision (2026-09-14T17:55:00Z).** Store = LOCAL_NODE (upsert JSON), cible = REPLICATED_PROTOCOL. Tests replay/expiry/tamper; raw-body refuse seed_hex. R345 untouched. UNIQUE_HUMAN=false. CERTIFIED_100=false. Ingest 409 not_extending ≠ API association fail.

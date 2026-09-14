@@ -1,0 +1,77 @@
+{
+  "challenge": {
+    "http": 200,
+    "keys": [
+      "protocol",
+      "challenge",
+      "node_id",
+      "node_wallet_address",
+      "expires_in",
+      "sign_over",
+      "instructions",
+      "unique_human",
+      "certified_100",
+      "r345_untouched",
+      "human_registry_not_required"
+    ],
+    "protocol": "r348-user-node-association-v1",
+    "node_id": "artcb1_REMPLACER_PAR_VOTRE_ADRESSE"
+  },
+  "associate": {
+    "http": 200,
+    "ok": true,
+    "unique_human": false,
+    "r345": true
+  },
+  "replay": {
+    "http": 400,
+    "detail": {
+      "code": "challenge_unknown",
+      "protocol": "r348-user-node-association-v1"
+    }
+  },
+  "seed_in_body": {
+    "http": 422,
+    "detail": [
+      {
+        "type": "string_too_short",
+        "loc": [
+          "body",
+          "challenge"
+        ],
+        "msg": "String should have at least 16 characters",
+        "input": "x",
+        "ctx": {
+          "min_length": 16
+        }
+      },
+      {
+        "type": "string_too_short",
+        "loc": [
+          "body",
+          "signature_hex"
+        ],
+        "msg": "String should have at least 16 characters",
+        "input": "y",
+        "ctx": {
+          "min_length": 16
+        }
+      }
+    ],
+    "note": "extra fields may be ignored by pydantic — server must also scan raw body"
+  },
+  "status": {
+    "http": 200,
+    "count": 1
+  },
+  "https://n3.artcb.me": {
+    "http": 200,
+    "node_id": "artcb1dtgrdhn6ldqcfvqn9mkwegaekprjfqnq3w04hg",
+    "protocol": "r348-user-node-association-v1"
+  },
+  "https://n4.artcb.me": {
+    "http": 200,
+    "node_id": "artcb1fhhdgtfp37erry38h8qqxf8aqmaz3zghg54ls5",
+    "protocol": "r348-user-node-association-v1"
+  }
+}

@@ -38,6 +38,8 @@ def _store(request: Request) -> UserNodeAssociationStore:
 
 
 class AssociateBody(BaseModel):
+    model_config = {"extra": "forbid"}
+
     user_address: str = Field(min_length=8)
     user_public_key_hex: str = Field(min_length=32)
     challenge: str = Field(min_length=16)
@@ -58,14 +60,22 @@ def user_node_challenge(request: Request) -> dict[str, Any]:
     )
     out["r345_untouched"] = True
     out["human_registry_not_required"] = True
+    out["persistence"] = "LOCAL_NODE"
     return out
 
 
 @router.post("/associate", summary="Bind USER to NODE via Ed25519 signature (no privkey)")
-def user_node_associate(body: AssociateBody, request: Request) -> dict[str, Any]:
-    raw = body.model_dump()
+async def user_node_associate(request: Request) -> dict[str, Any]:
+    # Scan RAW JSON before Pydantic so seed_hex/private_key cannot be silently dropped.
+    try:
+        raw = await request.json()
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail={"code": "invalid_json"}) from exc
+    if not isinstance(raw, dict):
+        raise HTTPException(status_code=400, detail={"code": "invalid_json_object"})
     try:
         reject_private_key_fields(raw)
+        body = AssociateBody.model_validate(raw)
         rec = verify_and_build_association(
             challenge=body.challenge,
             store=_challenges,
@@ -78,14 +88,19 @@ def user_node_associate(body: AssociateBody, request: Request) -> dict[str, Any]
     except UserNodeAssociationError as exc:
         code = str(exc)
         status = 400
-        if code.startswith("private_key"):
-            status = 400
-        elif code in {"signature_invalid", "challenge_unknown", "challenge_expired"}:
-            status = 401 if code == "signature_invalid" else 400
+        if code == "signature_invalid":
+            status = 401
         raise HTTPException(status_code=status, detail={"code": code, "protocol": PROTOCOL}) from exc
+    except Exception as exc:
+        # pydantic ValidationError → 422
+        from pydantic import ValidationError
+
+        if isinstance(exc, ValidationError):
+            raise HTTPException(status_code=422, detail=exc.errors()) from exc
+        raise
 
     logger.info(
-        "user_node_associated user=%s node=%s role=%s",
+        "user_node_associated user=%s node=%s role=%s persistence=LOCAL_NODE",
         stored.user_address[:20],
         stored.node_id[:24],
         stored.role,
@@ -94,10 +109,11 @@ def user_node_associate(body: AssociateBody, request: Request) -> dict[str, Any]
         "protocol": PROTOCOL,
         "ok": True,
         "association": stored.to_dict(),
+        "persistence": "LOCAL_NODE",
         "unique_human": False,
         "certified_100": False,
         "r345_untouched": True,
-        "note": "Association ≠ wallet ownership bind (R349) ≠ UNIQUE_HUMAN",
+        "note": "Association ≠ wallet ownership bind (R349) ≠ UNIQUE_HUMAN; not network-replicated yet",
     }
 
 
@@ -118,6 +134,7 @@ def user_node_status(
         "node_id": node_id,
         "count": len(rows),
         "associations": rows,
+        "persistence": "LOCAL_NODE",
         "unique_human": False,
         "certified_100": False,
         "r345_untouched": True,

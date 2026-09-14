@@ -177,3 +177,6 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 82. **R348 (2026-09-14T17:50:00Z).** USER↔NODE association scaffold (sign locally). R345 untouched. UNIQUE_HUMAN=false. CERTIFIED_100=false.
+
+
+83. **R348b (2026-09-14T17:55:00Z).** USER↔NODE: LOCAL_NODE now; REPLICATED_PROTOCOL decided target. Adversarial tests. CERTIFIED_100=false.

@@ -160,7 +160,12 @@ def verify_and_build_association(
 
 
 class UserNodeAssociationStore:
-    """Append-only local store — not a HumanIdentity registry."""
+    """Local per-node association file (R348).
+
+    Persistence mode today: **LOCAL_NODE** — JSON file rewritten on upsert
+    (not a blockchain event; not multi-node consensus).
+    Target (R348b decision): **REPLICATED_PROTOCOL** association event later.
+    """
 
     def __init__(self, path: Path) -> None:
         self.path = Path(path)
