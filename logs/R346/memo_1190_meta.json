@@ -1,0 +1,25 @@
+{
+  "index": 1190,
+  "http": 200,
+  "keys": [
+    "block_index",
+    "block_hash",
+    "graph_id",
+    "timestamp",
+    "pol_score",
+    "visibility",
+    "memo_type",
+    "agent_id",
+    "session_id",
+    "tags",
+    "parent_block_index",
+    "content_text",
+    "content_available"
+  ],
+  "content_chars": 0,
+  "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "type": "agent_thought_surfaced",
+  "graph_id": "ai_memo_c077c3b82271",
+  "block_index": 1190,
+  "head": ""
+}

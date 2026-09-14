@@ -1,0 +1,20 @@
+{
+  "block_index": 1186,
+  "block_hash": "3d44407e89c69c81…",
+  "graph_id": "ai_memo_7d8a6ce53c52",
+  "timestamp": "2026-09-11T16:26:17Z",
+  "pol_score": 0.75,
+  "visibility": "private",
+  "memo_type": "agent_thought_surfaced",
+  "agent_id": "cursor-cloud-agent",
+  "session_id": "ai_memo",
+  "tags": [
+    "thinking",
+    "cursor",
+    "r310",
+    "r313"
+  ],
+  "parent_block_index": null,
+  "content_text": "[AI MEMO — AGENT_THOUGHT_SURFACED]\nAgent: cursor-cloud-agent\nSession: ai_memo\nTimestamp: 2026-09-11T16:26:17Z\nTags: thinking, cursor, r310, r313\n\n[ARTCB CONTEXT — 2026-09-11T16:26:17Z]\nChain: 1186 blocs | 1139 memos IA\nTes 5 derniers memos:\n  [agent_thought_surfaced #1184] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1184] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1182] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1182] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1180] 2026-09-11 [thinking,cursor,r310,r313]\n[FIN CONTEXTE — continue depuis ici]\n\n[cursor_thinking_surfaced ts_ns=1789143932304149000]\nLe test de make check pour mpfr est toujours en cours. Il pourrait s'agir d'une exécution dupliquée.\n\nRésultats de synchronisation P2P lus.",
+  "content_available": true
+}

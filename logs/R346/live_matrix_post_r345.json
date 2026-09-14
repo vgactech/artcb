@@ -1,0 +1,50 @@
+{
+  "live_git_sha": "11bb42ca0dd216da10697fbecf836310be7e9810",
+  "ts": 1789407411.1599932,
+  "A_first_create_deviceA": {
+    "http": 200,
+    "code": null,
+    "name": "r346a_407411",
+    "binding_scope": null,
+    "address_prefix": "artcb1fvjyekaa42dvyt"
+  },
+  "A2_second_same_device": {
+    "http": 409,
+    "detail": {
+      "code": "device_wallet_limit",
+      "message": "Un wallet 'r346a_407411' a déjà été créé sur cet appareil (fingerprint: 959346b90d817dfb…). Un seul wallet est autorisé par appareil pour prévenir la fraude. Si vous avez perdu votre accès, utilisez votre seed_hex pour le récupérer.",
+      "hint": "Un seul wallet par appareil navigateur (anti-fraude). Connectez-vous au wallet existant, ou utilisez un autre appareil / ARTCB_ALLOW_MULTI_WALLET=true en BETA lab uniquement. Ce n'est PAS une collision de nom.",
+      "binding_scope": "client"
+    },
+    "name": "r346a2_407411"
+  },
+  "B_other_device": {
+    "http": 200,
+    "code": null,
+    "name": "r346b_407411"
+  },
+  "C_password_vgactech": {
+    "http": 401
+  },
+  "D_status": {
+    "unique_human_proven": false,
+    "face": true,
+    "wallet_exists": true
+  },
+  "E_seed_session": {
+    "http": 200,
+    "wallet": "vgactech",
+    "address_match": true
+  },
+  "verdict": {
+    "client_fp_allows_new_device": true,
+    "same_device_second_blocked": true,
+    "other_device_allowed": true,
+    "bio_password_still_denied": true,
+    "unique_human_still_false": true,
+    "authorized_wallet_seed_ok": true,
+    "UNIQUE_HUMAN": false,
+    "CERTIFIED_100": false,
+    "r345_live": true
+  }
+}

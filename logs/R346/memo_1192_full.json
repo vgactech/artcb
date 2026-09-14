@@ -1,0 +1,20 @@
+{
+  "block_index": 1192,
+  "block_hash": "bde2f44c194b14ff…",
+  "graph_id": "ai_memo_563d5735bbea",
+  "timestamp": "2026-09-11T16:27:06Z",
+  "pol_score": 0.75,
+  "visibility": "private",
+  "memo_type": "agent_thought_surfaced",
+  "agent_id": "cursor-cloud-agent",
+  "session_id": "ai_memo",
+  "tags": [
+    "thinking",
+    "cursor",
+    "r310",
+    "r313"
+  ],
+  "parent_block_index": null,
+  "content_text": "[AI MEMO — AGENT_THOUGHT_SURFACED]\nAgent: cursor-cloud-agent\nSession: ai_memo\nTimestamp: 2026-09-11T16:27:06Z\nTags: thinking, cursor, r310, r313\n\n[ARTCB CONTEXT — 2026-09-11T16:27:06Z]\nChain: 1192 blocs | 1145 memos IA\nTes 5 derniers memos:\n  [agent_thought_surfaced #1190] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1190] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1188] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1188] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1186] 2026-09-11 [thinking,cursor,r310,r313]\n[FIN CONTEXTE — continue depuis ici]\n\n[cursor_thinking_surfaced ts_ns=1789143980478056000]\nL'endpoint `/api/v1/chain/blocks` fonctionne avec authentification.\n\nLe Mac possède une chaîne tronquée à hauteur 8 contre 1160 sur le serveur. Les blocs pourraient être refusés en cas de fork. Il faut vérifier les hashes de genesis et le comportement d'import avant de synchroniser.\n\nL'import des blocs publics par offre échouera si la tête du Mac ne correspond pas exactement. Il faut mesurer le genesis_hash du Mac et le comparer à celui d'OVH1. Le rapport 314 sera rédigé. La synchronisation publique fonctionne déjà, mais elle ne couvre pas toute la hauteur. Pour atteindre la tête complète, il faudra soit un replica officiel, soit un import chaîne compatible. Il reste à vérifier le dernier hash du Mac face au bloc 8 d'OVH1. L'installation brew sera laissée en l'état.",
+  "content_available": true
+}

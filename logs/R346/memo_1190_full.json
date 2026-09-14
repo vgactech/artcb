@@ -1,0 +1,20 @@
+{
+  "block_index": 1190,
+  "block_hash": "1a108abf2f630c4e…",
+  "graph_id": "ai_memo_c077c3b82271",
+  "timestamp": "2026-09-11T16:26:37Z",
+  "pol_score": 0.75,
+  "visibility": "private",
+  "memo_type": "agent_thought_surfaced",
+  "agent_id": "cursor-cloud-agent",
+  "session_id": "ai_memo",
+  "tags": [
+    "thinking",
+    "cursor",
+    "r310",
+    "r313"
+  ],
+  "parent_block_index": null,
+  "content_text": "[AI MEMO — AGENT_THOUGHT_SURFACED]\nAgent: cursor-cloud-agent\nSession: ai_memo\nTimestamp: 2026-09-11T16:26:37Z\nTags: thinking, cursor, r310, r313\n\n[ARTCB CONTEXT — 2026-09-11T16:26:37Z]\nChain: 1190 blocs | 1143 memos IA\nTes 5 derniers memos:\n  [agent_thought_surfaced #1188] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1188] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1186] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1186] 2026-09-11 [thinking,cursor,r310,r313]\n  [agent_thought_surfaced #1184] 2026-09-11 [thinking,cursor,r310,r313]\n[FIN CONTEXTE — continue depuis ici]\n\n[cursor_thinking_surfaced ts_ns=1789143952533238000]\nLa hauteur du Mac est encore à 8. Il possède une chaîne courte divergente. Les blocs publics P2P ne s'importent que si ils étendent le sommet actuel.\n\nLe Mac ne peut pas récupérer le livre complet depuis OVH1 car son IP est rejetée comme non officielle. Les options envisagées sont : importer le replica via un endpoint HTTPS avec authentification opérateur, ou utiliser un script de téléchargement par clé API.",
+  "content_available": true
+}
