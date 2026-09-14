@@ -709,13 +709,27 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
     state = _state(request)
     wallet_mgr = WalletManager()
 
-    # ANTI-FRAUDE : vérifier qu'aucun wallet n'existe déjà pour cet appareil
-    if state.wallet_device_binding and state.device_identity:
+    # R345 (2026-09-14T17:20:00Z): anti-fraude = empreinte **client** (navigateur),
+    # pas l'identité matérielle du **serveur** API.
+    # ~~state.device_identity.device_fingerprint~~ bloquait TOUS les utilisateurs
+    # après le 1er wallet créé sur le nœud (ex. cursor-cloud-agent sur ovh-node-1).
+    from src.api.auth_routes import device_fingerprint as client_device_fingerprint
+
+    client_fp = client_device_fingerprint(request)
+    bind_fp = client_fp or (
+        state.device_identity.device_fingerprint if state.device_identity else ""
+    )
+    bind_env = "client_ua_device_id" if client_fp else (
+        state.device_identity.env_type if state.device_identity else "unknown"
+    )
+
+    # ANTI-FRAUDE : un seul wallet par empreinte client (UA + X-ARTCB-Device-Id)
+    if state.wallet_device_binding and bind_fp:
         try:
             state.wallet_device_binding.check_and_bind(
                 wallet_name=body.name,
-                device_fingerprint=state.device_identity.device_fingerprint,
-                env_type=state.device_identity.env_type,
+                device_fingerprint=bind_fp,
+                env_type=bind_env,
             )
         except WalletDeviceBindingError as exc:
             # R343: structured code — frontend must NOT map this to "name already exists"
@@ -725,10 +739,12 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
                     "code": "device_wallet_limit",
                     "message": str(exc),
                     "hint": (
-                        "Un seul wallet par appareil (anti-fraude). "
+                        "Un seul wallet par appareil navigateur (anti-fraude). "
                         "Connectez-vous au wallet existant, ou utilisez un autre appareil / "
-                        "ARTCB_ALLOW_MULTI_WALLET=true en BETA lab uniquement."
+                        "ARTCB_ALLOW_MULTI_WALLET=true en BETA lab uniquement. "
+                        "Ce n'est PAS une collision de nom."
                     ),
+                    "binding_scope": "client" if client_fp else "server_fallback",
                 },
             ) from exc
 

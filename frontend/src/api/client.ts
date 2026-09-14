@@ -3,6 +3,31 @@ import type { IRGraph, PolMetrics, ChainBlock } from "../types";
 
 const api = axios.create({ baseURL: "/api/v1" });
 
+/** R345 — stable browser device id (not HumanIdentity; not server host FP). */
+const DEVICE_ID_KEY = "artcb_device_id";
+
+function ensureClientDeviceId(): string {
+  try {
+    let id = localStorage.getItem(DEVICE_ID_KEY);
+    if (!id || id.length < 8) {
+      id =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `dev_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+      localStorage.setItem(DEVICE_ID_KEY, id);
+    }
+    return id;
+  } catch {
+    return "anonymous";
+  }
+}
+
+api.interceptors.request.use((config) => {
+  config.headers = config.headers ?? {};
+  config.headers["X-ARTCB-Device-Id"] = ensureClientDeviceId();
+  return config;
+});
+
 export async function fetchWaillyExcerpt(maxPages = 3): Promise<string> {
   const { data } = await api.get<{ text: string }>("/demo/wailly-excerpt", {
     params: { max_pages: maxPages },

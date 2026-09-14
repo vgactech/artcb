@@ -1,0 +1,69 @@
+{
+  "live_git_sha": "e3025328e727274fffdb6300d61976f880c138b1",
+  "r345_on_main": false,
+  "A_classic_create_new_name": {
+    "http": 409,
+    "detail": {
+      "code": "device_wallet_limit",
+      "message": "Un wallet 'cursor-cloud-agent' a déjà été créé sur cet appareil (fingerprint: a6fce8a864ecee5c…). Un seul wallet est autorisé par appareil pour prévenir la fraude. Si vous avez perdu votre accès, utilisez votre seed_hex pour le récupérer.",
+      "hint": "Un seul wallet par appareil (anti-fraude). Connectez-vous au wallet existant, ou utilisez un autre appareil / ARTCB_ALLOW_MULTI_WALLET=true en BETA lab uniquement."
+    }
+  },
+  "B_classic_other_device_id": {
+    "http": 409,
+    "detail": {
+      "code": "device_wallet_limit",
+      "message": "Un wallet 'cursor-cloud-agent' a déjà été créé sur cet appareil (fingerprint: a6fce8a864ecee5c…). Un seul wallet est autorisé par appareil pour prévenir la fraude. Si vous avez perdu votre accès, utilisez votre seed_hex pour le récupérer.",
+      "hint": "Un seul wallet par appareil (anti-fraude). Connectez-vous au wallet existant, ou utilisez un autre appareil / ARTCB_ALLOW_MULTI_WALLET=true en BETA lab uniquement."
+    }
+  },
+  "C_password_login_vgactech": {
+    "http": 401,
+    "detail": "Identifiants invalides. Wallet créé par empreinte ou visage ? Utilisez la connexion biométrique (/register), pas le mot de passe."
+  },
+  "D_webauthn_status": {
+    "http": 200,
+    "unique_human_proven": false,
+    "wallet_exists": true,
+    "methods": [
+      "face_camera"
+    ],
+    "face": true,
+    "fp": false
+  },
+  "E_balance": {
+    "http": 401,
+    "keys": [
+      "detail"
+    ]
+  },
+  "F_challenge": {
+    "http": 200,
+    "keys": [
+      "challenge",
+      "expires_in",
+      "instructions"
+    ]
+  },
+  "G_seed_verify": {
+    "http": 200,
+    "ok": true,
+    "keys": [
+      "session_token",
+      "wallet_name",
+      "address",
+      "expires_in",
+      "idle_expires_in",
+      "session_id",
+      "device_bound"
+    ]
+  },
+  "interpretation": {
+    "live_still_e302532_without_r345": true,
+    "classic_create_still_blocked_by_server_fp": true,
+    "device_id_header_ignored_on_live": true,
+    "vgactech_password_login_fails_as_expected_for_bio": true,
+    "unique_human_still_false": true,
+    "note": "Push R345 required before live client-FP matrix can PASS"
+  }
+}

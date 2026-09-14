@@ -239,6 +239,7 @@ def main() -> int:
             f"- seen/checked/applied/applied_confirmed/violated/corrected: "
             f"`{agg.get('seen')}`/`{agg.get('checked')}`/`{agg.get('applied')}`/"
             f"`{agg.get('applied_confirmed')}`/`{agg.get('violated')}`/`{agg.get('corrected')}`\n"
+            f"  _(applied_confirmed = preuve indépendante ; n’exige pas un événement `applied` préalable)_\n"
             f"- conflicts: `{snap.get('conflicts')}` · coverage_gaps: `{snap.get('coverage_gaps')}`\n"
             f"- evidence: `rules/rule_registry.json` + `rule_coverage.json` + `data/trace/rule_usage.jsonl`\n"
             f"- honest: rules_total=registry_only · thinking≠applied_confirmed · CERTIFIED_100=false\n\n"

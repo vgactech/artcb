@@ -216,7 +216,17 @@ export function Wallets() {
       await reload();
     } catch (err: unknown) {
       const axErr = err as { response?: { data?: { detail?: string }; status?: number } };
-      setLoginError(axErr?.response?.data?.detail ?? "Identifiants invalides — vérifiez votre nom et mot de passe.");
+      setLoginError(
+        axErr?.response?.data?.detail ??
+          "Identifiants invalides — vérifiez votre nom et mot de passe."
+      );
+      // R345: biometric wallets use a random vault password never shown — steer to /register
+      const detail = axErr?.response?.data?.detail;
+      if (typeof detail === "string" && /biométr|empreinte|visage|\/register/i.test(detail)) {
+        setLoginError(
+          `${detail} → ouvrez Inscription biométrique (/register) et utilisez « Connexion », pas le formulaire mot de passe.`
+        );
+      }
     } finally {
       setLoginLoading(false);
     }

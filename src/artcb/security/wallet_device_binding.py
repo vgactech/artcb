@@ -1,18 +1,25 @@
-"""Liaison wallet ↔ appareil — un seul wallet par machine (anti-fraude).
+"""Liaison wallet ↔ appareil client — un seul wallet par empreinte navigateur (anti-fraude).
 
 Protocole :
-  À la création d'un wallet (POST /wallet/create), le device_fingerprint de
-  la machine hôte est enregistré dans data/wallet_device_bindings.json.
+  À la création d'un wallet (POST /wallet/create ou biométrie), l'empreinte
+  **client** est enregistrée dans data/wallet_device_bindings.json :
+    sha256(User-Agent | X-ARTCB-Device-Id)[:32]
 
-  Si une deuxième tentative de création de wallet provient du même fingerprint,
-  elle est rejetée avec HTTP 409 et le message explicite.
+  R345 (2026-09-14T17:20:00Z): ~~machine hôte serveur (DeviceIdentity)~~ barré pour
+  le multi-utilisateur public — un seul wallet `cursor-cloud-agent` sur ovh-node-1
+  bloquait TOUTES les créations classiques sur artcb.me.
+
+  Si une deuxième tentative de création de wallet provient du même fingerprint
+  client, elle est rejetée avec HTTP 409 ``device_wallet_limit``.
 
   Exceptions :
     - ARTCB_ALLOW_MULTI_WALLET=true  : désactive le check (dev/tests uniquement)
     - wallet_name == "default"        : toujours autorisé (migration)
     - Le nœud bootstrap (N1/N2)       : exemption par ARTCB_BOOTSTRAP_NODE=true
 
-Référence : rapport 114 — 2026-08-07
+  Ce n'est PAS HumanIdentity / UNIQUE_HUMAN. WebAuthn ≠ unicité mondiale.
+
+Référence : rapport 114 — 2026-08-07 ; R345 client-scope
 """
 
 from __future__ import annotations

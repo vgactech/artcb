@@ -20,11 +20,20 @@ from src.artcb.reasoning.langage_battery import battery_summary
 def test_org_reward_gate_and_no_self_validate() -> None:
     assert reward_eligible(OrgKybStatus.ORG_CREATED) is False
     assert reward_eligible(OrgKybStatus.ORG_ACTIVE) is True
-    assert creator_may_self_validate(creator_id="A", validator_id="A") is True
-    assert creator_may_self_validate(creator_id="A", validator_id="B") is False
+    # R345: self-validate DENY; independent validator OK at this gate
+    assert creator_may_self_validate(creator_id="A", validator_id="A") is False
+    assert creator_may_self_validate(creator_id="A", validator_id="B") is True
+    assert creator_may_self_validate(creator_id="", validator_id="B") is False
     assert conflict_of_interest(validator_id="U1", org_controller_ids=["U1"], ubo_ids=[]) is True
+    assert conflict_of_interest(validator_id="U2", org_controller_ids=["U1"], ubo_ids=["U2"]) is True
+    assert conflict_of_interest(validator_id="U3", org_controller_ids=["U1"], ubo_ids=["U2"]) is False
     c = public_commitment_stub("org1", "abc")
     assert c["includes_raw_documents"] is False
+
+
+def test_creator_cannot_self_validate() -> None:
+    assert creator_may_self_validate(creator_id="A", validator_id="A") is False
+    assert creator_may_self_validate(creator_id="A", validator_id="B") is True
 
 
 def test_qr_pairing_single_use_and_expiry() -> None:

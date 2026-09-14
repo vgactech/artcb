@@ -1,0 +1,99 @@
+{
+  "protocol": "r344-corpus-compliance-audit-v1",
+  "ts_ns_note": "generated after live bootstrap on e302532",
+  "git": {
+    "head": "e3025328e727274fffdb6300d61976f880c138b1",
+    "origin_main": "e3025328e727274fffdb6300d61976f880c138b1",
+    "equal": true
+  },
+  "live": {
+    "health_git_sha": "e3025328e727274fffdb6300d61976f880c138b1",
+    "chain_height": 1991,
+    "chain_valid": true
+  },
+  "registry": {
+    "version": 5,
+    "registered_rules": 19,
+    "includes": ["RT-CORPUS-MAP", "RT-TELEMETRY", "RT-DIVERGENCE-341"]
+  },
+  "coverage_versioned_on_origin_main_HEAD": {
+    "note": "STALE vs registry on same commit",
+    "coverage_claims_registry_version": 4,
+    "registered_rules": 18,
+    "corpus_markers_sum": 175,
+    "unmapped_estimate": 157,
+    "mapped_to_source": "PARTIAL",
+    "certified_100": false
+  },
+  "registry_on_origin_main_HEAD": {
+    "version": 5,
+    "registered_rules": 19
+  },
+  "coverage_worktree_after_regen": {
+    "note": "local regen via artcb_r340_rule_corpus_audit.py; not yet on GitHub unless committed",
+    "registered_rules": 19,
+    "registry_version": 5,
+    "corpus_markers_sum": 181,
+    "unmapped_estimate": 162,
+    "mapped_to_source": "PARTIAL"
+  },
+  "badge_recomputed_this_turn": {
+    "registry_v": 5,
+    "registered_rules": 19,
+    "corpus_markers_sum": "177_then_181_local",
+    "unmapped_estimate": "158_then_162_local",
+    "aggregate": {
+      "seen": 11,
+      "checked": 7,
+      "applied": 0,
+      "applied_confirmed": 12,
+      "violated": 0,
+      "corrected": 0,
+      "not_proven": 10,
+      "waived": 0
+    },
+    "conflicts": 0,
+    "coverage_gaps": 1,
+    "ui_vs_github_coverage": "DIVERGE",
+    "ui_vs_github_registry": "MATCH_19"
+  },
+  "counter_semantics": {
+    "applied_confirmed_gt_applied_allowed": true,
+    "reason": "applied and applied_confirmed are independent event kinds; confirmed requires CONFIRMED_EVIDENCE+ref, not prior applied",
+    "rule_usage_kinds_observed": {
+      "seen": 11,
+      "checked": 7,
+      "applied": 0,
+      "applied_confirmed": 12,
+      "not_proven": 10,
+      "coverage_gap": 1
+    }
+  },
+  "runtime": {
+    "reads_registry": true,
+    "reads_full_corpus_as_rules": false,
+    "reads_coverage_markers": true,
+    "unmapped_enforced_by_telemetry": false,
+    "unmapped_may_influence_via_cursor_text": true
+  },
+  "pipeline_answers": {
+    "discovered": "PARTIAL",
+    "extracted": "PARTIAL",
+    "normalized": "PARTIAL",
+    "deduplicated": "NO",
+    "classified": "PARTIAL",
+    "registered": "PARTIAL",
+    "covered": "PARTIAL",
+    "transmitted_to_runtime": "PARTIAL",
+    "used_to_guide": "PARTIAL",
+    "measured_usage": "PARTIAL",
+    "independently_confirmed": "PARTIAL",
+    "r341_linked": "PARTIAL"
+  },
+  "final_verdict": "PARTIAL",
+  "certified_100": false,
+  "question": "Le corpus normatif complet d'ARTCB est-il réellement transmis à l'agent, réellement utilisé, réellement vérifié et réellement prouvé par des artefacts indépendants ?",
+  "answer": "PARTIAL",
+  "rapport": "rapports/344_corpus_compliance_audit.md",
+  "tests_r344": "2 passed (test_r344_telemetry_semantics.py)"
+}

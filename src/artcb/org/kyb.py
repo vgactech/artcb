@@ -27,8 +27,20 @@ def reward_eligible(status: OrgKybStatus | str) -> bool:
 
 
 def creator_may_self_validate(*, creator_id: str, validator_id: str) -> bool:
-    """Hard rule: ORG creator cannot self-validate."""
-    return creator_id.strip() != "" and creator_id == validator_id
+    """Return True iff this validator is allowed to validate the org.
+
+    R345 (2026-09-14T17:20:00Z): hard rule — creator cannot self-validate.
+    ~~return creator_id == validator_id~~ was inverted (returned True on self).
+    Expected:
+      creator=A, validator=A → False (DENY)
+      creator=A, validator=B → True (independent validator OK at this gate)
+    Controller/UBO conflicts are handled separately by ``conflict_of_interest``.
+    """
+    c = (creator_id or "").strip()
+    v = (validator_id or "").strip()
+    if not c or not v:
+        return False
+    return c != v
 
 
 def conflict_of_interest(
@@ -37,10 +49,13 @@ def conflict_of_interest(
     org_controller_ids: list[str],
     ubo_ids: list[str],
 ) -> bool:
-    """True if validator is controller/UBO of the org."""
-    banned = {validator_id, *org_controller_ids, *ubo_ids}
-    # conflict if validator appears in controllers/UBO set more than once as self
-    return validator_id in org_controller_ids or validator_id in ubo_ids
+    """True if validator is controller or UBO of the org (DENY)."""
+    v = (validator_id or "").strip()
+    if not v:
+        return True
+    controllers = {x.strip() for x in org_controller_ids if (x or "").strip()}
+    ubos = {x.strip() for x in ubo_ids if (x or "").strip()}
+    return v in controllers or v in ubos
 
 
 def public_commitment_stub(org_id: str, dossier_hash: str) -> dict[str, Any]:

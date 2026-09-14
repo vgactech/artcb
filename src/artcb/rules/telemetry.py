@@ -251,7 +251,13 @@ def badge_snapshot(path: Path | None = None) -> dict[str, Any]:
             "absence_of_violation_not_applied": True,
             "rules_total_is_registry_only": True,
             "registered_neq_global_corpus": True,
+            "applied_confirmed_independent_of_applied": True,
             "certified_100": False,
+        },
+        "counter_semantics": {
+            "applied": "weak claim with optional evidence_ref",
+            "applied_confirmed": "independent evidence_kind+ref; does NOT require prior applied event",
+            "note": "applied_confirmed > applied is allowed by design (R344)",
         },
     }
 

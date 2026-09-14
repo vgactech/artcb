@@ -163,8 +163,15 @@ def _wallet_exists(name: str) -> bool:
     return (WalletManager().wallet_dir / f"{name}.key").exists()
 
 
-def _create_wallet_if_needed(name: str, *, create: bool) -> dict[str, Any]:
+def _create_wallet_if_needed(
+    name: str,
+    *,
+    create: bool,
+    request: Request | None = None,
+) -> dict[str, Any]:
     from src.artcb.wallet.manager import WalletManager
+    from src.api.auth_routes import device_fingerprint as client_device_fingerprint
+    from src.artcb.security.wallet_device_binding import WalletDeviceBindingError
 
     wm = WalletManager()
     key_path = wm.wallet_dir / f"{name}.key"
@@ -181,6 +188,33 @@ def _create_wallet_if_needed(name: str, *, create: bool) -> dict[str, Any]:
         }
     if not create:
         raise HTTPException(status_code=404, detail="wallet_unknown")
+
+    # R345: same client device limit as classic create (not HumanIdentity uniqueness)
+    if request is not None:
+        state = request.app.state.artcb
+        client_fp = client_device_fingerprint(request)
+        if state.wallet_device_binding and client_fp:
+            try:
+                state.wallet_device_binding.check_and_bind(
+                    wallet_name=name,
+                    device_fingerprint=client_fp,
+                    env_type="client_ua_device_id_bio",
+                )
+            except WalletDeviceBindingError as exc:
+                raise HTTPException(
+                    status_code=409,
+                    detail={
+                        "code": "device_wallet_limit",
+                        "message": str(exc),
+                        "hint": (
+                            "Un seul wallet par appareil navigateur. "
+                            "WebAuthn/visage ≠ HumanIdentity unique mondiale."
+                        ),
+                        "binding_scope": "client",
+                        "unique_human_proven": False,
+                    },
+                ) from exc
+
     vault = secrets.token_urlsafe(32)
     wallet = wm.create_wallet(name=name, user_password=vault)
     seed_hex = wallet.signing_key.encode().hex()
@@ -193,8 +227,12 @@ def _create_wallet_if_needed(name: str, *, create: bool) -> dict[str, Any]:
         "WARNING": (
             "SAUVEGARDEZ votre seed_hex MAINTENANT — "
             "c'est votre clé privée, elle ne sera plus jamais affichée. "
-            "L'empreinte / le visage déverrouillent ce nœud, pas la seed."
+            "L'empreinte / le visage déverrouillent ce nœud, pas la seed. "
+            "Le mot de passe vault n'est pas affiché — reconnectez via /register."
         ),
+        "auth_method": "biometric_vault",
+        "password_login_possible": False,
+        "unique_human_proven": False,
     }
 
 
@@ -288,7 +326,7 @@ def webauthn_register_verify(body: RegisterFinishBody, request: Request) -> dict
         _audit("webauthn_register_failed", wallet=body.name, request=request, reason=str(exc) or "invalid")
         raise HTTPException(status_code=400, detail=str(exc) if str(exc) else "webauthn_register_failed") from exc
 
-    wallet = _create_wallet_if_needed(body.name, create=body.create_wallet)
+    wallet = _create_wallet_if_needed(body.name, create=body.create_wallet, request=request)
     modality = body.modality if body.modality != "both" else pending.get("modality") or MODALITY_FINGERPRINT
     _audit(
         "webauthn_register_ok",
@@ -424,7 +462,7 @@ def face_enroll_verify(body: FaceFinishBody, request: Request) -> dict[str, Any]
     if not body.liveness_ok:
         _audit("face_enroll_failed", wallet=body.name, request=request, reason="face_liveness_required")
         raise HTTPException(status_code=400, detail="face_liveness_required")
-    wallet = _create_wallet_if_needed(body.name, create=body.create_wallet)
+    wallet = _create_wallet_if_needed(body.name, create=body.create_wallet, request=request)
     secret_hash = hashlib.sha256(body.device_secret.encode("utf-8")).hexdigest()
     save_face(
         {

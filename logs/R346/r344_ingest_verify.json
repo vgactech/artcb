@@ -1,0 +1,28 @@
+{
+  "protocol": "r346-r344-ingest-verify-v1",
+  "claimed_bootstrap": {
+    "chars": 13660,
+    "sha256": "dc014df3b7262b5d7afed2ccff54f993aed91fe882f4b5287bba03f9e1b731dd",
+    "ingest_http": 200,
+    "ingest_block_index": 1191,
+    "ingest_block_hash": "3c5164d3d8b3424ca731a93491465e8395b588e1cfbbbe062ac141b6f3a3e0c5",
+    "graph_id": "ai_memo_df04a126781d"
+  },
+  "live_graph_artcb_me": {
+    "source_text_chars": 14314,
+    "source_checksum": "sha256:2fdf634ef39869e4a9a798e155c3195fae255e48b8141dad8382f82f9b5186df",
+    "embedded_prompt_chars": 13660,
+    "embedded_prompt_sha256": "dc014df3b7262b5d7afed2ccff54f993aed91fe882f4b5287bba03f9e1b731dd",
+    "sha_match_bootstrap_payload": true,
+    "contains_PHASE_12": true,
+    "contains_AUDIT_COMPLET": true
+  },
+  "gaps": {
+    "GET_ai_memo_1191": 404,
+    "peers_n2_n3_n4_graph": 404,
+    "block_hash_lookup_api": 404,
+    "note": "Content proven via graph source_text on apex; index/hash API + replica graph distribution NOT_PROVEN"
+  },
+  "verdict": "PARTIAL",
+  "certified_100": false
+}

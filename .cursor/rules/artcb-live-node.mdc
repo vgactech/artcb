@@ -165,3 +165,9 @@ Interdit : inventer un solde, un bloc, un Settlement, un `git_sha` live. Interdi
 
 
 78. **R343 (2026-09-14T16:55:00Z).** 409 wallet: codes structurés; ORG KYB ≠ human KYC; QR≠UNIQUE_HUMAN; langage IR≠native certifié. CERTIFIED_100=false.
+
+
+79. **R344 corpus compliance audit (2026-09-14T17:10:00Z).** Audit R337/R340/R341: mechanism EXISTS; full corpus mapped/enforced = PARTIAL. GitHub `rule_coverage.json` was STALE (18/175/157) vs registry v5/19 on same SHA. Counters: `applied_confirmed` independent of `applied` (0/12 allowed by design). Runtime reads registry+coverage markers, NOT full normative corpus as RT-IDs. CERTIFIED_100=false. Verdict question corpus→agent: **PARTIAL**.
+
+
+80. **R345 (2026-09-14T17:25:00Z).** Wallet bind=client FP not server host; bio≠HumanIdentity; KYB self-validate DENY. CERTIFIED_100=false.
