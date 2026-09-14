@@ -177,3 +177,11 @@ Progress estimate (matrix-weighted, honest): **~58%** of declared P0 rows live-p
 | R341 tokenomics/PoL/V01-07 | buckets | SIMULATED/OPEN | pas auto-PASS |
 | #86 / Anti-Sybil | remesure parallèle | voir logs/R341 | org ACL / sample gate |
 | CERTIFIED_100 | — | **false** | — |
+
+## R342b append (2026-09-14T16:28:44Z) — BETA live propagation reprobe
+
+| ID | Domaine | Live | Notes |
+|----|---------|------|-------|
+| R342b chain | GitHub→health→HTTP→JS | **PASS** | `86f4dcb` ×4 ; `BtHzgi7y` ; BETA in assets |
+| R342b stale probe | `live_probe.json` | SUPERSEDED_STALE | DfbuIJFE/ed159ff = avant follow-main |
+| CERTIFIED_100 | — | **false** | BETA ≠ official inauguration |
