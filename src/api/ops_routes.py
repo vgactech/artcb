@@ -44,6 +44,11 @@ _MIN_RESTART_GAP_S = 30.0
 # nonce_hex → expires_at (timestamp float)
 _PQC_CHALLENGES: dict[str, float] = {}
 _PQC_CHALLENGE_TTL = 300  # 5 minutes
+_PQC_CHALLENGE_MAX = 500  # cap mémoire anti-DoS
+# Rate-limit par IP : ip → [timestamps]
+_PQC_RATE_WINDOW_S = 60
+_PQC_RATE_MAX = 10
+_PQC_RATE: dict[str, list[float]] = {}
 
 
 class PqcVerifyRequest(BaseModel):
@@ -295,18 +300,33 @@ async def fanout_restart(
     "/pqc-challenge",
     summary="V-PQC-2 : émettre un challenge ML-DSA-65 (nonce 32 octets, TTL 5 min)",
 )
-def pqc_challenge() -> dict[str, Any]:
+def pqc_challenge(request: Request) -> dict[str, Any]:
     """Étape 1/2 de V-PQC-2 : le serveur émet un nonce anti-rejeu.
 
     Le client doit ensuite appeler POST /ops/pqc-verify avec ce nonce pour
     prouver qu'il détient la clé privée ML-DSA-65 correspondant au wallet.
     Chaque nonce est à usage unique et expire dans 5 minutes.
+    Rate-limit : 10 requêtes/minute/IP. Cap mémoire : 500 challenges actifs max.
     """
-    # Purge des challenges expirés
     now = time.time()
+
+    # Rate-limit par IP
+    client_ip = (request.client.host if request.client else "unknown")
+    hits = _PQC_RATE.get(client_ip, [])
+    hits = [t for t in hits if now - t < _PQC_RATE_WINDOW_S]
+    if len(hits) >= _PQC_RATE_MAX:
+        raise HTTPException(status_code=429, detail="pqc_challenge_rate_limited")
+    hits.append(now)
+    _PQC_RATE[client_ip] = hits
+
+    # Purge des challenges expirés
     expired = [k for k, exp in list(_PQC_CHALLENGES.items()) if now > exp]
     for k in expired:
         _PQC_CHALLENGES.pop(k, None)
+
+    # Cap mémoire anti-DoS
+    if len(_PQC_CHALLENGES) >= _PQC_CHALLENGE_MAX:
+        raise HTTPException(status_code=503, detail="pqc_challenge_capacity_exceeded")
 
     nonce = secrets.token_hex(32)  # 32 octets = 64 chars hex
     _PQC_CHALLENGES[nonce] = now + _PQC_CHALLENGE_TTL
