@@ -6,6 +6,8 @@ POST /announce lets an allowlisted clone/Replit be seen without a wallet/KEM.
 
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import APIRouter, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
@@ -57,3 +59,69 @@ def announce_observer(body: AnnounceObserverRequest, request: Request) -> dict:
         }
     )
     return {"registered": True, "observer": True, "entry": entry, "network_id": nid}
+
+
+@router.get("/nakamoto", summary="Coefficient de Nakamoto — diversité opérateur du réseau")
+def nakamoto_coefficient(request: Request) -> dict[str, Any]:
+    """Calcule le coefficient de Nakamoto du réseau ARTCB.
+
+    Coefficient = nombre minimal d'entités indépendantes (opérateurs) qu'il faut
+    compromettre pour contrôler plus de 50 % des nœuds PBFT.
+
+    Méthode : regrouper les nœuds PBFT par (provider, doppler_project) comme proxy
+    d'opérateur. BFT fault tolerance = f avec N=3f+1 → on contrôle si on a >N/3 nœuds.
+
+    Note : avec 4 nœuds appartenant à 1 opérateur → coefficient=1 (honnête).
+    L'objectif P2 (coefficient≥2) nécessite des nœuds indépendants tiers.
+    """
+    from src.artcb.node_registry import NODES, official_pbft_replica_ids
+    from src.artcb.consensus.live_bft import n_f_q
+
+    replicas = official_pbft_replica_ids()
+    n, f, q = n_f_q(len(replicas))
+
+    # Grouper par opérateur unique = (provider + racine du doppler_project)
+    # Heuristique : même nic/compte → même compte cloud
+    operator_map: dict[str, list[str]] = {}
+    for nid in replicas:
+        spec = NODES.get(nid)
+        if spec is None:
+            continue
+        # Proxy opérateur = provider + doppler_project (un compte Doppler = un opérateur)
+        op_key = f"{spec.provider}:{spec.doppler_project}"
+        operator_map.setdefault(op_key, []).append(nid)
+
+    # Coefficient = min nombre d'opérateurs pour atteindre >f nœuds (quorum Byzantine)
+    # Trier par taille décroissante
+    op_sizes = sorted([len(v) for v in operator_map.values()], reverse=True)
+    cumul = 0
+    nakamoto = 0
+    threshold = f + 1  # contrôle BFT si >f nœuds compromis
+    for sz in op_sizes:
+        cumul += sz
+        nakamoto += 1
+        if cumul >= threshold:
+            break
+
+    goal_met = nakamoto >= 2  # objectif P2
+
+    return {
+        "nakamoto_coefficient": nakamoto,
+        "goal_p2_met": goal_met,
+        "goal_p2_target": 2,
+        "n_replicas": n,
+        "f_fault_tolerance": f,
+        "threshold_to_control": threshold,
+        "operators": {
+            op: {"nodes": nodes, "count": len(nodes)}
+            for op, nodes in operator_map.items()
+        },
+        "note": (
+            "Coefficient=1 : 4 nœuds, 1 opérateur (vgactech). "
+            "Atteindre ≥2 requiert des opérateurs tiers indépendants."
+            if nakamoto < 2
+            else f"Coefficient={nakamoto} — diversité opérateur suffisante."
+        ),
+        "certified_100_relevant": True,
+        "ts_ns": __import__("time").time_ns(),
+    }
