@@ -830,14 +830,18 @@ def wallet_list(request: Request) -> dict:
     from src.api.api_keys_routes import require_write_actor
 
     # R351b: env operator key path (ARTCB_API_KEY Doppler) → full access
+    # require_write_actor est une dépendance FastAPI — on lui passe l'authorization header
+    # manuellement car on l'appelle en dehors de Depends()
     authenticated = _bearer_present(request)
     if not authenticated:
-        try:
-            actor = require_write_actor(request)
-            if actor and actor.get("source") in {"operator", "env"}:
-                authenticated = True
-        except Exception:
-            pass
+        authorization = request.headers.get("authorization")
+        if authorization:
+            try:
+                actor = require_write_actor(request, authorization=authorization)
+                if actor and actor.get("source") in {"operator", "env"}:
+                    authenticated = True
+            except Exception:
+                pass
 
     # ~~default "1"~~ → default "0" (fail-closed). Explicit "1" restores old public projection.
     public_allowed = os.getenv("ARTCB_WALLET_LIST_PUBLIC", "0").strip().lower() in {"1", "true", "yes"}
