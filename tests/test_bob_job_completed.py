@@ -460,3 +460,80 @@ class TestBobJobCompleted:
         )
         assert p1["job_id"] == p2["job_id"], "T9 : job_id aussi déterministe"
 
+
+    # ---------------------------------------------------------------------------
+    # BOB-11 : T10 — ts_ns profondément imbriqué dans metadata (P0-B.2)
+    # ---------------------------------------------------------------------------
+
+    def test_bob11_t10_deep_temporal_strip(self, job_mod, tmp_path):
+        """T10 : ts_ns dans un sous-objet imbriqué → même event_id (P0-B.2 récursif)."""
+        import json as _json
+        session_id = "sess_011"
+        trace = tmp_path / "trace"
+        trace.mkdir(parents=True, exist_ok=True)
+
+        TOOL = "read_file"
+        PATH = "src/main.py"
+
+        # ts_ns dans metadata imbriqué (niv 2)
+        with (trace / "bob_tool_usage.jsonl").open("w") as f:
+            f.write(_json.dumps({
+                "tool": TOOL, "path": PATH, "session_id": session_id,
+                "metadata": {"timing": {"ts_ns": 1000, "dur_ns": 500}},
+            }) + "\n")
+        with (trace / "bob_prompts.jsonl").open("w") as f:
+            f.write(_json.dumps({"prompt_len": 10, "session_id": session_id}) + "\n")
+        (trace / "bob_turns.jsonl").write_text("")
+        (trace / "bob_pretooluse.jsonl").write_text("")
+
+        with patch.object(job_mod, "_git_sha", return_value="aabbcc001122"):
+            p1 = job_mod.build_job_completed(session_id=session_id)
+
+        # Même travail, ts_ns imbriqué différent
+        with (trace / "bob_tool_usage.jsonl").open("w") as f:
+            f.write(_json.dumps({
+                "tool": TOOL, "path": PATH, "session_id": session_id,
+                "metadata": {"timing": {"ts_ns": 9_999_999, "dur_ns": 777}},
+            }) + "\n")
+
+        with patch.object(job_mod, "_git_sha", return_value="aabbcc001122"):
+            p2 = job_mod.build_job_completed(session_id=session_id)
+
+        assert p1["event_id"] == p2["event_id"], (
+            f"T10 FAIL : ts_ns imbriqué différent → event_id différent.\n"
+            f"p1={p1['event_id']}\np2={p2['event_id']}"
+        )
+
+    # ---------------------------------------------------------------------------
+    # BOB-12 : T11 — extra.password ne passe pas (P0-A.2)
+    # ---------------------------------------------------------------------------
+
+    def test_bob12_t11_extra_password_redacted(self, job_mod, tmp_path):
+        """T11 : champ sensible dans extra → redacté dans packet et outbox (P0-A.2)."""
+        import json as _json
+        session_id = "sess_012"
+        _make_traces(tmp_path, session_id)
+        EXTRA_PWD = "ExtraPasswordTresSecret"
+        EXTRA_TOKEN = "ExtraToken_xXxBob2026"
+
+        mock_err = {"status": "network_error"}
+        with patch.object(job_mod, "_git_sha", return_value="ddeeff001122"):
+            with patch.object(job_mod, "_post_to_artcb", return_value=mock_err):
+                job_mod.publish_job_completed(
+                    session_id=session_id,
+                    extra={
+                        "password": EXTRA_PWD,
+                        "credentials": {"token": EXTRA_TOKEN},
+                        "deep": {"nested": {"api_key": EXTRA_TOKEN}},
+                    },
+                )
+
+        outbox = tmp_path / "outbox"
+        files = list(outbox.glob("job_completed_*.json"))
+        assert len(files) == 1
+        content = files[0].read_text()
+
+        assert EXTRA_PWD   not in content, "P0-A.2 : extra.password trouvé dans outbox"
+        assert EXTRA_TOKEN not in content, "P0-A.2 : extra.credentials.token trouvé dans outbox"
+        assert "[REDACTED]" in content
+

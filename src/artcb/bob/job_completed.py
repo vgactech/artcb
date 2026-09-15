@@ -238,16 +238,27 @@ def build_job_completed(
     # Redaction du message assistant
     raw_output = _redact_secrets(last_assistant_message)
 
-    # Hashes canoniques pour l'identité déterministe (P0-B + P0-B.1)
-    # On exclut les métadonnées temporelles (ts_ns, completed_at, dur_*) des données
-    # participant à l'identité logique du travail. Un même travail reproduit à un
-    # autre moment réel doit produire le même event_id.
+    # Hashes canoniques pour l'identité déterministe (P0-B + P0-B.1 + P0-B.2)
+    # P0-B.2 : _strip_temporal est récursif — retire ts_ns/mono_ns/... à tous niveaux.
     _TEMPORAL_KEYS = frozenset({"ts_ns", "mono_ns", "completed_at_ns", "dur_ns", "dur_ms",
                                  "started_at", "completed_at", "timestamp", "time"})
 
+    def _strip_temporal_value(v: Any) -> Any:
+        """Retire récursivement les clés temporelles dans toute structure imbriquée."""
+        if isinstance(v, dict):
+            return {k: _strip_temporal_value(val) for k, val in v.items()
+                    if k not in _TEMPORAL_KEYS}
+        if isinstance(v, list):
+            return [_strip_temporal_value(item) for item in v]
+        return v
+
     def _strip_temporal(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        """Retire les clés temporelles pour le calcul du hash d'identité."""
-        return [{k: v for k, v in row.items() if k not in _TEMPORAL_KEYS} for row in rows]
+        """Retire récursivement les clés temporelles de chaque ligne (P0-B.2)."""
+        return [
+            {k: _strip_temporal_value(v) for k, v in row.items()
+             if k not in _TEMPORAL_KEYS}
+            for row in rows
+        ]
 
     prompt_hash = _sha256(json.dumps(
         _strip_temporal(raw_traces["raw_prompts"]),
@@ -318,6 +329,11 @@ def build_job_completed(
     }
     if extra:
         packet.update(extra)
+        # P0-A.2 : redaction récursive finale après extra pour garantir
+        # qu'aucun champ sensible fourni par l'appelant ne persiste dans le paquet.
+        for k in list(packet.keys()):
+            packet[k] = _redact_value(k, packet[k])
+
     return packet
 
 
