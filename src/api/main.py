@@ -462,7 +462,12 @@ def create_app() -> FastAPI:
                 getattr(state, "producer_failover", None)
                 and state.producer_failover.live
             ),
-            "producer_failover_will_append": False,
+            "producer_failover_will_append": bool(
+                getattr(state, "producer_failover", None)
+                and state.producer_failover.live
+                and state.producer_failover.produce_armed
+                and state.producer_failover.append_implemented
+            ),
         }
 
     # Serve React frontend (built dist/) at root

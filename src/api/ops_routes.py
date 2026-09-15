@@ -448,3 +448,71 @@ def pqc_verify(body: PqcVerifyRequest, request: Request) -> dict[str, Any]:
         raise HTTPException(status_code=500, detail="vpqc2_signature_verification_failed")
 
     return result
+
+
+# ── GO-E V-01-B : route de production failover ────────────────────────────────
+
+@router.post(
+    "/failover-produce",
+    summary="GO-E V-01-B : tente de produire un bloc de secours (Bearer opérateur)",
+)
+def failover_produce(request: Request) -> dict[str, Any]:
+    """Déclenche manuellement maybe_produce() du ProducerFailoverRuntime.
+
+    Conditions : ARTCB_PRODUCER_FAILOVER_LIVE=true + ARTCB_PRODUCER_FAILOVER_PRODUCE=true
+    + le producteur actif doit être mort (heartbeat_timeout dépassé).
+    La grace period doit être expirée (30s par défaut après élection).
+    """
+    from src.api.api_keys_routes import require_write_actor
+
+    actor: dict | None = None
+    auth = request.headers.get("authorization", "")
+    if auth:
+        try:
+            actor = require_write_actor(request, authorization=auth)
+        except Exception:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=401, detail="ops_requires_bearer")
+    if actor is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=401, detail="ops_requires_bearer")
+    source = str(actor.get("source") or "")
+    if source not in {"operator", "env", "api_key"}:
+        scopes = actor.get("scopes") or []
+        if "admin" not in scopes and "write" not in scopes:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=403, detail="ops_restart_forbidden")
+
+    state = request.app.state.artcb
+    runtime = getattr(state, "producer_failover", None)
+    if runtime is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail="failover_runtime_unavailable")
+
+    chain = getattr(state, "chain", None)
+    result = runtime.maybe_produce(chain=chain)
+    return {
+        "ok": result.get("appended", False),
+        "result": result,
+        "node_id": getattr(state.p2p_identity, "node_id", "?") if state else "?",
+        "ts_ns": now_wall_ns(),
+    }
+
+
+@router.get(
+    "/failover-status",
+    summary="GO-E V-01-B : état du ProducerFailoverRuntime",
+)
+def failover_status(request: Request) -> dict[str, Any]:
+    """Retourne l'état du ProducerFailoverRuntime : monitor, last_produce_result, etc."""
+    state = request.app.state.artcb
+    runtime = getattr(state, "producer_failover", None)
+    if runtime is None:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=503, detail="failover_runtime_unavailable")
+    return {
+        "ok": True,
+        "status": runtime.status(),
+        "node_id": getattr(state.p2p_identity, "node_id", "?") if state else "?",
+        "ts_ns": now_wall_ns(),
+    }
