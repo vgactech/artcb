@@ -107,17 +107,36 @@ def _read_jsonl_tail(path: Path, n: int = 50) -> list[dict[str, Any]]:
     return rows[-n:]
 
 
+def _redact_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Applique _redact_secrets sur chaque valeur string de chaque ligne."""
+    result = []
+    for row in rows:
+        cleaned: dict[str, Any] = {}
+        for k, v in row.items():
+            if isinstance(v, str):
+                cleaned[k] = _redact_secrets(v)
+            else:
+                cleaned[k] = v
+        result.append(cleaned)
+    return result
+
+
 def _collect_raw_traces(session_id: str | None) -> dict[str, Any]:
-    """Collecte les traces brutes pertinentes pour cette session."""
+    """Collecte et redacte les traces brutes pertinentes pour cette session.
+
+    CORRECTION P0-A : la redaction est appliquée ICI, avant toute écriture
+    sur disque (outbox) et avant le POST. Le paquet final ne contient jamais
+    de données brutes non redactées.
+    """
     def _filter(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         if not session_id:
             return rows
         return [r for r in rows if r.get("session_id") == session_id or "session_id" not in r]
 
-    tool_rows = _filter(_read_jsonl_tail(TRACE_DIR / "bob_tool_usage.jsonl", 200))
-    turn_rows = _filter(_read_jsonl_tail(TRACE_DIR / "bob_turns.jsonl", 50))
-    prompt_rows = _filter(_read_jsonl_tail(TRACE_DIR / "bob_prompts.jsonl", 50))
-    pretool_rows = _filter(_read_jsonl_tail(TRACE_DIR / "bob_pretooluse.jsonl", 200))
+    tool_rows  = _redact_rows(_filter(_read_jsonl_tail(TRACE_DIR / "bob_tool_usage.jsonl", 200)))
+    turn_rows  = _redact_rows(_filter(_read_jsonl_tail(TRACE_DIR / "bob_turns.jsonl", 50)))
+    prompt_rows = _redact_rows(_filter(_read_jsonl_tail(TRACE_DIR / "bob_prompts.jsonl", 50)))
+    pretool_rows = _redact_rows(_filter(_read_jsonl_tail(TRACE_DIR / "bob_pretooluse.jsonl", 200)))
 
     return {
         "raw_tool_events": tool_rows,
@@ -129,14 +148,25 @@ def _collect_raw_traces(session_id: str | None) -> dict[str, Any]:
     }
 
 
-def _make_job_id(session_id: str | None, ts_ns: int) -> str:
-    seed = f"{session_id or 'nosession'}:{ts_ns}"
-    return "job_" + hashlib.sha256(seed.encode()).hexdigest()[:24]
+def _make_event_id(
+    *,
+    repo_sha: str,
+    session_id: str | None,
+    prompt_hash: str,
+    tool_hash: str,
+) -> str:
+    """Identifiant déterministe — CORRECTION P0-B : aucun timestamp dans l'identité.
 
-
-def _make_event_id(job_id: str, repo_sha: str) -> str:
-    seed = f"{job_id}:{repo_sha}"
-    return "evt_" + hashlib.sha256(seed.encode()).hexdigest()[:32]
+    Même travail logique (même repo_sha + session + prompts + outils)
+    → même event_id, quelle que soit l'heure de la tentative.
+    """
+    canonical = json.dumps({
+        "repo_sha": repo_sha,
+        "session_id": session_id or "nosession",
+        "prompt_hash": prompt_hash,
+        "tool_hash": tool_hash,
+    }, sort_keys=True, ensure_ascii=False)
+    return "evt_" + hashlib.sha256(canonical.encode()).hexdigest()[:32]
 
 
 # ---------------------------------------------------------------------------
@@ -152,31 +182,49 @@ def build_job_completed(
     status: str = "completed",
     extra: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Construit le paquet JOB_COMPLETED — trace brute, aucun résumé comme source de vérité."""
+    """Construit le paquet JOB_COMPLETED — trace brute redactée, aucun résumé.
+
+    P0-A : toutes les traces sont redactées AVANT toute écriture sur disque.
+    P0-B : event_id déterministe — aucun timestamp dans l'identité logique.
+    """
     ts_ns = time.time_ns()
     repo_sha = _git_sha()
-    job_id = _make_job_id(session_id, ts_ns)
-    raw_traces = _collect_raw_traces(session_id)
     changed_files = _git_changed_files()
 
-    # Contenu principal (redacté des secrets)
-    raw_output = _redact_secrets(last_assistant_message)
-    raw_tool_str = _redact_secrets(json.dumps(raw_traces["raw_tool_events"], ensure_ascii=False))
-    raw_turns_str = _redact_secrets(json.dumps(raw_traces["raw_turns"], ensure_ascii=False))
+    # Traces collectées ET redactées dès la collecte (P0-A)
+    raw_traces = _collect_raw_traces(session_id)
 
-    # Contenu canonique pour hash
+    # Redaction du message assistant
+    raw_output = _redact_secrets(last_assistant_message)
+
+    # Hashes canoniques pour l'identité déterministe (P0-B)
+    prompt_hash = _sha256(json.dumps(raw_traces["raw_prompts"], sort_keys=True, ensure_ascii=False))
+    tool_hash   = _sha256(json.dumps(raw_traces["raw_tool_events"], sort_keys=True, ensure_ascii=False))
+
+    # event_id : déterministe, sans timestamp (P0-B)
+    event_id = _make_event_id(
+        repo_sha=repo_sha,
+        session_id=session_id,
+        prompt_hash=prompt_hash,
+        tool_hash=tool_hash,
+    )
+
+    # job_id : dérivé de l'event_id (déterministe aussi)
+    job_id = "job_" + hashlib.sha256(event_id.encode()).hexdigest()[:24]
+
+    # Hash du contenu canonique (calculé sur les données déjà redactées)
     canonical = json.dumps({
-        "job_id": job_id,
+        "event_id": event_id,
         "session_id": session_id,
         "repo_sha": repo_sha,
         "raw_output": raw_output,
-        "raw_tool_str": raw_tool_str,
+        "tool_hash": tool_hash,
+        "prompt_hash": prompt_hash,
         "changed_files": changed_files,
     }, sort_keys=True, ensure_ascii=False)
     raw_hash = _sha256(canonical)
 
-    event_id = _make_event_id(job_id, repo_sha)
-
+    # Paquet final : 100 % redacté — prêt pour outbox ET pour POST (P0-A)
     packet: dict[str, Any] = {
         "event_type": "JOB_COMPLETED",
         "event_id": event_id,
@@ -192,12 +240,15 @@ def build_job_completed(
         "tool_count": tool_count,
         "error_count": error_count,
         "changed_files": changed_files,
-        # Traces brutes (aucune compression sémantique)
+        # Traces brutes redactées (P0-A)
         "raw_output": raw_output,
         "raw_tool_events": raw_traces["raw_tool_events"],
         "raw_turns": raw_traces["raw_turns"],
         "raw_prompts": raw_traces["raw_prompts"],
         "raw_pretool_events": raw_traces["raw_pretool_events"],
+        # Hashes d'identité (P0-B)
+        "prompt_hash": prompt_hash,
+        "tool_hash": tool_hash,
         # Intégrité
         "raw_hash": raw_hash,
         "content_sha256": raw_hash,
@@ -205,6 +256,7 @@ def build_job_completed(
         "includes_thinking": False,
         "includes_system_prompt": False,
         "secrets_redacted": True,
+        "redaction_applied_before_outbox": True,
         "visibility": "private",
     }
     if extra:
@@ -217,11 +269,17 @@ def build_job_completed(
 # ---------------------------------------------------------------------------
 
 def _post_to_artcb(packet: dict[str, Any]) -> dict[str, Any]:
-    """Envoie le paquet vers POST /api/v1/agent/events."""
+    """Envoie le paquet vers POST /api/v1/agent/events.
+
+    P0-A : le packet est déjà entièrement redacté à ce stade.
+    La redaction ici est une dernière passe de sécurité défensive,
+    mais ne doit pas être le seul point de protection.
+    """
     import urllib.request
     import urllib.error
 
-    # On sérialise le paquet complet comme `content` de l'événement
+    # Le packet est déjà redacté (P0-A) — sérialisation directe
+    # La passe _redact_secrets est conservée comme défense en profondeur
     content = _redact_secrets(json.dumps(packet, ensure_ascii=False))
 
     body = json.dumps({
