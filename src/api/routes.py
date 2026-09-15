@@ -822,10 +822,23 @@ def wallet_list(request: Request) -> dict:
     HTTP 401. Opt-in public projection with ARTCB_WALLET_LIST_PUBLIC=1.
     With a valid Bearer: full metadata for the operator/session path.
     ~~ARTCB_WALLET_LIST_PUBLIC default "1"~~ (barred — leaked addresses to anon).
+
+    R351b: accepte aussi la clé env ARTCB_API_KEY (operator path via require_write_actor)
+    pour permettre à chaque nœud de lister ses wallets avec sa propre clé Doppler.
     """
     from src.artcb.wallet.manager import WalletManager
+    from src.api.api_keys_routes import require_write_actor
 
+    # R351b: env operator key path (ARTCB_API_KEY Doppler) → full access
     authenticated = _bearer_present(request)
+    if not authenticated:
+        try:
+            actor = require_write_actor(request)
+            if actor and actor.get("source") in {"operator", "env"}:
+                authenticated = True
+        except Exception:
+            pass
+
     # ~~default "1"~~ → default "0" (fail-closed). Explicit "1" restores old public projection.
     public_allowed = os.getenv("ARTCB_WALLET_LIST_PUBLIC", "0").strip().lower() in {"1", "true", "yes"}
     if not authenticated and not public_allowed:
