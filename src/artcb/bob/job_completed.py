@@ -35,14 +35,26 @@ from typing import Any
 ARTCB_API_URL = os.environ.get("ARTCB_API_URL", "http://152.228.144.34:8000")
 ARTCB_API_KEY = os.environ.get("ARTCB_API_KEY", "")
 
-# Patterns de secrets à redacter avant tout envoi
+# Patterns de secrets à redacter avant tout envoi (valeurs string reconnues)
 _SECRET_PATTERNS: list[re.Pattern[str]] = [
     re.compile(r"dp\.st\.[A-Za-z0-9._-]{10,}", re.I),        # tokens Doppler
     re.compile(r"artcb_[a-f0-9]{40,}", re.I),                # API keys ARTCB
     re.compile(r"-----BEGIN.*?PRIVATE KEY-----.*?-----END.*?PRIVATE KEY-----", re.S),
-    re.compile(r"\"(password|secret|private_key|seed_hex|token)\"\s*:\s*\"[^\"]{4,}\"", re.I),
     re.compile(r"amelie92"),                                   # mot de passe connu exposé
 ]
+
+# Noms de champs dont la valeur est TOUJOURS redactée, quelle que soit sa forme.
+# Aucune regex ne peut détecter un mot de passe arbitraire par sa valeur.
+_SENSITIVE_FIELD_NAMES: frozenset[str] = frozenset({
+    "password", "passwd", "pass", "pwd",
+    "secret", "private_key", "privkey", "priv_key",
+    "seed", "seed_hex", "mnemonic",
+    "token", "access_token", "refresh_token", "id_token",
+    "api_key", "apikey", "api_secret",
+    "authorization", "auth", "bearer",
+    "client_secret",
+    "private",
+})
 
 OUTBOX_DIR = Path(__file__).resolve().parents[3] / "data" / "trace" / "outbox"
 TRACE_DIR = Path(__file__).resolve().parents[3] / "data" / "trace"
@@ -107,18 +119,47 @@ def _read_jsonl_tail(path: Path, n: int = 50) -> list[dict[str, Any]]:
     return rows[-n:]
 
 
+def _redact_value(key: str, value: Any) -> Any:
+    """Redaction récursive d'une valeur, sensible au nom du champ parent.
+
+    P0-A.1 — trois règles :
+    1. Si le nom du champ est sensible : toujours [REDACTED], quelle que soit la valeur.
+    2. Si la valeur est une string : appliquer _redact_secrets (regex connues).
+    3. Si la valeur est un dict ou une liste : descente récursive.
+    """
+    key_lower = str(key).lower()
+
+    # Règle 1 — champ sensible par nom : valeur entière masquée
+    if key_lower in _SENSITIVE_FIELD_NAMES:
+        return "[REDACTED]"
+
+    # Règle 2 — string : regex connues
+    if isinstance(value, str):
+        return _redact_secrets(value)
+
+    # Règle 3 — dict : récursion
+    if isinstance(value, dict):
+        return {k: _redact_value(k, v) for k, v in value.items()}
+
+    # Règle 3 — liste : récursion sur chaque élément
+    if isinstance(value, list):
+        return [
+            _redact_value(key, item) if isinstance(item, (str, dict, list))
+            else item
+            for item in value
+        ]
+
+    # Autres types (int, float, bool, None) : conserver
+    return value
+
+
 def _redact_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Applique _redact_secrets sur chaque valeur string de chaque ligne."""
-    result = []
-    for row in rows:
-        cleaned: dict[str, Any] = {}
-        for k, v in row.items():
-            if isinstance(v, str):
-                cleaned[k] = _redact_secrets(v)
-            else:
-                cleaned[k] = v
-        result.append(cleaned)
-    return result
+    """Redaction récursive + par nom de champ sur une liste de lignes JSONL.
+
+    P0-A.1 : chaque ligne est traitée récursivement. Un secret imbriqué à
+    n'importe quel niveau (dict, liste, valeur directe) est masqué.
+    """
+    return [{k: _redact_value(k, v) for k, v in row.items()} for row in rows]
 
 
 def _collect_raw_traces(session_id: str | None) -> dict[str, Any]:
@@ -197,9 +238,25 @@ def build_job_completed(
     # Redaction du message assistant
     raw_output = _redact_secrets(last_assistant_message)
 
-    # Hashes canoniques pour l'identité déterministe (P0-B)
-    prompt_hash = _sha256(json.dumps(raw_traces["raw_prompts"], sort_keys=True, ensure_ascii=False))
-    tool_hash   = _sha256(json.dumps(raw_traces["raw_tool_events"], sort_keys=True, ensure_ascii=False))
+    # Hashes canoniques pour l'identité déterministe (P0-B + P0-B.1)
+    # On exclut les métadonnées temporelles (ts_ns, completed_at, dur_*) des données
+    # participant à l'identité logique du travail. Un même travail reproduit à un
+    # autre moment réel doit produire le même event_id.
+    _TEMPORAL_KEYS = frozenset({"ts_ns", "mono_ns", "completed_at_ns", "dur_ns", "dur_ms",
+                                 "started_at", "completed_at", "timestamp", "time"})
+
+    def _strip_temporal(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Retire les clés temporelles pour le calcul du hash d'identité."""
+        return [{k: v for k, v in row.items() if k not in _TEMPORAL_KEYS} for row in rows]
+
+    prompt_hash = _sha256(json.dumps(
+        _strip_temporal(raw_traces["raw_prompts"]),
+        sort_keys=True, ensure_ascii=False,
+    ))
+    tool_hash = _sha256(json.dumps(
+        _strip_temporal(raw_traces["raw_tool_events"]),
+        sort_keys=True, ensure_ascii=False,
+    ))
 
     # event_id : déterministe, sans timestamp (P0-B)
     event_id = _make_event_id(

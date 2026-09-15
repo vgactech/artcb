@@ -321,3 +321,142 @@ class TestBobJobCompleted:
         # prompt_hash et tool_hash présents (P0-B)
         assert len(packet["prompt_hash"]) == 64, "prompt_hash doit être un sha256 hex"
         assert len(packet["tool_hash"]) == 64,   "tool_hash doit être un sha256 hex"
+
+
+    # ---------------------------------------------------------------------------
+    # BOB-08 : redaction par nom de champ — T7 (champ sensible, direct + imbriqué)
+    # ---------------------------------------------------------------------------
+
+    def test_bob08_t7_field_name_redaction(self, job_mod, tmp_path):
+        """T7 : mot de passe / token par nom de champ → [REDACTED] quelle que soit sa forme."""
+        import json as _json
+        session_id = "sess_008"
+        trace = tmp_path / "trace"
+        trace.mkdir(parents=True, exist_ok=True)
+
+        MOT_DE_PASSE = "bonjour123"  # aucun format reconnaissable par regex
+        TOKEN = "NouveauToken2026XYZ"
+
+        # Champ direct niveau 1
+        with (trace / "bob_tool_usage.jsonl").open("w") as f:
+            f.write(_json.dumps({
+                "ts_ns": 1, "tool": "write_file",
+                "username": "alice", "password": MOT_DE_PASSE,
+                "session_id": session_id,
+            }) + "\n")
+        # Champ imbriqué niveau 2
+        with (trace / "bob_prompts.jsonl").open("w") as f:
+            f.write(_json.dumps({
+                "ts_ns": 2, "session_id": session_id,
+                "credentials": {"password": MOT_DE_PASSE, "token": TOKEN},
+            }) + "\n")
+        # Champ dans liste
+        with (trace / "bob_turns.jsonl").open("w") as f:
+            f.write(_json.dumps({
+                "ts_ns": 3, "session_id": session_id,
+                "headers": [{"authorization": f"Bearer {TOKEN}"}],
+            }) + "\n")
+        (trace / "bob_pretooluse.jsonl").write_text("")
+
+        mock_err = {"status": "network_error"}
+        with patch.object(job_mod, "_git_sha", return_value="bbccdd001122"):
+            with patch.object(job_mod, "_post_to_artcb", return_value=mock_err):
+                job_mod.publish_job_completed(
+                    session_id=session_id,
+                    last_assistant_message="résultat sans secret",
+                )
+
+        outbox = tmp_path / "outbox"
+        files = list(outbox.glob("job_completed_*.json"))
+        assert len(files) == 1
+        content = files[0].read_text()
+
+        assert MOT_DE_PASSE not in content, f"Mot de passe direct trouvé dans outbox"
+        assert TOKEN not in content,        f"Token trouvé dans outbox"
+        assert "[REDACTED]" in content,     "La redaction doit laisser [REDACTED]"
+
+    # ---------------------------------------------------------------------------
+    # BOB-09 : redaction récursive — T8 (dict imbriqué profond + liste de dicts)
+    # ---------------------------------------------------------------------------
+
+    def test_bob09_t8_recursive_redaction(self, job_mod, tmp_path):
+        """T8 : secret dans dict imbriqué profond et liste de dicts → absent de l'outbox."""
+        import json as _json
+        session_id = "sess_009"
+        trace = tmp_path / "trace"
+        trace.mkdir(parents=True, exist_ok=True)
+
+        DEEP_SECRET = "SuperSecretProfond2026"
+
+        # Niveau 3 d'imbrication
+        with (trace / "bob_tool_usage.jsonl").open("w") as f:
+            f.write(_json.dumps({
+                "ts_ns": 1, "session_id": session_id,
+                "level1": {"level2": {"credentials": {"password": DEEP_SECRET}}},
+            }) + "\n")
+        # Secret dans liste de dicts
+        with (trace / "bob_prompts.jsonl").open("w") as f:
+            f.write(_json.dumps({
+                "ts_ns": 2, "session_id": session_id,
+                "events": [{"metadata": {"api_key": DEEP_SECRET}}],
+            }) + "\n")
+        (trace / "bob_turns.jsonl").write_text("")
+        (trace / "bob_pretooluse.jsonl").write_text("")
+
+        mock_err = {"status": "network_error"}
+        with patch.object(job_mod, "_git_sha", return_value="ccddee001122"):
+            with patch.object(job_mod, "_post_to_artcb", return_value=mock_err):
+                job_mod.publish_job_completed(session_id=session_id)
+
+        outbox = tmp_path / "outbox"
+        files = list(outbox.glob("job_completed_*.json"))
+        assert len(files) == 1
+        content = files[0].read_text()
+
+        assert DEEP_SECRET not in content, (
+            f"Secret imbriqué profond trouvé dans outbox ! P0-A.1 non respecté."
+        )
+        assert "[REDACTED]" in content
+
+    # ---------------------------------------------------------------------------
+    # BOB-10 : idempotence sémantique — T9 (même travail, ts_ns différents dans les traces)
+    # ---------------------------------------------------------------------------
+
+    def test_bob10_t9_semantic_idempotence_with_different_ts_ns(self, job_mod, tmp_path):
+        """T9 : même travail reproduit avec ts_ns différents dans les traces → même event_id."""
+        import json as _json
+        import shutil
+        session_id = "sess_010"
+        trace = tmp_path / "trace"
+        trace.mkdir(parents=True, exist_ok=True)
+
+        TOOL = "apply_diff"
+        PATH = "src/foo.py"
+        PROMPT_LEN = 42
+
+        # Jeu A — première exécution (ts_ns = 1000)
+        with (trace / "bob_tool_usage.jsonl").open("w") as f:
+            f.write(_json.dumps({"ts_ns": 1000, "tool": TOOL, "path": PATH, "session_id": session_id}) + "\n")
+        with (trace / "bob_prompts.jsonl").open("w") as f:
+            f.write(_json.dumps({"ts_ns": 1000, "prompt_len": PROMPT_LEN, "session_id": session_id}) + "\n")
+        (trace / "bob_turns.jsonl").write_text("")
+        (trace / "bob_pretooluse.jsonl").write_text("")
+
+        with patch.object(job_mod, "_git_sha", return_value="aabbcc001122"):
+            p1 = job_mod.build_job_completed(session_id=session_id)
+
+        # Jeu B — même travail, ts_ns différents (9 millions de ns plus tard)
+        with (trace / "bob_tool_usage.jsonl").open("w") as f:
+            f.write(_json.dumps({"ts_ns": 9_000_000, "tool": TOOL, "path": PATH, "session_id": session_id}) + "\n")
+        with (trace / "bob_prompts.jsonl").open("w") as f:
+            f.write(_json.dumps({"ts_ns": 9_000_000, "prompt_len": PROMPT_LEN, "session_id": session_id}) + "\n")
+
+        with patch.object(job_mod, "_git_sha", return_value="aabbcc001122"):
+            p2 = job_mod.build_job_completed(session_id=session_id)
+
+        assert p1["event_id"] == p2["event_id"], (
+            f"T9 FAIL : même travail, ts_ns traces différents → event_id différent.\n"
+            f"p1={p1['event_id']}\np2={p2['event_id']}"
+        )
+        assert p1["job_id"] == p2["job_id"], "T9 : job_id aussi déterministe"
+
