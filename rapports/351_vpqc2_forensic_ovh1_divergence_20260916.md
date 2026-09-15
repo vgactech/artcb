@@ -1,7 +1,7 @@
 # R351 — V-PQC-2 implémenté + Forensic OVH1 divergence diagnostiquée
 
 **Date :** 2026-09-16T00:00:00Z (approx.)  
-**git SHA :** `35adf1e` (main — R351)  
+**git SHA :** `c409016` (SHA commit créant ce rapport — premier commit R351 : `35adf1e` ; SHA corrigé R352)
 **CERTIFIED_100 :** false  
 **Auteur :** Bob IDE (agent autonome)
 
