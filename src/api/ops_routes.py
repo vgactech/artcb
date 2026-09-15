@@ -11,17 +11,24 @@ Two auth paths:
 1. Local ``require_write_actor`` (node's own env key) — ``/self-restart``
 2. Official replica signature (like concept peer-ingest) — ``/peer-restart``
    so ovh-node-1 can bounce n2/n3/n4 over :443 without their API keys.
+
+V-PQC-2 — ML-DSA-65 challenge/verify (R351):
+  POST /ops/pqc-challenge  → nonce 32 octets (usage unique, TTL 5 min)
+  POST /ops/pqc-verify     → signe le nonce avec la clé PQC privée du nœud,
+                             vérifie immédiatement → preuve de contrôle PQC
 """
 
 from __future__ import annotations
 
 import hashlib
 import os
+import secrets
 import threading
 import time
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
+from pydantic import BaseModel, Field
 
 from src.api.api_keys_routes import require_write_actor
 from src.artcb.trace.ns import now_mono_ns, now_wall_ns
@@ -32,6 +39,17 @@ PEER_RESTART_PROTOCOL = "ops-peer-restart-v1"
 _MAX_SKEW_NS = 120_000_000_000  # 120s
 _LAST_RESTART_MONO = 0.0
 _MIN_RESTART_GAP_S = 30.0
+
+# V-PQC-2 — challenges ML-DSA en attente de vérification
+# nonce_hex → expires_at (timestamp float)
+_PQC_CHALLENGES: dict[str, float] = {}
+_PQC_CHALLENGE_TTL = 300  # 5 minutes
+
+
+class PqcVerifyRequest(BaseModel):
+    challenge: str = Field(min_length=64, max_length=64, description="Nonce hex 32 octets reçu via /ops/pqc-challenge")
+    wallet_name: str = Field(default="default", description="Nom du wallet local dont on prouve le contrôle PQC")
+    user_password: str | None = Field(default=None, description="Mot de passe wallet si nécessaire")
 
 
 def _key_fingerprint() -> dict[str, Any]:
@@ -267,3 +285,146 @@ async def fanout_restart(
         "published_by": actor.get("kind") or actor.get("source"),
         "note": "HTTPS :443 peer restart; keys reload only if doppler run injects ARTCB_API_KEY",
     }
+
+
+# ---------------------------------------------------------------------------
+# V-PQC-2 — Preuve de contrôle ML-DSA-65 (R351)
+# ---------------------------------------------------------------------------
+
+@router.post(
+    "/pqc-challenge",
+    summary="V-PQC-2 : émettre un challenge ML-DSA-65 (nonce 32 octets, TTL 5 min)",
+)
+def pqc_challenge() -> dict[str, Any]:
+    """Étape 1/2 de V-PQC-2 : le serveur émet un nonce anti-rejeu.
+
+    Le client doit ensuite appeler POST /ops/pqc-verify avec ce nonce pour
+    prouver qu'il détient la clé privée ML-DSA-65 correspondant au wallet.
+    Chaque nonce est à usage unique et expire dans 5 minutes.
+    """
+    # Purge des challenges expirés
+    now = time.time()
+    expired = [k for k, exp in list(_PQC_CHALLENGES.items()) if now > exp]
+    for k in expired:
+        _PQC_CHALLENGES.pop(k, None)
+
+    nonce = secrets.token_hex(32)  # 32 octets = 64 chars hex
+    _PQC_CHALLENGES[nonce] = now + _PQC_CHALLENGE_TTL
+    return {
+        "challenge": nonce,
+        "algorithm": "ML-DSA-65",
+        "expires_in": _PQC_CHALLENGE_TTL,
+        "instructions": (
+            "Signez ce challenge (bytes.fromhex(challenge)) avec votre clé privée ML-DSA-65, "
+            "puis POST /api/v1/ops/pqc-verify avec {challenge, wallet_name, [user_password]}."
+        ),
+        "ts_ns": now_wall_ns(),
+    }
+
+
+@router.post(
+    "/pqc-verify",
+    summary="V-PQC-2 : signer + vérifier le challenge ML-DSA-65 (preuve de contrôle PQC)",
+)
+def pqc_verify(body: PqcVerifyRequest, request: Request) -> dict[str, Any]:
+    """Étape 2/2 de V-PQC-2 : le nœud signe le challenge avec sa clé PQC privée
+    puis vérifie immédiatement la signature avec la clé publique.
+
+    Prouve que ce nœud détient la clé privée ML-DSA-65 dont l'empreinte
+    est enregistrée dans le wallet (pqc_public_key_hex).
+
+    Résultat persisté dans le log debug — CERTIFIED_100 reste false tant que
+    cette preuve n'est pas validée sur les 4 nœuds.
+    """
+    import logging as _logging
+    _logger = _logging.getLogger("artcb.ops.vpqc2")
+
+    t0 = now_mono_ns()
+
+    # 1. Vérifier que le challenge est connu et non expiré
+    exp = _PQC_CHALLENGES.get(body.challenge)
+    if not exp:
+        raise HTTPException(status_code=400, detail="vpqc2_challenge_unknown_or_already_used")
+    if time.time() > exp:
+        _PQC_CHALLENGES.pop(body.challenge, None)
+        raise HTTPException(status_code=400, detail="vpqc2_challenge_expired")
+
+    # 2. Vérifier que PQC est disponible sur ce nœud
+    from src.artcb.crypto.pqc import pqc_available, sign_message as pqc_sign, verify_message as pqc_verify_msg
+    if not pqc_available():
+        raise HTTPException(
+            status_code=503,
+            detail="vpqc2_pqc_unavailable: liboqs ML-DSA-65 absent sur ce nœud — installer liboqs",
+        )
+
+    # 3. Charger le wallet (clé PQC privée chiffrée localement)
+    from src.artcb.wallet.manager import WalletManager
+    wm = WalletManager()
+    try:
+        wallet = wm.load_wallet(name=body.wallet_name, user_password=body.user_password)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"vpqc2_wallet_not_found: {body.wallet_name}")
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"vpqc2_wallet_load_error: {exc}")
+
+    # 4. Vérifier que ce wallet a une clé PQC
+    if not wallet.pqc_secret_key or not wallet.pqc_public_key:
+        raise HTTPException(
+            status_code=422,
+            detail="vpqc2_no_pqc_key: ce wallet n'a pas de clé ML-DSA-65 — recréer avec liboqs",
+        )
+
+    # 5. Signer le challenge avec la clé PQC privée
+    challenge_bytes = bytes.fromhex(body.challenge)
+    try:
+        pqc_signature = pqc_sign(challenge_bytes, wallet.pqc_secret_key)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"vpqc2_sign_error: {exc}")
+
+    # 6. Vérifier immédiatement la signature (preuve complète)
+    try:
+        verified = pqc_verify_msg(challenge_bytes, pqc_signature, wallet.pqc_public_key)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"vpqc2_verify_error: {exc}")
+
+    # 7. Challenge consommé (usage unique)
+    _PQC_CHALLENGES.pop(body.challenge, None)
+
+    # 8. Résultat
+    node_id = os.environ.get("ARTCB_NODE_ID") or "unknown"
+    pqc_pub_hex = wallet.pqc_public_key.hex()
+    sig_hex = pqc_signature.hex()
+    dur_ns = now_mono_ns() - t0
+
+    result: dict[str, Any] = {
+        "vpqc2_pass": verified,
+        "node_id": node_id,
+        "wallet_name": body.wallet_name,
+        "wallet_address": wallet.address,
+        "wallet_address_v2": wallet.address_v2,
+        "algorithm": "ML-DSA-65",
+        "challenge": body.challenge,
+        "pqc_public_key_hex": pqc_pub_hex,
+        "pqc_public_key_len": len(wallet.pqc_public_key),
+        "signature_hex": sig_hex[:64] + "...(truncated)",
+        "signature_len": len(pqc_signature),
+        "verified": verified,
+        "ts_ns": now_wall_ns(),
+        "dur_ns": dur_ns,
+        "dur_ms": round(dur_ns / 1_000_000, 2),
+        "note": (
+            "V-PQC-2 PASS: contrôle clé privée ML-DSA-65 prouvé sur ce nœud. "
+            "CERTIFIED_100 reste false jusqu'à validation sur les 4 nœuds."
+        ) if verified else "V-PQC-2 FAIL: signature ML-DSA invalide",
+    }
+
+    if verified:
+        _logger.info(
+            "[V-PQC-2] PASS node=%s wallet=%s address=%s pqc_pub=%s... dur_ms=%.1f",
+            node_id, body.wallet_name, wallet.address, pqc_pub_hex[:16], dur_ns / 1_000_000,
+        )
+    else:
+        _logger.error("[V-PQC-2] FAIL node=%s wallet=%s", node_id, body.wallet_name)
+        raise HTTPException(status_code=500, detail="vpqc2_signature_verification_failed")
+
+    return result
