@@ -99,47 +99,37 @@ def attempt_attestation_quote(*, extra_data: bytes, is_vm: bool) -> dict[str, An
     msg = root / "quote.msg"
     sig = root / "quote.sig"
     pcr = root / "quote.pcr"
+    # tpm2-tools ≥5.0 : -o écrit le fichier PCR (certaines versions le laissent vide).
+    # On génère sans -o d'abord, puis vérification sans -f si pcr vide.
     quoted = _run(
         [
             "tpm2_quote",
-            "-c",
-            str(ak_ctx),
-            "-l",
-            PCR_SELECTION,
-            "-q",
-            qhex,
-            "-m",
-            str(msg),
-            "-s",
-            str(sig),
-            "-o",
-            str(pcr),
-            "-g",
-            "sha256",
+            "-c", str(ak_ctx),
+            "-l", PCR_SELECTION,
+            "-q", qhex,
+            "-m", str(msg),
+            "-s", str(sig),
+            "-o", str(pcr),
+            "-g", "sha256",
         ],
         cwd=root,
     )
     if not quoted["ok"]:
         return {"verified": False, "ok": False, "reason": "QUOTE_FAILED", "kind": kind, "detail": quoted.get("stderr"), "quote": None}
 
-    check = _run(
-        [
-            "tpm2_checkquote",
-            "-u",
-            str(ak_pub),
-            "-m",
-            str(msg),
-            "-s",
-            str(sig),
-            "-f",
-            str(pcr),
-            "-g",
-            "sha256",
-            "-q",
-            qhex,
-        ],
-        cwd=root,
-    )
+    # checkquote : avec -f si pcr non vide, sans -f sinon (tpm2-tools 5.6 compat)
+    pcr_nonempty = pcr.is_file() and pcr.stat().st_size > 0
+    check_args = [
+        "tpm2_checkquote",
+        "-u", str(ak_pub),
+        "-m", str(msg),
+        "-s", str(sig),
+        "-g", "sha256",
+        "-q", qhex,
+    ]
+    if pcr_nonempty:
+        check_args += ["-f", str(pcr)]
+    check = _run(check_args, cwd=root)
     if not check["ok"]:
         return {"verified": False, "ok": False, "reason": "QUOTE_VERIFY_FAILED", "kind": kind, "detail": check.get("stderr"), "quote": None}
 

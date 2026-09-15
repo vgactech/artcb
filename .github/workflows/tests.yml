@@ -13,6 +13,13 @@ name: ARTCB — Tests CI
 # GitHub ne transmet JAMAIS les secrets aux workflows déclenchés par un fork externe.
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "rapports/**"
+      - "logs/**"
+      - "*.md"
+      - "frontend/**"
   workflow_dispatch:
     inputs:
       reason:
