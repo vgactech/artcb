@@ -152,3 +152,26 @@ Conservé. Les conditions non remplies :
 - `pqc_control_proven = false` (V-PQC-2 non implémenté)
 - `machine_bound_proven = false`
 - `USER↔NODE ×4 = false`
+
+---
+
+## 7. Mise à jour session — USER↔NODE score final
+
+**Score : 2/4**
+
+| Nœud | Statut | Détail |
+|---|---|---|
+| OVH1 | ✅ PASS | vgactech2 pwd=12345678 + challenge/verify + association |
+| AWS3 | ✅ PASS | device files supprimés localement via SSM + recréation + association |
+| OVH2 | ❌ BLOQUÉ | device_wallet_limit persisté — pas de vecteur d'exécution distant |
+| OVH4 | ❌ BLOQUÉ | idem OVH2 — VPS OVH sans SSH depuis aws-node-3 ni SSM |
+
+**Tous les 4 nœuds sont sur SHA `42a1e2d`** (follow-main ✅).
+
+**Action requise OVH2/OVH4 :** exécuter manuellement depuis la console OVH ou un terminal SSH :
+```bash
+cd /home/ubuntu/artcb
+ARTCB_USER_WALLET_SEED_HEX=<seed> ARTCB_NODE_BASE_URL=http://localhost:8000 \
+ARTCB_DATA_DIR=/home/ubuntu/artcb/data \
+.venv/bin/python3 scripts/artcb_r350_fix_device_limit.py
+```
