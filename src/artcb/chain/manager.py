@@ -574,70 +574,149 @@ class ChainManager:
     def list_blocks_legacy(self) -> list[dict]:
         return self._read_all_blocks()
 
-    def verify_chain_integrity(self) -> dict:
-        """R364-BUG3: Verify sequential index + prev_hash linkage on startup.
+    def verify_chain_integrity(self, *, verify_hashes: bool = True) -> dict:
+        """R365-FIX-A: Full chain integrity — structure + crypto hash + network metadata.
 
-        Returns a dict with:
-          ok        : bool — True if chain is intact
-          height    : int  — number of blocks checked
-          first_bad : int | None — index of first broken block (None = all ok)
-          reason    : str | None — description of first error
-          gaps      : list[int] — missing index values
-          duplicates: list[int] — duplicated index values
+        Three layers verified:
+          L1 (structure)  : sequential index, no gaps, no duplicates, prev_hash linkage
+          L2 (crypto)     : hash recalculated via ffi.build_block_hash() for public blocks
+          L3 (metadata)   : Genesis block carries correct network_id / protocol_version
 
-        Never raises. Fail-safe: if it cannot read, returns ok=False with reason.
+        Returns dict:
+          ok              : bool  — all layers passed
+          height          : int   — blocks checked
+          first_bad       : int|None — index of first bad block
+          reason          : str|None — human-readable cause
+          gaps            : list[int]
+          duplicates      : list[int]
+          hash_failures   : list[int] — indices where recalculated hash ≠ stored hash
+          level           : "L1"|"L2"|"L3" — deepest layer checked
+          consensus_safe  : bool  — safe to participate in PBFT consensus
+
+        Never raises. Fail-safe: io errors → ok=False.
         """
-        import hashlib
+        from src.artcb.crypto_policy import NETWORK_ID, PROTOCOL_VERSION
 
         try:
             blocks = self._read_all_blocks()
         except Exception as exc:
-            return {"ok": False, "height": 0, "first_bad": None, "reason": f"read_error:{exc}", "gaps": [], "duplicates": []}
+            return {
+                "ok": False, "height": 0, "first_bad": None,
+                "reason": f"read_error:{exc}", "gaps": [], "duplicates": [],
+                "hash_failures": [], "level": "L1", "consensus_safe": False,
+            }
 
         if not blocks:
-            return {"ok": True, "height": 0, "first_bad": None, "reason": None, "gaps": [], "duplicates": []}
+            return {
+                "ok": True, "height": 0, "first_bad": None, "reason": None,
+                "gaps": [], "duplicates": [], "hash_failures": [],
+                "level": "L1", "consensus_safe": True,
+            }
 
+        # ── L1: Structure ────────────────────────────────────────────────────
         indices = [int(b.get("index", -1)) for b in blocks]
-        # Check for gaps and duplicates
-        gaps: list[int] = []
-        duplicates: list[int] = []
         seen: set[int] = set()
-        for i, idx in enumerate(indices):
+        duplicates: list[int] = []
+        for idx in indices:
             if idx in seen:
                 duplicates.append(idx)
             seen.add(idx)
-        expected = set(range(min(indices), max(indices) + 1))
-        gaps = sorted(expected - seen)
+        expected_set = set(range(min(indices), max(indices) + 1))
+        gaps = sorted(expected_set - seen)
 
-        # Check prev_hash linkage
-        prev_hash = str(blocks[0].get("prev_hash") or "")
         first_bad: int | None = None
         reason: str | None = None
-
+        prev_hash = str(blocks[0].get("prev_hash") or "")
         for i, block in enumerate(blocks):
             idx = int(block.get("index", -1))
             block_prev = str(block.get("prev_hash") or "")
             if i > 0 and block_prev != prev_hash:
                 first_bad = idx
-                reason = f"prev_hash_mismatch at index={idx}: expected={prev_hash[:16]} got={block_prev[:16]}"
+                reason = f"L1_prev_hash_mismatch index={idx} expected={prev_hash[:16]} got={block_prev[:16]}"
                 break
-            # Advance prev_hash to this block's hash
             prev_hash = str(block.get("hash") or "")
 
-        ok = first_bad is None and not gaps and not duplicates
-        if not ok and reason is None:
-            if gaps:
-                reason = f"gaps_in_index: {gaps[:5]}"
-            elif duplicates:
-                reason = f"duplicate_indices: {duplicates[:5]}"
+        if first_bad is not None or gaps or duplicates:
+            reason = reason or (
+                f"L1_gaps:{gaps[:5]}" if gaps else f"L1_duplicates:{duplicates[:5]}"
+            )
+            return {
+                "ok": False, "height": len(blocks), "first_bad": first_bad,
+                "reason": reason, "gaps": gaps[:20], "duplicates": duplicates[:20],
+                "hash_failures": [], "level": "L1", "consensus_safe": False,
+            }
+
+        # ── L2: Cryptographic hash verification (public blocks only) ─────────
+        hash_failures: list[int] = []
+        if verify_hashes:
+            try:
+                for block in blocks:
+                    if block.get("visibility") != "public":
+                        continue
+                    try:
+                        ok_hash = self.verify_block_dict(block)
+                        if not ok_hash:
+                            hash_failures.append(int(block.get("index", -1)))
+                    except Exception:
+                        hash_failures.append(int(block.get("index", -1)))
+            except Exception:
+                pass  # L2 best-effort — don't let import errors block startup
+
+        if hash_failures:
+            return {
+                "ok": False, "height": len(blocks),
+                "first_bad": hash_failures[0], "reason": f"L2_hash_mismatch indices={hash_failures[:5]}",
+                "gaps": [], "duplicates": [], "hash_failures": hash_failures[:20],
+                "level": "L2", "consensus_safe": False,
+            }
+
+        # ── L3: Network metadata (Genesis block) ─────────────────────────────
+        genesis = blocks[0]
+        g_network = str(genesis.get("network_id") or genesis.get("chain_id") or "")
+        g_proto   = str(genesis.get("protocol_version") or "")
+        if g_network and g_network != NETWORK_ID:
+            return {
+                "ok": False, "height": len(blocks), "first_bad": 0,
+                "reason": f"L3_network_id_mismatch genesis={g_network!r} expected={NETWORK_ID!r}",
+                "gaps": [], "duplicates": [], "hash_failures": [],
+                "level": "L3", "consensus_safe": False,
+            }
+        if g_proto and g_proto != PROTOCOL_VERSION:
+            return {
+                "ok": False, "height": len(blocks), "first_bad": 0,
+                "reason": f"L3_protocol_version_mismatch genesis={g_proto!r} expected={PROTOCOL_VERSION!r}",
+                "gaps": [], "duplicates": [], "hash_failures": [],
+                "level": "L3", "consensus_safe": False,
+            }
 
         return {
-            "ok": ok,
-            "height": len(blocks),
-            "first_bad": first_bad,
-            "reason": reason,
-            "gaps": gaps[:20],
-            "duplicates": duplicates[:20],
+            "ok": True, "height": len(blocks), "first_bad": None, "reason": None,
+            "gaps": [], "duplicates": [], "hash_failures": [],
+            "level": "L2" if verify_hashes else "L1",
+            "consensus_safe": True,
+        }
+
+    def consensus_gate(self) -> dict:
+        """R365-FIX-A: Gate — a node MUST pass this before participating in PBFT.
+
+        Returns:
+          allowed : bool  — True = safe to vote/prepare/commit
+          reason  : str   — why blocked (or 'ok')
+          integrity : dict — full verify_chain_integrity result
+
+        Called by write_certified_block and import_extending_block.
+        ARTCB_PBFT_SKIP_INTEGRITY_GATE=1 disables for tests/bootstrap.
+        """
+        import os
+        if os.environ.get("ARTCB_PBFT_SKIP_INTEGRITY_GATE", "").strip() in ("1", "true", "True"):
+            return {"allowed": True, "reason": "gate_skipped_env", "integrity": {}}
+        result = self.verify_chain_integrity()
+        if result.get("consensus_safe"):
+            return {"allowed": True, "reason": "ok", "integrity": result}
+        return {
+            "allowed": False,
+            "reason": f"integrity_gate_blocked:{result.get('reason','unknown')}",
+            "integrity": result,
         }
 
     def last_hash(self) -> str:
@@ -868,7 +947,15 @@ class ChainManager:
         """Write a PBFT-finalized block. Certificate is sidecar to the hash.
 
         R328: always routes through public ledger when split is active.
+        R365-FIX-A: consensus_gate() blocks write if chain integrity fails.
         """
+        gate = self.consensus_gate()
+        if not gate["allowed"]:
+            import logging as _log
+            _log.getLogger("artcb.chain.manager").error(
+                "write_certified_block BLOCKED by consensus_gate: %s", gate["reason"]
+            )
+            return False
         payload = dict(block)
         payload["pbft_cert"] = cert
         payload["visibility"] = "public"
