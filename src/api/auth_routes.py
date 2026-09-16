@@ -1,12 +1,21 @@
 """Authentification utilisateur ARTCB — login, challenge, verify.
 
 Protocole :
-  1. POST /auth/login     — login classique (name + password)
+  1. POST /auth/login     — login classique (name + password) [DÉPRÉCIÉ — P0-A 2026-09-16]
+                            Les wallets biométriques ARTCB ne peuvent pas utiliser ce chemin.
+                            Voie recommandée : /auth/verify (clé privée) ou /auth/webauthn/login (biométrie).
   2. GET  /auth/challenge — nonce pour signature crypto
-  3. POST /auth/verify    — vérification signature Ed25519 du challenge
-  4. POST /auth/logout    — invalide le token de session
+  3. POST /auth/verify    — vérification signature Ed25519 du challenge  ← VOIE PRINCIPALE
+  4. POST /auth/webauthn/login/verify — authentification biométrique     ← VOIE BIOMÉTRIQUE
+  5. POST /auth/logout    — invalide le token de session
 
 L'API key (/api-keys/generate) n'est utilisable QU'APRÈS authentification.
+
+DEPRECATION P0-A (2026-09-16) :
+  /auth/login (name + password) est déprécié pour les nouvelles identités ARTCB.
+  Les identités HumanIdentity (biométriques) n'ont jamais de mot de passe connu.
+  Les wallets classiques existants peuvent encore utiliser /auth/login temporairement.
+  Tous les nouveaux clients doivent utiliser /auth/verify ou /auth/webauthn/login.
 """
 from __future__ import annotations
 
@@ -213,15 +222,29 @@ def require_session(
 #  Endpoints
 # --------------------------------------------------------------------------- #
 
-@router.post("/login", summary="Connexion par nom + mot de passe")
-def login(body: LoginRequest, request: Request) -> dict:
+# P0-A (2026-09-16) — /auth/login déprécié. Code conservé (R299 : jamais supprimer).
+# Les wallets classiques existants restent fonctionnels.
+# Nouveaux clients → /auth/verify (clé privée) ou /auth/webauthn/login (biométrie).
+_LOGIN_DEPRECATED_HINT = (
+    "DEPRECATED: /auth/login (name+password) est déprécié. "
+    "Utilisez /auth/verify (clé privée + challenge) ou /auth/webauthn/login (biométrie). "
+    "Les wallets HumanIdentity ARTCB n'ont pas de mot de passe connu."
+)
+
+from fastapi.responses import JSONResponse
+
+
+@router.post("/login", summary="[DÉPRÉCIÉ] Connexion par nom + mot de passe")
+def login(body: LoginRequest, request: Request) -> JSONResponse:
     """
-    Connexion classique : identifiant (nom du wallet) + mot de passe.
+    [DÉPRÉCIÉ — P0-A 2026-09-16] Connexion classique : identifiant + mot de passe.
 
-    Le mot de passe est utilisé pour déchiffrer la seed Ed25519 stockée
-    sur le serveur. Si le déchiffrement réussit, une session est créée.
+    Ce chemin sera supprimé dans une future version.
+    Voies recommandées :
+      - GET  /auth/challenge  + POST /auth/verify  → signature clé privée
+      - POST /auth/webauthn/login/options + /verify → biométrie (empreinte, Face ID)
 
-    Retourne un token de session `sess_xxx` valide 30 minutes.
+    Pour les wallets classiques existants uniquement.
     """
     from src.artcb.wallet.encryption import decrypt_private_key
     from src.artcb.wallet.manager import WalletManager
@@ -249,16 +272,29 @@ def login(body: LoginRequest, request: Request) -> dict:
         raise HTTPException(status_code=401, detail=LOGIN_FAILED_DETAIL)
 
     # Reconstruire l'adresse depuis la seed déjà déchiffrée
-    # (pas besoin de rappeler load_wallet qui re-déchiffrerait avec la passphrase serveur)
     from nacl import signing as _signing
     from src.artcb.wallet.address import address_from_signing_key as _addr
     signing_key = _signing.SigningKey(seed)
     address = _addr(signing_key)
 
-    logger.info("Login successful: wallet=%s address=%s", body.name, address)
+    logger.warning(
+        "DEPRECATED /auth/login used: wallet=%s — steer to /auth/verify or /auth/webauthn/login",
+        body.name,
+    )
     issued = issue_session(wallet_name=body.name, address=address, request=request)
     issued["message"] = "Connecté. Utilisez session_token dans Authorization: Bearer <token>"
-    return issued
+    issued["deprecated"] = True
+    issued["deprecation_hint"] = _LOGIN_DEPRECATED_HINT
+    issued["recommended_path"] = "/auth/verify (clé privée) ou /auth/webauthn/login (biométrie)"
+
+    return JSONResponse(
+        content=issued,
+        headers={
+            "Deprecation": "true",
+            "Sunset": "2027-01-01",
+            "Link": '</api/v1/auth/verify>; rel="successor-version"',
+        },
+    )
 
 
 @router.get("/challenge", summary="Obtenir un nonce pour l'authentification par signature")

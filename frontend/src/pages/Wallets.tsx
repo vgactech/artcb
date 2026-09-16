@@ -529,39 +529,75 @@ export function Wallets() {
         </div>
       )}
 
-      {/* ── Panneau : Login — J'ai déjà un compte ─────────────── */}
-      <div className="panel">
-        <h2>Connexion — J'ai déjà un compte</h2>
-        <p style={{ fontSize: 13, color: "var(--terminal-muted, #8b949e)", marginBottom: 8 }}>
-          Connectez-vous avec le <strong>nom de votre wallet</strong> et votre <strong>mot de passe</strong>.
-          Une fois connecté, vous pourrez générer des clés API pour ChatGPT, Claude, n8n, etc.
-        </p>
-        <div className="toolbar" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
-          <input
-            value={loginName}
-            onChange={(e) => setLoginName(e.target.value)}
-            placeholder="Nom du wallet"
-            style={{ minWidth: 160 }}
-            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-          />
-          <input
-            type="password"
-            value={loginPassword}
-            onChange={(e) => setLoginPassword(e.target.value)}
-            placeholder="Mot de passe"
-            style={{ minWidth: 160 }}
-            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-          />
-          <button className="primary" onClick={handleLogin} disabled={loginLoading || !loginName.trim() || !loginPassword.trim()}>
-            {loginLoading ? "Connexion…" : "Se connecter"}
-          </button>
-        </div>
-        {loginError && <p className="mc-error">{loginError}</p>}
-        {sessionToken && (
-          <p style={{ color: "var(--mc-grass)", fontSize: 12, marginTop: 6 }}>
-            ✓ Connecté — session active (utilisez le dashboard pour générer une API key)
+      {/* ── Panneau : Connexion — P0-A (2026-09-16) ──────────────
+           Login nom+mot de passe DÉPRÉCIÉ → redirigé vers biométrie/clé privée.
+           Le formulaire password est conservé en fallback pour wallets classiques existants
+           mais visuellement dépriorisé. Voie principale = /register (biométrie). ──── */}
+      <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)" }}>
+        <h2>Connexion</h2>
+        {/* VOIE PRINCIPALE : biométrie */}
+        <div style={{ marginBottom: 16, padding: "12px 14px", background: "rgba(86,196,38,0.08)", borderRadius: 6, border: "1px solid var(--mc-grass, #56c426)" }}>
+          <p style={{ margin: 0, fontWeight: 700, color: "var(--mc-grass, #56c426)", marginBottom: 6 }}>
+            ◇ Connexion recommandée — empreinte / Face ID
           </p>
-        )}
+          <p style={{ fontSize: 12, color: "var(--terminal-muted)", margin: "0 0 10px 0" }}>
+            Identité ARTCB = biométrie + clé privée. Le mot de passe seul ne prouve pas votre identité humaine.
+          </p>
+          <Link to="/register" className="primary" style={{ display: "inline-block", textDecoration: "none", fontSize: 13 }}>
+            Connexion biométrique (empreinte / Face ID) →
+          </Link>
+        </div>
+
+        {/* FALLBACK : clé privée via challenge/verify */}
+        <details style={{ marginBottom: 14 }}>
+          <summary style={{ fontSize: 13, cursor: "pointer", color: "var(--terminal-muted)", userSelect: "none" }}>
+            ▸ Connexion par clé privée (challenge + signature Ed25519)
+          </summary>
+          <p style={{ fontSize: 12, color: "var(--terminal-muted)", marginTop: 8, marginBottom: 4 }}>
+            Utilisez <code>GET /auth/challenge</code> puis signez le nonce avec votre clé privée Ed25519,
+            ensuite <code>POST /auth/verify</code>. Cette voie est destinée aux clients programmatiques.
+          </p>
+          <code style={{ fontSize: 11, background: "#111", padding: "4px 8px", borderRadius: 4, display: "block" }}>
+            GET /api/v1/auth/challenge → POST /api/v1/auth/verify
+          </code>
+        </details>
+
+        {/* DÉPRÉCIÉ : nom + mot de passe — wallets classiques existants uniquement */}
+        <details>
+          <summary style={{ fontSize: 12, cursor: "pointer", color: "var(--mc-redstone, #c0392b)", userSelect: "none" }}>
+            ⚠ [DÉPRÉCIÉ] Connexion mot de passe — wallets classiques existants uniquement
+          </summary>
+          <p style={{ fontSize: 12, color: "var(--mc-redstone, #c0392b)", marginTop: 8, marginBottom: 8 }}>
+            Ce mode de connexion est déprécié (P0-A 2026-09-16). Il ne fonctionne que pour les wallets créés
+            avec un mot de passe. Les nouvelles identités ARTCB utilisent uniquement la biométrie.
+          </p>
+          <div className="toolbar" style={{ flexWrap: "wrap", gap: "0.5rem" }}>
+            <input
+              value={loginName}
+              onChange={(e) => setLoginName(e.target.value)}
+              placeholder="Nom du wallet (classique)"
+              style={{ minWidth: 160 }}
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+            />
+            <input
+              type="password"
+              value={loginPassword}
+              onChange={(e) => setLoginPassword(e.target.value)}
+              placeholder="Mot de passe"
+              style={{ minWidth: 160 }}
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+            />
+            <button onClick={handleLogin} disabled={loginLoading || !loginName.trim() || !loginPassword.trim()} style={{ borderColor: "var(--mc-redstone)", color: "var(--mc-redstone)" }}>
+              {loginLoading ? "Connexion…" : "Se connecter (déprécié)"}
+            </button>
+          </div>
+          {loginError && <p className="mc-error">{loginError}</p>}
+          {sessionToken && (
+            <p style={{ color: "var(--mc-grass)", fontSize: 12, marginTop: 6 }}>
+              ✓ Connecté — session active
+            </p>
+          )}
+        </details>
       </div>
 
       {/* ── Panneau : Importer une adresse (lecture seule) ──────── */}

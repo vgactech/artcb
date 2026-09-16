@@ -1,10 +1,20 @@
-"""Pipeline minage unifié — apprentissage (sources) + raisonnement (dual-agent) + récompense PoL."""
+"""Pipeline minage unifié — apprentissage (sources) + raisonnement (dual-agent) + récompense PoL.
+
+P0-B (2026-09-16) — Intégration homomorphe :
+  Le pipeline accepte désormais un `biometric_commitment` optionnel. Si fourni,
+  il est inscrit dans les métadonnées du bloc miné (champ `homomorphic_proof`).
+  Ceci permet à ARTCB de lier un bloc à une identité biométrique engagée
+  sans exposer le modèle biométrique brut (conforme spec §4 / §6).
+
+  L'engagement voyage dans les métadonnées du bloc — pas dans le graph IR.
+  `unique_human_proven` reste False (stub non certifié).
+"""
 
 from __future__ import annotations
 
 import logging
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from src.artcb.ir.models import sha256_text
@@ -32,6 +42,8 @@ class MiningPipelineResult:
     contributors: list[dict]
     phases: dict[str, Any]
     message: str
+    # P0-B : engagement homomorphe optionnel (None si non fourni)
+    homomorphic_proof: dict[str, Any] | None = field(default=None)
 
 
 def build_contributors(
@@ -171,6 +183,11 @@ class MiningPipeline:
         learning_source: str | None = None,
         learning_offset: int = 0,
         extra_contributors: list[dict] | None = None,
+        # P0-B : engagement homomorphe optionnel
+        # Accepte un dict `{"commitment": ..., "template_hash": ..., "algorithm": ...}`
+        # ou directement un BiometricCommitment.to_public_record().
+        # Jamais de blinding ni de template brut dans ce dict.
+        biometric_commitment: dict[str, Any] | None = None,
     ) -> MiningPipelineResult:
         from src.artcb.ir.llm_encoder import LLMEncoder
 
@@ -217,6 +234,7 @@ class MiningPipeline:
                 contributors=[],
                 phases=phases,
                 message="Raisonnement rejeté — PoL < seuil 0.6",
+                homomorphic_proof=None,
             )
 
         block_index = None
@@ -263,6 +281,25 @@ class MiningPipeline:
 
             public_symbols = graph.orig_symbols if visibility == "public" and graph.orig_symbols else None
 
+            # P0-B : construire les métadonnées homomorphes à inscrire dans le bloc
+            hom_meta: dict[str, Any] | None = None
+            if biometric_commitment is not None:
+                # Vérification minimale : on n'accepte jamais le blinding ni le template brut
+                forbidden = {"blinding_hex", "blinding", "template_bytes", "template_raw"}
+                if forbidden & set(biometric_commitment.keys()):
+                    logger.warning(
+                        "P0-B biometric_commitment rejeté : champs interdits présents %s",
+                        forbidden & set(biometric_commitment.keys()),
+                    )
+                else:
+                    hom_meta = {
+                        "commitment": biometric_commitment.get("commitment"),
+                        "template_hash": biometric_commitment.get("template_hash"),
+                        "algorithm": biometric_commitment.get("algorithm", "ARTCB-PEDERSEN-SHA512-v1"),
+                        "unique_human_proven": False,
+                        "p0b_version": "1",
+                    }
+
             block = self.chain.append_block(
                 graph_id=graph.graph_id,
                 graph_root=graph_root,
@@ -272,6 +309,8 @@ class MiningPipeline:
                 contributors=contributors if actor_address else None,
                 public_symbols=public_symbols,
                 source="mining",
+                # P0-B : métadonnées homomorphes (None si absent)
+                homomorphic_proof=hom_meta,
             )
             if visibility == "public" and public_symbols and self._publish_public_symbols:
                 self._publish_public_symbols(
@@ -290,6 +329,8 @@ class MiningPipeline:
                 "hash_version": getattr(block, "hash_version", 1),
                 "h_adult": (block.economics or {}).get("h_adult") if block.economics else None,
                 "economic_root": (block.economics or {}).get("economic_root") if block.economics else None,
+                # P0-B
+                "homomorphic_proof_attached": hom_meta is not None,
             }
 
             if self.timeline:
@@ -318,6 +359,7 @@ class MiningPipeline:
             contributors=contributors,
             phases=phases,
             message="Pipeline complet : apprentissage + raisonnement + minage PoL",
+            homomorphic_proof=hom_meta if store_block else None,
         )
 
     def run_from_connector(

@@ -49,6 +49,7 @@ from src.api.network_routes import router as network_router
 from src.api.kcg_routes import router as kcg_router
 from src.api.agent_protocol_routes import router as agent_protocol_router
 from src.api.ops_routes import router as ops_router
+from src.api.biometric_identity_routes import router as biometric_identity_router
 
 # Any Replit account — never a named Autoscale hostname in git.
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
@@ -370,6 +371,8 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(webauthn_router)
     app.include_router(user_node_router)
+    # P0-C (2026-09-16) — identité biométrique on-chain
+    app.include_router(biometric_identity_router)
     app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)

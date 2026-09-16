@@ -111,6 +111,8 @@ class ChainBlock:
     hash_sha3: str | None = None
     economics: dict | None = None
     hash_version: int = HASH_VERSION_V1
+    # P0-B (2026-09-16) : engagement homomorphe optionnel (jamais le blinding ni le template brut)
+    homomorphic_proof: dict | None = None
 
     def to_json_line(self) -> str:
         payload = {
@@ -138,6 +140,9 @@ class ChainBlock:
             payload["public_symbols"] = self.public_symbols
         if self.hash_sha3:
             payload["hash_sha3"] = self.hash_sha3
+        # P0-B : engagement homomorphe — public record uniquement (jamais blinding)
+        if self.homomorphic_proof:
+            payload["homomorphic_proof"] = self.homomorphic_proof
         return encode_jsonl_with_converged_size(payload)
 
     @classmethod
@@ -987,6 +992,8 @@ class ChainManager:
         verified_humans: float | None = None,
         h_adult: float | None = None,
         dry_run: bool = False,
+        # P0-B (2026-09-16) : engagement homomorphe optionnel (jamais blinding ni template brut)
+        homomorphic_proof: dict | None = None,
     ) -> ChainBlock:
         from src.artcb.trace.ns import emit, now_mono_ns
 
@@ -1182,6 +1189,8 @@ class ChainManager:
             public_symbols=dict(public_symbols) if public_symbols else {},
             economics=economics_payload,
             hash_version=hash_version,
+            # P0-B : engagement homomorphe — conservé tel quel (déjà filtré upstream)
+            homomorphic_proof=homomorphic_proof,
         )
         line = block.to_json_line()
         if dry_run:
