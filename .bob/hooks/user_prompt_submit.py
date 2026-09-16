@@ -74,9 +74,9 @@ def main() -> int:
         f"git HEAD = {git_head}",
         f"CERTIFIED_100=false | Jamais wipe | Jamais inventer SHA/hauteur/tip",
         f"Mode DEBUG actif | Répondre en français | Python+C uniquement",
-        f"Nœud live OVH1 = http://152.228.144.34:8000 (accès via SSM aws-node-3)",
+        f"Nœud live OVH1 = ❌ BLOQUÉ — désactivé par l'utilisateur (ne pas tenter de connexion)",
         f"V-PQC-1 PASS ✅ (recompute artcb2 validé) | V-PQC-2 à implémenter",
-        f"USER↔NODE: OVH1 ✅ | OVH2/OVH4/AWS3 ❌ (wallet absent — adresse non déterministe)",
+        f"USER↔NODE: OVH1 ❌ BLOQUÉ | OVH2/OVH4/AWS3 ❌ (wallet absent — adresse non déterministe)",
         f"Hooks Bob IDE: SessionStart ✅ | Stop ✅ | PostToolUse ✅ | UserPromptSubmit ✅ (ce hook)",
     ]
     print("\n".join(lines))

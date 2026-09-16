@@ -72,6 +72,7 @@ def main() -> int:
     # Rappel protocole
     lines.append("\n⚠️  CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip")
     lines.append("⚠️  Relire artcb-live-node.mdc + artcb-read-all.mdc avant tout travail")
+    lines.append("🚫  OVH1 = BLOQUÉ par l'utilisateur — aucune tentative de connexion jusqu'à réactivation explicite")
 
     print("\n".join(lines))
     return 0
