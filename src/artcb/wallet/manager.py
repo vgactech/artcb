@@ -22,6 +22,7 @@ from src.artcb.crypto.pqc import (
 from src.artcb.wallet.address import (
     address_from_signing_key,
     generate_test_address,
+    generate_test_hybrid_address_v2,
     hybrid_address_v2,
 )
 from src.artcb.wallet.encryption import (
@@ -165,8 +166,19 @@ class WalletManager:
             try:
                 pqc_secret, pqc_public = generate_keypair()
                 pqc_public = self._save_pqc_keys(name, pqc_secret, pqc_public)
-                address_v2 = hybrid_address_v2(signing_key.verify_key.encode(), pqc_public)
-                logger.info("Created hybrid wallet PQC=%s address_v2=%s", PQC_SIG_ALGORITHM, address_v2[:16])
+                # V-PQC-2: domain-separated hybrid address
+                # TEST  → generate_test_hybrid_address_v2() → artcb2t…
+                # MAINNET → legacy hybrid_address_v2() → artcb2…  (backward compat)
+                if ns == "TEST":
+                    address_v2 = generate_test_hybrid_address_v2(
+                        signing_key.verify_key.encode(), pqc_public
+                    )
+                else:
+                    address_v2 = hybrid_address_v2(signing_key.verify_key.encode(), pqc_public)
+                logger.info(
+                    "Created hybrid wallet PQC=%s address_v2=%s namespace=%s",
+                    PQC_SIG_ALGORITHM, address_v2[:16], ns,
+                )
             except Exception as exc:
                 logger.warning("PQC key generation skipped: %s", exc)
 

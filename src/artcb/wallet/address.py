@@ -229,6 +229,9 @@ def address_from_public_key_hex(public_key_hex: str, *, prefix: str = "artcb") -
 def hybrid_address_v2(ed25519_public_key: bytes, pqc_public_key: bytes) -> str:
     """
     Hybrid post-quantum address (artcb2) — hash of Ed25519 + ML-DSA public keys.
+
+    Legacy/MAINNET path — no domain tag injected.
+    Use hybrid_address_v2_domain_separated() for V-PQC-2 domain separation.
     """
     if len(ed25519_public_key) != 32:
         raise ValueError("Ed25519 public key must be 32 bytes")
@@ -240,7 +243,86 @@ def hybrid_address_v2(ed25519_public_key: bytes, pqc_public_key: bytes) -> str:
     return _bech32_encode("artcb2", data)
 
 
+def hybrid_address_v2_domain_separated(
+    ed25519_public_key: bytes,
+    pqc_public_key: bytes,
+    *,
+    domain_tag: str,
+    prefix: str = "artcb2",
+) -> str:
+    """V-PQC-2 — Hybrid PQC address with cryptographic domain separation.
+
+    Injects domain_tag into the hash input so that:
+      H(MAINNET_TAG || ed25519_pk || pqc_pk) ≠ H(TEST_TAG || ed25519_pk || pqc_pk)
+
+    Same key pair → different artcb2 address depending on the domain.
+    This closes the cross-domain replay vector for hybrid (PQC) wallets
+    (rapport 357 §5 backlog V-PQC-2).
+
+    Args:
+        ed25519_public_key: 32-byte Ed25519 public key
+        pqc_public_key:     ML-DSA-65 public key bytes
+        domain_tag:         DOMAIN_TAG_MAINNET or DOMAIN_TAG_TEST
+        prefix:             Bech32 HRP — "artcb2" for MAINNET, "artcb2t" for TEST
+
+    Returns:
+        Bech32-encoded domain-separated hybrid address
+    """
+    if len(ed25519_public_key) != 32:
+        raise ValueError("Ed25519 public key must be 32 bytes")
+    if not pqc_public_key:
+        raise ValueError("PQC public key required for hybrid address")
+    if not domain_tag:
+        raise ValueError("domain_tag must not be empty")
+
+    # Domain separation: SHA256(domain_tag_bytes || ed25519_pk || pqc_pk)
+    domain_bytes = domain_tag.encode("utf-8")
+    combined = hashlib.sha256(domain_bytes + ed25519_public_key + pqc_public_key).digest()
+    ripemd160_hash = hashlib.new("ripemd160", combined).digest()
+    data = _convertbits(ripemd160_hash, 8, 5)
+    address = _bech32_encode(prefix, data)
+
+    logger.debug(
+        "Generated domain-separated hybrid address=%s domain=%s",
+        address, domain_tag,
+    )
+    return address
+
+
+def generate_test_hybrid_address_v2(
+    ed25519_public_key: bytes,
+    pqc_public_key: bytes,
+) -> str:
+    """Convenience wrapper — TEST domain hybrid address (artcb2t…).
+
+    Uses DOMAIN_TAG_TEST + prefix "artcb2t".
+    """
+    return hybrid_address_v2_domain_separated(
+        ed25519_public_key,
+        pqc_public_key,
+        domain_tag=DOMAIN_TAG_TEST,
+        prefix="artcb2t",
+    )
+
+
+def generate_mainnet_hybrid_address_v2(
+    ed25519_public_key: bytes,
+    pqc_public_key: bytes,
+) -> str:
+    """Convenience wrapper — MAINNET domain-separated hybrid address (artcb2…).
+
+    NOTE: produces a DIFFERENT hash than legacy hybrid_address_v2() (no domain tag).
+    Use for new wallets post-V-PQC-2 roll-out.
+    """
+    return hybrid_address_v2_domain_separated(
+        ed25519_public_key,
+        pqc_public_key,
+        domain_tag=DOMAIN_TAG_MAINNET,
+        prefix="artcb2",
+    )
+
+
 def verify_address_v2(address: str) -> bool:
-    """Verify artcb2 hybrid address format and checksum."""
-    return verify_address(address, prefix="artcb2")
+    """Verify artcb2 / artcb2t hybrid address format and checksum."""
+    return verify_address(address, prefix="artcb2") or verify_address(address, prefix="artcb2t")
 

@@ -53,8 +53,11 @@ MAINNET_TO_TEST_ALLOWED: Final[bool] = False
 
 
 def is_test_address(address: str) -> bool:
-    """Return True if the address belongs to the TEST domain."""
-    return address.startswith(TEST_ADDRESS_PREFIX + "1")
+    """Return True if the address belongs to the TEST domain.
+
+    V-PQC-2: artcb2t… is the TEST hybrid (PQC) address prefix.
+    """
+    return address.startswith(TEST_ADDRESS_PREFIX + "1") or address.startswith("artcb2t")
 
 
 def is_mainnet_address(address: str) -> bool:
