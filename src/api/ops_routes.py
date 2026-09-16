@@ -431,6 +431,29 @@ def deploy_tls(
         except Exception as exc:
             steps.append({"step": "write_nginx_conf", "ok": False, "error": str(exc)[:200]})
             raise HTTPException(status_code=500, detail=f"deploy_tls_nginx_conf_failed:{exc}") from exc
+
+        # ── Désactiver l'ancien fichier TLS sous-domaine (conflit server_name) ──
+        # nginx charge les fichiers par ordre alpha — artcb-tls.conf < artcb-tls-wildcard.conf
+        # → le wildcard est ignoré. On le renomme en 00-artcb-tls-wildcard.conf pour passer premier.
+        new_nginx_conf = "/etc/nginx/conf.d/00-artcb-tls-wildcard.conf"
+        old_conflicts = [
+            "/etc/nginx/conf.d/artcb-tls.conf",
+            "/etc/nginx/conf.d/artcb-tls-wildcard.conf",  # ancien nom de ce script
+        ]
+        # Déplacer vers le nom prioritaire si différent
+        if nginx_conf != new_nginx_conf:
+            run_cmd(["mv", nginx_conf, new_nginx_conf])
+            nginx_conf = new_nginx_conf
+            steps.append({"step": "rename_conf_priority", "ok": True, "path": nginx_conf})
+
+        # Sauvegarder les anciens fichiers conflictuels
+        for old in old_conflicts:
+            if old != nginx_conf:
+                bak = old + f".bak-v08-{time.strftime('%Y%m%d')}"
+                rc2, _, _ = run_cmd(["test", "-f", old])
+                if rc2 == 0:
+                    run_cmd(["mv", old, bak])
+                    steps.append({"step": "backup_old_conf", "ok": True, "old": old, "bak": bak})
     else:
         steps.append({
             "step": "write_nginx_conf", "ok": False,
