@@ -647,3 +647,88 @@ class TestDomainSeparatedSignatures:
         msg = _json.dumps(payload_dict, sort_keys=True, ensure_ascii=False).encode("utf-8")
         with pytest.raises(BadSignatureError):
             w_b.signing_key.verify_key.verify(msg, sig_bytes)
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 8. P0-B Audit: TEST signature rejetée par le vérificateur MAINNET
+# ──────────────────────────────────────────────────────────────────────────────
+
+class TestMainnetVerifierRejectsTestSignature:
+    """Prouver que chain/manager.verify_block_signature() rejette une signature TEST.
+
+    Le vérificateur MAINNET signe/vérifie block_hash.encode("utf-8").
+    TestWallet.sign_payload() signe un JSON {"domain_id": "ARTCB/WALLET/TEST/V1", ...}.
+    Ces deux messages sont structurellement incompatibles → BadSignatureError.
+
+    R358 audit §4: la séparation n'est pas seulement visuelle (préfixe artcbdev),
+    elle est cryptographique via des messages différents.
+    """
+
+    def setup_method(self):
+        self.factory = TestWalletFactory()
+
+    def test_test_signature_cannot_verify_as_mainnet_block_hash(self):
+        """Signature produite par sign_payload(TEST) est invalide sur block_hash MAINNET."""
+        from nacl.exceptions import BadSignatureError
+        w = self.factory.create("F")
+        # Simulate a MAINNET block hash (hex string, 64 chars)
+        fake_block_hash = "a" * 64
+        mainnet_message = fake_block_hash.encode("utf-8")
+
+        # Produce a TEST signature (envelope contains domain_id, network_id, etc.)
+        test_sig_hex = w.sign_payload({"action": "op", "amount": 100})
+        test_sig_bytes = bytes.fromhex(test_sig_hex)
+
+        # MAINNET verifier reconstructs block_hash.encode() and verifies
+        # → message mismatch → BadSignatureError
+        with pytest.raises(BadSignatureError):
+            w.signing_key.verify_key.verify(mainnet_message, test_sig_bytes)
+
+    def test_mainnet_block_signature_cannot_verify_as_test_payload(self):
+        """Signature produite sur block_hash MAINNET est invalide sur envelope TEST."""
+        from nacl.exceptions import BadSignatureError
+        import json as _json
+        sk = nacl_signing.SigningKey.generate()
+        pk_bytes = sk.verify_key.encode()
+
+        # Simulate MAINNET: sign block_hash directly (no domain envelope)
+        fake_block_hash = "b" * 64
+        mainnet_signed = sk.sign(fake_block_hash.encode("utf-8"))
+        mainnet_sig_bytes = mainnet_signed.signature
+
+        # TEST verifier reconstructs full envelope including domain_id
+        test_addr = generate_test_address(pk_bytes)
+        test_envelope = {
+            "domain_id": TEST_DOMAIN_TAG,
+            "network_id": TEST_NETWORK_ID,
+            "genesis_hash": TEST_GENESIS_HASH,
+            "protocol_version": TEST_PROTOCOL_VERSION,
+            "wallet_id": test_addr,
+            "nonce": 0,
+            "payload": {"action": "op"},
+        }
+        test_message = _json.dumps(test_envelope, sort_keys=True, ensure_ascii=False).encode("utf-8")
+
+        with pytest.raises(BadSignatureError):
+            sk.verify_key.verify(test_message, mainnet_sig_bytes)
+
+    def test_verify_block_signature_rejects_test_sig(self):
+        """chain.manager.verify_block_signature() rejette une signature TEST.
+
+        Appel direct de verify_hybrid_and_or_window avec le message MAINNET
+        (block_hash.encode()) et une signature TEST → False.
+        """
+        from src.artcb.crypto.hybrid import verify_hybrid_and_or_window
+        w = self.factory.create("F")
+        # Test wallet produces an Ed25519 signature over the TEST envelope
+        test_sig_hex = w.sign_payload({"x": 1})
+
+        # MAINNET verifier uses block_hash as message
+        mainnet_message = ("c" * 64).encode("utf-8")
+
+        ok = verify_hybrid_and_or_window(
+            message=mainnet_message,
+            signature_value=f"ed25519:{test_sig_hex}",
+            ed25519_public_key=w.signing_key.verify_key.encode(),
+            pqc_public_key=None,
+        )
+        assert not ok, "MAINNET verifier must reject a TEST signature"
