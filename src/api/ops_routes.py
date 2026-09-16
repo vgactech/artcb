@@ -336,88 +336,131 @@ def deploy_tls(
     if "BEGIN" not in key or "PRIVATE KEY" not in key:
         raise HTTPException(status_code=422, detail="deploy_tls_key_invalid:not a PEM private key")
 
-    cert_dir  = "/etc/nginx/certs/artcb-wildcard"
-    cert_file = f"{cert_dir}/fullchain.pem"
-    key_file  = f"{cert_dir}/privkey.pem"
-    nginx_conf = "/etc/nginx/conf.d/artcb-tls-wildcard.conf"
+    # Chemin : /etc/nginx/certs si root, sinon via sudo ou ~/.artcb/certs
+    # nginx doit avoir accès en lecture aux fichiers de cert
     node_id   = os.environ.get("ARTCB_NODE_ID", "unknown")
     domain    = "artcb.me"
 
+    # Détecter si sudo est disponible sans mot de passe (NOPASSWD sudoers)
+    sudo_ok = _sub.run(["sudo", "-n", "true"], capture_output=True).returncode == 0
+    is_root = os.geteuid() == 0
+
+    if is_root or sudo_ok:
+        cert_dir   = "/etc/nginx/certs/artcb-wildcard"
+        nginx_conf = "/etc/nginx/conf.d/artcb-tls-wildcard.conf"
+    else:
+        # Pas de sudo disponible — écrire dans ARTCB_DATA_DIR, configurer via include nginx
+        data_dir   = os.environ.get("ARTCB_DATA_DIR", os.path.expanduser("~"))
+        cert_dir   = os.path.join(data_dir, ".artcb-certs", "artcb-wildcard")
+        nginx_conf = None  # ne peut pas écrire dans /etc/nginx sans droits
+
+    cert_file = f"{cert_dir}/fullchain.pem"
+    key_file  = f"{cert_dir}/privkey.pem"
+
     steps: list[dict] = []
 
-    # ── Écrire les fichiers ───────────────────────────────────────────────────
+    def run_cmd(cmd: list[str]) -> tuple[int, str, str]:
+        """Exécute une commande, préfixe sudo si nécessaire et pas root."""
+        if not is_root and sudo_ok and cmd[0] != "sudo":
+            cmd = ["sudo", "-n"] + cmd
+        r = _sub.run(cmd, capture_output=True, text=True, timeout=15)
+        return r.returncode, r.stdout, r.stderr
+
+    # ── Écrire les fichiers de cert ──────────────────────────────────────────
     try:
-        os.makedirs(cert_dir, mode=0o755, exist_ok=True)
-        with open(cert_file, "w") as f:
-            f.write(cert)
-        os.chmod(cert_file, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
-        with open(key_file, "w") as f:
-            f.write(key)
-        os.chmod(key_file, stat.S_IRUSR | stat.S_IWUSR)  # 600
+        rc, _, err = run_cmd(["mkdir", "-p", cert_dir])
+        if rc != 0:
+            raise PermissionError(f"mkdir failed: {err}")
+        # Écrire via fichier temp puis mv atomique
+        import tempfile
+        for fname, content, mode in [
+            (cert_file, cert, "644"),
+            (key_file,  key,  "600"),
+        ]:
+            with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".tmp") as tf:
+                tf.write(content)
+                tmp_path = tf.name
+            run_cmd(["mv", tmp_path, fname])
+            run_cmd(["chmod", mode, fname])
         steps.append({"step": "write_certs", "ok": True, "cert_dir": cert_dir})
     except Exception as exc:
         steps.append({"step": "write_certs", "ok": False, "error": str(exc)[:200]})
         raise HTTPException(status_code=500, detail=f"deploy_tls_write_failed:{exc}") from exc
 
     # ── Écrire la config nginx ────────────────────────────────────────────────
-    nginx_conf_content = f"""# ARTCB wildcard TLS — généré par /ops/deploy-tls le {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
-# node={node_id} domain={domain} — NE PAS ÉDITER MANUELLEMENT
-server {{
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    server_name {domain} www.{domain} n1.{domain} n2.{domain} n3.{domain} n4.{domain} node.{domain} _;
-    ssl_certificate     {cert_file};
-    ssl_certificate_key {key_file};
-    ssl_protocols       TLSv1.2 TLSv1.3;
-    ssl_ciphers         HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-    ssl_session_cache   shared:SSL:10m;
-    add_header Strict-Transport-Security "max-age=15768000; includeSubDomains" always;
-    location / {{
-        proxy_pass http://127.0.0.1:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto https;
-        proxy_set_header Authorization $http_authorization;
-        proxy_pass_header Authorization;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_read_timeout 120s;
-    }}
-}}
-"""
-    try:
-        with open(nginx_conf, "w") as f:
-            f.write(nginx_conf_content)
-        steps.append({"step": "write_nginx_conf", "ok": True, "path": nginx_conf})
-    except Exception as exc:
-        steps.append({"step": "write_nginx_conf", "ok": False, "error": str(exc)[:200]})
-        raise HTTPException(status_code=500, detail=f"deploy_tls_nginx_conf_failed:{exc}") from exc
+    if nginx_conf:
+        nginx_conf_content = (
+            f"# ARTCB wildcard TLS — généré par /ops/deploy-tls le "
+            f"{time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}\n"
+            f"# node={node_id} domain={domain}\n"
+            f"server {{\n"
+            f"    listen 443 ssl;\n"
+            f"    listen [::]:443 ssl;\n"
+            f"    server_name {domain} www.{domain} n1.{domain} n2.{domain} "
+            f"n3.{domain} n4.{domain} node.{domain} _;\n"
+            f"    ssl_certificate     {cert_file};\n"
+            f"    ssl_certificate_key {key_file};\n"
+            f"    ssl_protocols       TLSv1.2 TLSv1.3;\n"
+            f"    ssl_ciphers         HIGH:!aNULL:!MD5;\n"
+            f"    ssl_prefer_server_ciphers on;\n"
+            f"    ssl_session_cache   shared:SSL:10m;\n"
+            f"    add_header Strict-Transport-Security "
+            f'"max-age=15768000; includeSubDomains" always;\n'
+            f"    location / {{\n"
+            f"        proxy_pass http://127.0.0.1:8000;\n"
+            f"        proxy_http_version 1.1;\n"
+            f"        proxy_set_header Host $host;\n"
+            f"        proxy_set_header X-Real-IP $remote_addr;\n"
+            f"        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n"
+            f"        proxy_set_header X-Forwarded-Proto https;\n"
+            f"        proxy_set_header Authorization $http_authorization;\n"
+            f"        proxy_pass_header Authorization;\n"
+            f"        proxy_set_header Upgrade $http_upgrade;\n"
+            f'        proxy_set_header Connection "upgrade";\n'
+            f"        proxy_read_timeout 120s;\n"
+            f"    }}\n"
+            f"}}\n"
+        )
+        try:
+            import tempfile
+            with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".tmp") as tf:
+                tf.write(nginx_conf_content)
+                tmp_conf = tf.name
+            run_cmd(["mv", tmp_conf, nginx_conf])
+            steps.append({"step": "write_nginx_conf", "ok": True, "path": nginx_conf})
+        except Exception as exc:
+            steps.append({"step": "write_nginx_conf", "ok": False, "error": str(exc)[:200]})
+            raise HTTPException(status_code=500, detail=f"deploy_tls_nginx_conf_failed:{exc}") from exc
+    else:
+        steps.append({
+            "step": "write_nginx_conf", "ok": False,
+            "error": "no_sudo_no_root — nginx_conf non écrit; configurer sudo NOPASSWD pour ubuntu",
+        })
 
     # ── nginx -t ─────────────────────────────────────────────────────────────
     try:
-        r = _sub.run(["nginx", "-t"], capture_output=True, text=True, timeout=10)
-        ok = r.returncode == 0
-        steps.append({"step": "nginx_test", "ok": ok, "stdout": r.stdout[:300], "stderr": r.stderr[:300]})
+        rc, stdout, stderr = run_cmd(["nginx", "-t"])
+        ok = rc == 0
+        steps.append({"step": "nginx_test", "ok": ok, "stderr": stderr[:300]})
         if not ok:
-            raise HTTPException(status_code=500, detail=f"deploy_tls_nginx_test_failed:{r.stderr[:200]}")
+            raise HTTPException(status_code=500, detail=f"deploy_tls_nginx_test_failed:{stderr[:200]}")
     except FileNotFoundError:
-        steps.append({"step": "nginx_test", "ok": False, "error": "nginx not found in PATH"})
+        steps.append({"step": "nginx_test", "ok": False, "error": "nginx not found"})
 
     # ── systemctl reload nginx ───────────────────────────────────────────────
-    try:
-        r = _sub.run(["systemctl", "reload", "nginx"], capture_output=True, text=True, timeout=10)
-        ok = r.returncode == 0
-        steps.append({"step": "nginx_reload", "ok": ok, "stderr": r.stderr[:200]})
-    except FileNotFoundError:
-        # nginx -s reload fallback
+    reloaded = False
+    for cmd in [["systemctl", "reload", "nginx"], ["nginx", "-s", "reload"]]:
         try:
-            r2 = _sub.run(["nginx", "-s", "reload"], capture_output=True, text=True, timeout=10)
-            steps.append({"step": "nginx_reload_fallback", "ok": r2.returncode == 0})
-        except Exception as exc2:
-            steps.append({"step": "nginx_reload", "ok": False, "error": str(exc2)[:200]})
+            rc, _, err = run_cmd(cmd)
+            if rc == 0:
+                steps.append({"step": "nginx_reload", "ok": True, "cmd": cmd[0]})
+                reloaded = True
+                break
+            steps.append({"step": "nginx_reload", "ok": False, "cmd": cmd[0], "stderr": err[:200]})
+        except FileNotFoundError:
+            continue
+    if not reloaded:
+        steps.append({"step": "nginx_reload", "ok": False, "error": "no reload method worked"})
 
     all_ok = all(s.get("ok", False) for s in steps)
     return {
