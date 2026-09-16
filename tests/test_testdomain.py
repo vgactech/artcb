@@ -458,13 +458,36 @@ class TestWalletDeviceBindingTestNamespace:
         with pytest.raises(WalletDeviceBindingError):
             self.store.check_and_bind(wallet_name="second_prod_wallet", device_fingerprint=fp)
 
-    def test_test_wallet_auto_detected_by_name(self):
-        """Wallet names starting with artcbdev are automatically routed to TEST namespace."""
+    def test_namespace_by_explicit_parameter_not_by_name(self):
+        """R358 §5: namespace is determined ONLY by wallet_namespace param, not wallet_name.
+
+        wallet_name="artcbdev1qfoo" WITHOUT wallet_namespace="TEST"
+        → goes to PRODUCTION registry (1 per device enforced).
+        """
         fp = "fp_auto_001" * 3
+        # No wallet_namespace="TEST" → PRODUCTION path regardless of name prefix
         self.store.check_and_bind(wallet_name="artcbdev1qfoo", device_fingerprint=fp)
-        self.store.check_and_bind(wallet_name="artcbdev1qbar", device_fingerprint=fp)
-        assert len(self.store.list_test_bindings()) == 2
-        assert len(self.store.list_bindings()) == 0
+        # Second artcbdev name on same device → must raise (PRODUCTION 1-per-device rule)
+        with pytest.raises(WalletDeviceBindingError):
+            self.store.check_and_bind(wallet_name="artcbdev1qbar", device_fingerprint=fp)
+        # Only the PRODUCTION registry was touched
+        assert len(self.store.list_bindings()) == 1
+        assert len(self.store.list_test_bindings()) == 0
+
+    def test_production_bind_is_idempotent(self):
+        """R358 §6: same wallet+device bound twice → no duplicate in PRODUCTION registry."""
+        fp = "fp_idem_prod" * 3
+        self.store.check_and_bind(wallet_name="my_wallet", device_fingerprint=fp)
+        self.store.check_and_bind(wallet_name="my_wallet", device_fingerprint=fp)  # idempotent
+        assert len(self.store.list_bindings()) == 1
+
+    def test_test_bind_is_idempotent(self):
+        """R358 §6: same wallet+device bound twice in TEST → no duplicate."""
+        fp = "fp_idem_test" * 3
+        self.store.check_and_bind(wallet_name="test_w", device_fingerprint=fp, wallet_namespace="TEST")
+        self.store.check_and_bind(wallet_name="test_w", device_fingerprint=fp, wallet_namespace="TEST")
+        self.store.check_and_bind(wallet_name="test_w", device_fingerprint=fp, wallet_namespace="TEST")
+        assert len(self.store.list_test_bindings()) == 1  # exactly one record, no duplicates
 
     def test_same_test_wallet_name_different_device_rejected(self):
         fp1 = "device_fp_aaa" * 3

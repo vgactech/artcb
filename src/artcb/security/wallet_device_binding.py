@@ -21,10 +21,21 @@ Protocole :
       seul le binding « 1 wallet par device » est relaxé dans le namespace TEST.
       Les wallets TEST sont stockés dans test_wallet_device_bindings.json (registre séparé).
 
+  Namespace selection rule (R358 audit §5):
+    Le namespace est TOUJOURS déterminé par le paramètre ``wallet_namespace`` fourni
+    explicitement par l'appelant. ``is_test_wallet_name()`` est une fonction utilitaire
+    d'information uniquement — elle n'influence PLUS le routage de sécurité.
+    Raison : un champ de présentation (nom) ne doit jamais sélectionner implicitement
+    une politique de sécurité différente.
+
+  Idempotence (R358 audit §6):
+    bind(wallet_name, device_fingerprint) appelé plusieurs fois avec les mêmes arguments
+    est idempotent : aucun doublon n'est ajouté dans le registre.
+
   Ce n'est PAS HumanIdentity / UNIQUE_HUMAN. WebAuthn ≠ unicité mondiale.
   Couches : voir ``src/artcb/identity/layers.py`` (R347) — Node ≠ User ≠ DeviceHost ≠ DeviceClient.
 
-Référence : rapport 114 — 2026-08-07 ; R345 client-scope ; R357 TEST namespace
+Référence : rapport 114 — 2026-08-07 ; R345 client-scope ; R357 TEST namespace ; R358 fixes
 """
 
 from __future__ import annotations
@@ -43,10 +54,12 @@ class WalletDeviceBindingError(Exception):
 
 
 def is_test_wallet_name(wallet_name: str) -> bool:
-    """Return True if the wallet name belongs to the TEST namespace.
+    """Informational helper — return True if the name looks like a TEST wallet.
 
-    TEST wallets are identified by the artcbdev prefix in their address,
-    or by a name starting with 'test_' / 'artcbdev' (convention).
+    IMPORTANT (R358): This function is for logging/UI display only.
+    It does NOT influence security routing in check_and_bind().
+    Namespace selection is always driven by the explicit ``wallet_namespace``
+    parameter — never by wallet_name inference.
     """
     return (
         wallet_name.startswith("artcbdev")
@@ -111,20 +124,26 @@ class WalletDeviceBindingStore:
     ) -> None:
         """Vérifie et enregistre la liaison wallet ↔ fingerprint d'appareil.
 
+        Le namespace est déterminé UNIQUEMENT par ``wallet_namespace`` (R358 §5).
+        ``is_test_wallet_name()`` n'influe PAS sur le routage de sécurité.
+
         Pour le namespace TEST (wallet_namespace="TEST") :
           - Plusieurs wallets TEST peuvent coexister sur le même device.
           - Le binding est enregistré dans test_wallet_device_bindings.json.
+          - Idempotent : bind(A,X)+bind(A,X) = un seul enregistrement (R358 §6).
           - LA VALIDATION RESTE ACTIVE (pas de skip_validation).
           - Voir rapport 354 §9, rapport 355 §22–§23.
 
         Pour PRODUCTION :
           - Comportement inchangé : 1 wallet par fingerprint.
+          - Idempotent : bind(A,X) déjà existant → no-op (pas d'erreur, pas de doublon).
           - Exceptions ARTCB_ALLOW_MULTI_WALLET et ARTCB_BOOTSTRAP_NODE conservées.
 
-        Lève WalletDeviceBindingError si la contrainte est violée.
+        Lève WalletDeviceBindingError si la contrainte de sécurité est violée
+        (device déjà lié à un autre wallet).
         """
-        # Routing vers le registre TEST
-        if wallet_namespace == "TEST" or is_test_wallet_name(wallet_name):
+        # R358: routing par paramètre UNIQUEMENT, jamais par wallet_name
+        if wallet_namespace == "TEST":
             self._check_and_bind_test(
                 wallet_name=wallet_name,
                 device_fingerprint=device_fingerprint,
@@ -145,6 +164,13 @@ class WalletDeviceBindingStore:
         existing = next((r for r in records if r["device_fingerprint"] == device_fingerprint), None)
 
         if existing:
+            if existing["wallet_name"] == wallet_name:
+                # R358 idempotence: same wallet+device already bound → no-op
+                logger.debug(
+                    "wallet_device_binding: already bound wallet=%s fingerprint=%s... (idempotent)",
+                    wallet_name, device_fingerprint[:16],
+                )
+                return
             raise WalletDeviceBindingError(
                 f"Un wallet '{existing['wallet_name']}' a déjà été créé sur cet appareil "
                 f"(fingerprint: {device_fingerprint[:16]}…). "
@@ -178,12 +204,29 @@ class WalletDeviceBindingStore:
         Records are stored in test_wallet_device_bindings.json (separate from PROD).
         """
         records = self._read_test()
-        # In TEST namespace: same wallet_name must not be re-bound to a different device
-        existing = next((r for r in records if r["wallet_name"] == wallet_name), None)
-        if existing and existing["device_fingerprint"] != device_fingerprint:
+        # Find the most recent binding for this (wallet_name, device_fingerprint) pair
+        existing_same_pair = next(
+            (r for r in records
+             if r["wallet_name"] == wallet_name and r["device_fingerprint"] == device_fingerprint),
+            None,
+        )
+        if existing_same_pair:
+            # R358 idempotence: exact same pair already recorded → no-op, no duplicate
+            logger.debug(
+                "wallet_device_binding[TEST]: already bound wallet=%s fingerprint=%s... (idempotent)",
+                wallet_name, device_fingerprint[:16],
+            )
+            return
+
+        existing_other_device = next(
+            (r for r in records
+             if r["wallet_name"] == wallet_name and r["device_fingerprint"] != device_fingerprint),
+            None,
+        )
+        if existing_other_device:
             raise WalletDeviceBindingError(
                 f"TEST wallet '{wallet_name}' est déjà lié à un autre appareil "
-                f"(fingerprint: {existing['device_fingerprint'][:16]}…). "
+                f"(fingerprint: {existing_other_device['device_fingerprint'][:16]}…). "
                 "Le même nom de wallet TEST ne peut pas être re-lié à un device différent."
             )
         records.append({
