@@ -1,4 +1,15 @@
-"""ARTCB address generation — Bech32-like format with Ed25519 pubkey hash."""
+"""ARTCB address generation — Bech32-like format with Ed25519 pubkey hash.
+
+Domain separation (rapports 354/355):
+  generate_address_with_domain_tag() injects a domain string into the hash
+  so that the same public key produces DIFFERENT addresses on MAINNET vs TEST.
+
+  MAINNET: H("ARTCB/WALLET/MAINNET/V1" || pubkey)  → artcb1…
+  TEST:    H("ARTCB/WALLET/TEST/V1"    || pubkey)  → artcbdev1…
+
+  This prevents cross-domain replay: a TEST wallet_id cannot be used as a
+  MAINNET wallet_id even if the private key is identical.
+"""
 
 from __future__ import annotations
 
@@ -8,6 +19,11 @@ import logging
 from nacl import signing
 
 logger = logging.getLogger("artcb.wallet.address")
+
+# Domain separation tags (mirrors testdomain.policy constants — kept here to
+# avoid circular imports; both must stay in sync).
+DOMAIN_TAG_MAINNET: str = "ARTCB/WALLET/MAINNET/V1"
+DOMAIN_TAG_TEST: str = "ARTCB/WALLET/TEST/V1"
 
 # Bech32 charset (lowercase only)
 BECH32_CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
@@ -66,7 +82,7 @@ def _convertbits(data: bytes, frombits: int, tobits: int, pad: bool = True) -> l
 
 def generate_address(public_key_bytes: bytes, *, prefix: str = "artcb") -> str:
     """
-    Generate ARTCB address from Ed25519 public key.
+    Generate ARTCB address from Ed25519 public key (no domain tag — legacy/mainnet path).
 
     Format: artcb1<bech32_encoded_hash>
 
@@ -92,6 +108,74 @@ def generate_address(public_key_bytes: bytes, *, prefix: str = "artcb") -> str:
 
     logger.debug("Generated address=%s from pubkey_hash=%s", address, ripemd160_hash.hex()[:16])
     return address
+
+
+def generate_address_with_domain_tag(
+    public_key_bytes: bytes,
+    *,
+    domain_tag: str,
+    prefix: str = "artcb",
+) -> str:
+    """Generate ARTCB address with cryptographic domain separation.
+
+    The domain_tag is included in the hash input, so:
+      H(MAINNET_TAG || pubkey) ≠ H(TEST_TAG || pubkey)
+
+    Same public key → different wallet_id depending on the domain.
+    This prevents cross-domain replay (rapport 354 §14, rapport 355 §4–§7).
+
+    Args:
+        public_key_bytes: 32-byte Ed25519 public key
+        domain_tag: Domain separation string (DOMAIN_TAG_MAINNET or DOMAIN_TAG_TEST)
+        prefix: Bech32 HRP prefix (e.g. "artcb" or "artcbdev")
+
+    Returns:
+        Bech32-encoded domain-separated address
+    """
+    if len(public_key_bytes) != 32:
+        raise ValueError(f"Public key must be 32 bytes, got {len(public_key_bytes)}")
+    if not domain_tag:
+        raise ValueError("domain_tag must not be empty")
+
+    # Domain separation: hash(domain_tag_bytes || pubkey_bytes)
+    domain_bytes = domain_tag.encode("utf-8")
+    sha256_hash = hashlib.sha256(domain_bytes + public_key_bytes).digest()
+    ripemd160_hash = hashlib.new("ripemd160", sha256_hash).digest()
+
+    data = _convertbits(ripemd160_hash, 8, 5)
+    address = _bech32_encode(prefix, data)
+
+    logger.debug(
+        "Generated domain-separated address=%s domain=%s pubkey_hash=%s",
+        address, domain_tag, ripemd160_hash.hex()[:16],
+    )
+    return address
+
+
+def generate_test_address(public_key_bytes: bytes) -> str:
+    """Convenience wrapper — generate TEST domain address (artcbdev1…).
+
+    Uses DOMAIN_TAG_TEST + prefix "artcbdev".
+    """
+    return generate_address_with_domain_tag(
+        public_key_bytes,
+        domain_tag=DOMAIN_TAG_TEST,
+        prefix="artcbdev",
+    )
+
+
+def generate_mainnet_address_domain_separated(public_key_bytes: bytes) -> str:
+    """Convenience wrapper — generate MAINNET domain-separated address (artcb1…).
+
+    Uses DOMAIN_TAG_MAINNET + prefix "artcb".
+    NOTE: this produces a DIFFERENT hash than the legacy generate_address()
+    which has no domain tag. Use this for new wallets post-testdomain roll-out.
+    """
+    return generate_address_with_domain_tag(
+        public_key_bytes,
+        domain_tag=DOMAIN_TAG_MAINNET,
+        prefix="artcb",
+    )
 
 
 def verify_address(address: str, *, prefix: str = "artcb") -> bool:
