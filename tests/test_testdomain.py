@@ -732,3 +732,54 @@ class TestMainnetVerifierRejectsTestSignature:
             pqc_public_key=None,
         )
         assert not ok, "MAINNET verifier must reject a TEST signature"
+
+class TestChainManagerVerifierRejectsTestSignature:
+    """Test direct de ChainManager.verify_block_signature() — audit §5.
+
+    Prouve que le chemin COMPLET
+      TEST signature → ChainManager.verify_block_signature() → False
+    est fermé, pas seulement le primitif verify_hybrid_and_or_window.
+    """
+
+    def setup_method(self):
+        import tempfile
+        self._tmpdir = tempfile.mkdtemp()
+        self.factory = TestWalletFactory()
+
+    def test_chain_manager_rejects_test_wallet_signature(self):
+        """ChainManager.verify_block_signature(block_hash, test_sig) → False."""
+        from pathlib import Path
+        from src.artcb.chain.manager import ChainManager
+
+        # Instancier un ChainManager minimal (tmpdir, sans security pour éviter dépendances)
+        blocks_path = Path(self._tmpdir) / "blocks.jsonl"
+        key_path = Path(self._tmpdir) / "chain.key"
+        cm = ChainManager(blocks_path=blocks_path, key_path=key_path, enable_security=False)
+
+        # Wallet TEST produit une signature sur son envelope JSON
+        w = self.factory.create("F")
+        test_sig_hex = w.sign_payload({"action": "test_op", "val": 1})
+
+        # MAINNET vérifie: message = block_hash.encode()
+        fake_block_hash = "d" * 64
+        result = cm.verify_block_signature(fake_block_hash, f"ed25519:{test_sig_hex}")
+        assert result is False, (
+            "ChainManager.verify_block_signature() doit rejeter une signature TEST"
+        )
+
+    def test_chain_manager_accepts_its_own_signature(self):
+        """Sanity check: ChainManager vérifie sa propre signature sur son propre block_hash."""
+        from pathlib import Path
+        from src.artcb.chain.manager import ChainManager
+
+        blocks_path = Path(self._tmpdir) / "blocks2.jsonl"
+        key_path = Path(self._tmpdir) / "chain2.key"
+        cm = ChainManager(blocks_path=blocks_path, key_path=key_path, enable_security=False)
+
+        # Signer un hash fictif avec la clé MAINNET du ChainManager
+        fake_block_hash = "e" * 64
+        mainnet_sig = cm._sign_block(fake_block_hash)
+
+        # Le même ChainManager doit accepter sa propre signature
+        result = cm.verify_block_signature(fake_block_hash, mainnet_sig)
+        assert result is True, "ChainManager doit accepter sa propre signature"
