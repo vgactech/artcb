@@ -293,6 +293,150 @@ async def fanout_restart(
 
 
 # ---------------------------------------------------------------------------
+# V-08 — déploiement TLS wildcard artcb.me (2026-09-16)
+# ---------------------------------------------------------------------------
+
+@router.post(
+    "/deploy-tls",
+    summary="V-08 : déployer le certificat TLS wildcard depuis les variables Doppler",
+)
+def deploy_tls(
+    actor: Annotated[dict | None, Depends(require_write_actor)] = None,
+) -> dict[str, Any]:
+    """Lit ARTCB_TLS_CERT_WILDCARD + ARTCB_TLS_KEY_WILDCARD depuis l'environnement
+    (injectés par doppler run) et configure nginx avec le certificat wildcard
+    artcb.me + *.artcb.me.
+
+    Auth : Bearer ARTCB_API_KEY (env/operator).
+    Sécurité : ne log jamais la clé privée ; path fixe /etc/nginx/certs/artcb-wildcard.
+    Idempotent : peut être rappelé sans danger.
+    """
+    import stat
+    import subprocess as _sub
+
+    t0 = now_mono_ns()
+    if actor is None:
+        raise HTTPException(status_code=401, detail="ops_requires_bearer")
+    src = str(actor.get("source") or "")
+    if src not in {"operator", "env", "api_key"}:
+        scopes = actor.get("scopes") or []
+        if "admin" not in scopes and "write" not in scopes:
+            raise HTTPException(status_code=403, detail="ops_deploy_tls_forbidden")
+
+    cert = os.environ.get("ARTCB_TLS_CERT_WILDCARD", "").strip()
+    key  = os.environ.get("ARTCB_TLS_KEY_WILDCARD", "").strip()
+
+    if not cert or not key:
+        raise HTTPException(
+            status_code=424,
+            detail="deploy_tls_env_missing:ARTCB_TLS_CERT_WILDCARD or ARTCB_TLS_KEY_WILDCARD absent — inject via doppler run",
+        )
+    if "BEGIN CERTIFICATE" not in cert:
+        raise HTTPException(status_code=422, detail="deploy_tls_cert_invalid:not a PEM certificate")
+    if "BEGIN" not in key or "PRIVATE KEY" not in key:
+        raise HTTPException(status_code=422, detail="deploy_tls_key_invalid:not a PEM private key")
+
+    cert_dir  = "/etc/nginx/certs/artcb-wildcard"
+    cert_file = f"{cert_dir}/fullchain.pem"
+    key_file  = f"{cert_dir}/privkey.pem"
+    nginx_conf = "/etc/nginx/conf.d/artcb-tls-wildcard.conf"
+    node_id   = os.environ.get("ARTCB_NODE_ID", "unknown")
+    domain    = "artcb.me"
+
+    steps: list[dict] = []
+
+    # ── Écrire les fichiers ───────────────────────────────────────────────────
+    try:
+        os.makedirs(cert_dir, mode=0o755, exist_ok=True)
+        with open(cert_file, "w") as f:
+            f.write(cert)
+        os.chmod(cert_file, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+        with open(key_file, "w") as f:
+            f.write(key)
+        os.chmod(key_file, stat.S_IRUSR | stat.S_IWUSR)  # 600
+        steps.append({"step": "write_certs", "ok": True, "cert_dir": cert_dir})
+    except Exception as exc:
+        steps.append({"step": "write_certs", "ok": False, "error": str(exc)[:200]})
+        raise HTTPException(status_code=500, detail=f"deploy_tls_write_failed:{exc}") from exc
+
+    # ── Écrire la config nginx ────────────────────────────────────────────────
+    nginx_conf_content = f"""# ARTCB wildcard TLS — généré par /ops/deploy-tls le {time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
+# node={node_id} domain={domain} — NE PAS ÉDITER MANUELLEMENT
+server {{
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name {domain} www.{domain} n1.{domain} n2.{domain} n3.{domain} n4.{domain} node.{domain} _;
+    ssl_certificate     {cert_file};
+    ssl_certificate_key {key_file};
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache   shared:SSL:10m;
+    add_header Strict-Transport-Security "max-age=15768000; includeSubDomains" always;
+    location / {{
+        proxy_pass http://127.0.0.1:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header Authorization $http_authorization;
+        proxy_pass_header Authorization;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 120s;
+    }}
+}}
+"""
+    try:
+        with open(nginx_conf, "w") as f:
+            f.write(nginx_conf_content)
+        steps.append({"step": "write_nginx_conf", "ok": True, "path": nginx_conf})
+    except Exception as exc:
+        steps.append({"step": "write_nginx_conf", "ok": False, "error": str(exc)[:200]})
+        raise HTTPException(status_code=500, detail=f"deploy_tls_nginx_conf_failed:{exc}") from exc
+
+    # ── nginx -t ─────────────────────────────────────────────────────────────
+    try:
+        r = _sub.run(["nginx", "-t"], capture_output=True, text=True, timeout=10)
+        ok = r.returncode == 0
+        steps.append({"step": "nginx_test", "ok": ok, "stdout": r.stdout[:300], "stderr": r.stderr[:300]})
+        if not ok:
+            raise HTTPException(status_code=500, detail=f"deploy_tls_nginx_test_failed:{r.stderr[:200]}")
+    except FileNotFoundError:
+        steps.append({"step": "nginx_test", "ok": False, "error": "nginx not found in PATH"})
+
+    # ── systemctl reload nginx ───────────────────────────────────────────────
+    try:
+        r = _sub.run(["systemctl", "reload", "nginx"], capture_output=True, text=True, timeout=10)
+        ok = r.returncode == 0
+        steps.append({"step": "nginx_reload", "ok": ok, "stderr": r.stderr[:200]})
+    except FileNotFoundError:
+        # nginx -s reload fallback
+        try:
+            r2 = _sub.run(["nginx", "-s", "reload"], capture_output=True, text=True, timeout=10)
+            steps.append({"step": "nginx_reload_fallback", "ok": r2.returncode == 0})
+        except Exception as exc2:
+            steps.append({"step": "nginx_reload", "ok": False, "error": str(exc2)[:200]})
+
+    all_ok = all(s.get("ok", False) for s in steps)
+    return {
+        "deploy_tls_ok": all_ok,
+        "node_id": node_id,
+        "domain": domain,
+        "cert_dir": cert_dir,
+        "nginx_conf": nginx_conf,
+        "cert_domains": os.environ.get("ARTCB_TLS_CERT_DOMAIN", "?"),
+        "cert_expiry": os.environ.get("ARTCB_TLS_CERT_EXPIRY", "?"),
+        "steps": steps,
+        "ts_ns": now_wall_ns(),
+        "dur_ns": now_mono_ns() - t0,
+        "note": "Certificat wildcard déployé depuis ARTCB_TLS_CERT_WILDCARD (Doppler). Ne log pas la clé.",
+        "certified_100": False,
+    }
+
+
+# ---------------------------------------------------------------------------
 # V-PQC-2 — Preuve de contrôle ML-DSA-65 (R351)
 # ---------------------------------------------------------------------------
 
