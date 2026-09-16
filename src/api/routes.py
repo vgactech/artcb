@@ -686,6 +686,15 @@ class CreateWalletRequest(BaseModel):
             "Chiffre la clé privée. Requis pour se connecter via /auth/login et pour toute opération signée."
         ),
     )
+    wallet_namespace: str = Field(
+        default="MAINNET",
+        description=(
+            "Domaine cryptographique du wallet : 'MAINNET' (défaut) ou 'TEST'. "
+            "MAINNET → adresse artcb1… ARTCB réel. "
+            "TEST    → adresse artcbdev1… tARTCB isolé (rapport 354/355 TEST DOMAIN). "
+            "Le namespace est TOUJOURS explicite — jamais déduit du nom du wallet."
+        ),
+    )
 
 
 class WalletBalanceRequest(BaseModel):
@@ -701,10 +710,22 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
       - La seed_hex est retournée UNE SEULE FOIS — l'utilisateur doit la sauvegarder.
       - Sans la seed_hex OU le mot de passe, le compte est inaccessible.
       - Le login ultérieur (POST /auth/login) utilise ce même mot de passe.
-      - Un seul wallet par appareil (device fingerprint). Désactivable via ARTCB_ALLOW_MULTI_WALLET=true.
+      - wallet_namespace='MAINNET' (défaut) : un seul wallet par appareil (anti-fraude).
+      - wallet_namespace='TEST'    : plusieurs wallets TEST par appareil autorisés
+        (rapport 354 §9 — binding TEST dans registre séparé).
     """
     from src.artcb.wallet.manager import WalletManager
     from src.artcb.security.wallet_device_binding import WalletDeviceBindingError
+
+    ns = (body.wallet_namespace or "MAINNET").upper().strip()
+    if ns not in ("MAINNET", "TEST"):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "invalid_wallet_namespace",
+                "message": f"wallet_namespace doit être 'MAINNET' ou 'TEST', reçu: '{body.wallet_namespace}'",
+            },
+        )
 
     state = _state(request)
     wallet_mgr = WalletManager()
@@ -723,13 +744,16 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
         state.device_identity.env_type if state.device_identity else "unknown"
     )
 
-    # ANTI-FRAUDE : un seul wallet par empreinte client (UA + X-ARTCB-Device-Id)
+    # ANTI-FRAUDE : binding selon namespace
+    #   MAINNET → 1 wallet par device (règle anti-Sybil MAINNET)
+    #   TEST    → plusieurs wallets par device autorisés dans le registre TEST séparé
     if state.wallet_device_binding and bind_fp:
         try:
             state.wallet_device_binding.check_and_bind(
                 wallet_name=body.name,
                 device_fingerprint=bind_fp,
                 env_type=bind_env,
+                wallet_namespace=ns,
             )
         except WalletDeviceBindingError as exc:
             # R343: structured code — frontend must NOT map this to "name already exists"
@@ -751,14 +775,20 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
     try:
         # PROTOCOLE : chiffrer la seed avec le MOT DE PASSE de l'utilisateur,
         # pas uniquement avec la passphrase serveur.
-        wallet = wallet_mgr.create_wallet(name=body.name, user_password=body.password)
-        logger.info("Created wallet name=%s address=%s", body.name, wallet.address)
+        wallet = wallet_mgr.create_wallet(
+            name=body.name,
+            user_password=body.password,
+            wallet_namespace=ns,
+        )
+        logger.info("Created wallet name=%s address=%s namespace=%s", body.name, wallet.address, ns)
         # PROTOCOLE : la seed (clé privée) est retournée UNE SEULE FOIS à la création.
         # Elle n'est JAMAIS stockée en clair et ne sera plus jamais affichée.
         seed_hex = wallet.signing_key.encode().hex()
         response: dict = {
             "name": body.name,
             "address": wallet.address,
+            "wallet_namespace": ns,
+            "domain": ns,
             "public_key_hex": wallet.public_key_hex,
             "public_key_b64": wallet.public_key_b64,
             "seed_hex": seed_hex,
@@ -768,6 +798,7 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
                 "Sans elle, votre compte est définitivement inaccessible."
             ),
             "hybrid": wallet.is_hybrid,
+            "asset": "tARTCB" if ns == "TEST" else "ARTCB",
         }
         if wallet.address_v2:
             response["address_v2"] = wallet.address_v2

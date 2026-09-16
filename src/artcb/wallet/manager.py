@@ -21,6 +21,7 @@ from src.artcb.crypto.pqc import (
 )
 from src.artcb.wallet.address import (
     address_from_signing_key,
+    generate_test_address,
     hybrid_address_v2,
 )
 from src.artcb.wallet.encryption import (
@@ -115,8 +116,20 @@ class WalletManager:
         pqc_path.chmod(0o600)
         return public_key
 
-    def create_wallet(self, *, name: str = "default", user_password: str | None = None) -> Wallet:
+    def create_wallet(
+        self,
+        *,
+        name: str = "default",
+        user_password: str | None = None,
+        wallet_namespace: str = "MAINNET",
+    ) -> Wallet:
         """Create new wallet with Ed25519 keypair and optional ML-DSA hybrid keys.
+
+        wallet_namespace : "MAINNET" (default) or "TEST".
+          - "MAINNET" → legacy address_from_signing_key() → artcb1…
+          - "TEST"    → generate_test_address() → artcbdev1… (domain-separated hash)
+          Namespace is ALWAYS determined by this explicit parameter (rapport 354 §9,
+          rapport 358 audit §5) — never inferred from the wallet name.
 
         Si user_password est fourni, la seed est chiffrée avec ce mot de passe utilisateur.
         Le login via /auth/login utilise ce même mot de passe pour déchiffrer.
@@ -126,8 +139,18 @@ class WalletManager:
         if key_path.exists():
             raise FileExistsError(f"Wallet {name} already exists at {key_path}")
 
+        ns = wallet_namespace.upper().strip()
+        if ns not in ("MAINNET", "TEST"):
+            raise ValueError(f"wallet_namespace must be 'MAINNET' or 'TEST', got '{wallet_namespace}'")
+
         signing_key = signing.SigningKey.generate()
-        address = address_from_signing_key(signing_key)
+        pubkey_bytes = signing_key.verify_key.encode()
+
+        # Domain-separated address derivation (rapport 354 §14, rapport 355 §4)
+        if ns == "TEST":
+            address = generate_test_address(pubkey_bytes)  # artcbdev1…
+        else:
+            address = address_from_signing_key(signing_key)  # artcb1… (legacy path, unchanged)
 
         seed = signing_key.encode()
         # PROTOCOLE : chiffrer avec le mot de passe de l'utilisateur si fourni,
@@ -161,6 +184,8 @@ class WalletManager:
             "key_encryption": "AES-256-GCM",
             "key_format": "ARTCBENC1",
             "hybrid": pqc_public is not None,
+            "wallet_namespace": ns,
+            "domain": ns,
         }
         if pqc_public is not None:
             metadata["pqc_algorithm"] = PQC_SIG_ALGORITHM
@@ -169,7 +194,10 @@ class WalletManager:
             metadata["signature_algorithm"] = f"Ed25519+{PQC_SIG_ALGORITHM}"
         meta_path.write_text(json.dumps(metadata, indent=2))
 
-        logger.info("Created wallet name=%s address=%s hybrid=%s", name, address, pqc_public is not None)
+        logger.info(
+            "Created wallet name=%s address=%s namespace=%s hybrid=%s",
+            name, address, ns, pqc_public is not None,
+        )
 
         return Wallet(
             address=address,
