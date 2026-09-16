@@ -2,6 +2,9 @@
 
 Static registry + consumed BOOTSTRAP_NODES. Optional live probes (?live=1).
 POST /announce lets an allowlisted clone/Replit be seen without a wallet/KEM.
+
+V-08 (2026-09-16) : ajout de GET /failover-status
+    Expose l'état du failover SPOF artcb.me → nœuds de secours.
 """
 
 from __future__ import annotations
@@ -125,3 +128,47 @@ def nakamoto_coefficient(request: Request) -> dict[str, Any]:
         "certified_100_relevant": True,
         "ts_ns": __import__("time").time_ns(),
     }
+
+
+# ─── V-08 : failover-status ───────────────────────────────────────────────────
+
+@router.get(
+    "/failover-status",
+    summary="V-08 — État failover SPOF artcb.me",
+    tags=["network", "v08"],
+)
+def failover_status(
+    skip_ovh1: bool = Query(
+        default=True,
+        description=(
+            "Si True (défaut), OVH1 est traité comme bloqué "
+            "(règle opérateur). Passer False pour forcer un probe OVH1 réel."
+        ),
+    ),
+    timeout_s: float = Query(
+        default=3.0,
+        ge=0.5,
+        le=15.0,
+        description="Timeout HTTP par nœud en secondes.",
+    ),
+) -> dict[str, Any]:
+    """Retourne l'état de failover du réseau ARTCB (propriété V-08).
+
+    **V-08 — PUBLIC_ENDPOINT_SURVIVES_NODE_DEATH**
+
+    Vérifie que la mort d'OVH1 (apex `artcb.me`) ne rend pas le service
+    inaccessible, dès lors qu'au moins un nœud de secours (N2/N3/N4) est vivant.
+
+    Champs clés :
+    - `v08_satisfied` : True si un nœud non-apex est vivant
+    - `failover_triggered` : True si l'apex est mort ET un secours est sélectionné
+    - `active_node_id` / `active_url` : nœud actif recommandé
+    - `v08_note` : message opérateur (action DNS si nécessaire)
+
+    **Note architecturale** : la redirection DNS effective reste une action
+    opérateur manuelle (panneau OVH). Ce endpoint expose l'état et le diagnostic ;
+    il ne modifie pas le DNS automatiquement.
+    """
+    from src.artcb.network.failover import get_failover_status
+
+    return get_failover_status(skip_ovh1=skip_ovh1, timeout_s=timeout_s)
