@@ -646,12 +646,22 @@ class ChainManager:
                 "hash_failures": [], "level": "L1", "consensus_safe": False,
             }
 
-        # ── L2: Cryptographic hash verification (public blocks only) ─────────
+        # ── L2: Cryptographic hash verification (V2 blocks only) ─────────────
+        # Only blocks with hash_version >= HASH_VERSION_V2 carry economic_root
+        # in their canonical hash. Legacy V1 blocks are validated by L1
+        # prev_hash linkage only — re-computing their hash would always diverge
+        # because the C canonical changed between R364 and earlier miners.
+        # This is intentional (L-031): changing the C canonical is a fork; we
+        # do NOT retroactively invalidate the historic chain.
         hash_failures: list[int] = []
         if verify_hashes:
             try:
                 for block in blocks:
                     if block.get("visibility") != "public":
+                        continue
+                    block_version = int(block.get("hash_version") or HASH_VERSION_V1)
+                    if block_version < HASH_VERSION_V2:
+                        # Legacy block — L1 prev_hash linkage is sufficient
                         continue
                     try:
                         ok_hash = self.verify_block_dict(block)
