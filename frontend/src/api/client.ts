@@ -980,3 +980,83 @@ export async function deleteWebhook(hookId: string, token?: string): Promise<{ r
   const { data } = await api.delete(`/webhooks/${hookId}`, { headers });
   return data;
 }
+
+// --------------------------------------------------------------------------
+// P0-C — Identité biométrique on-chain (2026-09-16)
+// --------------------------------------------------------------------------
+
+export type HumanIdentityRecord = {
+  human_id: string;
+  commitment: string;
+  template_hash: string;
+  helper_data: string;
+  algorithm: string;
+  biometric_version: number;
+  status: string;
+  created_at: string;
+  wallet_address: string | null;
+  unique_human_proven: false;
+  node_id: string | null;
+};
+
+export type BiometricEnrollResponse = {
+  ok: boolean;
+  human_id: string;
+  status: string;
+  human_identity_record: HumanIdentityRecord;
+  commitment_public: Record<string, unknown>;
+  private_for_client: {
+    secret_hex: string;
+    blinding_hex: string;
+    WARNING: string;
+  };
+  unique_human_proven: false;
+  certified: false;
+  note: string;
+};
+
+export type UniquenessCheckResponse = {
+  match_found: boolean;
+  existing_human_id: string | null;
+  match_score: number;
+  certified: false;
+  unique_human_proven: false;
+  note: string;
+};
+
+/** POST /api/v1/identity/biometric/enroll
+ *  template_hex = modèle biométrique normalisé en hex (jamais l'image brute).
+ *  wallet_address optionnel.
+ */
+export async function biometricEnroll(
+  template_hex: string,
+  wallet_address?: string,
+): Promise<BiometricEnrollResponse> {
+  const { data } = await api.post("/identity/biometric/enroll", {
+    template_hex,
+    wallet_address: wallet_address || undefined,
+  });
+  return data as BiometricEnrollResponse;
+}
+
+/** POST /api/v1/identity/biometric/uniqueness-check */
+export async function biometricUniquenessCheck(
+  template_hex: string,
+): Promise<UniquenessCheckResponse> {
+  const { data } = await api.post("/identity/biometric/uniqueness-check", {
+    template_hex,
+  });
+  return data as UniquenessCheckResponse;
+}
+
+/** GET /api/v1/identity/biometric/{human_id} */
+export async function fetchHumanIdentity(human_id: string): Promise<HumanIdentityRecord & { found: boolean }> {
+  const { data } = await api.get(`/identity/biometric/${encodeURIComponent(human_id)}`);
+  return data;
+}
+
+/** GET /api/v1/identity/biometric/ */
+export async function listHumanIdentities(): Promise<{ count: number; human_ids: string[]; unique_human_proven: false }> {
+  const { data } = await api.get("/identity/biometric/");
+  return data;
+}

@@ -18,6 +18,7 @@ import { Mining } from "./pages/Mining";
 import { SystemPage } from "./pages/SystemPage";
 import { Wallets } from "./pages/Wallets";
 import { RegisterBiometric } from "./pages/RegisterBiometric";
+import { BiometricIdentityTest } from "./pages/BiometricIdentityTest";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="chain/block/:blockIndex" element={<ChainPage />} />
             <Route path="wallets" element={<Wallets />} />
             <Route path="register" element={<RegisterBiometric />} />
+            <Route path="identity-test" element={<BiometricIdentityTest />} />
             <Route path="mining" element={<Mining />} />
             <Route path="system" element={<SystemPage />} />
             <Route path="logs" element={<Logs />} />
