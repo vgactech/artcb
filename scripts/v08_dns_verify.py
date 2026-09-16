@@ -1,13 +1,26 @@
 #!/usr/bin/env python3
 """
-V-08 DNS VERIFY — 2026-09-16
-Vérifie que artcb.me résout vers plusieurs IPs (multi-A) après le fix V-08.
+V-08 DNS VERIFY — révision 2 (2026-09-16)
+Vérifie que artcb.me résout vers les IPs multi-A après le fix V-08.
+
+IPs dans le DNS apex (enregistrements A OVH) :
+  152.228.144.34 — OVH1 (apex historique, bloqué en test)
+  91.134.45.8    — N4 OVH (ACTIVE, cert wildcard artcb.me)
+  151.80.107.29  — N2 OVH (ACTIVE, cert n2.artcb.me — wildcard à déployer)
+
+Note : N3 (13.38.209.25) n'est PAS dans le DNS apex multi-A —
+  il sert artcb.me par backend mais ne reçoit pas directement le trafic DNS.
+  Si on souhaite l'y ajouter : POST OVH API avec subDomain="" target=13.38.209.25.
+
 Usage : python3 scripts/v08_dns_verify.py
 """
 import socket, subprocess, sys
 
 ZONE = "artcb.me"
+# IPs effectivement déclarées dans les enregistrements A apex (OVH DNS, IDs 5432477544/5435561713/5435561715)
 EXPECTED_IPS = {"152.228.144.34", "91.134.45.8", "151.80.107.29"}
+# N3 capable de servir artcb.me mais non dans le DNS apex
+CAPABLE_NOT_IN_DNS = {"13.38.209.25"}
 
 print(f"=== V-08 DNS Verify — {ZONE} ===\n")
 
