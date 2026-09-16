@@ -230,3 +230,144 @@ class TestVPQC2Policy:
             "artcb2qsender000001", "artcb2qrecipient000001"
         )
         assert not rejected, reason
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 5 — Régression create → store → reload (rapport 362, V-PQC-2 fix load_wallet)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestVPQC2LoadWalletRegression:
+    """Vérifie que load_wallet() préserve le namespace et recalcule address_v2
+    correctement après create_wallet() + flush disque.
+
+    Bug corrigé : load_wallet() utilisait toujours hybrid_address_v2() (legacy)
+    → un wallet TEST artcb2t… était rechargé avec artcb2… (MAINNET).
+    Fix : lire wallet_namespace depuis le .json metadata.
+    """
+
+    @pytest.fixture()
+    def wallet_dir(self, tmp_path):
+        return tmp_path / "wallets"
+
+    def _manager(self, wallet_dir):
+        from src.artcb.wallet.manager import WalletManager
+        wallet_dir.mkdir(parents=True, exist_ok=True)
+        return WalletManager(wallet_dir=wallet_dir)
+
+    def test_reload_test_wallet_address_stays_artcbdev1(self, wallet_dir):
+        """create TEST → reload → address toujours artcbdev1…"""
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="test_reload_ed", wallet_namespace="TEST")
+        assert created.address.startswith("artcbdev1"), f"create: {created.address}"
+
+        loaded = mgr.load_wallet(name="test_reload_ed")
+        assert loaded.address.startswith("artcbdev1"), (
+            f"reload: attendu artcbdev1…, obtenu {loaded.address}"
+        )
+
+    def test_reload_mainnet_wallet_address_stays_artcb1(self, wallet_dir):
+        """create MAINNET → reload → address toujours artcb1…"""
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="main_reload_ed", wallet_namespace="MAINNET")
+        assert created.address.startswith("artcb1"), f"create: {created.address}"
+
+        loaded = mgr.load_wallet(name="main_reload_ed")
+        assert loaded.address.startswith("artcb1"), (
+            f"reload: attendu artcb1…, obtenu {loaded.address}"
+        )
+
+    def test_reload_test_wallet_address_v2_stays_artcb2t(self, wallet_dir):
+        """create TEST + PQC → reload → address_v2 toujours artcb2t… (le bug corrigé)."""
+        from src.artcb.crypto.pqc import pqc_enabled
+        if not pqc_enabled():
+            pytest.skip("PQC non disponible")
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="test_reload_pqc", wallet_namespace="TEST")
+        if created.address_v2 is None:
+            pytest.skip("PQC keys non générées")
+        assert created.address_v2.startswith("artcb2t"), (
+            f"create address_v2={created.address_v2}"
+        )
+
+        loaded = mgr.load_wallet(name="test_reload_pqc")
+        assert loaded.address_v2 is not None
+        assert loaded.address_v2.startswith("artcb2t"), (
+            f"RÉGRESSION: reload address_v2={loaded.address_v2} — attendu artcb2t…"
+        )
+
+    def test_reload_mainnet_wallet_address_v2_stays_artcb2(self, wallet_dir):
+        """create MAINNET + PQC → reload → address_v2 toujours artcb2… (legacy inchangé)."""
+        from src.artcb.crypto.pqc import pqc_enabled
+        if not pqc_enabled():
+            pytest.skip("PQC non disponible")
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="main_reload_pqc", wallet_namespace="MAINNET")
+        if created.address_v2 is None:
+            pytest.skip("PQC keys non générées")
+        assert created.address_v2.startswith("artcb2"), (
+            f"create address_v2={created.address_v2}"
+        )
+
+        loaded = mgr.load_wallet(name="main_reload_pqc")
+        assert loaded.address_v2 is not None
+        assert loaded.address_v2.startswith("artcb2"), (
+            f"reload address_v2={loaded.address_v2} — attendu artcb2…"
+        )
+        # doit commencer par artcb2 mais PAS artcb2t
+        assert not loaded.address_v2.startswith("artcb2t"), (
+            f"MAINNET wallet ne doit pas avoir adresse artcb2t"
+        )
+
+    def test_reload_address_equals_created_address(self, wallet_dir):
+        """create → reload : address identique (Ed25519)."""
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="test_eq_ed", wallet_namespace="TEST")
+        loaded = mgr.load_wallet(name="test_eq_ed")
+        assert loaded.address == created.address, (
+            f"address mismatch: create={created.address} reload={loaded.address}"
+        )
+
+    def test_reload_address_v2_equals_created_address_v2_test(self, wallet_dir):
+        """create TEST + PQC → reload : address_v2 identique (artcb2t)."""
+        from src.artcb.crypto.pqc import pqc_enabled
+        if not pqc_enabled():
+            pytest.skip("PQC non disponible")
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="test_eq_pqc", wallet_namespace="TEST")
+        if created.address_v2 is None:
+            pytest.skip("PQC keys non générées")
+        loaded = mgr.load_wallet(name="test_eq_pqc")
+        assert loaded.address_v2 == created.address_v2, (
+            f"address_v2 mismatch: create={created.address_v2} reload={loaded.address_v2}"
+        )
+
+    def test_reload_address_v2_equals_created_address_v2_mainnet(self, wallet_dir):
+        """create MAINNET + PQC → reload : address_v2 identique (artcb2)."""
+        from src.artcb.crypto.pqc import pqc_enabled
+        if not pqc_enabled():
+            pytest.skip("PQC non disponible")
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="main_eq_pqc", wallet_namespace="MAINNET")
+        if created.address_v2 is None:
+            pytest.skip("PQC keys non générées")
+        loaded = mgr.load_wallet(name="main_eq_pqc")
+        assert loaded.address_v2 == created.address_v2, (
+            f"address_v2 mismatch: create={created.address_v2} reload={loaded.address_v2}"
+        )
+
+    def test_wallet_without_json_metadata_falls_back_mainnet(self, wallet_dir):
+        """Si le .json est absent, load_wallet doit fallback MAINNET (pas de crash)."""
+        from src.artcb.crypto.pqc import pqc_enabled
+        if not pqc_enabled():
+            pytest.skip("PQC non disponible")
+        mgr = self._manager(wallet_dir)
+        created = mgr.create_wallet(name="orphan_test", wallet_namespace="MAINNET")
+        # Supprimer le .json pour simuler un wallet legacy sans metadata
+        json_path = wallet_dir / "orphan_test.json"
+        if json_path.exists():
+            json_path.unlink()
+        # Doit charger sans crash, namespace = MAINNET par défaut
+        loaded = mgr.load_wallet(name="orphan_test")
+        assert loaded.address.startswith("artcb1"), (
+            f"fallback MAINNET attendu, got {loaded.address}"
+        )

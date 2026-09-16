@@ -225,6 +225,12 @@ class WalletManager:
 
         user_password : mot de passe utilisateur utilisé pour chiffrer la seed à la création.
         Obligatoire pour les wallets créés via /wallet/create {password}.
+
+        V-PQC-2 fix (rapport 362): wallet_namespace is read from the .json metadata so that
+        address_v2 is recomputed with the correct domain:
+          - TEST    → generate_test_hybrid_address_v2() → artcb2t…
+          - MAINNET → hybrid_address_v2() legacy          → artcb2…  (backward compat)
+        Prevents create/load address_v2 mismatch identified by ChatGPT audit.
         """
         key_path = self.wallet_dir / f"{name}.key"
         if not key_path.exists():
@@ -243,16 +249,42 @@ class WalletManager:
                 meta["key_format"] = "ARTCBENC1"
                 meta_path.write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
+        # Read wallet_namespace from .json metadata (V-PQC-2 fix)
+        meta_path = self.wallet_dir / f"{name}.json"
+        stored_ns = "MAINNET"
+        if meta_path.is_file():
+            try:
+                meta_data = json.loads(meta_path.read_text(encoding="utf-8"))
+                stored_ns = meta_data.get("wallet_namespace", "MAINNET").upper().strip()
+            except (json.JSONDecodeError, OSError):
+                stored_ns = "MAINNET"
+
         pqc_secret: bytes | None = None
         pqc_public: bytes | None = None
         address_v2: str | None = None
         pqc_loaded = self._load_pqc_keys(name)
         if pqc_loaded:
             pqc_secret, pqc_public = pqc_loaded
-            address_v2 = hybrid_address_v2(signing_key.verify_key.encode(), pqc_public)
+            # V-PQC-2: recalculate address_v2 using the stored namespace
+            # TEST    → artcb2t… (domain-separated)
+            # MAINNET → artcb2…  (legacy, backward compat)
+            if stored_ns == "TEST":
+                address_v2 = generate_test_hybrid_address_v2(
+                    signing_key.verify_key.encode(), pqc_public
+                )
+            else:
+                address_v2 = hybrid_address_v2(signing_key.verify_key.encode(), pqc_public)
 
-        address = address_from_signing_key(signing_key)
-        logger.debug("Loaded wallet name=%s address=%s hybrid=%s", name, address, pqc_public is not None)
+        # Ed25519 address: also domain-aware for TEST wallets
+        if stored_ns == "TEST":
+            address = generate_test_address(signing_key.verify_key.encode())  # artcbdev1…
+        else:
+            address = address_from_signing_key(signing_key)  # artcb1… legacy
+
+        logger.debug(
+            "Loaded wallet name=%s address=%s hybrid=%s namespace=%s",
+            name, address, pqc_public is not None, stored_ns,
+        )
 
         return Wallet(
             address=address,
