@@ -58,7 +58,13 @@ def _http_json(method: str, url: str, body: dict | None = None, timeout: float =
 
 
 def coordinate_public_finality(engine: Any, chain: Any, block: dict[str, Any]) -> dict[str, Any]:
-    """Fan-out PBFT for a constructed public block. Writes locally on certificate."""
+    """Fan-out PBFT for a constructed public block. Writes locally on certificate.
+
+    R364-BUG1 FIX: when the current primary is unreachable, automatically
+    trigger VIEW-CHANGE to the next reachable primary instead of fail-closing.
+    This allows OVH2/AWS3/OVH4 to continue consensus without OVH1 (or any
+    single dead node) blocking production indefinitely.
+    """
     t0 = now_mono_ns()
     data_dir = getattr(engine.pbft_log, "data_dir", None)
     if not on_official_compute():
@@ -67,10 +73,37 @@ def coordinate_public_finality(engine: Any, chain: Any, block: dict[str, Any]) -
         return {"ok": False, "wrote": False, "reason": "not_on_official_compute"}
     view = int(getattr(engine.pbft, "view", 0) or 0)
     primary = primary_of(view)
-    # ~~2026-09-10T11:20:00Z hosts = official_http_map() then hosts[primary]~~
-    # KeyError when primary is mac-node-local (view % 5 == 4). Fail closed.
+    # R364-BUG1: probe-aware reachable map (excludes dead nodes like ovh-node-1)
     hosts = pbft_reachable_http_map()
     if primary not in hosts and engine.node_id != primary:
+        # R364-BUG1 FIX — auto VIEW-CHANGE instead of fail-closed
+        from src.artcb.consensus.pbft_view import next_reachable_view
+        plan = next_reachable_view(view)
+        if plan.get("ok"):
+            target_view = int(plan["target_view"])
+            try:
+                split = chain.tip_public_private() if hasattr(chain, "tip_public_private") else {}
+                height = int(split.get("public_last_index") or -1) + 1
+                last_hash = str(split.get("public_last_hash") or "")
+                engine.pbft_log.emit_view_change(
+                    chain,
+                    view=target_view,
+                    height=height,
+                    last_hash=last_hash,
+                    reason=f"primary_unreachable_auto_vc:view={view}:primary={primary}",
+                )
+                # Fan-out VIEW-CHANGE to all reachable replicas
+                vc_rows = engine.pbft_log.view_changes(target_view) if hasattr(engine.pbft_log, "view_changes") else []
+                for nid, url in hosts.items():
+                    if nid == engine.node_id:
+                        continue
+                    _http_json("POST", f"{url}/api/v1/consensus/pbft/view-change",
+                               {"view": target_view, "reason": "primary_unreachable_auto_vc"})
+                vc_result = {"auto_view_change": True, "target_view": target_view, "new_primary": plan.get("primary")}
+            except Exception as exc:
+                vc_result = {"auto_view_change": False, "error": str(exc)[:120]}
+        else:
+            vc_result = {"auto_view_change": False, "reason": "no_reachable_primary"}
         if data_dir is not None:
             emit_pbft(
                 data_dir,
@@ -78,7 +111,7 @@ def coordinate_public_finality(engine: Any, chain: Any, block: dict[str, Any]) -
                 replica_id=engine.node_id,
                 ok=False,
                 dur_ns=now_mono_ns() - t0,
-                reason="primary_unreachable_transport",
+                reason="primary_unreachable_transport_auto_vc",
             )
         return {
             "ok": False,
@@ -86,6 +119,7 @@ def coordinate_public_finality(engine: Any, chain: Any, block: dict[str, Any]) -
             "reason": "primary_unreachable_transport",
             "primary": primary,
             "reachable": sorted(hosts),
+            **vc_result,
         }
     log = engine.pbft_log
     if engine.node_id == primary:

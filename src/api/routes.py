@@ -125,6 +125,14 @@ def health(request: Request) -> dict:
         chain_status = {"available": True, **state.chain.verify()}
     except FileNotFoundError as exc:
         chain_status = {"available": False, "message": str(exc)}
+
+    # R364-BUG3: chain integrity check on every health call
+    chain_integrity: dict = {"checked": False}
+    try:
+        chain_integrity = state.chain.verify_chain_integrity()
+    except Exception as exc:
+        chain_integrity = {"ok": False, "reason": f"integrity_check_error:{exc}", "checked": False}
+
     from src.artcb.crypto.pqc import pqc_available
     from src.artcb.crypto_policy import public_health_block
     from src.artcb.release import release_identity
@@ -138,6 +146,7 @@ def health(request: Request) -> dict:
         "bob_configured": bool(state.settings.bob_api_key),
         "demo_book": str(state.settings.demo_book_pdf),
         "chain": chain_status,
+        "chain_integrity": chain_integrity,
         "git_sha": identity["git_sha"],
         "git_branch": identity["git_branch"],
         "release_integrity": identity.get("release_integrity"),

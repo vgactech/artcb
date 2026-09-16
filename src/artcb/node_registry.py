@@ -234,18 +234,51 @@ def _mac_public_tunnel_http() -> str | None:
     return raw.rstrip("/")
 
 
-def pbft_reachable_http_map() -> dict[str, str]:
+def pbft_reachable_http_map(*, probe_timeout: float = 2.0, skip_probe: bool = False) -> dict[str, str]:
     """HTTP targets a coordinator can actually dial.
 
-    Always includes the four public seeds. Includes mac-node-local only if a
-    measured public tunnel URL is set. Never RFC1918. Never append Mac to
-    OFFICIAL_COMPUTE_NODE_IDS.
+    R364-BUG1 FIX: probes each seed node with a short TCP/HTTP connect to
+    exclude unreachable nodes (e.g. ovh-node-1 dead) from the returned map.
+    A node absent from this map will not block PBFT fan-out and will not be
+    selected as primary without triggering auto VIEW-CHANGE.
+
+    skip_probe=True: legacy behaviour (tests / fast path).
+    ARTCB_PBFT_SKIP_PROBE=1 env: same as skip_probe=True.
     """
+    import os
     out = seed_http_map()
     tunnel = _mac_public_tunnel_http()
     if tunnel:
         out[MAC_NODE_ID] = tunnel
-    return out
+    if skip_probe or os.environ.get("ARTCB_PBFT_SKIP_PROBE", "").strip() in ("1", "true", "True"):
+        return out
+    # Probe each node — remove unreachable ones
+    reachable: dict[str, str] = {}
+    for nid, base in out.items():
+        if _probe_http(base, timeout=probe_timeout):
+            reachable[nid] = base
+    # Always include self (we know we are up)
+    self_id = official_replica_id()
+    if self_id and self_id not in reachable:
+        for nid, base in out.items():
+            if nid == self_id:
+                reachable[nid] = base
+    return reachable if reachable else out  # fallback: never return empty
+
+
+def _probe_http(base: str, *, timeout: float = 2.0) -> bool:
+    """Quick TCP + HTTP probe. Returns True if the host responds with any HTTP status."""
+    import urllib.request
+    import urllib.error
+    try:
+        req = urllib.request.Request(f"{base}/api/v1/health",
+                                     headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=timeout):
+            return True
+    except urllib.error.HTTPError:
+        return True   # HTTP error = server is up
+    except Exception:
+        return False
 
 
 def pbft_membership_vs_transport() -> dict[str, Any]:

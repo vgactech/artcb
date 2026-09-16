@@ -168,7 +168,10 @@ def maybe_trigger_view_change(
 
 
 def tick(chain: Any, *, local_base: str, pbft_log: Any | None = None) -> dict[str, Any]:
-    stall_sec = float(os.environ.get("ARTCB_PUBLIC_TIP_STALL_SEC") or "900")
+    # R364-BUG2 FIX: default stall threshold 900s → 120s (2 min).
+    # A dead primary should trigger VIEW-CHANGE in ~2 min, not 15 min.
+    # Override with ARTCB_PUBLIC_TIP_STALL_SEC env var.
+    stall_sec = float(os.environ.get("ARTCB_PUBLIC_TIP_STALL_SEC") or "120")
     diag = diagnose(chain, pbft_log=pbft_log)
     action: dict[str, Any] = {"triggered": False}
     age = diag.get("age_sec")

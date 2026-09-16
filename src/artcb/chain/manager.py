@@ -574,6 +574,72 @@ class ChainManager:
     def list_blocks_legacy(self) -> list[dict]:
         return self._read_all_blocks()
 
+    def verify_chain_integrity(self) -> dict:
+        """R364-BUG3: Verify sequential index + prev_hash linkage on startup.
+
+        Returns a dict with:
+          ok        : bool — True if chain is intact
+          height    : int  — number of blocks checked
+          first_bad : int | None — index of first broken block (None = all ok)
+          reason    : str | None — description of first error
+          gaps      : list[int] — missing index values
+          duplicates: list[int] — duplicated index values
+
+        Never raises. Fail-safe: if it cannot read, returns ok=False with reason.
+        """
+        import hashlib
+
+        try:
+            blocks = self._read_all_blocks()
+        except Exception as exc:
+            return {"ok": False, "height": 0, "first_bad": None, "reason": f"read_error:{exc}", "gaps": [], "duplicates": []}
+
+        if not blocks:
+            return {"ok": True, "height": 0, "first_bad": None, "reason": None, "gaps": [], "duplicates": []}
+
+        indices = [int(b.get("index", -1)) for b in blocks]
+        # Check for gaps and duplicates
+        gaps: list[int] = []
+        duplicates: list[int] = []
+        seen: set[int] = set()
+        for i, idx in enumerate(indices):
+            if idx in seen:
+                duplicates.append(idx)
+            seen.add(idx)
+        expected = set(range(min(indices), max(indices) + 1))
+        gaps = sorted(expected - seen)
+
+        # Check prev_hash linkage
+        prev_hash = str(blocks[0].get("prev_hash") or "")
+        first_bad: int | None = None
+        reason: str | None = None
+
+        for i, block in enumerate(blocks):
+            idx = int(block.get("index", -1))
+            block_prev = str(block.get("prev_hash") or "")
+            if i > 0 and block_prev != prev_hash:
+                first_bad = idx
+                reason = f"prev_hash_mismatch at index={idx}: expected={prev_hash[:16]} got={block_prev[:16]}"
+                break
+            # Advance prev_hash to this block's hash
+            prev_hash = str(block.get("hash") or "")
+
+        ok = first_bad is None and not gaps and not duplicates
+        if not ok and reason is None:
+            if gaps:
+                reason = f"gaps_in_index: {gaps[:5]}"
+            elif duplicates:
+                reason = f"duplicate_indices: {duplicates[:5]}"
+
+        return {
+            "ok": ok,
+            "height": len(blocks),
+            "first_bad": first_bad,
+            "reason": reason,
+            "gaps": gaps[:20],
+            "duplicates": duplicates[:20],
+        }
+
     def last_hash(self) -> str:
         if self.height() == 0:
             return GENESIS_PREV_HASH
