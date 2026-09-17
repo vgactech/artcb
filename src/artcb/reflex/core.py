@@ -1,9 +1,9 @@
-"""Réflexe ARTCB — Moteur de priorité automatique (R350–R354, 2026-09-17).
+"""Réflexe ARTCB — Moteur de priorité automatique (R350–R355, 2026-09-17).
 
 Ce module implémente le réflexe autonome ARTCB :
 - Détection des déclencheurs (mémoire, thinking, raisonnement, biométrie)
 - Priorisation automatique des chantiers
-- Amélioration autonome de l'agent
+- Création d'un REASONING_RECORD à chaque activation (R355)
 - Activation simultanée Bob IDE + Cursor
 
 HONNÊTETÉ :
@@ -19,6 +19,15 @@ import time
 from dataclasses import dataclass, field
 from enum import IntEnum
 from typing import Any
+
+from src.artcb.reasoning.reference_id import ref_rule, ref_code
+from src.artcb.reasoning.first_reflex import FirstReflex, estimate_earliest_from_logs
+from src.artcb.reasoning.record import (
+    ReasoningRecord,
+    RecordAction,
+    RecordOutcome,
+    get_record_store,
+)
 
 logger = logging.getLogger("artcb.reflex.core")
 
@@ -141,6 +150,7 @@ class ReflexEngine:
         self._activated_at: float | None = None
         self.certified: bool = False  # CERTIFIED_100=false
         self.unique_human_proven: bool = False
+        self._last_record: Any = None  # dernier ReasoningRecord créé (R355)
 
     # ── Détection ─────────────────────────────────────────────────────────────
 
@@ -220,20 +230,86 @@ class ReflexEngine:
         self,
         text: str = "",
         files: list[str] | None = None,
+        session_id: str = "",
+        agent_id: str = "bob-ide",
     ) -> dict[str, Any]:
-        """Active le réflexe et retourne un rapport d'activation.
+        """Active le réflexe, crée un REASONING_RECORD et retourne un rapport.
 
         Args:
-            text: Texte du prompt ou description du contexte.
-            files: Fichiers modifiés.
+            text:       Texte du prompt ou description du contexte.
+            files:      Fichiers modifiés.
+            session_id: Identifiant de session (optionnel).
+            agent_id:   Identifiant de l'agent (optionnel).
 
         Returns:
-            Dictionnaire de rapport d'activation.
+            Dictionnaire de rapport d'activation incluant le record_id R355.
         """
         self._activated_at = time.time()
         triggers = self.detect_trigger(text=text, files=files)
         priority = triggers[0].priority if triggers else ReflexPriority.OTHER
 
+        # ── R355 : créer FIRST_REFLEX ─────────────────────────────────────
+        _files = files or []
+        first_reflex: FirstReflex | None = None
+        if triggers:
+            t0 = triggers[0]
+            ref_rule_id = ref_rule(
+                rule_name=f"R350-{t0.name}",
+                rule_file=".cursor/rules/artcb-reflex-priority.mdc",
+                rule_version="2026-09-17",
+            )
+            ref_files = [
+                ref_code(path=f, commit="", symbol="")
+                for f in _files[:5]  # limité à 5 fichiers pour compacité
+            ]
+            first_reflex = FirstReflex(
+                session_id=session_id or f"reflex_{int(self._activated_at)}",
+                trigger_name=t0.name,
+                priority=int(t0.priority),
+                evidence={
+                    "keywords": t0.keywords,
+                    "files": t0.files_affected,
+                    "prompt_chars": len(text),
+                },
+                reference_ids=[ref_rule_id.canonical] + [r.canonical for r in ref_files],
+            )
+
+        # ── R355 : EARLIEST_DETECTABLE_POINT ─────────────────────────────
+        earliest = None
+        if first_reflex:
+            earliest = estimate_earliest_from_logs(first_reflex.trigger_name)
+
+        # ── R355 : créer REASONING_RECORD ─────────────────────────────────
+        record = ReasoningRecord(
+            session_id=session_id or f"reflex_{int(self._activated_at)}",
+            agent_id=agent_id,
+            context_summary=text[:200] if text else "",
+            context_sha256=hashlib.sha256(text.encode()).hexdigest() if text else "",
+            first_reflex=first_reflex,
+            earliest=earliest,
+            action=RecordAction.ANALYZE,
+            action_detail=f"Réflexe R350–R355 activé — priorité {priority.name}",
+            outcome=RecordOutcome.PENDING,
+        )
+        if first_reflex:
+            from src.artcb.reasoning.reference_id import ref_rule as _ref_rule
+            record.add_reference(_ref_rule(
+                rule_name=f"R350-{triggers[0].name}",
+                rule_file=".cursor/rules/artcb-reflex-priority.mdc",
+                rule_version="2026-09-17",
+            ))
+        for obs_file in _files[:5]:
+            record.add_observation("file_in_context", path=obs_file)
+
+        # Persister localement (non bloquant)
+        try:
+            get_record_store().append(record)
+        except Exception as exc:
+            logger.warning("REASONING_RECORD store error (non-fatal): %s", exc)
+
+        self._last_record = record
+
+        # ── Rapport ───────────────────────────────────────────────────────
         report = {
             "reflex_activated": True,
             "priority": int(priority),
@@ -242,9 +318,13 @@ class ReflexEngine:
             "activated_at": self._activated_at,
             "certified": self.certified,
             "unique_human_proven": self.unique_human_proven,
+            "record_id": record.record_id,         # R355 — clé de traçabilité
+            "first_reflex": first_reflex.to_dict() if first_reflex else None,
+            "earliest": earliest.to_dict() if earliest else None,
             "note": (
-                "Réflexe ARTCB activé (R350–R354). "
+                "Réflexe ARTCB activé (R350–R355). "
                 "Priorité automatique déclenchée. "
+                "REASONING_RECORD créé. "
                 "CERTIFIED_100=false."
             ),
         }
@@ -267,8 +347,8 @@ class ReflexEngine:
             report["action"] = "Chantier standard — aucun réflexe prioritaire détecté."
 
         logger.info(
-            "ReflexEngine activé: priority=%s triggers=%d",
-            priority.name, len(triggers),
+            "ReflexEngine activé: priority=%s triggers=%d record_id=%s",
+            priority.name, len(triggers), record.record_id[:12],
         )
         return report
 

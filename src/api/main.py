@@ -52,6 +52,7 @@ from src.api.ops_routes import router as ops_router
 from src.api.biometric_identity_routes import router as biometric_identity_router
 from src.api.identity_device_routes import router as identity_device_router
 from src.api.reflex_routes import router as reflex_router
+from src.api.reasoning_routes import router as reasoning_router
 
 # Any Replit account — never a named Autoscale hostname in git.
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
@@ -379,6 +380,8 @@ def create_app() -> FastAPI:
     app.include_router(identity_device_router)
     # Réflexe ARTCB R350–R354 (2026-09-17) — moteur de priorité automatique
     app.include_router(reflex_router)
+    # REASONING_RECORD R355 (2026-09-17) — traçabilité raisonnement
+    app.include_router(reasoning_router)
     app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)
