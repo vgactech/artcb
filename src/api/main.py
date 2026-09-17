@@ -53,6 +53,7 @@ from src.api.biometric_identity_routes import router as biometric_identity_route
 from src.api.identity_device_routes import router as identity_device_router
 from src.api.reflex_routes import router as reflex_router
 from src.api.reasoning_routes import router as reasoning_router
+from src.api.anon_wallet_routes import router as anon_wallet_router
 
 # Any Replit account — never a named Autoscale hostname in git.
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
@@ -382,6 +383,8 @@ def create_app() -> FastAPI:
     app.include_router(reflex_router)
     # REASONING_RECORD R355 (2026-09-17) — traçabilité raisonnement
     app.include_router(reasoning_router)
+    # R358 (2026-09-17) — création wallet anonyme sans nom utilisateur
+    app.include_router(anon_wallet_router)
     app.include_router(api_keys_router)
     app.include_router(api_router)
     app.include_router(devnet_router)

@@ -186,23 +186,32 @@ export interface Translations {
   bio_seed_once: string;
   wallets_bio_title: string;
 
-  // RegisterBiometric R357 — page /register simplifiée (sans UI biométrique)
+  // RegisterBiometric R358 — page /register sans nom utilisateur
   reg_title: string;
   reg_subtitle: string;
   reg_disclaimer: string;
   reg_tab_create: string;
   reg_tab_login: string;
-  reg_name_label: string;
-  reg_name_placeholder: string;
+  reg_create_help: string;
   reg_create_btn: string;
+  reg_login_name_label: string;
+  reg_login_name_placeholder: string;
+  reg_login_name_hint: string;
+  reg_login_name_required: string;
   reg_login_btn: string;
   reg_busy: string;
   reg_created_ok: string;
   reg_login_ok: string;
-  reg_name_required: string;
   reg_webauthn_unsupported: string;
-  reg_platform_unavailable: string;
+  reg_wallet_id_label: string;
+  reg_address_label: string;
+  reg_open_wallet: string;
   reg_seed_once: string;
+  // clés obsolètes conservées pour compatibilité i18n (non utilisées dans R358)
+  reg_name_label: string;
+  reg_name_placeholder: string;
+  reg_name_required: string;
+  reg_platform_unavailable: string;
   
   // Memorize Page
   memorize_title: string;
@@ -507,23 +516,32 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     bio_raw_never_stored: 'Aucune image d’empreinte ou de visage n’est stockée ni écrite dans le livre. Seules des clés publiques WebAuthn (et un secret d’appareil pour la caméra) sont conservées. Ces méthodes déverrouillent le wallet sur cet appareil ; elles ne prouvent pas qu’une personne est un humain unique.',
     bio_seed_once: 'Sauvegardez cette seed maintenant — elle ne sera plus affichée.',
     wallets_bio_title: 'Inscription sans mot de passe',
-    // RegisterBiometric R357
+    // RegisterBiometric R358 — sans nom utilisateur
     reg_title: 'Créer un wallet',
-    reg_subtitle: 'Votre wallet ARTCB est protégé par l\'authentificateur de cet appareil (PIN, Touch ID, Face ID — géré par votre OS).',
+    reg_subtitle: 'Votre wallet ARTCB est protégé par l\'authentificateur de cet appareil. L\'OS gère lui-même le déverrouillage.',
     reg_disclaimer: 'La création d\'un wallet ne constitue pas une preuve d\'identité humaine unique. CERTIFIED_100=false.',
     reg_tab_create: 'Créer',
     reg_tab_login: 'Se connecter',
-    reg_name_label: 'Nom du wallet',
-    reg_name_placeholder: 'votre-nom',
-    reg_create_btn: 'Créer le wallet',
+    reg_create_help: 'Aucune information n\'est requise. Cliquez pour créer un wallet — votre appareil s\'occupe du reste.',
+    reg_create_btn: 'Créer un wallet',
+    reg_login_name_label: 'Identifiant du wallet',
+    reg_login_name_placeholder: 'w-4a3f8c1d… ou adresse',
+    reg_login_name_hint: 'Entrez l\'identifiant affiché lors de la création (w-…) ou l\'adresse de votre wallet.',
+    reg_login_name_required: 'Indiquez l\'identifiant ou l\'adresse de votre wallet.',
     reg_login_btn: 'Se connecter',
     reg_busy: 'En cours…',
-    reg_created_ok: 'Wallet créé. Votre appareil a enregistré la clé.',
+    reg_created_ok: 'Wallet créé. Notez l\'identifiant pour vous reconnecter.',
     reg_login_ok: 'Connecté.',
-    reg_name_required: 'Choisissez un nom de wallet.',
     reg_webauthn_unsupported: 'WebAuthn non disponible — utilisez HTTPS (artcb.me).',
-    reg_platform_unavailable: 'Authentificateur de plateforme non détecté — vérifiez que vous êtes en HTTPS.',
+    reg_wallet_id_label: 'Identifiant du wallet (à noter) :',
+    reg_address_label: 'Adresse ARTCB :',
+    reg_open_wallet: 'Ouvrir dans Wallets →',
     reg_seed_once: 'Sauvegardez cette seed maintenant — elle ne sera plus affichée.',
+    // clés obsolètes conservées pour compatibilité
+    reg_name_label: 'Nom du wallet',
+    reg_name_placeholder: 'votre-nom',
+    reg_name_required: 'Choisissez un nom de wallet.',
+    reg_platform_unavailable: 'Authentificateur de plateforme non détecté.',
     // Memorize Page
     memorize_title: 'Mémoriser',
     memorize_session: 'Session',
@@ -712,23 +730,32 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     bio_raw_never_stored: 'No fingerprint or face image is stored or written on-chain. Only WebAuthn public keys (and a device secret for the camera path) are kept. These methods unlock the wallet on this device; they do not prove that a person is a unique human.',
     bio_seed_once: 'Save this seed now — it will never be shown again.',
     wallets_bio_title: 'Passwordless registration',
-    // RegisterBiometric R357
+    // RegisterBiometric R358 — no username
     reg_title: 'Create wallet',
-    reg_subtitle: 'Your ARTCB wallet is protected by this device\'s authenticator (PIN, Touch ID, Face ID — managed by your OS).',
+    reg_subtitle: 'Your ARTCB wallet is protected by this device\'s authenticator. Your OS handles the unlock method.',
     reg_disclaimer: 'Creating a wallet is not proof of unique human identity. CERTIFIED_100=false.',
     reg_tab_create: 'Create',
     reg_tab_login: 'Sign in',
-    reg_name_label: 'Wallet name',
-    reg_name_placeholder: 'your-name',
+    reg_create_help: 'No information required. Click to create a wallet — your device does the rest.',
     reg_create_btn: 'Create wallet',
+    reg_login_name_label: 'Wallet identifier',
+    reg_login_name_placeholder: 'w-4a3f8c1d… or address',
+    reg_login_name_hint: 'Enter the identifier shown at creation (w-…) or your wallet address.',
+    reg_login_name_required: 'Enter your wallet identifier or address.',
     reg_login_btn: 'Sign in',
     reg_busy: 'Processing…',
-    reg_created_ok: 'Wallet created. Your device has registered the key.',
+    reg_created_ok: 'Wallet created. Note the identifier to sign in next time.',
     reg_login_ok: 'Signed in.',
-    reg_name_required: 'Choose a wallet name.',
     reg_webauthn_unsupported: 'WebAuthn not available — use HTTPS (artcb.me).',
-    reg_platform_unavailable: 'Platform authenticator not detected — make sure you are on HTTPS.',
+    reg_wallet_id_label: 'Wallet identifier (save this):',
+    reg_address_label: 'ARTCB address:',
+    reg_open_wallet: 'Open in Wallets →',
     reg_seed_once: 'Save this seed now — it will never be shown again.',
+    // legacy keys kept for i18n compatibility
+    reg_name_label: 'Wallet name',
+    reg_name_placeholder: 'your-name',
+    reg_name_required: 'Choose a wallet name.',
+    reg_platform_unavailable: 'Platform authenticator not detected.',
     memorize_title: 'Memorize', memorize_session: 'Session',
     memorize_session_id: 'session_id', memorize_use_llm: 'use_llm',
     memorize_use_pool: 'distributed compute (pool E2E)',

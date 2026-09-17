@@ -500,6 +500,42 @@ export async function webauthnLoginVerify(name: string, credential: unknown) {
   };
 }
 
+// ─── R358 — routes anonymes (zéro nom utilisateur) ───────────────────────────
+
+/** Démarre la cérémonie WebAuthn sans aucun nom fourni par l'utilisateur. */
+export async function anonRegisterOptions(createWallet = true) {
+  const { data } = await api.post("/auth/anon/register/options", {
+    create_wallet: createWallet,
+  });
+  return data as {
+    publicKey: WebAuthnPublicKey;
+    create_wallet: boolean;
+    raw_biometric_never_stored: boolean;
+  };
+}
+
+/** Vérifie l'attestation WebAuthn et crée le wallet automatiquement.
+ *  wallet_name = "w-<sha256(credential_id)[:16]>" — dérivé côté serveur.
+ */
+export async function anonRegisterVerify(credential: unknown, createWallet = true) {
+  const { data } = await api.post("/auth/anon/register/verify", {
+    credential,
+    create_wallet: createWallet,
+  });
+  return data as {
+    ok: boolean;
+    wallet_name: string;
+    address: string;
+    session_token: string;
+    expires_in: number;
+    wallet_created: boolean;
+    seed_hex?: string;
+    WARNING?: string;
+    unique_human_proven: boolean;
+    certified: boolean;
+  };
+}
+
 export async function webauthnStatus(name: string) {
   const { data } = await api.get("/auth/webauthn/status", { params: { name } });
   return data as {
