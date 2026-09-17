@@ -43,13 +43,33 @@ class SentenceSpan:
     end: int
 
 
+# R360 — seuils de scalabilité du graphe complet.
+#
+# Sous MAX_COMPLETE_GRAPH_NODES nœuds : graphe complet N(N-1) arcs CONNECTS.
+# Au-delà : fenêtre glissante ±SLIDING_WINDOW_K voisins par nœud.
+#   Exemple : pour K=5, chaque nœud est connecté aux 5 précédents et 5 suivants.
+#   Arcs = min(N(N-1), 2*K*N) ≈ O(K·N) linéaire.
+# Cela préserve la sémantique « co-présence contextuelle proche »
+# sans explosion quadratique sur les grands documents.
+MAX_COMPLETE_GRAPH_NODES: int = 20   # graphe complet en dessous
+SLIDING_WINDOW_K: int = 5            # voisins de chaque côté au-dessus
+
+
 class IREncoder:
     """Encode text into IR graph with guaranteed reversibility via source_text + spans."""
 
-    def __init__(self, symbol_registry: SymbolRegistry | None = None, enable_cache: bool = True) -> None:
+    def __init__(
+        self,
+        symbol_registry: SymbolRegistry | None = None,
+        enable_cache: bool = True,
+        max_complete_nodes: int = MAX_COMPLETE_GRAPH_NODES,
+        sliding_window_k: int = SLIDING_WINDOW_K,
+    ) -> None:
         self._registry = symbol_registry or SymbolRegistry()
         self._cache: dict[str, IRGraph] = {} if enable_cache else None
         self._cache_enabled = enable_cache
+        self._max_complete_nodes = max_complete_nodes
+        self._sliding_window_k = sliding_window_k
 
     def encode(self, text: str, session_id: str | None = None) -> IRGraph:
         # Cache optimization: Check if text already encoded
@@ -89,54 +109,59 @@ class IREncoder:
                 )
             )
 
-        # R359 — graphe complet bidirectionnel : N(N-1) arcs pour N nœuds.
-        # Pour chaque paire ordonnée (i, j) avec i ≠ j :
-        #   - arc structurel CONNECTS (i→j) + arc CONNECTS (j→i)
-        #   - arc TEMPORAL conservé pour les nœuds consécutifs (ordre du texte)
-        #   - arc CAUSES ajouté si marqueur causal détecté entre consécutifs
-        # Les arcs TEMPORAL et CAUSES ont une sémantique précise —
-        # ils ne sont PAS générés pour toutes les paires (ce serait faux).
-        for i in range(len(nodes)):
-            for j in range(len(nodes)):
-                if i == j:
-                    continue
-                ni = nodes[i]
-                nj = nodes[j]
-                # Arc structurel bidirectionnel (graphe complet)
+        # R359/R360 — construction des arcs CONNECTS.
+        #
+        # Mode GRAPHE COMPLET (N ≤ max_complete_nodes, défaut 20) :
+        #   Pour chaque paire ordonnée (i,j) avec i≠j → arc CONNECTS.
+        #   Total = N(N-1) arcs. Garantit la connectivité directe maximale.
+        #
+        # Mode FENÊTRE GLISSANTE (N > max_complete_nodes) :
+        #   Chaque nœud i est connecté aux nœuds dans [i-K, i+K] \ {i}.
+        #   Total ≈ 2·K·N arcs (linéaire, O(K·N)).
+        #   Préserve la co-présence contextuelle proche sans explosion quadratique.
+        #
+        # Dans les deux modes :
+        #   TEMPORAL : uniquement entre consécutifs (i→i+1), N-1 arcs.
+        #   CAUSES   : uniquement si marqueur causal détecté, jamais inventé.
+        n = len(nodes)
+        use_complete = n <= self._max_complete_nodes
+
+        if use_complete:
+            # Graphe complet : toutes les paires ordonnées
+            connects_pairs: list[tuple[int, int]] = [
+                (i, j) for i in range(n) for j in range(n) if i != j
+            ]
+        else:
+            # Fenêtre glissante : voisins dans ±K
+            k = self._sliding_window_k
+            connects_pairs = [
+                (i, j)
+                for i in range(n)
+                for j in range(max(0, i - k), min(n, i + k + 1))
+                if i != j
+            ]
+            logger.debug(
+                "R360 fenêtre glissante activée : N=%d > seuil=%d → %d paires CONNECTS (K=%d)",
+                n, self._max_complete_nodes, len(connects_pairs), k,
+            )
+
+        for i, j in connects_pairs:
+            ni, nj = nodes[i], nodes[j]
+            edges.append(
+                IREdge(**{"from": ni.id, "to": nj.id, "rel": EdgeType.CONNECTS.value, "w": 1.0})
+            )
+
+        # TEMPORAL : consécutifs uniquement, dans les deux modes
+        for i in range(n - 1):
+            ni, nj = nodes[i], nodes[i + 1]
+            edges.append(
+                IREdge(**{"from": ni.id, "to": nj.id, "rel": EdgeType.TEMPORAL.value, "w": 1.0})
+            )
+            # CAUSES : uniquement si marqueur détecté, jamais inventé
+            if self._has_causal_link(spans[i].text, spans[i + 1].text):
                 edges.append(
-                    IREdge(
-                        **{
-                            "from": ni.id,
-                            "to": nj.id,
-                            "rel": EdgeType.CONNECTS.value,
-                            "w": 1.0,
-                        }
-                    )
+                    IREdge(**{"from": ni.id, "to": nj.id, "rel": EdgeType.CAUSES.value, "w": 0.8})
                 )
-                # Arc TEMPORAL uniquement entre consécutifs (i→i+1)
-                if j == i + 1:
-                    edges.append(
-                        IREdge(
-                            **{
-                                "from": ni.id,
-                                "to": nj.id,
-                                "rel": EdgeType.TEMPORAL.value,
-                                "w": 1.0,
-                            }
-                        )
-                    )
-                    # Arc CAUSES uniquement si marqueur détecté
-                    if self._has_causal_link(spans[i].text, spans[j].text):
-                        edges.append(
-                            IREdge(
-                                **{
-                                    "from": ni.id,
-                                    "to": nj.id,
-                                    "rel": EdgeType.CAUSES.value,
-                                    "w": 0.8,
-                                }
-                            )
-                        )
 
         join_sep = self._detect_join_separator(text, spans)
         graph = IRGraph(

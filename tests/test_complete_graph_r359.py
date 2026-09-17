@@ -199,3 +199,88 @@ def test_bidirectional_both_directions(encoder: IREncoder):
             assert (nodes[i], nodes[j]) in connects, (
                 f"Arc CONNECTS manquant : {nodes[i]} → {nodes[j]}"
             )
+
+# ─── R360 — scalabilité : fenêtre glissante au-delà du seuil ─────────────────
+
+def test_r360_complete_below_threshold():
+    """Sous le seuil (N≤20) → graphe complet N(N-1)."""
+    enc = IREncoder(max_complete_nodes=20)
+    text = " ".join(f"Phrase {i}." for i in range(1, 11))
+    graph = enc.encode(text)
+    n = len(graph.nodes)
+    assert n <= 20
+    connects = _connects_count(graph)
+    assert connects == n * (n - 1), f"N={n}: attendu {n*(n-1)}, obtenu {connects}"
+
+
+def test_r360_sliding_window_above_threshold():
+    """Au-delà du seuil (N>20) → fenêtre glissante, linéaire."""
+    k = 3
+    enc = IREncoder(max_complete_nodes=5, sliding_window_k=k)
+    # Forcer N > seuil
+    text = " ".join(f"Phrase {i}." for i in range(1, 12))
+    graph = enc.encode(text)
+    n = len(graph.nodes)
+    assert n > 5, f"attendu N>5 pour déclencher la fenêtre, N={n}"
+    connects = _connects_count(graph)
+    # Maximum théorique avec fenêtre ±K
+    max_connects = 2 * k * n
+    assert connects <= max_connects, (
+        f"N={n}, K={k}: connects={connects} > max_fenêtre={max_connects}"
+    )
+    # Nettement inférieur au graphe complet
+    assert connects < n * (n - 1), (
+        f"fenêtre glissante ne réduit pas les arcs : connects={connects}, N(N-1)={n*(n-1)}"
+    )
+
+
+def test_r360_no_self_loop_sliding():
+    """Pas d'auto-boucle en mode fenêtre glissante."""
+    enc = IREncoder(max_complete_nodes=3, sliding_window_k=2)
+    text = " ".join(f"Concept {i}." for i in range(1, 10))
+    graph = enc.encode(text)
+    for e in graph.edges:
+        assert e.fr != e.to, f"Auto-boucle en mode fenêtre : {e.fr} → {e.to}"
+
+
+def test_r360_temporal_preserved_in_sliding():
+    """TEMPORAL reste N-1 arcs en mode fenêtre glissante."""
+    enc = IREncoder(max_complete_nodes=3, sliding_window_k=2)
+    text = " ".join(f"Phrase {i}." for i in range(1, 8))
+    graph = enc.encode(text)
+    n = len(graph.nodes)
+    temporal = _temporal_count(graph)
+    assert temporal == n - 1, f"TEMPORAL={temporal}, attendu N-1={n-1}"
+
+
+def test_r360_window_connects_both_directions():
+    """En mode fenêtre, les arcs sont bidirectionnels dans la fenêtre."""
+    k = 2
+    enc = IREncoder(max_complete_nodes=3, sliding_window_k=k)
+    text = " ".join(f"X{i}." for i in range(1, 8))
+    graph = enc.encode(text)
+    connects = {(e.fr, e.to) for e in graph.edges if e.rel == "↔"}
+    nodes = [nd.id for nd in graph.nodes]
+    # Pour chaque paire dans la fenêtre : les deux directions doivent exister
+    n = len(nodes)
+    for i in range(n):
+        for j in range(max(0, i - k), min(n, i + k + 1)):
+            if i == j:
+                continue
+            assert (nodes[i], nodes[j]) in connects, (
+                f"Arc manquant dans fenêtre : {nodes[i]} → {nodes[j]}"
+            )
+
+
+def test_r360_threshold_configurable():
+    """Le seuil est configurable — deux encodeurs différents produisent des structures différentes."""
+    text = " ".join(f"N{i}." for i in range(1, 9))
+    enc_full = IREncoder(max_complete_nodes=50)   # graphe complet
+    enc_win = IREncoder(max_complete_nodes=3, sliding_window_k=2)  # fenêtre
+    g_full = enc_full.encode(text)
+    g_win = enc_win.encode(text)
+    n = len(g_full.nodes)
+    assert _connects_count(g_full) == n * (n - 1)
+    assert _connects_count(g_win) < n * (n - 1)
+
+
