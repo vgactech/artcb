@@ -214,17 +214,15 @@ export function BiometricIdentityTest() {
     <div className="mc-page">
       <h1 className="dashboard-title">◉ Test biométrique manuel — Identité on-chain</h1>
 
-      {/* ── Bannière honnêteté ─────────────────────────────────────────── */}
+      {/* ── Bannière information ────────────────────────────────────────── */}
       <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)", background: "rgba(255,215,0,0.04)", marginBottom: 16 }}>
         <p style={{ margin: 0, fontSize: 13 }}>
-          <strong style={{ color: "var(--mc-gold)" }}>⚠ Honnêteté ARTCB</strong> —{" "}
-          <code>unique_human_proven = false</code> · <code>CERTIFIED_100 = false</code>
+          <strong style={{ color: "var(--mc-gold)" }}>⚠ Portée de ce test</strong>
         </p>
         <p style={{ margin: "6px 0 0 0", fontSize: 12, color: "var(--terminal-muted)" }}>
           Ce test utilise WebAuthn (capteur natif de ton appareil) pour dériver un template cryptographique.
           Ce n'est <strong>pas</strong> un template biométrique brut (le standard W3C interdit son extraction).
           C'est une preuve de possession du capteur liée à cet appareil.
-          FAR/FRR/PAD non mesurés. Pour un test certifié : SDK natif iOS/Android + enclave sécurisée.
         </p>
       </div>
 
@@ -329,7 +327,7 @@ export function BiometricIdentityTest() {
                 ✅ Identité biométrique enregistrée sur la blockchain ARTCB
               </p>
               <p style={{ fontSize: 12, color: "var(--terminal-muted)", margin: "4px 0 0 0" }}>
-                unique_human_proven=false · certified=false · stub non certifié
+                Lié à cet appareil · preuve de possession du capteur
               </p>
             </div>
 

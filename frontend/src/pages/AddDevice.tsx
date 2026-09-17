@@ -175,11 +175,10 @@ export function AddDevice() {
     <div className="mc-page">
       <h1 className="dashboard-title">◉ ADD_DEVICE — Ajouter un appareil à une identité ARTCB</h1>
 
-      {/* Bannière honnêteté */}
+      {/* Bannière règles ADD_DEVICE */}
       <div className="panel" style={{ borderColor: "var(--mc-gold, #ffd700)", background: "rgba(255,215,0,0.04)", marginBottom: 16 }}>
         <p style={{ margin: 0, fontSize: 13 }}>
-          <strong style={{ color: "var(--mc-gold)" }}>⚠ Règles ADD_DEVICE (spec §17–18)</strong> —{" "}
-          <code>CERTIFIED_100 = false</code> · <code>unique_human_proven = false</code>
+          <strong style={{ color: "var(--mc-gold)" }}>⚠ Règles ADD_DEVICE</strong>
         </p>
         <p style={{ margin: "6px 0 0 0", fontSize: 12, color: "var(--terminal-muted)" }}>
           ❌ PIN seul REFUSÉ · ❌ Nouveau wallet depuis nouvel appareil REFUSÉ ·
@@ -266,7 +265,7 @@ export function AddDevice() {
               ✅ Appareil ajouté à l'identité ARTCB
             </p>
             <p style={{ fontSize: 12, color: "var(--terminal-muted)", margin: "4px 0 0 0" }}>
-              Aucun nouveau wallet créé · unique_human_proven=false · certified_100=false
+              Aucun nouveau wallet créé · appareil associé à l'identité existante
             </p>
           </div>
           <pre style={{ fontSize: 11, background: "#111", padding: 10, borderRadius: 4, overflow: "auto" }}>
