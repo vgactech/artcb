@@ -435,12 +435,26 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
     if not matching_record:
         raise HTTPException(status_code=404, detail=f"human_id_not_found: {human_id}")
 
-    # ── 8. Enregistrer B dans credential_store (enrôlement réel de B) ─────────
-    # Si new_device_public_key_b64 est fourni, B est enrôlé cryptographiquement
-    # dans credential_store.jsonl avec sa propre clé publique — il pourra se
-    # connecter via /auth/webauthn/login avec sa credential.
+    # ── 8. Enregistrer B dans les deux stores (enrôlement réel de B) ──────────
+    #
+    # B doit être présent dans DEUX endroits pour être pleinement fonctionnel :
+    #
+    #   a) identity/credential_store.jsonl  → lié au HumanID (pour ADD_DEVICE)
+    #   b) webauthn/credentials.json        → lié au wallet_name (pour /auth/webauthn/login)
+    #
+    # Sans (b), B ne peut pas se connecter via /auth/webauthn/login.
+    # Le champ "cose_b64" est la clé COSE P-256 attendue par public_key_from_cose().
+    # Si new_device_public_key_b64 est une clé COSE, on l'utilise directement.
+    # Si c'est un PEM brut, on le convertit.
+    #
+    # Note : si new_device_public_key_b64 n'est pas fourni, l'enrôlement est partiel
+    # (device associé mais B ne peut pas encore se connecter).
     new_cred_enrolled = False
+    wallet_address = matching_record.get("wallet_address", "")
+    wallet_name = matching_record.get("wallet_name", human_id)
+
     if body.new_device_public_key_b64:
+        # ── a) identity/credential_store.jsonl ───────────────────────────────
         data_dir_cs = Path(os.environ.get("ARTCB_DATA_DIR", "data"))
         cred_store_path = data_dir_cs / "identity" / "credential_store.jsonl"
         cred_store_path.parent.mkdir(parents=True, exist_ok=True)
@@ -448,7 +462,7 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
             "credential_id": body.new_device_credential_id,
             "human_id": human_id,
             "public_key_b64": body.new_device_public_key_b64,
-            "public_key_pem": "",   # PEM non fourni à ce stade (clé brute b64)
+            "public_key_pem": "",
             "sign_count": 0,
             "enrolled_by": body.credential_id[:16] + "…",
             "enrolled_via": "add_device_r363",
@@ -457,7 +471,31 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
         }
         with cred_store_path.open("a") as _f:
             _f.write(json.dumps(new_cred_rec, ensure_ascii=False) + "\n")
-        new_cred_enrolled = True
+
+        # ── b) webauthn/credentials.json → pour /auth/webauthn/login ─────────
+        # Le champ "cose_b64" est utilisé par public_key_from_cose() lors du login.
+        # On l'aliase depuis new_device_public_key_b64 (supposé être COSE b64url).
+        try:
+            from src.artcb.security.webauthn_store import save_credential as _save_webauthn_cred
+            webauthn_cred_rec = {
+                "credential_id": body.new_device_credential_id,
+                "wallet_name": wallet_name,
+                "address": wallet_address,
+                "cose_b64": body.new_device_public_key_b64,  # clé COSE P-256 b64url
+                "sign_count": 0,
+                "rp_id": rp_id,
+                "modality": "add_device",
+                "human_id": human_id,
+                "enrolled_by": body.credential_id[:16] + "…",
+                "enrolled_via": "add_device_r363",
+                "device_hint": body.new_device_hint,
+                "created_at": time.time(),
+            }
+            _save_webauthn_cred(webauthn_cred_rec)
+            new_cred_enrolled = True
+        except Exception as _exc:
+            logger.warning("add_device: save_webauthn_cred failed: %s", _exc)
+            new_cred_enrolled = False
 
     # ── 9. Enregistrer le device_record dans device_registry ──────────────────
     device_id = hashlib.sha256(
@@ -480,8 +518,6 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
         "certified_100": False,
     }
     _append_device(device_record)
-
-    wallet_address = matching_record.get("wallet_address", "")
 
     logger.info(
         "ADD_DEVICE R363 OK: human_id=%s device_id=%s hint=%s authorized_by=%s (WebAuthn assertion valide)",

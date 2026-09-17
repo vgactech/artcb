@@ -8,6 +8,11 @@ Injecte aussi l'état git HEAD courant pour que le modèle sache toujours où il
 R350–R354 (2026-09-17) : Ce hook active automatiquement le réflexe ARTCB.
 Toute modification liée à la mémoire/thinking/réflexe = priorité absolue.
 
+R366/AUTO_PREFLIGHT (2026-09-17) :
+  - Charge .artcb/task_ledger.yaml à chaque prompt
+  - Détecte divergence ledger.git_head ↔ git HEAD réel
+  - Injecte résumé OPEN/IN_PROGRESS dans le contexte
+
 Fail-open : exit 0 en cas d'erreur.
 Jamais de secrets affichés.
 """
@@ -51,6 +56,72 @@ PQC_KEYWORDS = [
     "pqc", "ml-dsa", "ml_dsa", "ML-DSA", "post.quantique",
     "vpqc", "dilithium", "kyber", "falcon",
 ]
+
+
+# ─── AUTO_PREFLIGHT : chargement du ledger + détection divergence ────────────
+
+LEDGER_PATH = ROOT / ".artcb" / "task_ledger.yaml"
+
+
+def load_ledger() -> dict:
+    """Charge .artcb/task_ledger.yaml. Retourne {} si absent ou invalide."""
+    try:
+        import yaml  # type: ignore[import]
+        if LEDGER_PATH.exists():
+            return yaml.safe_load(LEDGER_PATH.read_text(encoding="utf-8")) or {}
+    except Exception:
+        pass
+    return {}
+
+
+def preflight_summary(real_head: str) -> list[str]:
+    """Génère un résumé AUTO_PREFLIGHT depuis le ledger.
+
+    Détecte divergence ledger.git_head ↔ git HEAD réel.
+    Retourne des lignes à injecter dans le contexte.
+    """
+    lines: list[str] = []
+    ledger = load_ledger()
+    if not ledger:
+        lines.append("⚠ .artcb/task_ledger.yaml absent ou invalide — ledger non chargé")
+        return lines
+
+    meta = ledger.get("meta", {})
+    ledger_head = str(meta.get("git_head", "?"))
+    # Extraire le SHA court depuis real_head ("275f746 (main)" → "275f746")
+    real_sha = real_head.split()[0] if real_head else real_head
+    # Détecter divergence (comparer les SHA sans branche)
+    if ledger_head != "?" and not real_sha.startswith(ledger_head) and not ledger_head.startswith(real_sha):
+        lines.append(f"⚠ LEDGER_DIVERGENCE: ledger.git_head={ledger_head} ↔ git HEAD={real_sha} — synchronisation requise")
+    else:
+        lines.append(f"✅ Ledger synchronisé: git_head={ledger_head} ({real_sha})")
+
+    # Tâches IN PROGRESS
+    in_progress = ledger.get("in_progress") or []
+    if in_progress:
+        ids = [t.get("id", "?") for t in in_progress if isinstance(t, dict)]
+        lines.append(f"🔄 IN_PROGRESS: {', '.join(ids)}")
+
+    # Tâches OPEN (top 5 par priorité)
+    open_tasks = ledger.get("open") or []
+    if open_tasks:
+        high = [t for t in open_tasks if isinstance(t, dict) and t.get("priority") in ("HIGH", "CRITICAL")]
+        med  = [t for t in open_tasks if isinstance(t, dict) and t.get("priority") == "MEDIUM"]
+        low  = [t for t in open_tasks if isinstance(t, dict) and t.get("priority") == "LOW"]
+        parts = []
+        for t in (high + med + low)[:5]:
+            tid = t.get("id", "?")
+            blocker = " 🚨BLOCKER" if t.get("blocker") else ""
+            parts.append(f"{tid}{blocker}")
+        lines.append(f"📋 OPEN ({len(open_tasks)} tâches): {', '.join(parts)}" + (" …" if len(open_tasks) > 5 else ""))
+
+    # Avancement global
+    progress = ledger.get("progress", {})
+    global_pct = progress.get("global_pct")
+    if global_pct is not None:
+        lines.append(f"📊 Global: {global_pct}% | PBFT: {meta.get('pbft_status', '?')}")
+
+    return lines
 
 
 def get_git_head() -> str:
@@ -139,6 +210,16 @@ def main() -> int:
 
     if reflex_line:
         lines.insert(3, reflex_line)
+
+    # AUTO_PREFLIGHT — ledger + divergence (R366)
+    try:
+        pf = preflight_summary(git_head)
+        if pf:
+            lines.append("")
+            lines.append("## AUTO_PREFLIGHT ARTCB")
+            lines.extend(pf)
+    except Exception:
+        pass
 
     print("\n".join(lines))
     return 0

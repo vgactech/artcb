@@ -9,7 +9,7 @@ meta:
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-17"
-  git_head: "df7cb20"    # sera mis à jour après push R363b
+  git_head: "275f746"
   chain_height: 1142
   certified_100: false
   pbft_primary: "aws-node-3"
@@ -225,18 +225,18 @@ decisions:
 # ÉTAT AVANCEMENT GLOBAL
 # ═══════════════════════════════════════════════════════════════════════════════
 progress:
-  global_pct: 64
+  global_pct: 70
   breakdown:
     blockchain_core: 90
     wallet_hybrid_ed25519_mldsa65: 88
     webauthn_register: 85
-    add_device_multi_device: 60   # R363 en cours → était 55%
+    add_device_multi_device: 85   # R363+R363b+R363c — vraie WebAuthn + enrôlement B + E2E + concurrence
     biometric_identity_human_id: 50
     reflex_artcb_r350_r354: 55
     pqc_mldsa65: 85
-    pbft_consensus: 80            # bloquant: aws-node-3 mort
-    tests_coverage: 82
-    ui_artcbme: 88                # R362 livré
-    task_ledger: 50               # R366 créé, preflight manquant
+    pbft_consensus: 90            # aws-node-3 ALIVE, synchronisé
+    tests_coverage: 87            # +E2E A→B→login + concurrence race condition
+    ui_artcbme: 88
+    task_ledger: 85               # ledger + AUTO_PREFLIGHT opérationnel
     pol_knowledgeid_usageid: 25
     genesis_transfer_creator_node: 20

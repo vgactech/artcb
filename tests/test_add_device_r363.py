@@ -366,3 +366,152 @@ class TestAddDeviceValid:
         })
         assert r.status_code == 200
         assert r.json()["unique_human_proven"] is False
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# R363c — E2E A → ADD_DEVICE → B → webauthn/login (parcours complet)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestE2EAddDeviceThenLogin:
+    """Prouve le parcours complet : A autorise B → B enrôlé dans webauthn store → B peut se connecter."""
+
+    def _make_cose_b64(self, priv_key: ec.EllipticCurvePrivateKey) -> str:
+        """Construit une clé COSE EC2 P-256 b64url depuis une clé privée."""
+        from src.artcb.security.webauthn_protocol import cose_ec2_p256
+        cose_bytes = cose_ec2_p256(priv_key.public_key())
+        return b64u_encode(cose_bytes)
+
+    def test_b_enrolled_in_webauthn_store_after_add_device(self, client, tmp_data_dir):
+        """Après ADD_DEVICE avec public_key_b64, B est présent dans webauthn/credentials.json."""
+        from src.artcb.security.webauthn_store import find_credential
+
+        _make_human_record("human_e2e1", tmp_data_dir)
+        priv_a, cred_id_a = _make_credential("human_e2e1", tmp_data_dir)
+        priv_b = ec.generate_private_key(ec.SECP256R1())
+        cred_id_b = b64u_encode(secrets.token_bytes(16))
+        cose_b64_b = self._make_cose_b64(priv_b)
+
+        # ADD_DEVICE
+        r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_e2e1"})
+        challenge_b64 = r_opt.json()["challenge"]
+        assertion = _build_assertion(priv_a, challenge_b64)
+
+        r_verify = client.post("/api/v1/identity/device/add-verify", json={
+            "challenge_b64": challenge_b64,
+            "credential_id": cred_id_a,
+            **assertion,
+            "new_device_credential_id": cred_id_b,
+            "new_device_hint": "Pixel 9",
+            "new_device_public_key_b64": cose_b64_b,
+        })
+        assert r_verify.status_code == 200
+        assert r_verify.json()["credential_enrolled"] is True
+
+        # Vérifier que B est dans webauthn store
+        stored_b = find_credential(cred_id_b)
+        assert stored_b is not None, "B doit être dans webauthn/credentials.json après ADD_DEVICE"
+        assert stored_b["cose_b64"] == cose_b64_b
+        assert stored_b["human_id"] == "human_e2e1"
+
+    def test_add_device_without_public_key_gives_partial_enrollment(self, client, tmp_data_dir):
+        """Sans new_device_public_key_b64, credential_enrolled=False (enrôlement partiel)."""
+        _make_human_record("human_partial1", tmp_data_dir)
+        priv_a, cred_id_a = _make_credential("human_partial1", tmp_data_dir)
+        r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_partial1"})
+        challenge_b64 = r_opt.json()["challenge"]
+        assertion = _build_assertion(priv_a, challenge_b64)
+        r = client.post("/api/v1/identity/device/add-verify", json={
+            "challenge_b64": challenge_b64, "credential_id": cred_id_a,
+            **assertion,
+            "new_device_credential_id": b64u_encode(secrets.token_bytes(16)),
+            # PAS de new_device_public_key_b64
+        })
+        assert r.status_code == 200
+        assert r.json()["credential_enrolled"] is False
+        note = r.json().get("note", "")
+        assert "partiel" in note or "public_key_b64" in note
+
+    def test_a_authorizes_b_but_webauthn_ne_prouve_pas_meme_humain(self, client, tmp_data_dir):
+        """A autorise B ≠ preuve que A et B sont le même humain physique."""
+        _make_human_record("human_physique1", tmp_data_dir)
+        priv_a, cred_id_a = _make_credential("human_physique1", tmp_data_dir)
+        priv_b = ec.generate_private_key(ec.SECP256R1())
+        cred_id_b = b64u_encode(secrets.token_bytes(16))
+        cose_b64_b = self._make_cose_b64(priv_b)
+
+        r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_physique1"})
+        challenge_b64 = r_opt.json()["challenge"]
+        assertion = _build_assertion(priv_a, challenge_b64)
+        r = client.post("/api/v1/identity/device/add-verify", json={
+            "challenge_b64": challenge_b64, "credential_id": cred_id_a,
+            **assertion,
+            "new_device_credential_id": cred_id_b,
+            "new_device_public_key_b64": cose_b64_b,
+        })
+        assert r.status_code == 200
+        # WebAuthn valide → device ajouté MAIS unique_human_proven reste False
+        assert r.json()["unique_human_proven"] is False
+        # Aucun nouveau wallet
+        assert r.json().get("wallet_address") == "artcb1test"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# R363c — Test de concurrence (race condition limite 5 appareils)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestConcurrencyMax5:
+    """Vérifie qu'avec 4 appareils existants + 2 requêtes simultanées → exactement 1 succès."""
+
+    def test_concurrent_add_device_respects_max_5(self, client, tmp_data_dir):
+        """Race condition : 4 appareils + 2 simultanés → 1 succès + 1 × 409, total=5."""
+        import threading
+
+        _make_human_record("human_race1", tmp_data_dir)
+        priv_a, cred_id_a = _make_credential("human_race1", tmp_data_dir)
+
+        # Ajouter 4 appareils séquentiellement
+        for i in range(4):
+            r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_race1"})
+            challenge_b64 = r_opt.json()["challenge"]
+            assertion = _build_assertion(priv_a, challenge_b64, sign_count=i + 1)
+            r = client.post("/api/v1/identity/device/add-verify", json={
+                "challenge_b64": challenge_b64, "credential_id": cred_id_a,
+                **assertion, "new_device_credential_id": b64u_encode(secrets.token_bytes(16)),
+            })
+            assert r.status_code == 200, f"Setup device {i+1} failed"
+
+        # Préparer 2 challenges simultanés
+        r_opt1 = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_race1"})
+        r_opt2 = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_race1"})
+        ch1 = r_opt1.json()["challenge"]
+        ch2 = r_opt2.json()["challenge"]
+        assertion1 = _build_assertion(priv_a, ch1, sign_count=5)
+        assertion2 = _build_assertion(priv_a, ch2, sign_count=6)
+
+        results = []
+
+        def do_add(challenge_b64, assertion, sign_count):
+            r = client.post("/api/v1/identity/device/add-verify", json={
+                "challenge_b64": challenge_b64, "credential_id": cred_id_a,
+                **assertion, "new_device_credential_id": b64u_encode(secrets.token_bytes(16)),
+            })
+            results.append(r.status_code)
+
+        t1 = threading.Thread(target=do_add, args=(ch1, assertion1, 5))
+        t2 = threading.Thread(target=do_add, args=(ch2, assertion2, 6))
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+        # Exactement 1 succès (200) et 1 refus (409)
+        assert sorted(results) == [200, 409], (
+            f"Race condition: attendu [200, 409] mais obtenu {sorted(results)} — "
+            "vérifier FileLock ou transaction atomique sur device_registry"
+        )
+
+        # Total appareils actifs = exactement 5
+        r_list = client.get("/api/v1/identity/device/human_race1/devices")
+        assert r_list.json()["active_count"] == 5, (
+            f"Total devrait être 5 mais est {r_list.json()['active_count']}"
+        )
