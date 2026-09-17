@@ -519,3 +519,199 @@ def logout_all(
     _sessions_save(_sessions)
     logger.info("logout-all : %d sessions révoquées pour %s", len(victims), str(address)[:16])
     return {"revoked": len(victims), "address": address}
+
+
+# --------------------------------------------------------------------------- #
+#  WebAuthn ARTCB — Login biométrique (P0-A v2 — 2026-09-17)
+#
+#  Flux :
+#    1. POST /auth/webauthn/login/options  → challenge
+#    2. (client) capture empreinte → calcule template_bytes + template_hex
+#    3. POST /auth/webauthn/login/verify   → vérif unicité HumanIdentityRecord
+#                                            → session si identité trouvée
+#
+#  DIFFÉRENCE AVEC WEBAUTHN FIDO2 CLASSIQUE :
+#    - Pas de credential FIDO2 local : c'est l'identité ARTCB HumanIdentityRecord
+#      qui est la source de vérité (spec §1–§5).
+#    - Le template biométrique est comparé au template_hash_hex enregistré
+#      dans le HumanIdentityRecord (stub hash exact — production : FHE/TEE).
+#    - Aucune image brute ni private key n'est transmise.
+#
+#  HONNÊTETÉ :
+#    - unique_human_proven = False (hash exact — pas de matching FHE certifié)
+#    - CERTIFIED_100 = False
+# --------------------------------------------------------------------------- #
+
+_webauthn_challenges: dict[str, float] = {}  # challenge_hex → expires_at
+
+
+class WebAuthnLoginOptionsRequest(BaseModel):
+    """Options pour initier le login biométrique ARTCB."""
+    hint: str = Field(
+        default="fingerprint",
+        description="Type de biométrie souhaité : fingerprint | face | qr-smartphone",
+    )
+
+
+class WebAuthnLoginVerifyRequest(BaseModel):
+    """Vérification du login biométrique ARTCB.
+
+    Le client fournit :
+      - challenge  : le challenge obtenu depuis /options
+      - template_hex : le template biométrique normalisé (hex) — JAMAIS une image brute
+
+    Note : template_hex doit être ≥ 64 chars (32 bytes minimum pour un template normalisé).
+    L'image brute (champs 'image', 'photo', 'raw') est rejetée.
+    """
+    challenge: str = Field(min_length=64, max_length=64, description="Challenge hex obtenu via /options")
+    template_hex: str = Field(min_length=64, description="Template biométrique normalisé (hex) — pas d'image brute")
+    human_id: str | None = Field(default=None, description="HumanID optionnel pour cibler une identité existante")
+
+
+@router.post(
+    "/webauthn/login/options",
+    summary="Initier le login biométrique ARTCB (étape 1/2)",
+    response_description="Challenge à signer biométriquement",
+)
+def webauthn_login_options(body: WebAuthnLoginOptionsRequest) -> dict:
+    """Émet un challenge pour le login biométrique ARTCB.
+
+    L'utilisateur doit ensuite capturer son empreinte/visage, dériver le
+    template biométrique, et POST /auth/webauthn/login/verify avec ce challenge
+    et le template_hex normalisé.
+
+    OVH1 bloqué — réponse exclusivement depuis N2/N3/N4.
+    """
+    challenge = secrets.token_hex(32)
+    _webauthn_challenges[challenge] = time.time() + _CHALLENGE_TTL
+    return {
+        "challenge": challenge,
+        "expires_in": _CHALLENGE_TTL,
+        "hint": body.hint,
+        "instructions": (
+            "Capturez votre empreinte biométrique, dérivez le template normalisé (hex ≥ 64 chars), "
+            "puis POST /auth/webauthn/login/verify avec {challenge, template_hex}. "
+            "Ne transmettez jamais l'image brute — rejeté HTTP 400."
+        ),
+        "certified_100": False,
+        "unique_human_proven": False,
+    }
+
+
+@router.post(
+    "/webauthn/login/verify",
+    summary="Vérifier le login biométrique ARTCB (étape 2/2)",
+    response_description="Session token si identité biométrique trouvée",
+)
+def webauthn_login_verify(body: WebAuthnLoginVerifyRequest, request: Request) -> dict:
+    """Vérifie le template biométrique contre les identités HumanIdentityRecord enregistrées.
+
+    Flow :
+      1. Charge tous les HumanIdentityRecord depuis l'état local
+      2. Calcule BiometricCommitment sur le template présenté
+      3. Compare template_hash_hex avec les records (check_uniqueness stub)
+      4. Si match → émet une session pour ce wallet (si le HumanIdentityRecord a un wallet)
+      5. Si no match → 401 (identité biométrique non enregistrée)
+
+    HONNÊTETÉ :
+      - Matching = hash exact (stub). Production : FHE/TEE.
+      - unique_human_proven = False sur la session émise.
+      - CERTIFIED_100 = False.
+    """
+    from src.artcb.crypto.homomorphic import commit_biometric_template
+    from src.artcb.identity.biometric_onchain import check_uniqueness
+
+    # ── Vérifier le challenge ────────────────────────────────────────────────
+    exp = _webauthn_challenges.get(body.challenge)
+    if not exp:
+        raise HTTPException(status_code=400, detail="webauthn_challenge_unknown")
+    if time.time() > exp:
+        _webauthn_challenges.pop(body.challenge, None)
+        raise HTTPException(status_code=400, detail="webauthn_challenge_expired")
+
+    # ── Rejeter image brute ──────────────────────────────────────────────────
+    # Le template_hex ne doit pas être une image (pas de magic bytes connus)
+    try:
+        tmpl_bytes = bytes.fromhex(body.template_hex)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="template_hex_invalid_hex")
+
+    PNG_MAGIC  = b"\x89PNG"
+    JPEG_MAGIC = b"\xff\xd8\xff"
+    BMP_MAGIC  = b"BM"
+    if tmpl_bytes[:4] == PNG_MAGIC or tmpl_bytes[:3] == JPEG_MAGIC or tmpl_bytes[:2] == BMP_MAGIC:
+        raise HTTPException(status_code=400, detail="raw_image_rejected — fournir un template normalisé")
+
+    # ── Charger les HumanIdentityRecords ────────────────────────────────────
+    from src.api.biometric_identity_routes import _load_records
+    records = _load_records()
+
+    # ── Filtrer optionnellement par human_id (avant le check "pas d'identité") ──
+    # Si human_id est spécifié et introuvable → 404 (pas 401)
+    if body.human_id:
+        target_records = [r for r in records if r.get("human_id") == body.human_id]
+        if not target_records:
+            _webauthn_challenges.pop(body.challenge, None)
+            raise HTTPException(status_code=404, detail=f"human_id_not_found: {body.human_id}")
+    else:
+        target_records = records
+
+    if not target_records:
+        _webauthn_challenges.pop(body.challenge, None)
+        raise HTTPException(
+            status_code=401,
+            detail="biometric_identity_not_found — aucune identité biométrique enregistrée sur ce nœud",
+        )
+
+    # ── Calculer commitment sur le template présenté ────────────────────────
+    try:
+        commitment = commit_biometric_template(tmpl_bytes)
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"commitment_error: {exc}")
+
+    # ── Vérification d'unicité (match = identité trouvée) ───────────────────
+    check = check_uniqueness(commitment, target_records)
+
+    if not check.match_found:
+        _webauthn_challenges.pop(body.challenge, None)
+        raise HTTPException(
+            status_code=401,
+            detail=(
+                "biometric_identity_not_found — aucune identité correspondante. "
+                "Inscrivez-vous via POST /api/v1/identity/biometric/enroll."
+            ),
+        )
+
+    # ── Challenge consommé (usage unique) ────────────────────────────────────
+    _webauthn_challenges.pop(body.challenge, None)
+
+    # ── Récupérer le wallet associé ─────────────────────────────────────────
+    matched_record = next(
+        (r for r in target_records if r.get("human_id") == check.existing_human_id),
+        None,
+    )
+    wallet_address = (matched_record or {}).get("wallet_address") or ""
+    wallet_name    = (matched_record or {}).get("wallet_name") or check.existing_human_id or "unknown"
+    human_id       = check.existing_human_id or ""
+
+    logger.info(
+        "WebAuthn ARTCB login OK: human_id=%s wallet=%s (unique_human_proven=False)",
+        human_id[:16] if human_id else "?", wallet_name,
+    )
+
+    session = issue_session(
+        wallet_name=wallet_name,
+        address=wallet_address,
+        request=request,
+    )
+    return {
+        **session,
+        "human_id": human_id,
+        "login_method": "webauthn_artcb_biometric",
+        "unique_human_proven": False,
+        "certified_100": False,
+        "note": (
+            "Login biométrique ARTCB — matching hash exact (stub). "
+            "unique_human_proven=False jusqu'à validation FHE/TEE certifiée."
+        ),
+    }
