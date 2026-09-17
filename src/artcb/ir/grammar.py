@@ -25,6 +25,10 @@ class EdgeType(StrEnum):
     CONTRADICTS = "⊥"
     SUPPORTS = "⊢"
     COMPRESSES = "≡"
+    # R359 — arc structurel bidirectionnel du graphe complet.
+    # Signifie "co-présent dans le même contexte".
+    # Ne doit PAS être interprété comme une relation causale ou temporelle.
+    CONNECTS = "↔"
 
 
 IR_VERSION = "0.1"

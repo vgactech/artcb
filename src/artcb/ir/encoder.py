@@ -88,28 +88,55 @@ class IREncoder:
                     end=span.end,
                 )
             )
-            if index > 1:
+
+        # R359 — graphe complet bidirectionnel : N(N-1) arcs pour N nœuds.
+        # Pour chaque paire ordonnée (i, j) avec i ≠ j :
+        #   - arc structurel CONNECTS (i→j) + arc CONNECTS (j→i)
+        #   - arc TEMPORAL conservé pour les nœuds consécutifs (ordre du texte)
+        #   - arc CAUSES ajouté si marqueur causal détecté entre consécutifs
+        # Les arcs TEMPORAL et CAUSES ont une sémantique précise —
+        # ils ne sont PAS générés pour toutes les paires (ce serait faux).
+        for i in range(len(nodes)):
+            for j in range(len(nodes)):
+                if i == j:
+                    continue
+                ni = nodes[i]
+                nj = nodes[j]
+                # Arc structurel bidirectionnel (graphe complet)
                 edges.append(
                     IREdge(
                         **{
-                            "from": f"n{index - 1}",
-                            "to": node_id,
-                            "rel": EdgeType.TEMPORAL.value,
+                            "from": ni.id,
+                            "to": nj.id,
+                            "rel": EdgeType.CONNECTS.value,
                             "w": 1.0,
                         }
                     )
                 )
-                if self._has_causal_link(spans[index - 2].text, span.text):
+                # Arc TEMPORAL uniquement entre consécutifs (i→i+1)
+                if j == i + 1:
                     edges.append(
                         IREdge(
                             **{
-                                "from": f"n{index - 1}",
-                                "to": node_id,
-                                "rel": EdgeType.CAUSES.value,
-                                "w": 0.8,
+                                "from": ni.id,
+                                "to": nj.id,
+                                "rel": EdgeType.TEMPORAL.value,
+                                "w": 1.0,
                             }
                         )
                     )
+                    # Arc CAUSES uniquement si marqueur détecté
+                    if self._has_causal_link(spans[i].text, spans[j].text):
+                        edges.append(
+                            IREdge(
+                                **{
+                                    "from": ni.id,
+                                    "to": nj.id,
+                                    "rel": EdgeType.CAUSES.value,
+                                    "w": 0.8,
+                                }
+                            )
+                        )
 
         join_sep = self._detect_join_separator(text, spans)
         graph = IRGraph(

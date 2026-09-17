@@ -1,3 +1,6 @@
+// R359 — séparation surface publique / interne
+// Supprimé du frontend public : /reflex, /memorize, /logs
+// Backend Reflex, Memorize, Logs : conservés — agents uniquement
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { DashboardProvider } from "./context/DashboardContext";
 import { DashboardLayout } from "./layout/DashboardLayout";
@@ -12,15 +15,12 @@ import { JoinGroup } from "./pages/JoinGroup";
 import { Home } from "./pages/Home";
 import { Governance } from "./pages/Governance";
 import { Network } from "./pages/Network";
-import { Logs } from "./pages/Logs";
-import { Memorize } from "./pages/Memorize";
 import { Mining } from "./pages/Mining";
 import { SystemPage } from "./pages/SystemPage";
 import { Wallets } from "./pages/Wallets";
 import { RegisterBiometric } from "./pages/RegisterBiometric";
 import { BiometricIdentityTest } from "./pages/BiometricIdentityTest";
 import { AddDevice } from "./pages/AddDevice";
-import { ReflexStatus } from "./pages/ReflexStatus";
 
 export default function App() {
   return (
@@ -29,7 +29,6 @@ export default function App() {
         <Routes>
           <Route element={<DashboardLayout />}>
             <Route index element={<Home />} />
-            <Route path="memorize" element={<Memorize />} />
             <Route path="graph" element={<GraphPage />} />
             <Route path="chain" element={<ChainPage />} />
             <Route path="chain/block/:blockIndex" element={<ChainPage />} />
@@ -37,10 +36,8 @@ export default function App() {
             <Route path="register" element={<RegisterBiometric />} />
             <Route path="identity-test" element={<BiometricIdentityTest />} />
             <Route path="add-device" element={<AddDevice />} />
-            <Route path="reflex" element={<ReflexStatus />} />
             <Route path="mining" element={<Mining />} />
             <Route path="system" element={<SystemPage />} />
-            <Route path="logs" element={<Logs />} />
             <Route path="console" element={<Console />} />
             <Route path="groups/join" element={<JoinGroup />} />
             <Route path="groups" element={<Groups />} />
@@ -49,7 +46,6 @@ export default function App() {
             <Route path="network" element={<Network />} />
             <Route path="api-keys" element={<ApiKeys />} />
             <Route path="agent-memory" element={<AgentMemory />} />
-            <Route path="demo" element={<Navigate to="/memorize" replace />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

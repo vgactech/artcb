@@ -15,14 +15,12 @@ export function DashboardLayout() {
   const [blocks, setBlocks] = useState<ChainBlock[]>([]);
   const [chainValid, setChainValid] = useState<boolean | null>(null);
 
+  // R359 — nav publique : /reflex, /memorize, /logs supprimés (backend agents uniquement)
   const NAV = [
     { section: "CORE", items: [
       { to: "/", label: t('nav_dashboard'), icon: "▶" },
       { to: "/register", label: t('nav_register'), icon: "◉" },
-      { to: "/identity-test", label: "Test Biométrie", icon: "🪪" },
       { to: "/add-device", label: "ADD_DEVICE", icon: "+" },
-      { to: "/reflex", label: "Réflexe R350", icon: "⚡" },
-      { to: "/memorize", label: t('nav_memorize'), icon: "W" },
       { to: "/graph", label: t('nav_graph'), icon: "◎" },
     ]},
     { section: "CHAIN", items: [
@@ -32,7 +30,6 @@ export function DashboardLayout() {
     ]},
     { section: "SYSTEM", items: [
       { to: "/system", label: t('nav_system'), icon: "F3" },
-      { to: "/logs", label: t('nav_logs'), icon: "=" },
       { to: "/console", label: t('nav_console'), icon: ">" },
       { to: "/integrations", label: t('nav_integrations'), icon: "+" },
       { to: "/network", label: t('nav_network'), icon: "~" },
