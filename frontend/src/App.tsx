@@ -19,6 +19,8 @@ import { SystemPage } from "./pages/SystemPage";
 import { Wallets } from "./pages/Wallets";
 import { RegisterBiometric } from "./pages/RegisterBiometric";
 import { BiometricIdentityTest } from "./pages/BiometricIdentityTest";
+import { AddDevice } from "./pages/AddDevice";
+import { ReflexStatus } from "./pages/ReflexStatus";
 
 export default function App() {
   return (
@@ -34,6 +36,8 @@ export default function App() {
             <Route path="wallets" element={<Wallets />} />
             <Route path="register" element={<RegisterBiometric />} />
             <Route path="identity-test" element={<BiometricIdentityTest />} />
+            <Route path="add-device" element={<AddDevice />} />
+            <Route path="reflex" element={<ReflexStatus />} />
             <Route path="mining" element={<Mining />} />
             <Route path="system" element={<SystemPage />} />
             <Route path="logs" element={<Logs />} />

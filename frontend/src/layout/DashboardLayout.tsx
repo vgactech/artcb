@@ -20,6 +20,8 @@ export function DashboardLayout() {
       { to: "/", label: t('nav_dashboard'), icon: "▶" },
       { to: "/register", label: t('nav_register'), icon: "◉" },
       { to: "/identity-test", label: "Test Biométrie", icon: "🪪" },
+      { to: "/add-device", label: "ADD_DEVICE", icon: "+" },
+      { to: "/reflex", label: "Réflexe R350", icon: "⚡" },
       { to: "/memorize", label: t('nav_memorize'), icon: "W" },
       { to: "/graph", label: t('nav_graph'), icon: "◎" },
     ]},

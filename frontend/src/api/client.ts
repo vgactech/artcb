@@ -1060,3 +1060,97 @@ export async function listHumanIdentities(): Promise<{ count: number; human_ids:
   const { data } = await api.get("/identity/biometric/");
   return data;
 }
+
+// ─── ADD_DEVICE — R350–R354 (2026-09-17) ────────────────────────────────────
+
+export interface AddDeviceOptionsResponse {
+  challenge: string;
+  human_id: string;
+  expires_in: number;
+  instructions: string;
+  forbidden: string[];
+  certified_100: false;
+  unique_human_proven: false;
+}
+
+export interface AddDeviceVerifyRequest {
+  challenge: string;
+  existing_template_hex: string;
+  new_device_credential_hex: string;
+  new_device_hint?: string;
+}
+
+export interface AddDeviceVerifyResponse {
+  device_added: true;
+  device_id: string;
+  human_id: string;
+  wallet_address: string;
+  device_hint: string;
+  devices_count: number;
+  max_devices: number;
+  unique_human_proven: false;
+  certified_100: false;
+  note: string;
+}
+
+export interface DeviceRecord {
+  device_id: string;
+  device_hint: string;
+  created_at: number;
+  revoked: boolean;
+}
+
+export interface DeviceListResponse {
+  human_id: string;
+  devices: DeviceRecord[];
+  count: number;
+  active_count: number;
+  certified_100: false;
+}
+
+/** POST /api/v1/identity/device/add-options — Étape 1 : challenge ADD_DEVICE */
+export async function addDeviceOptions(
+  human_id: string,
+  new_device_hint = "unknown",
+): Promise<AddDeviceOptionsResponse> {
+  const { data } = await api.post("/identity/device/add-options", { human_id, new_device_hint });
+  return data as AddDeviceOptionsResponse;
+}
+
+/** POST /api/v1/identity/device/add-verify — Étape 2 : vérification biométrique + enregistrement */
+export async function addDeviceVerify(
+  body: AddDeviceVerifyRequest,
+): Promise<AddDeviceVerifyResponse> {
+  const { data } = await api.post("/identity/device/add-verify", body);
+  return data as AddDeviceVerifyResponse;
+}
+
+/** GET /api/v1/identity/device/{human_id}/devices — Lister les appareils d'une identité */
+export async function listDevices(human_id: string): Promise<DeviceListResponse> {
+  const { data } = await api.get(`/identity/device/${encodeURIComponent(human_id)}/devices`);
+  return data as DeviceListResponse;
+}
+
+// ─── REFLEX STATUS — R350–R354 ────────────────────────────────────────────────
+
+export interface ReflexStatusResponse {
+  engine: string;
+  rules: string;
+  activated_at: number | null;
+  total_triggers: number;
+  certified: boolean;
+  unique_human_proven: boolean;
+  priorities: {
+    REFLEX_MEMORY: number;
+    SECURITY: number;
+    PQC: number;
+    OTHER: number;
+  };
+  note: string;
+}
+
+/** GET /api/v1/reflex/status — État du moteur réflexe ARTCB */
+export async function fetchReflexStatus(): Promise<ReflexStatusResponse> {
+  const { data } = await api.get("/reflex/status");
+  return data as ReflexStatusResponse;
+}
