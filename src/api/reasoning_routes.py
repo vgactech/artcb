@@ -205,6 +205,110 @@ def seal_record(record_id: str, body: SealRecordRequest) -> dict:
     }
 
 
+
+class PublishRecordRequest(BaseModel):
+    """Options pour la publication PBFT d'un REASONING_RECORD scellé."""
+    api_url: str = Field(default="", max_length=256, description="URL du nœud primary (optionnel)")
+    seal_if_needed: bool = Field(
+        default=False,
+        description=(
+            "Si True : scelle automatiquement le record avant publication "
+            "(outcome=pass, learning vide). "
+            "Si False (défaut) : échoue si le record n'est pas déjà scellé."
+        ),
+    )
+    outcome_detail: str = Field(default="", max_length=500)
+    learning: str = Field(default="", max_length=2000)
+
+
+@router.post(
+    "/record/{record_id}/publish",
+    summary="Publier un REASONING_RECORD scellé via PBFT (R356)",
+)
+def publish_record(record_id: str, body: PublishRecordRequest) -> dict:
+    """Soumet le final_hash d'un ReasoningRecord scellé au consensus PBFT ARTCB.
+
+    ## Ce qui est gravé on-chain (R356 / audit R372 point 9)
+    PAS le raisonnement brut — uniquement la preuve cryptographique :
+      - record_id
+      - final_hash  (SHA-256 de tout le record)
+      - session_id_hash  (hash du session_id — pas le session_id brut)
+      - protocol_version r356-reasoning-v1
+
+    ## Scénarios
+      - Record non scellé + seal_if_needed=False → 409 record_not_sealed
+      - Record non scellé + seal_if_needed=True  → seal automatique puis publication
+      - Primary mort                             → ok=False, error=primary_unreachable
+      - Quorum < 3                               → ok=False, error=no_quorum
+      - Déjà publié                              → ok=True, already_published=True
+
+    CERTIFIED_100=false.
+    """
+    from src.artcb.reasoning.pbft_publisher import ReasoningPbftPublisher, PublishResult
+    from src.artcb.reasoning.record import record_from_dict
+
+    store = get_record_store()
+    row = store.find_by_record_id(record_id)
+    if row is None:
+        raise HTTPException(status_code=404, detail=f"record_not_found: {record_id}")
+
+    # Reconstruire le record complet
+    r = record_from_dict(row)
+
+    # Sceller si demandé et non encore scellé
+    if not r.frozen:
+        if not body.seal_if_needed:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    f"record_not_sealed: {record_id[:12]}… "
+                    "Sceller d'abord via POST /record/{id}/seal, "
+                    "ou passer seal_if_needed=true."
+                ),
+            )
+        r.seal(
+            outcome=RecordOutcome.PASS,
+            outcome_detail=body.outcome_detail or "auto-seal avant publication R356",
+            learning=body.learning,
+        )
+        store.append(r)
+
+    # Publier via PBFT
+    publisher = ReasoningPbftPublisher(
+        api_url=body.api_url or "",
+    )
+    result: PublishResult = publisher.publish(r)
+
+    # Si succès : mettre à jour le record avec le bloc on-chain
+    if result.ok and not result.already_published and result.block_index is not None:
+        from src.artcb.reasoning.record import SealedRecordError
+        # Créer une entrée de mise à jour (append-only — on ne réécrit pas)
+        update = {"record_id": r.record_id, "chain_block_index": result.block_index,
+                  "chain_block_hash": result.block_hash, "r356_published": True,
+                  "ts_ns": result.ts_ns}
+        import json as _json
+        from pathlib import Path
+        store_path = store._path
+        store_path.parent.mkdir(parents=True, exist_ok=True)
+        with store_path.open("a", encoding="utf-8") as fh:
+            fh.write(_json.dumps(update, ensure_ascii=False, separators=(",", ":")) + "\n")
+
+    logger.info(
+        "R356 publish: record_id=%s ok=%s error=%s block=%s dur=%.0fms",
+        record_id[:12], result.ok, result.error, result.block_index, result.duration_ms,
+    )
+
+    status_code = 200 if result.ok else 503
+    if not result.ok and result.error in ("record_not_sealed", "missing_final_hash"):
+        status_code = 409
+
+    response = result.to_dict()
+    if not result.ok and status_code == 503:
+        raise HTTPException(status_code=503, detail=response)
+    return response
+
+
+
 @router.get("/reflex-records", summary="REASONING_RECORD créés par le ReflexEngine")
 def reflex_records() -> dict:
     """Retourne les records créés par le ReflexEngine lors des activations.
