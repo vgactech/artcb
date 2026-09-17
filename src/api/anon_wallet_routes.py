@@ -153,23 +153,30 @@ def _create_wallet_auto(name: str, *, request: Request | None = None) -> dict[st
         "Anon wallet created name=%s address=%s hybrid=%s",
         name, wallet.address, wallet.is_hybrid,
     )
+    # R361 — restitution complète des clés privées au client.
+    # Ed25519 seed (32 octets = 64 hex) + ML-DSA-65 secret (4032 octets = 8064 hex).
+    # Les deux doivent être sauvegardées par l'utilisateur pour récupération hybride.
+    # Affichées UNE SEULE FOIS — jamais loggées, jamais stockées dans la session.
+    # Le serveur conserve les fichiers .key et .pqc chiffrés comme backup opérateur.
     result: dict[str, Any] = {
         "created": True,
         "name": name,
         "address": wallet.address,
         "seed_hex": seed_hex,
-        # Clés publiques (jamais les clés privées PQC)
         "public_key_hex": wallet.public_key_hex,
         "WARNING": (
-            "SAUVEGARDEZ votre seed_hex MAINTENANT — "
-            "c'est votre clé privée, elle ne sera plus jamais affichée. "
-            "Le vault est aléatoire et non transmis. "
-            "Reconnectez via /register avec le même appareil."
+            "SAUVEGARDEZ seed_hex ET pqc_secret_key_hex MAINTENANT — "
+            "ces clés privées ne seront plus jamais affichées. "
+            "Sans elles, la récupération du wallet hybride est impossible "
+            "si le serveur est indisponible."
         ),
         "unique_human_proven": False,
     }
-    # PQC : exposer la clé publique ML-DSA + adresse hybride si disponibles
-    # La clé PRIVÉE PQC reste côté serveur (fichier .pqc chiffré) — jamais transmise
+    # PQC : clé privée ML-DSA-65 (4032 octets = 8064 hex)
+    # Transmise UNE SEULE FOIS — c'est la clé privée post-quantique du wallet.
+    if wallet.pqc_secret_key is not None:
+        result["pqc_secret_key_hex"] = wallet.pqc_secret_key.hex()
+    # Clés publiques + adresse hybride
     if wallet.pqc_public_key_hex:
         result["pqc_public_key_hex"] = wallet.pqc_public_key_hex
     if wallet.address_v2:
@@ -285,14 +292,15 @@ def anon_register_verify(body: AnonRegisterVerifyBody, request: Request) -> dict
         "public_key_hex": wallet.get("public_key_hex"),
         **session,
     }
-    # PQC : clés publiques ML-DSA + adresse hybride si disponibles
-    # Les clés PRIVÉES (Ed25519 seed + PQC secret) restent protégées côté serveur
+    # PQC : clé publique ML-DSA + adresse hybride
     if wallet.get("pqc_public_key_hex"):
         out["pqc_public_key_hex"] = wallet["pqc_public_key_hex"]
     if wallet.get("address_v2"):
         out["address_v2"] = wallet["address_v2"]
-    # seed_hex : affiché une seule fois, à sauvegarder par l'utilisateur
+    # R361 — restitution complète : seed Ed25519 + clé privée PQC, affichées UNE SEULE FOIS
     if wallet.get("seed_hex"):
         out["seed_hex"] = wallet["seed_hex"]
         out["WARNING"] = wallet.get("WARNING")
+    if wallet.get("pqc_secret_key_hex"):
+        out["pqc_secret_key_hex"] = wallet["pqc_secret_key_hex"]
     return out

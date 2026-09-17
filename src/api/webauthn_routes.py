@@ -232,22 +232,31 @@ def _create_wallet_if_needed(
     vault = secrets.token_urlsafe(32)
     wallet = wm.create_wallet(name=name, user_password=vault)
     seed_hex = wallet.signing_key.encode().hex()
-    logger.info("Biometric wallet created name=%s address=%s", name, wallet.address)
-    return {
+    logger.info("Biometric wallet created name=%s address=%s hybrid=%s", name, wallet.address, wallet.is_hybrid)
+    # R361 — restitution complète des clés privées.
+    # Ed25519 seed (32 octets) + ML-DSA-65 secret (4032 octets) affichés UNE SEULE FOIS.
+    result: dict = {
         "created": True,
         "name": name,
         "address": wallet.address,
         "seed_hex": seed_hex,
         "WARNING": (
-            "SAUVEGARDEZ votre seed_hex MAINTENANT — "
-            "c'est votre clé privée, elle ne sera plus jamais affichée. "
-            "L'empreinte / le visage déverrouillent ce nœud, pas la seed. "
-            "Le mot de passe vault n'est pas affiché — reconnectez via /register."
+            "SAUVEGARDEZ seed_hex ET pqc_secret_key_hex MAINTENANT — "
+            "ces clés privées ne seront plus jamais affichées. "
+            "La biométrie déverrouille l'accès au nœud, pas les clés privées."
         ),
         "auth_method": "biometric_vault",
         "password_login_possible": False,
         "unique_human_proven": False,
     }
+    # PQC : clé privée ML-DSA-65 si générée
+    if wallet.pqc_secret_key is not None:
+        result["pqc_secret_key_hex"] = wallet.pqc_secret_key.hex()
+    if wallet.pqc_public_key_hex:
+        result["pqc_public_key_hex"] = wallet.pqc_public_key_hex
+    if wallet.address_v2:
+        result["address_v2"] = wallet.address_v2
+    return result
 
 
 def _mark_auth_methods(name: str, method: str) -> None:

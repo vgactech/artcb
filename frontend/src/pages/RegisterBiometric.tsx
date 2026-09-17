@@ -52,6 +52,8 @@ export function RegisterBiometric() {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [seed, setSeed] = useState<string | null>(null);
+  // R361 — clé privée PQC ML-DSA-65 (4032 octets = 8064 hex chars)
+  const [pqcSecret, setPqcSecret] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [walletName, setWalletName] = useState<string | null>(null);
 
@@ -73,12 +75,17 @@ export function RegisterBiometric() {
     setError(null);
     setInfo(null);
     setSeed(null);
+    setPqcSecret(null);
     try {
       const begin = await anonRegisterOptions(true);
       const cred = await createPlatformCredential(begin.publicKey);
       const done = await anonRegisterVerify(serializeCredential(cred), true);
       persistSession(done.session_token, done.wallet_name, done.address);
       if (done.seed_hex) setSeed(done.seed_hex);
+      // R361 — clé privée PQC reçue si wallet hybride
+      if ((done as Record<string, unknown>).pqc_secret_key_hex) {
+        setPqcSecret((done as Record<string, unknown>).pqc_secret_key_hex as string);
+      }
       setInfo(t("reg_created_ok"));
     } catch (err) {
       const ax = err as { response?: { data?: { detail?: unknown } } };
@@ -217,11 +224,37 @@ export function RegisterBiometric() {
         </div>
       )}
 
-      {/* Seed — afficher une seule fois */}
-      {seed && (
+      {/* R361 — Clés privées — afficher UNE SEULE FOIS */}
+      {(seed || pqcSecret) && (
         <div className="panel" style={{ border: "2px solid var(--mc-redstone, #c0392b)", marginTop: "1rem" }}>
           <h2>⚠ {t("reg_seed_once")}</h2>
-          <p className="mc-mono" style={{ wordBreak: "break-all" }}>{seed}</p>
+
+          {seed && (
+            <>
+              <p className="mc-muted" style={{ marginTop: "0.75rem" }}>
+                {t("reg_key_ed25519_label")}
+              </p>
+              <p className="mc-mono" style={{ wordBreak: "break-all", fontSize: "0.8em" }}>{seed}</p>
+            </>
+          )}
+
+          {pqcSecret && (
+            <>
+              <p className="mc-muted" style={{ marginTop: "0.75rem" }}>
+                {t("reg_key_pqc_label")}
+              </p>
+              <p className="mc-mono" style={{
+                wordBreak: "break-all",
+                fontSize: "0.7em",
+                maxHeight: "8em",
+                overflowY: "auto",
+                border: "1px solid var(--mc-border, #e5e7eb)",
+                padding: "0.4em",
+              }}>
+                {pqcSecret}
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>

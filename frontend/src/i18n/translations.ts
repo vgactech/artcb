@@ -207,6 +207,8 @@ export interface Translations {
   reg_address_label: string;
   reg_open_wallet: string;
   reg_seed_once: string;
+  reg_key_ed25519_label: string;
+  reg_key_pqc_label: string;
   // clés obsolètes conservées pour compatibilité i18n (non utilisées dans R358)
   reg_name_label: string;
   reg_name_placeholder: string;
@@ -516,7 +518,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     bio_raw_never_stored: 'Aucune image d’empreinte ou de visage n’est stockée ni écrite dans le livre. Seules des clés publiques WebAuthn (et un secret d’appareil pour la caméra) sont conservées. Ces méthodes déverrouillent le wallet sur cet appareil ; elles ne prouvent pas qu’une personne est un humain unique.',
     bio_seed_once: 'Sauvegardez cette seed maintenant — elle ne sera plus affichée.',
     wallets_bio_title: 'Inscription sans mot de passe',
-    // RegisterBiometric R358 — sans nom utilisateur
+    // RegisterBiometric R358/R361
     reg_title: 'Créer un wallet',
     reg_subtitle: 'Votre wallet est protégé par l\'authentificateur de cet appareil.',
     reg_disclaimer: '',
@@ -536,7 +538,9 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reg_wallet_id_label: 'Identifiant du wallet (à noter) :',
     reg_address_label: 'Adresse ARTCB :',
     reg_open_wallet: 'Ouvrir dans Wallets →',
-    reg_seed_once: 'Sauvegardez cette seed maintenant — elle ne sera plus affichée.',
+    reg_seed_once: 'Sauvegardez vos clés privées maintenant — elles ne seront plus jamais affichées.',
+    reg_key_ed25519_label: 'Clé privée Ed25519 (seed, 32 octets) :',
+    reg_key_pqc_label: 'Clé privée ML-DSA-65 (post-quantique, 4032 octets) :',
     // clés obsolètes conservées pour compatibilité
     reg_name_label: 'Nom du wallet',
     reg_name_placeholder: 'votre-nom',
@@ -750,7 +754,9 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reg_wallet_id_label: 'Wallet identifier (save this):',
     reg_address_label: 'ARTCB address:',
     reg_open_wallet: 'Open in Wallets →',
-    reg_seed_once: 'Save this seed now — it will never be shown again.',
+    reg_seed_once: 'Save your private keys now — they will never be shown again.',
+    reg_key_ed25519_label: 'Ed25519 private key (seed, 32 bytes):',
+    reg_key_pqc_label: 'ML-DSA-65 private key (post-quantum, 4032 bytes):',
     // legacy keys kept for i18n compatibility
     reg_name_label: 'Wallet name',
     reg_name_placeholder: 'your-name',
