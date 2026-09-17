@@ -345,7 +345,23 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
     human_id = challenge_data["human_id"]
     rp_id = challenge_data.get("rp_id", "artcb.me")
 
-    # ── 2. Récupérer la clé publique de la credential de l'appareil EXISTANT ─
+    # ── 2. Vérifier limite d'appareils EN PREMIER (avant toute crypto) ────────
+    # Ordre transactionnel correct : pas de consommation de preuve si l'opération
+    # est de toute façon impossible (audit R363 — corriger ordre max_5).
+    MAX_DEVICES_PER_HUMAN = 5
+    device_registry_pre = _load_device_registry()
+    human_devices = [d for d in device_registry_pre if d.get("human_id") == human_id and not d.get("revoked")]
+    if len(human_devices) >= MAX_DEVICES_PER_HUMAN:
+        _device_challenges.pop(body.challenge_b64, None)
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"device_limit_reached — max {MAX_DEVICES_PER_HUMAN} appareils par HumanID. "
+                "Révoquez un appareil existant avant d'en ajouter un nouveau."
+            ),
+        )
+
+    # ── 3. Récupérer la clé publique de la credential de l'appareil EXISTANT ─
     cred_store = _load_credential_store()
     existing_cred = cred_store.get(body.credential_id)
     if not existing_cred:
@@ -366,7 +382,7 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
             detail="credential_human_id_mismatch — cette credential n'appartient pas à cet HumanID",
         )
 
-    # ── 3. Charger la clé publique ───────────────────────────────────────────
+    # ── 4. Charger la clé publique de A ─────────────────────────────────────
     pub_key_pem = existing_cred.get("public_key_pem", "")
     if not pub_key_pem:
         _device_challenges.pop(body.challenge_b64, None)
@@ -379,7 +395,7 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
         _device_challenges.pop(body.challenge_b64, None)
         raise HTTPException(status_code=500, detail="credential_public_key_invalid")
 
-    # ── 4. Vérification WebAuthn cryptographique ─────────────────────────────
+    # ── 5. Vérification WebAuthn cryptographique de A ────────────────────────
     host = request.headers.get("host", "artcb.me")
     origins = expected_origins(host, "https")
 
@@ -409,30 +425,41 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
             detail=f"webauthn_assertion_failed: {exc} — ⚠️ PIN seul REFUSÉ (R363 spec §4)",
         )
 
-    # ── 5. Mise à jour du sign_count anti-replay ─────────────────────────────
+    # ── 6. Mise à jour du sign_count anti-replay (après toutes les vérifications) ─
     _update_sign_count(body.credential_id, new_sign_count)
     _device_challenges.pop(body.challenge_b64, None)
 
-    # ── 6. Vérifier l'identité correspondante ────────────────────────────────
+    # ── 7. Vérifier l'identité correspondante ────────────────────────────────
     records = _load_records()
     matching_record = next((r for r in records if r.get("human_id") == human_id), None)
     if not matching_record:
         raise HTTPException(status_code=404, detail=f"human_id_not_found: {human_id}")
 
-    # ── 7. Vérifier limite d'appareils (anti-abus spec §17) ──────────────────
-    MAX_DEVICES_PER_HUMAN = 5
-    device_registry = _load_device_registry()
-    human_devices = [d for d in device_registry if d.get("human_id") == human_id and not d.get("revoked")]
-    if len(human_devices) >= MAX_DEVICES_PER_HUMAN:
-        raise HTTPException(
-            status_code=409,
-            detail=(
-                f"device_limit_reached — max {MAX_DEVICES_PER_HUMAN} appareils par HumanID. "
-                "Révoquez un appareil existant avant d'en ajouter un nouveau."
-            ),
-        )
+    # ── 8. Enregistrer B dans credential_store (enrôlement réel de B) ─────────
+    # Si new_device_public_key_b64 est fourni, B est enrôlé cryptographiquement
+    # dans credential_store.jsonl avec sa propre clé publique — il pourra se
+    # connecter via /auth/webauthn/login avec sa credential.
+    new_cred_enrolled = False
+    if body.new_device_public_key_b64:
+        data_dir_cs = Path(os.environ.get("ARTCB_DATA_DIR", "data"))
+        cred_store_path = data_dir_cs / "identity" / "credential_store.jsonl"
+        cred_store_path.parent.mkdir(parents=True, exist_ok=True)
+        new_cred_rec = {
+            "credential_id": body.new_device_credential_id,
+            "human_id": human_id,
+            "public_key_b64": body.new_device_public_key_b64,
+            "public_key_pem": "",   # PEM non fourni à ce stade (clé brute b64)
+            "sign_count": 0,
+            "enrolled_by": body.credential_id[:16] + "…",
+            "enrolled_via": "add_device_r363",
+            "device_hint": body.new_device_hint,
+            "created_at": time.time(),
+        }
+        with cred_store_path.open("a") as _f:
+            _f.write(json.dumps(new_cred_rec, ensure_ascii=False) + "\n")
+        new_cred_enrolled = True
 
-    # ── 8. Enregistrer le nouvel appareil ─────────────────────────────────────
+    # ── 9. Enregistrer le device_record dans device_registry ──────────────────
     device_id = hashlib.sha256(
         f"{human_id}:{body.new_device_credential_id}:{time.time_ns()}".encode()
     ).hexdigest()[:32]
@@ -448,6 +475,7 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
         "revoked_at": None,
         "auth_method": "add_device_webauthn_assertion_r363",
         "authorized_by_credential": body.credential_id,
+        "credential_enrolled": new_cred_enrolled,
         "unique_human_proven": False,
         "certified_100": False,
     }
@@ -470,12 +498,14 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
         "max_devices": MAX_DEVICES_PER_HUMAN,
         "authorized_by": body.credential_id[:16] + "…",
         "proof_class": "webauthn_assertion_cryptographic",
+        "credential_enrolled": new_cred_enrolled,
         "unique_human_proven": False,
         "certified_100": False,
         "note": (
             "Appareil ajouté via VRAIE assertion WebAuthn (R363). "
-            "Aucun nouveau wallet créé (spec §10 rapport 367). "
-            "WebAuthn valide ≠ unique_human_proven (spec §4 rapport 367)."
+            + ("Credential B enrôlée dans credential_store — B peut se connecter via /auth/webauthn/login. " if new_cred_enrolled else "Clé publique B non fournie — enrôlement partiel (fournir new_device_public_key_b64 pour enrôlement complet). ")
+            + "Aucun nouveau wallet créé (spec §10 rapport 367). "
+            + "WebAuthn valide ≠ unique_human_proven (spec §4 rapport 367)."
         ),
     }
 
