@@ -1,17 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
+/**
+ * RegisterBiometric — R357
+ *
+ * Architecture cible :
+ *   - L'utilisateur choisit un nom de wallet
+ *   - Un seul bouton "Créer le wallet" → WebAuthn natif de l'OS
+ *   - L'OS décide comment déverrouiller le credential (PIN, Touch ID, Face ID…)
+ *   - ARTCB ne présente PAS de choix biométrique (pas de Fingerprint / Face / Both)
+ *   - PAS de caméra, PAS de FaceCapture, PAS de face enrollment
+ *   - Le même formulaire sert aussi à la connexion (tab Connexion)
+ *
+ * Séparation garantie :
+ *   WebAuthn credential ≠ identité humaine unique ≠ preuve anti-Sybil
+ *   (CERTIFIED_100=false — ces preuves sont gérées hors de ce formulaire)
+ */
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  faceEnrollOptions,
-  faceEnrollVerify,
-  faceLogin,
-  faceLoginOptions,
   webauthnLoginOptions,
   webauthnLoginVerify,
   webauthnRegisterOptions,
   webauthnRegisterVerify,
-  webauthnStatus,
 } from "../api/client";
-import { FaceCapture, loadFaceSecret, saveFaceSecret } from "../components/FaceCapture";
 import { useDashboard } from "../context/DashboardContext";
 import { useTranslation } from "../i18n/useTranslation";
 import {
@@ -25,7 +34,6 @@ import {
 const SESSION_TOKEN_KEY = "artcb_session_token";
 const SESSION_WALLET_KEY = "artcb_session_wallet";
 
-type Modality = "fingerprint" | "face" | "both";
 type Mode = "register" | "login";
 
 export function RegisterBiometric() {
@@ -36,8 +44,6 @@ export function RegisterBiometric() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
-  const [cameraOn, setCameraOn] = useState(false);
-  const [cameraIntent, setCameraIntent] = useState<"enroll" | "login" | null>(null);
   const [seed, setSeed] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [platformOk, setPlatformOk] = useState<boolean | null>(null);
@@ -53,75 +59,13 @@ export function RegisterBiometric() {
     setAddress(addr);
   };
 
-  const runWebauthnRegister = async (modality: "fingerprint" | "face", alsoCreate: boolean) => {
-    if (!webauthnSupported()) {
-      throw new Error("Ce navigateur ne prend pas en charge WebAuthn (empreinte / Face ID).");
-    }
-    const begin = await webauthnRegisterOptions(name.trim(), modality, alsoCreate);
-    const cred = await createPlatformCredential(begin.publicKey);
-    const done = await webauthnRegisterVerify(name.trim(), modality, serializeCredential(cred), alsoCreate);
-    persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
-    if (done.seed_hex) setSeed(done.seed_hex);
-    return done;
-  };
-
-  const enrollFaceCamera = useCallback(
-    async (secret: string) => {
-      setCameraOn(false);
-      setBusy(true);
-      setError(null);
-      try {
-        const begin = await faceEnrollOptions(name.trim(), true);
-        const done = await faceEnrollVerify({
-          name: name.trim(),
-          nonce: begin.nonce,
-          device_secret: secret,
-          liveness_ok: true,
-          create_wallet: true,
-        });
-        saveFaceSecret(name.trim(), secret);
-        persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
-        if (done.seed_hex) setSeed(done.seed_hex);
-        setInfo("Présence faciale locale enregistrée (caméra). Aucune photo n'a été stockée. Ceci déverrouille le wallet sur cet appareil ; ce n'est pas une preuve d'identité unique.");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        setBusy(false);
-        setCameraIntent(null);
-      }
-    },
-    [name, setActorAddress],
-  );
-
-  const loginFaceCamera = useCallback(
-    async (secret: string) => {
-      setCameraOn(false);
-      setBusy(true);
-      setError(null);
-      try {
-        const begin = await faceLoginOptions(name.trim());
-        const stored = loadFaceSecret(name.trim()) || secret;
-        const done = await faceLogin({
-          name: name.trim(),
-          nonce: begin.nonce,
-          device_secret: stored,
-          liveness_ok: true,
-        });
-        persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
-        setInfo("Connecté par présence faciale locale (caméra).");
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        setBusy(false);
-        setCameraIntent(null);
-      }
-    },
-    [name, setActorAddress],
-  );
-
-  const handleRegister = async (choice: Modality) => {
+  const handleRegister = async () => {
     if (!name.trim()) {
-      setError("Choisissez un nom de wallet.");
+      setError(t("reg_name_required"));
+      return;
+    }
+    if (!webauthnSupported()) {
+      setError(t("reg_webauthn_unsupported"));
       return;
     }
     setBusy(true);
@@ -129,21 +73,14 @@ export function RegisterBiometric() {
     setInfo(null);
     setSeed(null);
     try {
-      if (choice === "fingerprint") {
-        await runWebauthnRegister("fingerprint", true);
-        setInfo("Empreinte enregistrée via le capteur de l'appareil (WebAuthn).");
-      } else if (choice === "face") {
-        // Camera first. WebAuthn "face" is the same OS sensor as fingerprint
-        // (Android/iOS cannot open the selfie camera via navigator.credentials).
-        setCameraIntent("enroll");
-        setCameraOn(true);
-        setInfo("Caméra avant : placez votre visage dans le cadre. Aucune photo n'est envoyée.");
-      } else {
-        await runWebauthnRegister("fingerprint", true);
-        setCameraIntent("enroll");
-        setCameraOn(true);
-        setInfo("Empreinte enregistrée. Caméra avant pour le visage — aucune photo n'est envoyée.");
-      }
+      // Passe "fingerprint" au backend comme modalité par défaut —
+      // l'OS choisit lui-même comment déverrouiller (PIN, biométrie, etc.)
+      const begin = await webauthnRegisterOptions(name.trim(), "fingerprint", true);
+      const cred = await createPlatformCredential(begin.publicKey);
+      const done = await webauthnRegisterVerify(name.trim(), "fingerprint", serializeCredential(cred), true);
+      persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
+      if (done.seed_hex) setSeed(done.seed_hex);
+      setInfo(t("reg_created_ok"));
     } catch (err) {
       const ax = err as { response?: { data?: { detail?: string } } };
       setError(ax?.response?.data?.detail || (err instanceof Error ? err.message : String(err)));
@@ -152,36 +89,19 @@ export function RegisterBiometric() {
     }
   };
 
-  const handleLogin = async (choice: Exclude<Modality, "both">) => {
+  const handleLogin = async () => {
     if (!name.trim()) {
-      setError("Indiquez le nom du wallet.");
+      setError(t("reg_name_required"));
       return;
     }
     setBusy(true);
     setError(null);
     try {
-      if (choice === "fingerprint") {
-        const begin = await webauthnLoginOptions(name.trim(), "fingerprint");
-        const cred = await getPlatformCredential(begin.publicKey);
-        const done = await webauthnLoginVerify(name.trim(), serializeCredential(cred));
-        persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
-        setInfo("Connecté par empreinte.");
-      } else {
-        const st = await webauthnStatus(name.trim()).catch(() => null);
-        const hasCamera = Boolean(st?.face_camera_enrolled || loadFaceSecret(name.trim()));
-        if (hasCamera) {
-          setCameraIntent("login");
-          setCameraOn(true);
-          setInfo("Caméra avant : placez votre visage dans le cadre.");
-        } else {
-          // Existing enrollments created via OS sensor (same as fingerprint).
-          const begin = await webauthnLoginOptions(name.trim(), "face");
-          const cred = await getPlatformCredential(begin.publicKey);
-          const done = await webauthnLoginVerify(name.trim(), serializeCredential(cred));
-          persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
-          setInfo("Connecté par le capteur de l'appareil (Face ID / empreinte OS). La caméra s'ouvre pour les nouveaux comptes visage.");
-        }
-      }
+      const begin = await webauthnLoginOptions(name.trim(), "fingerprint");
+      const cred = await getPlatformCredential(begin.publicKey);
+      const done = await webauthnLoginVerify(name.trim(), serializeCredential(cred));
+      persistSession(done.session_token, done.wallet_name || name.trim(), done.address);
+      setInfo(t("reg_login_ok"));
     } catch (err) {
       const ax = err as { response?: { data?: { detail?: string } } };
       setError(ax?.response?.data?.detail || (err instanceof Error ? err.message : String(err)));
@@ -190,90 +110,82 @@ export function RegisterBiometric() {
     }
   };
 
-  const onLive = useCallback(
-    (secret: string) => {
-      if (cameraIntent === "login") loginFaceCamera(secret);
-      else enrollFaceCamera(secret);
-    },
-    [cameraIntent, enrollFaceCamera, loginFaceCamera],
-  );
-
   return (
     <div className="mc-page bio-page">
-      <h1 className="dashboard-title">{t("bio_title")}</h1>
-      <p className="bio-lead">{t("bio_subtitle")}</p>
-      <p className="mc-muted">{t("bio_raw_never_stored")}</p>
+      <h1 className="dashboard-title">{t("reg_title")}</h1>
+      <p className="bio-lead">{t("reg_subtitle")}</p>
+      <p className="mc-muted">{t("reg_disclaimer")}</p>
 
+      {/* Onglets Créer / Connexion */}
       <div className="bio-mode-toggle" role="tablist">
-        <button className={mode === "register" ? "primary" : ""} onClick={() => setMode("register")} type="button">
-          {t("bio_register_tab")}
+        <button
+          className={mode === "register" ? "primary" : ""}
+          onClick={() => { setMode("register"); setError(null); setInfo(null); }}
+          type="button"
+        >
+          {t("reg_tab_create")}
         </button>
-        <button className={mode === "login" ? "primary" : ""} onClick={() => setMode("login")} type="button">
-          {t("bio_login")}
+        <button
+          className={mode === "login" ? "primary" : ""}
+          onClick={() => { setMode("login"); setError(null); setInfo(null); }}
+          type="button"
+        >
+          {t("reg_tab_login")}
         </button>
       </div>
 
       <div className="panel">
-        <label className="bio-label" htmlFor="bio-wallet-name">
-          {t("bio_name_label")}
+        <label className="bio-label" htmlFor="reg-wallet-name">
+          {t("reg_name_label")}
         </label>
         <input
-          id="bio-wallet-name"
+          id="reg-wallet-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder={t("bio_name_placeholder")}
+          placeholder={t("reg_name_placeholder")}
           autoComplete="username"
           inputMode="text"
+          onKeyDown={(e) => e.key === "Enter" && (mode === "register" ? handleRegister() : handleLogin())}
         />
+
         {platformOk === false && (
-          <p className="mc-muted">{t("bio_unsupported")}</p>
+          <p className="mc-muted">{t("reg_platform_unavailable")}</p>
         )}
       </div>
 
+      {/* Bouton unique — pas de choix biométrique */}
       {mode === "register" ? (
-        <div className="bio-choices">
-          <button className="bio-choice primary" type="button" disabled={busy || !name.trim()} onClick={() => handleRegister("fingerprint")}>
-            {t("bio_fingerprint")}
-          </button>
-          <button className="bio-choice" type="button" disabled={busy || !name.trim()} onClick={() => handleRegister("face")}>
-            {t("bio_face")}
-          </button>
-          <button className="bio-choice" type="button" disabled={busy || !name.trim()} onClick={() => handleRegister("both")}>
-            {t("bio_both")}
-          </button>
-        </div>
+        <button
+          className="bio-choice primary"
+          type="button"
+          disabled={busy || !name.trim()}
+          onClick={handleRegister}
+        >
+          {busy ? t("reg_busy") : t("reg_create_btn")}
+        </button>
       ) : (
-        <div className="bio-choices">
-          <button className="bio-choice primary" type="button" disabled={busy || !name.trim()} onClick={() => handleLogin("fingerprint")}>
-            {t("bio_login_fingerprint")}
-          </button>
-          <button className="bio-choice" type="button" disabled={busy || !name.trim()} onClick={() => handleLogin("face")}>
-            {t("bio_login_face")}
-          </button>
-        </div>
+        <button
+          className="bio-choice primary"
+          type="button"
+          disabled={busy || !name.trim()}
+          onClick={handleLogin}
+        >
+          {busy ? t("reg_busy") : t("reg_login_btn")}
+        </button>
       )}
 
-      <FaceCapture
-        active={cameraOn}
-        onLive={onLive}
-        onError={(msg) => {
-          setError(msg);
-          setCameraOn(false);
-        }}
-        label={t("bio_camera_help")}
-      />
-
-      {busy && <p className="mc-muted">{t("bio_webauthn_prompt")}</p>}
       {error && <p className="mc-error">{error}</p>}
       {info && <p className="bio-ok">{info}</p>}
+
       {address && (
         <p className="mc-mono">
           Wallet : {address} — <Link to="/wallets">ouvrir</Link>
         </p>
       )}
+
       {seed && (
         <div className="panel" style={{ border: "2px solid var(--mc-redstone, #c0392b)" }}>
-          <h2>⚠ {t("bio_seed_once")}</h2>
+          <h2>⚠ {t("reg_seed_once")}</h2>
           <p className="mc-mono" style={{ wordBreak: "break-all" }}>{seed}</p>
         </div>
       )}
@@ -281,11 +193,3 @@ export function RegisterBiometric() {
   );
 }
 
-export function useWebauthnStatus(name: string) {
-  const [status, setStatus] = useState<Awaited<ReturnType<typeof webauthnStatus>> | null>(null);
-  useEffect(() => {
-    if (!name) return;
-    webauthnStatus(name).then(setStatus).catch(() => setStatus(null));
-  }, [name]);
-  return status;
-}

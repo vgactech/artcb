@@ -125,7 +125,7 @@ export function DashboardLayout() {
             </span>
           ) : (
             <>
-            <Link to="/register" className="mc-header-kpi" style={{ color: "var(--mc-gold, #ffd700)", textDecoration: "none" }} title="Inscription biométrie">
+            <Link to="/register" className="mc-header-kpi" style={{ color: "var(--mc-gold, #ffd700)", textDecoration: "none" }} title="Créer un wallet">
               ◉ {t("nav_register")}
             </Link>
             <Link to="/wallets" className="mc-header-kpi" style={{ color: "var(--mc-gold, #ffd700)", textDecoration: "none" }} title="Aucun wallet actif — cliquez pour en créer un">

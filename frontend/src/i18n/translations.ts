@@ -185,6 +185,24 @@ export interface Translations {
   bio_raw_never_stored: string;
   bio_seed_once: string;
   wallets_bio_title: string;
+
+  // RegisterBiometric R357 — page /register simplifiée (sans UI biométrique)
+  reg_title: string;
+  reg_subtitle: string;
+  reg_disclaimer: string;
+  reg_tab_create: string;
+  reg_tab_login: string;
+  reg_name_label: string;
+  reg_name_placeholder: string;
+  reg_create_btn: string;
+  reg_login_btn: string;
+  reg_busy: string;
+  reg_created_ok: string;
+  reg_login_ok: string;
+  reg_name_required: string;
+  reg_webauthn_unsupported: string;
+  reg_platform_unavailable: string;
+  reg_seed_once: string;
   
   // Memorize Page
   memorize_title: string;
@@ -338,7 +356,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_groups: 'Groupes',
     nav_api_keys: 'Clés API',
     nav_agent_memory: 'Mémoire IA',
-    nav_register: 'S’inscrire',
+    nav_register: 'Créer wallet',
     // Dashboard
     dashboard_title: 'Tableau de bord ARTCB',
     dashboard_subtitle: 'Mémoire collective décentralisée',
@@ -470,8 +488,8 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     home_view_all: 'Voir tout →',
     home_reward_note: 'Reward genesis epoch : 1 ARTCB / bloc',
     home_ir_live: 'IR live',
-    home_bio_cta: 'Bienvenue sur ARTCB — inscrivez-vous par biométrie, par visage, ou les deux.',
-    home_bio_cta_btn: 'S’inscrire par biométrie',
+    home_bio_cta: 'Bienvenue sur ARTCB — créez votre wallet et commencez à mémoriser.',
+    home_bio_cta_btn: 'Créer un wallet',
     bio_title: 'Inscription biométrique',
     bio_subtitle: 'Empreinte = capteur du téléphone (WebAuthn). Visage = caméra avant. Face ID OS est le même capteur que l’empreinte : il n’allume pas la caméra.',
     bio_fingerprint: 'Empreinte (capteur)',
@@ -489,6 +507,23 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     bio_raw_never_stored: 'Aucune image d’empreinte ou de visage n’est stockée ni écrite dans le livre. Seules des clés publiques WebAuthn (et un secret d’appareil pour la caméra) sont conservées. Ces méthodes déverrouillent le wallet sur cet appareil ; elles ne prouvent pas qu’une personne est un humain unique.',
     bio_seed_once: 'Sauvegardez cette seed maintenant — elle ne sera plus affichée.',
     wallets_bio_title: 'Inscription sans mot de passe',
+    // RegisterBiometric R357
+    reg_title: 'Créer un wallet',
+    reg_subtitle: 'Votre wallet ARTCB est protégé par l\'authentificateur de cet appareil (PIN, Touch ID, Face ID — géré par votre OS).',
+    reg_disclaimer: 'La création d\'un wallet ne constitue pas une preuve d\'identité humaine unique. CERTIFIED_100=false.',
+    reg_tab_create: 'Créer',
+    reg_tab_login: 'Se connecter',
+    reg_name_label: 'Nom du wallet',
+    reg_name_placeholder: 'votre-nom',
+    reg_create_btn: 'Créer le wallet',
+    reg_login_btn: 'Se connecter',
+    reg_busy: 'En cours…',
+    reg_created_ok: 'Wallet créé. Votre appareil a enregistré la clé.',
+    reg_login_ok: 'Connecté.',
+    reg_name_required: 'Choisissez un nom de wallet.',
+    reg_webauthn_unsupported: 'WebAuthn non disponible — utilisez HTTPS (artcb.me).',
+    reg_platform_unavailable: 'Authentificateur de plateforme non détecté — vérifiez que vous êtes en HTTPS.',
+    reg_seed_once: 'Sauvegardez cette seed maintenant — elle ne sera plus affichée.',
     // Memorize Page
     memorize_title: 'Mémoriser',
     memorize_session: 'Session',
@@ -677,6 +712,23 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     bio_raw_never_stored: 'No fingerprint or face image is stored or written on-chain. Only WebAuthn public keys (and a device secret for the camera path) are kept. These methods unlock the wallet on this device; they do not prove that a person is a unique human.',
     bio_seed_once: 'Save this seed now — it will never be shown again.',
     wallets_bio_title: 'Passwordless registration',
+    // RegisterBiometric R357
+    reg_title: 'Create wallet',
+    reg_subtitle: 'Your ARTCB wallet is protected by this device\'s authenticator (PIN, Touch ID, Face ID — managed by your OS).',
+    reg_disclaimer: 'Creating a wallet is not proof of unique human identity. CERTIFIED_100=false.',
+    reg_tab_create: 'Create',
+    reg_tab_login: 'Sign in',
+    reg_name_label: 'Wallet name',
+    reg_name_placeholder: 'your-name',
+    reg_create_btn: 'Create wallet',
+    reg_login_btn: 'Sign in',
+    reg_busy: 'Processing…',
+    reg_created_ok: 'Wallet created. Your device has registered the key.',
+    reg_login_ok: 'Signed in.',
+    reg_name_required: 'Choose a wallet name.',
+    reg_webauthn_unsupported: 'WebAuthn not available — use HTTPS (artcb.me).',
+    reg_platform_unavailable: 'Platform authenticator not detected — make sure you are on HTTPS.',
+    reg_seed_once: 'Save this seed now — it will never be shown again.',
     memorize_title: 'Memorize', memorize_session: 'Session',
     memorize_session_id: 'session_id', memorize_use_llm: 'use_llm',
     memorize_use_pool: 'distributed compute (pool E2E)',
