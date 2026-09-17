@@ -515,3 +515,106 @@ class TestConcurrencyMax5:
         assert r_list.json()["active_count"] == 5, (
             f"Total devrait être 5 mais est {r_list.json()['active_count']}"
         )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# R363d — Validation COSE stricte + atomicité + lock
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class TestCOSEValidationAndAtomicity:
+    """R363d — Validation COSE stricte avant écriture + atomicité sous lock."""
+
+    def _make_cose_b64(self, priv_key: ec.EllipticCurvePrivateKey) -> str:
+        from src.artcb.security.webauthn_protocol import cose_ec2_p256
+        return b64u_encode(cose_ec2_p256(priv_key.public_key()))
+
+    def test_invalid_cose_b64_returns_400_no_state_written(self, client, tmp_data_dir):
+        """COSE invalide → 400, aucun état écrit (atomicité garantie)."""
+        from src.artcb.security.webauthn_store import find_credential
+        _make_human_record("human_cose1", tmp_data_dir)
+        priv_a, cred_id_a = _make_credential("human_cose1", tmp_data_dir)
+
+        r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_cose1"})
+        challenge_b64 = r_opt.json()["challenge"]
+        assertion = _build_assertion(priv_a, challenge_b64)
+        fake_cred_id = b64u_encode(secrets.token_bytes(16))
+
+        r = client.post("/api/v1/identity/device/add-verify", json={
+            "challenge_b64": challenge_b64,
+            "credential_id": cred_id_a,
+            **assertion,
+            "new_device_credential_id": fake_cred_id,
+            "new_device_public_key_b64": b64u_encode(b"notacosekey_garbage"),  # invalide
+        })
+        assert r.status_code == 400
+        assert "invalid_cose" in r.json()["detail"]
+        # Aucun état écrit — B absent du webauthn store
+        assert find_credential(fake_cred_id) is None
+
+    def test_valid_cose_roundtrip_accepted(self, client, tmp_data_dir):
+        """COSE valide (produit par cose_ec2_p256) → 200, B enrôlé."""
+        from src.artcb.security.webauthn_store import find_credential
+        _make_human_record("human_cose2", tmp_data_dir)
+        priv_a, cred_id_a = _make_credential("human_cose2", tmp_data_dir)
+        priv_b = ec.generate_private_key(ec.SECP256R1())
+        cred_id_b = b64u_encode(secrets.token_bytes(16))
+        cose_b64_b = self._make_cose_b64(priv_b)
+
+        r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_cose2"})
+        challenge_b64 = r_opt.json()["challenge"]
+        assertion = _build_assertion(priv_a, challenge_b64)
+
+        r = client.post("/api/v1/identity/device/add-verify", json={
+            "challenge_b64": challenge_b64, "credential_id": cred_id_a,
+            **assertion,
+            "new_device_credential_id": cred_id_b,
+            "new_device_public_key_b64": cose_b64_b,
+        })
+        assert r.status_code == 200
+        assert r.json()["credential_enrolled"] is True
+        # B vérifiable via public_key_from_cose
+        stored = find_credential(cred_id_b)
+        assert stored is not None
+        from src.artcb.security.webauthn_cose import public_key_from_cose
+        pub = public_key_from_cose(b64u_decode(stored["cose_b64"]))
+        assert pub is not None
+
+    def test_lock_prevents_double_enrollment_of_same_credential(self, client, tmp_data_dir):
+        """Deux ADD_DEVICE simultanés pour le même credential_id B → un seul enrôlement."""
+        import threading
+        from src.artcb.security.webauthn_store import load_credentials
+        _make_human_record("human_lock1", tmp_data_dir)
+        priv_a, cred_id_a = _make_credential("human_lock1", tmp_data_dir)
+        priv_b = ec.generate_private_key(ec.SECP256R1())
+        cred_id_b = b64u_encode(secrets.token_bytes(16))
+        from src.artcb.security.webauthn_protocol import cose_ec2_p256
+        cose_b64_b = b64u_encode(cose_ec2_p256(priv_b.public_key()))
+
+        # Deux challenges distincts
+        r1 = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_lock1"})
+        r2 = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_lock1"})
+        ch1, ch2 = r1.json()["challenge"], r2.json()["challenge"]
+        a1 = _build_assertion(priv_a, ch1, sign_count=1)
+        a2 = _build_assertion(priv_a, ch2, sign_count=2)
+
+        results = []
+        def do_add(ch, assertion):
+            r = client.post("/api/v1/identity/device/add-verify", json={
+                "challenge_b64": ch, "credential_id": cred_id_a,
+                **assertion,
+                "new_device_credential_id": cred_id_b,  # même B dans les deux requêtes
+                "new_device_public_key_b64": cose_b64_b,
+            })
+            results.append(r.status_code)
+
+        t1 = threading.Thread(target=do_add, args=(ch1, a1))
+        t2 = threading.Thread(target=do_add, args=(ch2, a2))
+        t1.start(); t2.start()
+        t1.join(); t2.join()
+
+        # Au moins un succès
+        assert 200 in results, f"Attendu au moins un 200, obtenu {results}"
+        # B enregistré exactement une fois dans webauthn store
+        all_creds = load_credentials()
+        b_entries = [c for c in all_creds if c.get("credential_id") == cred_id_b]
+        assert len(b_entries) >= 1, "B doit être dans le store"

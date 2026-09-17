@@ -9,7 +9,7 @@ meta:
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-17"
-  git_head: "275f746"
+  git_head: "5fa8a6d"
   chain_height: 1142
   certified_100: false
   pbft_primary: "aws-node-3"

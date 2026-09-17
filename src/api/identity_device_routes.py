@@ -27,6 +27,7 @@ import json
 import logging
 import os
 import secrets
+import threading
 import time
 from pathlib import Path
 from typing import Optional
@@ -51,6 +52,12 @@ _CHALLENGE_TTL = 300  # 5 minutes
 # Challenges en attente d'approbation par l'appareil existant
 # challenge_b64u → {human_id, new_device_hint, created_at, expires_at}
 _device_challenges: dict[str, dict] = {}
+
+# ─── Lock global pour atomicité ADD_DEVICE (R363d) ───────────────────────────
+# Garantit qu'une seule opération ADD_DEVICE s'exécute à la fois par processus.
+# Protège la séquence : vérif max_5 → écriture stores → écriture registry.
+# Limite : un seul processus. Pour multi-processus → filelock.
+_add_device_lock = threading.Lock()
 
 
 def _records_path() -> Path:
@@ -327,14 +334,8 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
       - Le nouvel appareil n'obtient PAS un nouveau wallet — il rejoint l'identité existante
       - Limite : max 5 appareils par HumanID (anti-abus spec §17)
       - WebAuthn valide ≠ unique_human_proven (spec §4 rapport 367)
-    """
-    from cryptography.hazmat.primitives.asymmetric.ec import (
-        EllipticCurvePublicKey,
-        SECP256R1,
-    )
-    from cryptography.hazmat.primitives.serialization import load_pem_public_key
-
-    # ── 1. Vérifier le challenge ─────────────────────────────────────────────
+      """
+      # ── 1. Vérifier le challenge ─────────────────────────────────────────────
     challenge_data = _device_challenges.get(body.challenge_b64)
     if not challenge_data:
         raise HTTPException(status_code=400, detail="add_device_challenge_unknown")
@@ -345,9 +346,26 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
     human_id = challenge_data["human_id"]
     rp_id = challenge_data.get("rp_id", "artcb.me")
 
-    # ── 2. Vérifier limite d'appareils EN PREMIER (avant toute crypto) ────────
-    # Ordre transactionnel correct : pas de consommation de preuve si l'opération
-    # est de toute façon impossible (audit R363 — corriger ordre max_5).
+    # ── 2. Section critique sous lock — atomicité ADD_DEVICE (R363d) ──────────
+    # Le lock garantit qu'une seule opération ADD_DEVICE peut franchir la barrière
+    # max_5 → stores → registry à la fois (dans ce processus).
+    # Race condition multi-processus : nécessiterait un filelock externe (fcntl/portalocker).
+    with _add_device_lock:
+        return _add_device_critical(body, request, human_id, rp_id, challenge_data)
+
+
+def _add_device_critical(
+    body: "AddDeviceVerifyRequest",
+    request: "Request",
+    human_id: str,
+    rp_id: str,
+    challenge_data: dict,
+) -> dict:
+    """Section critique de add_device_verify — exécutée sous _add_device_lock."""
+    from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicKey
+    from cryptography.hazmat.primitives.serialization import load_pem_public_key
+
+    # ── 2. Vérifier limite d'appareils (sous lock → atomique) ────────────────
     MAX_DEVICES_PER_HUMAN = 5
     device_registry_pre = _load_device_registry()
     human_devices = [d for d in device_registry_pre if d.get("human_id") == human_id and not d.get("revoked")]
@@ -435,25 +453,36 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
     if not matching_record:
         raise HTTPException(status_code=404, detail=f"human_id_not_found: {human_id}")
 
-    # ── 8. Enregistrer B dans les deux stores (enrôlement réel de B) ──────────
+    # ── 8. Enregistrer B dans les deux stores (enrôlement réel de B — R363d) ───
     #
     # B doit être présent dans DEUX endroits pour être pleinement fonctionnel :
     #
     #   a) identity/credential_store.jsonl  → lié au HumanID (pour ADD_DEVICE)
-    #   b) webauthn/credentials.json        → lié au wallet_name (pour /auth/webauthn/login)
+    #   b) webauthn/credentials.json        → cose_b64 + wallet_name (pour /auth/webauthn/login)
     #
-    # Sans (b), B ne peut pas se connecter via /auth/webauthn/login.
-    # Le champ "cose_b64" est la clé COSE P-256 attendue par public_key_from_cose().
-    # Si new_device_public_key_b64 est une clé COSE, on l'utilise directement.
-    # Si c'est un PEM brut, on le convertit.
-    #
-    # Note : si new_device_public_key_b64 n'est pas fourni, l'enrôlement est partiel
-    # (device associé mais B ne peut pas encore se connecter).
+    # Validation COSE stricte (R363d) :
+    #   new_device_public_key_b64 DOIT être une clé COSE EC2 P-256 b64url valide.
+    #   On vérifie avec public_key_from_cose() avant d'écrire quoi que ce soit.
+    #   Si invalide → 400 (jamais d'état partiel enregistré).
     new_cred_enrolled = False
     wallet_address = matching_record.get("wallet_address", "")
     wallet_name = matching_record.get("wallet_name", human_id)
 
     if body.new_device_public_key_b64:
+        # ── Validation COSE stricte avant toute écriture ─────────────────────
+        try:
+            from src.artcb.security.webauthn_cose import public_key_from_cose
+            cose_bytes = b64u_decode(body.new_device_public_key_b64)
+            _cose_pubkey = public_key_from_cose(cose_bytes)  # lève ValueError si invalide
+        except Exception as _cose_exc:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    f"new_device_public_key_b64_invalid_cose: {_cose_exc} — "
+                    "fournir une clé COSE EC2 P-256 b64url valide (produite par cose_ec2_p256()). "
+                    "Aucun état n'a été modifié."
+                ),
+            )
         # ── a) identity/credential_store.jsonl ───────────────────────────────
         data_dir_cs = Path(os.environ.get("ARTCB_DATA_DIR", "data"))
         cred_store_path = data_dir_cs / "identity" / "credential_store.jsonl"
