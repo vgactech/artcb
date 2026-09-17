@@ -1,0 +1,145 @@
+---
+description: >
+  ARTCB Réflexe — Priorité automatique absolue.
+  Ce fichier s'active dans Cursor ET Bob IDE.
+  Toute modification du code ARTCB liée à la mémoire IA, au thinking,
+  au réflexe ou au raisonnement déclenche immédiatement ce protocole
+  AVANT tout autre chantier en cours.
+alwaysApply: true
+---
+
+# ARTCB — Réflexe & Priorité Automatique (2026-09-17T00:00:00Z)
+
+## R350 — Réflexe prioritaire absolu (2026-09-17)
+
+Ce fichier **ne supprime rien**. Il ajoute la couche réflexe autonome.
+
+### Priorité d'activation (ordre strict)
+
+1. **RÉFLEXE MÉMOIRE / THINKING / RAISONNEMENT** → priorité 0 absolue
+2. Sécurité biométrique / identité humaine → priorité 1
+3. Certification V-PQC / cryptographie → priorité 2
+4. Tous les autres chantiers → priorité 3+
+
+### Déclenchement automatique
+
+Ce réflexe s'active automatiquement quand :
+
+- Une modification touche `src/artcb/memory/`, `src/artcb/reasoning/`, `src/artcb/reflex/`
+- Une modification touche `src/artcb/mcp/tools.py` ou `src/artcb/mcp/server.py`
+- Une modification touche `.bob/hooks/` ou `.cursor/hooks/`
+- Une modification touche `AUTO_PROMPT_ARTCB`, `LEÇONS_APPRISES_ARTCB`, `PROTOCOLE_ARTCB`
+- L'utilisateur mentionne « réflexe », « mémoire IA », « thinking », « raisonnement »
+- Une nouvelle session démarre (SessionStart hook)
+- Un nouveau prompt arrive (UserPromptSubmit hook)
+
+### Ce que le réflexe fait automatiquement
+
+```
+DÉCLENCHEMENT
+      ↓
+1. Vérifier état mémoire live (GET /api/v1/ai/context)
+      ↓
+2. Vérifier état hooks (.bob/hooks/ + .cursor/hooks/)
+      ↓
+3. Vérifier scripts/artcb_reflex_check.py
+      ↓
+4. Mettre à jour LEÇONS_APPRISES_ARTCB si nouvelle leçon
+      ↓
+5. Graver le contexte sur ARTCB (artcb_memo)
+      ↓
+6. Continuer le chantier principal
+```
+
+### Ce que le réflexe NE fait PAS
+
+- ❌ Ne bloque pas les autres chantiers
+- ❌ Ne supprime pas d'historique
+- ❌ Ne grave pas thinking / tokens / system prompt on-chain
+- ❌ Ne stoppe pas un processus en cours
+
+---
+
+## R351 — Activation simultanée Bob IDE + Cursor (2026-09-17)
+
+Ce fichier est dans `.cursor/rules/` → actif pour Cursor.
+Le hook `.bob/hooks/user_prompt_submit.py` lit ce fichier → actif pour Bob IDE.
+
+**Pour tout nouvel utilisateur de Bob IDE ou Cursor travaillant sur ARTCB :**
+
+```
+Session ouverte
+      ↓
+SessionStart hook → artcb_live_bootstrap.py
+      ↓
+UserPromptSubmit hook → injection contexte réflexe
+      ↓
+Ce fichier chargé (alwaysApply: true)
+      ↓
+Agent opère avec réflexe activé
+```
+
+---
+
+## R352 — Amélioration autonome (2026-09-17)
+
+L'agent doit s'améliorer de manière autonome à chaque tour :
+
+1. **Après chaque implémentation** : vérifier si une leçon doit être ajoutée à `LEÇONS_APPRISES_ARTCB`
+2. **Après chaque erreur** : documenter la cause dans `LEÇONS_APPRISES_ARTCB` avec horodatage
+3. **Après chaque certification** : mettre à jour l'état dans `artcb-live-node.mdc`
+4. **Après chaque commit** : vérifier que `CERTIFIED_100=false` est respecté partout
+
+### Règle d'or de l'amélioration autonome
+
+> **Si une correction ou amélioration du réflexe/mémoire est identifiée, elle devient immédiatement la tâche courante, avant tout autre travail en cours.**
+
+---
+
+## R353 — Architecture réflexe ARTCB (2026-09-17)
+
+```
+UTILISATEUR (Bob IDE ou Cursor)
+         │
+         ▼
+  UserPromptSubmit hook
+         │
+         ├── Archive prompt (data/trace/bob_prompts.jsonl)
+         ├── Détecte mots-clés réflexe
+         ├── Injecte contexte ARTCB live
+         └── Déclenche artcb_live_bootstrap.py
+         │
+         ▼
+  src/artcb/reflex/core.py
+         │
+         ├── ReflexEngine.check_priority()
+         ├── ReflexEngine.detect_trigger()
+         ├── ReflexEngine.activate()
+         └── ReflexEngine.report()
+         │
+         ▼
+  ARTCB Memory (POST /api/v1/ai/memo)
+         │
+         ▼
+  Blockchain ARTCB (immuable)
+```
+
+---
+
+## R354 — Interdictions absolues liées au réflexe (2026-09-17)
+
+Ces interdictions s'ajoutent aux règles existantes R11–R349b :
+
+- ❌ Jamais passer une session sans vérifier l'état mémoire live
+- ❌ Jamais modifier `src/artcb/reflex/` sans tests correspondants
+- ❌ Jamais désactiver un hook sans documenter la raison et l'horodatage
+- ❌ Jamais laisser `artcb_reflex_check.py` échouer sans corriger immédiatement
+- ❌ Jamais fusionner du code qui casse le mécanisme de mémorisation on-chain
+
+---
+
+## Historique
+
+| Date UTC | Règle | Auteur |
+|----------|-------|--------|
+| 2026-09-17T00:00:00Z | R350–R354 création initiale | Agent ARTCB |

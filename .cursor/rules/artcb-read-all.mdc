@@ -5,6 +5,11 @@ alwaysApply: true
 
 # Index de relecture obligatoire (R300 — 2026-09-10T00:05:00Z)
 
+## R350 ajout (2026-09-17T00:00:00Z) — Réflexe prioritaire
+
+- `.cursor/rules/artcb-reflex-priority.mdc` (`alwaysApply: true`) — **PRIORITÉ ABSOLUE** : toute modification mémoire/thinking/réflexe passe avant tout autre chantier.
+
+
 Ce fichier **n’efface rien**. Il liste où sont éparpillées les règles.  
 À **chaque tour** et **à l’intérieur du tour** (après compaction, après une étape majeure) : ouvrir chaque fichier **de la première à la dernière ligne**.
 

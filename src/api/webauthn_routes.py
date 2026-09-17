@@ -77,10 +77,24 @@ ASSURANCE_LEVELS: dict[str, dict[str, Any]] = {
         "level": 1,
         "proves": "local face presence in frame + possession of the device secret",
         "does_not_prove": "identity, liveness against photo/video/mask, uniqueness",
+        # R350 (2026-09-17) — spec §4 rapport 367/370 :
+        # face_camera N'EST PAS une voie d'authentification principale ARTCB.
+        # Elle reste disponible pour accessibilité motrice uniquement.
+        # En production, toujours orienter vers WebAuthn natif.
+        "production_status": "FALLBACK_ACCESSIBILITY_ONLY",
+        "not_accepted_as": [
+            "human_identity_proof",
+            "unique_human_proof",
+            "biometric_artcb_primary",
+        ],
     },
 }
 
-FACE_CAMERA_LABEL = "Vérification de présence faciale locale"
+# R350 (2026-09-17) — face_camera est une voie de FALLBACK ACCESSIBILITÉ uniquement.
+# Elle ne constitue pas une preuve d'identité humaine ARTCB.
+# Toujours privilégier WebAuthn natif (Touch ID / Face ID / biométrie OS).
+FACE_CAMERA_INACTIVE_PRODUCTION = False  # True = désactiver complètement en prod
+FACE_CAMERA_LABEL = "Vérification de présence faciale locale (fallback accessibilité)"
 
 
 def _audit(event: str, *, wallet: str, request: Request | None = None, **fields: Any) -> None:
