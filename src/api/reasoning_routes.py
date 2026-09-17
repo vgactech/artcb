@@ -23,6 +23,7 @@ from src.artcb.reasoning.record import (
     RecordOutcome,
     ReasoningRecordStore,
     get_record_store,
+    record_from_dict,
 )
 from src.artcb.reasoning.reference_id import (
     ReferenceID,
@@ -152,57 +153,55 @@ def get_record(record_id: str) -> dict:
     return match
 
 
-@router.post("/record/{record_id}/seal", summary="Sceller un REASONING_RECORD")
+@router.post("/record/{record_id}/seal", summary="Sceller un REASONING_RECORD (R355.2–R355.3)")
 def seal_record(record_id: str, body: SealRecordRequest) -> dict:
-    """Marque un REASONING_RECORD comme complété (outcome + apprentissage).
+    """Scelle un REASONING_RECORD existant — préserve FIRST_REFLEX + EARLIEST + refs + obs.
 
-    Note : le scellement est actuellement append-only (un nouveau record est
-    créé avec le résultat — le store JSONL est immutable).
+    R355.2 : le record scellé est frozen (SealedRecordError si modifié ultérieurement).
+    R355.3 : reconstruit le record complet depuis le JSONL — first_reflex, earliest,
+             reference_ids et observations sont préservés.
+    final_hash = SHA-256(canonique complet = TOUS les champs).
     CERTIFIED_100=false.
     """
     store = get_record_store()
-    rows = store.load_all()
-    original = next((r for r in rows if r.get("record_id", "").startswith(record_id)), None)
-    if not original:
-        raise HTTPException(status_code=404, detail=f"record_not_found: {record_id}")
-
     try:
         outcome_enum = RecordOutcome(body.outcome.lower())
     except ValueError:
         outcome_enum = RecordOutcome.UNKNOWN
 
-    # Créer un record de complétion (on ne réécrit pas l'original — append-only)
-    sealed = ReasoningRecord(
-        session_id=original.get("session_id", ""),
-        agent_id=original.get("agent_id", "bob-ide"),
-        context_summary=original.get("context_summary", ""),
-        action=RecordAction(original.get("action", "analyze")),
-        action_detail=original.get("action_detail", ""),
+    # R355.3 : seal_in_place reconstruit le record complet (first_reflex, earliest, refs, obs)
+    sealed = store.seal_in_place(
+        record_id,
         outcome=outcome_enum,
         outcome_detail=body.outcome_detail,
         learning=body.learning,
         new_rule_candidate=body.new_rule_candidate,
     )
-    sealed.seal(
-        outcome=outcome_enum,
-        outcome_detail=body.outcome_detail,
-        learning=body.learning,
-        new_rule_candidate=body.new_rule_candidate,
-    )
-    store.append(sealed)
+    if sealed is None:
+        raise HTTPException(status_code=404, detail=f"record_not_found: {record_id}")
 
     logger.info(
-        "REASONING_RECORD sealed: original_id=%s sealed_id=%s outcome=%s",
-        record_id[:12], sealed.record_id[:12], outcome_enum.value,
+        "REASONING_RECORD sealed: record_id=%s final_hash=%s outcome=%s frozen=%s",
+        sealed.record_id[:12], sealed.final_hash[:12], outcome_enum.value, sealed.frozen,
     )
 
     return {
         "sealed": True,
-        "original_record_id": record_id,
-        "sealed_record_id": sealed.record_id,
+        "record_id": sealed.record_id,
+        "final_hash": sealed.final_hash,   # R355.1 : hash de TOUT le record
+        "frozen": sealed.frozen,           # R355.2 : toujours True après seal
         "outcome": outcome_enum.value,
         "new_rule_candidate": body.new_rule_candidate,
+        "first_reflex_preserved": sealed.first_reflex is not None,   # R355.3
+        "earliest_preserved": sealed.earliest is not None,           # R355.3
+        "observations_count": len(sealed.observations),              # R355.3
+        "reference_ids_count": len(sealed.reference_ids),            # R355.3
         "certified_100": False,
+        "note": (
+            "R355.1: final_hash=SHA-256(tous les champs). "
+            "R355.2: frozen=True. "
+            "R355.3: first_reflex+earliest+refs+obs préservés."
+        ),
     }
 
 

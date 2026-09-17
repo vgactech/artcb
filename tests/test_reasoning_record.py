@@ -224,6 +224,8 @@ from src.artcb.reasoning.record import (
     RecordAction,
     RecordOutcome,
     ReasoningRecordStore,
+    SealedRecordError,
+    record_from_dict,
 )
 
 
@@ -431,3 +433,263 @@ class TestReflexEngineWithRecord:
         engine = ReflexEngine()
         report = engine.activate(text="mémoire", session_id="test_note")
         assert "REASONING_RECORD" in report.get("note", "")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# R355.1 — final_hash = SHA-256 de TOUT le record
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestFinalHash:
+
+    def test_final_hash_empty_before_seal(self):
+        """R355.1 : final_hash est vide avant seal()."""
+        r = ReasoningRecord(session_id="s", action=RecordAction.ANALYZE)
+        assert r.final_hash == ""
+
+    def test_final_hash_set_after_seal(self):
+        """R355.1 : final_hash est un SHA-256 de 64 chars après seal()."""
+        r = ReasoningRecord(session_id="s", action=RecordAction.ANALYZE)
+        r.seal(outcome=RecordOutcome.PASS, outcome_detail="ok")
+        assert len(r.final_hash) == 64
+        assert r.final_hash != ""
+
+    def test_final_hash_includes_observations(self):
+        """R355.1 : deux records identiques sauf observations → final_hash différent."""
+        ts = time.time_ns()
+        r1 = ReasoningRecord(session_id="s", ts_start_ns=ts, action=RecordAction.ANALYZE)
+        r1.seal(outcome=RecordOutcome.PASS)
+
+        r2 = ReasoningRecord(session_id="s", ts_start_ns=ts, action=RecordAction.ANALYZE)
+        r2.add_observation("file_modified", path="x.py")
+        r2.seal(outcome=RecordOutcome.PASS)
+
+        assert r1.final_hash != r2.final_hash
+
+    def test_final_hash_includes_outcome(self):
+        """R355.1 : outcome différent → final_hash différent."""
+        ts = time.time_ns()
+        r1 = ReasoningRecord(session_id="s", ts_start_ns=ts)
+        r1.seal(outcome=RecordOutcome.PASS)
+
+        r2 = ReasoningRecord(session_id="s", ts_start_ns=ts)
+        r2.seal(outcome=RecordOutcome.FAIL)
+
+        assert r1.final_hash != r2.final_hash
+
+    def test_final_hash_includes_learning(self):
+        """R355.1 : learning différent → final_hash différent."""
+        ts = time.time_ns()
+        r1 = ReasoningRecord(session_id="s", ts_start_ns=ts)
+        r1.seal(learning="règle A")
+
+        r2 = ReasoningRecord(session_id="s", ts_start_ns=ts)
+        r2.seal(learning="règle B")
+
+        assert r1.final_hash != r2.final_hash
+
+    def test_record_id_stable_before_seal(self):
+        """R355.1 : record_id ne change PAS quand on ajoute des observations."""
+        r = ReasoningRecord(session_id="s", action=RecordAction.ANALYZE)
+        id_before = r.record_id
+        r.add_observation("test", key="val")
+        id_after = r.record_id
+        assert id_before == id_after  # stable pendant la phase ouverte
+
+    def test_final_hash_in_to_dict(self):
+        r = ReasoningRecord(session_id="s")
+        r.seal()
+        d = r.to_dict()
+        assert "final_hash" in d
+        assert len(d["final_hash"]) == 64
+
+    def test_frozen_in_to_dict(self):
+        r = ReasoningRecord(session_id="s")
+        r.seal()
+        d = r.to_dict()
+        assert d.get("frozen") is True
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# R355.2 — seal() gèle le record (frozen=True)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestSealFrozen:
+
+    def test_frozen_false_before_seal(self):
+        r = ReasoningRecord(session_id="s")
+        assert r.frozen is False
+
+    def test_frozen_true_after_seal(self):
+        r = ReasoningRecord(session_id="s")
+        r.seal()
+        assert r.frozen is True
+
+    def test_add_observation_after_seal_raises(self):
+        r = ReasoningRecord(session_id="s")
+        r.seal()
+        with pytest.raises(SealedRecordError, match="add_observation"):
+            r.add_observation("x")
+
+    def test_add_reference_after_seal_raises(self):
+        r = ReasoningRecord(session_id="s")
+        r.seal()
+        with pytest.raises(SealedRecordError, match="add_reference"):
+            r.add_reference(ref_rule(rule_name="R0"))
+
+    def test_seal_twice_raises(self):
+        r = ReasoningRecord(session_id="s")
+        r.seal()
+        with pytest.raises(SealedRecordError, match="seal"):
+            r.seal()
+
+    def test_sealed_error_contains_record_id(self):
+        r = ReasoningRecord(session_id="s")
+        r.seal()
+        try:
+            r.add_observation("x")
+        except SealedRecordError as e:
+            assert r.record_id[:12] in str(e)
+
+    def test_seal_deterministic_given_same_state(self):
+        """Deux records identiques scellés au même ts → final_hash identique."""
+        ts = time.time_ns()
+        r1 = ReasoningRecord(session_id="s1", ts_start_ns=ts)
+        r2 = ReasoningRecord(session_id="s1", ts_start_ns=ts)
+        # Forcer ts_end_ns identique
+        r1.seal(outcome=RecordOutcome.PASS)
+        ts_end = r1.ts_end_ns
+        # Restaurer ts_end pour r2 avant de sceller
+        import src.artcb.reasoning.record as rmod
+        r2.seal(outcome=RecordOutcome.PASS)
+        object.__setattr__(r2, "ts_end_ns", ts_end)
+        r2.final_hash = r2._compute_final_hash()
+        assert r1.record_id == r2.record_id  # record_id identique (mêmes champs stables)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# R355.3 — record_from_dict + seal_in_place préserve FIRST_REFLEX + EARLIEST + refs + obs
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TestRecordFromDict:
+
+    def _make_full_record(self) -> ReasoningRecord:
+        fr = FirstReflex(
+            session_id="sess",
+            trigger_name="REFLEX_MEMORY",
+            priority=0,
+            evidence={"keywords": ["mémoire"]},
+        )
+        edp = EarliestDetectablePoint(
+            trigger_name="REFLEX_MEMORY",
+            chain_height=1142,
+            confidence=0.35,
+            method="log_trace",
+        )
+        r = ReasoningRecord(
+            session_id="sess",
+            agent_id="bob-ide",
+            context_summary="test",
+            first_reflex=fr,
+            earliest=edp,
+            action=RecordAction.IMPLEMENT,
+        )
+        r.add_reference(ref_rule(rule_name="R355"))
+        r.add_observation("file_modified", path="src/x.py")
+        return r
+
+    def test_roundtrip_preserves_first_reflex(self):
+        """R355.3 : record_from_dict préserve first_reflex."""
+        r = self._make_full_record()
+        d = r.to_dict()
+        r2 = record_from_dict(d)
+        assert r2.first_reflex is not None
+        assert r2.first_reflex.trigger_name == "REFLEX_MEMORY"
+
+    def test_roundtrip_preserves_earliest(self):
+        """R355.3 : record_from_dict préserve earliest."""
+        r = self._make_full_record()
+        d = r.to_dict()
+        r2 = record_from_dict(d)
+        assert r2.earliest is not None
+        assert r2.earliest.chain_height == 1142
+
+    def test_roundtrip_preserves_observations(self):
+        """R355.3 : record_from_dict préserve observations."""
+        r = self._make_full_record()
+        d = r.to_dict()
+        r2 = record_from_dict(d)
+        assert len(r2.observations) == 1
+        assert r2.observations[0]["path"] == "src/x.py"
+
+    def test_roundtrip_preserves_reference_ids(self):
+        """R355.3 : record_from_dict préserve reference_ids."""
+        r = self._make_full_record()
+        d = r.to_dict()
+        r2 = record_from_dict(d)
+        assert len(r2.reference_ids) == 1
+        assert "R355" in r2.reference_ids[0].payload.get("rule_name", "")
+
+    def test_roundtrip_frozen_record_stays_frozen(self):
+        """R355.3 : un record scellé reconstruit est frozen."""
+        r = self._make_full_record()
+        r.seal(outcome=RecordOutcome.PASS)
+        d = r.to_dict()
+        r2 = record_from_dict(d)
+        assert r2.frozen is True
+        assert r2.final_hash == r.final_hash
+
+    def test_seal_in_place_preserves_first_reflex(self, tmp_path):
+        """R355.3 : seal_in_place préserve first_reflex + earliest + refs + obs."""
+        store = ReasoningRecordStore(tmp_path / "records.jsonl")
+        r = self._make_full_record()
+        store.append(r)
+
+        sealed = store.seal_in_place(
+            r.record_id,
+            outcome=RecordOutcome.PASS,
+            outcome_detail="3/3 PASS",
+            learning="règle R355.3",
+            new_rule_candidate=True,
+        )
+        assert sealed is not None
+        assert sealed.frozen is True
+        assert len(sealed.final_hash) == 64
+        # R355.3 : tout est préservé
+        assert sealed.first_reflex is not None
+        assert sealed.first_reflex.trigger_name == "REFLEX_MEMORY"
+        assert sealed.earliest is not None
+        assert sealed.earliest.chain_height == 1142
+        assert len(sealed.observations) == 1
+        assert len(sealed.reference_ids) == 1
+        assert sealed.learning == "règle R355.3"
+        assert sealed.new_rule_candidate is True
+
+    def test_seal_in_place_not_found_returns_none(self, tmp_path):
+        store = ReasoningRecordStore(tmp_path / "records.jsonl")
+        result = store.seal_in_place(
+            "nonexistent",
+            outcome=RecordOutcome.FAIL,
+            outcome_detail="",
+            learning="",
+            new_rule_candidate=False,
+        )
+        assert result is None
+
+    def test_seal_in_place_already_sealed(self, tmp_path):
+        """seal_in_place sur record déjà scellé retourne le record existant."""
+        store = ReasoningRecordStore(tmp_path / "records.jsonl")
+        r = self._make_full_record()
+        r.seal(outcome=RecordOutcome.PASS)
+        store.append(r)
+        original_final_hash = r.final_hash
+
+        result = store.seal_in_place(
+            r.record_id,
+            outcome=RecordOutcome.FAIL,  # ignoré — déjà scellé
+            outcome_detail="",
+            learning="",
+            new_rule_candidate=False,
+        )
+        assert result is not None
+        assert result.frozen is True
+        assert result.final_hash == original_final_hash  # hash non altéré
