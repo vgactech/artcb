@@ -149,12 +149,17 @@ def _create_wallet_auto(name: str, *, request: Request | None = None) -> dict[st
     vault = secrets.token_urlsafe(32)
     wallet = wm.create_wallet(name=name, user_password=vault)
     seed_hex = wallet.signing_key.encode().hex()
-    logger.info("Anon wallet created name=%s address=%s", name, wallet.address)
-    return {
+    logger.info(
+        "Anon wallet created name=%s address=%s hybrid=%s",
+        name, wallet.address, wallet.is_hybrid,
+    )
+    result: dict[str, Any] = {
         "created": True,
         "name": name,
         "address": wallet.address,
         "seed_hex": seed_hex,
+        # Clés publiques (jamais les clés privées PQC)
+        "public_key_hex": wallet.public_key_hex,
         "WARNING": (
             "SAUVEGARDEZ votre seed_hex MAINTENANT — "
             "c'est votre clé privée, elle ne sera plus jamais affichée. "
@@ -163,6 +168,13 @@ def _create_wallet_auto(name: str, *, request: Request | None = None) -> dict[st
         ),
         "unique_human_proven": False,
     }
+    # PQC : exposer la clé publique ML-DSA + adresse hybride si disponibles
+    # La clé PRIVÉE PQC reste côté serveur (fichier .pqc chiffré) — jamais transmise
+    if wallet.pqc_public_key_hex:
+        result["pqc_public_key_hex"] = wallet.pqc_public_key_hex
+    if wallet.address_v2:
+        result["address_v2"] = wallet.address_v2
+    return result
 
 
 @router.post("/register/options")
@@ -269,9 +281,17 @@ def anon_register_verify(body: AnonRegisterVerifyBody, request: Request) -> dict
         "raw_biometric_stored": False,
         "unique_human_proven": False,
         "certified": False,
-        "note": "R358 — wallet créé sans nom utilisateur. wallet_name dérivé du credential_id WebAuthn.",
+        # Clé publique Ed25519 — à stocker côté navigateur pour vérifications
+        "public_key_hex": wallet.get("public_key_hex"),
         **session,
     }
+    # PQC : clés publiques ML-DSA + adresse hybride si disponibles
+    # Les clés PRIVÉES (Ed25519 seed + PQC secret) restent protégées côté serveur
+    if wallet.get("pqc_public_key_hex"):
+        out["pqc_public_key_hex"] = wallet["pqc_public_key_hex"]
+    if wallet.get("address_v2"):
+        out["address_v2"] = wallet["address_v2"]
+    # seed_hex : affiché une seule fois, à sauvegarder par l'utilisateur
     if wallet.get("seed_hex"):
         out["seed_hex"] = wallet["seed_hex"]
         out["WARNING"] = wallet.get("WARNING")

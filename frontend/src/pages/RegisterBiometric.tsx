@@ -138,7 +138,6 @@ export function RegisterBiometric() {
     <div className="mc-page bio-page">
       <h1 className="dashboard-title">{t("reg_title")}</h1>
       <p className="bio-lead">{t("reg_subtitle")}</p>
-      <p className="mc-muted">{t("reg_disclaimer")}</p>
 
       {/* Onglets */}
       <div className="bio-mode-toggle" role="tablist">

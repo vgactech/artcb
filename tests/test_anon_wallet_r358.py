@@ -205,7 +205,6 @@ def test_anon_register_verify_derives_wallet_name(
     assert result["ok"] is True
     assert result["unique_human_proven"] is False
     assert result["certified"] is False
-    assert "R358" in result["note"]
     # _create_wallet_auto appelé avec le nom dérivé
     assert mock_create.call_args[0][0] == expected_name
 

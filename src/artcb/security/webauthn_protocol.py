@@ -142,12 +142,15 @@ def registration_options(
         "attestation": "none",
         "excludeCredentials": [],
         "authenticatorSelection": {
-            "authenticatorAttachment": "platform",
+            # R358 : pas de restriction "platform" — permet les authenticators
+            # cross-device (clé de sécurité, smartphone via QR/caBLE) en plus
+            # des authenticators de plateforme (Touch ID, Windows Hello…).
+            # L'OS et le navigateur présentent les options disponibles à l'utilisateur.
             "residentKey": "preferred",
             "requireResidentKey": False,
             "userVerification": "required",
         },
-        "hints": ["client-device"],
+        "hints": ["client-device", "security-key", "hybrid"],
         "extensions": {"credProps": True},
         "modality": modality,
     }
