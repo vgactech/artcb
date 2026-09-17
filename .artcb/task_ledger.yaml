@@ -1,0 +1,228 @@
+# ARTCB — Ledger de tâches persistant
+# Mis à jour automatiquement par Bob IDE à chaque session/prompt.
+# Format : YAML lisible machine + humain.
+# Ne jamais supprimer une tâche DONE — conserver l'historique complet.
+# CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
+
+meta:
+  version: "1.0"
+  repo: "https://github.com/vgactech/artcb"
+  node_live: "http://151.80.107.29:8000"
+  last_updated: "2026-09-17"
+  git_head: "25d1e1e"
+  chain_height: 1142
+  certified_100: false
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TÂCHES DONE (historique — ne jamais supprimer)
+# ═══════════════════════════════════════════════════════════════════════════════
+done:
+
+  - id: R350
+    title: "Réflexe ARTCB — ReflexEngine priorité automatique"
+    commit: "55e8065"
+    tests: "132/132 PASS"
+    note: "stub fonctionnel — CERTIFIED_100=false"
+
+  - id: R355
+    title: "REASONING_RECORD + ReferenceID + FIRST_REFLEX + EARLIEST_DETECTABLE_POINT"
+    commit: "b2a5a62"
+    tests: "69/69 PASS"
+    corrections: ["R355.1 final_hash complet", "R355.2 seal frozen", "R355.3 /seal API préserve champs"]
+
+  - id: R356
+    title: "PBFT publisher + /publish API"
+    commit: "cda4495"
+    tests: "91/91 PASS"
+
+  - id: R357
+    title: "/register sans biométrie UI — bouton unique WebAuthn OS"
+    commit: "0036f41"
+    tests: "91/91 PASS"
+
+  - id: R358
+    title: "/register zéro champ + wallet_name auto depuis credential_id"
+    commits: ["5f8e162", "cc18e60"]
+    tests: "109/109 PASS"
+    note: "supprimé authenticatorAttachment=platform + hints=[hybrid]"
+
+  - id: R359
+    title: "Supprimer /reflex /memorize /logs du frontend + graphe N(N-1) arcs CONNECTS"
+    commit: "971bdca"
+    tests: "140/140 PASS"
+
+  - id: R360
+    title: "Fenêtre glissante N>20 — O(K·N) vs O(N²)"
+    commit: "2b36297"
+    tests: "146/146 PASS"
+
+  - id: R361
+    title: "Restituer pqc_secret_key_hex (ML-DSA-65) à la création wallet"
+    commit: "0b738a6"
+    tests: "128/128 PASS"
+
+  - id: R362
+    title: "Supprimer CERTIFIED_100/unique_human_proven de /add-device + /identity-test"
+    commit: "25d1e1e"
+    bundle: "index-CssPbdoB.js"
+    note: "informations d'audit interne retirées de l'UI publique"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TÂCHES IN PROGRESS
+# ═══════════════════════════════════════════════════════════════════════════════
+in_progress:
+
+  - id: R363
+    title: "Vraie vérification WebAuthn dans add-verify + revoke (remplace stub template_hex)"
+    status: "implementing"
+    priority: HIGH
+    files:
+      - "src/api/identity_device_routes.py"
+      - "tests/test_add_device_r363.py"
+    what_changed:
+      - "add-options: challenge b64url + allow_credentials + rp_id (standard WebAuthn)"
+      - "add-verify: verify_assertion() cryptographique — credential_id + clientDataJSON + authenticatorData + signature"
+      - "revoke: même vérification WebAuthn que add-verify"
+      - "credential_store.jsonl: registre clés publiques PEM par human_id"
+      - "sign_count anti-replay mis à jour après chaque assertion valide"
+    security_properties:
+      - "PIN seul → 401 credential_not_found"
+      - "template_hex seul → 422 (champ disparu du schéma)"
+      - "mauvaise signature → 401 webauthn_assertion_failed"
+      - "credential wrong human → 403"
+      - "challenge inconnu → 400"
+      - "WebAuthn valide ≠ unique_human_proven (toujours False)"
+    pending: "push + tests live"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TÂCHES OPEN (backlog ordonné par priorité)
+# ═══════════════════════════════════════════════════════════════════════════════
+open:
+
+  - id: R364
+    title: "Tests attaque E2E — suite complète"
+    priority: HIGH
+    depends_on: R363
+    tests_required:
+      - "PIN seul → 401"
+      - "template_hex seul → 422"
+      - "mauvaise signature → 401"
+      - "credential wrong human → 403"
+      - "challenge expiré → 400"
+      - "ADD_DEVICE valide WebAuthn → 200"
+      - "max 5 appareils → 409"
+      - "revoke WebAuthn valide → 200"
+      - "revoke credential inconnue → 401"
+      - "WebAuthn valide ≠ unique_human_proven (toujours False)"
+    file: "tests/test_add_device_r363.py"
+    note: "fichier créé — dépend de pytest non-bloquant"
+
+  - id: R365
+    title: "Relancer aws-node-3 PBFT primary ou déclencher view-change"
+    priority: HIGH
+    blocker: true
+    issue: >
+      aws-node-3 (13.38.209.25) est offline depuis 2026-09-12.
+      Toute publication on-chain est gelée — prepared_count n'atteint pas quorum.
+    options:
+      - "AWS CLI: aws ec2 start-instances --instance-ids <id> --profile artcb-node-3"
+      - "Déclencher PBFT view-change depuis les nœuds OVH"
+      - "Mettre à jour la config PBFT pour exclure aws-node-3"
+
+  - id: R366
+    title: "AUTO_ARTCB_PREFLIGHT dans user_prompt_submit.py"
+    priority: MEDIUM
+    file: ".bob/hooks/user_prompt_submit.py"
+    description: >
+      Charger automatiquement .artcb/task_ledger.yaml + état GitHub + divergences
+      à chaque prompt. Injecter dans le contexte de l'agent.
+
+  - id: TASK-001
+    title: "Identité biométrique / multi-device — complétion"
+    priority: MEDIUM
+    sub_tasks:
+      - "Intégrer credential_store dans /identity/biometric/enroll (stocker clé publique WebAuthn)"
+      - "FHE matching biométrique (remplacer stub hash-based)"
+      - "FAR/FRR/PAD mesurés"
+      - "Tests SDK natif iOS/Android"
+
+  - id: TASK-005
+    title: "Genesis transfer — authz"
+    priority: LOW
+    description: "Transfert de contrôle genesis node → nouvelle gouvernance"
+
+  - id: TASK-006
+    title: "Creator-node failure — nœud créateur mort"
+    priority: MEDIUM
+    description: >
+      aws-node-3 est le primary PBFT ET le creator-node.
+      Définir le comportement du réseau si le creator-node ne revient jamais.
+
+  - id: TASK-007
+    title: "PoL / KnowledgeID / UsageID — architecture + implémentation"
+    priority: LOW
+    description: >
+      Proof-of-Learning : enregistrer les contributions on-chain.
+      KnowledgeID : identifiant du savoir contribué.
+      UsageID : traçabilité des usages des modèles.
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DÉCISIONS ARCHITECTURE (immuables — ne jamais supprimer)
+# ═══════════════════════════════════════════════════════════════════════════════
+decisions:
+
+  - id: D001
+    source: "rapport 367"
+    title: "PIN ≠ preuve ARTCB"
+    rule: "Aucun PIN, password, secret, code local n'est accepté comme preuve d'identité ou de wallet"
+    status: ENFORCED
+    enforcement: "R363 — credential_not_found → 401 si PIN seul"
+
+  - id: D002
+    source: "rapport 367"
+    title: "face_camera = FALLBACK_ACCESSIBILITY_ONLY"
+    rule: "La caméra frontale n'est pas une preuve d'identité ARTCB — non acceptée comme biometric_primary"
+    status: ENFORCED
+    enforcement: "R357 + reflex/core.py FACE_CAMERA_INACTIVE_PRODUCTION"
+
+  - id: D003
+    source: "rapport 367"
+    title: "WebAuthn valide ≠ unique_human_proven"
+    rule: >
+      Une assertion WebAuthn prouve la possession d'un authenticator,
+      PAS l'unicité humaine. unique_human_proven reste toujours False.
+    status: ENFORCED
+    enforcement: "unique_human_proven=False dans tous les records + tests"
+
+  - id: D004
+    source: "rapport 367/370"
+    title: "ADD_DEVICE — aucun nouveau wallet créé"
+    rule: "Un nouvel appareil REJOINT l'identité existante — ne crée pas de nouveau wallet"
+    status: ENFORCED
+    enforcement: "R363 — device_record ne contient pas de nouveau wallet"
+
+  - id: D005
+    source: "CERTIFIED_100 policy"
+    title: "CERTIFIED_100 = False — permanent"
+    rule: "Ne jamais inverser CERTIFIED_100. Pas de claim de certification sans preuve complète."
+    status: PERMANENT
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ÉTAT AVANCEMENT GLOBAL
+# ═══════════════════════════════════════════════════════════════════════════════
+progress:
+  global_pct: 64
+  breakdown:
+    blockchain_core: 90
+    wallet_hybrid_ed25519_mldsa65: 88
+    webauthn_register: 85
+    add_device_multi_device: 60   # R363 en cours → était 55%
+    biometric_identity_human_id: 50
+    reflex_artcb_r350_r354: 55
+    pqc_mldsa65: 85
+    pbft_consensus: 80            # bloquant: aws-node-3 mort
+    tests_coverage: 82
+    ui_artcbme: 88                # R362 livré
+    task_ledger: 50               # R366 créé, preflight manquant
+    pol_knowledgeid_usageid: 25
+    genesis_transfer_creator_node: 20
