@@ -62,11 +62,12 @@ ARTCB_DOMAIN_LEGACY = "artcb.space"
 ARTCB_DOMAIN_LABELS: tuple[str, ...] = ("n1", "n2", "n3", "n4", "node", "www")
 # DNS cible (nœuds live existants). Apex = OVH1 canonique. Pas d'AAAA inventée.
 ARTCB_DNS_A_RECORDS: dict[str, str] = {
-    # V-08 FIX 2026-09-16 — apex multi-A (OVH1 + N4 + N2) : TTL 60s
-    # OVH1 152.228.144.34 reste en premier mais n'est plus le seul.
-    # Enregistrements ajoutés via API OVH (artcb-4 / xy4589-ovh).
-    "": "152.228.144.34",       # apex artcb.me → OVH1 (+ N4 91.134.45.8 + N2 151.80.107.29 en multi-A)
-    "n1": "152.228.144.34",     # OVH1
+    # V-08 FIX v2 2026-09-16 — OVH1 SUPPRIMÉ du DNS apex (mort, provoquait timeout clients)
+    # apex artcb.me → N4 (91.134.45.8) + N2 (151.80.107.29) uniquement, TTL 60s
+    # n1.artcb.me conservé pour accès de service direct (OVH1 quand il reviendra)
+    # Action OVH API : DELETE record 5432477544 + refresh zone
+    "": "91.134.45.8",          # apex artcb.me → N4 (primary, cert wildcard artcb.me)
+    "n1": "152.228.144.34",     # OVH1 (sous-domaine de service uniquement, hors apex)
     "n2": "151.80.107.29",      # OVH2
     "n3": "13.38.209.25",      # AWS3
     "n4": "91.134.45.8",        # OVH4
