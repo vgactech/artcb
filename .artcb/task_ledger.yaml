@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.8"
+  version: "1.9"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "d57f868"
+  git_head: "32ae4b7"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -227,6 +227,23 @@ done:
     tests: "18/18 PASS — total 90/90 PASS"
     certified_100: false
 
+  - id: TASK-006-CREATOR-NODE
+    title: "TASK-006 — Creator-node / Primary failure policy"
+    commit: "32ae4b7"
+    files_created:
+      - "src/artcb/consensus/creator_node_policy.py — PrimaryFailurePolicy 3 états"
+      - "tests/test_task006_creator_node.py — 20 tests A→P PASS"
+    states:
+      - "ALIVE → WAIT"
+      - "DEAD_TRANSIENT (<24h) → WAIT (watchdog actif)"
+      - "DEAD_RECOVERABLE (24h–7j) → TRIGGER_VIEW_CHANGE"
+      - "DEAD_PERMANENT (>7j) → OPERATOR_DECISION"
+    impact_aws_node_3_permanent:
+      "N=4→3, Q=3→2, quorum maintenu. Action opérateur : pbft_replica=False dans node_registry.py"
+    tests: "20/20 PASS — total 110/110 PASS"
+    certified_100: false
+    note: "Retrait JAMAIS automatique — opérateur décide explicitement"
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -238,10 +255,10 @@ in_progress:
 open:
 
   - id: R365
-    title: "Relancer aws-node-3 PBFT primary ou déclencher view-change"
+    title: "aws-node-3 : surveillance PBFT long terme + décision retrait si mort permanent"
     priority: HIGH
     blocker: false
-    note: "V-STALL-01 RÉSOLU (2e89322) — chain_height=1198 ALIVE view=27. R365 reste pour surveillance long terme."
+    note: "TASK-006 implémenté — outil assess_primary_failure() disponible. R365 = surveillance + décision opérateur."
 
   - id: R366
     title: "AUTO_ARTCB_PREFLIGHT — fermeture administrative (fonctionnel, non clôturé)"
