@@ -9,7 +9,7 @@ meta:
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "42079d2"
+  git_head: "d780008"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -323,7 +323,7 @@ done:
 
   - id: R375
     title: "R375 — Rule Corpus Telemetry v2 : rule_corpus_index.json + rule_sources rescan"
-    commit: "pending-r375"
+    commit: "d780008"
     files_created:
       - "scripts/artcb_r375_corpus_refresh.py — scanner corpus normatif complet"
       - "rules/rule_corpus_index.json — 230 entrées CR-* (RULE/DECISION/SPEC/LESSON/etc.)"
