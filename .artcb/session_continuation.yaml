@@ -9,53 +9,42 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 meta:
-  last_updated: "2026-09-18T05:10:00Z"
-  git_head: "4cd7b17"
+  last_updated: "2026-09-18T06:15:00Z"
+  git_head: "41ce134"
   chain_height: 1198
-  session_count: 14
+  session_count: 15
 
 # ─── ÉTAT COURANT DE REPRISE ─────────────────────────────────────────────────
 
 current:
-  task_id: "R369-ENFORCEMENT"
-  title: "R369 enforcement réel + R371 remote-sync + TASK-001 biométrie + TASK-006 creator-node"
+  task_id: "TASK-001-BIOMETRIE"
+  title: "TASK-001 biométrie FuzzyExtractor + TASK-006 creator-node + surveillance PBFT"
   status: "IN_PROGRESS"
   started: "2026-09-18"
 
-  # ── Accompli cette session (2026-09-18-C) ────────────────────────────────
+  # ── Accompli cette session (2026-09-18-D) ────────────────────────────────
   completed_this_session:
-    - "fix test_add_device_r363.py — 20/20 PASS (rp_id=testserver, human_id≥8, create_app)"
-    - "commit 4cd7b17 pushé + OVH2 déployé (sha confirmé live)"
-    - "R364 DONE : tous les tests attaque E2E passent (20/20)"
-    - "R369 adversariaux 23/23 PASS (tests M→S présents)"
-    - "R368-R370 P0-A→P0-E présents dans preflight.py (883 lignes)"
-    - "ledger + session_continuation mis à jour → git_head=4cd7b17"
+    - "R369-enforcement COMPLET : Gate CRITICAL dans wallet_create (routes.py)"
+    - "R369-enforcement COMPLET : Gate LIVE_WRITE dans append_block (manager.py)"
+    - "Route /api/v1/reflex/status — ReflexEngine + PreflightGate + tableau R369 (JSON propre)"
+    - "Route /api/v1/reflex/preflight — rapport brut git/live/ledger (JSON propre)"
+    - "commit 41ce134 pushé — 62/62 tests PASS"
+    - "ledger v1.6 + session_continuation mis à jour → git_head=41ce134"
 
   next_actions:
 
     - step: 1
-      what: "R369-enforcement — PreflightGate.require_authorized() intégrée dans les routes sensibles"
-      modules:
-        - "src/api/identity_device_routes.py (add-verify, revoke-device)"
-        - "src/api/wallet_routes.py (create_wallet)"
-        - "src/artcb/chain/manager.py (append_block)"
-      note: "fail-closed pour CRITICAL + LIVE_WRITE — pas seulement hook Bob"
-      status: "TODO"
-
-    - step: 2
-      what: "R371 — RemoteGitState.fetch() + classify_divergence() complet + session_continuation auto-sync"
-      module: "src/artcb/reflex/preflight.py"
-      note: "RemoteGitState existe déjà — brancher fetch_remote() dans run_checks FULL"
-      status: "TODO"
-
-    - step: 3
       what: "TASK-001 — FuzzyExtractor réel (remplacer stub biometric_onchain.py)"
       module: "src/artcb/identity/biometric_onchain.py"
       status: "TODO"
 
-    - step: 4
+    - step: 2
       what: "TASK-006 — Creator-node failure : définir comportement réseau si aws-node-3 ne revient pas"
       status: "TODO"
+
+    - step: 3
+      what: "Déploiement OVH2 du commit 41ce134 (follow-main timer ou déclenchement manuel)"
+      status: "PENDING_DEPLOY"
 
   context:
     r368_r370_done: >

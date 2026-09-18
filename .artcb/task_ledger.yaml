@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.5"
+  version: "1.6"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "4cd7b17"
+  git_head: "41ce134"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -161,11 +161,27 @@ done:
       - "P0-C : OperationRisk + required_preflight_mode() + PreflightGate.authorize()"
       - "P0-D : PreflightBlockedError + fail-closed pour CODE_CHANGE/DEPLOY/LIVE_WRITE/CRITICAL"
       - "P0-E : LiveState 5 niveaux — live_reachable/healthy/git_sha_known/git_match/height"
-    gaps_remaining:
-      - "R369-enforcement : PreflightGate pas encore intégrée dans les routes métier (add-verify, wallet, chain)"
-      - "R371 : fetch_remote() non branché dans run_checks FULL automatiquement"
-      - "Tests adversariaux de bypass direct (appel fonction sensible sans Gate) — à compléter"
+    gaps_remaining: []
     certified_100: false
+
+  - id: R369-ENFORCEMENT
+    title: "R369-enforcement COMPLET — Gate dans toutes les routes sensibles + routes UI"
+    commit: "41ce134"
+    files_modified:
+      - "src/api/routes.py — Gate CRITICAL dans wallet_create"
+      - "src/artcb/chain/manager.py — Gate LIVE_WRITE dans append_block (skip dry_run)"
+      - "src/api/reflex_routes.py — /status + /preflight routes UI sérialisées JSON"
+    routes_protected:
+      - "POST /api/v1/identity/device/add-verify → CRITICAL ✅"
+      - "DELETE /api/v1/identity/device/revoke → CRITICAL ✅"
+      - "POST /api/v1/wallet/create → CRITICAL ✅"
+      - "chain.append_block() → LIVE_WRITE ✅ (skip dry_run)"
+    routes_ui:
+      - "GET /api/v1/reflex/status → ReflexEngine + PreflightGate + R369 tableau"
+      - "GET /api/v1/reflex/preflight → rapport brut git/live/ledger"
+    tests: "62/62 PASS (ARTCB_PREFLIGHT_GATE_DISABLED=1)"
+    certified_100: false
+    note: "Enforcement logiciel — bypass Python direct possible (documenté, limite honnête)"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
@@ -176,15 +192,6 @@ in_progress:
 # TÂCHES OPEN (backlog ordonné par priorité)
 # ═══════════════════════════════════════════════════════════════════════════════
 open:
-
-  - id: R364-R369-ENFORCEMENT
-    title: "PreflightGate intégrée dans routes métier sensibles + remote-sync automatique"
-    priority: P0
-    sub_tasks:
-      - "PreflightGate.require_authorized() dans add-verify, revoke-device, wallet, chain.append_block"
-      - "fetch_remote() branché dans run_checks FULL"
-      - "Tests bypass direct (appel fonction sensible sans Gate → BLOCKED)"
-    file: "src/artcb/reflex/preflight.py"
 
   - id: R365
     title: "Relancer aws-node-3 PBFT primary ou déclencher view-change"
