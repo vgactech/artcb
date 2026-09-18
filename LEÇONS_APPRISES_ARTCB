@@ -227,3 +227,8 @@
 **Leçon :** Ne jamais construire un mécanisme d'identité humaine en supposant que `UV=true` signifie "biométrique vérifié". La spec W3C le documente explicitement (issue #1728). `unique_human_proven` reste `False` même avec `UV=true`.  
 **Action :** R372 — TASK-001-BIOMETRIE-SUITE enrichie avec les 5 cas à distinguer + champ `user_verification_method (BIOMETRIC | PIN | UNKNOWN)` + `wallet_per_human_limit` à implémenter.
 
+
+### L-048 — Nouvelle dépendance = re-pip obligatoire sur tous les nœuds live (2026-09-18)
+**Contexte :** R374 a ajouté `bchlib>=2.1.3` dans `requirements.txt`. Le code a été poussé et deployé (git pull OK). Mais `start_node.sh` ne relançait pas `pip install` au démarrage. Résultat : les 3 nœuds live (OVH2, OVH4, AWS3) crashaient au boot avec `ModuleNotFoundError: No module named 'bchlib'`, provoquant une boucle de redémarrages et un 502 sur `artcb.me`.
+**Leçon :** (1) Tout commit ajoutant une lib dans `requirements.txt` doit être accompagné d'un hotfix pip sur les nœuds live. (2) `start_node.sh` doit exécuter `pip install -r requirements.txt --quiet` avant uvicorn pour auto-réparer ce cas à l'avenir. (3) Git pull ≠ dépendances installées. (4) Un service en boucle `activating (auto-restart)` sur systemd = analyser les logs AVANT de supposer un crash du code.
+**Action :** R377 — `pip install bchlib` manuel sur N2/N4/N3. `start_node.sh` modifié : `pip install -r requirements.txt --quiet` ajouté avant le lancement uvicorn. Rapport `rapports/R377_hotfix_bchlib_live_nodes.md`.

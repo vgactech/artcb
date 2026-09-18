@@ -18,6 +18,13 @@ export ARTCB_GIT_SHA="${ARTCB_GIT_SHA:-$(git rev-parse HEAD 2>/dev/null || true)
 export ARTCB_GIT_BRANCH="${ARTCB_GIT_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)}"
 echo "── git ${ARTCB_GIT_BRANCH:-?}@${ARTCB_GIT_SHA:-unknown}"
 
+# L-048 (R377) : installer les dépendances à chaque démarrage pour que les nouvelles
+# libs ajoutées dans requirements.txt (ex: bchlib R374) soient toujours présentes.
+# --quiet évite le bruit dans les logs systemd ; --no-build-isolation accélère.
+if [ -f requirements.txt ] && [ -x .venv/bin/pip ]; then
+  .venv/bin/pip install -r requirements.txt --quiet 2>&1 | grep -v "^Requirement already" || true
+fi
+
 # GRA11: 8 parallel GETs filled a tiny accept queue even when handlers were O(1).
 # backlog + concurrency cap keep the TCP file from dropping SYNs; keep-alive short
 # so a probe burst does not pin workers.
