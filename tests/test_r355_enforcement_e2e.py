@@ -129,39 +129,62 @@ def test_B_preflight_degraded_no_ledger(tmp_path: Path) -> None:
 # ─── Test C : divergence git détectée ────────────────────────────────────────
 
 def test_C_git_divergence_detected(tmp_path: Path, minimal_ledger: Path) -> None:
-    """Si ledger.git_head ≠ git HEAD réel, git_sync est DEGRADED.
+    """Si ledger.recorded_sha ≠ git HEAD et pas parent direct → DEGRADED (REAL_DIVERGENCE).
 
-    Le ledger a git_head=abc1234.
-    On simule git HEAD = xyz9999 (différent).
+    Le ledger a recorded_sha=abc1234.
+    Git HEAD = xyz9999 (différent, pas dans les parents).
     """
     pfe = PreflightEngine(root=tmp_path)
 
-    # Ledger dit abc1234
-    git_state = GitState(sha_short="xyz9999", sha_full="xyz9999abcdef", branch="main", available=True)
+    # Git HEAD très différent, pas dans les parents récents
+    git_state = GitState(
+        sha_short="xyz9999", sha_full="xyz9999abcdef0123456789", branch="main",
+        available=True, recent_parents=["xyz9999", "aaa0001"]
+    )
     ledger_state = pfe.load_task_ledger()  # chargé depuis minimal_ledger (abc1234)
 
     assert ledger_state.available, "Ledger doit être chargé"
-    check = pfe._check_git_sync(git_state, ledger_state)
+    # P0-A : utilise classify_git_ledger_sync
+    check = pfe.classify_git_ledger_sync(git_state, ledger_state)
 
     assert check.status == CheckStatus.DEGRADED, (
-        f"Divergence ledger=abc1234 ≠ git=xyz9999 doit produire DEGRADED, got {check.status}"
+        f"REAL_DIVERGENCE doit produire DEGRADED, got {check.status}"
     )
-    assert "LEDGER_DIVERGENCE" in check.detail or "sync" in check.detail.lower()
+    assert "REAL_DIVERGENCE" in check.detail or "DIVERGENCE" in check.detail
+
+
+def test_C_git_expected_lag(tmp_path: Path, minimal_ledger: Path) -> None:
+    """Si ledger.recorded_sha est un parent direct de git HEAD → EXPECTED_LAG."""
+    pfe = PreflightEngine(root=tmp_path)
+    # Git HEAD a abc1234 dans ses parents récents → EXPECTED_LAG
+    git_state = GitState(
+        sha_short="def5678", sha_full="def5678abcdef0123456789", branch="main",
+        available=True, recent_parents=["def5678", "abc1234", "000aaaa"]
+    )
+    ledger_state = pfe.load_task_ledger()
+    assert ledger_state.recorded_sha[:7] == "abc1234"
+
+    check = pfe.classify_git_ledger_sync(git_state, ledger_state)
+    assert check.status == CheckStatus.EXPECTED_LAG, (
+        f"Parent direct → EXPECTED_LAG, got {check.status.value}: {check.detail}"
+    )
 
 
 def test_C2_git_sync_pass_when_matching(tmp_path: Path, minimal_ledger: Path) -> None:
-    """Si ledger.git_head correspond à git HEAD, git_sync est PASS."""
+    """Si ledger.recorded_sha correspond à git HEAD, git_sync est PASS."""
     pfe = PreflightEngine(root=tmp_path)
-    # Git SHA correspondant exactement au ledger (abc1234)
-    git_state = GitState(sha_short="abc1234", sha_full="abc1234567890abcdef", branch="main", available=True)
+    git_state = GitState(
+        sha_short="abc1234", sha_full="abc1234567890abcdef", branch="main",
+        available=True, recent_parents=["abc1234"]
+    )
     ledger_state = pfe.load_task_ledger()
 
-    assert ledger_state.available, "Ledger doit être disponible (fixture minimal_ledger créé dans tmp_path)"
-    assert ledger_state.git_head == "abc1234", f"Ledger git_head attendu abc1234, got {ledger_state.git_head!r}"
+    assert ledger_state.available, "Ledger doit être disponible"
+    assert ledger_state.recorded_sha[:7] == "abc1234"
 
-    check = pfe._check_git_sync(git_state, ledger_state)
+    check = pfe.classify_git_ledger_sync(git_state, ledger_state)
     assert check.status == CheckStatus.PASS, (
-        f"git={git_state.sha_short} ledger={ledger_state.git_head} → doit être PASS, got {check.status}"
+        f"git=abc1234 ledger=abc1234 → PASS, got {check.status}"
     )
 
 
@@ -325,7 +348,7 @@ def test_H_snapshot_contains_required_fields() -> None:
     # git_sha peut être None si git non dispo, mais la clé doit exister
     assert "git_sha" in snap
     assert "ledger_sha256" in snap
-    assert "live_available" in snap
+    assert "live_reachable" in snap
 
 
 def test_H2_snapshot_in_report(engine: ReflexEngine) -> None:
@@ -365,16 +388,18 @@ def test_J_policy_git_unavailable_blocked(tmp_path: Path) -> None:
     """Si Git est indisponible, git_sync est BLOCKED."""
     pfe = PreflightEngine(root=tmp_path)
     git_unavailable = GitState(available=False)
-    ledger_ok = LedgerState(git_head="abc1234", available=True, sha256="x" * 64)
+    # P0-A : LedgerState utilise recorded_sha
+    ledger_ok = LedgerState(recorded_sha="abc1234", available=True, sha256="x" * 64)
 
-    check = pfe._check_git_sync(git_unavailable, ledger_ok)
+    check = pfe.classify_git_ledger_sync(git_unavailable, ledger_ok)
     assert check.status == CheckStatus.BLOCKED
 
 
 def test_J2_live_unavailable_not_proven(tmp_path: Path) -> None:
     """Si live est indisponible en mode FULL, live_node est NOT_PROVEN."""
     pfe = PreflightEngine(root=tmp_path)
-    live_unavailable = LiveState(available=False, url="http://test")
+    # P0-E : LiveState n'a plus available=False comme init arg
+    live_unavailable = LiveState(url="http://test")  # reachable=False par défaut
 
     check = pfe._check_live_node(live_unavailable, PreflightMode.FULL)
     assert check.status == CheckStatus.NOT_PROVEN

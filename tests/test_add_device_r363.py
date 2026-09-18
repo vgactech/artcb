@@ -85,8 +85,8 @@ def _make_credential(human_id: str, data_dir: Path, origin: str = "http://localh
 def _build_assertion(
     priv_key: ec.EllipticCurvePrivateKey,
     challenge_b64: str,
-    rp_id: str = "localhost",
-    origin: str = "http://localhost",
+    rp_id: str = "testserver",   # TestClient envoie Host: testserver → rp_id_for_host → "testserver"
+    origin: str = "http://testserver",
     sign_count: int = 1,
 ) -> dict:
     """Construit une assertion WebAuthn logicielle valide."""
@@ -119,8 +119,10 @@ def _build_assertion(
 
 @pytest.fixture()
 def client():
-    from src.api.main import app
-    with TestClient(app) as c:
+    # tmp_data_dir (autouse=True) a déjà setenv ARTCB_DATA_DIR avant ce point.
+    from src.api.main import create_app
+    _app = create_app()
+    with TestClient(_app) as c:
         yield c
 
 
@@ -227,7 +229,7 @@ class TestAttacksRefused:
             "challenge_b64": fake_challenge,
             "credential_id": cred_id,
             **assertion,
-            "new_device_credential_id": "newdev1",
+            "new_device_credential_id": "newdev1xx",  # ≥8 chars (min_length=8)
         })
         assert r.status_code == 400
         assert "challenge" in r.json()["detail"]
@@ -254,17 +256,17 @@ class TestAttacksRefused:
 
     def test_credential_wrong_human_returns_403(self, client, tmp_data_dir):
         """Credential appartenant à un autre HumanID → 403."""
-        _make_human_record("human_A", tmp_data_dir)
-        _make_human_record("human_B", tmp_data_dir)
-        priv_b, cred_id_b = _make_credential("human_B", tmp_data_dir)
-        # Options pour human_A
-        r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_A"})
+        _make_human_record("human_A1x", tmp_data_dir)  # ≥8 chars (min_length=8)
+        _make_human_record("human_B1x", tmp_data_dir)  # ≥8 chars
+        priv_b, cred_id_b = _make_credential("human_B1x", tmp_data_dir)
+        # Options pour human_A1x
+        r_opt = client.post("/api/v1/identity/device/add-options", json={"human_id": "human_A1x"})
         challenge_b64 = r_opt.json()["challenge"]
-        # Assertion avec credential de human_B
+        # Assertion avec credential de human_B1x
         assertion = _build_assertion(priv_b, challenge_b64)
         r2 = client.post("/api/v1/identity/device/add-verify", json={
             "challenge_b64": challenge_b64,
-            "credential_id": cred_id_b,   # appartient à human_B
+            "credential_id": cred_id_b,   # appartient à human_B1x
             **assertion,
             "new_device_credential_id": "newdev_wronghuman",
         })
