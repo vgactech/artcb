@@ -1,11 +1,11 @@
 {
   "protocol": "r340-rule-sources-v2",
-  "refreshed_by": "R375",
+  "refreshed_by": "R379",
   "ts_ns": 1789713340318878000,
-  "note": "Append-only cartography. Updated by artcb_r375_corpus_refresh.py. Does not replace PROTOCOLE/AUTO_PROMPT/Cursor. CERTIFIED_100=false.",
-  "registry_version": 6,
-  "registered_rules": 20,
-  "active_rules": 20,
+  "note": "Append-only cartography. Updated by R379. Does not replace PROTOCOLE/AUTO_PROMPT/Cursor. CERTIFIED_100=false.",
+  "registry_version": 7,
+  "registered_rules": 23,
+  "active_rules": 23,
   "sources": [
     {
       "source_id": "rule_registry",
@@ -706,6 +706,63 @@
         "struck_markers": 0
       },
       "notes": []
+    },
+    {
+      "source_id": "forensic_nanosecond",
+      "path": "src/artcb/trace/ns.py",
+      "kind": "RULE",
+      "authority": "telemetry",
+      "present": true,
+      "category": "observability",
+      "domain": "forensic_logging",
+      "description": "Log forensic nanoseconde — actif sur CHAQUE requête HTTP et écriture chaîne (middleware main.py). Métriques : ts_wall_ns, mono_ns, pid, kind, method, path, dur_ns, http, ok. Activé AUTOMATIQUEMENT sans action utilisateur. ARTCB_DEBUG=true par défaut (logging_config.py). Ne jamais désactiver sans ordre explicite.",
+      "activation": "automatic",
+      "trigger": "every_http_request + every_block_write",
+      "applies_to": ["code_modification", "new_feature", "deployment", "live_node"],
+      "detections": {
+        "rt_ids": ["RT-TELEMETRY"],
+        "rxxx_ids": ["R379"],
+        "d_ids": []
+      },
+      "notes": ["Middleware nanosecond_http_trace dans main.py — toujours actif mode normal + bootstrap"]
+    },
+    {
+      "source_id": "module_versioning",
+      "path": "src/artcb/release.py",
+      "kind": "CONVENTION",
+      "authority": "dev_gate",
+      "present": true,
+      "category": "traceability",
+      "domain": "versioning",
+      "description": "Versioning de module après chaque modification unitaire. Règle R379 : tout fichier Python modifié dans un commit R-XXX doit avoir son docstring d'en-tête mis à jour avec la référence R-XXX et la date. release.py expose git_sha comme version runtime. Les rapports doivent documenter l'avant/après avec numéro de ligne.",
+      "activation": "per_commit",
+      "trigger": "every_code_modification",
+      "applies_to": ["src/**/*.py", "src/**/*.c", "src/**/*.h"],
+      "detections": {
+        "rt_ids": [],
+        "rxxx_ids": ["R379"],
+        "d_ids": []
+      },
+      "notes": ["Convention : docstring ligne 1 = module + R-XXX + date. git_sha = version déployée."]
+    },
+    {
+      "source_id": "auto_retrospective",
+      "path": "rapports/",
+      "kind": "RULE",
+      "authority": "dev_gate",
+      "present": true,
+      "category": "quality_assurance",
+      "domain": "retrospective",
+      "description": "Auto-feedback et rétrospective après chaque tâche finalisée (R379). Règle : après chaque R-XXX complété, produire dans rapports/ un fichier R-XXX_*.md contenant : (1) points forts — ce qui a bien fonctionné ; (2) points faibles — ce qui peut être amélioré ; (3) avant/après avec lignes exactes et noms de fichiers ; (4) métriques tests PASS/FAIL ; (5) limites honnêtes documentées. Ce rapport est produit EN PARALLÈLE de la tâche, jamais à la place du développement. CERTIFIED_100=false dans chaque rapport.",
+      "activation": "automatic",
+      "trigger": "task_finalized",
+      "applies_to": ["every_R_task", "TASK-001", "TASK-005", "TASK-006", "TASK-007"],
+      "detections": {
+        "rt_ids": ["RT-TELEMETRY"],
+        "rxxx_ids": ["R379"],
+        "d_ids": []
+      },
+      "notes": ["Distinct du développement ARTCB interne. Séparation : dev interne ≠ utilisation utilisateur."]
     }
   ]
 }

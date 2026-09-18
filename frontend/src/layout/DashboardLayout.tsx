@@ -16,6 +16,8 @@ export function DashboardLayout() {
   const [chainValid, setChainValid] = useState<boolean | null>(null);
 
   // R359 — nav publique : /reflex, /memorize, /logs supprimés (backend agents uniquement)
+  // R379 — nav publique : /network (P2P/pool) et /agent-memory (mémoire IA) supprimés
+  //         Backend P2P + AgentMemory conservés — accessibles via API/agents uniquement
   const NAV = [
     { section: "CORE", items: [
       { to: "/", label: t('nav_dashboard'), icon: "▶" },
@@ -32,11 +34,9 @@ export function DashboardLayout() {
       { to: "/system", label: t('nav_system'), icon: "F3" },
       { to: "/console", label: t('nav_console'), icon: ">" },
       { to: "/integrations", label: t('nav_integrations'), icon: "+" },
-      { to: "/network", label: t('nav_network'), icon: "~" },
       { to: "/governance", label: t('nav_governance'), icon: "G" },
       { to: "/groups", label: t('nav_groups'), icon: "[G]" },
       { to: "/api-keys", label: t('nav_api_keys'), icon: "K" },
-      { to: "/agent-memory", label: t('nav_agent_memory'), icon: "AI" },
     ]},
   ];
 

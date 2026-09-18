@@ -259,3 +259,70 @@ class WalletDeviceBindingStore:
     def list_test_bindings(self) -> list[dict]:
         """Liste toutes les liaisons TEST enregistrées."""
         return self._read_test()
+
+    # ── R379 — Admin reset/revoke (contrôlé, jamais silencieux) ──────────────
+
+    def admin_revoke_by_fingerprint(self, device_fingerprint: str) -> dict | None:
+        """Révoque le binding PRODUCTION pour ce fingerprint.
+
+        Retourne l'entrée supprimée, ou None si aucun binding existant.
+        Opération irréversible — réservée à l'administration/récupération.
+        Le binding TEST correspondant n'est PAS touché (registre séparé).
+
+        Usage : test environnement, migration, récupération d'accès (seed_hex requis).
+        """
+        records = self._read()
+        to_remove = next(
+            (r for r in records if r["device_fingerprint"] == device_fingerprint), None
+        )
+        if to_remove is None:
+            return None
+        updated = [r for r in records if r["device_fingerprint"] != device_fingerprint]
+        self._write(updated)
+        logger.warning(
+            "wallet_device_binding: ADMIN REVOKE fingerprint=%s... wallet=%s",
+            device_fingerprint[:16],
+            to_remove.get("wallet_name", "?"),
+        )
+        return to_remove
+
+    def admin_revoke_by_wallet(self, wallet_name: str) -> dict | None:
+        """Révoque le binding PRODUCTION pour ce wallet_name.
+
+        Retourne l'entrée supprimée, ou None si aucun binding existant.
+        Opération irréversible — réservée à l'administration/récupération.
+        """
+        records = self._read()
+        to_remove = next(
+            (r for r in records if r["wallet_name"] == wallet_name), None
+        )
+        if to_remove is None:
+            return None
+        updated = [r for r in records if r["wallet_name"] != wallet_name]
+        self._write(updated)
+        logger.warning(
+            "wallet_device_binding: ADMIN REVOKE wallet=%s fingerprint=%s...",
+            wallet_name,
+            to_remove.get("device_fingerprint", "?")[:16],
+        )
+        return to_remove
+
+    def admin_revoke_test_by_wallet(self, wallet_name: str) -> dict | None:
+        """Révoque le binding TEST pour ce wallet_name.
+
+        Retourne l'entrée supprimée, ou None si absent.
+        """
+        records = self._read_test()
+        to_remove = next(
+            (r for r in records if r["wallet_name"] == wallet_name), None
+        )
+        if to_remove is None:
+            return None
+        updated = [r for r in records if r["wallet_name"] != wallet_name]
+        self._write_test(updated)
+        logger.warning(
+            "wallet_device_binding[TEST]: ADMIN REVOKE wallet=%s fingerprint=%s...",
+            wallet_name,
+            to_remove.get("device_fingerprint", "?")[:16],
+        )
+        return to_remove

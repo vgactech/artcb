@@ -1,10 +1,10 @@
 // R359 — séparation surface publique / interne
 // Supprimé du frontend public : /reflex, /memorize, /logs
-// Backend Reflex, Memorize, Logs : conservés — agents uniquement
+// R379 — Supprimé du frontend : /agent-memory (P2P IA), /network (P2P pairs + pool ML-KEM)
+// Backend AgentMemory, P2P, Network : conservés — agents/API uniquement
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { DashboardProvider } from "./context/DashboardContext";
 import { DashboardLayout } from "./layout/DashboardLayout";
-import { AgentMemory } from "./pages/AgentMemory";
 import { ApiKeys } from "./pages/ApiKeys";
 import { ChainPage } from "./pages/ChainPage";
 import { Console } from "./pages/Console";
@@ -14,7 +14,6 @@ import { Integrations } from "./pages/Integrations";
 import { JoinGroup } from "./pages/JoinGroup";
 import { Home } from "./pages/Home";
 import { Governance } from "./pages/Governance";
-import { Network } from "./pages/Network";
 import { Mining } from "./pages/Mining";
 import { SystemPage } from "./pages/SystemPage";
 import { Wallets } from "./pages/Wallets";
@@ -43,9 +42,7 @@ export default function App() {
             <Route path="groups" element={<Groups />} />
             <Route path="integrations" element={<Integrations />} />
             <Route path="governance" element={<Governance />} />
-            <Route path="network" element={<Network />} />
             <Route path="api-keys" element={<ApiKeys />} />
-            <Route path="agent-memory" element={<AgentMemory />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

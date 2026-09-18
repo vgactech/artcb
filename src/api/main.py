@@ -54,6 +54,7 @@ from src.api.identity_device_routes import router as identity_device_router
 from src.api.reflex_routes import router as reflex_router
 from src.api.reasoning_routes import router as reasoning_router
 from src.api.anon_wallet_routes import router as anon_wallet_router
+from src.api.admin_device_binding_routes import router as admin_device_binding_router
 
 # Any Replit account — never a named Autoscale hostname in git.
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
@@ -447,6 +448,8 @@ def create_app() -> FastAPI:
     app.include_router(concept_router)
     # R336 (2026-09-13T18:40:00Z) — HTTPS ops restart (LAN :22 CLOSED; :443 OPEN)
     app.include_router(ops_router)
+    # R379 — Admin device binding reset (opérateur uniquement)
+    app.include_router(admin_device_binding_router)
     logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
 
     @app.get("/live")
