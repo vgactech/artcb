@@ -5,16 +5,20 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.2"
+  version: "1.3"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "b83b05f"
-  chain_height: 1142
+  git_head: "eb097e1"
+  chain_height: 1198
+  chain_height_public: 837
+  chain_height_private: 361
+  last_block_index: 1194
+  last_block_ts: "2026-09-14T17:42:02Z"
   certified_100: false
   pbft_primary: "aws-node-3"
-  pbft_status: "ALIVE — synchronisé b83b05f, view=27, committed=106"
-  v_stall_01: "CONFIRMÉ — blocks.jsonl figé à 1142, memo en RAM seulement, fix en cours"
+  pbft_status: "ALIVE — synchronisé eb097e1, view=27"
+  v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 en prod (commits cf30b3a + eb097e1)"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)
@@ -106,10 +110,13 @@ done:
 
   - id: R367
     title: "V-STALL-01 fix — /ai/status, /ai/context, /ai/memory affichent vraie hauteur split ledger"
-    commit: "pending"
+    commits: ["cf30b3a", "eb097e1"]
     routes_fixed: ["/api/v1/ai/status", "/api/v1/ai/context", "/api/v1/ai/memory"]
     root_cause: "list_blocks() sans visibility lisait blocks.jsonl principal figé (1142) ignorant public/blocks.jsonl (1194+)"
-    fix: "tip_public_private() → pub_h + priv_h → hauteur réelle"
+    fix: "tip_public_private() → pub_h + priv_h → hauteur réelle. last_block via queue[-50:] évite confusion offset ligne vs block.index"
+    verified_in_prod: true
+    before: "height=1142 last_index=1141 ts=2026-09-12"
+    after: "height=1198 last_index=1194 ts=2026-09-14 pol_avg=0.75"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
