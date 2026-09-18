@@ -9,10 +9,10 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 meta:
-  last_updated: "2026-09-18T06:15:00Z"
-  git_head: "41ce134"
+  last_updated: "2026-09-18T07:00:00Z"
+  git_head: "43d0b6c"
   chain_height: 1198
-  session_count: 15
+  session_count: 16
 
 # ─── ÉTAT COURANT DE REPRISE ─────────────────────────────────────────────────
 
@@ -22,14 +22,13 @@ current:
   status: "IN_PROGRESS"
   started: "2026-09-18"
 
-  # ── Accompli cette session (2026-09-18-D) ────────────────────────────────
+  # ── Accompli cette session (2026-09-18-E) ────────────────────────────────
   completed_this_session:
-    - "R369-enforcement COMPLET : Gate CRITICAL dans wallet_create (routes.py)"
-    - "R369-enforcement COMPLET : Gate LIVE_WRITE dans append_block (manager.py)"
-    - "Route /api/v1/reflex/status — ReflexEngine + PreflightGate + tableau R369 (JSON propre)"
-    - "Route /api/v1/reflex/preflight — rapport brut git/live/ledger (JSON propre)"
-    - "commit 41ce134 pushé — 62/62 tests PASS"
-    - "ledger v1.6 + session_continuation mis à jour → git_head=41ce134"
+    - "R370-bypass-closure : GateProductionBypassError (interdit en production)"
+    - "R370 : _check_gate_disabled() fail-closed au boot create_app()"
+    - "R370 : 10 tests adversariaux T/U/V/W — 72/72 total PASS"
+    - "commit 43d0b6c pushé — matrice 7 appelants append_block vérifiée"
+    - "ledger v1.7 + session_continuation mis à jour → git_head=43d0b6c"
 
   next_actions:
 
@@ -43,7 +42,7 @@ current:
       status: "TODO"
 
     - step: 3
-      what: "Déploiement OVH2 du commit 41ce134 (follow-main timer ou déclenchement manuel)"
+      what: "Déploiement OVH2 du commit 43d0b6c (follow-main timer automatique)"
       status: "PENDING_DEPLOY"
 
   context:

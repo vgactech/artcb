@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.6"
+  version: "1.7"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "41ce134"
+  git_head: "43d0b6c"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -182,6 +182,24 @@ done:
     tests: "62/62 PASS (ARTCB_PREFLIGHT_GATE_DISABLED=1)"
     certified_100: false
     note: "Enforcement logiciel — bypass Python direct possible (documenté, limite honnête)"
+
+  - id: R370-BYPASS-CLOSURE
+    title: "R370 bypass-closure — GateProductionBypassError + tests T/U/V/W"
+    commit: "43d0b6c"
+    files_modified:
+      - "src/artcb/agent_control/gate.py — GateProductionBypassError + _check_gate_disabled()"
+      - "src/artcb/agent_control/__init__.py — exporte GateProductionBypassError + reset_gate"
+      - "src/api/main.py — vérification R370 au démarrage create_app()"
+      - "tests/test_r369_adversarial.py — 10 nouveaux tests T/U/V/W"
+    security_properties:
+      - "ARTCB_ENV=production + GATE_DISABLED → GateProductionBypassError au boot"
+      - "NODE_ENV=production + GATE_DISABLED → idem"
+      - "consume_authorization() → capability usage unique (réutilisation refusée)"
+      - "Analyse source statique : Gate présente dans append_block() ET wallet_create()"
+      - "Matrice 7 appelants append_block vérifiée (mining/bridge/memory/authz/p2p/PBFT)"
+    tests: "72/72 PASS (23 anciens + 19 R355 + 20 R363 + 10 R370)"
+    bypass_restant: "Écriture directe blocks.jsonl niveau OS (hors portée Python — documenté)"
+    certified_100: false
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
