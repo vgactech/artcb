@@ -997,6 +997,13 @@ class ChainManager:
     ) -> ChainBlock:
         from src.artcb.trace.ns import emit, now_mono_ns
 
+        # R369-enforcement : Gate LIVE_WRITE avant tout ajout de bloc (sauf dry_run)
+        if not dry_run:
+            from src.artcb.agent_control import require_operation_authorized, OperationRisk
+            require_operation_authorized(
+                "append_block", OperationRisk.LIVE_WRITE, task_id="R369"
+            )
+
         t_append = now_mono_ns()
         # R327 2026-09-12T02:25:00Z — public blocks extend the *public* tip, not the
         # total book height. Private-only suffixes on one seed (OVH1) were making

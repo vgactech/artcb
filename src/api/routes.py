@@ -723,6 +723,10 @@ def wallet_create(body: CreateWalletRequest, request: Request) -> dict:
       - wallet_namespace='TEST'    : plusieurs wallets TEST par appareil autorisés
         (rapport 354 §9 — binding TEST dans registre séparé).
     """
+    # R369-enforcement : Gate obligatoire avant toute création de wallet (CRITICAL)
+    from src.artcb.agent_control import require_operation_authorized, OperationRisk
+    require_operation_authorized("wallet_create", OperationRisk.CRITICAL, task_id="R369")
+
     from src.artcb.wallet.manager import WalletManager
     from src.artcb.security.wallet_device_binding import WalletDeviceBindingError
 
