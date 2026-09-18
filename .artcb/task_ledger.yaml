@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.1"
+  version: "2.2"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "af451f5"
+  git_head: "ddb0abf"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -261,7 +261,7 @@ done:
 
   - id: R371
     title: "R371 — Injection contenu réel fichiers règles dans chaque prompt"
-    commit: "pending-r371"
+    commit: "afdc515"
     status: "DONE"
     files_modified:
       - ".bob/hooks/user_prompt_submit.py — inject_rules_content() + INJECT_CONTENT_FILES"
@@ -276,6 +276,21 @@ done:
       Sans injection, le modèle ne les lit que s'il décide de le faire manuellement
       — ce qui n'est pas garanti à chaque tour. R371 corrige ce point structurel.
     distinction: "INJECTED ≠ APPLIED_CONFIRMED — distinction maintenue (règle audit §6)"
+    certified_100: false
+
+  - id: R373
+    title: "R373 — HumanIdentityPolicy : 5 cas multi-appareil + UV=PIN/biométrie + wallet_per_human_limit"
+    commit: "ddb0abf"
+    files_created:
+      - "src/artcb/identity/human_identity_policy.py — UserVerificationMethod + HumanIdentityStatus + check_wallet_per_human_limit + classify_device_scenario + evaluate_wallet_creation"
+      - "tests/test_task001_r373_human_identity_policy.py — 26 tests S01→S23 PASS"
+    invariants_enforced:
+      - "UV=true ≠ unique_human_proven dans tous les cas (implies_unique_human()=False)"
+      - "BIOMETRIC_CLAIMED ≠ HUMAN_VERIFIED ≠ UNIQUE_HUMAN_VERIFIED"
+      - "CASE_3 : même humain / tentative multi-wallet → 409 anti-Sybil"
+      - "CASE_5 : PIN seul → allow_login mais pas création wallet si limite atteinte"
+      - "Wallet révoqué ne compte pas dans la limite"
+    tests: "26/26 PASS — total 38/38 PASS (test_task001 + test_add_device)"
     certified_100: false
 
 # ═══════════════════════════════════════════════════════════════════════════════
