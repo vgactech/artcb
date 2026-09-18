@@ -5,15 +5,16 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.1"
+  version: "1.2"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
-  last_updated: "2026-09-17"
-  git_head: "5fa8a6d"
+  last_updated: "2026-09-18"
+  git_head: "b83b05f"
   chain_height: 1142
   certified_100: false
   pbft_primary: "aws-node-3"
-  pbft_status: "ALIVE — relancé, synchronisé df7cb20"
+  pbft_status: "ALIVE — synchronisé b83b05f, view=27, committed=106"
+  v_stall_01: "CONFIRMÉ — blocks.jsonl figé à 1142, memo en RAM seulement, fix en cours"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)
@@ -102,6 +103,13 @@ done:
     title: "Créer .artcb/task_ledger.yaml"
     commit: "df7cb20"
     note: "Fichier créé. AUTO_PREFLIGHT non encore livré (tâche OPEN séparée)."
+
+  - id: R367
+    title: "V-STALL-01 fix — /ai/status, /ai/context, /ai/memory affichent vraie hauteur split ledger"
+    commit: "pending"
+    routes_fixed: ["/api/v1/ai/status", "/api/v1/ai/context", "/api/v1/ai/memory"]
+    root_cause: "list_blocks() sans visibility lisait blocks.jsonl principal figé (1142) ignorant public/blocks.jsonl (1194+)"
+    fix: "tip_public_private() → pub_h + priv_h → hauteur réelle"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
@@ -225,7 +233,7 @@ decisions:
 # ÉTAT AVANCEMENT GLOBAL
 # ═══════════════════════════════════════════════════════════════════════════════
 progress:
-  global_pct: 70
+  global_pct: 72
   breakdown:
     blockchain_core: 90
     wallet_hybrid_ed25519_mldsa65: 88

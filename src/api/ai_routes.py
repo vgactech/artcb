@@ -61,8 +61,17 @@ def _build_context_snippet(state, agent_id: str | None, limit: int = 5) -> str:
     Compact par design : 5 memos max, 80 chars/memo — ne pollue pas le prompt.
     """
     try:
-        blocks = state.chain.list_blocks()
-        chain_height = len(blocks)
+        # V-STALL-01 fix : hauteur réelle via tip_public_private en mode split
+        try:
+            tip_info = state.chain.tip_public_private()
+            pub_h = int(tip_info.get("public_height") or 0)
+            priv_h = int(tip_info.get("private_height") or 0)
+            chain_height = (pub_h + priv_h) if pub_h > 0 else int(tip_info.get("height_total") or 0)
+        except Exception:
+            chain_height = 0
+        blocks = state.chain.list_blocks(visibility="public") if state.chain._split_active() else state.chain.list_blocks()
+        if not chain_height:
+            chain_height = len(blocks)
 
         # Collecter memos IA (les plus récents d'abord)
         memos: list[dict] = []
@@ -195,13 +204,38 @@ def ai_status(
     """
     state = _state(request)
 
-    # Chaîne
+    # Chaîne — V-STALL-01 fix : en mode split ledger, utiliser tip_public_private()
+    # pour refléter la vraie hauteur publique (public/blocks.jsonl) et non le
+    # fichier principal figé (blocks.jsonl).
     try:
-        blocks = state.chain.list_blocks()
-        chain_height = len(blocks)
-        last_block = blocks[-1] if blocks else None
-        pol_scores = [b.get("pol_score", 0) for b in blocks if b.get("pol_score", 0) > 0]
+        tip_info = state.chain.tip_public_private()
+        pub_h = int(tip_info.get("public_height") or 0)
+        priv_h = int(tip_info.get("private_height") or 0)
+        legacy_h = int(tip_info.get("height_total") or 0)
+        if pub_h > 0:
+            # Mode split actif : la hauteur réelle = public + privé
+            chain_height = pub_h + priv_h
+        else:
+            # Fallback : blocks.jsonl principal
+            chain_height = legacy_h or len(state.chain.list_blocks())
+
+        # Dernier bloc : lire depuis public/blocks.jsonl si split actif
+        pub_idx = tip_info.get("public_last_index")
+        if pub_idx is not None and pub_idx >= 0:
+            pub_tip_blocks = state.chain.list_blocks(visibility="public", from_index=pub_idx, limit=1)
+            last_block = pub_tip_blocks[0] if pub_tip_blocks else None
+        else:
+            blocks = state.chain.list_blocks()
+            last_block = blocks[-1] if blocks else None
+
+        # pol_avg sur les derniers blocs publics (max 200 pour performances)
+        try:
+            pub_blocks_sample = state.chain.list_blocks(visibility="public", from_index=max(0, (pub_idx or 0) - 200))
+        except Exception:
+            pub_blocks_sample = state.chain.list_blocks()
+        pol_scores = [b.get("pol_score", 0) for b in pub_blocks_sample if b.get("pol_score", 0) > 0]
         pol_avg = sum(pol_scores) / len(pol_scores) if pol_scores else 0.0
+
         last_block_info = None
         if last_block:
             h = last_block.get("hash", "")
@@ -1190,9 +1224,14 @@ def ai_context(
     # Derniers memos récents
     recent_memos = all_memos[:limit]
 
-    # Hauteur chaîne
+    # Hauteur chaîne — V-STALL-01 fix : vraie hauteur via tip_public_private
     try:
-        chain_height = len(state.chain.list_blocks())
+        tip_info = state.chain.tip_public_private()
+        pub_h = int(tip_info.get("public_height") or 0)
+        priv_h = int(tip_info.get("private_height") or 0)
+        chain_height = (pub_h + priv_h) if pub_h > 0 else int(tip_info.get("height_total") or 0)
+        if not chain_height:
+            chain_height = len(state.chain.list_blocks())
     except Exception:
         chain_height = 0
 
