@@ -9,40 +9,38 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 meta:
-  last_updated: "2026-09-18T07:00:00Z"
-  git_head: "43d0b6c"
+  last_updated: "2026-09-18T08:00:00Z"
+  git_head: "d57f868"
   chain_height: 1198
-  session_count: 16
+  session_count: 17
 
 # ─── ÉTAT COURANT DE REPRISE ─────────────────────────────────────────────────
 
 current:
-  task_id: "TASK-001-BIOMETRIE"
-  title: "TASK-001 biométrie FuzzyExtractor + TASK-006 creator-node + surveillance PBFT"
+  task_id: "TASK-006-CREATOR-NODE"
+  title: "TASK-006 creator-node failure + TASK-001 suite ECC/FHE"
   status: "IN_PROGRESS"
   started: "2026-09-18"
 
-  # ── Accompli cette session (2026-09-18-E) ────────────────────────────────
+  # ── Accompli cette session (2026-09-18-F) ────────────────────────────────
   completed_this_session:
-    - "R370-bypass-closure : GateProductionBypassError (interdit en production)"
-    - "R370 : _check_gate_disabled() fail-closed au boot create_app()"
-    - "R370 : 10 tests adversariaux T/U/V/W — 72/72 total PASS"
-    - "commit 43d0b6c pushé — matrice 7 appelants append_block vérifiée"
-    - "ledger v1.7 + session_continuation mis à jour → git_head=43d0b6c"
+    - "TASK-001 Secure Sketch XOR+HKDF-SHA256-v2 — remplace stub SHA-512 naïf"
+    - "fuzzy_reproduce() fonctionnel dist=0 — tests C/D/E/G PASS"
+    - "18 tests TASK-001 PASS — total 90/90"
+    - "commit d57f868 pushé — ledger v1.8"
 
   next_actions:
 
     - step: 1
-      what: "TASK-001 — FuzzyExtractor réel (remplacer stub biometric_onchain.py)"
-      module: "src/artcb/identity/biometric_onchain.py"
+      what: "TASK-006 — Creator-node failure : comportement réseau si aws-node-3 mort permanent"
       status: "TODO"
 
     - step: 2
-      what: "TASK-006 — Creator-node failure : définir comportement réseau si aws-node-3 ne revient pas"
+      what: "R366 fermeture administrative AUTO_PREFLIGHT"
       status: "TODO"
 
     - step: 3
-      what: "Déploiement OVH2 du commit 43d0b6c (follow-main timer automatique)"
+      what: "Déploiement OVH2 du commit d57f868 (follow-main timer automatique)"
       status: "PENDING_DEPLOY"
 
   context:

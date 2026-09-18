@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.7"
+  version: "1.8"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "43d0b6c"
+  git_head: "d57f868"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -201,6 +201,32 @@ done:
     bypass_restant: "Écriture directe blocks.jsonl niveau OS (hors portée Python — documenté)"
     certified_100: false
 
+  - id: TASK-001-FUZZY-EXTRACTOR
+    title: "TASK-001 Secure Sketch FuzzyExtractor v2 — remplace stub SHA-512 naïf"
+    commit: "d57f868"
+    files_modified:
+      - "src/artcb/identity/biometric_onchain.py — Secure Sketch XOR+HKDF-SHA256-v2"
+    files_created:
+      - "tests/test_task001_biometric.py — 18 tests A→R PASS"
+    algorithm: "ARTCB-SECURE-SKETCH-HKDF-SHA256-v2"
+    cryptographic_scheme: >
+      Gen: pad=HKDF(template,salt,SKETCH), sketch=seed XOR pad, confirm=HKDF(seed,salt,CONFIRM)
+      Rep: pad'=HKDF(template',salt,SKETCH), seed'=sketch XOR pad', verify confirm'==confirm
+    properties:
+      - "dist=0 : reproduction déterministe (test C PASS)"
+      - "dist>0 : reproduction échoue sans ECC (test D PASS — limite honnête)"
+      - "secret_hex absent du record public (test K PASS)"
+      - "vérification temps constant hmac.compare_digest (test E PASS)"
+      - "unique_human_proven=False (tests O/L/M PASS)"
+      - "biometric_version=2, verification_policy=secure_sketch_hkdf_v2"
+    gaps_remaining:
+      - "ECC externe (BCH/Reed-Solomon) pour tolérance dist>0 réelle"
+      - "FHE matching pour check_uniqueness (remplace comparaison hash)"
+      - "FAR/FRR/PAD mesurés sur vrais capteurs (NIST BSSR)"
+      - "Tests SDK iOS/Android"
+    tests: "18/18 PASS — total 90/90 PASS"
+    certified_100: false
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -216,28 +242,21 @@ open:
     priority: HIGH
     blocker: false
     note: "V-STALL-01 RÉSOLU (2e89322) — chain_height=1198 ALIVE view=27. R365 reste pour surveillance long terme."
-    issue: >
-      aws-node-3 (13.38.209.25) était offline 2026-09-12.
-      V-STALL-01 corrigé. PBFT ALIVE view=27. Surveiller la stabilité.
-    options:
-      - "AWS CLI: aws ec2 start-instances --instance-ids i-06c9404e42798ff76 --region eu-west-3"
-      - "Déclencher PBFT view-change depuis les nœuds OVH si primary change"
 
   - id: R366
-    title: "AUTO_ARTCB_PREFLIGHT dans user_prompt_submit.py"
+    title: "AUTO_ARTCB_PREFLIGHT — fermeture administrative (fonctionnel, non clôturé)"
     priority: MEDIUM
     file: ".bob/hooks/user_prompt_submit.py"
-    description: >
-      Charger automatiquement .artcb/task_ledger.yaml + état GitHub + divergences
-      à chaque prompt. Injecter dans le contexte de l'agent.
+    note: "AUTO_PREFLIGHT actif dans le hook — clôture administrative requise uniquement"
 
-  - id: TASK-001
-    title: "Identité biométrique / multi-device — complétion"
+  - id: TASK-001-BIOMETRIE-SUITE
+    title: "TASK-001 suite : FHE matching + ECC tolerance + FAR/FRR + SDK iOS/Android"
     priority: MEDIUM
+    depends_on: "TASK-001-FUZZY-EXTRACTOR (DONE)"
     sub_tasks:
-      - "Intégrer credential_store dans /identity/biometric/enroll (stocker clé publique WebAuthn)"
-      - "FHE matching biométrique (remplacer stub hash-based)"
-      - "FAR/FRR/PAD mesurés"
+      - "ECC externe BCH(255,191,8) pour tolérance dist ≤ 8 bits/bloc"
+      - "FHE matching biométrique check_uniqueness (remplacer hash exact)"
+      - "FAR/FRR/PAD mesurés sur vrais capteurs"
       - "Tests SDK natif iOS/Android"
 
   - id: TASK-005
