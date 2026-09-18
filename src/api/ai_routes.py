@@ -220,20 +220,20 @@ def ai_status(
             chain_height = legacy_h or len(state.chain.list_blocks())
 
         # Dernier bloc : lire depuis public/blocks.jsonl si split actif
-        pub_idx = tip_info.get("public_last_index")
-        if pub_idx is not None and pub_idx >= 0:
-            pub_tip_blocks = state.chain.list_blocks(visibility="public", from_index=pub_idx, limit=1)
-            last_block = pub_tip_blocks[0] if pub_tip_blocks else None
+        # Note : from_index dans list_blocks est un offset de ligne, pas un block.index
+        # → on prend les derniers 50 blocs publics (offset depuis la fin) pour perf
+        pub_h_lines = int(tip_info.get("public_height") or 0)
+        if pub_h_lines > 0:
+            start_line = max(0, pub_h_lines - 50)
+            pub_tail = state.chain.list_blocks(visibility="public", from_index=start_line)
+            last_block = pub_tail[-1] if pub_tail else None
         else:
             blocks = state.chain.list_blocks()
             last_block = blocks[-1] if blocks else None
 
-        # pol_avg sur les derniers blocs publics (max 200 pour performances)
-        try:
-            pub_blocks_sample = state.chain.list_blocks(visibility="public", from_index=max(0, (pub_idx or 0) - 200))
-        except Exception:
-            pub_blocks_sample = state.chain.list_blocks()
-        pol_scores = [b.get("pol_score", 0) for b in pub_blocks_sample if b.get("pol_score", 0) > 0]
+        # pol_avg sur le même échantillon de blocs publics
+        pol_scores_sample = pub_tail if pub_h_lines > 0 else (blocks if not pub_h_lines else [])
+        pol_scores = [b.get("pol_score", 0) for b in pol_scores_sample if b.get("pol_score", 0) > 0]
         pol_avg = sum(pol_scores) / len(pol_scores) if pol_scores else 0.0
 
         last_block_info = None
