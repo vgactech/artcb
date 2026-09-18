@@ -9,7 +9,7 @@ meta:
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "pending-r374"
+  git_head: "d81b130"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -280,7 +280,7 @@ done:
 
   - id: R374
     title: "R374 — BCH(255,191,8) FuzzyExtractor : tolérance dist≤8 bits/bloc dans fuzzy_reproduce()"
-    commit: "pending-r374"
+    commit: "d81b130"
     files_modified:
       - "src/artcb/identity/biometric_onchain.py — _bch_encode_template() + _bch_decode_template() + fuzzy_reproduce() v3"
       - "tests/test_task001_biometric.py — tests B/D/P/Q/R mis à jour (v3)"
