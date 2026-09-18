@@ -13,6 +13,11 @@ R366/AUTO_PREFLIGHT (2026-09-17) :
   - Détecte divergence ledger.git_head ↔ git HEAD réel
   - Injecte résumé OPEN/IN_PROGRESS dans le contexte
 
+R368/SESSION_CONTINUATION (2026-09-18) :
+  - Charge .artcb/session_continuation.yaml à chaque prompt
+  - Injecte la tâche courante + prochaine action + contexte technique exact
+  - Résout le problème d'interruption répétée entre sessions
+
 Fail-open : exit 0 en cas d'erreur.
 Jamais de secrets affichés.
 """
@@ -32,7 +37,7 @@ RULE_REMINDERS = [
     "PROTOCOLE_ARTCB",
     "DECISIONS_UTILISATEUR_ARTCB",
     ".cursor/rules/artcb-live-node.mdc",
-    ".cursor/rules/artcb-reflex-priority.mdc",  # R350 nouveau
+    ".cursor/rules/artcb-reflex-priority.mdc",
 ]
 
 # R350 — Mots-clés qui déclenchent la priorité réflexe absolue
@@ -61,6 +66,7 @@ PQC_KEYWORDS = [
 # ─── AUTO_PREFLIGHT : chargement du ledger + détection divergence ────────────
 
 LEDGER_PATH = ROOT / ".artcb" / "task_ledger.yaml"
+CONTINUATION_PATH = ROOT / ".artcb" / "session_continuation.yaml"
 
 
 def load_ledger() -> dict:
@@ -72,6 +78,81 @@ def load_ledger() -> dict:
     except Exception:
         pass
     return {}
+
+
+def load_continuation() -> dict:
+    """Charge .artcb/session_continuation.yaml. Retourne {} si absent."""
+    try:
+        import yaml  # type: ignore[import]
+        if CONTINUATION_PATH.exists():
+            return yaml.safe_load(CONTINUATION_PATH.read_text(encoding="utf-8")) or {}
+    except Exception:
+        pass
+    return {}
+
+
+def continuation_summary() -> list[str]:
+    """Injecte le fil conducteur de session pour éviter l'interruption répétée.
+
+    Lit session_continuation.yaml et produit un bloc de contexte complet :
+    - tâche courante
+    - prochaine action concrète (module + classe + fonction)
+    - contexte technique exact
+    - dernière session (commit + ce qui a été fait)
+    """
+    lines: list[str] = []
+    cont = load_continuation()
+    if not cont:
+        return lines
+
+    current = cont.get("current", {})
+    if not current:
+        return lines
+
+    task_id = current.get("task_id", "?")
+    title = current.get("title", "")
+    status = current.get("status", "?")
+
+    lines.append(f"## 🔄 FIL CONDUCTEUR — reprise automatique")
+    lines.append(f"Tâche courante : **{task_id}** — {title} [{status}]")
+
+    # Prochaine action non faite
+    next_actions = current.get("next_actions", [])
+    pending = [a for a in next_actions if isinstance(a, dict) and a.get("status") == "TODO"]
+    if pending:
+        first = pending[0]
+        lines.append(f"⚡ PROCHAINE ACTION (step {first.get('step','?')}) : {first.get('what','')}")
+        module = first.get("module", "")
+        if module:
+            lines.append(f"   MODULE : {module}")
+        funcs = first.get("functions", [])
+        if funcs:
+            lines.append(f"   FONCTIONS : {', '.join(funcs[:3])}" + (" …" if len(funcs) > 3 else ""))
+        tests = first.get("tests", [])
+        if tests:
+            lines.append(f"   TESTS : {', '.join(tests[:3])}" + (" …" if len(tests) > 3 else ""))
+
+    # Contexte technique
+    ctx = current.get("context", {})
+    if ctx:
+        gap = ctx.get("gap_principal", "")
+        if gap:
+            # Tronquer à 200 chars pour ne pas polluer le contexte
+            gap_short = gap.strip().replace("\n", " ")[:200]
+            lines.append(f"⚠ GAP : {gap_short}")
+
+    # Dernière session
+    work_log = cont.get("work_log", [])
+    if work_log:
+        last = work_log[-1]
+        last_commit = last.get("commit") or str(last.get("commits", ["?"])[-1])
+        last_done = str(last.get("done", ""))[:120]
+        reason = str(last.get("stopped_reason", "")).strip().replace("\n", " ")[:100]
+        lines.append(f"📌 Dernière session ({last.get('session','?')}) commit={last_commit}: {last_done}")
+        if reason:
+            lines.append(f"   Arrêt : {reason}")
+
+    return lines
 
 
 def preflight_summary(real_head: str) -> list[str]:
@@ -177,7 +258,7 @@ def main() -> int:
             "prompt_len": len(prompt),
             "prompt_preview": prompt[:80].replace("\n", " "),
             "git_head": get_git_head(),
-            "reflex_priority": reflex_priority,  # R350
+            "reflex_priority": reflex_priority,
         }
         with (TRACE / "bob_prompts.jsonl").open("a") as fh:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -218,6 +299,15 @@ def main() -> int:
             lines.append("")
             lines.append("## AUTO_PREFLIGHT ARTCB")
             lines.extend(pf)
+    except Exception:
+        pass
+
+    # SESSION_CONTINUATION — fil conducteur anti-interruption (R368)
+    try:
+        sc = continuation_summary()
+        if sc:
+            lines.append("")
+            lines.extend(sc)
     except Exception:
         pass
 

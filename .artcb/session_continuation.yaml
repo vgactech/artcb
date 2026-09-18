@@ -1,0 +1,93 @@
+# ARTCB — Fil conducteur de session (session_continuation.yaml)
+# ─────────────────────────────────────────────────────────────────────────────
+# Ce fichier est mis à jour par Bob IDE à chaque fin de bloc de travail.
+# Son rôle : permettre à n'importe quelle nouvelle session de reprendre
+# EXACTEMENT là où la précédente s'est arrêtée, sans perte de contexte.
+#
+# RÈGLE : ne jamais supprimer — on append à work_log.
+# CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
+# ─────────────────────────────────────────────────────────────────────────────
+
+meta:
+  last_updated: "2026-09-18T01:15:00Z"
+  git_head: "pending-r368"
+  chain_height: 1198
+  session_count: 13
+
+# ─── ÉTAT COURANT DE REPRISE ─────────────────────────────────────────────────
+
+current:
+  task_id: "NEXT-CHANTIERS"
+  title: "Prochaines priorités : R364 tests complets + TASK-001 biométrie + TASK-006 creator-node"
+  status: "IN_PROGRESS"
+  started: "2026-09-18"
+
+  next_actions:
+
+    - step: 1
+      what: "Push commit R368-R370 + déploiement OVH2 + vérification live"
+      status: "TODO"
+
+    - step: 2
+      what: "R364 — compléter tests attaque E2E ADD_DEVICE (tests/test_add_device_r363.py)"
+      module: "tests/test_add_device_r363.py"
+      tests:
+        - "PIN seul → 401"
+        - "template_hex seul → 422"
+        - "mauvaise signature → 401"
+        - "challenge expiré → 400"
+        - "max 5 appareils → 409"
+      status: "TODO"
+
+    - step: 3
+      what: "TASK-001 — FuzzyExtractor réel (remplacer stub biometric_onchain.py 14 zones)"
+      module: "src/artcb/identity/biometric_onchain.py"
+      status: "TODO"
+
+    - step: 4
+      what: "TASK-006 — Creator-node failure : définir comportement réseau si aws-node-3 ne revient pas"
+      status: "TODO"
+
+  context:
+    r368_r370_done: >
+      PreflightEngine créé (preflight.py), branché dans ReflexEngine.activate(),
+      SESSION_CONTINUATION dans hook, 18 tests E2E PASS.
+      Chemin Prompt→Preflight→Reflex→Record maintenant traçable.
+    gap_restant: >
+      PreflightEngine = instruction, pas contrainte système.
+      Test contournement agent complet = futur R369-enforcement.
+      CERTIFIED_100=false.
+    reflex_engine: "src/artcb/reflex/core.py — activate() branché PreflightEngine R368"
+    preflight: "src/artcb/reflex/preflight.py — PreflightEngine, CheckStatus, GitState, LiveState, LedgerState"
+    reasoning_record: "src/artcb/reasoning/record.py — seal(), final_hash, frozen=True — R355.1-3 OK"
+    hook: ".bob/hooks/user_prompt_submit.py — SESSION_CONTINUATION + AUTO_PREFLIGHT actifs"
+    ledger: ".artcb/task_ledger.yaml — version 1.4, R368-R370 DONE"
+
+# ─── HISTORIQUE DES SESSIONS (append-only) ───────────────────────────────────
+
+work_log:
+
+  - session: "2026-09-17-A"
+    commit: "55e8065"
+    done: "R350 ReflexEngine stub + R355 ReasoningRecord + R355.1-3 corrections (69 tests PASS)"
+
+  - session: "2026-09-17-B"
+    commit: "b83b05f"
+    done: "R362 UI clean + R363a-d ADD_DEVICE WebAuthn cryptographique complet + lock atomique"
+
+  - session: "2026-09-18-A"
+    commits: ["cf30b3a", "eb097e1", "2e89322"]
+    done: "V-STALL-01 résolu — /ai/status height 1142→1198 (tip_public_private). Ledger v1.3."
+    stopped_reason: >
+      Limite de contexte atteinte après résolution V-STALL-01.
+      Prochaine étape : PreflightEngine (step 1 ci-dessus).
+
+  - session: "2026-09-18-B"
+    commit: "pending-r368"
+    done: >
+      R368-R370 : PreflightEngine (preflight.py, 310 lignes),
+      ReflexEngine.activate() branché PreflightEngine,
+      session_continuation.yaml (fil conducteur anti-interruption),
+      user_prompt_submit.py enrichi (SESSION_CONTINUATION),
+      test_r355_enforcement_e2e.py 18/18 PASS (A→L).
+    stopped_reason: "Push + déploiement OVH2 en attente — prochaine session continue step 1 NEXT-CHANTIERS."

@@ -1,15 +1,19 @@
-"""Réflexe ARTCB — Moteur de priorité automatique (R350–R355, 2026-09-17).
+"""Réflexe ARTCB — Moteur de priorité automatique (R350–R355+R368, 2026-09-18).
 
 Ce module implémente le réflexe autonome ARTCB :
 - Détection des déclencheurs (mémoire, thinking, raisonnement, biométrie)
 - Priorisation automatique des chantiers
 - Création d'un REASONING_RECORD à chaque activation (R355)
 - Activation simultanée Bob IDE + Cursor
+- Branchement PreflightEngine obligatoire avant activation (R368)
+
+R368 (2026-09-18) : activate() appelle PreflightEngine.run_checks() avant de
+    créer le ReasoningRecord. Le snapshot (git, ledger, live) est injecté dans
+    le record — le chemin Prompt→Preflight→Reflex→Record est traçable.
 
 HONNÊTETÉ :
-    - Ce module est un stub fonctionnel.
-    - L'activation réelle dépend des hooks Bob IDE et Cursor.
-    - CERTIFIED_100=false — le réflexe n'est pas certifié en conditions réelles.
+    - CERTIFIED_100=false.
+    - Test de bypass restant : test_r355_enforcement_e2e.py.
 """
 from __future__ import annotations
 
@@ -232,21 +236,47 @@ class ReflexEngine:
         files: list[str] | None = None,
         session_id: str = "",
         agent_id: str = "bob-ide",
+        task_id: str = "unknown",
+        preflight_mode: str = "full",
     ) -> dict[str, Any]:
         """Active le réflexe, crée un REASONING_RECORD et retourne un rapport.
 
+        R368 : appelle PreflightEngine avant de créer le ReasoningRecord.
+        Le snapshot (git, ledger, live) est injecté dans le record.
+
         Args:
-            text:       Texte du prompt ou description du contexte.
-            files:      Fichiers modifiés.
-            session_id: Identifiant de session (optionnel).
-            agent_id:   Identifiant de l'agent (optionnel).
+            text:           Texte du prompt ou description du contexte.
+            files:          Fichiers modifiés.
+            session_id:     Identifiant de session (optionnel).
+            agent_id:       Identifiant de l'agent (optionnel).
+            task_id:        Identifiant de la tâche courante (pour PreflightEngine).
+            preflight_mode: "full" (défaut) ou "lite".
 
         Returns:
-            Dictionnaire de rapport d'activation incluant le record_id R355.
+            Dictionnaire de rapport d'activation incluant le record_id R355
+            et le preflight_result R368.
         """
         self._activated_at = time.time()
         triggers = self.detect_trigger(text=text, files=files)
         priority = triggers[0].priority if triggers else ReflexPriority.OTHER
+
+        # ── R368 : PreflightEngine — exécuté AVANT le ReasoningRecord ────────
+        preflight_result = None
+        preflight_snapshot: dict[str, Any] = {}
+        try:
+            from src.artcb.reflex.preflight import PreflightEngine, PreflightMode
+            _mode = PreflightMode.LITE if preflight_mode == "lite" else PreflightMode.FULL
+            _pfe = PreflightEngine()
+            preflight_result = _pfe.run_checks(task_id=task_id, mode=_mode)
+            preflight_snapshot = _pfe.build_context_snapshot()
+            logger.debug(
+                "PreflightEngine status=%s task=%s ctx=%s",
+                preflight_result.overall_status.value,
+                task_id,
+                preflight_result.context_sha,
+            )
+        except Exception as exc:
+            logger.warning("PreflightEngine error (non-fatal): %s", exc)
 
         # ── R355 : créer FIRST_REFLEX ─────────────────────────────────────
         _files = files or []
@@ -279,7 +309,7 @@ class ReflexEngine:
         if first_reflex:
             earliest = estimate_earliest_from_logs(first_reflex.trigger_name)
 
-        # ── R355 : créer REASONING_RECORD ─────────────────────────────────
+        # ── R355+R368 : créer REASONING_RECORD avec snapshot preflight ────
         record = ReasoningRecord(
             session_id=session_id or f"reflex_{int(self._activated_at)}",
             agent_id=agent_id,
@@ -288,9 +318,20 @@ class ReflexEngine:
             first_reflex=first_reflex,
             earliest=earliest,
             action=RecordAction.ANALYZE,
-            action_detail=f"Réflexe R350–R355 activé — priorité {priority.name}",
+            action_detail=f"Réflexe R350–R355+R368 activé — priorité {priority.name}",
             outcome=RecordOutcome.PENDING,
         )
+        # R368 : injecter le snapshot de contexte dans le record
+        if preflight_snapshot:
+            record.add_observation(
+                "preflight_snapshot",
+                git_sha=preflight_snapshot.get("git_sha", "")[:7] if preflight_snapshot.get("git_sha") else "",
+                ledger_sha=preflight_snapshot.get("ledger_sha256", "")[:12] if preflight_snapshot.get("ledger_sha256") else "",
+                ledger_git_head=preflight_snapshot.get("ledger_git_head", ""),
+                live_height=preflight_snapshot.get("live_height"),
+                live_git_sha=preflight_snapshot.get("live_git_sha", ""),
+                certified_100=False,
+            )
         if first_reflex:
             from src.artcb.reasoning.reference_id import ref_rule as _ref_rule
             record.add_reference(_ref_rule(
@@ -321,10 +362,15 @@ class ReflexEngine:
             "record_id": record.record_id,         # R355 — clé de traçabilité
             "first_reflex": first_reflex.to_dict() if first_reflex else None,
             "earliest": earliest.to_dict() if earliest else None,
+            # R368 — preflight result
+            "preflight_status": preflight_result.overall_status.value if preflight_result else "not_run",
+            "preflight_context_sha": preflight_result.context_sha if preflight_result else None,
+            "preflight_git_sha": preflight_snapshot.get("git_sha", "")[:7] if preflight_snapshot else None,
+            "preflight_ledger_sha": preflight_snapshot.get("ledger_sha256", "")[:12] if preflight_snapshot else None,
             "note": (
-                "Réflexe ARTCB activé (R350–R355). "
-                "Priorité automatique déclenchée. "
-                "REASONING_RECORD créé. "
+                "Réflexe ARTCB activé (R350–R355+R368). "
+                "PreflightEngine exécuté. "
+                "REASONING_RECORD créé avec snapshot contexte. "
                 "CERTIFIED_100=false."
             ),
         }

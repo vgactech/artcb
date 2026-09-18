@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.3"
+  version: "1.4"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "eb097e1"
+  git_head: "pending-r368"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -17,8 +17,8 @@ meta:
   last_block_ts: "2026-09-14T17:42:02Z"
   certified_100: false
   pbft_primary: "aws-node-3"
-  pbft_status: "ALIVE — synchronisé eb097e1, view=27"
-  v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 en prod (commits cf30b3a + eb097e1)"
+  pbft_status: "ALIVE — synchronisé 2e89322, view=27"
+  v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 (commits cf30b3a + eb097e1)"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)
@@ -117,6 +117,27 @@ done:
     verified_in_prod: true
     before: "height=1142 last_index=1141 ts=2026-09-12"
     after: "height=1198 last_index=1194 ts=2026-09-14 pol_avg=0.75"
+
+  - id: R368-R370
+    title: "PreflightEngine + enforcement chemin Prompt→Preflight→Reflex→Record + SESSION_CONTINUATION"
+    commit: "pending"
+    files_created:
+      - "src/artcb/reflex/preflight.py — PreflightEngine (CheckResult, GitState, LiveState, LedgerState, PreflightResult)"
+      - ".artcb/session_continuation.yaml — fil conducteur anti-interruption"
+      - "tests/test_r355_enforcement_e2e.py — 18 tests E2E PASS"
+    files_modified:
+      - "src/artcb/reflex/core.py — activate() branché sur PreflightEngine (R368)"
+      - ".bob/hooks/user_prompt_submit.py — SESSION_CONTINUATION injecté (R368)"
+    tests: "18/18 PASS"
+    enforcement_status: >
+      Le chemin Prompt→Preflight→Reflex→ReasoningRecord est maintenant traçable.
+      PreflightEngine exécuté avant chaque ReasoningRecord.
+      Snapshot (git_sha, ledger_sha, live_height) gravé dans chaque record.
+      Test de bypass F PASS — add_observation + add_reference lèvent SealedRecordError après seal().
+    gaps_remaining:
+      - "PreflightEngine n'est pas encore une contrainte système irréfutable (instruction, pas primitive)"
+      - "Test de contournement complet agent (pas seulement record) — futur R369-enforcement"
+    certified_100: false
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
