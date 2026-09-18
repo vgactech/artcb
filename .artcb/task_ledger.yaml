@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.0"
+  version: "2.1"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "ac60579"
+  git_head: "af451f5"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -259,6 +259,25 @@ done:
       Mécanisme AUTO_PREFLIGHT actif et vérifié dans les faits.
       Distinction maintenue : INJECTED ≠ APPLIED_CONFIRMED (règle audit §6).
 
+  - id: R371
+    title: "R371 — Injection contenu réel fichiers règles dans chaque prompt"
+    commit: "pending-r371"
+    status: "DONE"
+    files_modified:
+      - ".bob/hooks/user_prompt_submit.py — inject_rules_content() + INJECT_CONTENT_FILES"
+    files_injected:
+      - "PROTOCOLE_ARTCB (intégral, max 4000 chars)"
+      - "DECISIONS_UTILISATEUR_ARTCB (intégral, max 8000 chars — fin = décisions récentes)"
+      - "LEÇONS_APPRISES_ARTCB (intégral, max 8000 chars — fin = leçons récentes)"
+      - "AUTO_PROMPT_ARTCB (queue 6000 chars — entrées les plus récentes)"
+    root_cause_fixed: >
+      artcb-read-all.mdc demandait de relire les fichiers (instruction)
+      mais ne les injectait pas dans le contexte (pas une contrainte architecturale).
+      Sans injection, le modèle ne les lit que s'il décide de le faire manuellement
+      — ce qui n'est pas garanti à chaque tour. R371 corrige ce point structurel.
+    distinction: "INJECTED ≠ APPLIED_CONFIRMED — distinction maintenue (règle audit §6)"
+    certified_100: false
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -276,7 +295,7 @@ open:
     note: "TASK-006 policy implémentée — assess_primary_failure() disponible. Décision opérateur requise pour retrait réel."
 
   - id: TASK-001-BIOMETRIE-SUITE
-    title: "TASK-001 suite : ECC tolerance + FHE matching + FAR/FRR + SDK iOS/Android"
+    title: "TASK-001 suite : ECC tolerance + FHE matching + FAR/FRR + SDK iOS/Android + PIN vs biométrie WebAuthn"
     priority: MEDIUM
     depends_on: "TASK-001-FUZZY-EXTRACTOR (DONE)"
     sub_tasks:
@@ -284,6 +303,21 @@ open:
       - "FHE matching biométrique check_uniqueness (remplacer hash exact)"
       - "FAR/FRR/PAD mesurés sur vrais capteurs (NIST BSSR)"
       - "Tests SDK natif iOS/Android"
+      - "UV=true ≠ empreinte vérifiée — documenter la limite WebAuthn dans le protocole ARTCB"
+      - "Distinguer cas 1→5 : même humain/même appareil / même humain/nouvel appareil / multi-identités / autre humain/appareil connu / PIN seul"
+      - "Anti-Sybil identity : lier authenticator credential_id à HumanID sans supposer que UV=biométrique"
+    webauthn_pin_problem: >
+      WebAuthn userVerification=required peut être satisfait par PIN ou biométrie
+      selon l'authenticator. Le serveur ARTCB ne peut pas distinguer les deux
+      depuis l'attestation seule (limite W3C documentée, issue #1728).
+      Conséquence : UV=true ne doit PAS être traité comme preuve biométrique humaine.
+      unique_human_proven reste False même si UV=true.
+    multi_device_identity: >
+      Schéma à verrouiller :
+      HUMAIN → biométrie native → AUTHENTICATOR/PASSKEY → clé crypto → APPAREIL A → Wallet A.
+      Même humain → APPAREIL B → tentative Wallet B : le protocole doit détecter
+      si c'est un ajout légitime (ADD_DEVICE) ou une tentative de double identité économique.
+      R363 gère ADD_DEVICE mais n'aborde pas l'anti-Sybil multi-wallet humain.
 
   - id: TASK-005
     title: "Genesis transfer — authz"

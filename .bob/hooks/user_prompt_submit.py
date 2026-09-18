@@ -18,6 +18,14 @@ R368/SESSION_CONTINUATION (2026-09-18) :
   - Injecte la tâche courante + prochaine action + contexte technique exact
   - Résout le problème d'interruption répétée entre sessions
 
+R371/INJECT_RULES_CONTENT (2026-09-18) :
+  - Injecte le CONTENU RÉEL (pas juste les noms) des fichiers de règles critiques
+  - DECISIONS_UTILISATEUR_ARTCB (intégral)
+  - LEÇONS_APPRISES_ARTCB (intégral)
+  - PROTOCOLE_ARTCB (intégral)
+  - Les dernières entrées AUTO_PROMPT_ARTCB (R349b onwards — les + récentes)
+  - Résout le problème : "artcb-read-all dit relire mais n'injecte pas"
+
 Fail-open : exit 0 en cas d'erreur.
 Jamais de secrets affichés.
 """
@@ -39,6 +47,18 @@ RULE_REMINDERS = [
     ".cursor/rules/artcb-live-node.mdc",
     ".cursor/rules/artcb-reflex-priority.mdc",
 ]
+
+# R371 — Fichiers dont le CONTENU est injecté (pas juste le nom)
+# Format : (chemin_relatif, max_chars, description_courte)
+INJECT_CONTENT_FILES = [
+    ("PROTOCOLE_ARTCB",           4000,  "PROTOCOLE ARTCB"),
+    ("DECISIONS_UTILISATEUR_ARTCB", 8000, "DÉCISIONS UTILISATEUR"),
+    ("LEÇONS_APPRISES_ARTCB",     8000,  "LEÇONS APPRISES"),
+]
+
+# Nombre de caractères des entrées récentes AUTO_PROMPT_ARTCB à injecter
+# (on prend la fin du fichier = les entrées les plus récentes)
+AUTO_PROMPT_TAIL_CHARS = 6000
 
 # R350 — Mots-clés qui déclenchent la priorité réflexe absolue
 REFLEX_PRIORITY_KEYWORDS = [
@@ -67,6 +87,58 @@ PQC_KEYWORDS = [
 
 LEDGER_PATH = ROOT / ".artcb" / "task_ledger.yaml"
 CONTINUATION_PATH = ROOT / ".artcb" / "session_continuation.yaml"
+
+
+# ─── R371 — Injection contenu réel des fichiers de règles ────────────────────
+
+def inject_rules_content() -> list[str]:
+    """Injecte le CONTENU RÉEL des fichiers de règles critiques.
+
+    R371 (2026-09-18) : résout le problème structurel où artcb-read-all.mdc
+    demandait de relire les fichiers mais ne les injectait pas dans le contexte.
+    Sans injection, le modèle ne les lit que s'il prend la décision de le faire
+    manuellement — ce qui n'est pas garanti à chaque tour.
+    """
+    lines: list[str] = []
+
+    lines.append("")
+    lines.append("## ═══ RÈGLES ARTCB — CONTENU INJECTÉ AUTOMATIQUEMENT (R371) ═══")
+    lines.append("## Ces fichiers sont injectés à chaque prompt par user_prompt_submit.py")
+    lines.append("## Ils remplacent l'instruction 'relire' de artcb-read-all.mdc")
+    lines.append("")
+
+    # Injecter chaque fichier critique en entier (tronqué si trop grand)
+    for rel_path, max_chars, label in INJECT_CONTENT_FILES:
+        fpath = ROOT / rel_path
+        if not fpath.exists():
+            lines.append(f"⚠ {label} : fichier absent ({rel_path})")
+            continue
+        try:
+            content = fpath.read_text(encoding="utf-8")
+            if len(content) > max_chars:
+                # Prendre la fin (les décisions/leçons récentes)
+                content = "…[tronqué début]\n" + content[-max_chars:]
+            lines.append(f"### ─── {label} ({rel_path}) ───")
+            lines.append(content.strip())
+            lines.append("")
+        except Exception as e:
+            lines.append(f"⚠ {label} : erreur lecture — {e}")
+
+    # Injecter la queue de AUTO_PROMPT_ARTCB (entrées les + récentes)
+    auto_prompt_path = ROOT / "AUTO_PROMPT_ARTCB"
+    if auto_prompt_path.exists():
+        try:
+            content = auto_prompt_path.read_text(encoding="utf-8")
+            tail = content[-AUTO_PROMPT_TAIL_CHARS:] if len(content) > AUTO_PROMPT_TAIL_CHARS else content
+            lines.append("### ─── AUTO_PROMPT_ARTCB — entrées récentes (queue) ───")
+            lines.append("…[début du fichier tronqué — voir AUTO_PROMPT_ARTCB complet]")
+            lines.append(tail.strip())
+            lines.append("")
+        except Exception as e:
+            lines.append(f"⚠ AUTO_PROMPT_ARTCB queue : erreur — {e}")
+
+    lines.append("## ═══ FIN RÈGLES INJECTÉES ═══")
+    return lines
 
 
 def load_ledger() -> dict:
@@ -308,6 +380,14 @@ def main() -> int:
         if sc:
             lines.append("")
             lines.extend(sc)
+    except Exception:
+        pass
+
+    # R371 — Injection contenu réel des fichiers de règles
+    try:
+        rc = inject_rules_content()
+        if rc:
+            lines.extend(rc)
     except Exception:
         pass
 

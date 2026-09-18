@@ -216,3 +216,14 @@
 **Action :** Rapport 307 + `run_live307_p0_primary_repair.py`. CERTIFIED_100=false.
 
 
+
+### L-046 — Instruction de relecture ≠ injection de contenu (2026-09-18)
+**Contexte :** `artcb-read-all.mdc` (alwaysApply) liste les fichiers à relire à chaque tour. Mais "lister" n'est pas "injecter". Le modèle ne relit automatiquement que ce qui est dans son contexte — pas ce qu'une instruction lui demande d'aller chercher.  
+**Leçon :** Pour qu'une règle soit **réellement** appliquée à chaque tour, son contenu doit être **injecté** dans le contexte du prompt, pas seulement nommé. Une instruction à lire ≠ une contrainte architecturale.  
+**Action :** R371 — `inject_rules_content()` dans `.bob/hooks/user_prompt_submit.py` injecte le contenu réel de PROTOCOLE_ARTCB, DECISIONS_UTILISATEUR_ARTCB, LEÇONS_APPRISES_ARTCB, et la queue d'AUTO_PROMPT_ARTCB à chaque prompt. Distinction maintenue : INJECTED ≠ APPLIED_CONFIRMED.
+
+### L-047 — WebAuthn UV=true ≠ empreinte digitale (2026-09-18)
+**Contexte :** `userVerification=required` dans WebAuthn peut être satisfait par PIN **ou** biométrie selon l'authenticator. Le serveur ARTCB reçoit `user_verified=true` dans l'assertion mais ne peut pas distinguer si c'est un PIN ou une empreinte/Face ID.  
+**Leçon :** Ne jamais construire un mécanisme d'identité humaine en supposant que `UV=true` signifie "biométrique vérifié". La spec W3C le documente explicitement (issue #1728). `unique_human_proven` reste `False` même avec `UV=true`.  
+**Action :** R372 — TASK-001-BIOMETRIE-SUITE enrichie avec les 5 cas à distinguer + champ `user_verification_method (BIOMETRIC | PIN | UNKNOWN)` + `wallet_per_human_limit` à implémenter.
+
