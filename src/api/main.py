@@ -113,6 +113,16 @@ def cors_allowed_origins() -> list[str]:
 
 
 def create_app() -> FastAPI:
+    # R370 : vérification anti-bypass Gate au démarrage (avant tout import de route)
+    # En production, ARTCB_PREFLIGHT_GATE_DISABLED=1 lève GateProductionBypassError
+    # et empêche l'application de démarrer → fail-closed garanti au boot.
+    from src.artcb.agent_control.gate import GateProductionBypassError as _GBE
+    from src.artcb.agent_control.gate import _check_gate_disabled as _cgd
+    try:
+        _cgd()
+    except _GBE:
+        raise  # Propager — ne jamais avaler silencieusement en production
+
     app = FastAPI(title="ARTCB API", version="0.3.0")
     # CORS : allow_origins=["*"] + allow_credentials=True est un anti-pattern
     # (la spec CORS interdit * avec credentials → Starlette reflète l'Origin).
@@ -128,6 +138,23 @@ def create_app() -> FastAPI:
     )
     state = build_app_state()
     app.state.artcb = state
+
+    # ── R369-enforcement : PreflightBlockedError → HTTP 503 ──────────────────
+    from src.artcb.reflex.preflight import PreflightBlockedError as _PBE
+    from fastapi.responses import JSONResponse as _JSONResp
+
+    @app.exception_handler(_PBE)
+    async def _preflight_blocked_handler(request, exc: _PBE):  # type: ignore[misc]
+        return _JSONResp(
+            status_code=503,
+            content={
+                "error": "PREFLIGHT_BLOCKED",
+                "operation": exc.operation,
+                "reason": exc.reason,
+                "certified_100": False,
+                "note": "Preflight obligatoire non satisfait — relancer après sync git/live.",
+            },
+        )
 
     @app.middleware("http")
     async def nanosecond_http_trace(request, call_next):
