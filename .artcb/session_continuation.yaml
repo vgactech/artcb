@@ -9,10 +9,10 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 meta:
-  last_updated: "2026-09-18T08:00:00Z"
-  git_head: "d57f868"
+  last_updated: "2026-09-18T09:00:00Z"
+  git_head: "ac60579"
   chain_height: 1198
-  session_count: 17
+  session_count: 18
 
 # ─── ÉTAT COURANT DE REPRISE ─────────────────────────────────────────────────
 
