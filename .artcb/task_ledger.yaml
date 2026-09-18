@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "1.4"
+  version: "1.5"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "3cbd4dd"
+  git_head: "4cd7b17"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -108,6 +108,29 @@ done:
     commit: "df7cb20"
     note: "Fichier créé. AUTO_PREFLIGHT non encore livré (tâche OPEN séparée)."
 
+  - id: R364
+    title: "Tests attaque E2E ADD_DEVICE — suite complète 20/20 PASS"
+    commit: "4cd7b17"
+    file: "tests/test_add_device_r363.py"
+    tests: "20/20 PASS"
+    tests_verified:
+      - "PIN seul → 401 (credential_not_found)"
+      - "template_hex seul → 422 (Pydantic)"
+      - "mauvaise signature → 401 (webauthn_assertion_failed)"
+      - "credential wrong human → 403 (mismatch)"
+      - "challenge inconnu → 400 (challenge_unknown)"
+      - "ADD_DEVICE valide WebAuthn → 200"
+      - "max 5 appareils → 409 (device_limit_reached)"
+      - "COSE invalide → 400 sans écriture état"
+      - "COSE valide roundtrip → 200"
+      - "WebAuthn valide ≠ unique_human_proven (toujours False)"
+      - "race condition 4+2 simultanés → exactement [200, 409]"
+      - "E2E A autorise B → B dans webauthn store"
+    root_causes_fixed:
+      - "rp_id='testserver' (TestClient Host header) vs 'localhost' (hash mismatch)"
+      - "human_id ≥8 chars (min_length Pydantic)"
+      - "client() fixture → create_app() (app=None sous pytest R310)"
+
   - id: R367
     title: "V-STALL-01 fix — /ai/status, /ai/context, /ai/memory affichent vraie hauteur split ledger"
     commits: ["cf30b3a", "eb097e1"]
@@ -120,23 +143,28 @@ done:
 
   - id: R368-R370
     title: "PreflightEngine + enforcement chemin Prompt→Preflight→Reflex→Record + SESSION_CONTINUATION"
-    commit: "pending"
+    commit: "a9ca39d"
+    fix_commit: "4cd7b17"
     files_created:
-      - "src/artcb/reflex/preflight.py — PreflightEngine (CheckResult, GitState, LiveState, LedgerState, PreflightResult)"
+      - "src/artcb/reflex/preflight.py — PreflightEngine 883 lignes (P0-A→P0-E)"
       - ".artcb/session_continuation.yaml — fil conducteur anti-interruption"
-      - "tests/test_r355_enforcement_e2e.py — 18 tests E2E PASS"
+      - "tests/test_r355_enforcement_e2e.py — 19 tests E2E PASS"
+      - "tests/test_r369_adversarial.py — 23 tests adversariaux PASS (M→S)"
     files_modified:
-      - "src/artcb/reflex/core.py — activate() branché sur PreflightEngine (R368)"
-      - ".bob/hooks/user_prompt_submit.py — SESSION_CONTINUATION injecté (R368)"
-    tests: "18/18 PASS"
-    enforcement_status: >
-      Le chemin Prompt→Preflight→Reflex→ReasoningRecord est maintenant traçable.
-      PreflightEngine exécuté avant chaque ReasoningRecord.
-      Snapshot (git_sha, ledger_sha, live_height) gravé dans chaque record.
-      Test de bypass F PASS — add_observation + add_reference lèvent SealedRecordError après seal().
+      - "src/artcb/reflex/core.py — activate() branché sur PreflightEngine"
+      - ".bob/hooks/user_prompt_submit.py — SESSION_CONTINUATION injecté"
+      - "tests/test_add_device_r363.py — 20/20 PASS (fix rp_id + human_id + create_app)"
+    tests: "62/62 PASS (19 R355 + 23 R369 + 20 R363)"
+    p0_implemented:
+      - "P0-A : classify_git_ledger_sync() — EXPECTED_LAG vs REAL_DIVERGENCE"
+      - "P0-B : RemoteGitState + get_remote_git_state() + fetch_remote() + compare_local_remote()"
+      - "P0-C : OperationRisk + required_preflight_mode() + PreflightGate.authorize()"
+      - "P0-D : PreflightBlockedError + fail-closed pour CODE_CHANGE/DEPLOY/LIVE_WRITE/CRITICAL"
+      - "P0-E : LiveState 5 niveaux — live_reachable/healthy/git_sha_known/git_match/height"
     gaps_remaining:
-      - "PreflightEngine n'est pas encore une contrainte système irréfutable (instruction, pas primitive)"
-      - "Test de contournement complet agent (pas seulement record) — futur R369-enforcement"
+      - "R369-enforcement : PreflightGate pas encore intégrée dans les routes métier (add-verify, wallet, chain)"
+      - "R371 : fetch_remote() non branché dans run_checks FULL automatiquement"
+      - "Tests adversariaux de bypass direct (appel fonction sensible sans Gate) — à compléter"
     certified_100: false
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -149,35 +177,26 @@ in_progress:
 # ═══════════════════════════════════════════════════════════════════════════════
 open:
 
-  - id: R364
-    title: "Tests attaque E2E — suite complète"
-    priority: HIGH
-    depends_on: R363
-    tests_required:
-      - "PIN seul → 401"
-      - "template_hex seul → 422"
-      - "mauvaise signature → 401"
-      - "credential wrong human → 403"
-      - "challenge expiré → 400"
-      - "ADD_DEVICE valide WebAuthn → 200"
-      - "max 5 appareils → 409"
-      - "revoke WebAuthn valide → 200"
-      - "revoke credential inconnue → 401"
-      - "WebAuthn valide ≠ unique_human_proven (toujours False)"
-    file: "tests/test_add_device_r363.py"
-    note: "fichier créé — dépend de pytest non-bloquant"
+  - id: R364-R369-ENFORCEMENT
+    title: "PreflightGate intégrée dans routes métier sensibles + remote-sync automatique"
+    priority: P0
+    sub_tasks:
+      - "PreflightGate.require_authorized() dans add-verify, revoke-device, wallet, chain.append_block"
+      - "fetch_remote() branché dans run_checks FULL"
+      - "Tests bypass direct (appel fonction sensible sans Gate → BLOCKED)"
+    file: "src/artcb/reflex/preflight.py"
 
   - id: R365
     title: "Relancer aws-node-3 PBFT primary ou déclencher view-change"
     priority: HIGH
-    blocker: true
+    blocker: false
+    note: "V-STALL-01 RÉSOLU (2e89322) — chain_height=1198 ALIVE view=27. R365 reste pour surveillance long terme."
     issue: >
-      aws-node-3 (13.38.209.25) est offline depuis 2026-09-12.
-      Toute publication on-chain est gelée — prepared_count n'atteint pas quorum.
+      aws-node-3 (13.38.209.25) était offline 2026-09-12.
+      V-STALL-01 corrigé. PBFT ALIVE view=27. Surveiller la stabilité.
     options:
-      - "AWS CLI: aws ec2 start-instances --instance-ids <id> --profile artcb-node-3"
-      - "Déclencher PBFT view-change depuis les nœuds OVH"
-      - "Mettre à jour la config PBFT pour exclure aws-node-3"
+      - "AWS CLI: aws ec2 start-instances --instance-ids i-06c9404e42798ff76 --region eu-west-3"
+      - "Déclencher PBFT view-change depuis les nœuds OVH si primary change"
 
   - id: R366
     title: "AUTO_ARTCB_PREFLIGHT dans user_prompt_submit.py"
