@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.2"
+  version: "2.3"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "ddb0abf"
+  git_head: "pending-r374"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -278,6 +278,34 @@ done:
     distinction: "INJECTED ≠ APPLIED_CONFIRMED — distinction maintenue (règle audit §6)"
     certified_100: false
 
+  - id: R374
+    title: "R374 — BCH(255,191,8) FuzzyExtractor : tolérance dist≤8 bits/bloc dans fuzzy_reproduce()"
+    commit: "pending-r374"
+    files_modified:
+      - "src/artcb/identity/biometric_onchain.py — _bch_encode_template() + _bch_decode_template() + fuzzy_reproduce() v3"
+      - "tests/test_task001_biometric.py — tests B/D/P/Q/R mis à jour (v3)"
+    files_created:
+      - "tests/test_task001_r374_bch.py — 30 tests S01→S30"
+    dependencies_added:
+      - "bchlib>=2.1.3 (requirements.txt)"
+    algorithm: "ARTCB-SECURE-SKETCH-HKDF-BCH-v3"
+    bch_params:
+      t: 8
+      m: 8
+      n: 255
+      prim_poly: "0x11d"
+      data_bytes_per_block: 23
+      ecc_bytes_per_block: 8
+    properties:
+      - "dist=0 → reproduction exacte (test S13 PASS)"
+      - "dist=1→8 → reproduction corrigée (tests S14→S16 PASS)"
+      - "dist=9 → None (fail-closed, test S17 PASS)"
+      - "helper_data = salt(32) || sketch(32) || confirm(16) || bch_ecc(var)"
+      - "unique_human_proven=False dans tous les cas (test S23 PASS)"
+    tests: "30/30 PASS (S01→S30) + 94/94 PASS total (zéro régression)"
+    certified_100: false
+    note: "FHE check_uniqueness non implémenté — prochaine étape TASK-001"
+
   - id: R373
     title: "R373 — HumanIdentityPolicy : 5 cas multi-appareil + UV=PIN/biométrie + wallet_per_human_limit"
     commit: "ddb0abf"
@@ -402,18 +430,18 @@ decisions:
 # ÉTAT AVANCEMENT GLOBAL
 # ═══════════════════════════════════════════════════════════════════════════════
 progress:
-  global_pct: 72
+  global_pct: 75
   breakdown:
     blockchain_core: 90
     wallet_hybrid_ed25519_mldsa65: 88
     webauthn_register: 85
     add_device_multi_device: 85   # R363+R363b+R363c — vraie WebAuthn + enrôlement B + E2E + concurrence
-    biometric_identity_human_id: 50
+    biometric_identity_human_id: 62  # R373 + R374 : 5 cas + BCH ECC — FHE manque encore
     reflex_artcb_r350_r354: 55
     pqc_mldsa65: 85
     pbft_consensus: 90            # aws-node-3 ALIVE, synchronisé
-    tests_coverage: 87            # +E2E A→B→login + concurrence race condition
+    tests_coverage: 89            # 94/94 PASS — R374 30 nouveaux tests
     ui_artcbme: 88
-    task_ledger: 85               # ledger + AUTO_PREFLIGHT opérationnel
+    task_ledger: 90               # ledger + AUTO_PREFLIGHT + session_continuation à jour
     pol_knowledgeid_usageid: 25
     genesis_transfer_creator_node: 20

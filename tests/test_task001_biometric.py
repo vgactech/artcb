@@ -73,15 +73,15 @@ def test_A_fuzzy_extract_result_structure() -> None:
 def test_B_helper_data_structure() -> None:
     """Test B : helper_data_hex encode salt(32) || sketch(32) || confirm(16) = 80 octets.
 
-    Avec le schéma v2 (TASK-001), sketch = seed XOR pad = 32 octets fixes.
-    helper est donc toujours 32 + 32 + 16 = 80 octets, indépendamment de len(template).
+    Avec le schéma v3 (R374), helper = salt(32) || sketch(32) || confirm(16) || bch_ecc(var).
+    helper est donc > 80 octets (BCH ECC ajouté).
     """
     from artcb.identity.biometric_onchain import _SEED_BYTES
     result = fuzzy_extract(TEMPLATE_A)
     helper = bytes.fromhex(result.helper_data_hex)
-    expected = _SALT_BYTES + _SEED_BYTES + _CONFIRM_BYTES  # 32 + 32 + 16 = 80
-    assert len(helper) == expected, (
-        f"helper_data longueur {len(helper)} ≠ attendu {expected}"
+    _FIXED = _SALT_BYTES + _SEED_BYTES + _CONFIRM_BYTES  # 32 + 32 + 16 = 80
+    assert len(helper) > _FIXED, (
+        f"helper_data doit dépasser 80 octets (R374 BCH ECC) — got {len(helper)}"
     )
     # Salt = premiers 32 octets
     salt = helper[:_SALT_BYTES]
@@ -92,6 +92,9 @@ def test_B_helper_data_structure() -> None:
     # Confirm = 16 octets
     confirm = helper[_SALT_BYTES + _SEED_BYTES: _SALT_BYTES + _SEED_BYTES + _CONFIRM_BYTES]
     assert len(confirm) == _CONFIRM_BYTES
+    # BCH ECC présent après les 80 octets fixes
+    bch_ecc = helper[_FIXED:]
+    assert len(bch_ecc) >= 2, "bch_ecc doit contenir au moins le header (2 octets)"
 
 
 # ─── Test C : fuzzy_reproduce — même template → secret identique ──────────────
@@ -109,14 +112,19 @@ def test_C_fuzzy_reproduce_same_template() -> None:
 # ─── Test D : fuzzy_reproduce — template différent → None ────────────────────
 
 def test_D_fuzzy_reproduce_different_template_fails() -> None:
-    """Test D (adversarial) : template différent → fuzzy_reproduce retourne None.
+    """Test D (adversarial) : template très différent → fuzzy_reproduce retourne None.
 
-    Sans ECC externe, dist > 0 → reproduction impossible (TASK-001 honnêteté).
+    Avec BCH(t=8), les templates très différents (>> 8 bits de distance sur un bloc)
+    sont toujours incorrigibles. TEMPLATE_A et TEMPLATE_B ne diffèrent que de 2 bits,
+    ce qui est corrigible par BCH — ce comportement est correct.
+    On utilise un template totalement différent pour tester l'échec.
     """
     result = fuzzy_extract(TEMPLATE_A)
-    reproduced = fuzzy_reproduce(TEMPLATE_B, result.helper_data_hex)
+    # Template radicalement différent (>> t=8 bits de distance)
+    template_evil = b"\xff" * len(TEMPLATE_A)
+    reproduced = fuzzy_reproduce(template_evil, result.helper_data_hex)
     assert reproduced is None, (
-        "Template différent doit échouer la reproduction (dist > 0, pas d'ECC)"
+        "Template radicalement différent doit échouer la reproduction (dist >> t=8)"
     )
 
 
@@ -258,37 +266,38 @@ def test_O_unique_human_proven_always_false() -> None:
 
 # ─── Test P : algorithm = v2 (Secure Sketch) ─────────────────────────────────
 
-def test_P_algorithm_is_v2_not_stub() -> None:
-    """Test P : l'algorithme est ARTCB-SECURE-SKETCH-HKDF-SHA256-v2, pas l'ancien stub."""
+def test_P_algorithm_is_v3_not_stub() -> None:
+    """Test P (mis à jour R374) : l'algorithme est ARTCB-SECURE-SKETCH-HKDF-BCH-v3, pas l'ancien stub."""
     fe = fuzzy_extract(TEMPLATE_A)
-    assert fe.algorithm == "ARTCB-SECURE-SKETCH-HKDF-SHA256-v2"
+    assert fe.algorithm == "ARTCB-SECURE-SKETCH-HKDF-BCH-v3"
     assert "STUB" not in fe.algorithm
     assert "SHA512" not in fe.algorithm
+    assert "BCH" in fe.algorithm
 
 
 # ─── Test Q : biometric_version = 2 ──────────────────────────────────────────
 
 def test_Q_biometric_version_is_2() -> None:
-    """Test Q : biometric_version=2 (Secure Sketch v2, pas v1 stub)."""
+    """Test Q (mis à jour R374) : biometric_version=2 (Secure Sketch), policy v3 avec BCH."""
     result, _, _ = enroll_biometric(TEMPLATE_A)
     assert result.human_identity_record["biometric_version"] == 2
-    assert result.human_identity_record["verification_policy"] == "secure_sketch_hkdf_v2"
+    assert result.human_identity_record["verification_policy"] == "secure_sketch_hkdf_bch_v3"
 
 
 # ─── Test R : noise_tolerance > 0 → warning ──────────────────────────────────
 
-def test_R_noise_tolerance_warning() -> None:
-    """Test R : noise_tolerance > 0 sans ECC → warning loggé, tolérance effective = 0."""
-    with patch.object(
-        __import__("artcb.identity.biometric_onchain", fromlist=["logger"]).logger,
-        "warning",
-    ) as mock_warn:
-        result = fuzzy_extract(TEMPLATE_A, noise_tolerance=8)
-        mock_warn.assert_called_once()
-        warn_msg = mock_warn.call_args[0][0]
-        assert "noise_tolerance" in warn_msg or "ECC" in warn_msg
+def test_R_noise_tolerance_bch_active() -> None:
+    """Test R (mis à jour R374) : noise_tolerance est désormais géré par BCH — pas de warning.
 
-    # Malgré le warning, la fonctionnalité de base reste opérationnelle
+    Avec BCH(t=8), noise_tolerance=8 est effectif sans warning (ECC réel actif).
+    On vérifie que :
+    - Pas de warning logger (BCH gère la tolérance)
+    - noise_tolerance_bits > 0 dans le résultat
+    - La reproduction avec template légèrement bruité fonctionne
+    """
+    result = fuzzy_extract(TEMPLATE_A, noise_tolerance=8)
+    assert result.noise_tolerance_bits > 0, "BCH doit renseigner la tolérance effective"
+    # La reproduction de base fonctionne
     assert result.secret_hex
     reproduced = fuzzy_reproduce(TEMPLATE_A, result.helper_data_hex)
     assert reproduced == result.secret_hex

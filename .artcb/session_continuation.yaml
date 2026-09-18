@@ -9,10 +9,10 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 meta:
-  last_updated: "2026-09-18T12:00:00Z"
-  git_head: "af451f5"
+  last_updated: "2026-09-18T14:00:00Z"
+  git_head: "pending-r374"
   chain_height: 1198
-  session_count: 19
+  session_count: 20
 
 # ─── ÉTAT COURANT DE REPRISE ─────────────────────────────────────────────────
 
@@ -22,68 +22,61 @@ current:
   status: "IN_PROGRESS"
   started: "2026-09-18"
 
-  # ── Accompli cette session (2026-09-18-G) ────────────────────────────────
+  # ── Accompli cette session (2026-09-18-H) ────────────────────────────────
   completed_this_session:
-    - "R371 : inject_rules_content() dans user_prompt_submit.py — contenu réel DECISIONS/LEÇONS/PROTOCOLE/AUTO_PROMPT injecté à chaque prompt"
-    - "task_ledger.yaml synchronisé git_head af451f5 + TASK-001-BIOMETRIE-SUITE enrichi UV=PIN/biométrie"
-    - "session_continuation.yaml mis à jour — session_count=19"
+    - "R373 (sessions précédentes) : HumanIdentityPolicy — 5 cas multi-appareil + UV=PIN/biométrie + wallet_per_human_limit — 26/26 PASS"
+    - "R374 : BCH(255,191,8) dans biometric_onchain.py — fuzzy_reproduce() tolère dist≤8 bits/bloc"
+    - "R374 : 30 tests S01→S30 PASS dans test_task001_r374_bch.py"
+    - "R374 : tests test_task001_biometric.py mis à jour (B/D/P/Q/R) — 18/18 PASS (v3)"
+    - "Total cette session : 94/94 PASS (zéro régression)"
 
   next_actions:
 
     - step: 1
       what: >
-        TASK-001 — WebAuthn UV=true ≠ empreinte : documenter la politique dans
-        src/artcb/identity/biometric_onchain.py + ajouter un champ
-        user_verification_method (BIOMETRIC | PIN | UNKNOWN) dans le credential_store.
-        Règle : unique_human_proven=False même si UV=true ET user_verification_method=BIOMETRIC.
+        TASK-001-BIOMETRIE-SUITE (restant) :
+        FHE matching biométrique check_uniqueness (remplacer hash exact).
+        Actuellement check_uniqueness() compare template_hash_hex exact (SHA-256).
+        Production : privacy_preserving_match() via homomorphic.py.
       status: "TODO"
-      module: "src/artcb/identity/biometric_onchain.py"
-      functions: ["verify_webauthn_assertion", "check_user_verification_method"]
+      module: "src/artcb/crypto/homomorphic.py + src/artcb/identity/biometric_onchain.py"
 
     - step: 2
-      what: >
-        TASK-001 — Anti-Sybil multi-appareil : politique wallet_per_human_limit.
-        Un HumanID ne peut pas avoir plus d'un wallet économique actif.
-        ADD_DEVICE ajoute un authenticator mais ne crée pas de nouveau wallet.
-        Bloquer création Wallet B si Wallet A déjà lié au même HumanID.
-      status: "TODO"
-      module: "src/artcb/identity/"
-      functions: ["check_wallet_human_limit", "link_wallet_to_human"]
-
-    - step: 3
-      what: >
-        TASK-001 — ECC externe BCH(255,191,8) pour tolérance dist ≤ 8 bits/bloc
-        (fuzzy_reproduce() actuellement FAIL si dist>0).
-      status: "TODO"
-      module: "src/artcb/identity/biometric_onchain.py"
-
-    - step: 4
       what: >
         TASK-006-LIVE-VALIDATION : validation live panne aws-node-3
         (actuellement ALIVE view=27 — prévoir test panne simulée).
       status: "TODO"
 
-    - step: 5
+    - step: 3
       what: "TASK-007 : PoL / KnowledgeID / UsageID — architecture + implémentation"
       status: "TODO"
 
+    - step: 4
+      what: >
+        R365 : aws-node-3 surveillance PBFT + décision retrait opérateur si mort permanent.
+        assess_primary_failure() disponible dans creator_node_policy.py.
+      status: "TODO"
+
   context:
+    r374_done: >
+      BCH(255, t=8, m=8, prim_poly=0x11d) implémenté dans biometric_onchain.py.
+      fuzzy_reproduce() corrige désormais jusqu'à 8 bits d'erreurs par bloc de 23 octets.
+      Algorithme v3 = ARTCB-SECURE-SKETCH-HKDF-BCH-v3.
+      helper_data = salt(32) || sketch(32) || confirm(16) || bch_ecc(var) — PUBLIC.
+      Dépendance ajoutée : bchlib>=2.1.3 dans requirements.txt.
+    r373_done: >
+      HumanIdentityPolicy — 5 cas multi-appareil classifiés.
+      UV=true ≠ unique_human_proven (invariant absolu maintenu).
+      wallet_per_human_limit enforced → 409 anti-Sybil.
     r371_done: >
-      inject_rules_content() injecte maintenant PROTOCOLE_ARTCB, DECISIONS_UTILISATEUR_ARTCB,
-      LEÇONS_APPRISES_ARTCB (intégraux, tronqués si >max_chars) et la queue d'AUTO_PROMPT_ARTCB
-      (6000 chars fin du fichier) à chaque prompt via user_prompt_submit.py.
-      Résout le problème structurel : artcb-read-all listait les fichiers sans les injecter.
-    webauthn_pin_problem: >
-      UV=true peut être PIN ou biométrie — le serveur ne peut pas distinguer.
-      unique_human_proven=False dans TOUS les cas.
-      R363 gère ADD_DEVICE cryptographiquement correct mais n'adresse pas anti-Sybil multi-wallet.
-    gap_principal: >
-      TASK-001 ouverte : UV=PIN vs biométrie non distingué, wallet_per_human_limit absent,
-      ECC BCH non implémenté. CERTIFIED_100=false.
+      inject_rules_content() injecte PROTOCOLE/DECISIONS/LEÇONS/AUTO_PROMPT à chaque prompt.
+    gap_restant: >
+      TASK-001 partiellement ouverte : FHE matching non implémenté (hash exact en production).
+      FAR/FRR/PAD non mesurés. SDK iOS/Android non testé. CERTIFIED_100=false.
     reflex_engine: "src/artcb/reflex/core.py — activate() branché PreflightEngine R368"
     preflight: "src/artcb/reflex/preflight.py — PreflightEngine P0-A→P0-E"
     hook: ".bob/hooks/user_prompt_submit.py — R371 inject_rules_content() actif"
-    ledger: ".artcb/task_ledger.yaml — version 2.1, R371 DONE, git_head=af451f5"
+    ledger: ".artcb/task_ledger.yaml — version 2.3, R374 DONE"
 
 # ─── HISTORIQUE DES SESSIONS (append-only) ───────────────────────────────────
 
@@ -122,3 +115,15 @@ work_log:
       DECISIONS/LEÇONS/PROTOCOLE/AUTO_PROMPT queue injectés à chaque prompt.
       task_ledger.yaml v2.1 git_head=af451f5 — TASK-001 enrichi UV=PIN/biométrie.
     stopped_reason: "Commit + push requis. Prochaine session : TASK-001 step 1 UV=PIN/biométrie."
+
+  - session: "2026-09-18-H"
+    commit: "pending-r374"
+    done: >
+      R374 : BCH(255,191,8) implémenté dans biometric_onchain.py.
+      _bch_encode_template() + _bch_decode_template() + fuzzy_reproduce() v3.
+      Algorithme ARTCB-SECURE-SKETCH-HKDF-BCH-v3 — tolérance dist≤8 bits/bloc.
+      30 nouveaux tests S01→S30 PASS dans test_task001_r374_bch.py.
+      test_task001_biometric.py mis à jour (B/D/P/Q/R) — 18/18 PASS.
+      Total session : 94/94 PASS (zéro régression).
+      bchlib>=2.1.3 ajouté dans requirements.txt.
+    stopped_reason: "Commit + push requis. Prochaine session : FHE matching (step 1) ou TASK-006-LIVE."

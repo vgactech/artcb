@@ -1,4 +1,4 @@
-"""Biométrie on-chain ARTCB — TASK-001 (2026-09-18).
+"""Biométrie on-chain ARTCB — TASK-001 / R374 (2026-09-18).
 
 Implémente le modèle cible de la spécification §3–§5 :
 
@@ -10,58 +10,76 @@ Implémente le modèle cible de la spécification §3–§5 :
          ↓
     modèle biométrique normalisé (template_bytes)
          ↓
+    BCH(255,191,8) : correction d'erreurs sur le template avant le Sketch
+         ↓
     SecureSketch (helper data publique + secret dérivé via HKDF)
          ↓
     BiometricCommitment (chiffré/haché — jamais brut)
          ↓
     HumanIdentityRecord on-chain
 
-## Architecture cryptographique TASK-001
+## Architecture cryptographique TASK-001 / R374
 
-### Fuzzy Extractor — Secure Sketch XOR + HKDF (remplacement du stub HKDF naïf)
+### Couche BCH — tolérance dist ≤ 8 bits par bloc de 23 octets (R374)
 
-Le modèle Fuzzy Extractor de Dodis et al. (2008) est implémenté via :
+BCH(255, t=8, m=8, prim_poly=0x11d) — paramètres standard ARTCB :
+  - n = 255 bits de code total
+  - t = 8 erreurs de bits corrigibles par bloc
+  - ecc_bytes = 8 octets d'ECC par bloc
+  - Taille du bloc de données : 23 octets (184 bits < 255)
 
-    1. SECURE SKETCH (SS) :
-       ss = template XOR locker
-       locker = HKDF(seed, salt, "ARTCB-SKETCH-LOCK")
-       seed = os.urandom(32)  # PRIVÉ — ne jamais stocker
+ENRÔLEMENT (_bch_encode_template) :
+  template_padded → découpé en blocs de BCH_DATA_BYTES octets
+  → pour chaque bloc : ecc_i = BCH.encode(bloc_i)
+  → helper_data stocke la concaténation des ecc (public)
+  → template_corrigé = template_padded (inchangé à l'enrôlement)
 
-       Propriété : SS permet de retrouver `seed` si template' est proche de template
-       (distance de Hamming ≤ noise_tolerance_bits).
+REPRODUCTION (_bch_decode_template) :
+  template'_padded → découpé en blocs
+  → pour chaque bloc_i : BCH.decode(bloc_i, ecc_i) → BCH.correct(bloc_i, ecc_i)
+  → si nerr < 0 → bloc incorrigible → retourner None (trop de bruit)
+  → template corrigé reconstruit → passé au Secure Sketch
 
-    2. REPRODUCTION :
-       Pour retrouver `seed` depuis (template', ss) :
-         candidate_locker = template' XOR ss
-         # Si dist(template, template') = 0 → candidate_locker = locker exact
-         # → HKDF inverse : vérification par HMAC-SHA256 de confirmation
+Propriété : si dist_bits(template, template') ≤ 8 × nb_blocs → reproduction réussie.
+Pour une empreinte digitale de 32 octets (= 1 bloc + padding) : tolérance ≤ 8 bits.
+Pour 64 octets (3 blocs) : tolérance ≤ 8 bits par bloc = 24 bits globaux.
 
-    3. SECRET FINAL :
-       secret = HKDF(seed, salt, "ARTCB-SECRET")
-       helper_data = (salt, ss) — PUBLICS
+### Fuzzy Extractor — Secure Sketch XOR + HKDF (ARTCB-SECURE-SKETCH-HKDF-BCH-v3)
 
-### Limite de cette implémentation (TASK-001 honnêteté)
+Schéma Gen(template) → (secret, helper) :
 
-Ce Secure Sketch est EXACT : il tolère uniquement dist=0 (même template).
-Pour une vraie tolérance aux variations de capteur (dist > 0) il faudrait :
-    - Quantization + error-correcting code (BCH / Reed-Solomon) sur le vecteur
-    - Fuzzy Vault / Fuzzy Commitment certifié (NIST SP 800-76)
-Cette implémentation est supérieure au stub précédent (HKDF direct sans sketch)
-car elle sépare correctement seed (privé), sketch (public), et confirmation.
-Elle est HONNÊTEMENT documentée : `noise_tolerance_bits` > 0 nécessite ECC externe.
+    salt       = random(_SALT_BYTES)      # PUBLIC — stocké dans helper
+    seed       = random(_SEED_BYTES)      # PRIVÉ — jamais stocké
+    tmpl_norm  = _bch_encode_template(template)  # template normalisé BCH
+    pad        = HKDF(tmpl_norm, salt, SKETCH, len=32)
+    sketch     = seed XOR pad             # PUBLIC
+    secret     = HKDF(seed, salt, SECRET) # PRIVÉ
+    confirm    = HKDF(seed, salt, CONFIRM, len=16)  # PUBLIC
+    bch_ecc    = ECC blocs (public)       # PUBLIC — stocké dans helper
+    helper     = salt || sketch || confirm || bch_ecc  # PUBLIC — on-chain
+
+Schéma Rep(template', helper) → secret :
+
+    tmpl_corr  = _bch_decode_template(template', bch_ecc)  # correction BCH
+    si tmpl_corr is None → échec (trop de bruit)
+    pad'       = HKDF(tmpl_corr, salt, SKETCH, len=32)
+    seed'      = sketch XOR pad'
+    Vérifier : HKDF(seed', salt, CONFIRM) == confirm
+    Retourner : HKDF(seed', salt, SECRET)
 
 ### Propriétés garanties
 
 - template_bytes brut N'EST JAMAIS envoyé au serveur (rejet HTTP 400)
 - secret_hex PRIVÉ — jamais on-chain
-- helper_data (salt + ss) PUBLICS — on-chain
+- helper_data (salt + sketch + confirm + bch_ecc) PUBLICS — on-chain
 - unique_human_proven = False jusqu'à matching FHE certifié (spec §5)
 - CERTIFIED_100 = False
+- BCH.decode() < 0 → None (fail-closed — pas de secret incorrect)
 
-POUR LA PRODUCTION :
-    - Ajouter quantization + BCH(255,191,8) pour tolérance dist ≤ 8 bits/byte-block
+PRODUCTION :
     - Brancher TEE/HSM pour seed + secret
-    - Valider sur bases biométriques NIST BSSR
+    - Valider FAR/FRR sur bases NIST BSSR
+    - Quantification du vecteur biométrique côté client recommandée
 """
 from __future__ import annotations
 
@@ -74,6 +92,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+import bchlib
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
@@ -84,12 +103,12 @@ from src.artcb.crypto.homomorphic import (
 
 logger = logging.getLogger("artcb.identity.biometric_onchain")
 
-# ─── Constantes ───────────────────────────────────────────────────────────────
+# ─── Constantes Secure Sketch ─────────────────────────────────────────────────
 
-_SKETCH_DOMAIN   = b"ARTCB-SKETCH-LOCK-v2"
-_SECRET_DOMAIN   = b"ARTCB-SECRET-v2"
-_CONFIRM_DOMAIN  = b"ARTCB-CONFIRM-v2"
-_ALGO_NAME       = "ARTCB-SECURE-SKETCH-HKDF-SHA256-v2"
+_SKETCH_DOMAIN   = b"ARTCB-SKETCH-LOCK-v3"   # v3 avec BCH
+_SECRET_DOMAIN   = b"ARTCB-SECRET-v3"
+_CONFIRM_DOMAIN  = b"ARTCB-CONFIRM-v3"
+_ALGO_NAME       = "ARTCB-SECURE-SKETCH-HKDF-BCH-v3"
 
 # Taille du seed interne (privé, jamais on-chain)
 _SEED_BYTES = 32
@@ -97,8 +116,105 @@ _SEED_BYTES = 32
 _SALT_BYTES = 32
 # Taille du secret final dérivé
 _SECRET_BYTES = 32
-# Taille du HMAC de confirmation (inclus dans helper_data pour vérification rapide)
+# Taille du HMAC de confirmation (public, stocké dans helper_data)
 _CONFIRM_BYTES = 16
+
+# ─── Constantes BCH ───────────────────────────────────────────────────────────
+
+# BCH(255, t=8, m=8) — standard ARTCB R374
+# prim_poly=0x11d = x^8 + x^4 + x^3 + x^2 + 1 (polynôme primitif standard GF(2^8))
+_BCH_T          = 8          # erreurs de bits corrigibles par bloc
+_BCH_PRIM_POLY  = 0x11d      # polynôme primitif GF(2^8)
+_BCH_DATA_BYTES = 23         # octets de données par bloc (184 bits < n=255)
+# ecc_bytes déduit de l'instance BCH (= 8 pour t=8, m=8)
+
+def _make_bch() -> bchlib.BCH:
+    """Crée une instance BCH(255, t=8) — instanciation légère, réutilisable."""
+    return bchlib.BCH(_BCH_T, prim_poly=_BCH_PRIM_POLY)
+
+
+# ─── Couche BCH — encode/decode template ──────────────────────────────────────
+
+def _bch_encode_template(template_bytes: bytes) -> tuple[bytes, bytes]:
+    """Encode le template en blocs BCH.
+
+    Découpe template_bytes en blocs de _BCH_DATA_BYTES octets (padding nul si nécessaire),
+    génère l'ECC BCH pour chaque bloc.
+
+    Returns:
+        (template_padded, bch_ecc_blob)
+        - template_padded : template normalisé à un multiple de _BCH_DATA_BYTES (PUBLIC, helper)
+        - bch_ecc_blob    : concaténation des ecc de chaque bloc (PUBLIC, helper)
+    """
+    bch = _make_bch()
+    ecc_bytes = bch.ecc_bytes  # = 8 pour BCH(t=8, m=8)
+
+    # Pad template à multiple de BCH_DATA_BYTES
+    n_blocks = max(1, (len(template_bytes) + _BCH_DATA_BYTES - 1) // _BCH_DATA_BYTES)
+    padded_len = n_blocks * _BCH_DATA_BYTES
+    template_padded = template_bytes.ljust(padded_len, b"\x00")
+
+    ecc_parts: list[bytes] = []
+    for i in range(n_blocks):
+        block = template_padded[i * _BCH_DATA_BYTES: (i + 1) * _BCH_DATA_BYTES]
+        ecc = bch.encode(block)
+        ecc_parts.append(ecc)
+
+    bch_ecc_blob = b"".join(ecc_parts)
+    # Préfixe : 1 octet = nombre de blocs (max 255) + 1 octet = ecc_bytes par bloc
+    header = bytes([n_blocks, ecc_bytes])
+    return template_padded, header + bch_ecc_blob
+
+
+def _bch_decode_template(
+    template_bytes: bytes,
+    bch_ecc_blob: bytes,
+) -> bytes | None:
+    """Corrige template_bytes avec les ECC BCH stockés.
+
+    Returns:
+        template corrigé (bytes) si tous les blocs sont corrigibles,
+        None si au moins un bloc est incorrigible (trop d'erreurs ou blob corrompu).
+    """
+    if len(bch_ecc_blob) < 2:
+        return None
+    n_blocks   = bch_ecc_blob[0]
+    ecc_size   = bch_ecc_blob[1]
+    ecc_data   = bch_ecc_blob[2:]
+
+    expected_ecc_len = n_blocks * ecc_size
+    if len(ecc_data) < expected_ecc_len:
+        return None
+
+    bch = _make_bch()
+    if bch.ecc_bytes != ecc_size:
+        # Incompatibilité paramètres — fail-closed
+        return None
+
+    # Pad template' au même nombre de blocs que lors de l'enrôlement
+    padded_len = n_blocks * _BCH_DATA_BYTES
+    template_padded = template_bytes.ljust(padded_len, b"\x00")[:padded_len]
+
+    corrected_parts: list[bytes] = []
+    for i in range(n_blocks):
+        block = bytearray(template_padded[i * _BCH_DATA_BYTES: (i + 1) * _BCH_DATA_BYTES])
+        ecc   = bytearray(ecc_data[i * ecc_size: (i + 1) * ecc_size])
+
+        nerr = bch.decode(block, ecc)
+        if nerr < 0:
+            # Bloc incorrigible (trop d'erreurs) — fail-closed
+            logger.debug(
+                "_bch_decode_template: bloc %d incorrigible (nerr=%d)", i, nerr
+            )
+            return None
+        if nerr > 0:
+            bch.correct(block, ecc)
+            logger.debug(
+                "_bch_decode_template: bloc %d — %d erreurs corrigées", i, nerr
+            )
+        corrected_parts.append(bytes(block))
+
+    return b"".join(corrected_parts)
 
 
 # --------------------------------------------------------------------------- #
@@ -107,23 +223,25 @@ _CONFIRM_BYTES = 16
 
 @dataclass
 class FuzzyExtractorResult:
-    """Résultat d'un FuzzyExtractor Secure Sketch ARTCB.
+    """Résultat d'un FuzzyExtractor Secure Sketch + BCH ARTCB (R374).
 
-    - secret_hex     : secret dérivé (PRIVÉ — jamais on-chain, jamais loggé).
-    - helper_data_hex: helper = salt || sketch || confirm — PUBLIC, on-chain.
-    - template_hash  : H(template normalisé) — domaine séparé.
-    - algorithm      : identifiant de l'algorithme (versioning).
-    - certified      : False — TASK-001 sans ECC externe (tolérance dist=0).
+    - secret_hex          : secret dérivé (PRIVÉ — jamais on-chain, jamais loggé).
+    - helper_data_hex     : helper = salt || sketch || confirm || bch_ecc — PUBLIC, on-chain.
+    - template_hash_hex   : H(template padded BCH) — domaine séparé.
+    - algorithm           : identifiant de l'algorithme (versioning).
+    - certified           : False — FHE uniqueness non implémenté (TASK-001).
+    - noise_tolerance_bits: tolérance effective en bits (8 × nb_blocs).
     """
     secret_hex: str           # PRIVÉ — ne jamais sérialiser on-chain
-    helper_data_hex: str      # salt(32) || sketch(N) || confirm(16) — public
-    template_hash_hex: str    # H(template) — public
+    helper_data_hex: str      # salt(32) || sketch(32) || confirm(16) || bch_ecc — public
+    template_hash_hex: str    # H(template padded BCH) — public
     algorithm: str = _ALGO_NAME
     certified: bool = False
+    noise_tolerance_bits: int = 0   # rempli par fuzzy_extract()
     note: str = (
-        "Secure Sketch XOR + HKDF-SHA256. "
-        "Tolérance dist=0 sans ECC externe (TASK-001). "
-        "Production : ajouter BCH(255,191,8) pour dist ≤ 8 bits/bloc."
+        "Secure Sketch XOR + HKDF-SHA256 + BCH(255,191,8). "
+        "Tolérance : 8 erreurs de bits par bloc de 23 octets (R374). "
+        "unique_human_proven=False — FHE matching non implémenté (TASK-001)."
     )
 
 
@@ -154,46 +272,43 @@ def _pad_or_trim(data: bytes, target: int) -> bytes:
 def fuzzy_extract(
     template_bytes: bytes,
     *,
-    noise_tolerance: int = 0,  # TASK-001 : 0 = exact. ECC requis pour > 0.
+    noise_tolerance: int = 8,  # R374 : 8 bits par bloc (BCH t=8) — effectif
     salt: bytes | None = None,
 ) -> FuzzyExtractorResult:
-    """Extrait un secret déterministe via Secure Sketch XOR + HKDF-SHA256.
+    """Extrait un secret déterministe via BCH + Secure Sketch XOR + HKDF-SHA256 (R374).
 
     Schéma Gen(template) → (secret, helper) :
 
-        salt       = random(_SALT_BYTES)      # PUBLIC — stocké dans helper
-        seed       = random(_SEED_BYTES)      # PRIVÉ — jamais stocké
-        pad        = HKDF(template, salt, SKETCH, len=32)  # dérivé du template
-        sketch     = seed XOR pad             # PUBLIC — permet de retrouver seed
-        secret     = HKDF(seed, salt, SECRET) # PRIVÉ
-        confirm    = HKDF(seed, salt, CONFIRM, len=16)  # PUBLIC — vérification
-        helper     = salt || sketch || confirm           # PUBLIC — on-chain
+        salt          = random(_SALT_BYTES)                   # PUBLIC
+        seed          = random(_SEED_BYTES)                   # PRIVÉ
+        tmpl_padded, bch_ecc = _bch_encode_template(template) # PUBLIC (ecc)
+        pad           = HKDF(tmpl_padded, salt, SKETCH, 32)
+        sketch        = seed XOR pad                          # PUBLIC
+        secret        = HKDF(seed, salt, SECRET)              # PRIVÉ
+        confirm       = HKDF(seed, salt, CONFIRM, 16)         # PUBLIC
+        helper        = salt || sketch || confirm || bch_ecc  # PUBLIC, on-chain
 
     Schéma Rep(template', helper) → secret :
 
-        pad'       = HKDF(template', salt, SKETCH, len=32)
-        seed'      = sketch XOR pad'
-        Si template' == template → pad' == pad → seed' == seed
-        Vérifier : HKDF(seed', salt, CONFIRM) == confirm
-        Retourner : HKDF(seed', salt, SECRET)
+        bch_ecc       = helper[80:]  (après salt+sketch+confirm)
+        tmpl_corr     = _bch_decode_template(template', bch_ecc)
+        si tmpl_corr is None → return None (trop d'erreurs, fail-closed)
+        pad'          = HKDF(tmpl_corr, salt, SKETCH, 32)
+        seed'         = sketch XOR pad'
+        confirm'      = HKDF(seed', salt, CONFIRM, 16)
+        si confirm' != confirm → return None
+        return HKDF(seed', salt, SECRET)
 
-    Propriété : si template' == template → secret' == secret (dist=0 exact).
-    Tolérance dist > 0 nécessite ECC externe (non implémenté TASK-001).
+    Tolérance effective : 8 bits d'erreurs par bloc de 23 octets.
 
     Args:
         template_bytes: modèle biométrique normalisé (jamais image brute).
-        noise_tolerance: tolérance (bits). Ignoré sans ECC — doit rester 0.
+        noise_tolerance: ignoré — paramétré par BCH_T=8. Conservé pour compatibilité.
         salt: sel aléatoire (public, généré si absent).
     """
     if not template_bytes:
         raise ValueError(
             "template_bytes vide — normaliser le modèle biométrique côté client d'abord"
-        )
-    if noise_tolerance > 0:
-        logger.warning(
-            "TASK-001 FuzzyExtractor : noise_tolerance=%d demandé mais ECC non implémenté "
-            "— tolérance effective = 0. Production : ajouter BCH externe.",
-            noise_tolerance,
         )
 
     salt = salt or os.urandom(_SALT_BYTES)
@@ -201,37 +316,44 @@ def fuzzy_extract(
     # Seed privé — source d'entropie de tout le système
     seed = os.urandom(_SEED_BYTES)
 
-    # Pad dérivé du template (public mais lié au template — pas au seed)
-    # pad = HKDF(template, salt, SKETCH) → 32 octets
-    pad = _hkdf_derive(template_bytes, salt, _SKETCH_DOMAIN, _SEED_BYTES)
+    # 1. BCH encode : normalize template + générer ECC
+    template_padded, bch_ecc = _bch_encode_template(template_bytes)
 
-    # Secure Sketch = seed XOR pad — PUBLIC
-    # Propriété : sketch XOR pad = seed (si même pad → même template)
+    # 2. Pad dérivé du template paddé (lié au template normalisé BCH)
+    pad = _hkdf_derive(template_padded, salt, _SKETCH_DOMAIN, _SEED_BYTES)
+
+    # 3. Secure Sketch = seed XOR pad — PUBLIC
     sketch = _xor_bytes(seed, pad)
 
-    # Secret final PRIVÉ — dérivé du seed
+    # 4. Secret final PRIVÉ
     secret = _hkdf_derive(seed, salt, _SECRET_DOMAIN, _SECRET_BYTES)
 
-    # Token de confirmation PUBLIC — permet de vérifier seed retrouvé sans révéler secret
+    # 5. Confirmation PUBLIQUE
     confirm = _hkdf_derive(seed, salt, _CONFIRM_DOMAIN, _CONFIRM_BYTES)
 
-    # Template hash — domaine séparé du sketch
+    # 6. Template hash — sur le template paddé (stable)
     template_hash = hashlib.sha256(
-        b"ARTCB-TEMPLATE-v2:" + template_bytes
+        b"ARTCB-TEMPLATE-v3:" + template_padded
     ).hexdigest()
 
-    # helper_data = salt(32B) || sketch(32B) || confirm(16B) — PUBLIC, on-chain
-    helper_data = salt + sketch + confirm
+    # helper_data = salt(32B) || sketch(32B) || confirm(16B) || bch_ecc(var) — PUBLIC
+    helper_data = salt + sketch + confirm + bch_ecc
+
+    # Nombre de blocs BCH = taille sans header / ecc_bytes
+    bch = _make_bch()
+    n_blocks = max(1, (len(template_bytes) + _BCH_DATA_BYTES - 1) // _BCH_DATA_BYTES)
+    tolerance = _BCH_T * n_blocks  # bits corrigibles totaux
 
     logger.debug(
-        "fuzzy_extract: template_len=%d salt=%s",
-        len(template_bytes), salt.hex()[:16],
+        "fuzzy_extract: template_len=%d n_blocks=%d tolerance=%d bits salt=%s",
+        len(template_bytes), n_blocks, tolerance, salt.hex()[:16],
     )
 
     return FuzzyExtractorResult(
         secret_hex=secret.hex(),
         helper_data_hex=helper_data.hex(),
         template_hash_hex=template_hash,
+        noise_tolerance_bits=tolerance,
     )
 
 
@@ -239,22 +361,27 @@ def fuzzy_reproduce(
     template_bytes: bytes,
     helper_data_hex: str,
 ) -> str | None:
-    """Re-dérive le secret depuis template' et helper_data (Rep).
+    """Re-dérive le secret depuis template' et helper_data (Rep) — R374 avec BCH.
 
     Flux Rep(template', helper) :
-        helper = salt(32) || sketch(32) || confirm(16)
-        pad'    = HKDF(template', salt, SKETCH, len=32)
-        seed'   = sketch XOR pad'
-        confirm' = HKDF(seed', salt, CONFIRM, len=16)
-        Si confirm' == confirm → seed' est correct → retourner HKDF(seed', salt, SECRET)
-        Sinon → None (template différent ou helper corrompu)
+        helper    = salt(32) || sketch(32) || confirm(16) || bch_ecc(var)
+        bch_ecc   = helper[80:]   (80 = 32+32+16)
+        tmpl_corr = _bch_decode_template(template', bch_ecc)
+        si tmpl_corr is None → None (trop d'erreurs bits — fail-closed)
+        pad'      = HKDF(tmpl_corr, salt, SKETCH, len=32)
+        seed'     = sketch XOR pad'
+        confirm'  = HKDF(seed', salt, CONFIRM, len=16)
+        Si confirm' == confirm → retourner HKDF(seed', salt, SECRET)
+        Sinon → None (helper corrompu ou dist > tolérance BCH)
+
+    Tolérance effective : 8 bits d'erreurs par bloc BCH de 23 octets.
 
     Args:
-        template_bytes: template à reproduire (identique à l'enrôlement pour dist=0).
-        helper_data_hex: helper publié lors de l'enrôlement (salt || sketch || confirm).
+        template_bytes: template à reproduire (peut différer de l'enrôlement de ≤ 8 bits/bloc).
+        helper_data_hex: helper publié lors de l'enrôlement.
 
     Returns:
-        secret_hex si reproduction réussie, None sinon.
+        secret_hex si reproduction réussie, None sinon (fail-closed).
     """
     if not template_bytes or not helper_data_hex:
         return None
@@ -263,29 +390,36 @@ def fuzzy_reproduce(
     except ValueError:
         return None
 
-    # Décoder helper = salt(32) || sketch(32) || confirm(16)
-    expected_len = _SALT_BYTES + _SEED_BYTES + _CONFIRM_BYTES
-    if len(helper) < expected_len:
+    # Décoder helper = salt(32) || sketch(32) || confirm(16) || bch_ecc(>=2)
+    _FIXED = _SALT_BYTES + _SEED_BYTES + _CONFIRM_BYTES  # 80 octets fixes
+    if len(helper) < _FIXED + 2:  # +2 pour le header BCH minimum
         return None
 
-    salt    = helper[:_SALT_BYTES]
-    sketch  = helper[_SALT_BYTES: _SALT_BYTES + _SEED_BYTES]
-    confirm = helper[_SALT_BYTES + _SEED_BYTES: _SALT_BYTES + _SEED_BYTES + _CONFIRM_BYTES]
+    salt        = helper[:_SALT_BYTES]
+    sketch      = helper[_SALT_BYTES: _SALT_BYTES + _SEED_BYTES]
+    confirm     = helper[_SALT_BYTES + _SEED_BYTES: _FIXED]
+    bch_ecc     = helper[_FIXED:]
 
-    # Recalculer pad' depuis template'
-    pad_prime = _hkdf_derive(template_bytes, salt, _SKETCH_DOMAIN, _SEED_BYTES)
+    # 1. Corriger template' via BCH
+    template_corr = _bch_decode_template(template_bytes, bch_ecc)
+    if template_corr is None:
+        logger.debug("fuzzy_reproduce: FAILED — BCH decode échoué (template trop bruité)")
+        return None
 
-    # Retrouver seed' = sketch XOR pad'
+    # 2. Recalculer pad' depuis template corrigé
+    pad_prime = _hkdf_derive(template_corr, salt, _SKETCH_DOMAIN, _SEED_BYTES)
+
+    # 3. Retrouver seed' = sketch XOR pad'
     seed_prime = _xor_bytes(sketch, pad_prime)
 
-    # Vérifier par confirm en temps constant
+    # 4. Vérifier confirm en temps constant
     confirm_prime = _hkdf_derive(seed_prime, salt, _CONFIRM_DOMAIN, _CONFIRM_BYTES)
     if hmac.compare_digest(confirm_prime, confirm):
         secret = _hkdf_derive(seed_prime, salt, _SECRET_DOMAIN, _SECRET_BYTES)
         logger.debug("fuzzy_reproduce: SUCCESS")
         return secret.hex()
 
-    logger.debug("fuzzy_reproduce: FAILED — confirm mismatch (template ≠ ou helper corrompu)")
+    logger.debug("fuzzy_reproduce: FAILED — confirm mismatch (dist > tolérance BCH ou helper corrompu)")
     return None
 
 
@@ -317,7 +451,7 @@ class HumanIdentityRecord:
     helper_data_hex: str                         # public — on-chain
     algorithm: str = _ALGO_NAME
     biometric_version: int = 2                   # v2 = Secure Sketch
-    verification_policy: str = "secure_sketch_hkdf_v2"
+    verification_policy: str = "secure_sketch_hkdf_bch_v3"
     status: str = "active"
     created_at: str = field(
         default_factory=lambda: time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -339,6 +473,8 @@ class HumanIdentityRecord:
             "algorithm": self.algorithm,
             "biometric_version": self.biometric_version,
             "verification_policy": self.verification_policy,
+            "bch_tolerance_bits_per_block": _BCH_T,
+            "bch_data_bytes_per_block": _BCH_DATA_BYTES,
             "status": self.status,
             "created_at": self.created_at,
             "wallet_address": self.wallet_address,
