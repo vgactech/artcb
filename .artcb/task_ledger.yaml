@@ -9,7 +9,7 @@ meta:
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "pending-r368"
+  git_head: "a9ca39d"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
