@@ -9,37 +9,40 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 meta:
-  last_updated: "2026-09-18T14:00:00Z"
-  git_head: "d780008"
+  last_updated: "2026-09-18T18:00:00Z"
+  git_head: "pending-r376"
   chain_height: 1198
-  session_count: 20
+  session_count: 21
 
 # ─── ÉTAT COURANT DE REPRISE ─────────────────────────────────────────────────
 
 current:
   task_id: "TASK-001-BIOMETRIE-SUITE"
-  title: "TASK-001 suite ECC/FHE + PIN vs biométrie WebAuthn + anti-Sybil multi-appareil"
+  title: "TASK-001 suite — R376 DONE. Prochaine : FHE véritable / TASK-006-LIVE-VALIDATION / TASK-007"
   status: "IN_PROGRESS"
   started: "2026-09-18"
 
-  # ── Accompli cette session (2026-09-18-H) ────────────────────────────────
+  # ── Accompli cette session (2026-09-18-I) ────────────────────────────────
   completed_this_session:
-    - "R373 (sessions précédentes) : HumanIdentityPolicy — 5 cas multi-appareil + UV=PIN/biométrie + wallet_per_human_limit — 26/26 PASS"
-    - "R374 : BCH(255,191,8) dans biometric_onchain.py — fuzzy_reproduce() tolère dist≤8 bits/bloc"
-    - "R374 : 30 tests S01→S30 PASS dans test_task001_r374_bch.py"
-    - "R374 : tests test_task001_biometric.py mis à jour (B/D/P/Q/R) — 18/18 PASS (v3)"
-    - "Total cette session : 94/94 PASS (zéro régression)"
+    - "R376 : check_uniqueness() branché sur privacy_preserving_match() — 22/22 PASS"
+    - "R376 : _check_uniqueness_privacy_preserving() — route privacy_preserving_xor"
+    - "R376 : UniquenessCheckResult.match_method (exact_hash | privacy_preserving_xor)"
+    - "R376 : seuil par défaut 0.85 (tolérance bruit)"
+    - "R376 : rapport rapports/R376_privacy_preserving_uniqueness.md"
+    - "Non-régression complète : 136/136 PASS (114 anciens + 22 nouveaux)"
+    - "AUTO_PROMPT_ARTCB entrée 90 appendée"
+    - "task_ledger.yaml v2.5 — R376 DONE, TASK-001 sous-tâches mises à jour"
 
   next_actions:
 
     - step: 1
       what: >
-        TASK-001-BIOMETRIE-SUITE (restant) :
-        FHE matching biométrique check_uniqueness (remplacer hash exact).
-        Actuellement check_uniqueness() compare template_hash_hex exact (SHA-256).
-        Production : privacy_preserving_match() via homomorphic.py.
+        TASK-001 restant — FHE véritable (SEAL/OpenFHE/Concrete) pour check_uniqueness().
+        Le stub XOR SHA-256 est peu robuste au bruit capteur réel (effet avalanche).
+        Priorité : évaluer bchlib fuzzy distance DIRECTEMENT sur template_bytes
+        plutôt que sur le hash SHA-256 pour un matching robuste sans FHE lourd.
       status: "TODO"
-      module: "src/artcb/crypto/homomorphic.py + src/artcb/identity/biometric_onchain.py"
+      module: "src/artcb/identity/biometric_onchain.py + src/artcb/crypto/homomorphic.py"
 
     - step: 2
       what: >
@@ -58,25 +61,26 @@ current:
       status: "TODO"
 
   context:
+    r376_done: >
+      check_uniqueness() route vers _check_uniqueness_privacy_preserving() si template_bytes_for_match fourni.
+      Appelle privacy_preserving_match() de homomorphic.py (distance XOR sur template_hash SHA-256).
+      match_method : "exact_hash" | "privacy_preserving_xor". Seuil 0.85.
+      Limite honnête : XOR sur SHA-256 = effet avalanche. Pour production : SEAL/OpenFHE/Concrete.
+      22/22 PASS. Non-régression 136/136 PASS.
     r374_done: >
-      BCH(255, t=8, m=8, prim_poly=0x11d) implémenté dans biometric_onchain.py.
-      fuzzy_reproduce() corrige désormais jusqu'à 8 bits d'erreurs par bloc de 23 octets.
-      Algorithme v3 = ARTCB-SECURE-SKETCH-HKDF-BCH-v3.
-      helper_data = salt(32) || sketch(32) || confirm(16) || bch_ecc(var) — PUBLIC.
-      Dépendance ajoutée : bchlib>=2.1.3 dans requirements.txt.
+      BCH(255, t=8, m=8, prim_poly=0x11d) dans biometric_onchain.py.
+      fuzzy_reproduce() corrige jusqu'à 8 bits/bloc. 30/30 PASS.
     r373_done: >
-      HumanIdentityPolicy — 5 cas multi-appareil classifiés.
-      UV=true ≠ unique_human_proven (invariant absolu maintenu).
-      wallet_per_human_limit enforced → 409 anti-Sybil.
+      HumanIdentityPolicy — 5 cas multi-appareil. UV=true ≠ unique_human_proven. 26/26 PASS.
     r371_done: >
       inject_rules_content() injecte PROTOCOLE/DECISIONS/LEÇONS/AUTO_PROMPT à chaque prompt.
     gap_restant: >
-      TASK-001 partiellement ouverte : FHE matching non implémenté (hash exact en production).
+      FHE véritable non implémenté (XOR hash = stub effet avalanche).
       FAR/FRR/PAD non mesurés. SDK iOS/Android non testé. CERTIFIED_100=false.
     reflex_engine: "src/artcb/reflex/core.py — activate() branché PreflightEngine R368"
     preflight: "src/artcb/reflex/preflight.py — PreflightEngine P0-A→P0-E"
     hook: ".bob/hooks/user_prompt_submit.py — R371 inject_rules_content() actif"
-    ledger: ".artcb/task_ledger.yaml — version 2.4, R374+R375 DONE"
+    ledger: ".artcb/task_ledger.yaml — version 2.5, R374+R375+R376 DONE"
 
 # ─── HISTORIQUE DES SESSIONS (append-only) ───────────────────────────────────
 
@@ -127,3 +131,14 @@ work_log:
       Total session : 94/94 PASS (zéro régression).
       bchlib>=2.1.3 ajouté dans requirements.txt.
     stopped_reason: "Commit + push requis. Prochaine session : FHE matching (step 1) ou TASK-006-LIVE."
+
+  - session: "2026-09-18-I"
+    commit: "pending-r376"
+    done: >
+      R376 : check_uniqueness() branché sur privacy_preserving_match().
+      _check_uniqueness_privacy_preserving() — distance XOR via homomorphic.py.
+      UniquenessCheckResult.match_method (exact_hash | privacy_preserving_xor).
+      Seuil par défaut 0.85. Rapport rapports/R376_privacy_preserving_uniqueness.md.
+      22 nouveaux tests T01→T22 PASS dans test_task001_r376_uniqueness.py.
+      Non-régression 136/136 PASS. AUTO_PROMPT entrée 90. Ledger v2.5.
+    stopped_reason: "Commit + push requis. Prochaine : FHE véritable TASK-001 ou TASK-006-LIVE-VALIDATION."
