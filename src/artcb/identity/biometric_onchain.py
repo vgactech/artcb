@@ -772,3 +772,204 @@ def _check_uniqueness_privacy_preserving(
             "nouvelle HumanIdentity autorisée. unique_human_proven=False."
         ),
     )
+
+
+# --------------------------------------------------------------------------- #
+#  R378 — Matching Hamming direct sur template_bytes
+#  (sans passer par SHA-256 — résout le problème d'effet avalanche de R376)
+# --------------------------------------------------------------------------- #
+
+def hamming_distance_bits(a: bytes, b: bytes) -> int:
+    """Distance de Hamming en bits entre deux séquences d'octets.
+
+    Compte le nombre de bits différents entre `a` et `b`.
+    Si les longueurs diffèrent, les octets manquants sont traités comme 0x00.
+
+    Complexité : O(min(len(a), len(b))) — pas de SHA-256, pas d'effet avalanche.
+
+    Propriété fondamentale R378 :
+        si a et b sont deux captures du même template biométrique avec faible bruit,
+        la distance Hamming sera faible (ex: 1–16 bits sur 256 bits).
+        si a et b viennent de deux personnes différentes, la distance sera proche
+        de max/2 (propriété des vecteurs pseudo-aléatoires indépendants).
+
+    Note honnête : cette propriété ne tient que si les templates sont normalisés
+    de la même façon (même capteur, même extraction, même orientation).
+    Elle n'est PAS garantie par l'algorithme — elle dépend du pipeline de capture.
+    CERTIFIED_100=false.
+    """
+    max_len = max(len(a), len(b))
+    a_padded = a.ljust(max_len, b"\x00")
+    b_padded = b.ljust(max_len, b"\x00")
+    return sum(bin(x ^ y).count("1") for x, y in zip(a_padded, b_padded))
+
+
+def hamming_similarity(a: bytes, b: bytes) -> float:
+    """Similarité normalisée [0,1] basée sur la distance de Hamming.
+
+    similarity = 1 - (hamming_distance / max_bits)
+
+    1.0 = templates identiques
+    0.0 = templates opposés bit-à-bit
+    ~0.5 = templates indépendants (propriété attendue pour personnes différentes)
+    """
+    max_bits = max(len(a), len(b)) * 8
+    if max_bits == 0:
+        return 1.0
+    dist = hamming_distance_bits(a, b)
+    return 1.0 - (dist / max_bits)
+
+
+@dataclass
+class HammingMatchResult:
+    """Résultat de la comparaison Hamming directe (R378).
+
+    Avantage vs R376 : opère sur les `template_bytes` bruts — pas sur SHA-256.
+    La distance de Hamming mesure la vraie proximité biométrique, pas la
+    diffusion cryptographique du hash.
+
+    Limites honnêtes :
+        - Requiert que template_bytes soit normalisé identiquement à l'enrôlement
+        - Ne prouve pas l'identité humaine (CERTIFIED_100=false)
+        - FAR/FRR non mesurés sur capteurs réels (NIST BSSR)
+        - unique_human_proven = False — invariant absolu
+
+    match_method = "hamming_direct"
+    """
+    match_found: bool
+    existing_human_id: str | None = None
+    hamming_distance: int = 0         # bits différents (absolu)
+    hamming_similarity: float = 0.0   # [0,1] — 1.0 = identiques
+    threshold_bits: int = 0           # seuil utilisé (bits)
+    template_len_bytes: int = 0       # longueur du template comparé
+    certified: bool = False
+    unique_human_proven: bool = False
+    match_method: str = "hamming_direct"
+    note: str = (
+        "R378 : distance de Hamming sur template_bytes bruts. "
+        "Supérieur au XOR SHA-256 de R376 (pas d'effet avalanche). "
+        "unique_human_proven=False — invariant absolu. CERTIFIED_100=false."
+    )
+
+
+def hamming_uniqueness_check(
+    new_template_bytes: bytes,
+    existing_records: list[dict[str, Any]],
+    *,
+    threshold_bits: int | None = None,
+    threshold_ratio: float | None = None,
+) -> HammingMatchResult:
+    """Vérifie l'unicité biométrique via distance de Hamming sur template_bytes.
+
+    R378 — Remplace le XOR SHA-256 de R376 par une comparaison directe sur les
+    données biométriques. La distance de Hamming mesure la vraie proximité
+    bit-à-bit entre deux templates, sans passer par une fonction de hachage
+    dont l'effet avalanche détruirait l'information de proximité.
+
+    Logique de seuil :
+        - `threshold_bits` (int) : seuil absolu en bits différents.
+          Si distance(A, B) <= threshold_bits → match trouvé.
+        - `threshold_ratio` (float [0,1]) : seuil relatif = ratio × max_bits.
+          Converti en bits avant la comparaison.
+        - Si les deux sont fournis → threshold_bits prime.
+        - Si aucun → défaut = 5% de max_bits (tolérance bruit modérée).
+
+    Seuil par défaut (5% de max_bits) :
+        Pour template 32 octets (256 bits) → seuil = 12 bits.
+        Pour template 64 octets (512 bits) → seuil = 25 bits.
+        Justification : un capteur d'empreinte typique introduit 1–5% de bruit
+        entre deux captures du même doigt (sans normalisation parfaite).
+        NOTE : ce seuil est arbitraire et non calibré sur capteurs réels.
+        Il DOIT être ajusté via mesure FAR/FRR sur population réelle avant
+        tout usage en production. CERTIFIED_100=false.
+
+    **Invariants absolus :**
+        - unique_human_proven = False dans tous les cas
+        - certified = False dans tous les cas
+
+    Args:
+        new_template_bytes: template brut du nouveau candidat (JAMAIS stocké).
+        existing_records: liste de dicts avec clé "template_bytes_b64" ou
+            "template_bytes_hex" pour la comparaison Hamming directe.
+            Les enregistrements sans template_bytes sont ignorés silencieusement.
+        threshold_bits: seuil absolu en bits. Prime sur threshold_ratio.
+        threshold_ratio: seuil relatif [0,1]. Converti en bits selon la longueur max.
+
+    Returns:
+        HammingMatchResult — premier match trouvé ou no-match si aucun.
+    """
+    import base64  # stdlib — import local pour ne pas polluer le module
+    template_len = len(new_template_bytes)
+    max_bits = template_len * 8
+
+    # Calcul du seuil effectif
+    if threshold_bits is not None:
+        effective_threshold_bits = threshold_bits
+    elif threshold_ratio is not None:
+        effective_threshold_bits = max(1, int(threshold_ratio * max_bits))
+    else:
+        # Défaut : 5% de max_bits (non calibré — voir docstring)
+        effective_threshold_bits = max(1, int(0.05 * max_bits))
+
+    logger.debug(
+        "hamming_uniqueness_check: template_len=%d max_bits=%d threshold_bits=%d",
+        template_len, max_bits, effective_threshold_bits,
+    )
+
+    for rec in existing_records:
+        # Récupérer le template stocké — base64 ou hex
+        stored_bytes: bytes | None = None
+        if "template_bytes_b64" in rec and rec["template_bytes_b64"]:
+            try:
+                stored_bytes = base64.b64decode(rec["template_bytes_b64"])
+            except Exception:
+                stored_bytes = None
+        elif "template_bytes_hex" in rec and rec["template_bytes_hex"]:
+            try:
+                stored_bytes = bytes.fromhex(rec["template_bytes_hex"])
+            except Exception:
+                stored_bytes = None
+
+        if not stored_bytes:
+            # Pas de template_bytes dans ce record — ignorer silencieusement
+            # (compatibilité avec les anciens records qui ne stockent que le hash)
+            continue
+
+        dist = hamming_distance_bits(new_template_bytes, stored_bytes)
+        sim = hamming_similarity(new_template_bytes, stored_bytes)
+
+        logger.debug(
+            "hamming_uniqueness_check: human_id=%s dist=%d bits sim=%.4f threshold=%d",
+            rec.get("human_id"), dist, sim, effective_threshold_bits,
+        )
+
+        if dist <= effective_threshold_bits:
+            logger.warning(
+                "hamming_uniqueness_check: MATCH human_id=%s dist=%d bits — "
+                "création refusée (spec §5)",
+                rec.get("human_id"), dist,
+            )
+            return HammingMatchResult(
+                match_found=True,
+                existing_human_id=rec.get("human_id"),
+                hamming_distance=dist,
+                hamming_similarity=sim,
+                threshold_bits=effective_threshold_bits,
+                template_len_bytes=template_len,
+                note=(
+                    f"R378 Hamming match : dist={dist} bits ≤ threshold={effective_threshold_bits} — "
+                    "création refusée (spec §5). unique_human_proven=False."
+                ),
+            )
+
+    return HammingMatchResult(
+        match_found=False,
+        hamming_distance=-1,  # sentinelle : aucun enregistrement avec template_bytes
+        hamming_similarity=0.0,
+        threshold_bits=effective_threshold_bits,
+        template_len_bytes=template_len,
+        note=(
+            f"R378 Hamming no-match threshold={effective_threshold_bits} bits — "
+            "nouvelle HumanIdentity autorisée. unique_human_proven=False."
+        ),
+    )

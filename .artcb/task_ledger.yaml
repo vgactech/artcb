@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.5"
+  version: "2.6"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "7589092"
+  git_head: "pending-r378"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
