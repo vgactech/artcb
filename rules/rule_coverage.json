@@ -1,32 +1,35 @@
 {
-  "protocol": "r340-rule-corpus-coverage-v1",
-  "ts_ns": 1789407763525950000,
+  "protocol": "r340-rule-corpus-coverage-v2",
+  "refreshed_by": "R375",
+  "ts_ns": 1789713340318878000,
   "registry": {
     "version": 6,
     "registered_rules": 20,
     "active_rules": 20,
-    "note": "registered_rules \u2260 total ARTCB normative corpus"
+    "note": "registered_rules ≠ total ARTCB normative corpus"
   },
   "corpus_markers": {
-    "numbered_entry_sum": 187,
+    "numbered_entry_sum": 148,
     "by_authority": {
-      "telemetry": 0,
       "protocol": 0,
-      "agent_instructions": 41,
-      "cursor": 109,
+      "agent_instructions": 27,
+      "cursor": 90,
       "operator": 0,
-      "product": 37,
+      "product": 31,
       "dev_gate": 0,
-      "history": 0
+      "open": 0,
+      "history": 0,
+      "governance": 0,
+      "naming": 0,
+      "telemetry": 0
     },
     "note": "markers are detections not unique semantic RULE count"
   },
   "registry_coverage": {
     "registered": 20,
     "mapped_to_source": "PARTIAL",
-    "unmapped_estimate": 167,
-    "live_node_includes_r339": true,
-    "sync_gap_live_node_vs_registry": false
+    "unmapped_estimate": 128,
+    "corpus_index_path": "rules/rule_corpus_index.json"
   },
   "categories": [
     "RULE",
@@ -43,6 +46,7 @@
   "honest": {
     "rules_total_is_registry_only": true,
     "no_honest_global_X_rules_without_canonical_map": true,
-    "dns_poison_match0_is_invalid_no_sample": true
+    "dns_poison_match0_is_invalid_no_sample": true,
+    "registry_ne_corpus": true
   }
 }

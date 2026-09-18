@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.3"
+  version: "2.4"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "d81b130"
+  git_head: "42079d2"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -321,6 +321,28 @@ done:
     tests: "26/26 PASS — total 38/38 PASS (test_task001 + test_add_device)"
     certified_100: false
 
+  - id: R375
+    title: "R375 — Rule Corpus Telemetry v2 : rule_corpus_index.json + rule_sources rescan"
+    commit: "pending-r375"
+    files_created:
+      - "scripts/artcb_r375_corpus_refresh.py — scanner corpus normatif complet"
+      - "rules/rule_corpus_index.json — 230 entrées CR-* (RULE/DECISION/SPEC/LESSON/etc.)"
+    files_modified:
+      - "rules/rule_sources.json — v2, 18 sources scannées, SHA256 actualisés"
+      - "rules/rule_coverage.json — v2, 148 marqueurs, unmapped_estimate=128"
+    architecture:
+      corpus_layer: "CR-* — toutes les entrées normatives (230)"
+      operational_layer: "RT-* — sous-ensemble opérationnel (20)"
+      mapping: "rt_rule_id != null dans CR-* si RT correspondant"
+    counts:
+      total_cr: 230
+      kinds: "RULE=133 DECISION=47 LESSON=44 SPEC=2 CHECK=1 CONVENTION=1 QUESTION=1 EVIDENCE=1"
+      numbered_markers: 148
+      registry_rt_ids: 20
+      divergences: 0
+    anti_divergence_verified: "rule_registry ↔ rule_sources : ZERO divergence"
+    certified_100: false
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -430,7 +452,7 @@ decisions:
 # ÉTAT AVANCEMENT GLOBAL
 # ═══════════════════════════════════════════════════════════════════════════════
 progress:
-  global_pct: 75
+  global_pct: 76
   breakdown:
     blockchain_core: 90
     wallet_hybrid_ed25519_mldsa65: 88
@@ -442,6 +464,7 @@ progress:
     pbft_consensus: 90            # aws-node-3 ALIVE, synchronisé
     tests_coverage: 89            # 94/94 PASS — R374 30 nouveaux tests
     ui_artcbme: 88
-    task_ledger: 90               # ledger + AUTO_PREFLIGHT + session_continuation à jour
+    task_ledger: 95               # ledger v2.4 + corpus_index + session_continuation synchronisés
+    rule_governance: 75           # R375 : CR-* index créé, 2 niveaux séparés, 0 divergence — FHE absent
     pol_knowledgeid_usageid: 25
     genesis_transfer_creator_node: 20

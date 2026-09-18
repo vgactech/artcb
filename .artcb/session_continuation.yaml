@@ -10,7 +10,7 @@
 
 meta:
   last_updated: "2026-09-18T14:00:00Z"
-  git_head: "d81b130"
+  git_head: "42079d2"
   chain_height: 1198
   session_count: 20
 
@@ -76,7 +76,7 @@ current:
     reflex_engine: "src/artcb/reflex/core.py — activate() branché PreflightEngine R368"
     preflight: "src/artcb/reflex/preflight.py — PreflightEngine P0-A→P0-E"
     hook: ".bob/hooks/user_prompt_submit.py — R371 inject_rules_content() actif"
-    ledger: ".artcb/task_ledger.yaml — version 2.3, R374 DONE"
+    ledger: ".artcb/task_ledger.yaml — version 2.4, R374+R375 DONE"
 
 # ─── HISTORIQUE DES SESSIONS (append-only) ───────────────────────────────────
 

@@ -1,7 +1,11 @@
 {
-  "protocol": "r340-rule-sources-v1",
-  "ts_ns": 1789372652440084000,
-  "note": "Append-only cartography. Does not replace PROTOCOLE/AUTO_PROMPT/Cursor. CERTIFIED_100=false.",
+  "protocol": "r340-rule-sources-v2",
+  "refreshed_by": "R375",
+  "ts_ns": 1789713340318878000,
+  "note": "Append-only cartography. Updated by artcb_r375_corpus_refresh.py. Does not replace PROTOCOLE/AUTO_PROMPT/Cursor. CERTIFIED_100=false.",
+  "registry_version": 6,
+  "registered_rules": 20,
+  "active_rules": 20,
   "sources": [
     {
       "source_id": "rule_registry",
@@ -9,8 +13,8 @@
       "kind": "REGISTRY",
       "authority": "telemetry",
       "present": true,
-      "bytes": 8409,
-      "sha256": "a136fe75c3b9bce6bc91ec7311d8ec1738ad0d6cd7a1932aa5df2078b84b1faf",
+      "bytes": 9819,
+      "sha256": "d44aad9d6ca1de73be938124006b3dd2ea1499a9962c76b6f69b8314a36060f3",
       "detections": {
         "numbered_entries": 0,
         "rt_ids": [
@@ -26,8 +30,10 @@
           "RT-077-N04",
           "RT-CAPABILITY-FIRST",
           "RT-CORPUS-MAP",
+          "RT-DIVERGENCE-341",
           "RT-HW-BINDING",
           "RT-HW-H1",
+          "RT-IDENTITY-LAYERS",
           "RT-ISSUE-87",
           "RT-MEASURE-VALID",
           "RT-SYBIL-076",
@@ -35,16 +41,19 @@
         ],
         "d_ids": [],
         "rxxx_ids": [
-          "R169",
-          "R299",
-          "R338",
-          "R339",
-          "R340"
+          "169",
+          "299",
+          "338",
+          "339",
+          "340",
+          "341",
+          "345",
+          "347"
         ],
         "struck_markers": 0,
-        "registry_version": 4,
-        "registered_rules": 18,
-        "active_rules": 18,
+        "registry_version": 6,
+        "registered_rules": 20,
+        "active_rules": 20,
         "rule_ids": [
           "RT-002",
           "RT-003",
@@ -54,16 +63,18 @@
           "RT-013",
           "RT-016",
           "RT-039",
-          "RT-077-N04",
-          "RT-SYBIL-076",
-          "RT-TELEMETRY",
-          "RT-CAPABILITY-FIRST",
           "RT-077-C04",
-          "RT-ISSUE-87",
-          "RT-HW-H1",
-          "RT-HW-BINDING",
+          "RT-077-N04",
+          "RT-CAPABILITY-FIRST",
           "RT-CORPUS-MAP",
-          "RT-MEASURE-VALID"
+          "RT-DIVERGENCE-341",
+          "RT-HW-BINDING",
+          "RT-HW-H1",
+          "RT-IDENTITY-LAYERS",
+          "RT-ISSUE-87",
+          "RT-MEASURE-VALID",
+          "RT-SYBIL-076",
+          "RT-TELEMETRY"
         ]
       },
       "notes": []
@@ -81,8 +92,7 @@
         "rt_ids": [],
         "d_ids": [],
         "rxxx_ids": [],
-        "struck_markers": 0,
-        "explicit_numbered_estimate": 0
+        "struck_markers": 0
       },
       "notes": []
     },
@@ -92,10 +102,10 @@
       "kind": "RULE",
       "authority": "agent_instructions",
       "present": true,
-      "bytes": 134790,
-      "sha256": "09e625164c48db021d6babe6b24e07692c62f2d25c1b507cf31c6045e83d475e",
+      "bytes": 142297,
+      "sha256": "68a8762029b8db61c5c888932e503ec11f9dd8045116a9a2bf33093b136ef75e",
       "detections": {
-        "numbered_entries": 35,
+        "numbered_entries": 27,
         "rt_ids": [
           "RT-LEG"
         ],
@@ -126,7 +136,9 @@
           "R271",
           "R273",
           "R285",
+          "R297b",
           "R300",
+          "R301b",
           "R317",
           "R318",
           "R319",
@@ -141,9 +153,26 @@
           "R328",
           "R329",
           "R330",
+          "R337",
           "R338",
           "R339",
-          "R340"
+          "R340",
+          "R341",
+          "R342",
+          "R342b",
+          "R343",
+          "R344",
+          "R345",
+          "R347",
+          "R348",
+          "R348b",
+          "R349",
+          "R349a",
+          "R363",
+          "R371",
+          "R372",
+          "R373",
+          "R374"
         ],
         "struck_markers": 8
       },
@@ -155,10 +184,10 @@
       "kind": "RULE",
       "authority": "cursor",
       "present": true,
-      "bytes": 37813,
-      "sha256": "55fc8f2c2efa18910e269643eb02c8cfc019bb4019822b459928edcfd6ab94d2",
+      "bytes": 39889,
+      "sha256": "bc6a648d27dcad8b71196f8a3efe2cb1a15be112dd92e957038ebbfbcca4e9ae",
       "detections": {
-        "numbered_entries": 93,
+        "numbered_entries": 84,
         "rt_ids": [],
         "d_ids": [
           "D-029",
@@ -187,9 +216,12 @@
           "R286",
           "R287",
           "R297",
+          "R297b",
           "R299",
+          "R299b",
           "R300",
           "R301",
+          "R301b",
           "R302",
           "R303",
           "R306",
@@ -224,7 +256,17 @@
           "R337",
           "R338",
           "R339",
-          "R340"
+          "R340",
+          "R341",
+          "R342b",
+          "R343",
+          "R344",
+          "R345",
+          "R347",
+          "R348",
+          "R348b",
+          "R349a",
+          "R349b"
         ],
         "struck_markers": 13
       },
@@ -236,16 +278,42 @@
       "kind": "RULE",
       "authority": "cursor",
       "present": true,
-      "bytes": 2930,
-      "sha256": "fd36aa9fd7da4526ce1908c4acffcbf759d7adbd2a6a0557ccab8509e1be102c",
+      "bytes": 3168,
+      "sha256": "7abd8614aee78ce190769d5803b23024a1c888bcf685a1ad46eb7bf0de69e672",
       "detections": {
         "numbered_entries": 0,
         "rt_ids": [],
         "d_ids": [],
         "rxxx_ids": [
-          "R300"
+          "R297b",
+          "R300",
+          "R350"
         ],
         "struck_markers": 3
+      },
+      "notes": []
+    },
+    {
+      "source_id": "reflex_priority",
+      "path": ".cursor/rules/artcb-reflex-priority.mdc",
+      "kind": "RULE",
+      "authority": "cursor",
+      "present": true,
+      "bytes": 4702,
+      "sha256": "79a80cba21ff4073fbb6983399e3fae415eb105c0e355ad369201ba6057160b5",
+      "detections": {
+        "numbered_entries": 5,
+        "rt_ids": [],
+        "d_ids": [],
+        "rxxx_ids": [
+          "R349b",
+          "R350",
+          "R351",
+          "R352",
+          "R353",
+          "R354"
+        ],
+        "struck_markers": 0
       },
       "notes": []
     },
@@ -258,12 +326,14 @@
       "bytes": 6099,
       "sha256": "25a97f34b2b762f92a9f29752801e4e72eb8f45d1d96b298f928486c93a3c723",
       "detections": {
-        "numbered_entries": 7,
+        "numbered_entries": 1,
         "rt_ids": [],
         "d_ids": [],
         "rxxx_ids": [
           "R287",
           "R294",
+          "R297a",
+          "R297b",
           "R299",
           "R300",
           "R303"
@@ -302,10 +372,12 @@
       "bytes": 1783,
       "sha256": "040b82e6e4489c6c12b03102833c541ca7e1a973b7b6b972a02dc67cf5dc3657",
       "detections": {
-        "numbered_entries": 3,
+        "numbered_entries": 0,
         "rt_ids": [],
         "d_ids": [],
-        "rxxx_ids": [],
+        "rxxx_ids": [
+          "R297b"
+        ],
         "struck_markers": 1
       },
       "notes": []
@@ -382,7 +454,7 @@
       "bytes": 36539,
       "sha256": "b7dfafc516a6830540133b0779e404cf752ff8e2cdb65ddf256e5310ac25551b",
       "detections": {
-        "numbered_entries": 37,
+        "numbered_entries": 31,
         "rt_ids": [
           "RT-LEG"
         ],
@@ -462,12 +534,12 @@
     },
     {
       "source_id": "lecons",
-      "path": "LE\u00c7ONS_APPRISES_ARTCB",
+      "path": "LEÇONS_APPRISES_ARTCB",
       "kind": "LESSON",
       "authority": "history",
       "present": true,
-      "bytes": 21648,
-      "sha256": "930bcf1fe2d833ef36b4403ec8a8f699864994583f240d005ecf476242fe6bbd",
+      "bytes": 23273,
+      "sha256": "8862d188d81f0fcdda4b7cf4fd5053d75e3f77f659e601da984fb835244daef9",
       "detections": {
         "numbered_entries": 0,
         "rt_ids": [
@@ -489,8 +561,56 @@
           "D-029",
           "D-031"
         ],
-        "rxxx_ids": [],
-        "struck_markers": 0
+        "rxxx_ids": [
+          "R371",
+          "R372"
+        ],
+        "struck_markers": 0,
+        "l_ids": [
+          "L-001",
+          "L-002",
+          "L-003",
+          "L-004",
+          "L-005",
+          "L-006",
+          "L-007",
+          "L-008",
+          "L-009",
+          "L-010",
+          "L-011",
+          "L-012",
+          "L-013",
+          "L-015",
+          "L-016",
+          "L-017",
+          "L-018",
+          "L-019",
+          "L-023",
+          "L-024",
+          "L-025",
+          "L-026",
+          "L-027",
+          "L-028",
+          "L-029",
+          "L-030",
+          "L-031",
+          "L-032",
+          "L-033",
+          "L-034",
+          "L-035",
+          "L-036",
+          "L-037",
+          "L-038",
+          "L-039",
+          "L-040",
+          "L-041",
+          "L-042",
+          "L-043",
+          "L-044",
+          "L-045",
+          "L-046",
+          "L-047"
+        ]
       },
       "notes": []
     },
@@ -520,6 +640,69 @@
         "rt_ids": [],
         "d_ids": [],
         "rxxx_ids": [],
+        "struck_markers": 0
+      },
+      "notes": []
+    },
+    {
+      "source_id": "roadmap",
+      "path": "ROADMAP_GENERAL_ARTCB",
+      "kind": "SPEC",
+      "authority": "product",
+      "present": true,
+      "bytes": 22595,
+      "sha256": "3e85e360ead87435d81cb224dc20b26b32fbcfc864719b3edb99ecadbd3c1ee0",
+      "detections": {
+        "numbered_entries": 0,
+        "rt_ids": [
+          "RT-LEG"
+        ],
+        "d_ids": [
+          "D-002",
+          "D-023"
+        ],
+        "rxxx_ids": [],
+        "struck_markers": 0
+      },
+      "notes": []
+    },
+    {
+      "source_id": "task_ledger",
+      "path": ".artcb/task_ledger.yaml",
+      "kind": "EVIDENCE",
+      "authority": "telemetry",
+      "present": true,
+      "bytes": 22937,
+      "sha256": "8eaf697883136db4b5f75896889c4b704ae6414e4259d3e9e3b1abbbf8ea0b3d",
+      "detections": {
+        "numbered_entries": 0,
+        "rt_ids": [],
+        "d_ids": [],
+        "rxxx_ids": [
+          "R310",
+          "R350",
+          "R355",
+          "R356",
+          "R357",
+          "R358",
+          "R359",
+          "R360",
+          "R361",
+          "R362",
+          "R363",
+          "R363b",
+          "R363c",
+          "R364",
+          "R365",
+          "R366",
+          "R367",
+          "R368",
+          "R369",
+          "R370",
+          "R371",
+          "R373",
+          "R374"
+        ],
         "struck_markers": 0
       },
       "notes": []
