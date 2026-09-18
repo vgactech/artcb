@@ -1,9 +1,12 @@
 # R379 — Audit cartographie + Admin device-binding + Frontend nettoyage + Règles télémétrie
 
-**Date :** 2026-09-18  
-**Commit :** (pending push)  
-**Statut :** ✅ DONE — implémentation complète  
-**CERTIFIED_100 :** false  
+**Date :** 2026-09-18
+**Commit R379 :** `e9cf1a1766fdcc5af3d235f69848e1bb8bb8d2f4` — poussé sur `origin/main` ✅
+**Commit L-049 :** `358c27018f5ed2450f23dcbc77b11c9f62c2dba9` — HEAD `origin/main` ✅
+**Statut :** ✅ CODE + PUSH confirmés sur origin/main
+**Tests locaux :** 7/7 PASS (déclarés dans commit — pas de CI GitHub disponible)
+**Déploiement live :** à vérifier séparément (R380)
+**CERTIFIED_100 :** false
 **Avancement global :** 78%
 
 ---
