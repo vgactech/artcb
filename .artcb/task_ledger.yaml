@@ -9,7 +9,7 @@ meta:
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-18"
-  git_head: "pending-r376"
+  git_head: "3be73bb"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -345,7 +345,7 @@ done:
 
   - id: R376
     title: "R376 — check_uniqueness() branché sur privacy_preserving_match() (matching XOR tolérant)"
-    commit: "pending-r376"
+    commit: "3be73bb"
     files_modified:
       - "src/artcb/identity/biometric_onchain.py — check_uniqueness() + _check_uniqueness_privacy_preserving() + UniquenessCheckResult.match_method"
     files_created:

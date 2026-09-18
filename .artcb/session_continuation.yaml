@@ -10,7 +10,7 @@
 
 meta:
   last_updated: "2026-09-18T18:00:00Z"
-  git_head: "pending-r376"
+  git_head: "3be73bb"
   chain_height: 1198
   session_count: 21
 
@@ -133,7 +133,7 @@ work_log:
     stopped_reason: "Commit + push requis. Prochaine session : FHE matching (step 1) ou TASK-006-LIVE."
 
   - session: "2026-09-18-I"
-    commit: "pending-r376"
+    commit: "3be73bb"
     done: >
       R376 : check_uniqueness() branché sur privacy_preserving_match().
       _check_uniqueness_privacy_preserving() — distance XOR via homomorphic.py.
