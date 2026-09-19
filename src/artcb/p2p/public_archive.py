@@ -1,6 +1,7 @@
 """Archive des blocs publics reçus via P2P (chaîne locale inchangée)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

@@ -25,6 +25,7 @@ C2-D exige qu'un agent tiers puisse résoudre sans clé.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import contextlib
 import logging

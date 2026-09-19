@@ -9,6 +9,7 @@ Spark "free" is excluded (not a comparable fee market).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from dataclasses import dataclass

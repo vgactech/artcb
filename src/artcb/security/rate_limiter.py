@@ -8,6 +8,7 @@ Implémente :
 4. Address-based limiting (wallet)
 """
 
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 import logging
 import time
 from collections import defaultdict, deque

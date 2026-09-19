@@ -15,6 +15,7 @@ L'exécution automatique est le rôle de l'agent IA ou d'un scheduler (IR v0.3).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import re

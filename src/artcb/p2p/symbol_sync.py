@@ -1,6 +1,7 @@
 """Synchronisation P2P des symboles publics (blockchain publique + gossip HTTP)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from typing import Any

@@ -1,6 +1,7 @@
 """FastAPI application — ARTCB MVP Phase 2+3."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import os

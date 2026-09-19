@@ -30,6 +30,7 @@ Calcul dynamique de max_contributors_per_block (rapport 113 — 2026-08-04) :
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import os

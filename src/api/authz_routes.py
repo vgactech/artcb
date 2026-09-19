@@ -6,6 +6,7 @@ Domain Manifest / Registry live here too: a node hosts, the founder owns.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import os
 from typing import Any

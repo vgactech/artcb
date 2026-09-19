@@ -8,6 +8,7 @@ certified_distributed_mainnet remains a separate lock (DV-01…07 + operator GO)
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from typing import Any, Final
 

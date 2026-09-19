@@ -6,6 +6,7 @@ En production, seul le fondateur peut les modifier via vote de gouvernance.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from dataclasses import dataclass
 

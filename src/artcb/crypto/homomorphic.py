@@ -19,6 +19,7 @@ IMPORTANT — honnêteté (R271 / CERTIFIED_100=false) :
     Pour une implémentation complète, brancher sur SEAL / OpenFHE / Concrete.
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import hmac

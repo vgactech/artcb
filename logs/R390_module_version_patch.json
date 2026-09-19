@@ -1,0 +1,1268 @@
+{
+  "ts_ns": 1789835774892816000,
+  "version": "1.0.0",
+  "dry_run": false,
+  "total": 252,
+  "patched": 250,
+  "skipped_already_present": 2,
+  "results": [
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mac_node_access.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/release.py",
+      "action": "patched",
+      "insert_at_line": 7
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/config.py",
+      "action": "patched",
+      "insert_at_line": 20
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/logging_config.py",
+      "action": "patched",
+      "insert_at_line": 20
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/agent_runtime.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/sim_provenance.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/devnet_validation.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/tokenomics.py",
+      "action": "patched",
+      "insert_at_line": 35
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/agent_context_contract.py",
+      "action": "patched",
+      "insert_at_line": 7
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/live.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/node_registry.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus_spec.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/crypto_policy.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/connectors/kaggle_connector.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/connectors/llm_router.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/connectors/sources.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/connectors/manager.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/agent_control/gate.py",
+      "action": "patched",
+      "insert_at_line": 33
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/byzantine_evidence.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/creator_node_policy.py",
+      "action": "patched",
+      "insert_at_line": 39
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/tip_attest.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/public_tip_watchdog.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/tpm_quote.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/liveness.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/pbft_exclusive.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/replica_identity.py",
+      "action": "patched",
+      "insert_at_line": 14
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/pbft_view.py",
+      "action": "patched",
+      "insert_at_line": 18
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/live_bft.py",
+      "action": "patched",
+      "insert_at_line": 14
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/campaign_artifacts.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/tpm_kind.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/byzantine_guard.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/platform_attest.py",
+      "action": "patched",
+      "insert_at_line": 36
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/pbft_certification_matrix.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/consensus/pbft_finality.py",
+      "action": "patched",
+      "insert_at_line": 22
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/crypto/liboqs_runtime.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/crypto/hybrid.py",
+      "action": "patched",
+      "insert_at_line": 16
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/crypto/pqc.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/crypto/homomorphic.py",
+      "action": "patched",
+      "insert_at_line": 22
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/crypto/kem.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/crypto/hashing.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/payments/stripe_jobs.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pol/scorer_numpy.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pol/nft.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pol/transfer.py",
+      "action": "patched",
+      "insert_at_line": 14
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pol/scorer.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/trace/agent_run.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/trace/ns.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/privacy/egress.py",
+      "action": "patched",
+      "insert_at_line": 21
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/privacy/homomorphic.py",
+      "action": "patched",
+      "insert_at_line": 18
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/privacy/federated.py",
+      "action": "patched",
+      "insert_at_line": 23
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/repo_scope.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/vector_store_faiss.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/concept_network.py",
+      "action": "patched",
+      "insert_at_line": 16
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/agent_channel.py",
+      "action": "patched",
+      "insert_at_line": 24
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/vector_store.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/repo_ingest.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/concept_store.py",
+      "action": "patched",
+      "insert_at_line": 25
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/node_index.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/graph_store.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/memory/concept_sync.py",
+      "action": "patched",
+      "insert_at_line": 26
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/autodev/user.py",
+      "action": "patched",
+      "insert_at_line": 16
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/identity/user_wallet_ownership.py",
+      "action": "skip_already_present"
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/identity/user_node_association.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/identity/biometric_onchain.py",
+      "action": "patched",
+      "insert_at_line": 85
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/identity/human_identity_policy.py",
+      "action": "patched",
+      "insert_at_line": 49
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/identity/layers.py",
+      "action": "patched",
+      "insert_at_line": 16
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/bob/job_completed.py",
+      "action": "patched",
+      "insert_at_line": 20
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/anti_sybil.py",
+      "action": "patched",
+      "insert_at_line": 23
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/rate_limiter.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/webauthn_store.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/slashing.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/hardware_identity.py",
+      "action": "patched",
+      "insert_at_line": 21
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/wallet_device_binding.py",
+      "action": "patched",
+      "insert_at_line": 42
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/webauthn_cose.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/security/webauthn_protocol.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/auth/qr_pairing.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/decoder.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/binary.py",
+      "action": "patched",
+      "insert_at_line": 19
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/concept_lexicon.py",
+      "action": "patched",
+      "insert_at_line": 27
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/models.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/bob_client.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/compression.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/rules.py",
+      "action": "patched",
+      "insert_at_line": 18
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/encoder.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/grammar.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/symbols.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/macros.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/concept.py",
+      "action": "patched",
+      "insert_at_line": 33
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/llm_encoder.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/ir/symbol_store.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/org/kyb.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/platform/mac_hardware_inventory.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/platform/capability_discovery.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/network/failover.py",
+      "action": "patched",
+      "insert_at_line": 47
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/io/pdf_loader.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/io/pdf_loader_async.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/io/media_ingest.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/agents/pool_manager.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/agents/explorer.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/agents/critic.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/chain/book_index.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/chain/split_ledger.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/chain/binary_log.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/chain/ffi.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/chain/manager.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mcp/server.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mcp/tools.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mcp/prompts.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mcp/resources.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/groups/signing.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/groups/policy.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/groups/join_requests.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/groups/manager.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/kcg/store.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/kcg/overdraft.py",
+      "action": "patched",
+      "insert_at_line": 27
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/kcg/pouc.py",
+      "action": "patched",
+      "insert_at_line": 28
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/kcg/events.py",
+      "action": "patched",
+      "insert_at_line": 19
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/kcg/fee.py",
+      "action": "patched",
+      "insert_at_line": 28
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/bridges/manager.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reasoning/reference_id.py",
+      "action": "patched",
+      "insert_at_line": 29
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reasoning/langage_battery.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reasoning/canonical.py",
+      "action": "patched",
+      "insert_at_line": 14
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reasoning/record.py",
+      "action": "patched",
+      "insert_at_line": 29
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reasoning/first_reflex.py",
+      "action": "patched",
+      "insert_at_line": 38
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reasoning/pbft_publisher.py",
+      "action": "patched",
+      "insert_at_line": 60
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mining/protocol.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mining/pipeline.py",
+      "action": "patched",
+      "insert_at_line": 14
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/mining/identity.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/devnet/faucet.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/integrations/gradium.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/system/hardware.py",
+      "action": "patched",
+      "insert_at_line": 18
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/system/optimizer.py",
+      "action": "patched",
+      "insert_at_line": 33
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/rtleg/timeline.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/rtleg/events.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/sdk/artcb_sdk.py",
+      "action": "patched",
+      "insert_at_line": 31
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/testdomain/chain.py",
+      "action": "patched",
+      "insert_at_line": 18
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/testdomain/transaction.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/testdomain/policy.py",
+      "action": "patched",
+      "insert_at_line": 14
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/testdomain/factory.py",
+      "action": "patched",
+      "insert_at_line": 31
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/testdomain/attestation.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/testdomain/wallet_states.py",
+      "action": "patched",
+      "insert_at_line": 30
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/sync.py",
+      "action": "patched",
+      "insert_at_line": 7
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/handshake.py",
+      "action": "patched",
+      "insert_at_line": 7
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/producer_runtime.py",
+      "action": "patched",
+      "insert_at_line": 26
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/seed_discovery.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/public_url.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/producer_election.py",
+      "action": "patched",
+      "insert_at_line": 23
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/symbol_sync.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/libp2p_node.py",
+      "action": "patched",
+      "insert_at_line": 25
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/node_identity.py",
+      "action": "patched",
+      "insert_at_line": 31
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/peers.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/symbol_archive.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/gossip.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/public_archive.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/official_replica.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/node_reputation.py",
+      "action": "patched",
+      "insert_at_line": 34
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/p2p/flux.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/economic_snapshot.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/fees.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/satoshi.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/hbp.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/settlement.py",
+      "action": "patched",
+      "insert_at_line": 17
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/preblocks.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/economic_root.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/job_payment.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/job_provider.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/distributed.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/owner_decay.py",
+      "action": "patched",
+      "insert_at_line": 19
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/pol_record.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/dividend.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/workid.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/provider_worker.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/demographic.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/network_capacity.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/oracle.py",
+      "action": "patched",
+      "insert_at_line": 21
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/human_binding.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/partition_map.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/identity.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/replicated_settlement.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/audit_log.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/emission.py",
+      "action": "patched",
+      "insert_at_line": 27
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/economics/monthly_lock.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/wallet/address.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/wallet/encryption.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/wallet/manager.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/governance/manager.py",
+      "action": "patched",
+      "insert_at_line": 39
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/rules/telemetry.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/node_cert.py",
+      "action": "patched",
+      "insert_at_line": 16
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/store.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/models.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/anchor.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/registry.py",
+      "action": "patched",
+      "insert_at_line": 22
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/domains.py",
+      "action": "patched",
+      "insert_at_line": 18
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/actions.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/engine.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/node_roles.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/gate.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/body_replication.py",
+      "action": "patched",
+      "insert_at_line": 22
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/identity.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/governance.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/authz/genesis.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pool/service.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pool/discovery.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pool/policy.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pool/preferences.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pool/e2e.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/pool/orchestrator.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/notifications/manager.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reflex/core.py",
+      "action": "patched",
+      "insert_at_line": 19
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/artcb/reflex/preflight.py",
+      "action": "patched",
+      "insert_at_line": 38
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/ops_routes.py",
+      "action": "patched",
+      "insert_at_line": 22
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/security_routes.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/dashboard_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/setup_routes.py",
+      "action": "patched",
+      "insert_at_line": 25
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/economics_routes.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/devnet_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/agent_protocol_routes.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/deps.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/privacy_routes.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/api_keys_routes.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/connectors_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/authz_routes.py",
+      "action": "patched",
+      "insert_at_line": 9
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/symbols_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/governance_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/network_routes.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/ai_routes.py",
+      "action": "patched",
+      "insert_at_line": 21
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/concept_routes.py",
+      "action": "patched",
+      "insert_at_line": 28
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/pol_phase11_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/libp2p_routes.py",
+      "action": "patched",
+      "insert_at_line": 14
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/user_wallet_routes.py",
+      "action": "skip_already_present"
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/reasoning_routes.py",
+      "action": "patched",
+      "insert_at_line": 13
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/identity_device_routes.py",
+      "action": "patched",
+      "insert_at_line": 24
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/p2p_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/auth_routes.py",
+      "action": "patched",
+      "insert_at_line": 25
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/pool_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/consensus_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/groups_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/reflex_routes.py",
+      "action": "patched",
+      "insert_at_line": 10
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/bridges_routes.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/mining_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/anon_wallet_routes.py",
+      "action": "patched",
+      "insert_at_line": 22
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/user_node_routes.py",
+      "action": "patched",
+      "insert_at_line": 8
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/session_store.py",
+      "action": "patched",
+      "insert_at_line": 11
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/main.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/admin_device_binding_routes.py",
+      "action": "patched",
+      "insert_at_line": 29
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/biometric_identity_routes.py",
+      "action": "patched",
+      "insert_at_line": 22
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/notifications_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/kcg_routes.py",
+      "action": "patched",
+      "insert_at_line": 12
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/webauthn_routes.py",
+      "action": "patched",
+      "insert_at_line": 15
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/websocket.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    },
+    {
+      "path": "/Users/deyi/.bob/playground/src/api/trace_routes.py",
+      "action": "patched",
+      "insert_at_line": 4
+    }
+  ]
+}

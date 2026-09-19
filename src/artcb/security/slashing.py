@@ -8,6 +8,7 @@ Implémente :
 4. Blacklist persistante
 """
 
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 import json
 import logging
 from dataclasses import dataclass, field

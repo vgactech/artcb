@@ -1,6 +1,7 @@
 """Classify repo paths into ARTCB visibilities. Secrets are catalogued, never inlined."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from pathlib import Path
 

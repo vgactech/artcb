@@ -24,6 +24,7 @@ R321 2026-09-11T21:00:00Z — UI locales + Latin:
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 # Longer keys first so "verificar" wins over "veri".
 ACTION_ALIASES: dict[str, str] = {

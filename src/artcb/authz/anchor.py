@@ -6,6 +6,7 @@ Reward is forced to 0 — this is not a mining event.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from typing import Any

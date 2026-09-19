@@ -4,6 +4,7 @@ Never logs secrets. Values come from env (systemd/start_node) or `git`.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import os

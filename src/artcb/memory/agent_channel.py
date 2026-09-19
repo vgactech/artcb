@@ -21,6 +21,7 @@ Les ConceptPackets sont définis dans concept.py.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import time

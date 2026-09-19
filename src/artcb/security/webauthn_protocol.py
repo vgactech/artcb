@@ -8,6 +8,7 @@ Raw biometric samples never leave the device and are never written on chain.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import base64
 import hashlib

@@ -17,6 +17,7 @@ Règles absolues :
   - Idempotence : même event_id → already_committed (pas de doublon)
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

@@ -1,6 +1,7 @@
 """Orchestrateur pool — cycle complet local ou distribué chiffré."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from collections.abc import Callable

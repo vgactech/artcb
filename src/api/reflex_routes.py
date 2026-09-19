@@ -7,6 +7,7 @@ Expose l'état complet du moteur réflexe + PreflightGate :
   GET  /api/v1/reflex/priorities   → table des priorités
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import datetime
 

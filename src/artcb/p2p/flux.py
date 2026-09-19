@@ -6,6 +6,7 @@ never left the node. Rows appear only when a real push/pull/replica runs.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 from datetime import UTC, datetime

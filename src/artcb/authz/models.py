@@ -5,6 +5,7 @@ A3→C3 grants. Those are PolicyTx records, signed/audited/revocable.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal

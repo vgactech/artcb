@@ -1,6 +1,7 @@
 """Modèles de données IR ARTCB v0.1."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

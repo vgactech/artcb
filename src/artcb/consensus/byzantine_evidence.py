@@ -8,6 +8,7 @@ It does not rewrite blocks.jsonl. It does not certify BFT append.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

@@ -1,6 +1,7 @@
 """Routes Phase 11 — IR v0.2 Rules + PoL Transfer + PoL NFT."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import secrets

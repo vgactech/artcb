@@ -28,6 +28,7 @@ Compatible Python 3.10+ — dépendances : httpx (déjà dans requirements.txt)
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import os

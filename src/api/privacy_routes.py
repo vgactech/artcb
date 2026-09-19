@@ -10,6 +10,7 @@ Contrôlé par ARTCB_HOMOMORPHIC_MODE=true/false dans .env
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import os

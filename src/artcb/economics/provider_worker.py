@@ -5,6 +5,7 @@ Bounds 20–80% are **parameters** (ChatGPT suggestion in 162), not a frozen D-x
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import math

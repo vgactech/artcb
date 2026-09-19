@@ -1,6 +1,7 @@
 """Grammaire et constantes IR ARTCB v0.1."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from enum import StrEnum
 

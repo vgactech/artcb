@@ -6,6 +6,7 @@ with a new methodology_hash (still model B), not a silent overwrite.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

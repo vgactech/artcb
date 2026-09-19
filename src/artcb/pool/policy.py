@@ -1,6 +1,7 @@
 """Politique sécurité pool — chiffrement obligatoire si distribué, validation visibilité."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from typing import TYPE_CHECKING
 

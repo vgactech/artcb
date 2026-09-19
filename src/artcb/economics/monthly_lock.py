@@ -1,6 +1,7 @@
 """Monthly settlement lock — 30 days after monthly finality (user GO 162)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from datetime import UTC, datetime, timedelta

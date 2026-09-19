@@ -16,6 +16,7 @@ HONNÊTETÉ :
     - Test de bypass restant : test_r355_enforcement_e2e.py.
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import logging

@@ -7,6 +7,7 @@ Never writes tokens, PEM, or block bodies. Path + timing + status only.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import os

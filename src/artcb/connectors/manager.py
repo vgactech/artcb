@@ -1,6 +1,7 @@
 """Gestion des connecteurs — clés API stockées localement chiffrées AES-256-GCM."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

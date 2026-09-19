@@ -12,6 +12,7 @@ public tip age exceeds ``ARTCB_PUBLIC_TIP_STALL_SEC`` (default 900).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

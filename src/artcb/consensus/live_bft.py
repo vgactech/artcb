@@ -11,6 +11,7 @@ Private appends stay local. certified_distributed_mainnet is a separate gate.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

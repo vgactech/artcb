@@ -7,6 +7,7 @@ the 174-devnet-1 test book).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from datetime import UTC, datetime
 from typing import Any, Final

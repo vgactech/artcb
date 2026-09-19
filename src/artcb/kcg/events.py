@@ -16,6 +16,7 @@ mais ne sont pas encore déclenchés (GO-F = enregistrement uniquement).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import secrets
 import hashlib

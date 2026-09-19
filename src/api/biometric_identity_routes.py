@@ -19,6 +19,7 @@ HONNÊTETÉ (CERTIFIED_100=false) :
     - L'image brute est rejetée (HTTP 400) à chaque endpoint.
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

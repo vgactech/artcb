@@ -13,6 +13,7 @@ node is not a consensus participant — even if its name is on the list.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from dataclasses import dataclass
 from datetime import UTC, datetime

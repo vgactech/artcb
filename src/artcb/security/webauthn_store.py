@@ -8,6 +8,7 @@ Never stores raw fingerprint/face images. Files live under ARTCB_DATA_DIR.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

@@ -1,6 +1,7 @@
 """Native PoL record — rapport 162. LLM tokens are a cost, not a proof."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

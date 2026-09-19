@@ -8,6 +8,7 @@ latency is the measurement, not a reason to skip a log).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import struct

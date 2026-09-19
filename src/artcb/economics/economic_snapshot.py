@@ -14,6 +14,7 @@ Settlement = f(snapshot). Mid-epoch ownership changes do not rewrite P(N).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

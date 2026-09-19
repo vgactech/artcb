@@ -1,6 +1,7 @@
 """B-Tree-like node indexing for fast lookups (Optimisation #7)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from typing import TYPE_CHECKING

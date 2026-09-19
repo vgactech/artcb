@@ -5,6 +5,7 @@ RFC1918, tunnel, Doppler isolation. It does not enroll the Mac into live PBFT.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import ipaddress
 import json

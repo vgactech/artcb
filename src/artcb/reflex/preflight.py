@@ -35,6 +35,7 @@
 CERTIFIED_100=false. Tests adversariaux M→S dans test_r369_adversarial.py.
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

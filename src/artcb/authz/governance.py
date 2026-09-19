@@ -6,6 +6,7 @@ exceed the human controller. The ORG_ID / group_id never changes.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import uuid

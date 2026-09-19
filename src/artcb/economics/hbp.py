@@ -10,6 +10,7 @@ Linear on each segment. Independent of R(H) and of P_owner(n).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 

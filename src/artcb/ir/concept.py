@@ -30,6 +30,7 @@ Format binaire : les ConceptPacket entre agents utilisent struct pack (pas JSON)
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import struct

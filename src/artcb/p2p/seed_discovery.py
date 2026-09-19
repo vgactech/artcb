@@ -14,6 +14,7 @@ in unit tests (``ARTCB_SKIP_SEED_DISCOVERY=1``).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

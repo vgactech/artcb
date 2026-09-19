@@ -1,6 +1,7 @@
 """GET /api/v1/trace — nanosecond JSONL produced by live traffic and book writes."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from fastapi import APIRouter, Query, Request
 

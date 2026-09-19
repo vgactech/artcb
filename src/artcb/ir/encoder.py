@@ -1,6 +1,7 @@
 """Encodage texte humain → graphe IR ARTCB v0.1 (fallback rule-based)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import uuid

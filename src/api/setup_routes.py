@@ -22,6 +22,7 @@ secrets Replit pour avoir la variable disponible même si .node_config est perdu
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import os

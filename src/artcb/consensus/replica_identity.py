@@ -11,6 +11,7 @@ sign. Tests that prove binding call install_test_replica_registry().
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import os

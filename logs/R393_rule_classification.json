@@ -1,0 +1,16 @@
+{
+  "ts_ns": 1789835879096121000,
+  "total": 230,
+  "classified": 230,
+  "already_classified": 0,
+  "domain_distribution": {
+    "PROTOCOL": 96,
+    "GOVERNANCE": 48,
+    "LESSONS": 44,
+    "NETWORK": 39,
+    "TESTING": 1,
+    "ROADMAP": 1,
+    "IDENTITY": 1
+  },
+  "update_written": true
+}

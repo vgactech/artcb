@@ -32,6 +32,7 @@ CONSTANTES IMMUABLES (rapports 112 + 106 — 2026-08-04, revise 124, 161) :
 
 # ── Unité monétaire ────────────────────────────────────────────────────────
 # 1 ARTCB = 10^8 satoshi (meme granularite que Bitcoin)
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 SATOSHI_PER_ARTCB = 100_000_000
 
 # ── Reward initial ─────────────────────────────────────────────────────────

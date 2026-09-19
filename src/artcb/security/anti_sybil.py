@@ -20,6 +20,7 @@ Variables d'environnement :
                                   (utile pendant le dev pour mesurer l'usage reel)
 """
 
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 import logging
 import os
 import time

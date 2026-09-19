@@ -5,6 +5,7 @@ for local IR identity only. Live multi-agent native language = NOT_PROVEN.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from dataclasses import dataclass
 

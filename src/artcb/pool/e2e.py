@@ -1,6 +1,7 @@
 """Pool E2E — ML-KEM chiffrement morceaux apprentissage/raisonnement."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 from typing import Any

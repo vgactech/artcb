@@ -1,6 +1,7 @@
 """Décodage graphe IR → texte original ARTCB v0.1."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from difflib import SequenceMatcher

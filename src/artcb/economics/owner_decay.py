@@ -16,6 +16,7 @@ k is not a free magic number: it is derived from the user-locked P(3)=49%.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import math

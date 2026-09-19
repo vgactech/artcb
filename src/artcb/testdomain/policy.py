@@ -11,6 +11,7 @@ Constants follow the same naming discipline as crypto_policy.py (D-004: English 
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from typing import Any, Final
 

@@ -5,6 +5,7 @@ zero FAIL, zero NOT_PROVEN, zero SKIPPED, and every required row executed.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from typing import Any
 

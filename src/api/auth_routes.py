@@ -22,6 +22,7 @@ DEPRECATION P0-A (2026-09-16) :
   Tous les nouveaux clients doivent utiliser /auth/verify ou /auth/webauthn/biometric.
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import logging

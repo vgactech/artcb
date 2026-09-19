@@ -1,6 +1,7 @@
 """R343 — ORG/KYB status model (scaffold; not live-certified)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from enum import Enum
 from typing import Any

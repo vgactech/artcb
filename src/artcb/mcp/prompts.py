@@ -1,6 +1,7 @@
 """Prompts système MCP ARTCB — templates injectés automatiquement dans les agents IA."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 from typing import Any
 
 PROMPTS: list[dict[str, Any]] = [

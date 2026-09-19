@@ -1,6 +1,7 @@
 """Live BFT prepare/commit routes (DV-05). No bearer over remote HTTP."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 

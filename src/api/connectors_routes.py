@@ -1,6 +1,7 @@
 """Connecteurs API — clés utilisateur pour IA et sources d'apprentissage."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import uuid

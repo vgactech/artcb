@@ -1,6 +1,7 @@
 """Group REST routes — request-to-join (Solution 2), pas de clé privée partagée."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from datetime import UTC, datetime

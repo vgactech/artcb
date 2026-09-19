@@ -1,6 +1,7 @@
 """PDF text extraction for real-world ARTCB tests."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import os
 from concurrent.futures import ThreadPoolExecutor

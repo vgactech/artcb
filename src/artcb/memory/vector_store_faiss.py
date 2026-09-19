@@ -1,6 +1,7 @@
 """FAISS-based vector store for semantic search (Optimisation #3)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 from typing import TYPE_CHECKING

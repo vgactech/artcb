@@ -12,6 +12,7 @@ Finality V-05: N confirmations (default 2), locked D-043. Settlement BFT is DV-0
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import logging

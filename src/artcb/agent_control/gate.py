@@ -30,6 +30,7 @@ Bypass restant : modifier directement `blocks.jsonl` sans passer par append_bloc
 CERTIFIED_100=false.
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import os

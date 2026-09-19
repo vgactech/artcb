@@ -8,6 +8,7 @@ DEVICE_ABSENT is the honest result on the current four official VMs.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import os
 import subprocess

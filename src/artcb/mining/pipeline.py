@@ -11,6 +11,7 @@ P0-B (2026-09-16) — Intégration homomorphe :
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import uuid

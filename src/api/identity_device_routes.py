@@ -21,6 +21,7 @@ HONNÊTETÉ :
   - CERTIFIED_100 = False
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import base64
 import hashlib

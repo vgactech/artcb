@@ -35,6 +35,7 @@ HONNÊTETÉ : EARLIEST_DETECTABLE_POINT est une estimation.
 Elle ne prouve pas que l'agent aurait agi. CERTIFIED_100=false.
 """
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import json

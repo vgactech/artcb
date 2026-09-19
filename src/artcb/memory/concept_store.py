@@ -22,6 +22,7 @@ est toujours binaire. Aucun JSONL, aucun texte source dans l'index.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import logging

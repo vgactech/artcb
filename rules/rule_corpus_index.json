@@ -32,7 +32,10 @@
       "canonical_text": "Source: CHECKLIST_PRE_DEV_ARTCB",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086400000
     },
     {
       "corpus_id": "CR-CON-STANDARD-NAMES-99745114",
@@ -44,7 +47,10 @@
       "canonical_text": "Source: STANDARD_NAMES_ARTCB",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086469000
     },
     {
       "corpus_id": "CR-DEC-D-001-d7015b84",
@@ -56,7 +62,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086519000
     },
     {
       "corpus_id": "CR-DEC-D-002-0b15711b",
@@ -68,7 +77,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086568000
     },
     {
       "corpus_id": "CR-DEC-D-003-56d00f6f",
@@ -80,7 +92,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086613000
     },
     {
       "corpus_id": "CR-DEC-D-004-f9d4366b",
@@ -92,7 +107,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086660000
     },
     {
       "corpus_id": "CR-DEC-D-005-c686e795",
@@ -104,7 +122,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086702000
     },
     {
       "corpus_id": "CR-DEC-D-006-608fe5ca",
@@ -116,7 +137,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086752000
     },
     {
       "corpus_id": "CR-DEC-D-007-1dbb41d1",
@@ -128,7 +152,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086795000
     },
     {
       "corpus_id": "CR-DEC-D-008-9349fca6",
@@ -140,7 +167,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086837000
     },
     {
       "corpus_id": "CR-DEC-D-009-f745b0f9",
@@ -152,7 +182,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086877000
     },
     {
       "corpus_id": "CR-DEC-D-010-eabec334",
@@ -164,7 +197,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086919000
     },
     {
       "corpus_id": "CR-DEC-D-011-e0a45d63",
@@ -176,7 +212,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879086961000
     },
     {
       "corpus_id": "CR-DEC-D-012-5653259b",
@@ -188,7 +227,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087007000
     },
     {
       "corpus_id": "CR-DEC-D-013-654a8a36",
@@ -200,7 +242,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087048000
     },
     {
       "corpus_id": "CR-DEC-D-014-0c40e88c",
@@ -212,7 +257,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087093000
     },
     {
       "corpus_id": "CR-DEC-D-015-10c3009c",
@@ -224,7 +272,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087134000
     },
     {
       "corpus_id": "CR-DEC-D-016-0f6a34b5",
@@ -236,7 +287,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087178000
     },
     {
       "corpus_id": "CR-DEC-D-017-2a668320",
@@ -248,7 +302,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087219000
     },
     {
       "corpus_id": "CR-DEC-D-018-81669afc",
@@ -260,7 +317,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087276000
     },
     {
       "corpus_id": "CR-DEC-D-019-4a001aca",
@@ -272,7 +332,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087309000
     },
     {
       "corpus_id": "CR-DEC-D-020-456b25da",
@@ -284,7 +347,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087342000
     },
     {
       "corpus_id": "CR-DEC-D-021-11c5be85",
@@ -296,7 +362,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087374000
     },
     {
       "corpus_id": "CR-DEC-D-022-61b3ae64",
@@ -308,7 +377,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087410000
     },
     {
       "corpus_id": "CR-DEC-D-023-15a3acb2",
@@ -320,7 +392,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087445000
     },
     {
       "corpus_id": "CR-DEC-D-024-55f9d1ff",
@@ -332,7 +407,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087480000
     },
     {
       "corpus_id": "CR-DEC-D-025-0a673b04",
@@ -344,7 +422,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087514000
     },
     {
       "corpus_id": "CR-DEC-D-026-5dcf73e8",
@@ -356,7 +437,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087548000
     },
     {
       "corpus_id": "CR-DEC-D-027-c5f733fe",
@@ -368,7 +452,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087582000
     },
     {
       "corpus_id": "CR-DEC-D-028-d94c1212",
@@ -380,7 +467,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087674000
     },
     {
       "corpus_id": "CR-DEC-D-029-ac6800eb",
@@ -392,7 +482,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087720000
     },
     {
       "corpus_id": "CR-DEC-D-030-668b6df7",
@@ -404,7 +497,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087758000
     },
     {
       "corpus_id": "CR-DEC-D-031-691b3a54",
@@ -416,7 +512,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087794000
     },
     {
       "corpus_id": "CR-DEC-D-032-a226d7fc",
@@ -428,7 +527,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087838000
     },
     {
       "corpus_id": "CR-DEC-D-033-ce67abf0",
@@ -440,7 +542,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087874000
     },
     {
       "corpus_id": "CR-DEC-D-034-18a0119e",
@@ -452,7 +557,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087909000
     },
     {
       "corpus_id": "CR-DEC-D-035-e8cc92ab",
@@ -464,7 +572,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087943000
     },
     {
       "corpus_id": "CR-DEC-D-036-6d80afc5",
@@ -476,7 +587,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879087976000
     },
     {
       "corpus_id": "CR-DEC-D-037-ff46041e",
@@ -488,7 +602,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088013000
     },
     {
       "corpus_id": "CR-DEC-D-038-afc75401",
@@ -500,7 +617,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088048000
     },
     {
       "corpus_id": "CR-DEC-D-039-0e30de0c",
@@ -512,7 +632,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088083000
     },
     {
       "corpus_id": "CR-DEC-D-040-a20a23fe",
@@ -524,7 +647,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088118000
     },
     {
       "corpus_id": "CR-DEC-D-041-fb63c2b2",
@@ -536,7 +662,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088153000
     },
     {
       "corpus_id": "CR-DEC-D-042-1e5579c2",
@@ -548,7 +677,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088191000
     },
     {
       "corpus_id": "CR-DEC-D-043-ddf0465a",
@@ -560,7 +692,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088226000
     },
     {
       "corpus_id": "CR-DEC-D-044-bc00d1dc",
@@ -572,7 +707,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088260000
     },
     {
       "corpus_id": "CR-DEC-D-045-b0522fcf",
@@ -584,7 +722,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088294000
     },
     {
       "corpus_id": "CR-DEC-D-052-bd3a7188",
@@ -596,7 +737,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088327000
     },
     {
       "corpus_id": "CR-DEC-D-053-e3273fa4",
@@ -608,7 +752,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088360000
     },
     {
       "corpus_id": "CR-EVI-TASK-LEDGER-cfb78159",
@@ -620,7 +767,10 @@
       "canonical_text": "Source: .artcb/task_ledger.yaml",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "TESTING",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088407000
     },
     {
       "corpus_id": "CR-LES-L-001-88de3e89",
@@ -632,7 +782,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088454000
     },
     {
       "corpus_id": "CR-LES-L-002-f591482a",
@@ -644,7 +797,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088490000
     },
     {
       "corpus_id": "CR-LES-L-003-37b0bd3d",
@@ -656,7 +812,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088525000
     },
     {
       "corpus_id": "CR-LES-L-004-5e430dcc",
@@ -668,7 +827,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088562000
     },
     {
       "corpus_id": "CR-LES-L-005-caf302cd",
@@ -680,7 +842,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088596000
     },
     {
       "corpus_id": "CR-LES-L-006-fd876a7c",
@@ -692,7 +857,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088628000
     },
     {
       "corpus_id": "CR-LES-L-007-9e4b4270",
@@ -704,7 +872,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088660000
     },
     {
       "corpus_id": "CR-LES-L-008-68c3a1cb",
@@ -716,7 +887,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088692000
     },
     {
       "corpus_id": "CR-LES-L-009-3d293794",
@@ -728,7 +902,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088723000
     },
     {
       "corpus_id": "CR-LES-L-010-afce0160",
@@ -740,7 +917,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088756000
     },
     {
       "corpus_id": "CR-LES-L-011-7320f750",
@@ -752,7 +932,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088789000
     },
     {
       "corpus_id": "CR-LES-L-012-95570858",
@@ -764,7 +947,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088820000
     },
     {
       "corpus_id": "CR-LES-L-013-4fc2115d",
@@ -776,7 +962,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088852000
     },
     {
       "corpus_id": "CR-LES-L-015-a04ffc0d",
@@ -788,7 +977,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088888000
     },
     {
       "corpus_id": "CR-LES-L-016-c3e67e0d",
@@ -800,7 +992,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088921000
     },
     {
       "corpus_id": "CR-LES-L-017-533d777c",
@@ -812,7 +1007,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088953000
     },
     {
       "corpus_id": "CR-LES-L-018-8c6b5649",
@@ -824,7 +1022,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879088984000
     },
     {
       "corpus_id": "CR-LES-L-019-2df6bc5b",
@@ -836,7 +1037,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089015000
     },
     {
       "corpus_id": "CR-LES-L-023-95b24ab6",
@@ -848,7 +1052,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089048000
     },
     {
       "corpus_id": "CR-LES-L-024-134752f4",
@@ -860,7 +1067,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089083000
     },
     {
       "corpus_id": "CR-LES-L-025-54d00e09",
@@ -872,7 +1082,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089116000
     },
     {
       "corpus_id": "CR-LES-L-026-5320a46c",
@@ -884,7 +1097,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089148000
     },
     {
       "corpus_id": "CR-LES-L-027-6b50bb41",
@@ -896,7 +1112,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089180000
     },
     {
       "corpus_id": "CR-LES-L-028-ace87cc9",
@@ -908,7 +1127,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089274000
     },
     {
       "corpus_id": "CR-LES-L-029-46389f9a",
@@ -920,7 +1142,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089321000
     },
     {
       "corpus_id": "CR-LES-L-030-98fdaae5",
@@ -932,7 +1157,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089358000
     },
     {
       "corpus_id": "CR-LES-L-031-26feeee8",
@@ -944,7 +1172,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089393000
     },
     {
       "corpus_id": "CR-LES-L-032-5955f3be",
@@ -956,7 +1187,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089430000
     },
     {
       "corpus_id": "CR-LES-L-033-8c89d8b6",
@@ -968,7 +1202,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089464000
     },
     {
       "corpus_id": "CR-LES-L-034-5eb9c222",
@@ -980,7 +1217,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089497000
     },
     {
       "corpus_id": "CR-LES-L-035-1e8ceffb",
@@ -992,7 +1232,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089531000
     },
     {
       "corpus_id": "CR-LES-L-036-ee102f1a",
@@ -1004,7 +1247,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089564000
     },
     {
       "corpus_id": "CR-LES-L-037-17940c75",
@@ -1016,7 +1262,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089597000
     },
     {
       "corpus_id": "CR-LES-L-038-8e02a302",
@@ -1028,7 +1277,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089634000
     },
     {
       "corpus_id": "CR-LES-L-039-8b52119c",
@@ -1040,7 +1292,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089756000
     },
     {
       "corpus_id": "CR-LES-L-040-2a095d5a",
@@ -1052,7 +1307,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089865000
     },
     {
       "corpus_id": "CR-LES-L-041-0ee16d48",
@@ -1064,7 +1322,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089903000
     },
     {
       "corpus_id": "CR-LES-L-042-da94e7a9",
@@ -1076,7 +1337,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089941000
     },
     {
       "corpus_id": "CR-LES-L-043-705e518d",
@@ -1088,7 +1352,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879089976000
     },
     {
       "corpus_id": "CR-LES-L-044-541af022",
@@ -1100,7 +1367,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090001000
     },
     {
       "corpus_id": "CR-LES-L-045-3ee7b0c5",
@@ -1112,7 +1382,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090026000
     },
     {
       "corpus_id": "CR-LES-L-046-752274d6",
@@ -1124,7 +1397,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090050000
     },
     {
       "corpus_id": "CR-LES-L-047-433f89a3",
@@ -1136,7 +1412,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090075000
     },
     {
       "corpus_id": "CR-LES-LECONS-7bac72ba",
@@ -1148,7 +1427,10 @@
       "canonical_text": "Source: LEÇONS_APPRISES_ARTCB",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "LESSONS",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090116000
     },
     {
       "corpus_id": "CR-QUE-QUESTIONS-709c3c1f",
@@ -1160,7 +1442,10 @@
       "canonical_text": "Source: QUESTIONS_OUVERTES_ARTCB",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "ROADMAP",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090150000
     },
     {
       "corpus_id": "CR-RUL-169-62f82683",
@@ -1172,7 +1457,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090176000
     },
     {
       "corpus_id": "CR-RUL-299-4e280038",
@@ -1184,7 +1472,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090202000
     },
     {
       "corpus_id": "CR-RUL-338-bd5a5a7f",
@@ -1196,7 +1487,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090226000
     },
     {
       "corpus_id": "CR-RUL-339-a028146f",
@@ -1208,7 +1502,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090250000
     },
     {
       "corpus_id": "CR-RUL-340-635b4d2a",
@@ -1220,7 +1517,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090309000
     },
     {
       "corpus_id": "CR-RUL-341-d124010e",
@@ -1232,7 +1532,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090345000
     },
     {
       "corpus_id": "CR-RUL-345-e4559b3a",
@@ -1244,7 +1547,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090371000
     },
     {
       "corpus_id": "CR-RUL-347-b960aeca",
@@ -1256,7 +1562,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090396000
     },
     {
       "corpus_id": "CR-RUL-R253-1ba117a0",
@@ -1268,7 +1577,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090483000
     },
     {
       "corpus_id": "CR-RUL-R263-69035ffc",
@@ -1280,7 +1592,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879090532000
     },
     {
       "corpus_id": "CR-RUL-R264-67a59159",
@@ -1292,7 +1607,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879091880000
     },
     {
       "corpus_id": "CR-RUL-R265-240b0927",
@@ -1304,7 +1622,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092113000
     },
     {
       "corpus_id": "CR-RUL-R266-547e7043",
@@ -1316,7 +1637,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092175000
     },
     {
       "corpus_id": "CR-RUL-R268-d300e062",
@@ -1328,7 +1652,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092224000
     },
     {
       "corpus_id": "CR-RUL-R269-916ff9e3",
@@ -1340,7 +1667,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092278000
     },
     {
       "corpus_id": "CR-RUL-R270-87bab951",
@@ -1352,7 +1682,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092320000
     },
     {
       "corpus_id": "CR-RUL-R271-d1a0fbd6",
@@ -1364,7 +1697,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092364000
     },
     {
       "corpus_id": "CR-RUL-R272-4d07344b",
@@ -1376,7 +1712,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092408000
     },
     {
       "corpus_id": "CR-RUL-R273-21d14299",
@@ -1388,7 +1727,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092617000
     },
     {
       "corpus_id": "CR-RUL-R278-b967c3fe",
@@ -1400,7 +1742,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092660000
     },
     {
       "corpus_id": "CR-RUL-R279-e9f4f92a",
@@ -1412,7 +1757,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092689000
     },
     {
       "corpus_id": "CR-RUL-R280-d68d91ae",
@@ -1424,7 +1772,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092716000
     },
     {
       "corpus_id": "CR-RUL-R281-153f5237",
@@ -1436,7 +1787,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092744000
     },
     {
       "corpus_id": "CR-RUL-R282-03a20c33",
@@ -1448,7 +1802,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092771000
     },
     {
       "corpus_id": "CR-RUL-R283-aa70ad00",
@@ -1460,7 +1817,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092797000
     },
     {
       "corpus_id": "CR-RUL-R284-307abedd",
@@ -1472,7 +1832,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092824000
     },
     {
       "corpus_id": "CR-RUL-R285-67a2a9f0",
@@ -1484,7 +1847,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092852000
     },
     {
       "corpus_id": "CR-RUL-R286-fc085710",
@@ -1496,7 +1862,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092879000
     },
     {
       "corpus_id": "CR-RUL-R287-4ce2ab35",
@@ -1508,7 +1877,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092913000
     },
     {
       "corpus_id": "CR-RUL-R294-5faefc43",
@@ -1520,7 +1892,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092943000
     },
     {
       "corpus_id": "CR-RUL-R297-009dd324",
@@ -1532,7 +1907,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092970000
     },
     {
       "corpus_id": "CR-RUL-R297A-7aafcc1b",
@@ -1544,7 +1922,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879092998000
     },
     {
       "corpus_id": "CR-RUL-R297B-6aab7299",
@@ -1556,7 +1937,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093027000
     },
     {
       "corpus_id": "CR-RUL-R299-a0ba453b",
@@ -1568,7 +1952,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093054000
     },
     {
       "corpus_id": "CR-RUL-R299B-c3e08841",
@@ -1580,7 +1967,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093128000
     },
     {
       "corpus_id": "CR-RUL-R300-468adbcb",
@@ -1592,7 +1982,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093157000
     },
     {
       "corpus_id": "CR-RUL-R301-3f0a9b14",
@@ -1604,7 +1997,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093184000
     },
     {
       "corpus_id": "CR-RUL-R301B-9a7d9a2b",
@@ -1616,7 +2012,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093217000
     },
     {
       "corpus_id": "CR-RUL-R302-fdd6b3c7",
@@ -1628,7 +2027,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093247000
     },
     {
       "corpus_id": "CR-RUL-R303-3dcfb4ae",
@@ -1640,7 +2042,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093274000
     },
     {
       "corpus_id": "CR-RUL-R306-a2db2cd1",
@@ -1652,7 +2057,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093301000
     },
     {
       "corpus_id": "CR-RUL-R307-c928c6af",
@@ -1664,7 +2072,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093328000
     },
     {
       "corpus_id": "CR-RUL-R310-9c57eaf2",
@@ -1676,7 +2087,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093354000
     },
     {
       "corpus_id": "CR-RUL-R311-b0cceda4",
@@ -1688,7 +2102,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093380000
     },
     {
       "corpus_id": "CR-RUL-R312-97403a01",
@@ -1700,7 +2117,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093406000
     },
     {
       "corpus_id": "CR-RUL-R313-7c3e3001",
@@ -1712,7 +2132,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093431000
     },
     {
       "corpus_id": "CR-RUL-R314-865b76bb",
@@ -1724,7 +2147,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093457000
     },
     {
       "corpus_id": "CR-RUL-R315-0336f3e7",
@@ -1736,7 +2162,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093483000
     },
     {
       "corpus_id": "CR-RUL-R316-da4b9fee",
@@ -1748,7 +2177,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093511000
     },
     {
       "corpus_id": "CR-RUL-R317-8737446f",
@@ -1760,7 +2192,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093540000
     },
     {
       "corpus_id": "CR-RUL-R318-5a82536f",
@@ -1772,7 +2207,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093566000
     },
     {
       "corpus_id": "CR-RUL-R319-cfd59034",
@@ -1784,7 +2222,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093612000
     },
     {
       "corpus_id": "CR-RUL-R320-7d0a0c5e",
@@ -1796,7 +2237,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093673000
     },
     {
       "corpus_id": "CR-RUL-R321-a4e6a813",
@@ -1808,7 +2252,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093704000
     },
     {
       "corpus_id": "CR-RUL-R322-f60fba3b",
@@ -1820,7 +2267,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093734000
     },
     {
       "corpus_id": "CR-RUL-R323-2b257c9a",
@@ -1832,7 +2282,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093760000
     },
     {
       "corpus_id": "CR-RUL-R324-a358f322",
@@ -1844,7 +2297,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093786000
     },
     {
       "corpus_id": "CR-RUL-R325-662bdcd6",
@@ -1856,7 +2312,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093812000
     },
     {
       "corpus_id": "CR-RUL-R326-998e162c",
@@ -1868,7 +2327,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093845000
     },
     {
       "corpus_id": "CR-RUL-R327-0945ac12",
@@ -1880,7 +2342,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093871000
     },
     {
       "corpus_id": "CR-RUL-R328-5d15d525",
@@ -1892,7 +2357,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093896000
     },
     {
       "corpus_id": "CR-RUL-R329-3764353b",
@@ -1904,7 +2372,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093921000
     },
     {
       "corpus_id": "CR-RUL-R330-af835579",
@@ -1916,7 +2387,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093950000
     },
     {
       "corpus_id": "CR-RUL-R331-0c769c05",
@@ -1928,7 +2402,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879093979000
     },
     {
       "corpus_id": "CR-RUL-R332-aa332e0f",
@@ -1940,7 +2417,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094007000
     },
     {
       "corpus_id": "CR-RUL-R333-4454e01c",
@@ -1952,7 +2432,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094035000
     },
     {
       "corpus_id": "CR-RUL-R334-73bd6e37",
@@ -1964,7 +2447,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094062000
     },
     {
       "corpus_id": "CR-RUL-R335-a3cbc9cd",
@@ -1976,7 +2462,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094089000
     },
     {
       "corpus_id": "CR-RUL-R336-189025f6",
@@ -1988,7 +2477,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094119000
     },
     {
       "corpus_id": "CR-RUL-R337-6ccc4416",
@@ -2000,7 +2492,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094146000
     },
     {
       "corpus_id": "CR-RUL-R338-78d7f4b0",
@@ -2012,7 +2507,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094173000
     },
     {
       "corpus_id": "CR-RUL-R339-e324bc10",
@@ -2024,7 +2522,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094199000
     },
     {
       "corpus_id": "CR-RUL-R340-d4fd6a43",
@@ -2036,7 +2537,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094225000
     },
     {
       "corpus_id": "CR-RUL-R341-7d9b6af9",
@@ -2048,7 +2552,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094251000
     },
     {
       "corpus_id": "CR-RUL-R342-e2d3cc92",
@@ -2060,7 +2567,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094277000
     },
     {
       "corpus_id": "CR-RUL-R342B-9f484f71",
@@ -2072,7 +2582,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094306000
     },
     {
       "corpus_id": "CR-RUL-R343-08da9153",
@@ -2084,7 +2597,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094331000
     },
     {
       "corpus_id": "CR-RUL-R344-6d536f61",
@@ -2096,7 +2612,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094357000
     },
     {
       "corpus_id": "CR-RUL-R345-bf311348",
@@ -2108,7 +2627,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094387000
     },
     {
       "corpus_id": "CR-RUL-R347-ce558dca",
@@ -2120,7 +2642,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094413000
     },
     {
       "corpus_id": "CR-RUL-R348-63a0a9c0",
@@ -2132,7 +2657,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094438000
     },
     {
       "corpus_id": "CR-RUL-R348B-ebd4c2f3",
@@ -2144,7 +2672,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094466000
     },
     {
       "corpus_id": "CR-RUL-R349-195d487c",
@@ -2156,7 +2687,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094491000
     },
     {
       "corpus_id": "CR-RUL-R349A-8732926d",
@@ -2168,7 +2702,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094519000
     },
     {
       "corpus_id": "CR-RUL-R349B-e1c1e99d",
@@ -2180,7 +2717,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "NETWORK",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094548000
     },
     {
       "corpus_id": "CR-RUL-R350-7a5fb49c",
@@ -2192,7 +2732,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094576000
     },
     {
       "corpus_id": "CR-RUL-R351-c899c1fd",
@@ -2204,7 +2747,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094606000
     },
     {
       "corpus_id": "CR-RUL-R352-121cc195",
@@ -2216,7 +2762,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094634000
     },
     {
       "corpus_id": "CR-RUL-R353-2504fbe8",
@@ -2228,7 +2777,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094665000
     },
     {
       "corpus_id": "CR-RUL-R354-acdef033",
@@ -2240,7 +2792,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094762000
     },
     {
       "corpus_id": "CR-RUL-R355-fe658d5a",
@@ -2252,7 +2807,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094795000
     },
     {
       "corpus_id": "CR-RUL-R356-26ba3a15",
@@ -2264,7 +2822,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094823000
     },
     {
       "corpus_id": "CR-RUL-R357-aea1964f",
@@ -2276,7 +2837,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094850000
     },
     {
       "corpus_id": "CR-RUL-R358-bb825dfa",
@@ -2288,7 +2852,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094875000
     },
     {
       "corpus_id": "CR-RUL-R359-f39bd514",
@@ -2300,7 +2867,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094900000
     },
     {
       "corpus_id": "CR-RUL-R360-6003b0da",
@@ -2312,7 +2882,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094925000
     },
     {
       "corpus_id": "CR-RUL-R361-6a6a1c77",
@@ -2324,7 +2897,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094950000
     },
     {
       "corpus_id": "CR-RUL-R362-46f35959",
@@ -2336,7 +2912,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879094975000
     },
     {
       "corpus_id": "CR-RUL-R363-b0358972",
@@ -2348,7 +2927,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095010000
     },
     {
       "corpus_id": "CR-RUL-R363B-cdf7a2bd",
@@ -2360,7 +2942,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095101000
     },
     {
       "corpus_id": "CR-RUL-R363C-15ee5e5c",
@@ -2372,7 +2957,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095130000
     },
     {
       "corpus_id": "CR-RUL-R364-be130080",
@@ -2384,7 +2972,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095169000
     },
     {
       "corpus_id": "CR-RUL-R365-8da1d8d1",
@@ -2396,7 +2987,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095193000
     },
     {
       "corpus_id": "CR-RUL-R366-b3e9a651",
@@ -2408,7 +3002,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095217000
     },
     {
       "corpus_id": "CR-RUL-R367-29a72d19",
@@ -2420,7 +3017,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095240000
     },
     {
       "corpus_id": "CR-RUL-R368-9c011044",
@@ -2432,7 +3032,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095263000
     },
     {
       "corpus_id": "CR-RUL-R369-7b39d400",
@@ -2444,7 +3047,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095286000
     },
     {
       "corpus_id": "CR-RUL-R370-9ef02775",
@@ -2456,7 +3062,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095310000
     },
     {
       "corpus_id": "CR-RUL-R371-d8acb045",
@@ -2468,7 +3077,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095338000
     },
     {
       "corpus_id": "CR-RUL-R372-a0a7a414",
@@ -2480,7 +3092,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095434000
     },
     {
       "corpus_id": "CR-RUL-R373-d34c0bda",
@@ -2492,7 +3107,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095461000
     },
     {
       "corpus_id": "CR-RUL-R374-abd6e9da",
@@ -2504,7 +3122,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095486000
     },
     {
       "corpus_id": "CR-RUL-RT-002-58b40de7",
@@ -2516,7 +3137,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-002",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095512000
     },
     {
       "corpus_id": "CR-RUL-RT-003-6c3d0a34",
@@ -2528,7 +3152,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-003",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095538000
     },
     {
       "corpus_id": "CR-RUL-RT-004-03a2f254",
@@ -2540,7 +3167,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-004",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095563000
     },
     {
       "corpus_id": "CR-RUL-RT-009-4113cb73",
@@ -2552,7 +3182,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-009",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095587000
     },
     {
       "corpus_id": "CR-RUL-RT-011-9a2a6c5b",
@@ -2564,7 +3197,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-011",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095611000
     },
     {
       "corpus_id": "CR-RUL-RT-013-a2635a7c",
@@ -2576,7 +3212,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-013",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095636000
     },
     {
       "corpus_id": "CR-RUL-RT-016-b0f59dc1",
@@ -2588,7 +3227,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-016",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095663000
     },
     {
       "corpus_id": "CR-RUL-RT-039-f494d1a1",
@@ -2600,7 +3242,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-039",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095687000
     },
     {
       "corpus_id": "CR-RUL-RT-077-C04-6fbd3b8a",
@@ -2612,7 +3257,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-077-C04",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095715000
     },
     {
       "corpus_id": "CR-RUL-RT-077-N04-3cc007eb",
@@ -2624,7 +3272,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-077-N04",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095741000
     },
     {
       "corpus_id": "CR-RUL-RT-CAPABILITY-FIRST-9b75433d",
@@ -2636,7 +3287,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-CAPABILITY-FIRST",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095772000
     },
     {
       "corpus_id": "CR-RUL-RT-CORPUS-MAP-dbc91227",
@@ -2648,7 +3302,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-CORPUS-MAP",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095801000
     },
     {
       "corpus_id": "CR-RUL-RT-DIVERGENCE-341-4e6e99fe",
@@ -2660,7 +3317,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-DIVERGENCE-341",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095831000
     },
     {
       "corpus_id": "CR-RUL-RT-HW-BINDING-f97a6031",
@@ -2672,7 +3332,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-HW-BINDING",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095859000
     },
     {
       "corpus_id": "CR-RUL-RT-HW-H1-08243ffe",
@@ -2684,7 +3347,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-HW-H1",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095886000
     },
     {
       "corpus_id": "CR-RUL-RT-IDENTITY-LAYERS-ae9ff35a",
@@ -2696,7 +3362,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-IDENTITY-LAYERS",
-      "certified": false
+      "certified": false,
+      "domain": "IDENTITY",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095916000
     },
     {
       "corpus_id": "CR-RUL-RT-ISSUE-87-a02d7135",
@@ -2708,7 +3377,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-ISSUE-87",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095947000
     },
     {
       "corpus_id": "CR-RUL-RT-LEG-1435a3d7",
@@ -2720,7 +3392,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879095974000
     },
     {
       "corpus_id": "CR-RUL-RT-MEASURE-VALID-22105624",
@@ -2732,7 +3407,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-MEASURE-VALID",
-      "certified": false
+      "certified": false,
+      "domain": "GOVERNANCE",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879096003000
     },
     {
       "corpus_id": "CR-RUL-RT-SYBIL-076-ff2f74b8",
@@ -2744,7 +3422,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-SYBIL-076",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879096031000
     },
     {
       "corpus_id": "CR-RUL-RT-TELEMETRY-c94ae1ba",
@@ -2756,7 +3437,10 @@
       "canonical_text": "",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": "RT-TELEMETRY",
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879096059000
     },
     {
       "corpus_id": "CR-SPE-CDC-a6a9e108",
@@ -2768,7 +3452,10 @@
       "canonical_text": "Source: CAHIER_DES_CHARGES_ARTCB",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879096089000
     },
     {
       "corpus_id": "CR-SPE-ROADMAP-89910cf9",
@@ -2780,8 +3467,13 @@
       "canonical_text": "Source: ROADMAP_GENERAL_ARTCB",
       "status": "DETECTED_NOT_CLASSIFIED",
       "rt_rule_id": null,
-      "certified": false
+      "certified": false,
+      "domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r393_auto",
+      "domain_classified_ts": 1789835879096120000
     }
   ],
-  "certified_100": false
+  "certified_100": false,
+  "domain_classification_version": "R393",
+  "domain_classification_ts": 1789835879096709000
 }

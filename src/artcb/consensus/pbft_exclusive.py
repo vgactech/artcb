@@ -6,6 +6,7 @@ Pytest and agent hosts do not HTTP-fanout to production IPs.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 from typing import Any

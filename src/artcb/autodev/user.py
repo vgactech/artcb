@@ -13,6 +13,7 @@ Never create a public converging block (DOMAIN_COMMITMENT) from this path.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import os
 from dataclasses import dataclass

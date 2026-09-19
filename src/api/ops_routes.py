@@ -19,6 +19,7 @@ V-PQC-2 — ML-DSA-65 challenge/verify (R351):
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import os

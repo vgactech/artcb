@@ -39,6 +39,7 @@ Référence : rapport 114 — 2026-08-07 ; R345 client-scope ; R357 TEST namespa
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

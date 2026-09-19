@@ -1,6 +1,7 @@
 """Deterministic partition map — Hash(WorkID, Epoch, ParentRoot) mod N (162)."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import hashlib
 import logging

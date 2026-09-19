@@ -18,6 +18,7 @@ Sécurité : tous les endpoints sensibles utilisent verify_api_key (Bearer).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

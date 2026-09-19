@@ -1,6 +1,7 @@
 """Dynamic N_max from measured capacity (rapport 162). Safety 0.75 is a parameter."""
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import logging
 import math

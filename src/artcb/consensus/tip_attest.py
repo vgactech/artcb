@@ -7,6 +7,7 @@ Block append remains longest valid public chain. Settlement BFT is 188.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import base64
 from collections import defaultdict

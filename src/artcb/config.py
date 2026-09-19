@@ -17,6 +17,7 @@ REGLES D'USAGE (rapport 112 — 2026-08-04) :
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import os
 from dataclasses import dataclass

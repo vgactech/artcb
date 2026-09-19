@@ -8,6 +8,7 @@ It is a detector, not a demonstrated adversarial partition test.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 from dataclasses import dataclass, field
 from typing import Any

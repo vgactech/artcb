@@ -8,6 +8,7 @@ Compat : API identique pour auth_routes (dict mutable partagé + flush).
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import logging

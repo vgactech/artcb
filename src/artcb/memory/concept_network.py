@@ -13,6 +13,7 @@ B n'a jamais vu le texte humain, et son store était vide au départ.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import contextlib
 import logging

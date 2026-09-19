@@ -6,6 +6,7 @@ whole network. See domains.py for the replication matrix.
 """
 
 from __future__ import annotations
+MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
 
 import json
 import secrets
