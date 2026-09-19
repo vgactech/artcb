@@ -119,17 +119,16 @@ export function RegisterBiometric() {
       persistSession(done.session_token, done.wallet_name || loginName.trim(), done.address);
       setInfo(t("reg_login_ok"));
     } catch (err) {
-      const ax = err as { response?: { data?: { detail?: unknown } } };
+      // R385: err.message already contains a clear diagnostic if thrown by webauthnLoginOptions
+      const ax = err as { response?: { data?: { detail?: unknown } }; message?: string };
       const detail = ax?.response?.data?.detail;
-      setError(
+      const msg =
         typeof detail === "string"
           ? detail
           : detail
             ? JSON.stringify(detail)
-            : err instanceof Error
-              ? err.message
-              : String(err),
-      );
+            : ax?.message || (err instanceof Error ? err.message : String(err));
+      setError(msg);
     } finally {
       setBusy(false);
     }

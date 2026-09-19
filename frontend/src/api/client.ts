@@ -484,8 +484,23 @@ export async function webauthnRegisterVerify(
 }
 
 export async function webauthnLoginOptions(name: string, modality?: "fingerprint" | "face") {
-  const { data } = await api.post("/auth/webauthn/login/options", { name, modality });
-  return data as { publicKey: WebAuthnPublicKey };
+  try {
+    const { data } = await api.post("/auth/webauthn/login/options", { name, modality });
+    return data as { publicKey: WebAuthnPublicKey };
+  } catch (err: unknown) {
+    // R385: distinguish wallet_unknown (404) from service unavailable (503/502/network)
+    const ax = err as { response?: { status?: number; data?: { detail?: string } } };
+    const status = ax?.response?.status;
+    const detail = ax?.response?.data?.detail;
+    if (status === 404 && detail === "wallet_unknown") {
+      // Wallet exists only on another node — clear diagnostic, not a generic error
+      throw new Error("wallet_unknown_on_this_node: Ce wallet n'est pas connu de ce nœud. Réessayez ou utilisez votre seed_hex.");
+    }
+    if (status === 503 || status === 502 || !status) {
+      throw new Error("service_unavailable: Le service est momentanément indisponible. Réessayez dans quelques secondes.");
+    }
+    throw err;
+  }
 }
 
 export async function webauthnLoginVerify(name: string, credential: unknown) {
