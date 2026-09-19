@@ -40,9 +40,11 @@ from src.artcb.security.webauthn_store import (
     ALLOWED_MODALITIES,
     MODALITY_FACE,
     MODALITY_FINGERPRINT,
+    broadcast_credential,
     credentials_for_wallet,
     find_credential,
     find_face,
+    receive_credential,
     save_credential,
     save_face,
     update_sign_count,
@@ -360,17 +362,20 @@ def webauthn_register_verify(body: RegisterFinishBody, request: Request) -> dict
         level=ASSURANCE_LEVELS[f"webauthn_{modality}"]["level"],
         existing_credentials=len(credentials_for_wallet(body.name)),
     )
-    save_credential(
-        {
-            "credential_id": verified["credential_id"],
-            "cose_b64": verified["cose_b64"],
-            "sign_count": verified["sign_count"],
-            "wallet_name": body.name,
-            "address": wallet["address"],
-            "modality": modality,
-            "rp_id": verified["rp_id"],
-        }
-    )
+    credential_record = {
+        "credential_id": verified["credential_id"],
+        "cose_b64": verified["cose_b64"],
+        "sign_count": verified["sign_count"],
+        "wallet_name": body.name,
+        "address": wallet["address"],
+        "modality": modality,
+        "rp_id": verified["rp_id"],
+    }
+    save_credential(credential_record)
+    # R387 — TASK-006 : fanout fire-and-forget vers les pairs officiels
+    # Les credentials WebAuthn (credential_id + clé publique COSE) sont des données
+    # publiques — elles peuvent être répliquées sans risque de confidentialité.
+    broadcast_credential(credential_record)
     _mark_auth_methods(body.name, f"webauthn_{modality}")
     session = issue_session(wallet_name=body.name, address=str(wallet["address"]))
     out: dict[str, Any] = {
@@ -570,4 +575,77 @@ def face_login_options(body: FaceBeginBody) -> dict[str, Any]:
         "liveness_required": True,
         "camera_facing_mode": "user",
         "raw_biometric_never_stored": True,
+    }
+
+
+# ─── R387 — TASK-006 : Endpoint de réception des credentials WebAuthn répliqués ───
+
+
+class IdentityReceiveBody(BaseModel):
+    """Corps de la requête POST /webauthn/identity/receive (fanout R387).
+
+    Reçu d'un nœud pair via broadcast_credential().
+    Seuls les champs publics sont attendus — jamais de clé privée.
+    """
+    credential_id: str
+    cose_b64: str
+    wallet_name: str
+    address: str | None = None
+    modality: str | None = None
+    rp_id: str | None = None
+    sign_count: int = 0
+
+
+@router.post("/webauthn/identity/receive")
+def webauthn_identity_receive(body: IdentityReceiveBody, request: Request) -> dict[str, Any]:
+    """Reçoit un credential WebAuthn répliqué par un nœud pair (R387 — TASK-006).
+
+    Ce endpoint est appelé par broadcast_credential() des autres nœuds.
+    Il stocke le credential localement pour que ce nœud puisse authentifier
+    l'utilisateur même si son wallet a été créé sur un autre nœud.
+
+    Sécurité :
+      - Seuls les champs publics sont traités (credential_id + clé publique COSE)
+      - La clé privée ne passe jamais ici — elle ne quitte pas l'appareil utilisateur
+      - Tout nœud peut appeler ce endpoint (pas d'auth Bearer requise pour le fanout
+        entre nœuds officiels, car les données sont publiques par définition)
+
+    DEBUG : toute réception est loguée dans artcb.api.webauthn.audit.
+    """
+    record = {
+        "credential_id": body.credential_id,
+        "cose_b64": body.cose_b64,
+        "wallet_name": body.wallet_name,
+        "address": body.address,
+        "modality": body.modality,
+        "rp_id": body.rp_id,
+        "sign_count": body.sign_count,
+    }
+    source = request.headers.get("X-ARTCB-Fanout-Source", "unknown")
+    stored = receive_credential(record)
+    if not stored:
+        _audit(
+            "webauthn_identity_receive_rejected",
+            wallet=body.wallet_name,
+            request=request,
+            source_node=source,
+        )
+        raise HTTPException(status_code=400, detail="identity_receive_invalid_record")
+    _audit(
+        "webauthn_identity_receive_ok",
+        wallet=body.wallet_name,
+        request=request,
+        source_node=source,
+        modality=str(body.modality),
+    )
+    logger.info(
+        "webauthn_identity_receive: credential répliqué wallet=%s modality=%s depuis=%s",
+        body.wallet_name, body.modality, source,
+    )
+    return {
+        "ok": True,
+        "stored": True,
+        "wallet_name": body.wallet_name,
+        "credential_id_prefix": body.credential_id[:12],
+        "source_node": source,
     }
