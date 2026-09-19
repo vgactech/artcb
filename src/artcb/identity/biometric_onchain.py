@@ -1,4 +1,4 @@
-"""Biométrie on-chain ARTCB — TASK-001 / R374 (2026-09-18).
+"""Biométrie on-chain ARTCB — TASK-001 / R374 / R376 / R378 (2026-09-18).
 
 Implémente le modèle cible de la spécification §3–§5 :
 

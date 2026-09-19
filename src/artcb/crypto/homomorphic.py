@@ -1,4 +1,4 @@
-"""Homomorphic commitment primitives — P0-B (2026-09-16).
+"""Homomorphic commitment primitives — P0-B / R376 / R378 (2026-09-16 → 2026-09-18).
 
 Objectif ARTCB : permettre la vérification d'unicité biométrique sans exposer
 le modèle brut. Ce module fournit un stub cryptographique opérationnel basé sur
