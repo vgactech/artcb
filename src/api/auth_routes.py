@@ -1,12 +1,16 @@
 """Authentification utilisateur ARTCB — login, challenge, verify.
+R384 (2026-09-18) : routes /webauthn/login/options et /webauthn/login/verify renommées
+    en /webauthn/biometric/options et /webauthn/biometric/verify pour éviter la collision
+    avec webauthn_routes.py (Bug C résolu — 24/24 tests PASS).
+R386 (2026-09-18) : versioning docstring mis à jour.
 
 Protocole :
   1. POST /auth/login     — login classique (name + password) [DÉPRÉCIÉ — P0-A 2026-09-16]
                             Les wallets biométriques ARTCB ne peuvent pas utiliser ce chemin.
-                            Voie recommandée : /auth/verify (clé privée) ou /auth/webauthn/login (biométrie).
+                            Voie recommandée : /auth/verify (clé privée) ou /auth/webauthn/biometric (biométrie).
   2. GET  /auth/challenge — nonce pour signature crypto
   3. POST /auth/verify    — vérification signature Ed25519 du challenge  ← VOIE PRINCIPALE
-  4. POST /auth/webauthn/login/verify — authentification biométrique     ← VOIE BIOMÉTRIQUE
+  4. POST /auth/webauthn/biometric/verify — authentification biométrique ← VOIE BIOMÉTRIQUE (R384)
   5. POST /auth/logout    — invalide le token de session
 
 L'API key (/api-keys/generate) n'est utilisable QU'APRÈS authentification.
@@ -15,7 +19,7 @@ DEPRECATION P0-A (2026-09-16) :
   /auth/login (name + password) est déprécié pour les nouvelles identités ARTCB.
   Les identités HumanIdentity (biométriques) n'ont jamais de mot de passe connu.
   Les wallets classiques existants peuvent encore utiliser /auth/login temporairement.
-  Tous les nouveaux clients doivent utiliser /auth/verify ou /auth/webauthn/login.
+  Tous les nouveaux clients doivent utiliser /auth/verify ou /auth/webauthn/biometric.
 """
 from __future__ import annotations
 

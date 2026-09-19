@@ -1,4 +1,5 @@
-"""Routes API — HumanIdentity multi-device (spec §17–18, rapport 367/370, R363 2026-09-17).
+"""Routes API — HumanIdentity multi-device (spec §17–18, rapport 367/370, R363/R381/R386 2026-09-17→18).
+R386 (2026-09-18) : versioning docstring mis à jour.
 
 Implémente le flux ADD_DEVICE avec VRAIE vérification WebAuthn (R363) :
   - Un humain peut ajouter un nouvel appareil à son identité ARTCB
@@ -42,6 +43,13 @@ from src.artcb.security.webauthn_protocol import (
     expected_origins,
     rp_id_for_host,
     verify_assertion,
+)
+
+# ── R369-enforcement : Gate préalable obligatoire ────────────────────────────
+from src.artcb.agent_control import (  # noqa: E402
+    require_operation_authorized,
+    OperationRisk,
+    PreflightBlockedError,
 )
 
 logger = logging.getLogger("artcb.api.identity_device")
@@ -334,8 +342,13 @@ def add_device_verify(body: AddDeviceVerifyRequest, request: Request) -> dict:
       - Le nouvel appareil n'obtient PAS un nouveau wallet — il rejoint l'identité existante
       - Limite : max 5 appareils par HumanID (anti-abus spec §17)
       - WebAuthn valide ≠ unique_human_proven (spec §4 rapport 367)
-      """
-      # ── 1. Vérifier le challenge ─────────────────────────────────────────────
+
+    R369-enforcement : Gate préalable CRITICAL avant toute modification d'identité.
+    """
+    # ── 0. Gate préalable obligatoire (R369-enforcement) ─────────────────────
+    require_operation_authorized("add_device_verify", OperationRisk.CRITICAL, task_id="R369")
+
+    # ── 1. Vérifier le challenge ─────────────────────────────────────────────
     challenge_data = _device_challenges.get(body.challenge_b64)
     if not challenge_data:
         raise HTTPException(status_code=400, detail="add_device_challenge_unknown")
@@ -610,7 +623,11 @@ def revoke_device(body: DeviceRevokeRequest, request: Request) -> dict:
 
     Nécessite une VRAIE assertion WebAuthn de l'appareil initiateur (R363 spec §17).
     Le PIN seul est REFUSÉ — identique à add-verify.
+    R369-enforcement : Gate préalable CRITICAL.
     """
+    # ── 0. Gate préalable obligatoire (R369-enforcement) ─────────────────────
+    require_operation_authorized("revoke_device", OperationRisk.CRITICAL, task_id="R369")
+
     from cryptography.hazmat.primitives.serialization import load_pem_public_key
 
     # ── 1. Récupérer la credential de l'appareil initiateur ─────────────────

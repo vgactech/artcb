@@ -1,4 +1,7 @@
 """WebAuthn (platform authenticator) for ARTCB wallet enrollment.
+R384 (2026-09-18) : login_options cross-device hints alignés avec registration_options.
+R385 (2026-09-18) : messages 404/503/502 enrichis pour debugging wallet non-répliqué.
+R386 (2026-09-18) : versioning docstring mis à jour.
 
 Fingerprint and Face ID / OS face unlock go through WebAuthn.
 Raw biometric samples never leave the device and are never written on chain.
@@ -173,7 +176,10 @@ def assertion_options(
         "rpId": rp_id,
         "allowCredentials": allow,
         "userVerification": "required",
-        "hints": ["client-device"],
+        # R384 — aligner avec registration_options : autoriser cross-device (hybrid)
+        # et les clés de sécurité physiques en plus de l'authenticator local.
+        # "client-device" seul bloquait les scénarios smartphone → PC sans capteur.
+        "hints": ["client-device", "hybrid", "security-key"],
         "modality": modality,
     }
 

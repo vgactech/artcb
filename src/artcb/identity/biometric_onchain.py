@@ -1,4 +1,4 @@
-"""Biométrie on-chain ARTCB — TASK-001 / R374 / R376 / R378 (2026-09-18).
+"""Biométrie on-chain ARTCB — TASK-001 / R374 / R376 / R378 / R386 (2026-09-18).
 
 Implémente le modèle cible de la spécification §3–§5 :
 
@@ -90,6 +90,7 @@ import logging
 import os
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import bchlib
@@ -573,6 +574,20 @@ def enroll_biometric(
         human_id, fe.algorithm,
     )
 
+    # R386 — trace nanoseconde des opérations biométriques (non-HTTP, non couvertes par middleware)
+    try:
+        from src.artcb.trace.ns import emit as _emit
+        _emit(None, {
+            "kind": "biometric_enroll",
+            "human_id": human_id,
+            "algorithm": fe.algorithm,
+            "noise_tolerance_bits": fe.noise_tolerance_bits,
+            "unique_human_proven": False,
+            "ok": True,
+        })
+    except Exception:  # noqa: BLE001
+        pass  # trace facultative — ne jamais bloquer l'enrôlement
+
     result = BiometricEnrollmentResult(
         human_id=human_id,
         human_identity_record=record.to_chain_record(),
@@ -667,36 +682,52 @@ def check_uniqueness(
     """
     # ── Chemin R376 : privacy_preserving_match si template_bytes fourni ───────
     if template_bytes_for_match:
-        return _check_uniqueness_privacy_preserving(
+        result = _check_uniqueness_privacy_preserving(
             new_commitment,
             existing_records,
             template_bytes=template_bytes_for_match,
             threshold=threshold,
         )
+    else:
+        # ── Fallback : hash exact (compatibilité ascendante) ─────────────────────
+        new_hash = new_commitment.template_hash_hex
+        result = UniquenessCheckResult(
+            match_found=False,
+            match_score=0.0,
+            match_method="exact_hash",
+            note="Pas de correspondance (hash exact) — nouvelle HumanIdentity autorisée.",
+        )
+        for rec in existing_records:
+            stored_hash = rec.get("template_hash") or rec.get("template_hash_hex", "")
+            if stored_hash and stored_hash == new_hash:
+                logger.warning(
+                    "check_uniqueness[exact]: MATCH human_id=%s — création refusée (spec §5)",
+                    rec.get("human_id"),
+                )
+                result = UniquenessCheckResult(
+                    match_found=True,
+                    existing_human_id=rec.get("human_id"),
+                    match_score=1.0,
+                    match_method="exact_hash",
+                    note="Template hash exact match — création refusée (spec §5). Fallback sans template_bytes.",
+                )
+                break
 
-    # ── Fallback : hash exact (compatibilité ascendante) ─────────────────────
-    new_hash = new_commitment.template_hash_hex
-    for rec in existing_records:
-        stored_hash = rec.get("template_hash") or rec.get("template_hash_hex", "")
-        if stored_hash and stored_hash == new_hash:
-            logger.warning(
-                "check_uniqueness[exact]: MATCH human_id=%s — création refusée (spec §5)",
-                rec.get("human_id"),
-            )
-            return UniquenessCheckResult(
-                match_found=True,
-                existing_human_id=rec.get("human_id"),
-                match_score=1.0,
-                match_method="exact_hash",
-                note="Template hash exact match — création refusée (spec §5). Fallback sans template_bytes.",
-            )
+    # R386 — trace nanoseconde check_uniqueness (non-HTTP)
+    try:
+        from src.artcb.trace.ns import emit as _emit
+        _emit(None, {
+            "kind": "biometric_check_uniqueness",
+            "match_found": result.match_found,
+            "match_method": result.match_method,
+            "existing_human_id": result.existing_human_id,
+            "unique_human_proven": False,
+            "ok": True,
+        })
+    except Exception:  # noqa: BLE001
+        pass  # trace facultative — ne jamais bloquer le check
 
-    return UniquenessCheckResult(
-        match_found=False,
-        match_score=0.0,
-        match_method="exact_hash",
-        note="Pas de correspondance (hash exact) — nouvelle HumanIdentity autorisée.",
-    )
+    return result
 
 
 def _check_uniqueness_privacy_preserving(
