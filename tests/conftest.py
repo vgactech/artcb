@@ -1,7 +1,19 @@
-"""Shared pytest fixtures."""
+"""Shared pytest fixtures.
+
+R396-C : hook forensic nanoseconde pour pytest.
+  Chaque test PASS/FAIL/ERROR émet un événement dans data/trace/pytest_trace.jsonl.
+  Format : {"kind":"pytest_result","ts_ns":...,"test_id":...,"outcome":...,"dur_ns":...,"commit_sha":...}
+
+  Règle ARTCB : production runtime ≠ CI — les deux doivent être traçables.
+  Le hook est fail-open : un échec du logging ne bloque pas les tests.
+"""
 
 from __future__ import annotations
 
+import json
+import os
+import subprocess
+import time
 from pathlib import Path
 
 import pytest
@@ -57,10 +69,62 @@ def pytest_configure(config) -> None:
     """R310 — before test module imports pull in api.main eager app.
     Force non-bootstrap + isolated defaults early; per-test tmp_path still wins later.
     """
-    import os
-
     os.environ.setdefault("ARTCB_BOOTSTRAP_NODE", "false")
     os.environ.setdefault("ARTCB_SKIP_SEED_DISCOVERY", "1")
     os.environ.setdefault("ARTCB_SKIP_CLOUD_METADATA", "1")
     os.environ.setdefault("ARTCB_ALLOW_LOCAL_PEERS", "1")
+
+
+# ── R396-C : Forensic trace pytest → data/trace/pytest_trace.jsonl ───────────
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+_PYTEST_TRACE = _REPO_ROOT / "data" / "trace" / "pytest_trace.jsonl"
+_COMMIT_SHA: str | None = None
+
+
+def _get_commit_sha() -> str:
+    """Retourne le SHA court HEAD (mise en cache pour toute la session pytest)."""
+    global _COMMIT_SHA
+    if _COMMIT_SHA is None:
+        try:
+            r = subprocess.run(
+                ["git", "rev-parse", "--short", "HEAD"],
+                capture_output=True, text=True, timeout=5,
+                cwd=str(_REPO_ROOT),
+            )
+            _COMMIT_SHA = r.stdout.strip() or "unknown"
+        except Exception:
+            _COMMIT_SHA = "unknown"
+    return _COMMIT_SHA
+
+
+def _emit_pytest_trace(row: dict) -> None:
+    """Écrit une ligne JSONL dans data/trace/pytest_trace.jsonl — fail-open."""
+    try:
+        _PYTEST_TRACE.parent.mkdir(parents=True, exist_ok=True)
+        with _PYTEST_TRACE.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n")
+    except Exception:
+        pass  # ne jamais bloquer les tests
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    """R396-C — émet un événement nanoseconde à la fin de chaque test (call phase)."""
+    t_start = time.time_ns()
+    outcome = yield
+    if call.when != "call":
+        return
+    t_end = time.time_ns()
+    rep = outcome.get_result()
+    _emit_pytest_trace({
+        "kind": "pytest_result",
+        "ts_ns": t_start,
+        "end_ns": t_end,
+        "dur_ns": t_end - t_start,
+        "test_id": item.nodeid,
+        "outcome": rep.outcome,  # "passed" | "failed" | "error"
+        "commit_sha": _get_commit_sha(),
+        "worker_id": os.environ.get("PYTEST_XDIST_WORKER", "main"),
+    })
 

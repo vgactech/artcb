@@ -6,15 +6,25 @@
   - Publie un événement JOB_COMPLETED vers ARTCB via src.artcb.bob.job_completed
     (idempotent, outbox locale si ARTCB indisponible, retry via flush_outbox)
   - Tente aussi de rejouer les événements en attente (outbox flush)
+  - Lance R392 auto-feedback et persiste AUDIT_STATUS (OK / FAILED / INCOMPLETE)
+    R396-A : le returncode est contrôlé — l'échec ne bloque pas Bob mais devient observable.
 
-Fail-open. Jamais de secrets. includes_thinking=False toujours.
+Règle R396 : FAIL-OPEN EXECUTION, FAIL-CLOSED AUDIT STATUS.
+  Une panne de feedback ne tue pas le tour, mais audit_status ≠ "ok" par défaut.
+
+Jamais de secrets. includes_thinking=False toujours.
 """
 from __future__ import annotations
-import hashlib, json, sys, time
+import hashlib, json, subprocess, sys, time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 TRACE = ROOT / "data" / "trace"
+
+# R396-A — Statuts d'audit possibles
+AUDIT_OK = "ok"
+AUDIT_FAILED = "failed"
+AUDIT_INCOMPLETE = "incomplete"
 
 
 def _count_tools(session_id: str | None) -> int:
@@ -114,17 +124,50 @@ def main() -> int:
         # Fail-open : ne jamais bloquer la fin de tour Bob
         artcb_result = {"artcb_status": "error", "note": "bob_job_completed_unavailable"}
 
-    # --- R394-C : Auto-feedback post-session (fail-open) ---
+    # --- R396-A : Auto-feedback post-session — FAIL-OPEN EXECUTION, FAIL-CLOSED AUDIT STATUS ---
+    audit_status = AUDIT_INCOMPLETE
+    audit_detail: dict = {}
     try:
-        import subprocess as _sp
-        _sp.run(
+        result = subprocess.run(
             ["python3", "scripts/artcb_r392_auto_feedback.py", "--since", "HEAD~1"],
             cwd=str(ROOT),
             timeout=25,
-            capture_output=True,  # ne pas polluer stdout du hook
+            capture_output=True,
+            text=True,
         )
+        if result.returncode == 0:
+            audit_status = AUDIT_OK
+            audit_detail = {"returncode": 0, "stderr_chars": len(result.stderr or "")}
+        else:
+            audit_status = AUDIT_FAILED
+            audit_detail = {
+                "returncode": result.returncode,
+                "stderr": (result.stderr or "")[:400],  # tronqué, jamais de secrets
+            }
+    except subprocess.TimeoutExpired:
+        audit_status = AUDIT_FAILED
+        audit_detail = {"error": "timeout_expired", "timeout_s": 25}
+    except Exception as exc:
+        audit_status = AUDIT_FAILED
+        audit_detail = {"error": type(exc).__name__, "msg": str(exc)[:200]}
+
+    # Persistance de l'audit_status dans bob_turns.jsonl — toujours écrit, même en échec
+    try:
+        TRACE.mkdir(parents=True, exist_ok=True)
+        audit_row = {
+            "ts_ns": time.time_ns(),
+            "kind": "bob_stop_audit",
+            "session_id": session_id,
+            "agent_id": "bob",
+            "audit_status": audit_status,
+            "feedback_script": "scripts/artcb_r392_auto_feedback.py",
+            **audit_detail,
+            "note": "R396-A — FAIL-OPEN execution, FAIL-CLOSED audit status",
+        }
+        with (TRACE / "bob_turns.jsonl").open("a") as fh:
+            fh.write(json.dumps(audit_row, ensure_ascii=False) + "\n")
     except Exception:
-        pass  # fail-open — ne jamais bloquer la fin de session
+        pass  # ne jamais bloquer la fin de session même si la trace échoue
 
     # --- Stdout → contexte Bob ---
     status = artcb_result.get("artcb_status", "error")
@@ -137,6 +180,10 @@ def main() -> int:
         print(f"[ARTCB JOB_COMPLETED] 📦 spooled (ARTCB indisponible) | event={event_id[:16]}... | outbox={artcb_result.get('outbox','?')}")
     else:
         print(f"[ARTCB JOB_COMPLETED] ⚠️  {status} — trace locale conservée")
+
+    # R396-A — audit status toujours visible dans stdout
+    audit_icon = {"ok": "✅", "failed": "❌", "incomplete": "⚠️"}.get(audit_status, "?")
+    print(f"[ARTCB AUDIT] {audit_icon} feedback={audit_status} | agent=bob | session={session_id or '?'}")
 
     return 0
 
