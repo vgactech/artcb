@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
-R393 — Classification automatique des 230 entrées rule_corpus_index.json par domaine.
+R393 v2 — Classification multi-domaines + confidence score des règles ARTCB.
+R394-E : chaque entrée reçoit `domains` (liste), `primary_domain`, `confidence` (0-1),
+         `classification_basis` (liste des champs ayant contribué).
 
 Domaines définis :
   IDENTITY     — biométrie, WebAuthn, wallet, identité humaine
@@ -28,7 +30,7 @@ CERTIFIED_100=false | DEBUG MODE
 
 from __future__ import annotations
 
-MODULE_VERSION = '1.0.0'  # R393 — classification règles
+MODULE_VERSION = '1.1.0'  # R394-E — classification multi-domaines + confidence
 
 import argparse
 import json
@@ -92,17 +94,39 @@ DOMAIN_KEYWORDS: dict[str, list[str]] = {
 }
 
 
-def classify_entry(entry: dict) -> str:
-    """Attribue un domaine à une entrée du corpus."""
-    # Texte à analyser : ref + source_path + canonical_text + kind
-    text = " ".join([
-        str(entry.get("ref", "")),
-        str(entry.get("source_path", "")),
-        str(entry.get("canonical_text", "")),
-        str(entry.get("kind", "")),
-        str(entry.get("authority", "")),
-        str(entry.get("corpus_id", "")),
-    ]).lower()
+KIND_FALLBACK: dict[str, str] = {
+    "DECISION": "GOVERNANCE",
+    "LESSON": "LESSONS",
+    "CHECK": "TESTING",
+    "CONVENTION": "PROTOCOL",
+    "RULE": "PROTOCOL",
+    "SPEC": "PROTOCOL",
+    "QUESTION": "PROTOCOL",
+    "EVIDENCE": "TESTING",
+}
+
+
+def classify_entry(entry: dict) -> dict:
+    """Attribue des domaines multiples + confidence à une entrée du corpus.
+
+    Retourne un dict avec :
+      primary_domain : str
+      domains        : list[str]  — tous les domaines avec score > 0
+      confidence     : float [0, 1]
+      classification_basis : list[str] — champs ayant contribué
+    """
+    # Champs à analyser
+    fields: dict[str, str] = {
+        "ref": str(entry.get("ref", "")),
+        "source_path": str(entry.get("source_path", "")),
+        "canonical_text": str(entry.get("canonical_text", "")),
+        "kind": str(entry.get("kind", "")),
+        "authority": str(entry.get("authority", "")),
+        "corpus_id": str(entry.get("corpus_id", "")),
+    }
+    # Champs non-vides (pour classification_basis)
+    non_empty = [k for k, v in fields.items() if v and v not in ("", "None")]
+    text = " ".join(fields.values()).lower()
 
     scores: dict[str, int] = {}
     for domain, keywords in DOMAIN_KEYWORDS.items():
@@ -110,22 +134,43 @@ def classify_entry(entry: dict) -> str:
         if score > 0:
             scores[domain] = score
 
+    # Fallback kind si aucun score
     if not scores:
-        # Fallback sur le kind
-        kind = entry.get("kind", "").upper()
-        kind_map = {
-            "DECISION": "GOVERNANCE",
-            "LESSON": "LESSONS",
-            "CHECK": "TESTING",
-            "CONVENTION": "PROTOCOL",
-            "RULE": "PROTOCOL",
-            "SPEC": "PROTOCOL",
-            "QUESTION": "PROTOCOL",
-            "EVIDENCE": "TESTING",
+        kind = fields["kind"].upper()
+        fallback_domain = KIND_FALLBACK.get(kind, "OTHER")
+        return {
+            "primary_domain": fallback_domain,
+            "domains": [fallback_domain],
+            "confidence": 0.4,  # confiance faible — fallback sur kind uniquement
+            "classification_basis": ["kind"],
         }
-        return kind_map.get(kind, "OTHER")
 
-    return max(scores, key=lambda d: scores[d])
+    # Trier par score décroissant
+    sorted_domains = sorted(scores.items(), key=lambda x: -x[1])
+    top_score = sorted_domains[0][1]
+    total_score = sum(s for _, s in sorted_domains)
+
+    # Domaines avec score ≥ 50% du top
+    threshold = max(1, top_score * 0.5)
+    active_domains = [d for d, s in sorted_domains if s >= threshold]
+
+    # Confidence = top_score / total_score (plus c'est concentré, plus c'est sûr)
+    confidence = round(top_score / max(total_score, 1), 3)
+
+    # Bonus confidence si canonical_text non vide
+    if fields["canonical_text"] and len(fields["canonical_text"]) > 5:
+        confidence = min(1.0, confidence + 0.15)
+
+    # Pénalité si un seul champ a contribué
+    if len(non_empty) <= 2:
+        confidence = max(0.0, confidence - 0.1)
+
+    return {
+        "primary_domain": sorted_domains[0][0],
+        "domains": active_domains,
+        "confidence": confidence,
+        "classification_basis": [k for k in non_empty if k != "kind"],
+    }
 
 
 def main():
@@ -140,31 +185,49 @@ def main():
     entries = corpus.get("entries", [])
     domain_counts: dict[str, int] = {}
     classified = 0
-    already_classified = 0
+    reclassified = 0
+    confidence_sum = 0.0
+    multi_domain_count = 0
 
     updated_entries = []
     for entry in entries:
-        current_domain = entry.get("domain")
-        if current_domain and current_domain != "?" and current_domain != "OTHER":
-            already_classified += 1
-            updated_entries.append(entry)
-            domain_counts[current_domain] = domain_counts.get(current_domain, 0) + 1
-            continue
-
-        domain = classify_entry(entry)
+        result = classify_entry(entry)
         entry_copy = dict(entry)
-        entry_copy["domain"] = domain
-        entry_copy["domain_classified_by"] = "artcb_r393_auto"
+
+        # Toujours reclassifier (R394-E — on écrase même les entrées précédemment classifiées)
+        prev_domain = entry.get("primary_domain") or entry.get("domain")
+        if prev_domain and prev_domain == result["primary_domain"]:
+            pass  # inchangé
+        elif prev_domain:
+            reclassified += 1
+
+        # Champs multi-domaines R394-E
+        entry_copy["primary_domain"] = result["primary_domain"]
+        entry_copy["domains"] = result["domains"]
+        entry_copy["confidence"] = result["confidence"]
+        entry_copy["classification_basis"] = result["classification_basis"]
+        entry_copy["domain_classified_by"] = "artcb_r393_v2"
         entry_copy["domain_classified_ts"] = time.time_ns()
+        # Garder "domain" pour rétrocompatibilité
+        entry_copy["domain"] = result["primary_domain"]
+
         updated_entries.append(entry_copy)
-        domain_counts[domain] = domain_counts.get(domain, 0) + 1
+        domain_counts[result["primary_domain"]] = domain_counts.get(result["primary_domain"], 0) + 1
         classified += 1
+        confidence_sum += result["confidence"]
+        if len(result["domains"]) > 1:
+            multi_domain_count += 1
+
+    avg_confidence = round(confidence_sum / max(classified, 1), 3)
 
     summary = {
         "ts_ns": time.time_ns(),
+        "version": "R393-v2-R394E",
         "total": len(entries),
         "classified": classified,
-        "already_classified": already_classified,
+        "reclassified": reclassified,
+        "multi_domain_count": multi_domain_count,
+        "avg_confidence": avg_confidence,
         "domain_distribution": dict(sorted(domain_counts.items(), key=lambda x: -x[1])),
         "update_written": args.update,
     }
@@ -176,15 +239,15 @@ def main():
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
 
-    print("[R393] Classification terminée:")
+    print("[R393] Classification multi-domaines v2 (R394-E):")
     for domain, count in sorted(domain_counts.items(), key=lambda x: -x[1]):
         print(f"  {domain:15s}: {count:3d}")
-    print(f"[R393] Total classifiés: {classified} / {len(entries)}")
+    print(f"[R393] Total: {classified} | Multi-domaines: {multi_domain_count} | Confidence avg: {avg_confidence}")
     print(f"[R393] Rapport: {report_path}")
 
     if args.update:
         corpus["entries"] = updated_entries
-        corpus["domain_classification_version"] = "R393"
+        corpus["domain_classification_version"] = "R393-v2-R394E"
         corpus["domain_classification_ts"] = time.time_ns()
         with open(corpus_path, "w", encoding="utf-8") as f:
             json.dump(corpus, f, indent=2, ensure_ascii=False)

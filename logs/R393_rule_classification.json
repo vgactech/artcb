@@ -1,8 +1,11 @@
 {
-  "ts_ns": 1789835879096121000,
+  "ts_ns": 1789837140920811000,
+  "version": "R393-v2-R394E",
   "total": 230,
   "classified": 230,
-  "already_classified": 0,
+  "reclassified": 0,
+  "multi_domain_count": 111,
+  "avg_confidence": 0.742,
   "domain_distribution": {
     "PROTOCOL": 96,
     "GOVERNANCE": 48,

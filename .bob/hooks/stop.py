@@ -114,6 +114,18 @@ def main() -> int:
         # Fail-open : ne jamais bloquer la fin de tour Bob
         artcb_result = {"artcb_status": "error", "note": "bob_job_completed_unavailable"}
 
+    # --- R394-C : Auto-feedback post-session (fail-open) ---
+    try:
+        import subprocess as _sp
+        _sp.run(
+            ["python3", "scripts/artcb_r392_auto_feedback.py", "--since", "HEAD~1"],
+            cwd=str(ROOT),
+            timeout=25,
+            capture_output=True,  # ne pas polluer stdout du hook
+        )
+    except Exception:
+        pass  # fail-open — ne jamais bloquer la fin de session
+
     # --- Stdout → contexte Bob ---
     status = artcb_result.get("artcb_status", "error")
     event_id = artcb_result.get("event_id", "?")
