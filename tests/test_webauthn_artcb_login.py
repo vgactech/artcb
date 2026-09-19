@@ -1,4 +1,4 @@
-"""Tests P0-A v2 — /auth/webauthn/login/options + /verify (2026-09-17).
+"""Tests P0-A v2 — /auth/webauthn/biometric/options + /verify (R384 — 2026-09-18).
 
 Vérifie :
   - Options retourne un challenge + hint
@@ -10,6 +10,9 @@ Vérifie :
   - Challenge usage unique (deuxième appel → 400)
   - unique_human_proven=False sur la session
   - certified_100=False
+
+NOTE R384 : Routes renommées /biometric/ pour éviter la collision avec le flux
+FIDO2 standard (/auth/webauthn/login/options dans webauthn_routes.py).
 """
 from __future__ import annotations
 
@@ -43,47 +46,47 @@ def api(tmp_path_factory: pytest.TempPathFactory) -> TestClient:
 
 
 def _get_challenge(api: TestClient) -> str:
-    """Obtient un challenge WebAuthn ARTCB."""
-    r = api.post("/api/v1/auth/webauthn/login/options", json={"hint": "fingerprint"})
+    """Obtient un challenge WebAuthn ARTCB biométrique (flux template_hex)."""
+    r = api.post("/api/v1/auth/webauthn/biometric/options", json={"hint": "fingerprint"})
     assert r.status_code == 200
     return r.json()["challenge"]
 
 
-# ─── Phase A : /auth/webauthn/login/options ───────────────────────────────────
+# ─── Phase A : /auth/webauthn/biometric/options ───────────────────────────────
 
 
 class TestWebAuthnOptions:
     def test_options_returns_challenge(self, api: TestClient):
-        r = api.post("/api/v1/auth/webauthn/login/options", json={})
+        r = api.post("/api/v1/auth/webauthn/biometric/options", json={})
         assert r.status_code == 200
         data = r.json()
         assert "challenge" in data
         assert len(data["challenge"]) == 64  # hex 32 bytes
 
     def test_options_challenge_is_unique(self, api: TestClient):
-        r1 = api.post("/api/v1/auth/webauthn/login/options", json={})
-        r2 = api.post("/api/v1/auth/webauthn/login/options", json={})
+        r1 = api.post("/api/v1/auth/webauthn/biometric/options", json={})
+        r2 = api.post("/api/v1/auth/webauthn/biometric/options", json={})
         assert r1.json()["challenge"] != r2.json()["challenge"]
 
     def test_options_returns_hint(self, api: TestClient):
-        r = api.post("/api/v1/auth/webauthn/login/options", json={"hint": "face"})
+        r = api.post("/api/v1/auth/webauthn/biometric/options", json={"hint": "face"})
         assert r.json()["hint"] == "face"
 
     def test_options_default_hint_fingerprint(self, api: TestClient):
-        r = api.post("/api/v1/auth/webauthn/login/options", json={})
+        r = api.post("/api/v1/auth/webauthn/biometric/options", json={})
         assert r.json()["hint"] == "fingerprint"
 
     def test_options_certified_false(self, api: TestClient):
-        r = api.post("/api/v1/auth/webauthn/login/options", json={})
+        r = api.post("/api/v1/auth/webauthn/biometric/options", json={})
         assert r.json()["certified_100"] is False
         assert r.json()["unique_human_proven"] is False
 
     def test_options_returns_instructions(self, api: TestClient):
-        r = api.post("/api/v1/auth/webauthn/login/options", json={})
+        r = api.post("/api/v1/auth/webauthn/biometric/options", json={})
         assert "instructions" in r.json()
 
 
-# ─── Phase B : /auth/webauthn/login/verify ────────────────────────────────────
+# ─── Phase B : /auth/webauthn/biometric/verify ───────────────────────────────
 
 
 class TestWebAuthnVerifyRawImageRejected:
@@ -91,7 +94,7 @@ class TestWebAuthnVerifyRawImageRejected:
 
     def test_png_image_rejected(self, api: TestClient):
         chal = _get_challenge(api)
-        r = api.post("/api/v1/auth/webauthn/login/verify", json={
+        r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": chal,
             "template_hex": PNG_MAGIC_HEX,
         })
@@ -100,7 +103,7 @@ class TestWebAuthnVerifyRawImageRejected:
 
     def test_jpeg_image_rejected(self, api: TestClient):
         chal = _get_challenge(api)
-        r = api.post("/api/v1/auth/webauthn/login/verify", json={
+        r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": chal,
             "template_hex": JPEG_MAGIC_HEX,
         })
@@ -111,7 +114,7 @@ class TestWebAuthnVerifyRawImageRejected:
         chal = _get_challenge(api)
         # BMP magic = 0x424D "BM"
         bmp_hex = "424d" + "00" * 62
-        r = api.post("/api/v1/auth/webauthn/login/verify", json={
+        r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": chal,
             "template_hex": bmp_hex,
         })
@@ -121,7 +124,7 @@ class TestWebAuthnVerifyRawImageRejected:
 
 class TestWebAuthnVerifyChallengeValidation:
     def test_unknown_challenge_rejected(self, api: TestClient):
-        r = api.post("/api/v1/auth/webauthn/login/verify", json={
+        r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": "00" * 32,
             "template_hex": TEMPLATE_HEX,
         })
@@ -133,7 +136,7 @@ class TestWebAuthnVerifyChallengeValidation:
         from src.api import auth_routes
         chal = "ee" * 32
         auth_routes._webauthn_challenges[chal] = time.time() - 1  # déjà expiré
-        r = api.post("/api/v1/auth/webauthn/login/verify", json={
+        r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": chal,
             "template_hex": TEMPLATE_HEX,
         })
@@ -143,7 +146,7 @@ class TestWebAuthnVerifyChallengeValidation:
     def test_invalid_hex_template_pydantic_rejected(self, api: TestClient):
         """template_hex non-hex → 422 (validation Pydantic) ou 400."""
         chal = _get_challenge(api)
-        r = api.post("/api/v1/auth/webauthn/login/verify", json={
+        r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": chal,
             "template_hex": "ZZZZZZ" * 20,  # pas du hex valide — longueur OK mais contenu invalide
         })
@@ -154,12 +157,12 @@ class TestWebAuthnVerifyChallengeValidation:
         """Un challenge ne peut être utilisé qu'une seule fois."""
         chal = _get_challenge(api)
         # Premier appel (template inconnu → 401 mais challenge consommé)
-        api.post("/api/v1/auth/webauthn/login/verify", json={
+        api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": chal,
             "template_hex": TEMPLATE_HEX,
         })
         # Deuxième appel → challenge inconnu
-        r2 = api.post("/api/v1/auth/webauthn/login/verify", json={
+        r2 = api.post("/api/v1/auth/webauthn/biometric/verify", json={
             "challenge": chal,
             "template_hex": TEMPLATE_HEX,
         })
@@ -172,7 +175,7 @@ class TestWebAuthnVerifyNoIdentity:
         """Sans identité enregistrée → 401."""
         chal = _get_challenge(api)
         with patch("src.api.biometric_identity_routes._load_records", return_value=[]):
-            r = api.post("/api/v1/auth/webauthn/login/verify", json={
+            r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
                 "challenge": chal,
                 "template_hex": TEMPLATE_HEX,
             })
@@ -195,7 +198,7 @@ class TestWebAuthnVerifyNoIdentity:
 
         chal = _get_challenge(api)
         with patch("src.api.biometric_identity_routes._load_records", return_value=[fake_record]):
-            r = api.post("/api/v1/auth/webauthn/login/verify", json={
+            r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
                 "challenge": chal,
                 "template_hex": TEMPLATE_HEX,  # différent de other_template
             })
@@ -218,7 +221,7 @@ class TestWebAuthnVerifySuccess:
 
         chal = _get_challenge(api)
         with patch("src.api.biometric_identity_routes._load_records", return_value=[fake_record]):
-            r = api.post("/api/v1/auth/webauthn/login/verify", json={
+            r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
                 "challenge": chal,
                 "template_hex": TEMPLATE_HEX,
             })
@@ -245,7 +248,7 @@ class TestWebAuthnVerifySuccess:
 
         chal = _get_challenge(api)
         with patch("src.api.biometric_identity_routes._load_records", return_value=[fake_record]):
-            r = api.post("/api/v1/auth/webauthn/login/verify", json={
+            r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
                 "challenge": chal,
                 "template_hex": TEMPLATE_HEX,
             })
@@ -278,7 +281,7 @@ class TestWebAuthnVerifySuccess:
 
         chal = _get_challenge(api)
         with patch("src.api.biometric_identity_routes._load_records", return_value=[record_a, record_b]):
-            r = api.post("/api/v1/auth/webauthn/login/verify", json={
+            r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
                 "challenge": chal,
                 "template_hex": TEMPLATE_HEX,
                 "human_id": "human_A",
@@ -290,7 +293,7 @@ class TestWebAuthnVerifySuccess:
         """human_id demandé mais inexistant → 404."""
         chal = _get_challenge(api)
         with patch("src.api.biometric_identity_routes._load_records", return_value=[]):
-            r = api.post("/api/v1/auth/webauthn/login/verify", json={
+            r = api.post("/api/v1/auth/webauthn/biometric/verify", json={
                 "challenge": chal,
                 "template_hex": TEMPLATE_HEX,
                 "human_id": "nonexistent_human",

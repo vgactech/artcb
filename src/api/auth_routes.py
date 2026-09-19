@@ -522,13 +522,18 @@ def logout_all(
 
 
 # --------------------------------------------------------------------------- #
-#  WebAuthn ARTCB — Login biométrique (P0-A v2 — 2026-09-17)
+#  WebAuthn ARTCB — Login biométrique template (P0-A v2 — 2026-09-17)
 #
-#  Flux :
-#    1. POST /auth/webauthn/login/options  → challenge
+#  Flux ARTCB biométrique (template_hex) — DISTINCT du flux FIDO2 standard :
+#    1. POST /auth/webauthn/biometric/options  → challenge
 #    2. (client) capture empreinte → calcule template_bytes + template_hex
-#    3. POST /auth/webauthn/login/verify   → vérif unicité HumanIdentityRecord
-#                                            → session si identité trouvée
+#    3. POST /auth/webauthn/biometric/verify   → vérif unicité HumanIdentityRecord
+#                                               → session si identité trouvée
+#
+#  NOTE R384 : Renommé /biometric/ pour éviter la collision avec
+#  webauthn_routes.py qui expose /webauthn/login/options pour le flux FIDO2
+#  standard (credential navigator). Les deux routes coexistaient sur la même
+#  URL — FastAPI enregistrait la dernière (webauthn_router écrasait auth_router).
 #
 #  DIFFÉRENCE AVEC WEBAUTHN FIDO2 CLASSIQUE :
 #    - Pas de credential FIDO2 local : c'est l'identité ARTCB HumanIdentityRecord
@@ -569,16 +574,17 @@ class WebAuthnLoginVerifyRequest(BaseModel):
 
 
 @router.post(
-    "/webauthn/login/options",
-    summary="Initier le login biométrique ARTCB (étape 1/2)",
+    "/webauthn/biometric/options",
+    summary="Initier le login biométrique ARTCB template (étape 1/2)",
     response_description="Challenge à signer biométriquement",
 )
-def webauthn_login_options(body: WebAuthnLoginOptionsRequest) -> dict:
-    """Émet un challenge pour le login biométrique ARTCB.
+def webauthn_biometric_options(body: WebAuthnLoginOptionsRequest) -> dict:
+    """Émet un challenge pour le login biométrique ARTCB (flux template_hex).
 
+    DISTINCT du flux FIDO2 standard (/auth/webauthn/login/options).
     L'utilisateur doit ensuite capturer son empreinte/visage, dériver le
-    template biométrique, et POST /auth/webauthn/login/verify avec ce challenge
-    et le template_hex normalisé.
+    template biométrique, et POST /auth/webauthn/biometric/verify avec ce
+    challenge et le template_hex normalisé.
 
     OVH1 bloqué — réponse exclusivement depuis N2/N3/N4.
     """
@@ -599,12 +605,14 @@ def webauthn_login_options(body: WebAuthnLoginOptionsRequest) -> dict:
 
 
 @router.post(
-    "/webauthn/login/verify",
-    summary="Vérifier le login biométrique ARTCB (étape 2/2)",
+    "/webauthn/biometric/verify",
+    summary="Vérifier le login biométrique ARTCB template (étape 2/2)",
     response_description="Session token si identité biométrique trouvée",
 )
-def webauthn_login_verify(body: WebAuthnLoginVerifyRequest, request: Request) -> dict:
+def webauthn_biometric_verify(body: WebAuthnLoginVerifyRequest, request: Request) -> dict:
     """Vérifie le template biométrique contre les identités HumanIdentityRecord enregistrées.
+
+    Flux ARTCB template (DISTINCT du flux FIDO2 /auth/webauthn/login/verify).
 
     Flow :
       1. Charge tous les HumanIdentityRecord depuis l'état local
