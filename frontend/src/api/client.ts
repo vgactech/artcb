@@ -765,94 +765,9 @@ export async function castGovernanceVote(proposalId: string, walletAddress: stri
   return data as { requires_rollback: boolean };
 }
 
-// --- P2P ---
-export async function fetchP2PStatus() {
-  const { data } = await api.get("/p2p/status");
-  return data as Record<string, unknown>;
-}
-
-export async function fetchP2PPeers() {
-  const { data } = await api.get("/p2p/peers");
-  return data as { peers: Array<Record<string, unknown>>; count: number };
-}
-
-export async function addP2PPeer(body: {
-  host: string;
-  port: number;
-  kem_public_key_hex: string;
-  label?: string;
-}) {
-  const { data } = await api.post("/p2p/peers", body);
-  return data;
-}
-
-export async function syncP2PAll(fromIndex = 0) {
-  const { data } = await api.post("/p2p/sync", null, { params: { from_index: fromIndex } });
-  return data as { results: unknown[]; peer_count: number };
-}
-
-// --- Pool calcul distribué E2E ---
-export async function fetchPoolStatus() {
-  const { data } = await api.get("/pool/status");
-  return data as Record<string, unknown>;
-}
-
-export async function fetchPoolJobs() {
-  const { data } = await api.get("/pool/jobs");
-  return data as { jobs: Array<Record<string, unknown>>; count: number };
-}
-
-export async function createPoolJob(body: {
-  text: string;
-  visibility?: string;
-  group_id?: string;
-  actor_address?: string;
-  wallet_name?: string;
-  chunk_chars?: number;
-  auto_dispatch?: boolean;
-  encrypt_transport?: boolean;
-}) {
-  const { data } = await api.post("/pool/jobs", body);
-  return data as { job: Record<string, unknown>; encrypted_transport: boolean };
-}
-
-export async function processAllPoolIncoming(body: {
-  wallet_name?: string;
-  contributor_address?: string;
-}) {
-  const { data } = await api.post("/pool/incoming/process-all", body);
-  return data as { processed: Array<Record<string, unknown>>; count: number };
-}
-
-export async function finalizePoolJob(jobId: string, fullText: string) {
-  const { data } = await api.post(`/pool/jobs/${jobId}/finalize`, { full_text: fullText });
-  return data as Record<string, unknown>;
-}
-
-export async function fetchPoolPreferences() {
-  const { data } = await api.get("/pool/preferences");
-  return data as { preferences: Record<string, unknown> };
-}
-
-export async function savePoolPreferences(body: Record<string, unknown>) {
-  const { data } = await api.put("/pool/preferences", body);
-  return data;
-}
-
-export async function runPoolMining(body: {
-  text: string;
-  use_distributed_pool?: boolean;
-  encrypt_transport?: boolean;
-  visibility?: string;
-  group_id?: string | null;
-  actor_address?: string;
-  wallet_name?: string;
-  auto_finalize?: boolean;
-  chunk_chars?: number;
-}) {
-  const { data } = await api.post("/pool/run", body);
-  return data as Record<string, unknown>;
-}
+// --- P2P / Pool : backend-only — supprimé du frontend R398 ---
+// Ces endpoints restent accessibles via API directe ou agents.
+// Pages /network et /memorize déjà retirées depuis R359/R379.
 
 export async function runMiningPipeline(body: {
   text: string;

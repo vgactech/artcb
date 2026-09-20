@@ -55,7 +55,7 @@ export function Home() {
   const heatmap = blocks.slice(-14).map((_, i) => (i % 3 === 0 ? "▓" : "░")).join("");
 
   const CHECKLIST = [
-    { id: "memorized" as const, label: t('home_checklist_memorize'), to: "/memorize" },
+    { id: "memorized" as const, label: t('home_checklist_memorize'), to: "/graph" },
     { id: "explored" as const, label: t('home_checklist_explore'), to: "/graph" },
     { id: "searched" as const, label: t('home_checklist_search'), to: "/graph" },
     { id: "signed" as const, label: t('home_checklist_sign'), to: "/chain" },

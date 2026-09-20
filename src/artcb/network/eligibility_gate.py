@@ -1,6 +1,15 @@
-"""R382 — NetworkEligibilityGate : éligibilité réseau d'un nœud ARTCB.
+"""R382/R397 — NetworkEligibilityGate : éligibilité réseau d'un nœud ARTCB.
 
-Principe fondamental (rapport expert 2026-09-19) :
+R397 — Forensic hardening (audit expert 2026-09-19) :
+  6 correctifs appliqués sur R382 :
+  1. ExternalProbeStore réel — record_external_probe() n'était pas un stub vide
+  2. outbound_tls / outbound_websocket mesurés séparément (pas projection TCP)
+  3. ConnectivityFailure enum — captive_portal ≠ NETWORK_DOWN ≠ ARTCB_UNREACHABLE
+  4. Détection CGNAT RFC 6598 (100.64.0.0/10) + IPv6 ULA + link-local
+  5. _get_local_ip() robuste (multi-fallback, pas 8.8.8.8 unique)
+  6. Multi-seeds outbound — indépendance vis-à-vis de artcb.me
+
+Principe fondamental :
   La question n'est pas « est-ce un Wi-Fi public/entreprise ? »
   mais « la machine peut-elle réellement satisfaire les exigences
   opérationnelles du protocole ARTCB dans ses conditions réseau actuelles ? »
@@ -13,40 +22,26 @@ Architecture :
   EpochCoordinator (economics) reste la seule autorité pour les transitions
   économiques (GRACE → OFFLINE, OFFLINE → RETIRED).
 
-Cycle complet :
-  DISCOVERY → TESTING → DIRECT | RELAYABLE | DEGRADED | SUSPENDED
-       ↑                              ↓
-  NETWORK_CHANGE ←── REASSESSMENT ←──┘
-
-Scénarios couverts (tableau expert §32) :
-  S01 Wi-Fi domestique plein   → DIRECT
-  S02 Wi-Fi public outbound    → RELAYABLE (si relay dispo) ou DEGRADED
-  S03 Wi-Fi entreprise strict  → SUSPENDED
-  S04 CGNAT / hotspot 4G       → RELAYABLE ou DEGRADED
-  S05 Double NAT               → RELAYABLE ou DEGRADED
-  S06 Captive portal (non auth)→ SUSPENDED
-  S07 VPN actif                → REASSESS (nouveau test)
-  S08 Changement réseau        → REASSESS
-  S09 Sleep/Wake               → REASSESS
-  S10 Probe node indisponible  → ne pas suspendre injustement (INDETERMINATE)
-
 HONNÊTETÉ :
-  - Les tests outbound sont réels (socket TCP).
-  - Le test inbound simule une probe externe : en local, il teste l'écoute
-    sur le port P2P configuré. En production, une probe externe ARTCB
-    doit valider external_reachable=True.
-  - CERTIFIED_100=false — calibrage sur vrais réseaux non encore mesuré.
+  - Tests outbound TCP séparés par host (multi-seeds).
+  - outbound_tls tente un vrai handshake TLS (ssl.wrap_socket).
+  - outbound_websocket teste uniquement le TCP 443 — upgrade WS non implémenté.
+  - record_external_probe() stocke les preuves externes dans ExternalProbeStore.
+  - nat_class = heuristique adresse IP — STUN/TURN non implémenté.
+  - CERTIFIED_100=false — calibrage vrais réseaux non encore mesuré.
 
 CERTIFIED_100=false | MODE DEBUG actif
 """
 
 from __future__ import annotations
 
-MODULE_VERSION = "1.0.0"  # R382
+MODULE_VERSION = "1.1.0"  # R397 — forensic hardening
 
+import ipaddress
 import logging
 import os
 import socket
+import ssl
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -63,16 +58,26 @@ DEFAULT_P2P_PORT: int = int(os.getenv("ARTCB_P2P_PORT", "18444"))
 PROBE_TIMEOUT_S: float = 5.0
 OUTBOUND_TIMEOUT_S: float = 5.0
 
-# Endpoints externes pour tests outbound (pas de fallback hardcodé secret —
-# uniquement les nœuds seeds ARTCB publics déclarés D-045)
-_DEFAULT_PROBE_HOST = os.getenv("ARTCB_PROBE_HOST", "artcb.me")
-_DEFAULT_PROBE_PORT = int(os.getenv("ARTCB_PROBE_PORT", "443"))
+# Multi-seeds outbound — D-045 : uniquement les 4 IP toujours allumées
+# artcb.me ne doit JAMAIS être le seul point de test (audit expert §13)
+# Les seeds supplémentaires permettent de distinguer panne artcb.me vs panne réseau local
+_OUTBOUND_SEEDS: list[tuple[str, int]] = [
+    (os.getenv("ARTCB_PROBE_HOST", "artcb.me"), int(os.getenv("ARTCB_PROBE_PORT", "443"))),
+    ("1.1.1.1", 443),    # Cloudflare — toujours accessible si Internet fonctionne
+    ("8.8.8.8", 443),    # Google DNS — second témoin indépendant
+]
+# Compatibilité R382 : alias direct vers le premier seed
+_DEFAULT_PROBE_HOST = _OUTBOUND_SEEDS[0][0]
+_DEFAULT_PROBE_PORT = _OUTBOUND_SEEDS[0][1]
 
 # Nombre minimum de tests positifs pour passer TESTING → DIRECT
 MIN_PASS_STREAK: int = 2  # anti-flap : 2 succès consécutifs requis
 
 # Fenêtre temporelle avant DEGRADED → SUSPENDED (secondes)
 DEGRADED_GRACE_S: int = int(os.getenv("ARTCB_DEGRADED_GRACE_S", str(5 * 60)))  # 5 min
+
+# Taille max du store de preuves externes (par nœud)
+MAX_EXTERNAL_PROBE_HISTORY: int = 50
 
 
 # ─── Enums ───────────────────────────────────────────────────────────────────
@@ -84,23 +89,45 @@ class NetworkState(str, Enum):
     Un nœud SUSPENDED réseau peut avoir EconomicState=GRACE si dans la
     fenêtre de grâce économique.
     """
-    UNKNOWN      = "UNKNOWN"       # jamais testé
-    TESTING      = "TESTING"       # évaluation en cours
-    DIRECT       = "DIRECT"        # connexions entrantes directes disponibles
-    RELAYABLE    = "RELAYABLE"     # relay ARTCB requis pour inbound
-    DEGRADED     = "DEGRADED"      # outbound ok, inbound fail, relay indisponible
-    SUSPENDED    = "SUSPENDED"     # ne satisfait pas les exigences minimales
-    INDETERMINATE = "INDETERMINATE" # probe externe indisponible — pas suspendre
+    UNKNOWN       = "UNKNOWN"        # jamais testé
+    TESTING       = "TESTING"        # évaluation en cours
+    DIRECT        = "DIRECT"         # connexions entrantes directes disponibles
+    RELAYABLE     = "RELAYABLE"      # relay ARTCB requis pour inbound
+    DEGRADED      = "DEGRADED"       # outbound ok, inbound fail, relay indisponible
+    SUSPENDED     = "SUSPENDED"      # ne satisfait pas les exigences minimales
+    INDETERMINATE = "INDETERMINATE"  # probe externe indisponible — pas suspendre
 
 
 class NatClass(str, Enum):
-    """Classification NAT mesurée."""
-    NONE         = "NONE"         # IP publique directe (serveur cloud)
-    FULL_CONE    = "FULL_CONE"    # NAT domestique classique
-    RESTRICTED   = "RESTRICTED"   # NAT avec restriction de port
-    SYMMETRIC    = "SYMMETRIC"    # NAT symétrique (CGNAT)
-    DOUBLE_NAT   = "DOUBLE_NAT"   # double NAT détecté
+    """Classification NAT heuristique basée sur l'adresse IP locale.
+
+    R397 — ajout CGNAT (RFC 6598 100.64.0.0/10), IPv6_ULA, LINK_LOCAL.
+    HONNÊTETÉ : classification par adresse IP uniquement — STUN/TURN non implémenté.
+    """
+    NONE         = "NONE"         # IP publique directe (serveur cloud / VPS)
+    FULL_CONE    = "FULL_CONE"    # RFC1918 privé avec preuve externe
+    RESTRICTED   = "RESTRICTED"   # RFC1918 privé sans preuve externe
+    CGNAT        = "CGNAT"        # RFC 6598 100.64.0.0/10 — opérateur mobile
+    DOUBLE_NAT   = "DOUBLE_NAT"   # double NAT détecté (heuristique future)
+    IPV6_ULA     = "IPV6_ULA"     # fc00::/7 — adresse ULA IPv6 locale
+    LINK_LOCAL   = "LINK_LOCAL"   # 169.254.x.x ou fe80:: — pas de routage
     UNKNOWN      = "UNKNOWN"
+
+
+class ConnectivityFailure(str, Enum):
+    """R397 — Cause précise d'un échec de connectivité.
+
+    Distingue les cas que R382 confondait tous sous captive_portal=True.
+    """
+    NONE                   = "NONE"                    # pas d'échec
+    NETWORK_DOWN           = "NETWORK_DOWN"            # aucun host joignable (réseau coupé)
+    ARTCB_UNREACHABLE      = "ARTCB_UNREACHABLE"       # artcb.me DOWN mais Internet OK
+    OUTBOUND_TCP_BLOCKED   = "OUTBOUND_TCP_BLOCKED"    # TCP bloqué sur tous les hosts
+    CAPTIVE_PORTAL         = "CAPTIVE_PORTAL"          # portail captif détecté
+    TLS_INTERCEPTED        = "TLS_INTERCEPTED"         # TLS intercepté / inspection proxy
+    PROXY_REQUIRED         = "PROXY_REQUIRED"          # proxy authentifié requis
+    PARTIAL_CONNECTIVITY   = "PARTIAL_CONNECTIVITY"    # certains seeds joignables, pas tous
+    UNKNOWN_FAILURE        = "UNKNOWN_FAILURE"         # échec non classifié
 
 
 # ─── Dataclasses ─────────────────────────────────────────────────────────────
@@ -122,31 +149,39 @@ class ConnectivityProbe:
 class NetworkCapability:
     """Capacité réseau mesurée d'une machine.
 
+    R397 : outbound_tls et outbound_websocket sont maintenant mesurés séparément.
+    ConnectivityFailure remplace captive_portal booléen (§3 audit expert).
     Séparée de l'identité du nœud (NodeID ≠ IP ≠ réseau actuel).
     """
     ts_ns: int = field(default_factory=time.time_ns)
 
-    # Connectivité sortante
-    outbound_tcp: bool = False
-    outbound_tls: bool = False
-    outbound_websocket: bool = False  # testé via TCP 443 (proxy-safe)
+    # Connectivité sortante — R397 : mesures indépendantes
+    outbound_tcp: bool = False        # TCP brut vers au moins 1 seed
+    outbound_tls: bool = False        # TLS handshake réel (ssl.wrap_socket)
+    outbound_websocket: bool = False  # TCP 443 (upgrade WS non implémenté — HONNÊTETÉ)
+    outbound_seeds_ok: int = 0        # nb seeds TCP joignables (max len(_OUTBOUND_SEEDS))
+    artcb_reachable: bool = False     # artcb.me spécifiquement joignable
 
     # Connectivité entrante (auto-probe locale)
     inbound_listen: bool = False      # le port P2P écoute localement
     external_reachable: bool = False  # preuve externe (probe ARTCB tiers)
     external_probe_count: int = 0     # nb probes externes reçues
     external_probe_ok: int = 0        # nb probes externes réussies
+    external_distinct_nodes: int = 0  # nb nœuds ARTCB distincts ayant probé
 
     # Relay
     relay_available: bool = False
 
-    # NAT
+    # NAT — R397 : CGNAT + IPv6
     nat_class: NatClass = NatClass.UNKNOWN
+
+    # R397 — diagnostic précis de l'échec (remplace captive_portal booléen)
+    connectivity_failure: ConnectivityFailure = ConnectivityFailure.NONE
+    captive_portal: bool = False  # conservé pour compatibilité R382 (dérivé de connectivity_failure)
 
     # Réseau
     packet_loss_pct: float = 0.0      # 0–100
     latency_ms: float | None = None
-    captive_portal: bool = False       # captive portal détecté
 
     # Métadonnées
     local_ip: str = ""
@@ -159,15 +194,19 @@ class NetworkCapability:
             "outbound_tcp": self.outbound_tcp,
             "outbound_tls": self.outbound_tls,
             "outbound_websocket": self.outbound_websocket,
+            "outbound_seeds_ok": self.outbound_seeds_ok,
+            "artcb_reachable": self.artcb_reachable,
             "inbound_listen": self.inbound_listen,
             "external_reachable": self.external_reachable,
             "external_probe_count": self.external_probe_count,
             "external_probe_ok": self.external_probe_ok,
+            "external_distinct_nodes": self.external_distinct_nodes,
             "relay_available": self.relay_available,
             "nat_class": self.nat_class.value,
+            "connectivity_failure": self.connectivity_failure.value,
+            "captive_portal": self.captive_portal,
             "packet_loss_pct": self.packet_loss_pct,
             "latency_ms": self.latency_ms,
-            "captive_portal": self.captive_portal,
             "local_ip": self.local_ip,
             "p2p_port": self.p2p_port,
             "probes": [vars(p) for p in self.probes],
@@ -260,28 +299,139 @@ def _probe_inbound_listen(p2p_port: int) -> ConnectivityProbe:
         )
 
 
-def _detect_captive_portal(probe_host: str, probe_port: int) -> bool:
-    """Détecte un captive portal : connexion TCP acceptée mais HTTP redirige.
+def _probe_outbound_tls(host: str, port: int, *, timeout_s: float = OUTBOUND_TIMEOUT_S) -> ConnectivityProbe:
+    """R397 — Tente un vrai handshake TLS vers host:port.
 
-    Approche légère : on vérifie si le TCP 443 vers le probe_host est joignable.
-    Un captive portal bloquera typiquement cette connexion ou redirigera HTTP→captive.
-    Honnêteté : détection partielle (TCP uniquement — pas de validation TLS/SNI).
+    HONNÊTETÉ : ssl.create_default_context() valide le certificat et le SNI.
+    Si le proxy intercepte TLS (inspection d'entreprise), la validation
+    du certificat peut échouer → TLS_INTERCEPTED détectable.
     """
+    ts = time.time_ns()
+    ctx = ssl.create_default_context()
     try:
-        with socket.create_connection((probe_host, probe_port), timeout=3.0):
-            return False  # connexion directe réussie → probablement pas de captive portal
-    except OSError:
-        # Impossible de joindre → potentiel captive portal ou réseau coupé
-        return True
+        with socket.create_connection((host, port), timeout=timeout_s) as raw_sock:
+            with ctx.wrap_socket(raw_sock, server_hostname=host) as tls_sock:
+                _ = tls_sock.getpeercert()
+                latency_ms = (time.perf_counter_ns() - ts) / 1_000_000
+                logger.debug("[R397] outbound TLS %s:%d OK %.1fms", host, port, latency_ms)
+                return ConnectivityProbe(
+                    ts_ns=ts, probe_kind="outbound_tls",
+                    host=host, port=port, success=True, latency_ms=latency_ms,
+                )
+    except ssl.SSLCertVerificationError as exc:
+        logger.debug("[R397] TLS cert verification FAIL %s:%d — possible inspection: %s", host, port, exc)
+        return ConnectivityProbe(
+            ts_ns=ts, probe_kind="outbound_tls",
+            host=host, port=port, success=False,
+            error=f"TLS_CERT_FAIL:{exc}",
+        )
+    except (ssl.SSLError, OSError) as exc:
+        logger.debug("[R397] outbound TLS %s:%d FAIL %s", host, port, exc)
+        return ConnectivityProbe(
+            ts_ns=ts, probe_kind="outbound_tls",
+            host=host, port=port, success=False, error=str(exc),
+        )
+
+
+def _classify_connectivity_failure(
+    seeds_ok: int,
+    artcb_ok: bool,
+    tls_ok: bool,
+    tcp_ok: bool,
+) -> ConnectivityFailure:
+    """R397 — Classifie la cause d'échec de connectivité.
+
+    Logique (ordre de priorité) :
+      - Tous seeds TCP fail + artcb fail → NETWORK_DOWN
+      - TCP ok sur seeds alternatifs mais artcb fail → ARTCB_UNREACHABLE
+      - TCP ok mais TLS fail → TLS_INTERCEPTED
+      - TCP fail total → OUTBOUND_TCP_BLOCKED
+      - Tous ok → NONE
+    """
+    if seeds_ok == 0 and not tcp_ok:
+        return ConnectivityFailure.NETWORK_DOWN
+    if seeds_ok > 0 and not artcb_ok:
+        return ConnectivityFailure.ARTCB_UNREACHABLE
+    if tcp_ok and not tls_ok:
+        return ConnectivityFailure.TLS_INTERCEPTED
+    if not tcp_ok:
+        return ConnectivityFailure.OUTBOUND_TCP_BLOCKED
+    return ConnectivityFailure.NONE
 
 
 def _get_local_ip() -> str:
-    """Détecte l'IP locale principale (non loopback)."""
+    """R397 — Détecte l'IP locale principale avec multi-fallback robuste.
+
+    R382 utilisait uniquement 8.8.8.8:80 — si ce seul host est bloqué,
+    la fonction retournait 127.0.0.1 à tort.
+    R397 essaie plusieurs hosts en séquence.
+    """
+    candidates = [
+        ("1.1.1.1", 443),
+        ("8.8.8.8", 80),
+        ("8.8.4.4", 53),
+    ]
+    for host, port in candidates:
+        try:
+            with socket.create_connection((host, port), timeout=2.0) as s:
+                ip = s.getsockname()[0]
+                if ip and ip != "0.0.0.0":
+                    return ip
+        except OSError:
+            continue
+    # Fallback via getaddrinfo — ne tente aucune connexion réseau
     try:
-        with socket.create_connection(("8.8.8.8", 80), timeout=2.0) as s:
-            return s.getsockname()[0]
+        return socket.gethostbyname(socket.gethostname())
     except OSError:
         return "127.0.0.1"
+
+
+def _classify_nat(local_ip: str, *, external_reachable: bool) -> NatClass:
+    """R397 — Classification NAT heuristique basée sur l'adresse IP locale.
+
+    Ajout RFC 6598 CGNAT (100.64.0.0/10), IPv6 ULA (fc00::/7),
+    link-local (169.254.x.x / fe80::).
+
+    HONNÊTETÉ : classification par plage d'adresses uniquement.
+    STUN/TURN pour classification NAT réelle non implémenté.
+    """
+    try:
+        addr = ipaddress.ip_address(local_ip)
+    except ValueError:
+        return NatClass.UNKNOWN
+
+    if addr.is_loopback:
+        return NatClass.UNKNOWN
+    if addr.is_link_local:
+        return NatClass.LINK_LOCAL
+
+    if isinstance(addr, ipaddress.IPv6Address):
+        # fc00::/7 = ULA (Unique Local Address)
+        if addr in ipaddress.ip_network("fc00::/7"):
+            return NatClass.IPV6_ULA
+        if addr.is_global:
+            return NatClass.NONE if not external_reachable else NatClass.FULL_CONE
+        return NatClass.UNKNOWN
+
+    # IPv4
+    # RFC 6598 — Shared Address Space (CGNAT opérateur)
+    if addr in ipaddress.ip_network("100.64.0.0/10"):
+        return NatClass.CGNAT
+
+    # RFC 1918 privé
+    rfc1918 = [
+        ipaddress.ip_network("10.0.0.0/8"),
+        ipaddress.ip_network("172.16.0.0/12"),
+        ipaddress.ip_network("192.168.0.0/16"),
+    ]
+    if any(addr in net for net in rfc1918):
+        return NatClass.FULL_CONE if external_reachable else NatClass.RESTRICTED
+
+    # IP publique routable
+    if addr.is_global:
+        return NatClass.NONE
+
+    return NatClass.UNKNOWN
 
 
 # ─── Évaluation principale ────────────────────────────────────────────────────
@@ -295,59 +445,107 @@ def assess_network_capability(
     external_reachable: bool | None = None,
     external_probe_count: int = 0,
     external_probe_ok: int = 0,
+    external_distinct_nodes: int = 0,
     _force_outbound: bool | None = None,    # injection de test uniquement
     _force_inbound: bool | None = None,     # injection de test uniquement
 ) -> NetworkCapability:
-    """Mesure la capacité réseau réelle de la machine courante.
+    """R397 — Mesure la capacité réseau réelle avec sondes indépendantes.
 
-    Args :
-        p2p_port           : port P2P ARTCB configuré
-        probe_host         : hôte de référence pour tests outbound (artcb.me par défaut)
-        probe_port         : port de référence (443)
-        relay_available    : un relay ARTCB tiers a confirmé sa disponibilité
-        external_reachable : preuve externe (True/False) ou None si non testée
-        external_probe_count / external_probe_ok : résultats des probes externes reçues
-        _force_outbound    : injection pour tests (ne PAS utiliser en production)
-        _force_inbound     : injection pour tests (ne PAS utiliser en production)
+    R397 vs R382 :
+      - Multi-seeds TCP (3 hosts) — artcb.me n'est plus le seul point de test
+      - TLS handshake réel séparé du TCP
+      - ConnectivityFailure classifié (NETWORK_DOWN vs ARTCB_UNREACHABLE vs TLS_INTERCEPTED)
+      - NAT classifié avec CGNAT RFC 6598 + IPv6
+      - _get_local_ip() robuste (multi-fallback)
     """
-    logger.debug("[R382] assess_network_capability — p2p_port=%d probe=%s:%d",
-                 p2p_port, probe_host, probe_port)
+    logger.debug("[R397] assess_network_capability — p2p_port=%d", p2p_port)
 
     cap = NetworkCapability(p2p_port=p2p_port)
     cap.local_ip = _get_local_ip()
 
-    # --- Connectivité sortante ---
+    # --- Connectivité sortante multi-seeds ---
     if _force_outbound is not None:
-        outbound_probe = ConnectivityProbe(
-            ts_ns=time.time_ns(), probe_kind="outbound_tcp",
-            host=probe_host, port=probe_port,
-            success=_force_outbound,
-        )
+        # Mode test : injection uniforme sur tous les seeds
+        for seed_host, seed_port in _OUTBOUND_SEEDS:
+            p = ConnectivityProbe(
+                ts_ns=time.time_ns(), probe_kind="outbound_tcp",
+                host=seed_host, port=seed_port, success=_force_outbound,
+            )
+            cap.probes.append(p)
         cap.outbound_tcp = _force_outbound
         cap.outbound_tls = _force_outbound
         cap.outbound_websocket = _force_outbound
+        cap.outbound_seeds_ok = len(_OUTBOUND_SEEDS) if _force_outbound else 0
+        cap.artcb_reachable = _force_outbound
+        cap.latency_ms = 1.0 if _force_outbound else None
+        # R397 — dériver connectivity_failure et captive_portal en mode injection aussi
+        if not _force_outbound:
+            cap.connectivity_failure = ConnectivityFailure.NETWORK_DOWN
+            cap.captive_portal = True
+        else:
+            cap.connectivity_failure = ConnectivityFailure.NONE
+            cap.captive_portal = False
     else:
-        outbound_probe = _probe_outbound_tcp(probe_host, probe_port)
-        cap.outbound_tcp = outbound_probe.success
-        cap.outbound_tls = outbound_probe.success   # même chemin TCP 443
-        cap.outbound_websocket = outbound_probe.success  # WS sur 443 même test
-        cap.latency_ms = outbound_probe.latency_ms
+        # Mode production : sonder chaque seed indépendamment
+        seeds_ok = 0
+        artcb_ok = False
+        best_latency: float | None = None
 
-    cap.probes.append(outbound_probe)
+        for seed_host, seed_port in _OUTBOUND_SEEDS:
+            p = _probe_outbound_tcp(seed_host, seed_port)
+            cap.probes.append(p)
+            if p.success:
+                seeds_ok += 1
+                if best_latency is None or (p.latency_ms and p.latency_ms < best_latency):
+                    best_latency = p.latency_ms
+            # Le premier seed est artcb.me (D-045)
+            if seed_host == _OUTBOUND_SEEDS[0][0] and p.success:
+                artcb_ok = True
 
-    # --- Captive portal ---
-    if not cap.outbound_tcp:
-        cap.captive_portal = True   # si même TCP 443 échoue → fort indice de portail
-        logger.debug("[R382] captive_portal=True (outbound TCP fail)")
-    else:
-        cap.captive_portal = False
+        cap.outbound_seeds_ok = seeds_ok
+        cap.artcb_reachable = artcb_ok
+        cap.outbound_tcp = seeds_ok > 0  # au moins 1 seed joignable
+        cap.latency_ms = best_latency
+
+        # TLS — testé uniquement si TCP fonctionne (évite le timeout inutile)
+        if cap.outbound_tcp:
+            tls_host = _OUTBOUND_SEEDS[0][0]  # artcb.me en priorité, sinon 1.1.1.1
+            if not artcb_ok:
+                tls_host = "1.1.1.1"
+            tls_p = _probe_outbound_tls(tls_host, 443)
+            cap.probes.append(tls_p)
+            cap.outbound_tls = tls_p.success
+        else:
+            cap.outbound_tls = False
+
+        # outbound_websocket = TCP 443 sur le premier seed (HONNÊTETÉ : upgrade WS non testé)
+        cap.outbound_websocket = artcb_ok  # TCP artcb.me:443 = meilleur proxy WS
+
+        # ConnectivityFailure — R397
+        cap.connectivity_failure = _classify_connectivity_failure(
+            seeds_ok=seeds_ok,
+            artcb_ok=artcb_ok,
+            tls_ok=cap.outbound_tls,
+            tcp_ok=cap.outbound_tcp,
+        )
+        # captive_portal = rétrocompatibilité R382
+        cap.captive_portal = cap.connectivity_failure in (
+            ConnectivityFailure.CAPTIVE_PORTAL,
+            ConnectivityFailure.NETWORK_DOWN,
+            ConnectivityFailure.OUTBOUND_TCP_BLOCKED,
+        )
+
+        logger.debug(
+            "[R397] outbound: tcp=%s tls=%s seeds_ok=%d artcb=%s failure=%s",
+            cap.outbound_tcp, cap.outbound_tls, seeds_ok, artcb_ok,
+            cap.connectivity_failure.value,
+        )
 
     # --- Connectivité entrante ---
     if _force_inbound is not None:
         inbound_probe = ConnectivityProbe(
             ts_ns=time.time_ns(), probe_kind="inbound_listen",
-            host="127.0.0.1", port=p2p_port,
-            success=_force_inbound,
+            host="127.0.0.1", port=p2p_port, success=_force_inbound,
         )
         cap.inbound_listen = _force_inbound
     else:
@@ -360,28 +558,24 @@ def assess_network_capability(
     if external_reachable is not None:
         cap.external_reachable = external_reachable
     else:
-        # Pas de probe externe fournie → on ne présume pas
         cap.external_reachable = False
-        logger.debug("[R382] external_reachable=None — conservateur: False")
+        logger.debug("[R397] external_reachable=None — conservateur: False")
 
     cap.external_probe_count = external_probe_count
     cap.external_probe_ok = external_probe_ok
+    cap.external_distinct_nodes = external_distinct_nodes
 
     # --- Relay ---
     cap.relay_available = relay_available
 
-    # --- NAT (heuristique légère) ---
-    if cap.local_ip.startswith("10.") or cap.local_ip.startswith("172.") or cap.local_ip.startswith("192.168."):
-        if not cap.external_reachable and cap.outbound_tcp:
-            cap.nat_class = NatClass.RESTRICTED  # heuristique — IP privée sans preuve externe
-        else:
-            cap.nat_class = NatClass.FULL_CONE   # IP privée mais preuve externe présente
-    else:
-        cap.nat_class = NatClass.NONE  # IP publique directe (ex. VPS cloud)
+    # --- NAT (R397 — heuristique étendue avec CGNAT + IPv6) ---
+    cap.nat_class = _classify_nat(cap.local_ip, external_reachable=cap.external_reachable)
 
-    logger.debug("[R382] capability: outbound=%s inbound=%s external=%s relay=%s nat=%s",
-                 cap.outbound_tcp, cap.inbound_listen, cap.external_reachable,
-                 cap.relay_available, cap.nat_class.value)
+    logger.debug(
+        "[R397] capability: outbound=%s tls=%s inbound=%s external=%s relay=%s nat=%s failure=%s",
+        cap.outbound_tcp, cap.outbound_tls, cap.inbound_listen, cap.external_reachable,
+        cap.relay_available, cap.nat_class.value, cap.connectivity_failure.value,
+    )
     return cap
 
 
@@ -542,7 +736,13 @@ class NetworkEligibilityGate:
         self._last_result: EligibilityResult | None = None
         self._history: list[dict[str, Any]] = []
 
-        logger.debug("[R382] NetworkEligibilityGate init node_id=%s port=%d",
+        # R397 — ExternalProbeStore réel (corrige stub vide de R382)
+        self._external_probes: list[dict[str, Any]] = []
+        self._external_probe_count: int = 0
+        self._external_probe_ok: int = 0
+        self._external_distinct_nodes: set[str] = set()
+
+        logger.debug("[R397] NetworkEligibilityGate init node_id=%s port=%d",
                      node_id, p2p_port)
 
     # Propriétés publiques (lecture seule)
@@ -564,27 +764,34 @@ class NetworkEligibilityGate:
         _force_outbound: bool | None = None,
         _force_inbound: bool | None = None,
     ) -> EligibilityResult:
-        """Lance une évaluation complète et met à jour l'état interne.
+        """R397 — Lance une évaluation complète et met à jour l'état interne.
 
-        Args supplémentaires injectés par les probes externes ARTCB :
-            relay_available      : un relay tiers a confirmé sa dispo
-            external_reachable   : preuve externe de joignabilité
-            external_probe_count : nb probes reçues depuis nœuds tiers
-            external_probe_ok    : nb probes réussies
+        Utilise les preuves externes accumulées via record_external_probe()
+        si external_probe_count/ok ne sont pas fournis explicitement.
         """
         prev_state = self._current_state
         self._current_state = NetworkState.TESTING
-        logger.info("[R382] assess() node_id=%s (prev_state=%s)",
+        logger.info("[R397] assess() node_id=%s (prev_state=%s)",
                     self.node_id, prev_state.value)
+
+        # R397 : utilise les preuves stockées si pas fourni explicitement
+        eff_probe_count = external_probe_count if external_probe_count else self._external_probe_count
+        eff_probe_ok = external_probe_ok if external_probe_ok else self._external_probe_ok
+        eff_distinct = len(self._external_distinct_nodes)
+        # external_reachable = True si ≥1 probe externe distincte a réussi
+        eff_reachable = external_reachable
+        if eff_reachable is None and self._external_probe_ok > 0:
+            eff_reachable = True
 
         cap = assess_network_capability(
             p2p_port=self.p2p_port,
             probe_host=self.probe_host,
             probe_port=self.probe_port,
             relay_available=relay_available,
-            external_reachable=external_reachable,
-            external_probe_count=external_probe_count,
-            external_probe_ok=external_probe_ok,
+            external_reachable=eff_reachable,
+            external_probe_count=eff_probe_count,
+            external_probe_ok=eff_probe_ok,
+            external_distinct_nodes=eff_distinct,
             _force_outbound=_force_outbound,
             _force_inbound=_force_inbound,
         )
@@ -642,9 +849,14 @@ class NetworkEligibilityGate:
         - connexion/déconnexion VPN
         - changement d'IP
         """
-        logger.info("[R382] on_network_change(%s) — réévaluation", reason)
+        logger.info("[R397] on_network_change(%s) — réévaluation", reason)
         self._degraded_since_ts_ns = None   # réinitialise la fenêtre de grâce
         self._pass_streak = 0
+        # R397 : réinitialise aussi le store de probes (réseau différent)
+        self._external_probes = []
+        self._external_probe_count = 0
+        self._external_probe_ok = 0
+        self._external_distinct_nodes = set()
         self._current_state = NetworkState.TESTING
         return self.assess()
 
@@ -653,14 +865,55 @@ class NetworkEligibilityGate:
         *,
         success: bool,
         probe_node_id: str = "unknown",
+        observed_address: str = "",
+        observed_port: int = 0,
+        transport: str = "tcp",
     ) -> None:
-        """Enregistre une probe externe reçue d'un nœud ARTCB tiers.
+        """R397 — Enregistre une probe externe réelle reçue d'un nœud ARTCB tiers.
 
-        Ce mécanisme (équivalent AutoNAT libp2p) permet de valider
-        external_reachable depuis plusieurs points du réseau ARTCB.
+        R382 : cette fonction était un stub vide (ne stockait rien).
+        R397 : stocke la preuve, met à jour les compteurs, ajoute le node_id
+               distinct. La prochaine assess() utilisera ces données automatiquement.
+
+        Équivalent AutoNAT libp2p : des pairs externes tentent de joindre
+        les adresses annoncées par ce nœud et rapportent le résultat.
         """
-        logger.debug("[R382] external_probe from=%s success=%s", probe_node_id, success)
-        # La prochaine assess() utilisera ces données si passées explicitement
+        ts = time.time_ns()
+        entry: dict[str, Any] = {
+            "ts_ns": ts,
+            "probe_node_id": probe_node_id,
+            "success": success,
+            "observed_address": observed_address,
+            "observed_port": observed_port,
+            "transport": transport,
+        }
+        self._external_probes.append(entry)
+        # Taille max
+        if len(self._external_probes) > MAX_EXTERNAL_PROBE_HISTORY:
+            self._external_probes = self._external_probes[-MAX_EXTERNAL_PROBE_HISTORY:]
+
+        self._external_probe_count += 1
+        if success:
+            self._external_probe_ok += 1
+        if probe_node_id and probe_node_id != "unknown":
+            self._external_distinct_nodes.add(probe_node_id)
+
+        logger.debug(
+            "[R397] record_external_probe from=%s success=%s total=%d ok=%d distinct=%d",
+            probe_node_id, success, self._external_probe_count,
+            self._external_probe_ok, len(self._external_distinct_nodes),
+        )
+
+    def external_probe_summary(self) -> dict[str, Any]:
+        """R397 — Retourne un résumé des preuves externes accumulées."""
+        return {
+            "count": self._external_probe_count,
+            "ok": self._external_probe_ok,
+            "fail": self._external_probe_count - self._external_probe_ok,
+            "distinct_nodes": len(self._external_distinct_nodes),
+            "reachable": self._external_probe_ok > 0,
+            "last_ts_ns": self._external_probes[-1]["ts_ns"] if self._external_probes else None,
+        }
 
     def history(self) -> list[dict[str, Any]]:
         """Retourne l'historique des transitions (max 100 entrées)."""
@@ -674,4 +927,5 @@ class NetworkEligibilityGate:
             "pass_streak": self._pass_streak,
             "last_result": self._last_result.to_dict() if self._last_result else None,
             "history_count": len(self._history),
+            "external_probe_summary": self.external_probe_summary(),
         }

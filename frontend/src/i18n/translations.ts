@@ -12,7 +12,7 @@ export interface Translations {
   nav_agents: string;
   nav_chain: string;
   nav_pol: string;
-  nav_memorize: string;
+  // nav_memorize: supprimé R398 (page Memorize retirée du frontend)
   nav_graph: string;
   nav_wallets: string;
   nav_mining: string;
@@ -20,11 +20,11 @@ export interface Translations {
   nav_logs: string;
   nav_console: string;
   nav_integrations: string;
-  nav_network: string;
+  // nav_network: supprimé R398 (P2P backend-only)
   nav_governance: string;
   nav_groups: string;
   nav_api_keys: string;
-  nav_agent_memory: string;
+  // nav_agent_memory: supprimé R398 (AgentMemory backend-only)
   nav_register: string;
   
   // Dashboard
@@ -215,25 +215,8 @@ export interface Translations {
   reg_name_required: string;
   reg_platform_unavailable: string;
   
-  // Memorize Page
-  memorize_title: string;
-  memorize_session: string;
-  memorize_session_id: string;
-  memorize_use_llm: string;
-  memorize_use_pool: string;
-  memorize_encrypt_transport: string;
-  memorize_visibility_current: string;
-  memorize_select_group: string;
-  memorize_source_title: string;
-  memorize_placeholder: string;
-  memorize_button: string;
-  memorize_button_loading: string;
-  memorize_graph_title: string;
-  memorize_graph_id: string;
-  memorize_nodes: string;
-  memorize_sign_block: string;
-  memorize_sign_loading: string;
-  
+  // Memorize Page — supprimé R398 (page retirée du frontend)
+
   // Graph Page
   graph_title: string;
   graph_title_with_id: string;
