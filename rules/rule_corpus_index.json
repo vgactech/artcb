@@ -30,7 +30,7 @@
       "source_path": "CHECKLIST_PRE_DEV_ARTCB",
       "authority": "dev_gate",
       "canonical_text": "Source: CHECKLIST_PRE_DEV_ARTCB",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "CHECK_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -47,7 +47,9 @@
         "canonical_text",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846335350000
     },
     {
       "corpus_id": "CR-CON-STANDARD-NAMES-99745114",
@@ -57,7 +59,7 @@
       "source_path": "STANDARD_NAMES_ARTCB",
       "authority": "naming",
       "canonical_text": "Source: STANDARD_NAMES_ARTCB",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "CONVENTION_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -74,7 +76,9 @@
         "canonical_text",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846335502000
     },
     {
       "corpus_id": "CR-DEC-D-001-d7015b84",
@@ -84,7 +88,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -100,7 +104,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846335612000
     },
     {
       "corpus_id": "CR-DEC-D-002-0b15711b",
@@ -110,7 +116,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -126,7 +132,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846335709000
     },
     {
       "corpus_id": "CR-DEC-D-003-56d00f6f",
@@ -136,7 +144,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -152,7 +160,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846335825000
     },
     {
       "corpus_id": "CR-DEC-D-004-f9d4366b",
@@ -162,7 +172,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -178,7 +188,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846335914000
     },
     {
       "corpus_id": "CR-DEC-D-005-c686e795",
@@ -188,7 +200,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -204,7 +216,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846335985000
     },
     {
       "corpus_id": "CR-DEC-D-006-608fe5ca",
@@ -214,7 +228,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -230,7 +244,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846337331000
     },
     {
       "corpus_id": "CR-DEC-D-007-1dbb41d1",
@@ -240,7 +256,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -256,7 +272,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846343577000
     },
     {
       "corpus_id": "CR-DEC-D-008-9349fca6",
@@ -266,7 +284,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -282,7 +300,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846343858000
     },
     {
       "corpus_id": "CR-DEC-D-009-f745b0f9",
@@ -292,7 +312,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -308,7 +328,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846343987000
     },
     {
       "corpus_id": "CR-DEC-D-010-eabec334",
@@ -318,7 +340,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -334,7 +356,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846344093000
     },
     {
       "corpus_id": "CR-DEC-D-011-e0a45d63",
@@ -344,7 +368,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -360,7 +384,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846344192000
     },
     {
       "corpus_id": "CR-DEC-D-012-5653259b",
@@ -370,7 +396,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -386,7 +412,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846344278000
     },
     {
       "corpus_id": "CR-DEC-D-013-654a8a36",
@@ -396,7 +424,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -412,7 +440,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846345883000
     },
     {
       "corpus_id": "CR-DEC-D-014-0c40e88c",
@@ -422,7 +452,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -438,7 +468,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846346055000
     },
     {
       "corpus_id": "CR-DEC-D-015-10c3009c",
@@ -448,7 +480,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -464,7 +496,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846347623000
     },
     {
       "corpus_id": "CR-DEC-D-016-0f6a34b5",
@@ -474,7 +508,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -490,7 +524,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846349267000
     },
     {
       "corpus_id": "CR-DEC-D-017-2a668320",
@@ -500,7 +536,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -516,7 +552,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846349701000
     },
     {
       "corpus_id": "CR-DEC-D-018-81669afc",
@@ -526,7 +564,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -542,7 +580,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846349799000
     },
     {
       "corpus_id": "CR-DEC-D-019-4a001aca",
@@ -552,7 +592,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -568,7 +608,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846349872000
     },
     {
       "corpus_id": "CR-DEC-D-020-456b25da",
@@ -578,7 +620,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -594,7 +636,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846349939000
     },
     {
       "corpus_id": "CR-DEC-D-021-11c5be85",
@@ -604,7 +648,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -620,7 +664,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846350000000
     },
     {
       "corpus_id": "CR-DEC-D-022-61b3ae64",
@@ -630,7 +676,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -646,7 +692,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846352875000
     },
     {
       "corpus_id": "CR-DEC-D-023-15a3acb2",
@@ -656,7 +704,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -672,7 +720,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846354520000
     },
     {
       "corpus_id": "CR-DEC-D-024-55f9d1ff",
@@ -682,7 +732,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -698,7 +748,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846355757000
     },
     {
       "corpus_id": "CR-DEC-D-025-0a673b04",
@@ -708,7 +760,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -724,7 +776,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846372744000
     },
     {
       "corpus_id": "CR-DEC-D-026-5dcf73e8",
@@ -734,7 +788,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -750,7 +804,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846378571000
     },
     {
       "corpus_id": "CR-DEC-D-027-c5f733fe",
@@ -760,7 +816,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -776,7 +832,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846378691000
     },
     {
       "corpus_id": "CR-DEC-D-028-d94c1212",
@@ -786,7 +844,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -802,7 +860,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846380113000
     },
     {
       "corpus_id": "CR-DEC-D-029-ac6800eb",
@@ -812,7 +872,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -830,7 +890,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846381518000
     },
     {
       "corpus_id": "CR-DEC-D-030-668b6df7",
@@ -840,7 +902,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -856,7 +918,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846387325000
     },
     {
       "corpus_id": "CR-DEC-D-031-691b3a54",
@@ -866,7 +930,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -882,7 +946,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846389935000
     },
     {
       "corpus_id": "CR-DEC-D-032-a226d7fc",
@@ -892,7 +958,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -908,7 +974,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390154000
     },
     {
       "corpus_id": "CR-DEC-D-033-ce67abf0",
@@ -918,7 +986,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -934,7 +1002,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390239000
     },
     {
       "corpus_id": "CR-DEC-D-034-18a0119e",
@@ -944,7 +1014,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -960,7 +1030,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390304000
     },
     {
       "corpus_id": "CR-DEC-D-035-e8cc92ab",
@@ -970,7 +1042,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -986,7 +1058,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390367000
     },
     {
       "corpus_id": "CR-DEC-D-036-6d80afc5",
@@ -996,7 +1070,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1012,7 +1086,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390429000
     },
     {
       "corpus_id": "CR-DEC-D-037-ff46041e",
@@ -1022,7 +1098,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1038,7 +1114,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390491000
     },
     {
       "corpus_id": "CR-DEC-D-038-afc75401",
@@ -1048,7 +1126,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1064,7 +1142,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390552000
     },
     {
       "corpus_id": "CR-DEC-D-039-0e30de0c",
@@ -1074,7 +1154,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1090,7 +1170,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390615000
     },
     {
       "corpus_id": "CR-DEC-D-040-a20a23fe",
@@ -1100,7 +1182,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1116,7 +1198,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390673000
     },
     {
       "corpus_id": "CR-DEC-D-041-fb63c2b2",
@@ -1126,7 +1210,7 @@
       "source_path": "DECISIONS_UTILISATEUR_ARTCB",
       "authority": "operator",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1142,7 +1226,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390729000
     },
     {
       "corpus_id": "CR-DEC-D-042-1e5579c2",
@@ -1152,7 +1238,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1168,7 +1254,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390784000
     },
     {
       "corpus_id": "CR-DEC-D-043-ddf0465a",
@@ -1178,7 +1266,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1194,7 +1282,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390839000
     },
     {
       "corpus_id": "CR-DEC-D-044-bc00d1dc",
@@ -1204,7 +1294,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1220,7 +1310,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390896000
     },
     {
       "corpus_id": "CR-DEC-D-045-b0522fcf",
@@ -1230,7 +1322,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1246,7 +1338,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846390951000
     },
     {
       "corpus_id": "CR-DEC-D-052-bd3a7188",
@@ -1256,7 +1350,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1272,7 +1366,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391008000
     },
     {
       "corpus_id": "CR-DEC-D-053-e3273fa4",
@@ -1282,7 +1378,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DECISION_ACTIVE",
       "rt_rule_id": null,
       "certified": false,
       "domain": "GOVERNANCE",
@@ -1298,7 +1394,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391069000
     },
     {
       "corpus_id": "CR-EVI-TASK-LEDGER-cfb78159",
@@ -1308,7 +1406,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "Source: .artcb/task_ledger.yaml",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "EVIDENCE_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "TESTING",
@@ -1321,7 +1419,9 @@
       "confidence": 0.4,
       "classification_basis": [
         "kind"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391130000
     },
     {
       "corpus_id": "CR-LES-L-001-88de3e89",
@@ -1331,7 +1431,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1347,7 +1447,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391212000
     },
     {
       "corpus_id": "CR-LES-L-002-f591482a",
@@ -1357,7 +1459,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1373,7 +1475,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391275000
     },
     {
       "corpus_id": "CR-LES-L-003-37b0bd3d",
@@ -1383,7 +1487,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1399,7 +1503,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391334000
     },
     {
       "corpus_id": "CR-LES-L-004-5e430dcc",
@@ -1409,7 +1515,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1425,7 +1531,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391393000
     },
     {
       "corpus_id": "CR-LES-L-005-caf302cd",
@@ -1435,7 +1543,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1451,7 +1559,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391449000
     },
     {
       "corpus_id": "CR-LES-L-006-fd876a7c",
@@ -1461,7 +1571,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1477,7 +1587,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391510000
     },
     {
       "corpus_id": "CR-LES-L-007-9e4b4270",
@@ -1487,7 +1599,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1503,7 +1615,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391574000
     },
     {
       "corpus_id": "CR-LES-L-008-68c3a1cb",
@@ -1513,7 +1627,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1529,7 +1643,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391635000
     },
     {
       "corpus_id": "CR-LES-L-009-3d293794",
@@ -1539,7 +1655,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1555,7 +1671,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391694000
     },
     {
       "corpus_id": "CR-LES-L-010-afce0160",
@@ -1565,7 +1683,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1581,7 +1699,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391759000
     },
     {
       "corpus_id": "CR-LES-L-011-7320f750",
@@ -1591,7 +1711,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1607,7 +1727,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391825000
     },
     {
       "corpus_id": "CR-LES-L-012-95570858",
@@ -1617,7 +1739,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1633,7 +1755,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391892000
     },
     {
       "corpus_id": "CR-LES-L-013-4fc2115d",
@@ -1643,7 +1767,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1659,7 +1783,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846391955000
     },
     {
       "corpus_id": "CR-LES-L-015-a04ffc0d",
@@ -1669,7 +1795,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1685,7 +1811,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392017000
     },
     {
       "corpus_id": "CR-LES-L-016-c3e67e0d",
@@ -1695,7 +1823,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1711,7 +1839,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392081000
     },
     {
       "corpus_id": "CR-LES-L-017-533d777c",
@@ -1721,7 +1851,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1737,7 +1867,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392148000
     },
     {
       "corpus_id": "CR-LES-L-018-8c6b5649",
@@ -1747,7 +1879,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1763,7 +1895,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392212000
     },
     {
       "corpus_id": "CR-LES-L-019-2df6bc5b",
@@ -1773,7 +1907,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1789,7 +1923,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392276000
     },
     {
       "corpus_id": "CR-LES-L-023-95b24ab6",
@@ -1799,7 +1935,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1815,7 +1951,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392339000
     },
     {
       "corpus_id": "CR-LES-L-024-134752f4",
@@ -1825,7 +1963,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1841,7 +1979,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392402000
     },
     {
       "corpus_id": "CR-LES-L-025-54d00e09",
@@ -1851,7 +1991,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1867,7 +2007,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846392464000
     },
     {
       "corpus_id": "CR-LES-L-026-5320a46c",
@@ -1877,7 +2019,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1893,7 +2035,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846395032000
     },
     {
       "corpus_id": "CR-LES-L-027-6b50bb41",
@@ -1903,7 +2047,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1919,7 +2063,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846397585000
     },
     {
       "corpus_id": "CR-LES-L-028-ace87cc9",
@@ -1929,7 +2075,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1945,7 +2091,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846398845000
     },
     {
       "corpus_id": "CR-LES-L-029-46389f9a",
@@ -1955,7 +2103,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1971,7 +2119,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399000000
     },
     {
       "corpus_id": "CR-LES-L-030-98fdaae5",
@@ -1981,7 +2131,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -1997,7 +2147,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399083000
     },
     {
       "corpus_id": "CR-LES-L-031-26feeee8",
@@ -2007,7 +2159,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2023,7 +2175,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399165000
     },
     {
       "corpus_id": "CR-LES-L-032-5955f3be",
@@ -2033,7 +2187,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2049,7 +2203,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399228000
     },
     {
       "corpus_id": "CR-LES-L-033-8c89d8b6",
@@ -2059,7 +2215,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2075,7 +2231,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399298000
     },
     {
       "corpus_id": "CR-LES-L-034-5eb9c222",
@@ -2085,7 +2243,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2101,7 +2259,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399360000
     },
     {
       "corpus_id": "CR-LES-L-035-1e8ceffb",
@@ -2111,7 +2271,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2127,7 +2287,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399474000
     },
     {
       "corpus_id": "CR-LES-L-036-ee102f1a",
@@ -2137,7 +2299,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2153,7 +2315,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846399538000
     },
     {
       "corpus_id": "CR-LES-L-037-17940c75",
@@ -2163,7 +2327,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2179,7 +2343,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846406499000
     },
     {
       "corpus_id": "CR-LES-L-038-8e02a302",
@@ -2189,7 +2355,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2205,7 +2371,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846409467000
     },
     {
       "corpus_id": "CR-LES-L-039-8b52119c",
@@ -2215,7 +2383,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2231,7 +2399,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846410833000
     },
     {
       "corpus_id": "CR-LES-L-040-2a095d5a",
@@ -2241,7 +2411,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2257,7 +2427,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846413102000
     },
     {
       "corpus_id": "CR-LES-L-041-0ee16d48",
@@ -2267,7 +2439,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2283,7 +2455,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846414475000
     },
     {
       "corpus_id": "CR-LES-L-042-da94e7a9",
@@ -2293,7 +2467,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2309,7 +2483,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846414959000
     },
     {
       "corpus_id": "CR-LES-L-043-705e518d",
@@ -2319,7 +2495,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2335,7 +2511,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846420376000
     },
     {
       "corpus_id": "CR-LES-L-044-541af022",
@@ -2345,7 +2523,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2361,7 +2539,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846421815000
     },
     {
       "corpus_id": "CR-LES-L-045-3ee7b0c5",
@@ -2371,7 +2551,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2387,7 +2567,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846427023000
     },
     {
       "corpus_id": "CR-LES-L-046-752274d6",
@@ -2397,7 +2579,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2413,7 +2595,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846428389000
     },
     {
       "corpus_id": "CR-LES-L-047-433f89a3",
@@ -2423,7 +2607,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2439,7 +2623,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846428884000
     },
     {
       "corpus_id": "CR-LES-LECONS-7bac72ba",
@@ -2449,7 +2635,7 @@
       "source_path": "LEÇONS_APPRISES_ARTCB",
       "authority": "history",
       "canonical_text": "Source: LEÇONS_APPRISES_ARTCB",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "LESSON_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "LESSONS",
@@ -2466,7 +2652,9 @@
         "canonical_text",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846430271000
     },
     {
       "corpus_id": "CR-QUE-QUESTIONS-709c3c1f",
@@ -2476,7 +2664,7 @@
       "source_path": "QUESTIONS_OUVERTES_ARTCB",
       "authority": "open",
       "canonical_text": "Source: QUESTIONS_OUVERTES_ARTCB",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "QUESTION_OPEN",
       "rt_rule_id": null,
       "certified": false,
       "domain": "ROADMAP",
@@ -2493,7 +2681,9 @@
         "canonical_text",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846431684000
     },
     {
       "corpus_id": "CR-RUL-169-62f82683",
@@ -2503,7 +2693,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2520,7 +2710,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846438365000
     },
     {
       "corpus_id": "CR-RUL-299-4e280038",
@@ -2530,7 +2722,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2547,7 +2739,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846443287000
     },
     {
       "corpus_id": "CR-RUL-338-bd5a5a7f",
@@ -2557,7 +2751,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2574,7 +2768,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846444733000
     },
     {
       "corpus_id": "CR-RUL-339-a028146f",
@@ -2584,7 +2780,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2601,7 +2797,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846446116000
     },
     {
       "corpus_id": "CR-RUL-340-635b4d2a",
@@ -2611,7 +2809,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2628,7 +2826,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846447682000
     },
     {
       "corpus_id": "CR-RUL-341-d124010e",
@@ -2638,7 +2838,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2655,7 +2855,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846454190000
     },
     {
       "corpus_id": "CR-RUL-345-e4559b3a",
@@ -2665,7 +2867,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2682,7 +2884,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846454687000
     },
     {
       "corpus_id": "CR-RUL-347-b960aeca",
@@ -2692,7 +2896,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2709,7 +2913,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846459854000
     },
     {
       "corpus_id": "CR-RUL-R253-1ba117a0",
@@ -2719,7 +2925,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -2736,7 +2942,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846460140000
     },
     {
       "corpus_id": "CR-RUL-R263-69035ffc",
@@ -2746,7 +2954,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2762,7 +2970,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846462445000
     },
     {
       "corpus_id": "CR-RUL-R264-67a59159",
@@ -2772,7 +2982,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2788,7 +2998,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846462909000
     },
     {
       "corpus_id": "CR-RUL-R265-240b0927",
@@ -2798,7 +3010,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -2815,7 +3027,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846464309000
     },
     {
       "corpus_id": "CR-RUL-R266-547e7043",
@@ -2825,7 +3039,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -2842,7 +3056,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846467596000
     },
     {
       "corpus_id": "CR-RUL-R268-d300e062",
@@ -2852,7 +3068,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -2869,7 +3085,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846467690000
     },
     {
       "corpus_id": "CR-RUL-R269-916ff9e3",
@@ -2879,7 +3097,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -2896,7 +3114,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846467754000
     },
     {
       "corpus_id": "CR-RUL-R270-87bab951",
@@ -2906,7 +3126,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2922,7 +3142,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846467816000
     },
     {
       "corpus_id": "CR-RUL-R271-d1a0fbd6",
@@ -2932,7 +3154,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -2948,7 +3170,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846467877000
     },
     {
       "corpus_id": "CR-RUL-R272-4d07344b",
@@ -2958,7 +3182,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -2975,7 +3199,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846467935000
     },
     {
       "corpus_id": "CR-RUL-R273-21d14299",
@@ -2985,7 +3211,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3001,7 +3227,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846467995000
     },
     {
       "corpus_id": "CR-RUL-R278-b967c3fe",
@@ -3011,7 +3239,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3028,7 +3256,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846468056000
     },
     {
       "corpus_id": "CR-RUL-R279-e9f4f92a",
@@ -3038,7 +3268,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3055,7 +3285,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846468119000
     },
     {
       "corpus_id": "CR-RUL-R280-d68d91ae",
@@ -3065,7 +3297,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3082,7 +3314,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846470246000
     },
     {
       "corpus_id": "CR-RUL-R281-153f5237",
@@ -3092,7 +3326,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3109,7 +3343,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846470355000
     },
     {
       "corpus_id": "CR-RUL-R282-03a20c33",
@@ -3119,7 +3355,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3136,7 +3372,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846470428000
     },
     {
       "corpus_id": "CR-RUL-R283-aa70ad00",
@@ -3146,7 +3384,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3163,7 +3401,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846473190000
     },
     {
       "corpus_id": "CR-RUL-R284-307abedd",
@@ -3173,7 +3413,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3190,7 +3430,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846476135000
     },
     {
       "corpus_id": "CR-RUL-R285-67a2a9f0",
@@ -3200,7 +3442,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3216,7 +3458,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846477430000
     },
     {
       "corpus_id": "CR-RUL-R286-fc085710",
@@ -3226,7 +3470,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3243,7 +3487,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846478175000
     },
     {
       "corpus_id": "CR-RUL-R287-4ce2ab35",
@@ -3253,7 +3499,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3270,7 +3516,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846478263000
     },
     {
       "corpus_id": "CR-RUL-R294-5faefc43",
@@ -3280,7 +3528,7 @@
       "source_path": ".cursor/rules/mac-node-local.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3297,7 +3545,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846483378000
     },
     {
       "corpus_id": "CR-RUL-R297-009dd324",
@@ -3307,7 +3557,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3324,7 +3574,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846483597000
     },
     {
       "corpus_id": "CR-RUL-R297A-7aafcc1b",
@@ -3334,7 +3586,7 @@
       "source_path": ".cursor/rules/mac-node-local.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3351,7 +3603,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846483742000
     },
     {
       "corpus_id": "CR-RUL-R297B-6aab7299",
@@ -3361,7 +3615,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3377,7 +3631,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846483859000
     },
     {
       "corpus_id": "CR-RUL-R299-a0ba453b",
@@ -3387,7 +3643,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3404,7 +3660,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846483964000
     },
     {
       "corpus_id": "CR-RUL-R299B-c3e08841",
@@ -3414,7 +3672,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3431,7 +3689,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846484046000
     },
     {
       "corpus_id": "CR-RUL-R300-468adbcb",
@@ -3441,7 +3701,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3458,7 +3718,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846485226000
     },
     {
       "corpus_id": "CR-RUL-R301-3f0a9b14",
@@ -3468,7 +3730,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3486,7 +3748,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846485758000
     },
     {
       "corpus_id": "CR-RUL-R301B-9a7d9a2b",
@@ -3496,7 +3760,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3513,7 +3777,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846488741000
     },
     {
       "corpus_id": "CR-RUL-R302-fdd6b3c7",
@@ -3523,7 +3789,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3541,7 +3807,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846491779000
     },
     {
       "corpus_id": "CR-RUL-R303-3dcfb4ae",
@@ -3551,7 +3819,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3569,7 +3837,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846494418000
     },
     {
       "corpus_id": "CR-RUL-R306-a2db2cd1",
@@ -3579,7 +3849,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3597,7 +3867,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846495156000
     },
     {
       "corpus_id": "CR-RUL-R307-c928c6af",
@@ -3607,7 +3879,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3625,7 +3897,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846495304000
     },
     {
       "corpus_id": "CR-RUL-R310-9c57eaf2",
@@ -3635,7 +3909,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3653,7 +3927,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846495550000
     },
     {
       "corpus_id": "CR-RUL-R311-b0cceda4",
@@ -3663,7 +3939,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3681,7 +3957,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846495960000
     },
     {
       "corpus_id": "CR-RUL-R312-97403a01",
@@ -3691,7 +3969,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3709,7 +3987,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846500071000
     },
     {
       "corpus_id": "CR-RUL-R313-7c3e3001",
@@ -3719,7 +3999,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3737,7 +4017,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846500986000
     },
     {
       "corpus_id": "CR-RUL-R314-865b76bb",
@@ -3747,7 +4029,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3765,7 +4047,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846501144000
     },
     {
       "corpus_id": "CR-RUL-R315-0336f3e7",
@@ -3775,7 +4059,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3793,7 +4077,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846501730000
     },
     {
       "corpus_id": "CR-RUL-R316-da4b9fee",
@@ -3803,7 +4089,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -3821,7 +4107,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846501813000
     },
     {
       "corpus_id": "CR-RUL-R317-8737446f",
@@ -3831,7 +4119,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3848,7 +4136,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846502286000
     },
     {
       "corpus_id": "CR-RUL-R318-5a82536f",
@@ -3858,7 +4148,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3875,7 +4165,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846503527000
     },
     {
       "corpus_id": "CR-RUL-R319-cfd59034",
@@ -3885,7 +4177,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3902,7 +4194,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846504029000
     },
     {
       "corpus_id": "CR-RUL-R320-7d0a0c5e",
@@ -3912,7 +4206,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3929,7 +4223,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846504410000
     },
     {
       "corpus_id": "CR-RUL-R321-a4e6a813",
@@ -3939,7 +4235,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3956,7 +4252,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846505044000
     },
     {
       "corpus_id": "CR-RUL-R322-f60fba3b",
@@ -3966,7 +4264,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -3983,7 +4281,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846505140000
     },
     {
       "corpus_id": "CR-RUL-R323-2b257c9a",
@@ -3993,7 +4293,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4010,7 +4310,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846505642000
     },
     {
       "corpus_id": "CR-RUL-R324-a358f322",
@@ -4020,7 +4322,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4037,7 +4339,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846506668000
     },
     {
       "corpus_id": "CR-RUL-R325-662bdcd6",
@@ -4047,7 +4351,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4064,7 +4368,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846506847000
     },
     {
       "corpus_id": "CR-RUL-R326-998e162c",
@@ -4074,7 +4380,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4091,7 +4397,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846506965000
     },
     {
       "corpus_id": "CR-RUL-R327-0945ac12",
@@ -4101,7 +4409,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4118,7 +4426,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507065000
     },
     {
       "corpus_id": "CR-RUL-R328-5d15d525",
@@ -4128,7 +4438,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4145,7 +4455,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507157000
     },
     {
       "corpus_id": "CR-RUL-R329-3764353b",
@@ -4155,7 +4467,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4172,7 +4484,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507241000
     },
     {
       "corpus_id": "CR-RUL-R330-af835579",
@@ -4182,7 +4496,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4199,7 +4513,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507323000
     },
     {
       "corpus_id": "CR-RUL-R331-0c769c05",
@@ -4209,7 +4525,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -4227,7 +4543,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507393000
     },
     {
       "corpus_id": "CR-RUL-R332-aa332e0f",
@@ -4237,7 +4555,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -4255,7 +4573,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507457000
     },
     {
       "corpus_id": "CR-RUL-R333-4454e01c",
@@ -4265,7 +4585,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -4283,7 +4603,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507523000
     },
     {
       "corpus_id": "CR-RUL-R334-73bd6e37",
@@ -4293,7 +4615,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -4311,7 +4633,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507610000
     },
     {
       "corpus_id": "CR-RUL-R335-a3cbc9cd",
@@ -4321,7 +4645,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -4339,7 +4663,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507674000
     },
     {
       "corpus_id": "CR-RUL-R336-189025f6",
@@ -4349,7 +4675,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -4367,7 +4693,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507739000
     },
     {
       "corpus_id": "CR-RUL-R337-6ccc4416",
@@ -4377,7 +4705,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4394,7 +4722,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507802000
     },
     {
       "corpus_id": "CR-RUL-R338-78d7f4b0",
@@ -4404,7 +4734,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4421,7 +4751,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507865000
     },
     {
       "corpus_id": "CR-RUL-R339-e324bc10",
@@ -4431,7 +4763,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4448,7 +4780,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507927000
     },
     {
       "corpus_id": "CR-RUL-R340-d4fd6a43",
@@ -4458,7 +4792,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4475,7 +4809,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846507988000
     },
     {
       "corpus_id": "CR-RUL-R341-7d9b6af9",
@@ -4485,7 +4821,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4502,7 +4838,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508048000
     },
     {
       "corpus_id": "CR-RUL-R342-e2d3cc92",
@@ -4512,7 +4850,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4529,7 +4867,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508106000
     },
     {
       "corpus_id": "CR-RUL-R342B-9f484f71",
@@ -4539,7 +4879,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4556,7 +4896,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508174000
     },
     {
       "corpus_id": "CR-RUL-R343-08da9153",
@@ -4566,7 +4908,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4583,7 +4925,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508239000
     },
     {
       "corpus_id": "CR-RUL-R344-6d536f61",
@@ -4593,7 +4937,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4610,7 +4954,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508304000
     },
     {
       "corpus_id": "CR-RUL-R345-bf311348",
@@ -4620,7 +4966,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4637,7 +4983,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508366000
     },
     {
       "corpus_id": "CR-RUL-R347-ce558dca",
@@ -4647,7 +4995,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4664,7 +5012,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508435000
     },
     {
       "corpus_id": "CR-RUL-R348-63a0a9c0",
@@ -4674,7 +5024,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4691,7 +5041,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508500000
     },
     {
       "corpus_id": "CR-RUL-R348B-ebd4c2f3",
@@ -4701,7 +5053,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4718,7 +5070,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508563000
     },
     {
       "corpus_id": "CR-RUL-R349-195d487c",
@@ -4728,7 +5082,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4745,7 +5099,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508625000
     },
     {
       "corpus_id": "CR-RUL-R349A-8732926d",
@@ -4755,7 +5111,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4772,7 +5128,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508688000
     },
     {
       "corpus_id": "CR-RUL-R349B-e1c1e99d",
@@ -4782,7 +5140,7 @@
       "source_path": ".cursor/rules/artcb-live-node.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "NETWORK",
@@ -4800,7 +5158,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508754000
     },
     {
       "corpus_id": "CR-RUL-R350-7a5fb49c",
@@ -4810,7 +5170,7 @@
       "source_path": ".cursor/rules/artcb-read-all.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4827,7 +5187,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508819000
     },
     {
       "corpus_id": "CR-RUL-R351-c899c1fd",
@@ -4837,7 +5199,7 @@
       "source_path": ".cursor/rules/artcb-reflex-priority.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4854,7 +5216,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508882000
     },
     {
       "corpus_id": "CR-RUL-R352-121cc195",
@@ -4864,7 +5228,7 @@
       "source_path": ".cursor/rules/artcb-reflex-priority.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4881,7 +5245,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846508946000
     },
     {
       "corpus_id": "CR-RUL-R353-2504fbe8",
@@ -4891,7 +5257,7 @@
       "source_path": ".cursor/rules/artcb-reflex-priority.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4908,7 +5274,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846509010000
     },
     {
       "corpus_id": "CR-RUL-R354-acdef033",
@@ -4918,7 +5286,7 @@
       "source_path": ".cursor/rules/artcb-reflex-priority.mdc",
       "authority": "cursor",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4935,7 +5303,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846509073000
     },
     {
       "corpus_id": "CR-RUL-R355-fe658d5a",
@@ -4945,7 +5315,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4962,7 +5332,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846509133000
     },
     {
       "corpus_id": "CR-RUL-R356-26ba3a15",
@@ -4972,7 +5344,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -4989,7 +5361,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846510765000
     },
     {
       "corpus_id": "CR-RUL-R357-aea1964f",
@@ -4999,7 +5373,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5016,7 +5390,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846511156000
     },
     {
       "corpus_id": "CR-RUL-R358-bb825dfa",
@@ -5026,7 +5402,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5043,7 +5419,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846512332000
     },
     {
       "corpus_id": "CR-RUL-R359-f39bd514",
@@ -5053,7 +5431,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5070,7 +5448,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846513520000
     },
     {
       "corpus_id": "CR-RUL-R360-6003b0da",
@@ -5080,7 +5460,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5097,7 +5477,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846514828000
     },
     {
       "corpus_id": "CR-RUL-R361-6a6a1c77",
@@ -5107,7 +5489,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5124,7 +5506,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846515020000
     },
     {
       "corpus_id": "CR-RUL-R362-46f35959",
@@ -5134,7 +5518,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5151,7 +5535,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846515130000
     },
     {
       "corpus_id": "CR-RUL-R363-b0358972",
@@ -5161,7 +5547,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5178,7 +5564,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846515226000
     },
     {
       "corpus_id": "CR-RUL-R363B-cdf7a2bd",
@@ -5188,7 +5576,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5205,7 +5593,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846515317000
     },
     {
       "corpus_id": "CR-RUL-R363C-15ee5e5c",
@@ -5215,7 +5605,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5232,7 +5622,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846515402000
     },
     {
       "corpus_id": "CR-RUL-R364-be130080",
@@ -5242,7 +5634,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5259,7 +5651,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846517484000
     },
     {
       "corpus_id": "CR-RUL-R365-8da1d8d1",
@@ -5269,7 +5663,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5286,7 +5680,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846518714000
     },
     {
       "corpus_id": "CR-RUL-R366-b3e9a651",
@@ -5296,7 +5692,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5313,7 +5709,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846519256000
     },
     {
       "corpus_id": "CR-RUL-R367-29a72d19",
@@ -5323,7 +5721,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5340,7 +5738,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846519660000
     },
     {
       "corpus_id": "CR-RUL-R368-9c011044",
@@ -5350,7 +5750,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5367,7 +5767,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846520180000
     },
     {
       "corpus_id": "CR-RUL-R369-7b39d400",
@@ -5377,7 +5779,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5394,7 +5796,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846520262000
     },
     {
       "corpus_id": "CR-RUL-R370-9ef02775",
@@ -5404,7 +5808,7 @@
       "source_path": ".artcb/task_ledger.yaml",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5421,7 +5825,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846521656000
     },
     {
       "corpus_id": "CR-RUL-R371-d8acb045",
@@ -5431,7 +5837,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5448,7 +5854,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846522900000
     },
     {
       "corpus_id": "CR-RUL-R372-a0a7a414",
@@ -5458,7 +5866,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5475,7 +5883,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846523501000
     },
     {
       "corpus_id": "CR-RUL-R373-d34c0bda",
@@ -5485,7 +5895,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5502,7 +5912,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846526918000
     },
     {
       "corpus_id": "CR-RUL-R374-abd6e9da",
@@ -5512,7 +5924,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5529,7 +5941,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846527202000
     },
     {
       "corpus_id": "CR-RUL-RT-002-58b40de7",
@@ -5539,7 +5953,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-002",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5555,7 +5969,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846527760000
     },
     {
       "corpus_id": "CR-RUL-RT-003-6c3d0a34",
@@ -5565,7 +5981,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-003",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5581,7 +5997,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846528156000
     },
     {
       "corpus_id": "CR-RUL-RT-004-03a2f254",
@@ -5591,7 +6009,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-004",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5607,7 +6025,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846529577000
     },
     {
       "corpus_id": "CR-RUL-RT-009-4113cb73",
@@ -5617,7 +6037,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-009",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5633,7 +6053,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846530744000
     },
     {
       "corpus_id": "CR-RUL-RT-011-9a2a6c5b",
@@ -5643,7 +6065,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-011",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5659,7 +6081,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846531877000
     },
     {
       "corpus_id": "CR-RUL-RT-013-a2635a7c",
@@ -5669,7 +6093,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-013",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5685,7 +6109,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846532008000
     },
     {
       "corpus_id": "CR-RUL-RT-016-b0f59dc1",
@@ -5695,7 +6121,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-016",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5711,7 +6137,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846532119000
     },
     {
       "corpus_id": "CR-RUL-RT-039-f494d1a1",
@@ -5721,7 +6149,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-039",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5737,7 +6165,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846534759000
     },
     {
       "corpus_id": "CR-RUL-RT-077-C04-6fbd3b8a",
@@ -5747,7 +6177,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-077-C04",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5763,7 +6193,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846534981000
     },
     {
       "corpus_id": "CR-RUL-RT-077-N04-3cc007eb",
@@ -5773,7 +6205,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-077-N04",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5789,7 +6221,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846536185000
     },
     {
       "corpus_id": "CR-RUL-RT-CAPABILITY-FIRST-9b75433d",
@@ -5799,7 +6233,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-CAPABILITY-FIRST",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5815,7 +6249,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846537366000
     },
     {
       "corpus_id": "CR-RUL-RT-CORPUS-MAP-dbc91227",
@@ -5825,7 +6261,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-CORPUS-MAP",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5841,7 +6277,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846538534000
     },
     {
       "corpus_id": "CR-RUL-RT-DIVERGENCE-341-4e6e99fe",
@@ -5851,7 +6289,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-DIVERGENCE-341",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5867,7 +6305,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846539802000
     },
     {
       "corpus_id": "CR-RUL-RT-HW-BINDING-f97a6031",
@@ -5877,7 +6317,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-HW-BINDING",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5894,7 +6334,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846539879000
     },
     {
       "corpus_id": "CR-RUL-RT-HW-H1-08243ffe",
@@ -5904,7 +6346,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-HW-H1",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5920,7 +6362,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846539940000
     },
     {
       "corpus_id": "CR-RUL-RT-IDENTITY-LAYERS-ae9ff35a",
@@ -5930,7 +6374,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-IDENTITY-LAYERS",
       "certified": false,
       "domain": "IDENTITY",
@@ -5947,7 +6391,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540027000
     },
     {
       "corpus_id": "CR-RUL-RT-ISSUE-87-a02d7135",
@@ -5957,7 +6403,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-ISSUE-87",
       "certified": false,
       "domain": "PROTOCOL",
@@ -5973,7 +6419,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540120000
     },
     {
       "corpus_id": "CR-RUL-RT-LEG-1435a3d7",
@@ -5983,7 +6431,7 @@
       "source_path": "AUTO_PROMPT_ARTCB",
       "authority": "agent_instructions",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "DETECTED_UNREGISTERED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -5999,7 +6447,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540195000
     },
     {
       "corpus_id": "CR-RUL-RT-MEASURE-VALID-22105624",
@@ -6009,7 +6459,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-MEASURE-VALID",
       "certified": false,
       "domain": "GOVERNANCE",
@@ -6026,7 +6476,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540267000
     },
     {
       "corpus_id": "CR-RUL-RT-SYBIL-076-ff2f74b8",
@@ -6036,7 +6488,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-SYBIL-076",
       "certified": false,
       "domain": "PROTOCOL",
@@ -6054,7 +6506,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540338000
     },
     {
       "corpus_id": "CR-RUL-RT-TELEMETRY-c94ae1ba",
@@ -6064,7 +6518,7 @@
       "source_path": "rules/rule_registry.json",
       "authority": "telemetry",
       "canonical_text": "",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "REGISTERED_IN_REGISTRY",
       "rt_rule_id": "RT-TELEMETRY",
       "certified": false,
       "domain": "PROTOCOL",
@@ -6080,7 +6534,9 @@
         "source_path",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540405000
     },
     {
       "corpus_id": "CR-SPE-CDC-a6a9e108",
@@ -6090,7 +6546,7 @@
       "source_path": "CAHIER_DES_CHARGES_ARTCB",
       "authority": "product",
       "canonical_text": "Source: CAHIER_DES_CHARGES_ARTCB",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "SPEC_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -6107,7 +6563,9 @@
         "canonical_text",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540475000
     },
     {
       "corpus_id": "CR-SPE-ROADMAP-89910cf9",
@@ -6117,7 +6575,7 @@
       "source_path": "ROADMAP_GENERAL_ARTCB",
       "authority": "product",
       "canonical_text": "Source: ROADMAP_GENERAL_ARTCB",
-      "status": "DETECTED_NOT_CLASSIFIED",
+      "status": "SPEC_DOCUMENTED",
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
@@ -6135,7 +6593,9 @@
         "canonical_text",
         "authority",
         "corpus_id"
-      ]
+      ],
+      "status_updated_by": "artcb_r381",
+      "status_updated_ts": 1789939846540543000
     }
   ],
   "certified_100": false,
