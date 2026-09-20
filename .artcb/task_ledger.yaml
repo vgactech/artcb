@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.6"
+  version: "2.7"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
-  last_updated: "2026-09-18"
-  git_head: "972cc16"
+  last_updated: "2026-09-20"
+  git_head: "c280a8a"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -19,6 +19,7 @@ meta:
   pbft_primary: "aws-node-3"
   pbft_status: "ALIVE — synchronisé 2e89322, view=27"
   v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 (commits cf30b3a + eb097e1)"
+  ledger_sync_note: "v2.7 — sync HEAD c280a8a (R397+R398+L055+R398-erratum). TASK-RULES-DOMAINS=DONE_VERIFIED."
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)
@@ -367,6 +368,103 @@ done:
     tests: "22/22 PASS (T01→T22) — non-régression 136/136 PASS"
     certified_100: false
 
+  - id: R377
+    title: "R377 — Hotfix live bchlib — artcb.me DOWN→UP"
+    commit: "e039cda"
+    changes:
+      - "pip install bchlib>=2.1.3 sur N2/N4/N3 (ModuleNotFoundError résolu)"
+      - "start_node.sh : pip install -r requirements.txt --quiet ajouté avant uvicorn"
+    tests: "4/4 nœuds healthy"
+    certified_100: false
+
+  - id: R378
+    title: "R378 — Matching Hamming direct sur template_bytes — matrice FAR/FRR simulée"
+    commit: "b146d5c"
+    files_modified:
+      - "src/artcb/identity/biometric_onchain.py — hamming_distance_bits() + hamming_similarity() + hamming_uniqueness_check()"
+    files_created:
+      - "tests/test_task001_r378_hamming.py — 28 tests T01→T28 PASS"
+      - "rapports/R378_hamming_matching_direct.md"
+    honest_limitations:
+      - "Vecteurs synthétiques ≠ capteurs réels — FAR/FRR non mesurés"
+      - "Seuil 8 bits non validé sur vraies empreintes"
+    tests: "28/28 PASS — non-régression 164/164 PASS"
+    certified_100: false
+
+  - id: R382
+    title: "R382 — NetworkEligibilityGate DIRECT/RELAYABLE/DEGRADED/SUSPENDED/INDETERMINATE"
+    commit: "b146d5c"
+    files_created:
+      - "src/artcb/network/eligibility_gate.py — MODULE_VERSION 1.0.0"
+      - "tests/test_r382_network_eligibility_gate.py — 30 tests T01→T30 PASS"
+      - "rapports/R382_network_eligibility_gate_2026-09-19.md"
+    certified_100: false
+
+  - id: R389
+    title: "R389 — Frontend cleanup P2P/AgentPanel + L-054 DNS-split"
+    commit: "59972aa"
+    files_modified:
+      - "frontend/src/App.tsx — routes /reflex /memorize /logs supprimées"
+      - "frontend/src/layout/DashboardLayout.tsx — nav épurée"
+    certified_100: false
+
+  - id: R397
+    title: "R397 — NetworkEligibilityGate hardening v1.1.0 — 6 correctifs audit expert"
+    commit: "3f02555"
+    files_modified:
+      - "src/artcb/network/eligibility_gate.py — MODULE_VERSION 1.0.0→1.1.0"
+    files_created:
+      - "tests/test_r397_eligibility_hardening.py — 28 tests T31→T58 PASS"
+      - "rapports/R397_network_eligibility_hardening_2026-09-20.md"
+    changes:
+      - "ExternalProbeStore réel (stub vide corrigé)"
+      - "outbound_tls : SSL handshake réel (_probe_outbound_tls)"
+      - "ConnectivityFailure enum : NONE/NETWORK_DOWN/ARTCB_UNREACHABLE/OUTBOUND_TCP_BLOCKED/CAPTIVE_PORTAL/TLS_INTERCEPTED/..."
+      - "CGNAT RFC6598 100.64.0.0/10 + IPv6 ULA + link-local dans _classify_nat()"
+      - "_get_local_ip() multi-fallback (1.1.1.1 / 8.8.8.8 / 8.8.4.4)"
+      - "_OUTBOUND_SEEDS multi-hosts (artcb.me + 1.1.1.1 + 8.8.8.8)"
+    tests: "28/28 PASS (T31→T58) + 30/30 non-régression R382"
+    certified_100: false
+
+  - id: R398
+    title: "R398 — Frontend cleanup P2P/Pool/Memorize/AgentPanel + audit 6 domaines"
+    commit: "4df65a4"
+    files_deleted:
+      - "frontend/src/pages/Memorize.tsx"
+      - "frontend/src/components/AgentPanel.tsx"
+    files_modified:
+      - "frontend/src/api/client.ts — 12 fonctions P2P/Pool supprimées"
+      - "frontend/src/i18n/translations.ts — clés nav_memorize/nav_network/nav_agent_memory/memorize_* retirées"
+      - "frontend/src/pages/Home.tsx — lien /memorize → /graph"
+    files_created:
+      - "rapports/R398_audit_6_domaines_cartographie_2026-09-20.md"
+    note: "Backend P2P + Pool + AgentMemory conservés — accessibles via API/agents uniquement"
+    certified_100: false
+
+  - id: R398-erratum
+    title: "R398-erratum — TASK-RULES-DOMAINS DONE_VERIFIED + L-055"
+    commit: "c280a8a"
+    files_created:
+      - "rapports/R398_ERRATUM_domain_tagging_done_2026-09-20.md"
+    files_modified:
+      - "LEÇONS_APPRISES_ARTCB — L-055 ajoutée"
+    changes:
+      - "TASK-RULES-DOMAINS → DONE_VERIFIED (230/230 CR-* avec domain+classification_basis, artcb_r393_v2)"
+      - "L-055 : Ne jamais déclarer RESTE À FAIRE sans lire le fichier cible sur HEAD actuel"
+      - "Distinction DONE_VERIFIED / DONE_REPORTED formalisée"
+    certified_100: false
+
+  - id: TASK-RULES-DOMAINS
+    title: "TASK-RULES-DOMAINS — domain tagging 230 CR-* (DONE_VERIFIED)"
+    status: DONE_VERIFIED
+    verified_on: "c280a8a"
+    verified_by: "audit expert GitHub + python3 rule_corpus_index.json"
+    result: "230/230 CR-* ont domain + primary_domain + domains + confidence + classification_basis"
+    classifier: "artcb_r393_v2"
+    domain_classification_version: "R393-v2-R394E"
+    domains_found: "PROTOCOL(96) GOVERNANCE(48) LESSONS(44) NETWORK(39) TESTING(1) ROADMAP(1) IDENTITY(1)"
+    note: "Déclaré incorrectement RESTE A FAIRE dans R398 — erratum R398 produit"
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -425,6 +523,18 @@ open:
       (si permanent) retrait → N=3 → quorum vérifié → blocs produits.
       Nécessite aws-node-3 accessible (actuellement view=27 ALIVE).
 
+  - id: TASK-VERSIONING
+    title: "Script bump automatique MODULE_VERSION (PATCH +1) après modification d'un module"
+    priority: MEDIUM
+    status: OPEN
+    blocker: false
+    description: >
+      Créer scripts/artcb_bump_module_version.py : lire MODULE_VERSION du fichier,
+      incrémenter PATCH (1.0.0→1.0.1 / 1.1.0→1.1.1), mettre à jour le commentaire
+      # R<n> — <raison>, émettre un log dans data/trace/module_version_history.jsonl.
+      Distinct de R390 (ajout/détection) — R390 ne bumpe pas automatiquement.
+    not_to_confuse_with: "scripts/artcb_r390_add_module_version.py (ajout/détection, pas bump)"
+
   - id: TASK-007
     title: "PoL / KnowledgeID / UsageID — architecture + implémentation"
     priority: LOW
@@ -478,19 +588,24 @@ decisions:
 # ÉTAT AVANCEMENT GLOBAL
 # ═══════════════════════════════════════════════════════════════════════════════
 progress:
-  global_pct: 76
+  global_pct: 78
   breakdown:
     blockchain_core: 90
     wallet_hybrid_ed25519_mldsa65: 88
     webauthn_register: 85
     add_device_multi_device: 85   # R363+R363b+R363c — vraie WebAuthn + enrôlement B + E2E + concurrence
-    biometric_identity_human_id: 62  # R373 + R374 : 5 cas + BCH ECC — FHE manque encore
+    biometric_identity_human_id: 65  # R373+R374+R376+R378 : 5 cas + BCH ECC + Hamming — FHE manque encore
+    network_eligibility: 70          # R382+R397 : v1.1.0 — 6 correctifs hardening, TLS/CGNAT/multi-seeds
     reflex_artcb_r350_r354: 55
     pqc_mldsa65: 85
     pbft_consensus: 90            # aws-node-3 ALIVE, synchronisé
-    tests_coverage: 89            # 94/94 PASS — R374 30 nouveaux tests
-    ui_artcbme: 88
-    task_ledger: 95               # ledger v2.4 + corpus_index + session_continuation synchronisés
-    rule_governance: 75           # R375 : CR-* index créé, 2 niveaux séparés, 0 divergence — FHE absent
+    tests_coverage: 91            # 141/141 PASS + T31→T58 R397
+    ui_artcbme: 92                # R398 : frontend P2P/Pool/Memorize/AgentPanel supprimés
+    task_ledger: 97               # ledger v2.7 — sync HEAD c280a8a — DONE_VERIFIED formalisé
+    rule_governance: 80           # R375+R381+R393 : CR-* index + domain tagging 230/230 DONE_VERIFIED
+    versioning_modules: 50        # R390 : 175 MODULE_VERSION ajoutés — auto-bump PATCH manque encore
     pol_knowledgeid_usageid: 25
     genesis_transfer_creator_node: 20
+  last_sync_sha: "c280a8a"
+  last_sync_date: "2026-09-20"
+  sync_note: "v2.7 — R377/R378/R382/R389/R397/R398/R398-erratum/L055 intégrés. TASK-RULES-DOMAINS=DONE_VERIFIED."
