@@ -26,17 +26,6 @@ export const CONSOLE_HELP = `ARTCB Console — commandes (API réelle, pas de mo
   mining status           — GET /api/v1/dashboard/mining/status
   mining latest           — GET /api/v1/dashboard/logs/mining-latest
 
-  POOL E2E (ML-KEM)
-  pool status             — GET /api/v1/pool/status
-  pool prefs              — GET /api/v1/pool/preferences
-  pool jobs               — GET /api/v1/pool/jobs
-  pool incoming           — GET /api/v1/pool/incoming
-
-  P2P
-  p2p status              — GET /api/v1/p2p/status
-  p2p peers               — GET /api/v1/p2p/peers
-  p2p sync                — POST /api/v1/p2p/sync
-
   GROUPES & GOUVERNANCE
   groups <address>        — GET /api/v1/groups?address=
   governance proposals    — GET /api/v1/governance/proposals

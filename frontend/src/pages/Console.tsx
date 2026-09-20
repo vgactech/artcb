@@ -92,12 +92,6 @@ export function Console() {
         out.push(JSON.stringify(await apiGet("/pool/jobs"), null, 2));
       } else if (trimmed === "pool incoming") {
         out.push(JSON.stringify(await apiGet("/pool/incoming"), null, 2));
-      } else if (trimmed === "p2p status") {
-        out.push(JSON.stringify(await apiGet("/p2p/status"), null, 2));
-      } else if (trimmed === "p2p peers") {
-        out.push(JSON.stringify(await apiGet("/p2p/peers"), null, 2));
-      } else if (trimmed === "p2p sync") {
-        out.push(JSON.stringify(await apiPost("/p2p/sync"), null, 2));
       } else if (trimmed.startsWith("groups ")) {
         const addr = trimmed.slice("groups ".length).trim();
         out.push(JSON.stringify(await apiGet(`/groups?address=${encodeURIComponent(addr)}`), null, 2));

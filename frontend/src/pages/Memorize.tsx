@@ -7,7 +7,6 @@ import {
   storeGraph,
   wsUrl,
 } from "../api/client";
-import { AgentPanel } from "../components/AgentPanel";
 import { GraphViewer } from "../components/GraphViewer";
 import { PolGauge } from "../components/PolGauge";
 import { useDashboard } from "../context/DashboardContext";
@@ -264,7 +263,6 @@ export function Memorize() {
           )}
         </div>
         <div className="mc-side-stack">
-          <AgentPanel messages={messages} />
           <PolGauge pol={pol} />
         </div>
       </div>

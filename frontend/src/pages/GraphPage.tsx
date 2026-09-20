@@ -6,7 +6,6 @@ import {
   searchNodes,
   storeGraph,
 } from "../api/client";
-import { AgentPanel } from "../components/AgentPanel";
 import { GraphViewer } from "../components/GraphViewer";
 import { PolGauge } from "../components/PolGauge";
 import { Reconstruct } from "../components/Reconstruct";
@@ -30,7 +29,6 @@ export function GraphPage() {
     visibility,
     groupId,
     markChecklist,
-    messages,
   } = useDashboard();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Array<{ node_id: string; score: number; text: string }>>([]);
@@ -204,7 +202,6 @@ export function GraphPage() {
           )}
         </div>
         <div className="mc-side-stack">
-          <AgentPanel messages={messages} />
           <PolGauge pol={pol} />
         </div>
       </div>
