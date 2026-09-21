@@ -84,14 +84,6 @@ export function Console() {
         out.push(JSON.stringify(await apiGet("/dashboard/mining/status"), null, 2));
       } else if (trimmed === "mining latest") {
         out.push(JSON.stringify(await apiGet("/dashboard/logs/mining-latest"), null, 2));
-      } else if (trimmed === "pool status") {
-        out.push(JSON.stringify(await apiGet("/pool/status"), null, 2));
-      } else if (trimmed === "pool prefs") {
-        out.push(JSON.stringify(await apiGet("/pool/preferences"), null, 2));
-      } else if (trimmed === "pool jobs") {
-        out.push(JSON.stringify(await apiGet("/pool/jobs"), null, 2));
-      } else if (trimmed === "pool incoming") {
-        out.push(JSON.stringify(await apiGet("/pool/incoming"), null, 2));
       } else if (trimmed.startsWith("groups ")) {
         const addr = trimmed.slice("groups ".length).trim();
         out.push(JSON.stringify(await apiGet(`/groups?address=${encodeURIComponent(addr)}`), null, 2));

@@ -318,15 +318,15 @@ export interface Translations {
   api_keys_active: string;
   api_keys_cursor_usage: string;
 
-  // Agent Memory Page
-  agent_memory_title: string;
-  agent_memory_tab_status: string;
-  agent_memory_tab_memos: string;
-  agent_memory_tab_new: string;
-  agent_memory_tab_search: string;
-  agent_memory_tab_export: string;
-  agent_memory_tab_webhooks: string;
-  agent_memory_tab_stream: string;
+  // Agent Memory Page — supprimé R401 (backend-only, page retirée du frontend)
+  // agent_memory_title: string;
+  // agent_memory_tab_status: string;
+  // agent_memory_tab_memos: string;
+  // agent_memory_tab_new: string;
+  // agent_memory_tab_search: string;
+  // agent_memory_tab_export: string;
+  // agent_memory_tab_webhooks: string;
+  // agent_memory_tab_stream: string;
 }
 
 export const translations: Record<Language, Partial<Translations> & Pick<Translations, 'nav_dashboard'>> = {
@@ -619,7 +619,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     // Console Page
     console_title: 'Console CLI',
     console_hint: 'API complète — terminal équivalent',
-    console_placeholder: 'help | health | pool status | p2p sync | mining status',
+    console_placeholder: 'help | health | mining status | chain | governance',
     console_execute: 'Exécuter',
     console_unknown_command: 'Commande inconnue',
     console_type_help: 'Tapez help',
@@ -788,7 +788,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     logs_demo_loading: 'Loading…', logs_rtleg_title: 'RT-LEG events',
     logs_rtleg_error: 'Error',
     console_title: 'CLI Console', console_hint: 'Full API — terminal equivalent',
-    console_placeholder: 'help | health | pool status | p2p sync | mining status',
+    console_placeholder: 'help | health | mining status | chain | governance',
     console_execute: 'Execute', console_unknown_command: 'Unknown command',
     console_type_help: 'Type help', console_welcome: 'ARTCB Console v0.4 — type help',
     agent_panel_title: 'Dual agents', agent_panel_empty: 'Explorer & Critic comment during encoding…',
@@ -900,7 +900,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     logs_demo_loading: '加载中…', logs_rtleg_title: 'RT-LEG事件',
     logs_rtleg_error: '错误',
     console_title: 'CLI控制台', console_hint: '完整API — 终端等效',
-    console_placeholder: 'help | health | pool status | p2p sync | mining status',
+    console_placeholder: 'help | health | mining status | chain | governance',
     console_execute: '执行', console_unknown_command: '未知命令',
     console_type_help: '输入help', console_welcome: 'ARTCB控制台v0.4 — 输入help',
     agent_panel_title: '双代理', agent_panel_empty: 'Explorer和Critic在编码时评论…',
@@ -1013,7 +1013,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     logs_demo_loading: 'Cargando…', logs_rtleg_title: 'Eventos RT-LEG',
     logs_rtleg_error: 'Error',
     console_title: 'Consola CLI', console_hint: 'API completa — terminal equivalente',
-    console_placeholder: 'help | health | pool status | p2p sync | mining status',
+    console_placeholder: 'help | health | mining status | chain | governance',
     console_execute: 'Ejecutar', console_unknown_command: 'Comando desconocido',
     console_type_help: 'Escribe help', console_welcome: 'ARTCB Consola v0.4 — escribe help',
     agent_panel_title: 'Agentes duales', agent_panel_empty: 'Explorer y Critic comentan durante la codificación…',
@@ -1126,7 +1126,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     logs_demo_loading: 'Carregando…', logs_rtleg_title: 'Eventos RT-LEG',
     logs_rtleg_error: 'Erro',
     console_title: 'Console CLI', console_hint: 'API completa — terminal equivalente',
-    console_placeholder: 'help | health | pool status | p2p sync | mining status',
+    console_placeholder: 'help | health | mining status | chain | governance',
     console_execute: 'Executar', console_unknown_command: 'Comando desconhecido',
     console_type_help: 'Digite help', console_welcome: 'ARTCB Console v0.4 — digite help',
     agent_panel_title: 'Agentes duais', agent_panel_empty: 'Explorer e Critic comentam durante a codificação…',
@@ -1239,7 +1239,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     logs_demo_loading: 'Caricamento…', logs_rtleg_title: 'Eventi RT-LEG',
     logs_rtleg_error: 'Errore',
     console_title: 'Console CLI', console_hint: 'API completa — equivalente terminale',
-    console_placeholder: 'help | health | pool status | p2p sync | mining status',
+    console_placeholder: 'help | health | mining status | chain | governance',
     console_execute: 'Esegui', console_unknown_command: 'Comando sconosciuto',
     console_type_help: 'Digita help', console_welcome: 'ARTCB Console v0.4 — digita help',
     agent_panel_title: 'Agenti duali', agent_panel_empty: 'Explorer e Critic commentano durante la codifica…',
@@ -1352,7 +1352,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     logs_demo_loading: 'Загрузка…', logs_rtleg_title: 'RT-LEG события',
     logs_rtleg_error: 'Ошибка',
     console_title: 'CLI Консоль', console_hint: 'Полный API — эквивалент терминала',
-    console_placeholder: 'help | health | pool status | p2p sync | mining status',
+    console_placeholder: 'help | health | mining status | chain | governance',
     console_execute: 'Выполнить', console_unknown_command: 'Неизвестная команда',
     console_type_help: 'Введите help', console_welcome: 'ARTCB Консоль v0.4 — введите help',
     agent_panel_title: 'Двойные агенты', agent_panel_empty: 'Explorer и Critic комментируют во время кодирования…',

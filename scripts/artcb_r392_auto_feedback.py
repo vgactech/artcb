@@ -35,7 +35,7 @@ CERTIFIED_100=false | DEBUG MODE
 
 from __future__ import annotations
 
-MODULE_VERSION = '1.1.0'  # R394-D — feedback basé sur faits
+MODULE_VERSION = '1.2.0'  # R401 — AVANT/APRÈS + POINTS_FORTS/FAIBLES
 
 import argparse
 import json
@@ -208,13 +208,18 @@ def collect_versioning_facts() -> dict:
 # ── Analyse des faits → FAITS/OBSERVATIONS/RISQUES/LEÇONS/ACTIONS ────────────
 
 def analyze(git: dict, tests: dict, versioning: dict) -> dict:
-    """Analyse basée sur les faits mesurés — aucun mot-clé de commit."""
+    """Analyse basée sur les faits mesurés — aucun mot-clé de commit.
+    R401 : ajout sections AVANT/APRÈS + POINTS_FORTS / POINTS_FAIBLES.
+    """
 
     facts = []
     observations = []
     risks = []
     lessons = []
     actions = []
+    avant_apres = []   # paires (fichier, avant, après)
+    points_forts = []
+    points_faibles = []
 
     # ── FAITS ──────────────────────────────────────────────────────────────
     facts.append(f"SHA actuel : {git['current_sha']}")
@@ -299,15 +304,64 @@ def analyze(git: dict, tests: dict, versioning: dict) -> dict:
             "Préférer des commits atomiques par fonctionnalité."
         )
 
+    # ── AVANT / APRÈS (basé sur git diff --stat) ──────────────────────────
+    # On construit la liste des fichiers modifiés avec le résumé +/- lignes
+    diff_raw = _run(["git", "diff", "--stat",
+                     f"{git['since_sha']}..HEAD" if git.get("since_sha") else "HEAD~1..HEAD"])
+    for line in diff_raw.splitlines():
+        if "|" not in line:
+            continue
+        parts = line.split("|")
+        filepath = parts[0].strip()
+        changes = parts[1].strip() if len(parts) > 1 else ""
+        avant_apres.append({
+            "fichier": filepath,
+            "modifications": changes,  # ex: "3 +++"
+        })
+
+    # ── POINTS FORTS ─────────────────────────────────────────────────────
+    if tests.get("passed", 0) > 0 and tests.get("failed", 0) == 0:
+        points_forts.append(
+            f"Tests : {tests['passed']} PASS, 0 FAIL — suite stable"
+        )
+    if versioning["coverage_pct"] >= 95:
+        points_forts.append(
+            f"Versioning : couverture {versioning['coverage_pct']}% — excellente traçabilité"
+        )
+    elif versioning["coverage_pct"] >= 80:
+        points_forts.append(
+            f"Versioning : couverture {versioning['coverage_pct']}% — bonne traçabilité"
+        )
+    if git["commits_count"] > 0:
+        points_forts.append(
+            f"{git['commits_count']} commit(s) effectué(s) — working tree progressant vers origin"
+        )
+
+    # ── POINTS FAIBLES ────────────────────────────────────────────────────
+    if tests.get("failed", 0) > 0:
+        points_faibles.append(
+            f"Tests en échec ({tests['failed']}) — risque de régression avant push"
+        )
+    if tests.get("status") == "not_measured":
+        points_faibles.append(
+            "Tests non mesurés — impossible de vérifier la stabilité de la session"
+        )
+    if versioning["coverage_pct"] < 80:
+        points_faibles.append(
+            f"Versioning : {versioning['without_version']} module(s) sans MODULE_VERSION "
+            f"({versioning['coverage_pct']}% couverture)"
+        )
+    if git["commits_count"] == 0:
+        points_faibles.append(
+            "Aucun commit détecté (L-049) — vérifier git status avant de marquer DONE"
+        )
+
     # ── ACTIONS ────────────────────────────────────────────────────────────
     if tests.get("failed", 0) > 0:
         actions.append("Corriger les tests en échec avant le prochain push")
 
-    actions.append("Déployer R387+R390 sur N2/N4/N3 (TASK-006-LIVE-VALIDATION)")
+    actions.append("Déployer sur N2/N4/N3 après chaque push (TASK-006-LIVE-VALIDATION)")
     actions.append("FHE check_uniqueness() — capteurs réels FAR/FRR (TASK-001-BIOMETRIE-SUITE)")
-    actions.append(
-        "Intégrer R392 dans .bob/hooks/stop.py pour déclenchement automatique (R394-C)"
-    )
 
     return {
         "facts": facts,
@@ -315,6 +369,9 @@ def analyze(git: dict, tests: dict, versioning: dict) -> dict:
         "risks": risks,
         "lessons": lessons,
         "actions": actions,
+        "avant_apres": avant_apres,
+        "points_forts": points_forts,
+        "points_faibles": points_faibles,
     }
 
 
@@ -364,6 +421,33 @@ def generate_report(since_sha: str | None, test_results_path: str | None,
     for action in analysis["actions"]:
         lines.append(f"→ {action}")
 
+    # R401 — AVANT / APRÈS
+    lines += ["", "## AVANT / APRÈS (modifications cette session)", ""]
+    if analysis["avant_apres"]:
+        lines.append("| Fichier | Modifications |")
+        lines.append("|---------|--------------|")
+        for entry in analysis["avant_apres"][:20]:
+            lines.append(f"| `{entry['fichier']}` | {entry['modifications']} |")
+        if len(analysis["avant_apres"]) > 20:
+            lines.append(f"| *... {len(analysis['avant_apres']) - 20} autres* | |")
+    else:
+        lines.append("- Aucune modification de fichier détectée.")
+
+    # R401 — POINTS FORTS / FAIBLES
+    lines += ["", "## ✅ POINTS FORTS", ""]
+    if analysis["points_forts"]:
+        for pf in analysis["points_forts"]:
+            lines.append(f"✅ {pf}")
+    else:
+        lines.append("- Aucun point fort identifié automatiquement cette session.")
+
+    lines += ["", "## ⚠️ POINTS FAIBLES / À AMÉLIORER", ""]
+    if analysis["points_faibles"]:
+        for pf in analysis["points_faibles"]:
+            lines.append(f"⚠️ {pf}")
+    else:
+        lines.append("- Aucun point faible détecté automatiquement.")
+
     lines += [
         "",
         "## Commits de la session",
@@ -379,20 +463,7 @@ def generate_report(since_sha: str | None, test_results_path: str | None,
         "",
         "---",
         "",
-        f"*Généré par `artcb_r392_auto_feedback.py` v{MODULE_VERSION} — R394-D — {ts.isoformat()}*",
-        "",
-        "### Intégration automatique (R394-C)",
-        "",
-        "Pour déclencher ce script automatiquement à chaque fin de session Bob IDE,",
-        "ajouter dans `.bob/hooks/stop.py` :",
-        "",
-        "```python",
-        "import subprocess, os",
-        "repo = os.environ.get('ARTCB_REPO_PATH', os.getcwd())",
-        "subprocess.run([",
-        "    'python3', 'scripts/artcb_r392_auto_feedback.py', '--since', 'HEAD~1'",
-        "], cwd=repo, timeout=30)",
-        "```",
+        f"*Généré par `artcb_r392_auto_feedback.py` v{MODULE_VERSION} — R401 — {ts.isoformat()}*",
     ]
 
     content = "\n".join(lines)

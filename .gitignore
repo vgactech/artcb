@@ -15,6 +15,8 @@ data/*
 !data/fixtures/
 !data/fixtures/README.md
 !data/founders/
+!data/trace/
+!data/trace/module_version_history.jsonl
 # Clés privées founders (SENSIBLE - ne jamais commit)
 data/founders/founders_wallets.json
 data/founders/founders_wallets_v2.json
