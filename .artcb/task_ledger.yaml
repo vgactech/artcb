@@ -1,24 +1,25 @@
-# ARTCB — Ledger de tâches persistant
+2# ARTCB — Ledger de tâches persistant
 # Mis à jour automatiquement par Bob IDE à chaque session/prompt.
 # Format : YAML lisible machine + humain.
 # Ne jamais supprimer une tâche DONE — conserver l'historique complet.
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.8"
+  version: "2.9"
   repo: "https://github.com/vgactech/artcb"
-  node_live: "https://artcb.me"
+  node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-21"
-  git_head: "e5da415"
-  chain_height: 1142
+  git_head: "b9036a3"
+  chain_height: 1198
   chain_height_public: 837
-  chain_height_private: 305
-  last_block_index: 1141
+  chain_height_private: 361
+  last_block_index: 1194
+  last_block_ts: "2026-09-14T17:42:02Z"
   certified_100: false
   pbft_primary: "aws-node-3"
   pbft_status: "ALIVE — synchronisé 2e89322, view=27"
-  versioning_canonical: "252/294 modules (85.7%) — scan logs/R394_module_fingerprints.json"
-  ledger_sync_note: "v2.8 — sync HEAD e5da415 (R402 post-push health check). L-054 aware. Auto-référence inévitable : ce ledger décrit e5da415 et sera porté par le commit suivant."
+  v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 (commits cf30b3a + eb097e1)"
+  ledger_sync_note: "v2.9 — sync HEAD b9036a3 (R402+R403+R404+R405+R406). Makefile install-hooks. TASK-VERSIONING=DONE."
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)
@@ -91,14 +92,14 @@ done:
       - "WebAuthn valide ≠ unique_human_proven (toujours False)"
     note: "Commit signé non-verified sur GitHub — normal (git config local sans GPG)"
 
-  - id: R364
-    title: "Tests attaque E2E — 12 tests dans test_add_device_r363.py"
+  - id: R364-initial
+    title: "Tests attaque E2E — 12 tests dans test_add_device_r363.py (version initiale CI)"
     commit: "df7cb20"
     file: "tests/test_add_device_r363.py"
-    note: "CI en cours au moment de la vérification GitHub — tests présents, exécution à confirmer"
+    note: "CI en cours au moment de la vérification GitHub — supplanté par R364 final 20/20 PASS"
 
-  - id: R365
-    title: "Relancer aws-node-3 PBFT primary"
+  - id: R365-initial
+    title: "Relancer aws-node-3 PBFT primary (entrée initiale)"
     commit: "N/A — ops"
     note: "aws-node-3 VIVANT — connecté SSH, synchronisé sur df7cb20, PBFT view=27 primary=aws-node-3 committed=106"
     resolved: true
@@ -464,6 +465,97 @@ done:
     domains_found: "PROTOCOL(96) GOVERNANCE(48) LESSONS(44) NETWORK(39) TESTING(1) ROADMAP(1) IDENTITY(1)"
     note: "Déclaré incorrectement RESTE A FAIRE dans R398 — erratum R398 produit"
 
+  - id: R402
+    title: "R402 — Post-push health check automatique + stop.py enrichi"
+    commit: "107d21b"
+    files_created:
+      - "scripts/artcb_r402_post_push_health.py — health check N2/N4/N3 (exclut OVH1)"
+      - "tests/test_r402_post_push_health.py — 15/15 PASS"
+    files_modified:
+      - ".bob/hooks/stop.py — appel R402 fail-open après chaque session"
+    tests: "15/15 PASS"
+    certified_100: false
+    note: "OVH1 (152.228.144.34) exclu conformément à la règle D-036"
+
+  - id: R403
+    title: "R403 — Audit cohérence wallet multi-nœuds + diagnostic WALLET_STATE_LOCAL"
+    commit: "0132ab1"
+    files_created:
+      - "scripts/artcb_r403_wallet_consistency_audit.py — 5 sondes par nœud"
+      - "tests/test_r403_wallet_consistency_audit.py — 19/19 PASS"
+    findings:
+      - "WalletManager.wallet_dir → LOCAL au nœud (line 95 manager.py)"
+      - "WalletDeviceBindingStore → LOCAL au nœud (line 84 wallet_device_binding.py)"
+      - "Blockchain (blocs) → RÉPLIQUÉE via PBFT ✅"
+      - "/api/v1/wallet/list requiert Bearer (401 sans token)"
+      - "/api/v1/admin/device-bindings/<fp> n'existe pas encore (404)"
+    tests: "19/19 PASS"
+    certified_100: false
+
+  - id: R404
+    title: "R404 — Rebuild frontend dist/ — suppression AgentMemory/Network du bundle"
+    commits: ["28d0f61", "6d5b40c"]
+    files_modified:
+      - "frontend/dist/assets/index-lQDgNxDq.js — nouveau bundle propre (sans /agent-memory, /network)"
+      - "frontend/dist/index.html — mis à jour"
+    note: "frontend/dist/ est versionné dans git — les nœuds servent ce dist/ directement"
+    tests: "bundle vérifié — routes /agent-memory et /network absentes"
+    certified_100: false
+
+  - id: R405
+    title: "R405 — TASK-VERSIONING : hook pre-commit auto-bump MODULE_VERSION, 15/15 PASS"
+    commit: "b9036a3"
+    files_created:
+      - "scripts/artcb_r405_precommit_hook.sh — hook bash (source versionnée)"
+      - "scripts/artcb_r405_install_precommit_hook.py — MODULE_VERSION 1.0.1 (auto-bumpé)"
+      - "tests/test_r405_precommit_hook.py — 15/15 PASS (dont 4 E2E vrai git)"
+      - "rapports/R405_task_versioning_precommit_hook_2026-09-21.md"
+    behavior:
+      - "git commit → détecte .py stagés avec MODULE_VERSION → bump PATCH → git add → commit final"
+      - "FAIL-OPEN : exit 0 même si bump échoue"
+      - "Nouveau clone : hook absent jusqu'à make install-hooks (R406)"
+    tests: "15/15 PASS"
+    certified_100: false
+    note: "Limite documentée : .git/hooks/ non versionné → make install-hooks requis après clone (R406)"
+
+  - id: R406
+    title: "R406 — Robustesse versioning : Makefile install-hooks + ledger v2.9 + sémantique git_head"
+    commit: "PENDING — à remplir après push"
+    files_created:
+      - "tests/test_r406_versioning_robustness.py — 15 tests T01→T15"
+      - "rapports/R406_robustesse_versioning_ledger_sync_2026-09-21.md"
+    files_modified:
+      - "Makefile — cibles install-hooks + check-hooks ajoutées"
+      - ".artcb/task_ledger.yaml — v2.9, git_head=b9036a3, R402→R406 intégrés"
+    decisions:
+      - "fail-open conservé : make install-hooks documente la responsabilité développeur"
+      - "sémantique git_head : HEAD avant commit de sync (auto-référence impossible)"
+      - "garantie clone : make install-hooks + README — pas de fail-closed (trop bloquant en phase dev)"
+    tests: "15/15 PASS (après ledger sync)"
+    certified_100: false
+
+  - id: TASK-VERSIONING
+    title: "TASK-VERSIONING — Script bump automatique MODULE_VERSION PATCH +1 après commit (DONE)"
+    status: DONE
+    done_by: "R400-B (moteur) + R405 (hook pre-commit) + R406 (Makefile install-hooks)"
+    commits: ["e5da415 (R400-B)", "b9036a3 (R405)", "PENDING (R406)"]
+    deliverables:
+      - "scripts/artcb_bump_module_version.py — moteur bump PATCH + journal jsonl"
+      - "scripts/artcb_r405_precommit_hook.sh — hook bash déclenché à chaque commit"
+      - "scripts/artcb_r405_install_precommit_hook.py — installeur + --check/--remove"
+      - "Makefile cible install-hooks — reproductibilité après clone"
+    fail_open_decision: >
+      CONSERVÉ en phase dev. Justification :
+      (1) git commit --no-verify contourne toujours un hook local ;
+      (2) Fail-closed bloquerait CI/CD automatisé et merges ;
+      (3) La vraie garantie sera apportée par une CI GitHub Actions (future R407).
+      La responsabilité du développeur est documentée : make install-hooks obligatoire après clone.
+    git_head_semantics: >
+      git_head dans le ledger = HEAD connu AVANT le commit de sync du ledger.
+      Auto-référence impossible : le SHA du commit contenant ce fichier ne peut pas
+      être connu avant ce commit. Sémantique choisie : SHA du commit précédent, vérifiable.
+    certified_100: false
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES IN PROGRESS
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -522,18 +614,6 @@ open:
       (si permanent) retrait → N=3 → quorum vérifié → blocs produits.
       Nécessite aws-node-3 accessible (actuellement view=27 ALIVE).
 
-  - id: TASK-VERSIONING
-    title: "Script bump automatique MODULE_VERSION (PATCH +1) après modification d'un module"
-    priority: MEDIUM
-    status: OPEN
-    blocker: false
-    description: >
-      Créer scripts/artcb_bump_module_version.py : lire MODULE_VERSION du fichier,
-      incrémenter PATCH (1.0.0→1.0.1 / 1.1.0→1.1.1), mettre à jour le commentaire
-      # R<n> — <raison>, émettre un log dans data/trace/module_version_history.jsonl.
-      Distinct de R390 (ajout/détection) — R390 ne bumpe pas automatiquement.
-    not_to_confuse_with: "scripts/artcb_r390_add_module_version.py (ajout/détection, pas bump)"
-
   - id: TASK-007
     title: "PoL / KnowledgeID / UsageID — architecture + implémentation"
     priority: LOW
@@ -587,7 +667,7 @@ decisions:
 # ÉTAT AVANCEMENT GLOBAL
 # ═══════════════════════════════════════════════════════════════════════════════
 progress:
-  global_pct: 78
+  global_pct: 84
   breakdown:
     blockchain_core: 90
     wallet_hybrid_ed25519_mldsa65: 88
@@ -598,13 +678,15 @@ progress:
     reflex_artcb_r350_r354: 55
     pqc_mldsa65: 85
     pbft_consensus: 90            # aws-node-3 ALIVE, synchronisé
-    tests_coverage: 91            # 141/141 PASS + T31→T58 R397
-    ui_artcbme: 92                # R398 : frontend P2P/Pool/Memorize/AgentPanel supprimés
-    task_ledger: 97               # ledger v2.7 — sync HEAD c280a8a — DONE_VERIFIED formalisé
+    tests_coverage: 92            # R402+R403+R405+R406 : +15+19+15+15 tests
+    ui_artcbme: 95                # R404 : dist/ rebuild — AgentMemory/Network hors bundle
+    task_ledger: 99               # ledger v2.9 — sync HEAD b9036a3 — R402→R406 intégrés
     rule_governance: 80           # R375+R381+R393 : CR-* index + domain tagging 230/230 DONE_VERIFIED
-    versioning_modules: 50        # R390 : 175 MODULE_VERSION ajoutés — auto-bump PATCH manque encore
+    versioning_modules: 80        # R405+R406 : hook pre-commit + Makefile install-hooks DONE
+    health_check_live: 85         # R402 : post-push health 3 nœuds automatique
+    wallet_audit_multi_node: 75   # R403 : WALLET_STATE_LOCAL diagnostiqué
     pol_knowledgeid_usageid: 25
     genesis_transfer_creator_node: 20
-  last_sync_sha: "1ac7d22"
+  last_sync_sha: "b9036a3"
   last_sync_date: "2026-09-21"
-  sync_note: "v2.7 — R400-A micro-sync 1 commit (1ac7d22=R399). Problème auto-référence documenté. TASK-RULES-DOMAINS=DONE_VERIFIED."
+  sync_note: "v2.9 — R402/R403/R404/R405/R406 intégrés. TASK-VERSIONING=DONE. Makefile install-hooks. git_head sémantique=HEAD avant commit sync."

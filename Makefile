@@ -2,7 +2,21 @@
         env-docker env-replit env-dev env-codespaces \
         docker-build docker-up docker-down docker-logs \
         ssh-setup test-fast deploy-check \
-        node-start p2p-status p2p-connect test-p2p
+        node-start p2p-status p2p-connect test-p2p \
+        install-hooks check-hooks
+
+# ─── Hooks Git (R406) ─────────────────────────────────────────────────────────
+# À exécuter après chaque nouveau clone : make install-hooks
+# Installe le hook pre-commit R405 (auto-bump MODULE_VERSION) dans .git/hooks/
+install-hooks:
+	@echo "[R406] Installation du hook pre-commit R405 (auto-bump MODULE_VERSION)..."
+	python3 scripts/artcb_r405_install_precommit_hook.py
+	@echo "[R406] ✅ Hook installé. Vérification :"
+	python3 scripts/artcb_r405_install_precommit_hook.py --check
+
+check-hooks:
+	@echo "[R406] Vérification de l'état du hook pre-commit R405..."
+	python3 scripts/artcb_r405_install_precommit_hook.py --check
 
 # ─── Build ────────────────────────────────────────────────────────────────────
 chain:
