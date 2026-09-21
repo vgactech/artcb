@@ -520,7 +520,7 @@ done:
 
   - id: R406
     title: "R406 — Robustesse versioning : Makefile install-hooks + ledger v2.9 + sémantique git_head"
-    commit: "PENDING — à remplir après push"
+    commit: "f865969"
     files_created:
       - "tests/test_r406_versioning_robustness.py — 15 tests T01→T15"
       - "rapports/R406_robustesse_versioning_ledger_sync_2026-09-21.md"
