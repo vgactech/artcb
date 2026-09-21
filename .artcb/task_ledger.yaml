@@ -5,21 +5,20 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.7"
+  version: "2.8"
   repo: "https://github.com/vgactech/artcb"
-  node_live: "http://151.80.107.29:8000"
+  node_live: "https://artcb.me"
   last_updated: "2026-09-21"
-  git_head: "1ac7d22"
-  chain_height: 1198
+  git_head: "e5da415"
+  chain_height: 1142
   chain_height_public: 837
-  chain_height_private: 361
-  last_block_index: 1194
-  last_block_ts: "2026-09-14T17:42:02Z"
+  chain_height_private: 305
+  last_block_index: 1141
   certified_100: false
   pbft_primary: "aws-node-3"
   pbft_status: "ALIVE — synchronisé 2e89322, view=27"
-  v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 (commits cf30b3a + eb097e1)"
-  ledger_sync_note: "v2.7 — sync HEAD 1ac7d22 (R399 micro-sync c280a8a→1ac7d22). Auto-référence résolue par commit R400-A."
+  versioning_canonical: "252/294 modules (85.7%) — scan logs/R394_module_fingerprints.json"
+  ledger_sync_note: "v2.8 — sync HEAD e5da415 (R402 post-push health check). L-054 aware. Auto-référence inévitable : ce ledger décrit e5da415 et sera porté par le commit suivant."
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)

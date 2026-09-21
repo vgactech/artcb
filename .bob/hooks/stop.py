@@ -185,6 +185,47 @@ def main() -> int:
     audit_icon = {"ok": "✅", "failed": "❌", "incomplete": "⚠️"}.get(audit_status, "?")
     print(f"[ARTCB AUDIT] {audit_icon} feedback={audit_status} | agent=bob | session={session_id or '?'}")
 
+    # --- R402 : Post-push health check artcb.me — FAIL-OPEN, visible dans stdout ---
+    # Déclenché à chaque fin de session pour détecter les pannes immédiatement après push.
+    # Ne bloque jamais la fin de tour. Résumé compact affiché.
+    try:
+        health_result = subprocess.run(
+            ["python3", "scripts/artcb_r402_post_push_health.py", "--timeout", "12", "--quiet"],
+            cwd=str(ROOT),
+            timeout=45,          # 3 nœuds × 12s max + marge
+            capture_output=True,
+            text=True,
+        )
+        health_status = "ok" if health_result.returncode == 0 else "degraded_or_down"
+        # Écriture trace nanoseconde
+        try:
+            TRACE.mkdir(parents=True, exist_ok=True)
+            health_row = {
+                "ts_ns": time.time_ns(),
+                "kind": "bob_stop_health_check",
+                "session_id": session_id,
+                "health_status": health_status,
+                "returncode": health_result.returncode,
+                "stdout_tail": (health_result.stdout or "")[-200:],
+                "note": "R402 — artcb.me + N2/N4/N3 IP directe",
+            }
+            with (TRACE / "bob_turns.jsonl").open("a") as fh:
+                fh.write(json.dumps(health_row, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+        health_icon = "✅" if health_result.returncode == 0 else "❌"
+        # Affichage résumé compact (1 ligne) sans bloquer
+        nodes_line = ""
+        for line in (health_result.stdout or "").splitlines():
+            if "nœuds UP" in line:
+                nodes_line = line.strip()
+                break
+        print(f"[ARTCB HEALTH] {health_icon} {nodes_line or health_status}")
+    except subprocess.TimeoutExpired:
+        print("[ARTCB HEALTH] ⚠️ health check timeout (45s) — non bloquant")
+    except Exception as exc:
+        print(f"[ARTCB HEALTH] ⚠️ health check erreur: {type(exc).__name__}: {str(exc)[:80]}")
+
     return 0
 
 

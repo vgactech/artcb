@@ -1,4 +1,7 @@
-/** WebAuthn helpers — fingerprint / Face ID / Windows Hello. No raw biometric leaves the device. */
+/** WebAuthn helpers — fingerprint / Face ID / Windows Hello. No raw biometric leaves the device.
+ *  R384 : validation des options avant tout appel navigator.credentials pour éviter les crashes
+ *  "undefined.challenge" causés par une réponse API mal structurée ou absente.
+ */
 
 function bufToB64u(buf: ArrayBuffer): string {
   const bytes = new Uint8Array(buf);
@@ -30,6 +33,32 @@ export async function platformAuthenticatorAvailable(): Promise<boolean> {
 }
 
 type JsonOptions = Record<string, unknown>;
+
+/**
+ * R384 — Valide que les options WebAuthn reçues du serveur sont exploitables
+ * avant tout appel à navigator.credentials. Lance une erreur explicite si une
+ * propriété obligatoire est absente ou invalide, plutôt qu'un crash
+ * "undefined.challenge" opaque dans le moteur JS.
+ */
+function validateWebAuthnOptions(publicKey: unknown, context: "create" | "get"): JsonOptions {
+  if (publicKey === null || publicKey === undefined) {
+    throw new Error(
+      `webauthn_options_missing : le serveur n'a pas renvoyé publicKey (contexte=${context}). ` +
+      "Vérifiez que le wallet existe et que la credential est bien enregistrée sur ce nœud."
+    );
+  }
+  if (typeof publicKey !== "object" || Array.isArray(publicKey)) {
+    throw new Error(`webauthn_options_invalid : publicKey doit être un objet (contexte=${context})`);
+  }
+  const opts = publicKey as JsonOptions;
+  if (typeof opts.challenge !== "string" || opts.challenge.length === 0) {
+    throw new Error(
+      `webauthn_challenge_missing : publicKey.challenge absent ou vide (contexte=${context}). ` +
+      "Le serveur n'a peut-être pas trouvé la credential pour ce wallet."
+    );
+  }
+  return opts;
+}
 
 function decodeCreateOptions(publicKey: JsonOptions): PublicKeyCredentialCreationOptions {
   const user = publicKey.user as Record<string, string>;
@@ -84,16 +113,20 @@ export function serializeCredential(cred: PublicKeyCredential): {
   };
 }
 
-export async function createPlatformCredential(publicKey: JsonOptions): Promise<PublicKeyCredential> {
-  const cred = await navigator.credentials.create({ publicKey: decodeCreateOptions(publicKey) });
+export async function createPlatformCredential(publicKey: unknown): Promise<PublicKeyCredential> {
+  // R384 — valider avant d'appeler decodeCreateOptions pour éviter undefined.challenge
+  const validated = validateWebAuthnOptions(publicKey, "create");
+  const cred = await navigator.credentials.create({ publicKey: decodeCreateOptions(validated) });
   if (!cred || cred.type !== "public-key") {
     throw new Error("webauthn_create_cancelled");
   }
   return cred as PublicKeyCredential;
 }
 
-export async function getPlatformCredential(publicKey: JsonOptions): Promise<PublicKeyCredential> {
-  const cred = await navigator.credentials.get({ publicKey: decodeRequestOptions(publicKey) });
+export async function getPlatformCredential(publicKey: unknown): Promise<PublicKeyCredential> {
+  // R384 — valider avant d'appeler decodeRequestOptions pour éviter undefined.challenge
+  const validated = validateWebAuthnOptions(publicKey, "get");
+  const cred = await navigator.credentials.get({ publicKey: decodeRequestOptions(validated) });
   if (!cred || cred.type !== "public-key") {
     throw new Error("webauthn_get_cancelled");
   }

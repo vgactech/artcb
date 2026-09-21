@@ -1,0 +1,71 @@
+{
+  "ts_ns": 1789978853386749000,
+  "timestamp_utc": "2026-09-21T08:20:53Z",
+  "probe_version": "1.0.0",
+  "local_sha": "e5da415",
+  "global_status": "ok",
+  "nodes_up": 3,
+  "nodes_total": 3,
+  "nodes": [
+    {
+      "ts_ns": 1789978853427454000,
+      "ip": "151.80.107.29",
+      "url": "https://151.80.107.29/api/v1/health",
+      "http_code": 200,
+      "latency_ms": 2363.8,
+      "api_ok": true,
+      "git_sha": "e5da4150542f",
+      "status": "ok",
+      "frontend_ok": true,
+      "frontend_code": 200,
+      "error": null,
+      "node_id": "N2",
+      "node_label": "OVH2"
+    },
+    {
+      "ts_ns": 1789978856096246000,
+      "ip": "91.134.45.8",
+      "url": "https://91.134.45.8/api/v1/health",
+      "http_code": 200,
+      "latency_ms": 702.4,
+      "api_ok": true,
+      "git_sha": "e5da4150542f",
+      "status": "ok",
+      "frontend_ok": true,
+      "frontend_code": 200,
+      "error": null,
+      "node_id": "N4",
+      "node_label": "OVH4"
+    },
+    {
+      "ts_ns": 1789978857109786000,
+      "ip": "13.38.209.25",
+      "url": "https://13.38.209.25/api/v1/health",
+      "http_code": 200,
+      "latency_ms": 894.7,
+      "api_ok": true,
+      "git_sha": "e5da4150542f",
+      "status": "ok",
+      "frontend_ok": true,
+      "frontend_code": 200,
+      "error": null,
+      "node_id": "N3",
+      "node_label": "AWS3"
+    }
+  ],
+  "domain": {
+    "ts_ns": 1789978858293900000,
+    "domain": "artcb.me",
+    "url": "https://artcb.me/api/v1/health",
+    "http_code": 200,
+    "latency_ms": 1521.9,
+    "api_ok": true,
+    "git_sha": "e5da4150542f",
+    "error": null,
+    "dns_split_suspected": false
+  },
+  "sha_warnings": [],
+  "dns_split_detected": false,
+  "certified_100": false,
+  "note": "R402 — L-054 aware — OVH1 BLOCKED by user decision"
+}
