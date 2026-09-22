@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "2.9"
+  version: "3.0"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
-  last_updated: "2026-09-21"
-  git_head: "b9036a3"
+  last_updated: "2026-09-22"
+  git_head: "40e7051"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -19,7 +19,17 @@ meta:
   pbft_primary: "aws-node-3"
   pbft_status: "ALIVE — synchronisé 2e89322, view=27"
   v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 (commits cf30b3a + eb097e1)"
-  ledger_sync_note: "v2.9 — sync HEAD b9036a3 (R402+R403+R404+R405+R406). Makefile install-hooks. TASK-VERSIONING=DONE."
+  ledger_sync_note: "v3.0 — sync HEAD 40e7051 (R415+R416+R417). fingerprint régénéré L-053. TASK-VERSIONING=DONE. DV-01..DV-07=PASS (artefacts versionnés). types_normatifs=8 (pas 7)."
+  dv_status:
+    DV-01: "PASS — e2e189_mainnet_genesis"
+    DV-02: "PASS — e2e208_dv02_dv06_live (flood HTTP borné, pas SYN)"
+    DV-03: "PASS — e2e189_mainnet_genesis"
+    DV-04: "PASS — e2e189_mainnet_genesis"
+    DV-05: "PASS — e2e188_dv05_live_bft (hérité, scénarios BFT non rejoués en 189)"
+    DV-06: "PASS — e2e208_dv02_dv06_live (netem 25%/80ms OVH4)"
+    DV-07: "PASS — e2e189_mainnet_genesis"
+  certified_distributed_mainnet: false
+  note_r416: "DV RESULT.json PASS != certification globale. Types normatifs=8 (RULE/DECISION/SPEC/LESSON/CHECK/CONVENTION/QUESTION/EVIDENCE). fingerprint régénéré R417 sur HEAD 40e7051."
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)
