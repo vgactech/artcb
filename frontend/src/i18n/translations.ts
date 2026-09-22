@@ -345,11 +345,11 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_logs: 'Logs',
     nav_console: 'Console',
     nav_integrations: 'Intégrations',
-    nav_network: 'Réseau P2P',
+    // nav_network: supprimé R415 (P2P backend-only, route absente depuis R379)
     nav_governance: 'Gouvernance',
     nav_groups: 'Groupes',
     nav_api_keys: 'Clés API',
-    nav_agent_memory: 'Mémoire IA',
+    // nav_agent_memory: supprimé R415 (AgentMemory backend-only, route absente depuis R379)
     nav_register: 'Créer wallet',
     // Dashboard
     dashboard_title: 'Tableau de bord ARTCB',
@@ -635,7 +635,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Aucun bloc',
     api_keys_title: 'Clés API · Accès externe', api_keys_token_warning: 'Copiez ce token maintenant — il ne sera plus affiché', api_keys_new_key: 'Nouvelle clé API', api_keys_active: 'Clés actives', api_keys_cursor_usage: 'Comment utiliser dans Cursor',
-    agent_memory_title: 'Agent Memory — ARTCB IA', agent_memory_tab_status: 'Statut', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'Nouveau mémo', agent_memory_tab_search: 'Recherche', agent_memory_tab_export: 'Export', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
+    // agent_memory_* : supprimé R415 — page AgentMemory retirée depuis R379/R401
   },
   
   en: {
@@ -643,8 +643,11 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_chain: 'Chain', nav_pol: 'PoL', nav_memorize: 'Memorize',
     nav_graph: 'Graph', nav_wallets: 'Wallets', nav_mining: 'Mining',
     nav_system: 'System', nav_logs: 'Logs', nav_console: 'Console',
-    nav_integrations: 'Integrations', nav_network: 'P2P Network',
-    nav_governance: 'Governance', nav_groups: 'Groups', nav_api_keys: 'API Keys', nav_agent_memory: 'AI Memory', nav_register: 'Sign up',
+    nav_integrations: 'Integrations',
+    // nav_network: removed R415 (P2P backend-only)
+    nav_governance: 'Governance', nav_groups: 'Groups', nav_api_keys: 'API Keys',
+    // nav_agent_memory: removed R415 (AgentMemory backend-only)
+    nav_register: 'Sign up',
     dashboard_title: 'ARTCB Dashboard', dashboard_subtitle: 'Decentralized Collective Memory',
     dashboard_blocks: 'Blocks', dashboard_pol_score: 'PoL Score', dashboard_graphs: 'Graphs',
     layout_visibility: 'Network', layout_visibility_private: 'PRIVATE',
@@ -797,7 +800,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_reconstructed: 'Reconstructed', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'No blocks',
     api_keys_title: 'API Keys · External access', api_keys_token_warning: 'Copy this token now — it will not be shown again', api_keys_new_key: 'New API key', api_keys_active: 'Active keys', api_keys_cursor_usage: 'How to use in Cursor',
-    agent_memory_title: 'Agent Memory — ARTCB AI', agent_memory_tab_status: 'Status', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'New memo', agent_memory_tab_search: 'Search', agent_memory_tab_export: 'Export', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
+    // agent_memory_* : removed R415 — AgentMemory page removed since R379/R401
   },
   
   zh: {
@@ -805,8 +808,10 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_chain: '区块链', nav_pol: '学习证明', nav_memorize: '记忆',
     nav_graph: '图谱', nav_wallets: '钱包', nav_mining: '挖矿',
     nav_system: '系统', nav_logs: '日志', nav_console: '控制台',
-    nav_integrations: '集成', nav_network: 'P2P网络',
-    nav_governance: '治理', nav_groups: '群组', nav_api_keys: 'API密钥', nav_agent_memory: 'AI记忆',
+    nav_integrations: '集成',
+    // nav_network: 已删除 R415 (P2P 仅后端)
+    nav_governance: '治理', nav_groups: '群组', nav_api_keys: 'API密钥',
+    // nav_agent_memory: 已删除 R415 (AgentMemory 仅后端)
     dashboard_title: 'ARTCB 仪表板', dashboard_subtitle: '去中心化集体记忆',
     dashboard_blocks: '区块', dashboard_pol_score: '学习证明分数', dashboard_graphs: '图表',
     layout_visibility: '网络', layout_visibility_private: '私有',
@@ -909,7 +914,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_reconstructed: '重建', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: '无区块',
     api_keys_title: 'API密钥·外部访问', api_keys_token_warning: '立即复制此令牌——不会再次显示', api_keys_new_key: '新API密钥', api_keys_active: '活跃密钥', api_keys_cursor_usage: '如何在Cursor中使用',
-    agent_memory_title: '代理记忆 — ARTCB AI', agent_memory_tab_status: '状态', agent_memory_tab_memos: '备忘', agent_memory_tab_new: '新备忘', agent_memory_tab_search: '搜索', agent_memory_tab_export: '导出', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: '流',
+    // agent_memory_* : 已删除 R415 — AgentMemory 页面自 R379/R401 起已移除
   },
   
   es: {
@@ -917,8 +922,10 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_chain: 'Cadena', nav_pol: 'PoL', nav_memorize: 'Memorizar',
     nav_graph: 'Gráfico', nav_wallets: 'Wallets', nav_mining: 'Minería',
     nav_system: 'Sistema', nav_logs: 'Registros', nav_console: 'Consola',
-    nav_integrations: 'Integraciones', nav_network: 'Red P2P',
-    nav_governance: 'Gobernanza', nav_groups: 'Grupos', nav_api_keys: 'Claves API', nav_agent_memory: 'Memoria IA',
+    nav_integrations: 'Integraciones',
+    // nav_network: eliminado R415 (P2P solo backend)
+    nav_governance: 'Gobernanza', nav_groups: 'Grupos', nav_api_keys: 'Claves API',
+    // nav_agent_memory: eliminado R415 (AgentMemory solo backend)
     dashboard_title: 'Panel ARTCB', dashboard_subtitle: 'Memoria Colectiva Descentralizada',
     dashboard_blocks: 'Bloques', dashboard_pol_score: 'Puntuación PoL', dashboard_graphs: 'Gráficos',
     layout_visibility: 'Red', layout_visibility_private: 'PRIVADO',
@@ -1022,7 +1029,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_reconstructed: 'Reconstruido', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Sin bloques',
     api_keys_title: 'Claves API · Acceso externo', api_keys_token_warning: 'Copia este token ahora — no se mostrará de nuevo', api_keys_new_key: 'Nueva clave API', api_keys_active: 'Claves activas', api_keys_cursor_usage: 'Cómo usar en Cursor',
-    agent_memory_title: 'Memoria de Agente — ARTCB IA', agent_memory_tab_status: 'Estado', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'Nuevo memo', agent_memory_tab_search: 'Buscar', agent_memory_tab_export: 'Exportar', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
+    // agent_memory_* : eliminado R415 — página AgentMemory retirada desde R379/R401
   },
   
   pt: {
@@ -1030,8 +1037,10 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_chain: 'Cadeia', nav_pol: 'PoL', nav_memorize: 'Memorizar',
     nav_graph: 'Gráfico', nav_wallets: 'Carteiras', nav_mining: 'Mineração',
     nav_system: 'Sistema', nav_logs: 'Registros', nav_console: 'Console',
-    nav_integrations: 'Integrações', nav_network: 'Rede P2P',
-    nav_governance: 'Governança', nav_groups: 'Grupos', nav_api_keys: 'Chaves API', nav_agent_memory: 'Memória IA',
+    nav_integrations: 'Integrações',
+    // nav_network: removido R415 (P2P somente backend)
+    nav_governance: 'Governança', nav_groups: 'Grupos', nav_api_keys: 'Chaves API',
+    // nav_agent_memory: removido R415 (AgentMemory somente backend)
     dashboard_title: 'Painel ARTCB', dashboard_subtitle: 'Memória Coletiva Descentralizada',
     dashboard_blocks: 'Blocos', dashboard_pol_score: 'Pontuação PoL', dashboard_graphs: 'Gráficos',
     layout_visibility: 'Rede', layout_visibility_private: 'PRIVADO',
@@ -1135,7 +1144,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_reconstructed: 'Reconstruído', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Sem blocos',
     api_keys_title: 'Chaves API · Acesso externo', api_keys_token_warning: 'Copie este token agora — não será exibido novamente', api_keys_new_key: 'Nova chave API', api_keys_active: 'Chaves ativas', api_keys_cursor_usage: 'Como usar no Cursor',
-    agent_memory_title: 'Memória de Agente — ARTCB IA', agent_memory_tab_status: 'Estado', agent_memory_tab_memos: 'Memos', agent_memory_tab_new: 'Novo memo', agent_memory_tab_search: 'Pesquisa', agent_memory_tab_export: 'Exportar', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
+    // agent_memory_* : removido R415 — página AgentMemory retirada desde R379/R401
   },
 
   it: {
@@ -1143,8 +1152,10 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_chain: 'Catena', nav_pol: 'PoL', nav_memorize: 'Memorizza',
     nav_graph: 'Grafico', nav_wallets: 'Portafogli', nav_mining: 'Mining',
     nav_system: 'Sistema', nav_logs: 'Log', nav_console: 'Console',
-    nav_integrations: 'Integrazioni', nav_network: 'Rete P2P',
-    nav_governance: 'Governance', nav_groups: 'Gruppi', nav_api_keys: 'Chiavi API', nav_agent_memory: 'Memoria IA',
+    nav_integrations: 'Integrazioni',
+    // nav_network: rimosso R415 (P2P solo backend)
+    nav_governance: 'Governance', nav_groups: 'Gruppi', nav_api_keys: 'Chiavi API',
+    // nav_agent_memory: rimosso R415 (AgentMemory solo backend)
     dashboard_title: 'Pannello ARTCB', dashboard_subtitle: 'Memoria Collettiva Decentralizzata',
     dashboard_blocks: 'Blocchi', dashboard_pol_score: 'Punteggio PoL', dashboard_graphs: 'Grafici',
     layout_visibility: 'Rete', layout_visibility_private: 'PRIVATO',
@@ -1248,7 +1259,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_reconstructed: 'Ricostruito', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Nessun blocco',
     api_keys_title: 'Chiavi API · Accesso esterno', api_keys_token_warning: 'Copia questo token ora — non verrà mostrato di nuovo', api_keys_new_key: 'Nuova chiave API', api_keys_active: 'Chiavi attive', api_keys_cursor_usage: 'Come usare in Cursor',
-    agent_memory_title: 'Memoria Agente — ARTCB IA', agent_memory_tab_status: 'Stato', agent_memory_tab_memos: 'Memo', agent_memory_tab_new: 'Nuovo memo', agent_memory_tab_search: 'Cerca', agent_memory_tab_export: 'Esporta', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Stream',
+    // agent_memory_* : rimosso R415 — pagina AgentMemory rimossa da R379/R401
   },
 
   ru: {
@@ -1256,8 +1267,10 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     nav_chain: 'Цепь', nav_pol: 'PoL', nav_memorize: 'Запомнить',
     nav_graph: 'Граф', nav_wallets: 'Кошельки', nav_mining: 'Майнинг',
     nav_system: 'Система', nav_logs: 'Журналы', nav_console: 'Консоль',
-    nav_integrations: 'Интеграции', nav_network: 'P2P сеть',
-    nav_governance: 'Управление', nav_groups: 'Группы', nav_api_keys: 'API ключи', nav_agent_memory: 'Память ИИ',
+    nav_integrations: 'Интеграции',
+    // nav_network: удалено R415 (P2P только бэкенд)
+    nav_governance: 'Управление', nav_groups: 'Группы', nav_api_keys: 'API ключи',
+    // nav_agent_memory: удалено R415 (AgentMemory только бэкенд)
     dashboard_title: 'Панель ARTCB', dashboard_subtitle: 'Децентрализованная коллективная память',
     dashboard_blocks: 'Блоки', dashboard_pol_score: 'Оценка PoL', dashboard_graphs: 'Графики',
     layout_visibility: 'Сеть', layout_visibility_private: 'ЧАСТНОЕ',
@@ -1361,7 +1374,7 @@ export const translations: Record<Language, Partial<Translations> & Pick<Transla
     reconstruct_reconstructed: 'Реконструировано', reconstruct_ok: 'OK 100%',
     block_row_no_blocks: 'Нет блоков',
     api_keys_title: 'API ключи · Внешний доступ', api_keys_token_warning: 'Скопируйте этот токен сейчас — он не будет показан снова', api_keys_new_key: 'Новый API ключ', api_keys_active: 'Активные ключи', api_keys_cursor_usage: 'Как использовать в Cursor',
-    agent_memory_title: 'Память агента — ARTCB ИИ', agent_memory_tab_status: 'Статус', agent_memory_tab_memos: 'Заметки', agent_memory_tab_new: 'Новая заметка', agent_memory_tab_search: 'Поиск', agent_memory_tab_export: 'Экспорт', agent_memory_tab_webhooks: 'Webhooks', agent_memory_tab_stream: 'Поток',
+    // agent_memory_* : удалено R415 — страница AgentMemory удалена с R379/R401
   },
 };
 
