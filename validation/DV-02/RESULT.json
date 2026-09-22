@@ -3,5 +3,11 @@
   "id": "DV-02",
   "sim": "e2e208_dv02_dv06_live",
   "status": "PASS",
-  "note": "bounded HTTP flood 64\u00d74 + unauth 401 + SSRF 400; not SYN"
+  "note": "bounded HTTP flood 64×4 + unauth 401 + SSRF 400; not SYN",
+  "git_sha": "7a6c04f",
+  "protocol_version": "174-devnet-1",
+  "genesis_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+  "network_id": "artcb-mainnet-1",
+  "enriched_at": "2026-09-22T00:00:00Z",
+  "enriched_by": "R420"
 }

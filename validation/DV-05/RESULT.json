@@ -3,5 +3,11 @@
   "id": "DV-05",
   "sim": "e2e188_dv05_live_bft",
   "status": "PASS",
-  "note": "e2e189 did not re-run BFT scenarios; inherited PASS from 188. Scope remains settlement WorkID, not append_block PBFT."
+  "note": "e2e189 did not re-run BFT scenarios; inherited PASS from 188. Scope remains settlement WorkID, not append_block PBFT.",
+  "git_sha": "7a6c04f",
+  "protocol_version": "174-devnet-1",
+  "genesis_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+  "network_id": "artcb-mainnet-1",
+  "enriched_at": "2026-09-22T00:00:00Z",
+  "enriched_by": "R420"
 }

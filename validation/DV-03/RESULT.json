@@ -2,5 +2,11 @@
   "at": "20260901T183347Z",
   "id": "DV-03",
   "sim": "e2e189_mainnet_genesis",
-  "status": "PASS"
+  "status": "PASS",
+  "git_sha": "7a6c04f",
+  "protocol_version": "174-devnet-1",
+  "genesis_hash": "b8a7d5ef50052790a0a243481981769d66710155088b0ed952860eeda282bfce",
+  "network_id": "artcb-mainnet-1",
+  "enriched_at": "2026-09-22T00:00:00Z",
+  "enriched_by": "R420"
 }

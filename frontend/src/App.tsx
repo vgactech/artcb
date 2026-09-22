@@ -1,7 +1,8 @@
 // R359 — séparation surface publique / interne
 // Supprimé du frontend public : /reflex, /memorize, /logs
 // R379 — Supprimé du frontend : /agent-memory (P2P IA), /network (P2P pairs + pool ML-KEM)
-// Backend AgentMemory, P2P, Network : conservés — agents/API uniquement
+// R420 — Supprimé du frontend : /identity-test (BiometricIdentityTest — debug backend-only)
+// Backend AgentMemory, P2P, Network, ReflexStatus, Logs, BiometricIdentityTest : API/agents uniquement
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { DashboardProvider } from "./context/DashboardContext";
 import { DashboardLayout } from "./layout/DashboardLayout";
@@ -18,7 +19,6 @@ import { Mining } from "./pages/Mining";
 import { SystemPage } from "./pages/SystemPage";
 import { Wallets } from "./pages/Wallets";
 import { RegisterBiometric } from "./pages/RegisterBiometric";
-import { BiometricIdentityTest } from "./pages/BiometricIdentityTest";
 import { AddDevice } from "./pages/AddDevice";
 
 export default function App() {
@@ -33,7 +33,6 @@ export default function App() {
             <Route path="chain/block/:blockIndex" element={<ChainPage />} />
             <Route path="wallets" element={<Wallets />} />
             <Route path="register" element={<RegisterBiometric />} />
-            <Route path="identity-test" element={<BiometricIdentityTest />} />
             <Route path="add-device" element={<AddDevice />} />
             <Route path="mining" element={<Mining />} />
             <Route path="system" element={<SystemPage />} />

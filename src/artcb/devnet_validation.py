@@ -6,7 +6,7 @@ records the 2026-08-31 user choices for live multi-node validation.
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
 
 import json
 from pathlib import Path
@@ -329,12 +329,18 @@ def certification_gate(verdicts: dict[str, str] | None = None) -> dict[str, Any]
 
 
 def public_lock() -> dict[str, Any]:
+    # R420 — distributed_certified branché dynamiquement sur certification_gate()
+    # Avant R420 : False codé en dur (divergence vs gate=True depuis R419/D-056).
+    verdicts = load_dv_verdicts()
+    gate = certification_gate(verdicts)
     return {
         "economic_v_series": ECONOMIC_V,
         "economic_v_locked": ECONOMIC_V_LOCKED,
         "distributed_profile": PROFILE,
         "distributed": DV,
-        "distributed_certified": False,
+        "distributed_certified": gate["certified_distributed_mainnet"],
+        "distributed_certified_reason": gate.get("reason", ""),
+        "distributed_certified_gate": gate,
         "decisions_174": DECISIONS_174,
         "decisions_175": DECISIONS_175,
         "decisions_177": DECISIONS_177,
