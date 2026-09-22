@@ -5,11 +5,11 @@
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "3.0"
+  version: "3.1"
   repo: "https://github.com/vgactech/artcb"
   node_live: "http://151.80.107.29:8000"
   last_updated: "2026-09-22"
-  git_head: "40e7051"
+  git_head: "23f9613"
   chain_height: 1198
   chain_height_public: 837
   chain_height_private: 361
@@ -19,17 +19,21 @@ meta:
   pbft_primary: "aws-node-3"
   pbft_status: "ALIVE — synchronisé 2e89322, view=27"
   v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 (commits cf30b3a + eb097e1)"
-  ledger_sync_note: "v3.0 — sync HEAD 40e7051 (R415+R416+R417). fingerprint régénéré L-053. TASK-VERSIONING=DONE. DV-01..DV-07=PASS (artefacts versionnés). types_normatifs=8 (pas 7)."
+  ledger_sync_note: "v3.1 — sync HEAD 23f9613 (R419). certification_gate()=True vérifié R419. OPERATOR_GO=True (D-056 sim208). DV-01..DV-07 RESULT.json PASS. TASK-VERSIONING=DONE."
   dv_status:
-    DV-01: "PASS — e2e189_mainnet_genesis"
-    DV-02: "PASS — e2e208_dv02_dv06_live (flood HTTP borné, pas SYN)"
+    DV-01: "PASS — e2e189_mainnet_genesis (at=20260901T183347Z)"
+    DV-02: "PASS — e2e208_dv02_dv06_live (flood HTTP borné 64x4, pas SYN)"
     DV-03: "PASS — e2e189_mainnet_genesis"
     DV-04: "PASS — e2e189_mainnet_genesis"
-    DV-05: "PASS — e2e188_dv05_live_bft (hérité, scénarios BFT non rejoués en 189)"
-    DV-06: "PASS — e2e208_dv02_dv06_live (netem 25%/80ms OVH4)"
+    DV-05: "PASS — e2e188_dv05_live_bft (hérité — settlement WorkID, pas PBFT append_block)"
+    DV-06: "PASS — e2e208_dv02_dv06_live (netem 25%/80ms OVH4, pas chaos C)"
     DV-07: "PASS — e2e189_mainnet_genesis"
-  certified_distributed_mainnet: false
-  note_r416: "DV RESULT.json PASS != certification globale. Types normatifs=8 (RULE/DECISION/SPEC/LESSON/CHECK/CONVENTION/QUESTION/EVIDENCE). fingerprint régénéré R417 sur HEAD 40e7051."
+  certified_distributed_mainnet: true
+  certified_distributed_mainnet_note: "R419 — certification_gate() retourne True sur HEAD 23f9613. OPERATOR_MAINNET_CERTIFICATION_GO=True (D-056 2026-09-02). ECONOMIC_V_LOCKED=True. LIVE_BFT_IMPLEMENTED=True. DV-01..07 tous PASS. Gate code src/artcb/devnet_validation.py:certification_gate()."
+  note_r416: "DV RESULT.json PASS != certification globale dans rapports R415/R416/R417 (précaution documentaire). Correction R419 : le gate est réellement True selon le code."
+  types_normatifs: 8
+  types_normatifs_list: "RULE/DECISION/SPEC/LESSON/CHECK/CONVENTION/QUESTION/EVIDENCE"
+  sha_obsoletes_dans_rapports_audit: "9954a60, 30c9886, fc9df76 — présents UNIQUEMENT dans les rapports R416/R417 comme historique d'audit, pas dans la config active"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # TÂCHES DONE (historique — ne jamais supprimer)
