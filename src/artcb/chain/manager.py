@@ -1,7 +1,7 @@
 """Blockchain manager — persistence + hybrid signatures + SHA-3 audit hash."""
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
 
 import json
 import logging
@@ -995,7 +995,12 @@ class ChainManager:
         dry_run: bool = False,
         # P0-B (2026-09-16) : engagement homomorphe optionnel (jamais blinding ni template brut)
         homomorphic_proof: dict | None = None,
-    ) -> ChainBlock:
+        # R437-C : seal automatique KnowledgeWorkRecord après inscription réelle du bloc.
+        # Tuple (work_record_id, KnowledgeWorkStore) ou None.
+        # Si fourni ET bloc accepté (non dry_run) → seal_with_block_hash(work_record_id, block.hash).
+        # Erreur de seal NON bloquante : loggée, bloc conservé, record reste PENDING.
+        knowledge_work_seal: "tuple[str, Any] | None" = None,
+    ) -> "ChainBlock":
         from src.artcb.trace.ns import emit, now_mono_ns
 
         # R369-enforcement : Gate LIVE_WRITE avant tout ajout de bloc (sauf dry_run)

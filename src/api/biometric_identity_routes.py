@@ -19,7 +19,7 @@ HONNÊTETÉ (CERTIFIED_100=false) :
     - L'image brute est rejetée (HTTP 400) à chaque endpoint.
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.2'  # R437 — anti-Sybil gate fail-closed
 
 import json
 import logging
@@ -39,6 +39,7 @@ from src.artcb.identity.biometric_onchain import (
     enroll_biometric,
     fuzzy_reproduce,
 )
+from src.artcb.identity.human_identity_policy import load_wallet_human_links
 
 logger = logging.getLogger("artcb.api.identity.biometric")
 router = APIRouter(prefix="/api/v1/identity/biometric", tags=["identity-biometric"])
@@ -190,12 +191,47 @@ def enroll(body: EnrollRequest, request: Request) -> dict[str, Any]:
             },
         )
 
+    # ── R437-A : Gate anti-Sybil CASE_3 fail-closed ────────────────────────────
+    # Charger les liens wallet↔human existants avant l'enrôlement.
+    # existing_wallet_links est toujours fourni (jamais None sur ce chemin).
+    # Si le store est vide ou inaccessible → liste vide → gate autorise (nouveau humain).
+    try:
+        existing_wallet_links = load_wallet_human_links()
+    except Exception as exc:
+        logger.warning("enroll: impossible de charger wallet_human_links — gate Sybil actif avec liste vide: %s", exc)
+        existing_wallet_links = []
+    # ───────────────────────────────────────────────────────────────────────────
+
     # Inscription
     result, secret_hex, blinding_hex = enroll_biometric(
         template_bytes,
         wallet_address=body.wallet_address,
         node_id=node_id,
+        existing_wallet_links=existing_wallet_links,
     )
+
+    # ── R437-A : Bloquer si CASE_3 détecté ────────────────────────────────────
+    if result.sybil_blocked:
+        logger.warning(
+            "P0-C enroll: SYBIL_BLOCKED human_id=%s existing_wallet=%s",
+            result.human_id,
+            (result.existing_wallet or "")[:16],
+        )
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "human_wallet_limit_reached",
+                "message": (
+                    "Ce HumanID a déjà atteint la limite de wallets économiques actifs (anti-Sybil CASE_3). "
+                    "Un humain = un wallet économique actif (spec §3)."
+                ),
+                "human_id": result.human_id,
+                "existing_wallet": result.existing_wallet,
+                "sybil_reason": result.sybil_reason,
+                "unique_human_proven": False,
+            },
+        )
+    # ───────────────────────────────────────────────────────────────────────────
 
     # Persistance on-chain locale
     _append_record(result.human_identity_record)
