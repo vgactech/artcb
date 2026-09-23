@@ -852,53 +852,15 @@ export async function getApiKeyMe(token: string): Promise<ApiKeyRecord> {
 }
 
 // --------------------------------------------------------------------------
-// AI Agent — mémoire, raisonnement, recherche, export, webhooks
+// AI Agent — statut, raisonnement, recherche, export, webhooks
+// R424 — postAiMemo / fetchAiMemory / AiMemo supprimés du frontend (backend-only)
+//         /ai/memo et /ai/memory restent accessibles via API directe ou agents.
 // --------------------------------------------------------------------------
-
-export type AiMemo = {
-  block_index: number;
-  block_hash: string;
-  graph_id: string;
-  timestamp: string;
-  pol_score: number;
-  memo_type: string;
-  agent_id: string;
-  session_id: string;
-  tags: string[];
-  source: string;
-};
 
 export async function fetchAiStatus(token?: string): Promise<Record<string, unknown>> {
   const headers: Record<string, string> = {};
   if (token) headers["Authorization"] = `Bearer ${token}`;
   const { data } = await api.get("/ai/status", { headers });
-  return data;
-}
-
-export async function postAiMemo(
-  body: {
-    content: string;
-    memo_type?: string;
-    tags?: string[];
-    session_id?: string;
-    wallet_name?: string | null;
-    visibility?: string;
-  },
-  token?: string,
-): Promise<Record<string, unknown>> {
-  const headers: Record<string, string> = {};
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  const { data } = await api.post("/ai/memo", body, { headers });
-  return data;
-}
-
-export async function fetchAiMemory(
-  opts?: { limit?: number; memo_type?: string },
-  token?: string,
-): Promise<{ memos: AiMemo[]; count: number }> {
-  const headers: Record<string, string> = {};
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  const { data } = await api.get("/ai/memory", { params: opts, headers });
   return data;
 }
 
@@ -1098,25 +1060,5 @@ export async function listDevices(human_id: string): Promise<DeviceListResponse>
 }
 
 // ─── REFLEX STATUS — R350–R354 ────────────────────────────────────────────────
-
-export interface ReflexStatusResponse {
-  engine: string;
-  rules: string;
-  activated_at: number | null;
-  total_triggers: number;
-  certified: boolean;
-  unique_human_proven: boolean;
-  priorities: {
-    REFLEX_MEMORY: number;
-    SECURITY: number;
-    PQC: number;
-    OTHER: number;
-  };
-  note: string;
-}
-
-/** GET /api/v1/reflex/status — État du moteur réflexe ARTCB */
-export async function fetchReflexStatus(): Promise<ReflexStatusResponse> {
-  const { data } = await api.get("/reflex/status");
-  return data as ReflexStatusResponse;
-}
+// R424 — ReflexStatusResponse + fetchReflexStatus supprimés du frontend (backend-only)
+//         /api/v1/reflex/status reste accessible via API directe ou agents.

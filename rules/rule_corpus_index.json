@@ -1410,11 +1410,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "TESTING",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140906927000,
-      "primary_domain": "TESTING",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.991681+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "TESTING"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.4,
       "classification_basis": [
@@ -5319,12 +5319,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919197000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995229+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5348,12 +5347,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919231000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995277+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5377,12 +5375,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919263000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995318+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5406,12 +5403,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919295000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995356+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5435,12 +5431,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919326000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995393+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5464,12 +5459,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919362000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995430+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5493,12 +5487,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919393000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995465+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5522,12 +5515,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919424000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995501+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5580,12 +5572,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919497000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995578+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5609,12 +5600,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919531000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995617+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5638,12 +5628,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919563000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995655+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5667,12 +5656,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919595000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995691+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5696,12 +5684,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919625000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995726+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5725,12 +5712,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919656000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995761+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5754,12 +5740,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919686000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995797+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5783,12 +5768,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919718000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995832+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -5812,12 +5796,11 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140919749000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.995906+00:00",
+      "primary_domain": "PROTOCOL_CHAIN",
       "domains": [
-        "PROTOCOL",
-        "ROADMAP"
+        "PROTOCOL_CHAIN"
       ],
       "confidence": 0.5,
       "classification_basis": [
@@ -6293,11 +6276,11 @@
       "rt_rule_id": "RT-DIVERGENCE-341",
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140920422000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.998870+00:00",
+      "primary_domain": "LESSONS",
       "domains": [
-        "PROTOCOL"
+        "LESSONS"
       ],
       "confidence": 1.0,
       "classification_basis": [
@@ -6492,13 +6475,11 @@
       "rt_rule_id": "RT-SYBIL-076",
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140920689000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.999332+00:00",
+      "primary_domain": "LESSONS",
       "domains": [
-        "PROTOCOL",
-        "LESSONS",
-        "SECURITY"
+        "LESSONS"
       ],
       "confidence": 0.333,
       "classification_basis": [
@@ -6579,11 +6560,10 @@
       "rt_rule_id": null,
       "certified": false,
       "domain": "PROTOCOL",
-      "domain_classified_by": "artcb_r393_v2",
-      "domain_classified_ts": 1789837140920807000,
-      "primary_domain": "PROTOCOL",
+      "domain_classified_by": "artcb_r427_v1",
+      "domain_classified_ts": "2026-09-23T06:58:44.999467+00:00",
+      "primary_domain": "ROADMAP",
       "domains": [
-        "PROTOCOL",
         "ROADMAP"
       ],
       "confidence": 0.65,
@@ -6599,6 +6579,7 @@
     }
   ],
   "certified_100": false,
-  "domain_classification_version": "R393-v2-R394E",
-  "domain_classification_ts": 1789837140923656000
+  "domain_classification_version": "R427-v1",
+  "domain_classification_ts": 1789837140923656000,
+  "domain_classification_updated_at": "2026-09-23T06:58:45.001971+00:00"
 }
