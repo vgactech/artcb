@@ -174,17 +174,19 @@ def test_t08_revoke_by_binding_id(store: WalletDeviceBindingStore) -> None:
 
 # ── T09 — Non-régression : DELETE physiques R379 fonctionnent toujours ────────
 
-def test_t09_r379_physical_delete_still_works(store: WalletDeviceBindingStore) -> None:
-    """T09 — Les méthodes admin_revoke_* R379 (suppression physique) fonctionnent toujours."""
+def test_t09_r379_physical_delete_eliminated_r433(store: WalletDeviceBindingStore) -> None:
+    """T09 — [R433] admin_revoke_by_wallet() lève BindingLegacyDeleteError (suppression directe éliminée).
+
+    Avant R433 : retournait l'enregistrement supprimé.
+    Après R433 : lève BindingLegacyDeleteError — utiliser revoke_with_history() + purge_binding().
+    """
+    from src.artcb.security.wallet_device_binding import BindingLegacyDeleteError
     _bind(store, "wallet-iota", "fp-jjj")
-    before_count = len(store.list_bindings())
 
-    removed = store.admin_revoke_by_wallet("wallet-iota")
+    with pytest.raises(BindingLegacyDeleteError, match="éliminé"):
+        store.admin_revoke_by_wallet("wallet-iota")
 
-    assert removed is not None, "admin_revoke_by_wallet doit retourner l'enregistrement supprimé"
-    assert removed["wallet_name"] == "wallet-iota"
-    after_count = len(store.list_bindings())
-    assert after_count == before_count - 1, "La suppression physique R379 doit réduire le registre"
-
-    # Double appel → None (idempotence R379)
-    assert store.admin_revoke_by_wallet("wallet-iota") is None
+    # Le binding est toujours présent (pas de suppression silencieuse)
+    assert store.get_binding("fp-jjj") is not None, (
+        "T09 R433 : le binding doit rester intact quand admin_revoke lève BindingLegacyDeleteError"
+    )

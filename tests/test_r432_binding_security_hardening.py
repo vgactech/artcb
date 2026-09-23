@@ -264,11 +264,12 @@ def test_t12_r431_non_regression(store: WalletDeviceBindingStore) -> None:
     with pytest.raises(BindingRevocationError, match="déjà révoqué"):
         store.revoke_with_history(wallet_name="wallet-nr", authenticated_actor="server")
 
-    # Suppression physique R379 fonctionne toujours (T09 R431)
+    # R433 : admin_revoke_by_wallet() lève BindingLegacyDeleteError (T09 R433)
+    from src.artcb.security.wallet_device_binding import BindingLegacyDeleteError
     store2 = WalletDeviceBindingStore(store.path.parent)
     store2.check_and_bind(wallet_name="wallet-r379", device_fingerprint="fp-r379",
                            env_type="test", wallet_namespace="PRODUCTION")
-    before = len(store2.list_bindings())
-    removed = store2.admin_revoke_by_wallet("wallet-r379")
-    assert removed is not None
-    assert len(store2.list_bindings()) == before - 1
+    with pytest.raises(BindingLegacyDeleteError, match="éliminé"):
+        store2.admin_revoke_by_wallet("wallet-r379")
+    # Binding non supprimé — toujours présent
+    assert store2.get_binding("fp-r379") is not None

@@ -1,4 +1,4 @@
-"""R379/R431 — Routes admin WalletDeviceBinding — reset/revoke contrôlé.
+"""R379/R431/R433 — Routes admin WalletDeviceBinding — revoke/purge contrôlé.
 
 ⚠️ ACCÈS OPÉRATEUR UNIQUEMENT (require_write_actor).
 Ces endpoints sont réservés à :
@@ -20,22 +20,22 @@ Endpoints :
     → Liste uniquement les bindings REVOKED (R431)
 
   POST /api/v1/admin/device-binding/revoke
-    → Révocation avec historique conservé (R431) — état ACTIVE → REVOKED
+    → Révocation avec historique conservé (R431/R433) — état ACTIVE → REVOKED
 
   DELETE /api/v1/admin/device-binding/fingerprint/{fingerprint}
-    → [R379 — DEPRECATED] Supprime physiquement le binding PRODUCTION pour ce fingerprint
+    → [R433 — HTTP 410 GONE] Suppression directe éliminée. Utiliser POST /revoke.
 
   DELETE /api/v1/admin/device-binding/wallet/{wallet_name}
-    → [R379 — DEPRECATED] Supprime physiquement le binding PRODUCTION pour ce wallet_name
+    → [R433 — HTTP 410 GONE] Suppression directe éliminée. Utiliser POST /revoke.
 
   DELETE /api/v1/admin/device-binding/test/wallet/{wallet_name}
-    → [R379 — DEPRECATED] Supprime physiquement le binding TEST pour ce wallet_name
+    → [R433 — HTTP 410 GONE] Suppression directe éliminée. Utiliser POST /revoke.
 
 PROTOCOLE ARTCB — mode DEBUG actif — logs WARNING obligatoires sur toute opération.
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.2.1'  # R432 — actor authentifié + purge séparé
+MODULE_VERSION = '1.3.1'  # R433 — DELETE legacy → 410 Gone + import BindingLegacyDeleteError
 
 import logging
 from typing import Annotated
@@ -44,6 +44,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Request
 
 from src.api.api_keys_routes import require_write_actor
 from src.artcb.security.wallet_device_binding import (
+    BindingLegacyDeleteError,
     BindingPurgeError,
     BindingRevocationError,
 )
@@ -331,105 +332,114 @@ def purge_binding(
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DELETE /api/v1/admin/device-binding/fingerprint/{fingerprint}
+# R433 — HTTP 410 Gone (suppression directe éliminée)
 # ─────────────────────────────────────────────────────────────────────────────
 
 @router.delete(
     "/fingerprint/{fingerprint}",
-    summary="[ADMIN] Supprimer le binding PRODUCTION pour ce fingerprint",
+    summary="[R433 — DEPRECATED 410] Suppression directe éliminée — utiliser POST /revoke",
 )
 def revoke_by_fingerprint(
     fingerprint: str,
     request: Request,
     _actor: Annotated[dict, Depends(require_write_actor)],
 ) -> dict:
-    """Supprime le binding PRODUCTION wallet↔appareil pour ce fingerprint.
+    """[R433 — HTTP 410 Gone] Suppression directe R379 éliminée.
 
-    Après suppression, l'appareil peut créer un nouveau wallet.
-    La protection anti-fraude globale reste active pour tous les autres appareils.
+    Utiliser POST /api/v1/admin/device-binding/revoke puis
+    POST /api/v1/admin/device-binding/purge si une purge physique est nécessaire.
     """
     store = _binding_store(request)
-    removed = store.admin_revoke_by_fingerprint(fingerprint)
-    _emit_admin_trace(request, "revoke_by_fingerprint", fingerprint[:16], {"revoked": removed})
-    if removed is None:
+    logger.warning(
+        "[ADMIN R433] DELETE /fingerprint appelé (chemin éliminé) — fingerprint=%s",
+        fingerprint[:16],
+    )
+    try:
+        store.admin_revoke_by_fingerprint(fingerprint)
+    except BindingLegacyDeleteError as exc:
         raise HTTPException(
-            status_code=404,
+            status_code=410,
             detail={
-                "code": "binding_not_found",
-                "message": f"Aucun binding PRODUCTION pour fingerprint={fingerprint[:16]}…",
+                "code": "legacy_delete_removed",
+                "message": str(exc),
+                "migration": "POST /api/v1/admin/device-binding/revoke",
             },
-        )
-    logger.warning("[ADMIN] Binding PRODUCTION supprimé : fingerprint=%s wallet=%s", fingerprint[:16], removed.get("wallet_name"))
-    return {
-        "ok": True,
-        "revoked": removed,
-        "message": "Binding PRODUCTION supprimé. L'appareil peut maintenant créer un nouveau wallet.",
-        "certified_100": False,
-    }
+        ) from exc
+    # Ce point ne devrait jamais être atteint (la méthode lève toujours)
+    raise HTTPException(status_code=410, detail={"code": "legacy_delete_removed"})
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DELETE /api/v1/admin/device-binding/wallet/{wallet_name}
+# R433 — HTTP 410 Gone (suppression directe éliminée)
 # ─────────────────────────────────────────────────────────────────────────────
 
 @router.delete(
     "/wallet/{wallet_name}",
-    summary="[ADMIN] Supprimer le binding PRODUCTION pour ce wallet_name",
+    summary="[R433 — DEPRECATED 410] Suppression directe éliminée — utiliser POST /revoke",
 )
 def revoke_by_wallet(
     wallet_name: str,
     request: Request,
     _actor: Annotated[dict, Depends(require_write_actor)],
 ) -> dict:
-    """Supprime le binding PRODUCTION pour ce wallet_name."""
+    """[R433 — HTTP 410 Gone] Suppression directe R379 éliminée.
+
+    Utiliser POST /api/v1/admin/device-binding/revoke puis
+    POST /api/v1/admin/device-binding/purge si une purge physique est nécessaire.
+    """
     store = _binding_store(request)
-    removed = store.admin_revoke_by_wallet(wallet_name)
-    _emit_admin_trace(request, "revoke_by_wallet", wallet_name, {"revoked": removed})
-    if removed is None:
+    logger.warning(
+        "[ADMIN R433] DELETE /wallet appelé (chemin éliminé) — wallet=%s",
+        wallet_name,
+    )
+    try:
+        store.admin_revoke_by_wallet(wallet_name)
+    except BindingLegacyDeleteError as exc:
         raise HTTPException(
-            status_code=404,
+            status_code=410,
             detail={
-                "code": "binding_not_found",
-                "message": f"Aucun binding PRODUCTION pour wallet_name={wallet_name}",
+                "code": "legacy_delete_removed",
+                "message": str(exc),
+                "migration": "POST /api/v1/admin/device-binding/revoke",
             },
-        )
-    logger.warning("[ADMIN] Binding PRODUCTION supprimé : wallet=%s fingerprint=%s", wallet_name, removed.get("device_fingerprint", "?")[:16])
-    return {
-        "ok": True,
-        "revoked": removed,
-        "message": "Binding PRODUCTION supprimé. L'appareil peut maintenant créer un nouveau wallet.",
-        "certified_100": False,
-    }
+        ) from exc
+    raise HTTPException(status_code=410, detail={"code": "legacy_delete_removed"})
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DELETE /api/v1/admin/device-binding/test/wallet/{wallet_name}
+# R433 — HTTP 410 Gone (suppression directe éliminée)
 # ─────────────────────────────────────────────────────────────────────────────
 
 @router.delete(
     "/test/wallet/{wallet_name}",
-    summary="[ADMIN] Supprimer le binding TEST pour ce wallet_name",
+    summary="[R433 — DEPRECATED 410] Suppression directe TEST éliminée — utiliser POST /revoke",
 )
 def revoke_test_by_wallet(
     wallet_name: str,
     request: Request,
     _actor: Annotated[dict, Depends(require_write_actor)],
 ) -> dict:
-    """Supprime le binding TEST pour ce wallet_name."""
+    """[R433 — HTTP 410 Gone] Suppression directe R379 éliminée (namespace TEST).
+
+    Utiliser POST /api/v1/admin/device-binding/revoke (namespace=TEST) puis
+    POST /api/v1/admin/device-binding/purge si une purge physique est nécessaire.
+    """
     store = _binding_store(request)
-    removed = store.admin_revoke_test_by_wallet(wallet_name)
-    _emit_admin_trace(request, "revoke_test_by_wallet", wallet_name, {"revoked": removed})
-    if removed is None:
+    logger.warning(
+        "[ADMIN R433] DELETE /test/wallet appelé (chemin éliminé) — wallet=%s",
+        wallet_name,
+    )
+    try:
+        store.admin_revoke_test_by_wallet(wallet_name)
+    except BindingLegacyDeleteError as exc:
         raise HTTPException(
-            status_code=404,
+            status_code=410,
             detail={
-                "code": "test_binding_not_found",
-                "message": f"Aucun binding TEST pour wallet_name={wallet_name}",
+                "code": "legacy_delete_removed",
+                "message": str(exc),
+                "migration": "POST /api/v1/admin/device-binding/revoke avec namespace=TEST",
             },
-        )
-    logger.warning("[ADMIN] Binding TEST supprimé : wallet=%s", wallet_name)
-    return {
-        "ok": True,
-        "revoked": removed,
-        "message": "Binding TEST supprimé.",
-        "certified_100": False,
-    }
+        ) from exc
+    raise HTTPException(status_code=410, detail={"code": "legacy_delete_removed"})
