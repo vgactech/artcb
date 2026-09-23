@@ -1,4 +1,4 @@
-"""R379 — Routes admin WalletDeviceBinding — reset/revoke contrôlé.
+"""R379/R431 — Routes admin WalletDeviceBinding — reset/revoke contrôlé.
 
 ⚠️ ACCÈS OPÉRATEUR UNIQUEMENT (require_write_actor).
 Ces endpoints sont réservés à :
@@ -7,33 +7,43 @@ Ces endpoints sont réservés à :
   - Debug live sur un nœud autorisé
 
 Ils ne désactivent PAS la protection anti-fraude globale.
-Seul le binding de cet appareil/wallet précis est supprimé.
+Seul le binding de cet appareil/wallet précis est affecté.
 
 Endpoints :
   GET  /api/v1/admin/device-binding/list
-    → Liste tous les bindings PRODUCTION + TEST
+    → Liste tous les bindings PRODUCTION + TEST (ACTIVE + REVOKED)
+
+  GET  /api/v1/admin/device-binding/list-active
+    → Liste uniquement les bindings ACTIVE (R431)
+
+  GET  /api/v1/admin/device-binding/list-revoked
+    → Liste uniquement les bindings REVOKED (R431)
+
+  POST /api/v1/admin/device-binding/revoke
+    → Révocation avec historique conservé (R431) — état ACTIVE → REVOKED
 
   DELETE /api/v1/admin/device-binding/fingerprint/{fingerprint}
-    → Supprime le binding PRODUCTION pour ce fingerprint (permet recréation wallet)
+    → [R379 — DEPRECATED] Supprime physiquement le binding PRODUCTION pour ce fingerprint
 
   DELETE /api/v1/admin/device-binding/wallet/{wallet_name}
-    → Supprime le binding PRODUCTION pour ce wallet_name
+    → [R379 — DEPRECATED] Supprime physiquement le binding PRODUCTION pour ce wallet_name
 
   DELETE /api/v1/admin/device-binding/test/wallet/{wallet_name}
-    → Supprime le binding TEST pour ce wallet_name
+    → [R379 — DEPRECATED] Supprime physiquement le binding TEST pour ce wallet_name
 
 PROTOCOLE ARTCB — mode DEBUG actif — logs WARNING obligatoires sur toute opération.
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.1.1'  # R431 — endpoint POST /revoke avec historique
 
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, HTTPException, Request
 
 from src.api.api_keys_routes import require_write_actor
+from src.artcb.security.wallet_device_binding import BindingRevocationError
 from src.artcb.trace.ns import emit, now_mono_ns, now_wall_ns
 
 logger = logging.getLogger("artcb.api.admin_device_binding")
@@ -102,6 +112,117 @@ def list_all_bindings(
         "test_count": len(test),
         "certified_100": False,
         "note": "Admin only — fingerprints are device hashes, not biometric data.",
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GET /api/v1/admin/device-binding/list-active  (R431)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router.get(
+    "/list-active",
+    summary="[ADMIN R431] Liste les bindings ACTIVE uniquement",
+)
+def list_active_bindings(
+    request: Request,
+    _actor: Annotated[dict, Depends(require_write_actor)],
+) -> dict:
+    """Liste les bindings PRODUCTION + TEST dont l'état est ACTIVE (R431)."""
+    store = _binding_store(request)
+    prod = store.list_active_bindings(namespace="PRODUCTION")
+    test = store.list_active_bindings(namespace="TEST")
+    logger.debug("[ADMIN R431] list_active_bindings: prod=%d test=%d", len(prod), len(test))
+    return {
+        "production": prod, "test": test,
+        "prod_count": len(prod), "test_count": len(test),
+        "filter": "ACTIVE", "certified_100": False,
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# GET /api/v1/admin/device-binding/list-revoked  (R431)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router.get(
+    "/list-revoked",
+    summary="[ADMIN R431] Liste les bindings REVOKED uniquement (audit trail)",
+)
+def list_revoked_bindings(
+    request: Request,
+    _actor: Annotated[dict, Depends(require_write_actor)],
+) -> dict:
+    """Liste les bindings PRODUCTION + TEST dont l'état est REVOKED (R431)."""
+    store = _binding_store(request)
+    prod = store.list_revoked_bindings(namespace="PRODUCTION")
+    test = store.list_revoked_bindings(namespace="TEST")
+    logger.debug("[ADMIN R431] list_revoked_bindings: prod=%d test=%d", len(prod), len(test))
+    return {
+        "production": prod, "test": test,
+        "prod_count": len(prod), "test_count": len(test),
+        "filter": "REVOKED", "certified_100": False,
+    }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# POST /api/v1/admin/device-binding/revoke  (R431)
+# ─────────────────────────────────────────────────────────────────────────────
+
+@router.post(
+    "/revoke",
+    summary="[ADMIN R431] Révoquer un binding avec historique conservé (ACTIVE → REVOKED)",
+)
+def revoke_with_history(
+    request: Request,
+    _actor: Annotated[dict, Depends(require_write_actor)],
+    wallet_name: str | None = Body(default=None, description="Nom du wallet"),
+    device_fingerprint: str | None = Body(default=None, description="Fingerprint device"),
+    binding_id: str | None = Body(default=None, description="UUID binding (prioritaire)"),
+    reason: str = Body(default="", description="Raison de la révocation"),
+    actor: str = Body(default="admin", description="Acteur déclenchant la révocation"),
+    namespace: str = Body(default="PRODUCTION", description="PRODUCTION ou TEST"),
+) -> dict:
+    """Révoque un binding wallet↔device avec historique conservé (R431).
+
+    NE SUPPRIME PAS l'enregistrement — change l'état ACTIVE → REVOKED.
+    Double révocation → HTTP 409. Binding introuvable → HTTP 404.
+    """
+    store = _binding_store(request)
+    try:
+        result = store.revoke_with_history(
+            wallet_name=wallet_name,
+            device_fingerprint=device_fingerprint,
+            binding_id=binding_id,
+            reason=reason,
+            actor=actor,
+            namespace=namespace,
+        )
+    except BindingRevocationError as exc:
+        err_msg = str(exc)
+        status = 409 if "déjà révoqué" in err_msg else 404
+        code = "binding_already_revoked" if status == 409 else "binding_not_found_or_invalid"
+        raise HTTPException(status_code=status, detail={"code": code, "message": err_msg})
+
+    _emit_admin_trace(
+        request,
+        "revoke_with_history",
+        str(wallet_name or device_fingerprint or binding_id or "?"),
+        {"revoked": result},
+    )
+    logger.warning(
+        "[ADMIN R431] REVOKE_WITH_HISTORY binding_id=%s wallet=%s actor=%s reason=%s",
+        result.get("binding_id"),
+        result.get("new_state", {}).get("wallet_name"),
+        actor,
+        reason or "<none>",
+    )
+    return {
+        "ok": True,
+        "binding_id": result.get("binding_id"),
+        "revoked_at": result.get("revoked_at"),
+        "previous_state": result.get("previous_state"),
+        "new_state": result.get("new_state"),
+        "message": "Binding révoqué avec historique conservé (REVOKED, enregistrement intact).",
+        "certified_100": False,
     }
 
 

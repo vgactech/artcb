@@ -39,15 +39,28 @@ Référence : rapport 114 — 2026-08-07 ; R345 client-scope ; R357 TEST namespa
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.1.1'  # R431 — revoke_with_history + BindingState
 
 import json
 import logging
 import os
+import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
 logger = logging.getLogger("artcb.security.wallet_device_binding")
+
+
+# ── R431 — État d'un binding ──────────────────────────────────────────────────
+
+class BindingState:
+    """Constantes d'état pour un binding wallet ↔ device (R431)."""
+    ACTIVE = "ACTIVE"
+    REVOKED = "REVOKED"
+
+
+class BindingRevocationError(Exception):
+    """Levée quand la révocation d'un binding échoue (ex. déjà révoqué, introuvable)."""
 
 
 class WalletDeviceBindingError(Exception):
@@ -162,7 +175,13 @@ class WalletDeviceBindingStore:
             return
 
         records = self._read()
-        existing = next((r for r in records if r["device_fingerprint"] == device_fingerprint), None)
+        # R431: seuls les bindings ACTIVE bloquent la création (les REVOKED sont ignorés)
+        existing = next(
+            (r for r in records
+             if r["device_fingerprint"] == device_fingerprint
+             and r.get("state", BindingState.ACTIVE) == BindingState.ACTIVE),
+            None,
+        )
 
         if existing:
             if existing["wallet_name"] == wallet_name:
@@ -180,11 +199,16 @@ class WalletDeviceBindingStore:
             )
 
         records.append({
+            "binding_id": str(uuid.uuid4()),
             "wallet_name": wallet_name,
             "device_fingerprint": device_fingerprint,
             "env_type": env_type,
             "namespace": "PRODUCTION",
+            "state": BindingState.ACTIVE,
             "created_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "revoked_at": None,
+            "revocation_reason": None,
+            "revocation_actor": None,
         })
         self._write(records)
         logger.info(
@@ -231,11 +255,16 @@ class WalletDeviceBindingStore:
                 "Le même nom de wallet TEST ne peut pas être re-lié à un device différent."
             )
         records.append({
+            "binding_id": str(uuid.uuid4()),
             "wallet_name": wallet_name,
             "device_fingerprint": device_fingerprint,
             "env_type": env_type,
             "namespace": "TEST",
+            "state": BindingState.ACTIVE,
             "created_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "revoked_at": None,
+            "revocation_reason": None,
+            "revocation_actor": None,
         })
         self._write_test(records)
         logger.info(
@@ -327,3 +356,122 @@ class WalletDeviceBindingStore:
             to_remove.get("device_fingerprint", "?")[:16],
         )
         return to_remove
+
+    # ── R431 — Révocation avec historique conservé ────────────────────────────
+
+    def revoke_with_history(
+        self,
+        *,
+        wallet_name: str | None = None,
+        device_fingerprint: str | None = None,
+        binding_id: str | None = None,
+        reason: str = "",
+        actor: str = "admin",
+        namespace: str = "PRODUCTION",
+    ) -> dict:
+        """Révoque un binding en conservant l'historique (R431).
+
+        La révocation change l'état de ACTIVE → REVOKED.
+        L'enregistrement N'EST PAS supprimé du registre.
+
+        Critères de sélection (au moins un requis) :
+          - binding_id          : identifiant UUID de l'enregistrement (prioritaire)
+          - wallet_name         : nom du wallet
+          - device_fingerprint  : empreinte de l'appareil
+
+        Règles :
+          - Seuls les bindings ACTIVE peuvent être révoqués.
+          - Si le binding est déjà REVOKED → BindingRevocationError (double révocation).
+          - Si aucun binding trouvé → BindingRevocationError.
+          - La révocation est atomique : lecture → modification → écriture.
+
+        Retourne le snapshot AVANT révocation (previous_state) et l'enregistrement final.
+        """
+        if not any([wallet_name, device_fingerprint, binding_id]):
+            raise BindingRevocationError(
+                "Au moins un critère est requis : binding_id, wallet_name ou device_fingerprint."
+            )
+
+        is_test = namespace == "TEST"
+        records = self._read_test() if is_test else self._read()
+
+        # Sélection du binding cible (binding_id prioritaire, puis wallet_name, puis fp)
+        target_idx = None
+        for i, r in enumerate(records):
+            match = False
+            if binding_id and r.get("binding_id") == binding_id:
+                match = True
+            elif wallet_name and r.get("wallet_name") == wallet_name:
+                match = True
+            elif device_fingerprint and r.get("device_fingerprint") == device_fingerprint:
+                match = True
+            if match:
+                target_idx = i
+                break
+
+        if target_idx is None:
+            raise BindingRevocationError(
+                f"Binding introuvable (namespace={namespace}, "
+                f"wallet={wallet_name}, fp={device_fingerprint}, id={binding_id})."
+            )
+
+        target = records[target_idx]
+        current_state = target.get("state", BindingState.ACTIVE)
+
+        if current_state == BindingState.REVOKED:
+            raise BindingRevocationError(
+                f"Binding déjà révoqué (binding_id={target.get('binding_id')}, "
+                f"wallet={target.get('wallet_name')}, revoked_at={target.get('revoked_at')})."
+            )
+
+        # Snapshot avant révocation
+        previous_snapshot = dict(target)
+
+        # Mutation → REVOKED (historique conservé)
+        now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+        records[target_idx] = {
+            **target,
+            "state": BindingState.REVOKED,
+            "revoked_at": now_str,
+            "revocation_reason": reason or None,
+            "revocation_actor": actor,
+        }
+        revoked_record = records[target_idx]
+
+        if is_test:
+            self._write_test(records)
+        else:
+            self._write(records)
+
+        logger.warning(
+            "wallet_device_binding: R431 REVOKE_WITH_HISTORY namespace=%s "
+            "binding_id=%s wallet=%s fp=%s... actor=%s reason=%s",
+            namespace,
+            target.get("binding_id", "?"),
+            target.get("wallet_name", "?"),
+            str(target.get("device_fingerprint", "?"))[:16],
+            actor,
+            reason or "<none>",
+        )
+
+        return {
+            "previous_state": previous_snapshot,
+            "new_state": revoked_record,
+            "revoked_at": now_str,
+            "binding_id": target.get("binding_id"),
+        }
+
+    def get_binding_by_id(self, binding_id: str, *, namespace: str = "PRODUCTION") -> dict | None:
+        """Retourne un binding par son binding_id (R431), ACTIVE ou REVOKED, ou None."""
+        records = self._read_test() if namespace == "TEST" else self._read()
+        return next((r for r in records if r.get("binding_id") == binding_id), None)
+
+    def list_active_bindings(self, *, namespace: str = "PRODUCTION") -> list[dict]:
+        """Liste uniquement les bindings ACTIVE (R431) pour le namespace donné."""
+        records = self._read_test() if namespace == "TEST" else self._read()
+        return [r for r in records if r.get("state", BindingState.ACTIVE) == BindingState.ACTIVE]
+
+    def list_revoked_bindings(self, *, namespace: str = "PRODUCTION") -> list[dict]:
+        """Liste uniquement les bindings REVOKED (R431) pour le namespace donné."""
+        records = self._read_test() if namespace == "TEST" else self._read()
+        return [r for r in records if r.get("state", BindingState.ACTIVE) == BindingState.REVOKED]
