@@ -55,7 +55,7 @@ def _bind(store: WalletDeviceBindingStore, wallet: str, fp: str) -> None:
 def test_t01_active_binding_can_be_revoked(store: WalletDeviceBindingStore) -> None:
     """T01 — Un binding ACTIVE peut être révoqué sans exception."""
     _bind(store, "wallet-alpha", "fp-aaa")
-    result = store.revoke_with_history(wallet_name="wallet-alpha", reason="test-T01", actor="test")
+    result = store.revoke_with_history(wallet_name="wallet-alpha", reason="test-T01", authenticated_actor="test")
     assert result["previous_state"]["state"] == BindingState.ACTIVE
     assert result["new_state"]["state"] == BindingState.REVOKED
 
@@ -65,7 +65,7 @@ def test_t01_active_binding_can_be_revoked(store: WalletDeviceBindingStore) -> N
 def test_t02_state_is_revoked_after_revocation(store: WalletDeviceBindingStore) -> None:
     """T02 — L'état du binding est REVOKED après révocation."""
     _bind(store, "wallet-beta", "fp-bbb")
-    store.revoke_with_history(wallet_name="wallet-beta", reason="T02", actor="test")
+    store.revoke_with_history(wallet_name="wallet-beta", reason="T02", authenticated_actor="test")
     # Vérification en relisant le registre
     all_records = store.list_bindings()
     target = next((r for r in all_records if r["wallet_name"] == "wallet-beta"), None)
@@ -83,7 +83,7 @@ def test_t03_record_stays_in_registry_after_revocation(store: WalletDeviceBindin
     _bind(store, "wallet-gamma", "fp-ccc")
     before_count = len(store.list_bindings())
 
-    store.revoke_with_history(wallet_name="wallet-gamma", reason="T03", actor="test")
+    store.revoke_with_history(wallet_name="wallet-gamma", reason="T03", authenticated_actor="test")
     after_count = len(store.list_bindings())
 
     assert after_count == before_count, (
@@ -98,7 +98,7 @@ def test_t03_record_stays_in_registry_after_revocation(store: WalletDeviceBindin
 def test_t04_revoked_binding_allows_new_wallet_creation(store: WalletDeviceBindingStore) -> None:
     """T04 — Après révocation, le même device peut créer un nouveau wallet."""
     _bind(store, "wallet-delta", "fp-ddd")
-    store.revoke_with_history(wallet_name="wallet-delta", reason="T04", actor="test")
+    store.revoke_with_history(wallet_name="wallet-delta", reason="T04", authenticated_actor="test")
 
     # Sans révocation, la 2e liaison avec fp-ddd pour un autre wallet lèverait WalletDeviceBindingError
     # Après révocation, elle doit réussir
@@ -122,10 +122,10 @@ def test_t05_revocation_without_criteria_raises_error(store: WalletDeviceBinding
 def test_t06_double_revocation_raises_error(store: WalletDeviceBindingStore) -> None:
     """T06 — Révoquer un binding déjà REVOKED lève BindingRevocationError (409)."""
     _bind(store, "wallet-epsilon", "fp-eee")
-    store.revoke_with_history(wallet_name="wallet-epsilon", reason="première", actor="test")
+    store.revoke_with_history(wallet_name="wallet-epsilon", reason="première", authenticated_actor="test")
 
     with pytest.raises(BindingRevocationError, match="déjà révoqué"):
-        store.revoke_with_history(wallet_name="wallet-epsilon", reason="deuxième", actor="test")
+        store.revoke_with_history(wallet_name="wallet-epsilon", reason="deuxième", authenticated_actor="test")
 
 
 # ── T07 — Audit trail : champs critiques conservés intacts ───────────────────
@@ -139,7 +139,7 @@ def test_t07_audit_trail_fields_preserved(store: WalletDeviceBindingStore) -> No
     binding_id_before = before["binding_id"]
     created_at_before = before["created_at"]
 
-    result = store.revoke_with_history(wallet_name="wallet-zeta", reason="T07", actor="auditor")
+    result = store.revoke_with_history(wallet_name="wallet-zeta", reason="T07", authenticated_actor="auditor")
     after = result["new_state"]
 
     assert after["binding_id"] == binding_id_before, "binding_id doit être conservé"
@@ -161,7 +161,7 @@ def test_t08_revoke_by_binding_id(store: WalletDeviceBindingStore) -> None:
     all_records = store.list_bindings()
     target_id = next(r["binding_id"] for r in all_records if r["wallet_name"] == "wallet-eta")
 
-    result = store.revoke_with_history(binding_id=target_id, reason="T08", actor="test")
+    result = store.revoke_with_history(binding_id=target_id, reason="T08", authenticated_actor="test")
 
     assert result["binding_id"] == target_id
     assert result["new_state"]["wallet_name"] == "wallet-eta"

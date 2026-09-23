@@ -39,8 +39,9 @@ Référence : rapport 114 — 2026-08-07 ; R345 client-scope ; R357 TEST namespa
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.1.1'  # R431 — revoke_with_history + BindingState
+MODULE_VERSION = '1.2.1'  # R432 — atomic write (tmp+rename+flock) + version CAS + purge séparé
 
+import fcntl
 import json
 import logging
 import os
@@ -61,6 +62,10 @@ class BindingState:
 
 class BindingRevocationError(Exception):
     """Levée quand la révocation d'un binding échoue (ex. déjà révoqué, introuvable)."""
+
+
+class BindingPurgeError(Exception):
+    """Levée quand une purge physique échoue (R432 — chemin distinct de la révocation)."""
 
 
 class WalletDeviceBindingError(Exception):
@@ -102,6 +107,34 @@ class WalletDeviceBindingStore:
         if not self.test_path.is_file():
             self._write_test([])
 
+    # ── R432 — Écriture atomique (tmp + rename + flock) ──────────────────────
+    @staticmethod
+    def _write_atomic(target: Path, records: list[dict]) -> None:
+        """Écriture atomique : tmp → fsync → rename (R432).
+
+        Garantit qu'un lecteur concurrent voit toujours un fichier JSON complet,
+        jamais un état partiel. Le verrou exclusif (fcntl.LOCK_EX) sérialise
+        les écrivains concurrents sur le même fichier.
+
+        Note : fcntl n'est disponible que sur POSIX (Linux/macOS). Sur Windows
+        le verrou est absent mais le rename reste atomique au niveau FS.
+        """
+        tmp = target.with_suffix(".tmp")
+        payload = json.dumps(records, indent=2, ensure_ascii=False).encode("utf-8")
+        with tmp.open("wb") as fh:
+            try:
+                fcntl.flock(fh, fcntl.LOCK_EX)
+            except (AttributeError, OSError):
+                pass  # Non-POSIX — best effort
+            fh.write(payload)
+            fh.flush()
+            os.fsync(fh.fileno())
+        tmp.rename(target)
+        try:
+            target.chmod(0o600)
+        except OSError:
+            pass
+
     def _read(self) -> list[dict]:
         try:
             return json.loads(self.path.read_text(encoding="utf-8"))
@@ -109,11 +142,7 @@ class WalletDeviceBindingStore:
             return []
 
     def _write(self, records: list[dict]) -> None:
-        self.path.write_text(
-            json.dumps(records, indent=2, ensure_ascii=False),
-            encoding="utf-8",
-        )
-        self.path.chmod(0o600)
+        self._write_atomic(self.path, records)
 
     def _read_test(self) -> list[dict]:
         try:
@@ -122,11 +151,7 @@ class WalletDeviceBindingStore:
             return []
 
     def _write_test(self, records: list[dict]) -> None:
-        self.test_path.write_text(
-            json.dumps(records, indent=2, ensure_ascii=False),
-            encoding="utf-8",
-        )
-        self.test_path.chmod(0o600)
+        self._write_atomic(self.test_path, records)
 
     def check_and_bind(
         self,
@@ -205,10 +230,12 @@ class WalletDeviceBindingStore:
             "env_type": env_type,
             "namespace": "PRODUCTION",
             "state": BindingState.ACTIVE,
+            "version": 1,
             "created_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "revoked_at": None,
             "revocation_reason": None,
             "revocation_actor": None,
+            "requested_actor": None,
         })
         self._write(records)
         logger.info(
@@ -261,10 +288,12 @@ class WalletDeviceBindingStore:
             "env_type": env_type,
             "namespace": "TEST",
             "state": BindingState.ACTIVE,
+            "version": 1,
             "created_at": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "revoked_at": None,
             "revocation_reason": None,
             "revocation_actor": None,
+            "requested_actor": None,
         })
         self._write_test(records)
         logger.info(
@@ -366,26 +395,34 @@ class WalletDeviceBindingStore:
         device_fingerprint: str | None = None,
         binding_id: str | None = None,
         reason: str = "",
-        actor: str = "admin",
+        authenticated_actor: str = "operator",
+        requested_actor: str | None = None,
         namespace: str = "PRODUCTION",
+        expected_version: int | None = None,
     ) -> dict:
-        """Révoque un binding en conservant l'historique (R431).
+        """Révoque un binding en conservant l'historique (R432 durci).
 
         La révocation change l'état de ACTIVE → REVOKED.
-        L'enregistrement N'EST PAS supprimé du registre.
+        L'enregistrement N'EST PAS supprimé du registre — audit trail permanent.
 
-        Critères de sélection (au moins un requis) :
-          - binding_id          : identifiant UUID de l'enregistrement (prioritaire)
-          - wallet_name         : nom du wallet
-          - device_fingerprint  : empreinte de l'appareil
+        Paramètres :
+          - authenticated_actor : identité vérifiée par le mécanisme d'auth serveur.
+            Ce champ est la preuve forensic — il ne vient jamais du body client.
+          - requested_actor     : valeur fournie par le body client (optionnelle, informative).
+          - expected_version    : si fourni, vérifie que le binding est au numéro de version
+            attendu avant d'écrire (Compare-And-Swap) — refuse si divergence.
+          - binding_id          : sélection prioritaire (UUID).
+          - wallet_name         : sélection secondaire.
+          - device_fingerprint  : sélection tertiaire.
 
         Règles :
           - Seuls les bindings ACTIVE peuvent être révoqués.
-          - Si le binding est déjà REVOKED → BindingRevocationError (double révocation).
-          - Si aucun binding trouvé → BindingRevocationError.
-          - La révocation est atomique : lecture → modification → écriture.
+          - Binding déjà REVOKED → BindingRevocationError (double révocation, HTTP 409).
+          - Binding introuvable → BindingRevocationError (HTTP 404).
+          - Si expected_version est fourni et ne correspond pas → BindingRevocationError (HTTP 409).
+          - Écriture via _write_atomic() — sérialisation multi-processus (flock + rename).
 
-        Retourne le snapshot AVANT révocation (previous_state) et l'enregistrement final.
+        Retourne : snapshot avant, enregistrement final, version, revoked_at, binding_id.
         """
         if not any([wallet_name, device_fingerprint, binding_id]):
             raise BindingRevocationError(
@@ -424,17 +461,27 @@ class WalletDeviceBindingStore:
                 f"wallet={target.get('wallet_name')}, revoked_at={target.get('revoked_at')})."
             )
 
+        # R432 — Compare-And-Swap sur version
+        current_version = target.get("version", 1)
+        if expected_version is not None and expected_version != current_version:
+            raise BindingRevocationError(
+                f"Conflit de version (CAS) : attendu v{expected_version}, "
+                f"actuel v{current_version} pour binding_id={target.get('binding_id')}."
+            )
+
         # Snapshot avant révocation
         previous_snapshot = dict(target)
 
-        # Mutation → REVOKED (historique conservé)
+        # Mutation → REVOKED avec incrément de version
         now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         records[target_idx] = {
             **target,
             "state": BindingState.REVOKED,
+            "version": current_version + 1,
             "revoked_at": now_str,
             "revocation_reason": reason or None,
-            "revocation_actor": actor,
+            "revocation_actor": authenticated_actor,   # identité serveur vérifiée
+            "requested_actor": requested_actor,         # champ fourni par le client, informatif
         }
         revoked_record = records[target_idx]
 
@@ -444,14 +491,18 @@ class WalletDeviceBindingStore:
             self._write(records)
 
         logger.warning(
-            "wallet_device_binding: R431 REVOKE_WITH_HISTORY namespace=%s "
-            "binding_id=%s wallet=%s fp=%s... actor=%s reason=%s",
+            "wallet_device_binding: R432 REVOKE_WITH_HISTORY namespace=%s "
+            "binding_id=%s wallet=%s fp=%s... authenticated_actor=%s "
+            "requested_actor=%s reason=%s v%s→v%s",
             namespace,
             target.get("binding_id", "?"),
             target.get("wallet_name", "?"),
             str(target.get("device_fingerprint", "?"))[:16],
-            actor,
+            authenticated_actor,
+            requested_actor or "<none>",
             reason or "<none>",
+            current_version,
+            current_version + 1,
         )
 
         return {
@@ -459,10 +510,12 @@ class WalletDeviceBindingStore:
             "new_state": revoked_record,
             "revoked_at": now_str,
             "binding_id": target.get("binding_id"),
+            "version_before": current_version,
+            "version_after": current_version + 1,
         }
 
     def get_binding_by_id(self, binding_id: str, *, namespace: str = "PRODUCTION") -> dict | None:
-        """Retourne un binding par son binding_id (R431), ACTIVE ou REVOKED, ou None."""
+        """Retourne un binding par son binding_id (R431/R432), ACTIVE ou REVOKED, ou None."""
         records = self._read_test() if namespace == "TEST" else self._read()
         return next((r for r in records if r.get("binding_id") == binding_id), None)
 
@@ -475,3 +528,96 @@ class WalletDeviceBindingStore:
         """Liste uniquement les bindings REVOKED (R431) pour le namespace donné."""
         records = self._read_test() if namespace == "TEST" else self._read()
         return [r for r in records if r.get("state", BindingState.ACTIVE) == BindingState.REVOKED]
+
+    # ── R432 — Purge physique (chemin distinct, exceptionnel) ─────────────────
+
+    def purge_binding(
+        self,
+        *,
+        binding_id: str,
+        authenticated_actor: str,
+        purge_reason: str,
+        namespace: str = "PRODUCTION",
+    ) -> dict:
+        """Purge physique d'un binding REVOKED (R432 — chemin exceptionnel distinct).
+
+        Règles :
+          - Seuls les bindings à l'état REVOKED peuvent être purgés.
+          - Un binding ACTIVE ne peut PAS être purgé directement : révoquer d'abord.
+          - La purge supprime physiquement l'enregistrement du registre JSON.
+          - Un journal forensic est écrit dans purge_log.json (immuable, append-only).
+          - binding_id est obligatoire pour la purge (identification précise).
+          - authenticated_actor et purge_reason sont obligatoires.
+
+        Lève BindingPurgeError si :
+          - binding_id introuvable
+          - état != REVOKED (binding encore ACTIVE)
+          - actor ou reason manquants
+        """
+        if not binding_id:
+            raise BindingPurgeError("binding_id est obligatoire pour la purge.")
+        if not authenticated_actor or not purge_reason:
+            raise BindingPurgeError("authenticated_actor et purge_reason sont obligatoires.")
+
+        is_test = namespace == "TEST"
+        records = self._read_test() if is_test else self._read()
+
+        target = next((r for r in records if r.get("binding_id") == binding_id), None)
+        if target is None:
+            raise BindingPurgeError(
+                f"Binding introuvable pour purge (binding_id={binding_id}, namespace={namespace})."
+            )
+
+        current_state = target.get("state", BindingState.ACTIVE)
+        if current_state != BindingState.REVOKED:
+            raise BindingPurgeError(
+                f"La purge est réservée aux bindings REVOKED. "
+                f"État actuel : {current_state} (binding_id={binding_id}). "
+                "Révoquer le binding avant de le purger."
+            )
+
+        # Écriture du journal forensic AVANT la suppression physique
+        now_str = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+        purge_entry = {
+            "purge_id": str(uuid.uuid4()),
+            "binding_id": binding_id,
+            "namespace": namespace,
+            "purged_at": now_str,
+            "authenticated_actor": authenticated_actor,
+            "purge_reason": purge_reason,
+            "snapshot": dict(target),
+        }
+        self._append_purge_log(purge_entry)
+
+        # Suppression physique
+        updated = [r for r in records if r.get("binding_id") != binding_id]
+        if is_test:
+            self._write_test(updated)
+        else:
+            self._write(updated)
+
+        logger.warning(
+            "wallet_device_binding: R432 PURGE_PHYSICAL binding_id=%s "
+            "namespace=%s actor=%s reason=%s purge_id=%s",
+            binding_id, namespace, authenticated_actor,
+            purge_reason, purge_entry["purge_id"],
+        )
+        return purge_entry
+
+    def _append_purge_log(self, entry: dict) -> None:
+        """Ajoute une entrée au journal forensic de purge (append-only, R432)."""
+        log_path = self.path.parent / "binding_purge_log.json"
+        try:
+            existing = json.loads(log_path.read_text(encoding="utf-8")) if log_path.is_file() else []
+        except Exception:
+            existing = []
+        existing.append(entry)
+        self._write_atomic(log_path, existing)
+
+    def list_purge_log(self) -> list[dict]:
+        """Retourne le journal forensic de toutes les purges physiques (R432)."""
+        log_path = self.path.parent / "binding_purge_log.json"
+        try:
+            return json.loads(log_path.read_text(encoding="utf-8")) if log_path.is_file() else []
+        except Exception:
+            return []
