@@ -82,7 +82,7 @@ PRODUCTION :
     - Quantification du vecteur biométrique côté client recommandée
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
 
 import hashlib
 import hmac
@@ -607,7 +607,7 @@ from src.artcb.crypto.homomorphic import privacy_preserving_match  # R376
 
 @dataclass
 class UniquenessCheckResult:
-    """Résultat du test d'unicité biométrique (R376).
+    """Résultat du test d'unicité biométrique (R376/R434).
 
     match_found=True → identité déjà enregistrée → refuser la création.
     match_found=False → pas de correspondance → autoriser.
@@ -616,26 +616,25 @@ class UniquenessCheckResult:
     `unique_human_proven` = False — invariant absolu.
     `match_method` indique la méthode de comparaison utilisée.
 
-    Méthodes :
-        "exact_hash"             : comparaison SHA-256 exacte (si template_bytes absent)
-        "privacy_preserving_xor" : distance XOR sur template_hash via privacy_preserving_match()
-                                   (R376 — remplace le hash exact quand template_bytes fourni)
+    Méthodes (par ordre de priorité croissante) :
+        "exact_hash"             : comparaison SHA-256 exacte (template_bytes absent)
+        "privacy_preserving_xor" : distance XOR sur template_hash (R376)
+        "hamming_direct"         : distance Hamming sur template_bytes bruts (R434 — prioritaire
+                                   si les records contiennent template_bytes_b64/_hex)
 
-    Note honnêteté R376 :
-        privacy_preserving_match() utilise une distance XOR sur les template_hash SHA-256.
-        C'est supérieur au hash exact (tolère les variations de bruit) mais N'EST PAS du
-        FHE véritable (SEAL/OpenFHE/Concrete). Le matching est une approximation documentée.
-        FAR/FRR/PAD non mesurés sur vrais capteurs. CERTIFIED_100=false.
+    Note honnêteté R434 :
+        "hamming_direct" opère sur les template_bytes bruts — pas sur SHA-256.
+        Résout l'effet avalanche de R376 (XOR SHA-256). Mesure la vraie proximité
+        biométrique bit-à-bit. FAR/FRR non mesurés sur capteurs réels. CERTIFIED_100=false.
     """
     match_found: bool
     existing_human_id: str | None = None
     match_score: float = 0.0
     certified: bool = False
     unique_human_proven: bool = False
-    match_method: str = "exact_hash"   # "exact_hash" | "privacy_preserving_xor"
+    match_method: str = "exact_hash"   # "exact_hash" | "privacy_preserving_xor" | "hamming_direct"
     note: str = (
-        "R376 : matching via privacy_preserving_match() — distance XOR sur template_hash. "
-        "Supérieur au hash exact (tolère bruit capteur). Pas de FHE véritable. "
+        "R434 : routing automatique hamming_direct > privacy_preserving_xor > exact_hash. "
         "unique_human_proven=False — invariant absolu. CERTIFIED_100=false."
     )
 
@@ -646,49 +645,68 @@ def check_uniqueness(
     *,
     threshold: float = 0.85,
     template_bytes_for_match: bytes | None = None,
+    threshold_bits: int | None = None,
 ) -> UniquenessCheckResult:
     """Vérifie si un nouveau template correspond à une identité déjà enregistrée.
 
-    R376 : si `template_bytes_for_match` est fourni, utilise `privacy_preserving_match()`
-    de `homomorphic.py` (distance XOR sur hash) pour comparer le nouveau template à
-    chacun des templates enregistrés. Détecte des correspondances même si le template
-    a légèrement varié (bruit capteur) — contrairement au hash exact.
+    R434 — Routing automatique en trois niveaux (priorité décroissante) :
 
-    Si `template_bytes_for_match` est absent, fallback sur comparaison hash exacte
-    (compatibilité ascendante).
+    1. hamming_direct (R434 — PRIORITAIRE) :
+       Si `template_bytes_for_match` est fourni ET que les records contiennent
+       `template_bytes_b64` ou `template_bytes_hex`, utilise `hamming_uniqueness_check()`.
+       Avantage : opère sur les bytes bruts — pas de SHA-256 — pas d'effet avalanche.
+
+    2. privacy_preserving_xor (R376 — fallback si pas de template_bytes dans les records) :
+       Si `template_bytes_for_match` est fourni mais les records ne contiennent que des
+       hashes, utilise `privacy_preserving_match()` (XOR sur SHA-256).
+
+    3. exact_hash (fallback ultime) :
+       Si `template_bytes_for_match` est absent, comparaison SHA-256 exacte.
 
     **Invariants absolus maintenus :**
     - `unique_human_proven` = False dans tous les cas
     - `certified` = False dans tous les cas
     - match_found=True → création refusée (spec §5)
 
-    **Honnêteté R376 :**
-    privacy_preserving_match() utilise XOR distance sur SHA-256(template). Ce n'est
-    PAS du chiffrement homomorphe véritable. Le terme "privacy-preserving" désigne ici
-    que les templates ne sont pas comparés directement — les engagements sont utilisés.
-    Pour production complète : brancher SEAL / OpenFHE / Concrete.
-
     Args:
         new_commitment: engagement du nouveau template.
         existing_records: liste des HumanIdentityRecord.to_chain_record() enregistrés.
-        threshold: seuil de correspondance [0,1]. Défaut 0.85 (tolérance bruit capteur).
+        threshold: seuil de correspondance [0,1] pour hamming_direct et XOR (défaut 0.85).
         template_bytes_for_match: template brut du nouveau candidat.
-            Si fourni → `privacy_preserving_match()` (R376).
-            Si absent → hash exact (fallback).
+        threshold_bits: seuil absolu Hamming en bits (prime sur threshold si fourni).
 
     Returns:
-        UniquenessCheckResult avec :
-            match_found=True si une correspondance est trouvée (au sens du seuil).
-            match_method indiquant la méthode utilisée.
+        UniquenessCheckResult avec match_method indiquant la méthode utilisée.
     """
-    # ── Chemin R376 : privacy_preserving_match si template_bytes fourni ───────
+    # ── Chemin R434 : Hamming direct si template_bytes fourni ET records ont bytes ─
     if template_bytes_for_match:
-        result = _check_uniqueness_privacy_preserving(
-            new_commitment,
-            existing_records,
-            template_bytes=template_bytes_for_match,
-            threshold=threshold,
+        has_bytes_records = any(
+            rec.get("template_bytes_b64") or rec.get("template_bytes_hex")
+            for rec in existing_records
         )
+        if has_bytes_records:
+            hamming_result = hamming_uniqueness_check(
+                template_bytes_for_match,
+                existing_records,
+                threshold_bits=threshold_bits,
+                threshold_ratio=None if threshold_bits is not None else (1.0 - threshold),
+            )
+            # Convertit HammingMatchResult → UniquenessCheckResult (interface unifiée)
+            result = UniquenessCheckResult(
+                match_found=hamming_result.match_found,
+                existing_human_id=hamming_result.existing_human_id,
+                match_score=hamming_result.hamming_similarity,
+                match_method="hamming_direct",
+                note=hamming_result.note,
+            )
+        else:
+            # ── Chemin R376 : privacy_preserving_xor si pas de template_bytes dans records ─
+            result = _check_uniqueness_privacy_preserving(
+                new_commitment,
+                existing_records,
+                template_bytes=template_bytes_for_match,
+                threshold=threshold,
+            )
     else:
         # ── Fallback : hash exact (compatibilité ascendante) ─────────────────────
         new_hash = new_commitment.template_hash_hex

@@ -6,7 +6,7 @@ En production, seul le fondateur peut les modifier via vote de gouvernance.
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
 
 from dataclasses import dataclass
 
@@ -22,15 +22,23 @@ class PolMetrics:
     retrieval_accuracy: float
     pol_score: float
     block_accepted: bool
+    # R434 — KnowledgeID reliant le raisonnement ARTCD à ce score PoL
+    knowledge_id: str | None = None
+    usage_id: str | None = None
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "delta_compression": self.delta_compression,
             "validation_rate": self.validation_rate,
             "retrieval_accuracy": self.retrieval_accuracy,
             "pol_score": round(self.pol_score, 4),
             "block_accepted": self.block_accepted,
         }
+        if self.knowledge_id is not None:
+            d["knowledge_id"] = self.knowledge_id
+        if self.usage_id is not None:
+            d["usage_id"] = self.usage_id
+        return d
 
 
 class PolScorer:
@@ -61,7 +69,17 @@ class PolScorer:
         nodes_retrieved: int | None = None,
         nodes_correct: int | None = None,
         ir_size: int | None = None,
+        knowledge_id: str | None = None,
+        usage_id: str | None = None,
     ) -> PolMetrics:
+        """Calcule le score PoL pour un graphe IR.
+
+        R434 : accepte knowledge_id et usage_id optionnels pour relier le score
+        au KnowledgeRecord et UsageRecord ARTCB correspondants.
+
+        knowledge_id → identifiant du raisonnement ARTCD qui a produit ce graphe IR.
+        usage_id → identifiant de l'utilisation de ce KnowledgeID pour ce bloc PoL.
+        """
         proposed = nodes_proposed if nodes_proposed is not None else len(graph.nodes)
         validated = nodes_validated if nodes_validated is not None else proposed
         proposed = max(proposed, 1)
@@ -92,6 +110,8 @@ class PolScorer:
             retrieval_accuracy=round(retrieval_accuracy, 4),
             pol_score=round(pol_score, 4),
             block_accepted=pol_score >= self.threshold,
+            knowledge_id=knowledge_id,
+            usage_id=usage_id,
         )
 
     @staticmethod
