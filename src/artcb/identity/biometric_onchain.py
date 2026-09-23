@@ -1,4 +1,4 @@
-"""Biométrie on-chain ARTCB — TASK-001 / R374 / R376 / R378 / R386 (2026-09-18).
+"""Biométrie on-chain ARTCB — TASK-001 / R374 / R376 / R378 / R386 / R435 (2026-09-18).
 
 Implémente le modèle cible de la spécification §3–§5 :
 
@@ -82,7 +82,7 @@ PRODUCTION :
     - Quantification du vecteur biométrique côté client recommandée
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.3'  # R435 — anti-Sybil enroll
 
 import hashlib
 import hmac
@@ -517,6 +517,11 @@ class BiometricEnrollmentResult:
         - secret_hex   : secret FuzzyExtractor
         - blinding_hex : facteur aveuglant de l'engagement Pedersen
 
+    R435 — champs anti-Sybil :
+        - sybil_blocked : True si wallet_per_human_limit atteint → enrôlement refusé.
+        - sybil_reason  : raison de blocage ou None.
+        - existing_wallet : wallet déjà actif pour ce HumanID (si bloqué).
+
     `unique_human_proven` reste False — stub non certifié.
     """
     human_id: str
@@ -527,6 +532,10 @@ class BiometricEnrollmentResult:
     )
     unique_human_proven: bool = False
     status: str = "enrolled"
+    # R435 — anti-Sybil
+    sybil_blocked: bool = False
+    sybil_reason: str | None = None
+    existing_wallet: str | None = None
 
 
 def enroll_biometric(
@@ -535,15 +544,43 @@ def enroll_biometric(
     wallet_address: str | None = None,
     node_id: str | None = None,
     salt: bytes | None = None,
+    blinding: bytes | None = None,
+    existing_wallet_links: list[dict[str, Any]] | None = None,
 ) -> tuple[BiometricEnrollmentResult, str, str]:
     """Flux d'inscription biométrique complet (spec §2 / §13).
+
+    R435 — Gate anti-Sybil intégré dans l'enrôlement :
+
+    Après dérivation du human_id, vérifie via check_wallet_per_human_limit()
+    que ce HumanID n'a pas déjà atteint la limite de wallets économiques actifs
+    (CASE_3 — spec TASK-001-BIOMETRIE-SUITE).
+
+    Si la limite est atteinte ET qu'un wallet_address est demandé :
+      → result.sybil_blocked = True
+      → result.status = "sybil_blocked"
+      → result.human_identity_record["wallet_address"] = None
+      → L'appelant DOIT vérifier result.sybil_blocked avant d'inscrire on-chain.
+
+    Si existing_wallet_links est None ou vide, aucune vérification n'est faite
+    (compat ascendante — pas de store disponible).
 
     IMPORTANT : `template_bytes` ne doit jamais être l'image brute.
     Il doit être le modèle normalisé extrait localement (côté client/appareil).
 
+    Args:
+        template_bytes        : modèle biométrique normalisé (jamais image brute).
+        wallet_address        : adresse wallet à associer (optionnel).
+        node_id               : nœud d'enrôlement (optionnel).
+        salt                  : sel BCH/HKDF (généré si absent).
+        blinding              : facteur aveuglant Pedersen (généré si absent).
+                                Fixer pour obtenir un human_id déterministe (tests).
+        existing_wallet_links : liste de dicts {human_id, wallet_address, revoked, …}
+                                utilisée pour le gate anti-Sybil CASE_3 (R435).
+                                Charger via human_identity_policy.load_wallet_human_links().
+
     Retourne :
         (result, secret_hex, blinding_hex)
-        - result       : sérialisable on-chain (public)
+        - result       : sérialisable on-chain (public) — vérifier sybil_blocked !
         - secret_hex   : PRIVÉ — ne jamais stocker côté serveur
         - blinding_hex : PRIVÉ — ne jamais stocker côté serveur
     """
@@ -554,25 +591,48 @@ def enroll_biometric(
     fe = fuzzy_extract(template_bytes, salt=salt)
 
     # 2. Engagement de Pedersen sur le template
-    commitment = commit_biometric_template(template_bytes)
+    commitment = commit_biometric_template(template_bytes, blinding=blinding)
 
     # 3. HumanID déterministe
     human_id = derive_human_id(commitment.commitment_hex, fe.helper_data_hex)
 
+    # ── R435 — Gate anti-Sybil CASE_3 ──────────────────────────────────────────
+    # Vérifie si ce HumanID peut créer un nouveau wallet économique.
+    # Uniquement si un wallet_address est demandé ET que le store est fourni.
+    sybil_blocked = False
+    sybil_reason: str | None = None
+    existing_wallet_for_human: str | None = None
+
+    if wallet_address is not None and existing_wallet_links is not None:
+        from src.artcb.identity.human_identity_policy import check_wallet_per_human_limit  # noqa: PLC0415
+        limit_decision = check_wallet_per_human_limit(human_id, existing_wallet_links)
+        if not limit_decision.allowed:
+            sybil_blocked = True
+            sybil_reason = limit_decision.reason
+            existing_wallet_for_human = limit_decision.existing_wallet
+            logger.warning(
+                "enroll_biometric: SYBIL_BLOCKED human_id=%s existing_wallet=%s",
+                human_id[:16],
+                (existing_wallet_for_human or "")[:16],
+            )
+    # ───────────────────────────────────────────────────────────────────────────
+
     # 4. HumanIdentityRecord
+    # Si sybil_blocked → wallet_address retirée du record (ne pas lier on-chain)
+    effective_wallet = None if sybil_blocked else wallet_address
     record = HumanIdentityRecord(
         human_id=human_id,
         commitment_hex=commitment.commitment_hex,
         template_hash_hex=commitment.template_hash_hex,
         helper_data_hex=fe.helper_data_hex,
         algorithm=fe.algorithm,
-        wallet_address=wallet_address,
+        wallet_address=effective_wallet,
         node_id=node_id,
     )
 
     logger.info(
-        "enroll_biometric: human_id=%s algorithm=%s unique_human_proven=False",
-        human_id, fe.algorithm,
+        "enroll_biometric: human_id=%s algorithm=%s sybil_blocked=%s unique_human_proven=False",
+        human_id, fe.algorithm, sybil_blocked,
     )
 
     # R386 — trace nanoseconde des opérations biométriques (non-HTTP, non couvertes par middleware)
@@ -583,6 +643,7 @@ def enroll_biometric(
             "human_id": human_id,
             "algorithm": fe.algorithm,
             "noise_tolerance_bits": fe.noise_tolerance_bits,
+            "sybil_blocked": sybil_blocked,
             "unique_human_proven": False,
             "ok": True,
         })
@@ -593,6 +654,10 @@ def enroll_biometric(
         human_id=human_id,
         human_identity_record=record.to_chain_record(),
         commitment_public=commitment.to_public_record(),
+        status="sybil_blocked" if sybil_blocked else "enrolled",
+        sybil_blocked=sybil_blocked,
+        sybil_reason=sybil_reason,
+        existing_wallet=existing_wallet_for_human,
     )
 
     return result, fe.secret_hex, commitment.blinding_hex
