@@ -1,6 +1,6 @@
 {
-  "ts_ns": 1790152526579760000,
-  "git_sha": "16ec819",
+  "ts_ns": 1790155825335089000,
+  "git_sha": "00c0a51",
   "repo_root": "playground",
   "total": 295,
   "with_version": 253,
@@ -9,2066 +9,2066 @@
       "path": "src/artcb/mac_node_access.py",
       "sha256": "4f377b56842472909686b40af3329eeb93796f2e31da46abe959d7b17cbb82bd",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526279911000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824877934000
     },
     {
       "path": "src/artcb/release.py",
       "sha256": "d93dbd2e25b8140398d7bc8db42b271923c151557d43de2af6495811a48be6bd",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526280807000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824879209000
     },
     {
       "path": "src/artcb/config.py",
       "sha256": "a0d4f7ec28e2ef369b97e5e9e03854d5ad9a8305f1871eb0a90c0cc6b1192fca",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526281727000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824890854000
     },
     {
       "path": "src/artcb/logging_config.py",
       "sha256": "9fb62a4c80b78f5d8e22aef1ea0e97fd746edfd124dbd2a37fd4ede1556913bf",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526282432000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824891631000
     },
     {
       "path": "src/artcb/agent_runtime.py",
       "sha256": "d64db6fcba50a25c8bee25267926085f511ba0327a7938f2652ee98c3f51836c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526283394000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824892593000
     },
     {
       "path": "src/artcb/sim_provenance.py",
       "sha256": "09072861fe3a5c431881a861a9b86fb8afc3bb29807e19023ba61c9061a28a5e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526284013000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824893218000
     },
     {
       "path": "src/artcb/devnet_validation.py",
       "sha256": "45c65465e7166119966af2fc81aa99f53830784e4e0f8866bb680ecbb1e517a3",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526285081000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824894684000
     },
     {
       "path": "src/artcb/__init__.py",
       "sha256": "0ae29a5fac83e5bb5698122d0553844fa0bc96bc098a4206b6927d601ab612f2",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526285640000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824895287000
     },
     {
       "path": "src/artcb/tokenomics.py",
       "sha256": "bab74f4957113009cfd60b4d2a6615622f68e42ba7e71775e146e9341432b4fb",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526286542000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824907283000
     },
     {
       "path": "src/artcb/agent_context_contract.py",
       "sha256": "97f057a75012f4b73b6ae054d577f870c4176d429f137171c8a35947bc13b51b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526287225000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824908304000
     },
     {
       "path": "src/artcb/live.py",
       "sha256": "b7c0f558c077755bbc41adddca4ac4828f82b929993b0697b9595440b9104866",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526288055000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824909392000
     },
     {
       "path": "src/artcb/node_registry.py",
       "sha256": "c8e2362686e89d12534f072513f59de0e549388a3a2397025307ea885921603d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526289684000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824910757000
     },
     {
       "path": "src/artcb/consensus_spec.py",
       "sha256": "af86eab55014e1d188ea83daa64bb807ca057d1f56b33e93e57009162c448d9f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526294285000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824912104000
     },
     {
       "path": "src/artcb/crypto_policy.py",
       "sha256": "57ebacb4354f9375436b55c0cf35ebde795e924a992783ac36c2bd5f2cd435e3",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526295304000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824928725000
     },
     {
       "path": "src/artcb/connectors/kaggle_connector.py",
       "sha256": "da30437f8cb410e2fb7da24a8bf6f26094adee0aea02b7eeb0a21606caca99b1",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526296082000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824942649000
     },
     {
       "path": "src/artcb/connectors/llm_router.py",
       "sha256": "3e14c773d8f9a326ac182dff76f0f545d6cab8206e2092ecbcbe9df2110db506",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526296792000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824944849000
     },
     {
       "path": "src/artcb/connectors/__init__.py",
       "sha256": "afb79a4826a23adc6c7eb0d7606562a9555ceedfc4b9a8ce192bd25adbca8f42",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526297381000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824945681000
     },
     {
       "path": "src/artcb/connectors/sources.py",
       "sha256": "f2c5328448880269a3a02755c71fd2f0a66e4ff94e1e1b255e7ec2d7b77fb9fe",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526298212000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824957047000
     },
     {
       "path": "src/artcb/connectors/manager.py",
       "sha256": "bedaf694ab2ae36ea5e5fc1748e9755efd37090b59c442b5fd9c2b714ca2f6aa",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526298963000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824958088000
     },
     {
       "path": "src/artcb/agent_control/__init__.py",
       "sha256": "e99d5b4abe9edafdbd7fd02f6c45788f5e4abe270849dc245facfec58a0f684a",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526299641000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824960605000
     },
     {
       "path": "src/artcb/agent_control/gate.py",
       "sha256": "efa235fd50befeebd14dc8d521170700965866ea74aa7c73d53fbdce6826276c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526300285000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824961630000
     },
     {
       "path": "src/artcb/consensus/byzantine_evidence.py",
       "sha256": "072301474dacc4036112912bc88494f7a8e2a4d7bbbddcebb2902b99e8584fd4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526301103000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824962502000
     },
     {
       "path": "src/artcb/consensus/creator_node_policy.py",
       "sha256": "79855c974ce0df24984472e8862dc78461723d22bcc1b13a08a310db52012605",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526301926000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824978792000
     },
     {
       "path": "src/artcb/consensus/tip_attest.py",
       "sha256": "3643e91e3d295aec7a9d8658a634d066dc58c1c2adf2be4bbeaa74d7a16491bf",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526302598000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824993634000
     },
     {
       "path": "src/artcb/consensus/public_tip_watchdog.py",
       "sha256": "b9cbff9b530932108172de0786e9f5922826748976b87e18bd2aa40b263b07e6",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526303260000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824994588000
     },
     {
       "path": "src/artcb/consensus/tpm_quote.py",
       "sha256": "316dd938d3075050cab2c9992a77df64fb0982bdaa6c3403cf72fbdb372ba1bf",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526303897000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155824995387000
     },
     {
       "path": "src/artcb/consensus/liveness.py",
       "sha256": "d402b0c43b6123b09d552ec186a4f0a4383c5ecb3e984431a2b621080127bd0f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526304450000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825006338000
     },
     {
       "path": "src/artcb/consensus/pbft_exclusive.py",
       "sha256": "e8877057d2a69869fb658b37112d704f9d0ddd29bd448e8f61d175aabe604ae8",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526305340000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825008586000
     },
     {
       "path": "src/artcb/consensus/__init__.py",
       "sha256": "0238f15707ced53203934907bc8d38add76abd7793bfb72702d23d12735f4d31",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526306052000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825009492000
     },
     {
       "path": "src/artcb/consensus/replica_identity.py",
       "sha256": "4cc8d2c4d595a65b1530138b5e160003dd2b7c71cc69193e8ab0ad1f4f2c1872",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526310844000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825010370000
     },
     {
       "path": "src/artcb/consensus/pbft_view.py",
       "sha256": "1d102255480c42d3b2833fab6dd670a69630e870930921a169a5f6b95ad541d4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526311732000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825011164000
     },
     {
       "path": "src/artcb/consensus/live_bft.py",
       "sha256": "17fc10b7719971532a6ff1b1614ee03332f59dd014ddfc35813d122787686269",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526312458000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825011903000
     },
     {
       "path": "src/artcb/consensus/campaign_artifacts.py",
       "sha256": "1c8f786883000984156f30dd2895822d3e49db5f30e4b32f0527bfb4c6309864",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526313050000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825012530000
     },
     {
       "path": "src/artcb/consensus/tpm_kind.py",
       "sha256": "fad3484e258584489239970f80ae2725e8425786ecb0ebef0d10bc1e5f3aba1f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526313713000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825020946000
     },
     {
       "path": "src/artcb/consensus/byzantine_guard.py",
       "sha256": "c042228983b39fc5d929f9f47cdcb4392dd1b38d7e92b53ca13c6216a08dbc7e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526314308000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825022025000
     },
     {
       "path": "src/artcb/consensus/platform_attest.py",
       "sha256": "0a8a0bef1a48d80bbc0e8307ce842441b8b62b0af106febc7d9b5d4fa2e21bae",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526315706000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825023802000
     },
     {
       "path": "src/artcb/consensus/pbft_certification_matrix.py",
       "sha256": "2c0629d797f211a70bfe181d7852a49d41caaca41de7c32aa7d1cd6613fe4a21",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526316437000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825024933000
     },
     {
       "path": "src/artcb/consensus/pbft_finality.py",
       "sha256": "6ac699670e3e7105ae3f60ead791b8ab92fb5a4c25f6db9c4b44cd6ce85715dc",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526317677000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825026459000
     },
     {
       "path": "src/artcb/crypto/liboqs_runtime.py",
       "sha256": "df5ca6d958ba15bb6cc721458e25a1f7f3c68821f7b59b4f87dc394daa280f8f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526318498000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825027552000
     },
     {
       "path": "src/artcb/crypto/hybrid.py",
       "sha256": "8c6b6b23700f5c54a2dc91b444758d56a5742873a680b7b5d875a887e33ebcd2",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526319139000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825028343000
     },
     {
       "path": "src/artcb/crypto/pqc.py",
       "sha256": "d984a3d2b9f79af571234c7d92e3e5e2a93c940263d34670cb726a5b140df221",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526319798000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825029121000
     },
     {
       "path": "src/artcb/crypto/__init__.py",
       "sha256": "d7356c0faf7ef48f2557472b5172da402d009aa2573123a4627700347b070413",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526320298000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825037306000
     },
     {
       "path": "src/artcb/crypto/homomorphic.py",
       "sha256": "823002a85f087f4b79ed7c5b26c33813f4240fd372dcf402fbfdc336e9ef0d8c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526320940000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825038411000
     },
     {
       "path": "src/artcb/crypto/kem.py",
       "sha256": "37317ba70e7a191971a5743c1d4313c4693d0b3b434b014992f9d0b88b1bf226",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526321750000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825039271000
     },
     {
       "path": "src/artcb/crypto/hashing.py",
       "sha256": "71cb46cc8b8d604df1d62d63fa6e7778539c15369b644060a0dedc4db57b7fef",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526322467000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825040025000
     },
     {
       "path": "src/artcb/payments/__init__.py",
       "sha256": "e061f2ef48673f7bd0568c03b8b88ed58364dca3406400649a92406231172dff",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526327121000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825041016000
     },
     {
       "path": "src/artcb/payments/stripe_jobs.py",
       "sha256": "46d69e07e3b2878a5071afee45e3df4f4050f58ca3ac4003566c2c529d2d2b10",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526328258000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825042209000
     },
     {
       "path": "src/artcb/pol/scorer_numpy.py",
       "sha256": "ac6de0af3cecd6b4d0da1eaae8b9f00a132fb3adba136f4f9fe0a984f7568293",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526329032000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825043057000
     },
     {
       "path": "src/artcb/pol/nft.py",
       "sha256": "8b9b1911741164094abb3668b9d36edbfe47b87e7f91d53a520f3186dca9a729",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526329745000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825043773000
     },
     {
       "path": "src/artcb/pol/__init__.py",
       "sha256": "488ee016c83f00a90ed937856371d04120df111a1ce828d01724460d384c3f54",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526330244000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825044353000
     },
     {
       "path": "src/artcb/pol/transfer.py",
       "sha256": "d071ef41f4c6952dd5d327538e210ee876c0d2e3f9a938dcfb52aba4eddaf169",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526331109000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825045327000
     },
     {
       "path": "src/artcb/pol/scorer.py",
       "sha256": "28eaf75760a01e010072b7642b6d755133af1695a6aae6c164ad1bc10e448b68",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526331855000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825051383000
     },
     {
       "path": "src/artcb/trace/agent_run.py",
       "sha256": "2b0a2a6d020c40b9a8efbf03d511b2b9052f8f3f32002e6dc248426c5b351210",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526332604000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825052703000
     },
     {
       "path": "src/artcb/trace/__init__.py",
       "sha256": "4380e6ee156c7de5d6741fd73688b66220659a8809f75ce1115329434477fe71",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526333132000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825053638000
     },
     {
       "path": "src/artcb/trace/ns.py",
       "sha256": "c027b883a422b2fc74ac8d616f5f9792b5467425aff3d223a396f6b220536ded",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526333711000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825054276000
     },
     {
       "path": "src/artcb/privacy/egress.py",
       "sha256": "dc6f78d5b7367ee65f646f1f309a7b564a14a351bbc4610859bc24f9ea381ff5",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526334598000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825055376000
     },
     {
       "path": "src/artcb/privacy/__init__.py",
       "sha256": "72d94e3136796359eab4963ebb6cd3d855d3be466d1f09e7ec534b9ac6c1bf49",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526335322000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825056497000
     },
     {
       "path": "src/artcb/privacy/homomorphic.py",
       "sha256": "0465b08c6de6bdc40cb26b73558a7218762e5ef0293ef4a91fee8c1e85431afc",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526336047000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825057544000
     },
     {
       "path": "src/artcb/privacy/federated.py",
       "sha256": "2e28484645af25047ce63f45fb2479932d0be5cb3d48b49b761d166a0332e755",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526336703000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825058401000
     },
     {
       "path": "src/artcb/memory/repo_scope.py",
       "sha256": "c1b8d739908826b6c12bcf21f93e130245b210b6138a53b3e4deedfe9be0329e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526337387000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825059240000
     },
     {
       "path": "src/artcb/memory/vector_store_faiss.py",
       "sha256": "4692d3418c6568f343e0bf2a7025fdeea6da9141b916229e5388a08cd1f21984",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526338040000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825059881000
     },
     {
       "path": "src/artcb/memory/concept_network.py",
       "sha256": "707d7b6c89bd429f48dcbc0e5724523a4dc8853c6cd13ecf472b6d64ac8d6fe5",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526338997000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825060596000
     },
     {
       "path": "src/artcb/memory/agent_channel.py",
       "sha256": "e29c5e1a4a2a55f68a5494b8f75e5f5a47f19e76109a4c48200bcabde758c071",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526339965000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825061315000
     },
     {
       "path": "src/artcb/memory/vector_store.py",
       "sha256": "1930bdfc3edb1823f4c53d28ddca32d02e76fc5b45bdc28b5ebce54243a8b8f3",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526344270000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825061860000
     },
     {
       "path": "src/artcb/memory/__init__.py",
       "sha256": "2f6a2535cdc4005ccd88fb619b275d1a0bf15be3e8ab612aa6ed462682107a77",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526345061000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825062363000
     },
     {
       "path": "src/artcb/memory/repo_ingest.py",
       "sha256": "df33ede06bac8f7ce020d6c3afcd14a2a22023c90bb6fadefb9c3fcd8542d74e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526345842000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825068109000
     },
     {
       "path": "src/artcb/memory/concept_store.py",
       "sha256": "4a83dcb3ddd4a4bfe092806f0341054a822282178f8215fb826f7f204fbc1583",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526346633000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825069275000
     },
     {
       "path": "src/artcb/memory/node_index.py",
       "sha256": "0f721fa3a42fdc6793df5d07dfbd9792b6ec3a77922a597fac443b20fe4cf3d8",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526347262000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825070023000
     },
     {
       "path": "src/artcb/memory/graph_store.py",
       "sha256": "3de6bd84b8500188375e10ab3afa1991547aeda55e53e4c0161ce6efaf7e8daa",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526347837000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825070643000
     },
     {
       "path": "src/artcb/memory/concept_sync.py",
       "sha256": "90b672b874990ec9d06876cc1c9a79940c4650969e52a15965df89fbfe9aa183",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526348414000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825071403000
     },
     {
       "path": "src/artcb/autodev/user.py",
       "sha256": "1e2fd4d0b49ac5da69d362959f271ecab60b6519eeeb0d6da84552f7377969ca",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526349061000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825072492000
     },
     {
       "path": "src/artcb/autodev/__init__.py",
       "sha256": "db4c0d00c3840a76c9871ed75fdc8ce16aa0573947b3baff8dec2c038639c988",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526349554000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825073073000
     },
     {
       "path": "src/artcb/identity/user_wallet_ownership.py",
       "sha256": "295dbedb36e1256f75429b1069433ebd99617293996c4763a3a250e9a667ab7d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526350279000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825073846000
     },
     {
       "path": "src/artcb/identity/user_node_association.py",
       "sha256": "dbf049426649f26cf53e9e36fa5aebde5f2af7db7aaff7413416f3f385805c30",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526350949000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825074612000
     },
     {
       "path": "src/artcb/identity/__init__.py",
       "sha256": "ff1b1db5a87cd227d6657ec3a4f39a4e89e67a601e5893adfe88c2f6abdf8f10",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526351523000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825075242000
     },
     {
       "path": "src/artcb/identity/biometric_onchain.py",
       "sha256": "c220a1fd9e82ff08db75899bf91e695aaf2435aa9f3a21690e655a966473c22f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526352673000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825076612000
     },
     {
       "path": "src/artcb/identity/human_identity_policy.py",
       "sha256": "9568a4a0ec8604cbe99ba45c86866807d75b7e8b4ea3ea842fce96ed529aa6ce",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526353540000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825077701000
     },
     {
       "path": "src/artcb/identity/layers.py",
       "sha256": "f4fa978f5ca75b6ce277b1ee80c9d4dc218c8a8c5cffa19ec971f29ea6b33955",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526354190000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825078555000
     },
     {
       "path": "src/artcb/bob/__init__.py",
       "sha256": "4110b973e3fc04a3bbf41a413309a78267d9d1bb2823d99de4357cf1abfa2e9f",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526354930000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825080346000
     },
     {
       "path": "src/artcb/bob/job_completed.py",
       "sha256": "a06d4d7e6593b4996b8979edbc959537a664704bbd946ab0634388628f66b3ca",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526356115000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825083780000
     },
     {
       "path": "src/artcb/security/anti_sybil.py",
       "sha256": "6418b4d700780e93a26e812bcb76ab5366c8b98562be8d96b051000296741503",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526361270000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825085410000
     },
     {
       "path": "src/artcb/security/rate_limiter.py",
       "sha256": "86deb03e8ee68e48f0a78a4f0834a728d7406f7e7d5e4d59915fef555e13a0e0",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526362065000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825086195000
     },
     {
       "path": "src/artcb/security/__init__.py",
       "sha256": "7029cf9a2632059e5297c795412d5dee43de4ea22d4de87f2356a4f9445c79c6",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526362620000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825087006000
     },
     {
       "path": "src/artcb/security/webauthn_store.py",
       "sha256": "63356c593d6c53be89cdcc0c3fd2f80927a57f1f3ab83353b8712bf481aee925",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526363330000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825087819000
     },
     {
       "path": "src/artcb/security/slashing.py",
       "sha256": "dd70cdb21f361353833dea8597d170e4fb30e3bce542852a2a562a393aaee176",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526364045000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825088601000
     },
     {
       "path": "src/artcb/security/hardware_identity.py",
       "sha256": "7fecbbeb39496ec447c6feed544d3c7c25dac15af7708ce57390c060c4414e0e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526364973000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825089648000
     },
     {
       "path": "src/artcb/security/wallet_device_binding.py",
-      "sha256": "342ef4bcd380266fc9ef0e812cfa71f8f1f9c43949085e24609fff2df4180649",
+      "sha256": "e304d5616140b3e96b9f7ab772aa56af146944cc5be0719911f18788830832e6",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526365777000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825090539000
     },
     {
       "path": "src/artcb/security/webauthn_cose.py",
       "sha256": "025c4f886368564b766f684e9801b03bb1c64e0b97cdc3667028be24ffcbf1e5",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526366424000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825091190000
     },
     {
       "path": "src/artcb/security/webauthn_protocol.py",
       "sha256": "7191a2cc0046355ee1db1af83cadc174e3f02ac2584a0bcdc84599ceba53d1d5",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526367188000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825092073000
     },
     {
       "path": "src/artcb/auth/qr_pairing.py",
       "sha256": "64713799468e310f9cb2c7999c67e39731b0c9385a427d944e09010ccf21ec65",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526368039000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825093109000
     },
     {
       "path": "src/artcb/ir/decoder.py",
       "sha256": "e73ee86865785f3e48672456c0978a0316621d483bad968cf3436a83cb9de249",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526368794000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825094146000
     },
     {
       "path": "src/artcb/ir/binary.py",
       "sha256": "7c1321c41d14a355f6edefd73f6c5e5e3173f71b4492497eb1420a78c10962a0",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526369464000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825094952000
     },
     {
       "path": "src/artcb/ir/concept_lexicon.py",
       "sha256": "f1447478f4977accfde99980a4737a033e423a971c1c0afe0a19c44415b9ab46",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526369996000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825096373000
     },
     {
       "path": "src/artcb/ir/models.py",
       "sha256": "dc0d79c7b868954686cebc3214efeaaee3558d5a7b30b1273c8a77194f93cbf1",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526370567000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825101709000
     },
     {
       "path": "src/artcb/ir/bob_client.py",
       "sha256": "edc5f2a494e3a64b299698cebb951248a4b24e34debc3f8576e6e64f2b29c2ce",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526371175000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825102601000
     },
     {
       "path": "src/artcb/ir/compression.py",
       "sha256": "6e1648aa7387ac2b6ab75c1f7adcb360ee66aaaa8a94dd27b8e0d578cc834a47",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526371843000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825103248000
     },
     {
       "path": "src/artcb/ir/__init__.py",
       "sha256": "c863eb29f1b1a1d6932c6d53c6d24e6f3af229a404b990a22700bdc3e63f9a30",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526372379000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825103755000
     },
     {
       "path": "src/artcb/ir/rules.py",
       "sha256": "d8afbfc2708291ba4fae0b08607bf0b7a7fa7f0675451ff8ce615b6881202f6e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526373177000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825104575000
     },
     {
       "path": "src/artcb/ir/encoder.py",
       "sha256": "07c0979ab452293b46d40ae0f5fbbc73a28d2f0e7293fe0892b3bc145c0cba4a",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526376655000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825105365000
     },
     {
       "path": "src/artcb/ir/grammar.py",
       "sha256": "925872a0a2be8948d6202eba3aeea0833a717245a8ec25df67c03fadac3561d2",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526377977000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825105948000
     },
     {
       "path": "src/artcb/ir/symbols.py",
       "sha256": "74fdd3172ab14c102233b8e26d7902b1170f23fc71bec1d2e91f98eee61c1a9b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526378644000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825106574000
     },
     {
       "path": "src/artcb/ir/macros.py",
       "sha256": "5b2b2e112162cbc04c84967f94b24100e5eee79e1099d6b816f1ef4d508affce",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526379216000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825107189000
     },
     {
       "path": "src/artcb/ir/concept.py",
       "sha256": "363dde6134ca8095c0ae1d5bc343d1efa2b910c18fae31c140b7a3b49e18d474",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526379919000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825107993000
     },
     {
       "path": "src/artcb/ir/llm_encoder.py",
       "sha256": "23e8b3cbeddb05d3c4c7e88053941463795cce8b789ebeb9860a9344d01c0689",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526380519000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825108638000
     },
     {
       "path": "src/artcb/ir/symbol_store.py",
       "sha256": "33fa4e81080d07f73f8b961725417a1fe373446df3d0f3ea19cee4fde95c40ad",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526381112000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825109260000
     },
     {
       "path": "src/artcb/org/__init__.py",
       "sha256": "e78932c09df9ad4830e4acfc9f9687f35bd3ea6ab44d27bfe4305f9cd52958d7",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526381780000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825109902000
     },
     {
       "path": "src/artcb/org/kyb.py",
       "sha256": "2732d9db94d3d93f1ec07eeed7d12194519fd5b25da0164e65cb0e9280347004",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526382359000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825110457000
     },
     {
       "path": "src/artcb/platform/mac_hardware_inventory.py",
       "sha256": "6acf855e4dc18f0dd58706fb9dafdd983e8e943a1e1098544fec010848c5920c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526383171000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825111332000
     },
     {
       "path": "src/artcb/platform/__init__.py",
       "sha256": "0ac9105daa9f7ddbfe04596c381cfe9a28437436a4f4b3b2a9de5c6fb27cd979",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526383913000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825112129000
     },
     {
       "path": "src/artcb/platform/capability_discovery.py",
       "sha256": "1143769a9db452594358245b1ab77395eb76d1a0852ef3f0f33a3155699997ae",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526384470000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825113859000
     },
     {
       "path": "src/artcb/network/eligibility_gate.py",
       "sha256": "ceae687036c444577f3e35f9627792e2bac135c9392fc5ec8eec21029efc93bc",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526386827000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825118843000
     },
     {
       "path": "src/artcb/network/__init__.py",
       "sha256": "bc8e66c9fe536521d17a280623425f973d36c6287afac14ff684e91b68cd2610",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526387354000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825119520000
     },
     {
       "path": "src/artcb/network/failover.py",
       "sha256": "3bb53205a8c2633781fa83e5281979ec9cd7fc38cd74375f68f08587c798f9d9",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526388216000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825120345000
     },
     {
       "path": "src/artcb/io/pdf_loader.py",
       "sha256": "c50a3b2e0d5df0b3591794837153610d5d8acb6383210c8f7c8b47c9ad5c3139",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526389173000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825121051000
     },
     {
       "path": "src/artcb/io/__init__.py",
       "sha256": "5938f8cf47ebb6e681c10018951fd44ddacd59dbfd7b920195ace896063cc1df",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526390052000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825121607000
     },
     {
       "path": "src/artcb/io/pdf_loader_async.py",
       "sha256": "3c0ed6598b461013dfe6dfacd5ebc851619329e065a1b51bf82feae67f3ecfe5",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526394534000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825122199000
     },
     {
       "path": "src/artcb/io/media_ingest.py",
       "sha256": "122d8d54b5e89bd8c2b46f82cb9642b5a86f3d4d6e4d5d51e5eaefbcaf02133c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526395659000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825123042000
     },
     {
       "path": "src/artcb/agents/pool_manager.py",
       "sha256": "fd0b12abf88ea05c87f3081824699ba4d46c27299f39aea00b9d27021c77ab73",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526396677000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825123852000
     },
     {
       "path": "src/artcb/agents/__init__.py",
       "sha256": "f913cff9235d6d26aad4bafc75fef2db9c286201d6b88485bda18ac1d41c7228",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526397175000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825124392000
     },
     {
       "path": "src/artcb/agents/explorer.py",
       "sha256": "c8c26d44dc38710004357fc5148d585e461188891d8ee9c9fb506a98d4b30fb9",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526397806000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825125061000
     },
     {
       "path": "src/artcb/agents/critic.py",
       "sha256": "e6a3ec290f10653e6459322cc3862963a70db2c727e7cd742ec7ca770cf00642",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526398356000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825125672000
     },
     {
       "path": "src/artcb/chain/book_index.py",
       "sha256": "a12e38ab58de4033d57e6c0553926f2a8413be0727ef92448bc47a167350643c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526399166000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825126555000
     },
     {
       "path": "src/artcb/chain/__init__.py",
       "sha256": "1766621ac4faf1e4602defc03c4d11f72cc76b6a6374a71aa61faa5f664b4218",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526399680000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825127166000
     },
     {
       "path": "src/artcb/chain/split_ledger.py",
       "sha256": "4d6dff9d65eb99bcb7616c3da04257024cc8d1dbc13c91aff45396daf38c83de",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526400309000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825127841000
     },
     {
       "path": "src/artcb/chain/binary_log.py",
       "sha256": "6f3896a712228e8c6b6a06422e99b6b64eb037c29a23154723271b993b8a7beb",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526400965000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825128439000
     },
     {
       "path": "src/artcb/chain/ffi.py",
       "sha256": "d24b489d0976f730e87f31d0e08cbd2d75e410209caed0c598817fd279719643",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526401643000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825129108000
     },
     {
       "path": "src/artcb/chain/manager.py",
       "sha256": "82df974af3e927cc25a295b83011c4fc98fa3b2e744ad4876ab231e9e932cad5",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526403405000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825135847000
     },
     {
       "path": "src/artcb/mcp/server.py",
       "sha256": "27cc57ceca5089cc2209d3eeb6355ab20e056e1362fafccadcd5a741fe9af49a",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526404565000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825136977000
     },
     {
       "path": "src/artcb/mcp/tools.py",
       "sha256": "8004c7163c51bf06e0a21433545a11de38b01103bc2628ff7f7d95abdffa1bba",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526406021000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825137966000
     },
     {
       "path": "src/artcb/mcp/__init__.py",
       "sha256": "c9271e8347c6ef99ea2d7c85309ca5d3bb1c4c46bb7aa87d5b140cf8dc41df2d",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526409288000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825138612000
     },
     {
       "path": "src/artcb/mcp/prompts.py",
       "sha256": "1435f5225eee393aa0aa929ada838a433c76d28bc8ee13c5fa3f5ab41e0a8d90",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526411507000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825139217000
     },
     {
       "path": "src/artcb/mcp/resources.py",
       "sha256": "d35c53d4d8a3005af4acc0c0edad6ebc30e93178dc87c3377012eaab9002e428",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526412251000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825139889000
     },
     {
       "path": "src/artcb/groups/signing.py",
       "sha256": "3d301a15307b66629af58dbce4b081acb1460d7c561fda7d6d1e339ce7605e2a",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526412999000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825140626000
     },
     {
       "path": "src/artcb/groups/policy.py",
       "sha256": "3a2e4d4f44343100180a8c97caf9ba6866268f9efa7ac6d1195242233c099204",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526413511000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825141244000
     },
     {
       "path": "src/artcb/groups/__init__.py",
       "sha256": "5a8d5a20589efedf9a54abb21cc8f3a466e30fb664f7691539c207b7b9f796ab",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526414041000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825141838000
     },
     {
       "path": "src/artcb/groups/join_requests.py",
       "sha256": "f22ae0381c9965d605867e4f65cb23d4c716f3addbe347e45a9de17d1bcb60b7",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526414747000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825142530000
     },
     {
       "path": "src/artcb/groups/manager.py",
       "sha256": "a46f3ce67f765c09f8d46fa6f85696d565ed0fb1a4d9129cb9140c4990cbaead",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526415475000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825143290000
     },
     {
       "path": "src/artcb/kcg/store.py",
       "sha256": "5025e09d4a00044d86193498739853a26ef500f1bf1cc8e17dc8efea4a763ec5",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526416302000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825144164000
     },
     {
       "path": "src/artcb/kcg/overdraft.py",
       "sha256": "42ad8620df154d395c7f7e6ed91cc0189705ce6b473700f3b4a7353026080c7d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526417010000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825144938000
     },
     {
       "path": "src/artcb/kcg/pouc.py",
       "sha256": "6d70aa4b6d967f194cb7a1df67552bca81ae4b47e42d21fcb0ce5df9276df996",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526417919000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825145748000
     },
     {
       "path": "src/artcb/kcg/events.py",
       "sha256": "14cd86d1a2cb8d90e3d43319da2edf82b9813bc87d31f2737b0a66a4683d6441",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526418640000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825151148000
     },
     {
       "path": "src/artcb/kcg/__init__.py",
       "sha256": "bbb3bb90441bb7ad14505470209e21e8ba943f6e2807796d7cad1239e2ae13c0",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526419246000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825152220000
     },
     {
       "path": "src/artcb/kcg/fee.py",
       "sha256": "988a80f4530958c36133de82ba55f7eeec5c199b458a043f28c90b2eae271751",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526419950000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825153002000
     },
     {
       "path": "src/artcb/bridges/__init__.py",
       "sha256": "4a2f60e0fd1a4101b0c98ee04493be1591e7187ce4096d09b4428f6aeffa7b1c",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526420592000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825154051000
     },
     {
       "path": "src/artcb/bridges/manager.py",
       "sha256": "3bbfbb08e3f8bd9ae2e223b366c8d638638a46f51d87db8a190fe477f8f88073",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526421466000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825155111000
     },
     {
       "path": "src/artcb/reasoning/reference_id.py",
       "sha256": "cc8b09b83d5f7ec0c842581161f39b74cefb4c9de137c81bf0de5559052fbed1",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526422616000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825156013000
     },
     {
       "path": "src/artcb/reasoning/__init__.py",
       "sha256": "4d4c7dd4747630a56620514a0c560ef63b3bf0412ebac406628ce5cb8d81fc39",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526426353000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825156645000
     },
     {
       "path": "src/artcb/reasoning/langage_battery.py",
       "sha256": "9838cd7ce9f6aa58495d7b67ac7ba1fbc05d04c01ece57d52c00f04f95b7a9a4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526427622000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825157241000
     },
     {
       "path": "src/artcb/reasoning/canonical.py",
       "sha256": "f38b450e5b28bb9521e6210d968f6a385d88e04672d94fcd9251658e2bd110e4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526428558000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825158004000
     },
     {
       "path": "src/artcb/reasoning/record.py",
       "sha256": "7d4a8b566b9753d7c7763b27b7f6f7dc6ea9856a61b53f73bdb567054a158de1",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526429474000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825158878000
     },
     {
       "path": "src/artcb/reasoning/first_reflex.py",
       "sha256": "5df0b9894d6cd6b19a037292320b2324434174371e95138927901555ffd74db2",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526430252000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825159901000
     },
     {
       "path": "src/artcb/reasoning/pbft_publisher.py",
       "sha256": "fd68f10607003c9f460045d37bba83cde5192fd2f4977a27887346f597ba0d0d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526431204000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825161040000
     },
     {
       "path": "src/artcb/mining/protocol.py",
       "sha256": "ef7f180603ed2bb12c998d0ea0aed33d9330dd33b83ba7c54562d147c4628087",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526432147000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825162046000
     },
     {
       "path": "src/artcb/mining/__init__.py",
       "sha256": "04a404cf5cb3fc73cc7d8ff32e6d15e206aeabc4d691fc5cc92c2408ba045be4",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526432731000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825166153000
     },
     {
       "path": "src/artcb/mining/pipeline.py",
       "sha256": "ff43d58af65c3ab2eca9f198b139e4e850f83e185aa1a2d6232b935e797eb420",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526433635000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825168694000
     },
     {
       "path": "src/artcb/mining/identity.py",
       "sha256": "4c9b51010c8d6028ef6d15994ff8500ff310da1c22ae9330857592ea3824d74c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526434349000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825169499000
     },
     {
       "path": "src/artcb/devnet/__init__.py",
       "sha256": "a4c42de6d6987d1fd662f90d5bdfa8ba6efd93a2f2d7ccb0cece8a93ab9bcea9",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526435129000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825170277000
     },
     {
       "path": "src/artcb/devnet/faucet.py",
       "sha256": "a5b9775c33aa2a7dbf00243efa5edee4739af8422d07b47624f590dfee3ba8de",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526435808000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825171022000
     },
     {
       "path": "src/artcb/integrations/__init__.py",
       "sha256": "581f953929e73457e2dd52cb17593dd398cfbb052c5459dc610c45f6e38e9ce6",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526436548000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825171709000
     },
     {
       "path": "src/artcb/integrations/gradium.py",
       "sha256": "c83a48373ad8bbafe19a560fca08dbbaaf65ffd74158e67ccbfd9201400f5276",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526437157000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825172280000
     },
     {
       "path": "src/artcb/system/__init__.py",
       "sha256": "4d97bf01c271c22113c15bc55bb8ee292772c7511abec1ce0e9a3bcb7f00568f",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526437833000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825172975000
     },
     {
       "path": "src/artcb/system/hardware.py",
       "sha256": "ff0b239495d2c0469990d22497325d4f9934b18696d663efec6ce0864f336fe4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526438770000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825173857000
     },
     {
       "path": "src/artcb/system/optimizer.py",
       "sha256": "02a54bbc084d459a49d28f47a2064f27f03f37ecc596b0f3401752d16a8c3007",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526439706000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825174753000
     },
     {
       "path": "src/artcb/rtleg/timeline.py",
       "sha256": "978dbc6df58ffe00f2bfcd93eec9c574838a27478fb0062d4ef33dcfe450830d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526443291000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825175626000
     },
     {
       "path": "src/artcb/rtleg/events.py",
       "sha256": "ce3167460e697623b150b6d0e86638bcfe69e3a21f4bf225542876fbc4eca895",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526444708000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825176570000
     },
     {
       "path": "src/artcb/rtleg/__init__.py",
       "sha256": "b2ea823956dedd4dac0bb245d2688dde072a84d8144e4c7a6bc38e717de82957",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526445315000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825177179000
     },
     {
       "path": "src/artcb/sdk/artcb_sdk.py",
       "sha256": "44f9a6a581b6d859b6b688b9fd86165a8c4a4c8cb6a2912e0a1b2f7230ce4c5d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526446178000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825178172000
     },
     {
       "path": "src/artcb/sdk/__init__.py",
       "sha256": "03f6449597896d716ae51a4efdb911caacf56bf7c689555ef70f73aa694b4a3c",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526446894000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825178816000
     },
     {
       "path": "src/artcb/testdomain/chain.py",
       "sha256": "534ca24bea3f7c86aa0704352c918c2e02ac70b8c65608dbe2c188c07b8c3f68",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526447831000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825184836000
     },
     {
       "path": "src/artcb/testdomain/transaction.py",
       "sha256": "f1301f8104d55cff8ac368c8a4a9d82527c7e6c880e2ac3d1cae3d8ad183677e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526448567000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825185858000
     },
     {
       "path": "src/artcb/testdomain/policy.py",
       "sha256": "feedc83339ee91afeb52311cfb9823459c4d3a16544913c0a04933fce40f513f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526449257000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825186582000
     },
     {
       "path": "src/artcb/testdomain/__init__.py",
       "sha256": "4e9bef1e50d633409609c21c7cc32e5b3e6ac0f8316769379937a15a596daab7",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526449900000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825187091000
     },
     {
       "path": "src/artcb/testdomain/factory.py",
       "sha256": "fac4e9c699ea9fe674cad118a01e76e038e757040b0bbf28f54a8d8fd0345d62",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526450816000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825187988000
     },
     {
       "path": "src/artcb/testdomain/attestation.py",
       "sha256": "5608177ac269fd75f5a7a932784864afc426aa7dad5e8f0088e0287d91516799",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526451501000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825188736000
     },
     {
       "path": "src/artcb/testdomain/wallet_states.py",
       "sha256": "4952331b1db9726870c5e0976cf49080002d9e9babf6e6171148038dd13ff240",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526452324000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825189491000
     },
     {
       "path": "src/artcb/p2p/sync.py",
       "sha256": "c8ed5fbe36b495a33f84b6f3fd4dc061c72910fff2a2ae65a82a1d83a4741417",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526453380000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825190520000
     },
     {
       "path": "src/artcb/p2p/handshake.py",
       "sha256": "502a71bd02e616cd1b7131f3af9ad21e5639be1a7ba523d6699a67600a2a4ae4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526454022000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825191150000
     },
     {
       "path": "src/artcb/p2p/producer_runtime.py",
       "sha256": "e2c34a27b0398ef5adb81634f693bb94681d900c0bf1c69dd1dd80a72e431894",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526454979000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825192052000
     },
     {
       "path": "src/artcb/p2p/seed_discovery.py",
       "sha256": "1a0843addadad93219a172dbcab6b7167b2ceccc08c29066dfe7265059764a42",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526456031000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825193037000
     },
     {
       "path": "src/artcb/p2p/public_url.py",
       "sha256": "d6ee68a9b2432234b276762e4b103c0ae4f76a9635420e2e86f2a3239ca5e7a1",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526459603000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825193696000
     },
     {
       "path": "src/artcb/p2p/producer_election.py",
       "sha256": "7c0a3111605881f84f20ceb191863bec702d5816010c0ebc9f771973529eafa1",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526461268000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825194444000
     },
     {
       "path": "src/artcb/p2p/symbol_sync.py",
       "sha256": "5982315e536677f200e5de02865e5f27977f7f309e5d5634c69512bc487f7618",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526462006000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825195098000
     },
     {
       "path": "src/artcb/p2p/libp2p_node.py",
       "sha256": "f06186130484c019703ba47c83450591828d3570291f39e897dd489496838261",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526462985000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825201608000
     },
     {
       "path": "src/artcb/p2p/node_identity.py",
       "sha256": "8691fdbbec24c89f9494c5f12aa9a6a654674f9e2b02156657b6109a15377136",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526463863000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825202550000
     },
     {
       "path": "src/artcb/p2p/peers.py",
       "sha256": "4f3469ccbb447f298519bcdb16478712e8357ebf058f92ffac3e9333e7029749",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526464600000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825203296000
     },
     {
       "path": "src/artcb/p2p/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526464886000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825203529000
     },
     {
       "path": "src/artcb/p2p/symbol_archive.py",
       "sha256": "bc690b8199a95d6704e161393f8fbdeb233677c2977a098ffb8ab0c778a18029",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526465512000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825204085000
     },
     {
       "path": "src/artcb/p2p/gossip.py",
       "sha256": "a15398f4100718ea922b5b139c6b2d187659df44efca9fb5ee329e68b4c20daf",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526466116000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825204673000
     },
     {
       "path": "src/artcb/p2p/public_archive.py",
       "sha256": "9438557d97125d21dec29e1cc65b7ea7b2b91c4869e8a7f996ed669835fee23e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526466676000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825205215000
     },
     {
       "path": "src/artcb/p2p/official_replica.py",
       "sha256": "4f3b325d2957e6b59cadf9172fbcec8f990925b12b68c9ebe668f056dc42b2e0",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526467523000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825206055000
     },
     {
       "path": "src/artcb/p2p/node_reputation.py",
       "sha256": "09327034f27d6eef692072c5c7f182f6bb0547708c80106af262a007203d4b7c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526468447000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825206898000
     },
     {
       "path": "src/artcb/p2p/flux.py",
       "sha256": "04756f6085a3f3ba30cd2cab8975a9216afdcd8835284fd075bf8fcc965e1ea6",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526469067000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825207467000
     },
     {
       "path": "src/artcb/economics/economic_snapshot.py",
       "sha256": "a2156aa5ec9aeb6e7f6e6f5b3be6747fb8fabfd2ca799ca81d86cfdd0e136def",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526469982000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825208508000
     },
     {
       "path": "src/artcb/economics/fees.py",
       "sha256": "be1d79a5d09ce1e1153edbfccf347a03711875a8b45ec8d0d74b1e44d3a8bb6b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526470959000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825209459000
     },
     {
       "path": "src/artcb/economics/satoshi.py",
       "sha256": "1beb5434228b86aa938fa944ba3e603adff13ffa052449c84be641423f6f7f3e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526471634000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825210038000
     },
     {
       "path": "src/artcb/economics/hbp.py",
       "sha256": "c34159b37ef15de429c6381278ab04ad80add7ef29eb5127f129e1bacfdf1e09",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526472218000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825210564000
     },
     {
       "path": "src/artcb/economics/settlement.py",
       "sha256": "99a07e6989b0b8bab1ebe89548c966c5d3050f822affb941fa7572dcc07352e0",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526473091000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825211275000
     },
     {
       "path": "src/artcb/economics/__init__.py",
       "sha256": "1fcbd2b084f62cf3aabc25c6da90e3cb83698e0be286c7d112670b4d1cc6e933",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526477417000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825211933000
     },
     {
       "path": "src/artcb/economics/preblocks.py",
       "sha256": "a38cf88ca121f929dee8f5ec9baea290ac653cbe4257dd2388773e54b5ba70b6",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526478421000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825216296000
     },
     {
       "path": "src/artcb/economics/economic_root.py",
       "sha256": "70d7a09708510b0620064a3e256a860cf5538a6dc6de0e6373223aa07f7b1ece",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526478984000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825218058000
     },
     {
       "path": "src/artcb/economics/job_payment.py",
       "sha256": "44aed40f0a3730057a4fcc3bedc41d021ff530828d6b5d78c0258e5023ee7a7a",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526479752000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825218889000
     },
     {
       "path": "src/artcb/economics/job_provider.py",
       "sha256": "0ace956e1195f1740f392830d62a4d63b676089061d5fe4f31e044285cf6843c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526480481000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825219544000
     },
     {
       "path": "src/artcb/economics/distributed.py",
       "sha256": "f8ed9f0ae71a32d893172317a05b3ea098928457ce4afc7da021571b9805ef7b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526481236000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825220262000
     },
     {
       "path": "src/artcb/economics/owner_decay.py",
       "sha256": "c7ca43e50b7017342191fe032a0589689809adb42cc34519a8175ae611cb2384",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526481886000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825220835000
     },
     {
       "path": "src/artcb/economics/pol_record.py",
       "sha256": "8e3e7c4af5309bce265127fe2ecc0b5c960e12ae9f5de99ef41352f3d221c3e4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526482522000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825221416000
     },
     {
       "path": "src/artcb/economics/dividend.py",
       "sha256": "6ba2f6bbf01e2e4a231985489a291bb1b728e927e0a7e3f02b8031e9124d0c26",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526483089000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825222091000
     },
     {
       "path": "src/artcb/economics/workid.py",
       "sha256": "b600fa9840b9e2ea22c446b62ec3bf3af76aea55e2c35d7dfb62e440d12f8896",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526483763000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825222855000
     },
     {
       "path": "src/artcb/economics/provider_worker.py",
       "sha256": "468e9aee93400134d86d5a2e5c04ec244afec4c406bfa6abc572b4af93a6aea2",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526484318000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825223434000
     },
     {
       "path": "src/artcb/economics/demographic.py",
       "sha256": "7fbb2c46704c696c2b3bd9f14e096686e0874b7146e7624e30cef6a52462af1f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526485056000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825223979000
     },
     {
       "path": "src/artcb/economics/network_capacity.py",
       "sha256": "f1755751811b45993aa14045b3b1c5bb02bd2c1ae58557755f2373a7cbb88e51",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526485761000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825224562000
     },
     {
       "path": "src/artcb/economics/oracle.py",
       "sha256": "6cb570acb5556c3e7a504c46f23d288a35558763ce8b51d1cc0d10927a992743",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526486570000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825225402000
     },
     {
       "path": "src/artcb/economics/human_binding.py",
       "sha256": "c80a94615450e3f8e7878b89d7ec45d03a307c071eaf622167215673f85e1e2d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526487332000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825226180000
     },
     {
       "path": "src/artcb/economics/partition_map.py",
       "sha256": "a89a3a95bb3ce99cabc5ebae0563cea5ae10bea0002c83b69c2e4de37bc3e9b0",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526487914000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825226750000
     },
     {
       "path": "src/artcb/economics/identity.py",
       "sha256": "04a6739092f3285e5bc9f65d632d8d643635f44fac65752b97991c0fcf345bf9",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526488842000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825227466000
     },
     {
       "path": "src/artcb/economics/replicated_settlement.py",
       "sha256": "a23d49cf86656c6b317acd0aab9ee267133ee97840aa1aeee8dd58505159a20d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526489805000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825228201000
     },
     {
       "path": "src/artcb/economics/audit_log.py",
       "sha256": "154da192db1ad5deac8be68ad0bfeab6da33e2b1f3638e42f008bb4c83c14e0a",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526493399000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825228774000
     },
     {
       "path": "src/artcb/economics/emission.py",
       "sha256": "c542cc2b23eb74e2ed72f29698e8a43984d98eda44f9cc22ea3268f57894c692",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526494845000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825234775000
     },
     {
       "path": "src/artcb/economics/monthly_lock.py",
       "sha256": "caaec3ce12a51961ea4082e91e526fc42f2e5f3e177ff4a1b2c3e7c7654ebd11",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526495446000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825235342000
     },
     {
       "path": "src/artcb/wallet/address.py",
       "sha256": "0c5959bea2639a72103fd43e1ff635d1f720434dc06cc96445d03a9d9f4d9637",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526496300000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825236239000
     },
     {
       "path": "src/artcb/wallet/encryption.py",
       "sha256": "029b59b7ac17b2f7cecd4219a05b2678f3f00779d4acd2fb462a4084adf6c97b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526496990000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825236972000
     },
     {
       "path": "src/artcb/wallet/__init__.py",
       "sha256": "bb71b69898a2b8c08e77b91613118f08ef0be7c9a12e885af38c232c1cfcf11e",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526497631000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825237637000
     },
     {
       "path": "src/artcb/wallet/manager.py",
       "sha256": "38b7fd39871a8d510d4267b026754c69d6b244d178bfb071ef1bd1a73e637d54",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526498461000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825238468000
     },
     {
       "path": "src/artcb/governance/__init__.py",
       "sha256": "5146b29ce47a371124eece005c5320e1d1f02c2471bd064936a8fe3ac20721e0",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526499160000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825239162000
     },
     {
       "path": "src/artcb/governance/manager.py",
       "sha256": "97d787c2a60aa0afc7ff7177ad7b757670b5efc94788f3366042ba7da5f59096",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526500345000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825240380000
     },
     {
       "path": "src/artcb/rules/__init__.py",
       "sha256": "d84c1f1b0d886e5ba0050e50480ccaf1646a531ec3e51d9404fd9ffabea9509a",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526501186000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825241135000
     },
     {
       "path": "src/artcb/rules/telemetry.py",
       "sha256": "020d6d84dd64252d603ae03c6bd5d952461547f2c9d9ef0c441aa069c4a29b07",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526502012000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825241990000
     },
     {
       "path": "src/artcb/authz/node_cert.py",
       "sha256": "4ecd8df607b72bca897fc32a523d18188363f80fef6c0bfd27dbe197c948047f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526502899000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825242896000
     },
     {
       "path": "src/artcb/authz/store.py",
       "sha256": "fe343639c15df3cab4d9eb519b23b08e40253550bb5cc06fdb4097c835429a73",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526503588000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825243607000
     },
     {
       "path": "src/artcb/authz/models.py",
       "sha256": "97972f7d1645a99bc1d174d060de70a66f7774d04b1614e5079e85e05eabcdc3",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526504207000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825244280000
     },
     {
       "path": "src/artcb/authz/anchor.py",
       "sha256": "5578a08eccd8db1bbdb40e13561131dd052eb410ca0579003a72511a9a62f793",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526504964000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825245013000
     },
     {
       "path": "src/artcb/authz/registry.py",
       "sha256": "98ba16d5cb38dba759806c15a374a702f354dcfea2506f5479f23f2181405490",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526506000000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825245903000
     },
     {
       "path": "src/artcb/authz/domains.py",
       "sha256": "1ae338e94454e6da83dcc2ace055e99479f1d120c4bcd7a49e5d68ec4a38466d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526510426000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825251424000
     },
     {
       "path": "src/artcb/authz/actions.py",
       "sha256": "28c2300628c64f51264a23bc85d20490c5a69f3249d578fd9f23ff0b030e5312",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526511390000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825252303000
     },
     {
       "path": "src/artcb/authz/__init__.py",
       "sha256": "d7673d318b3793c2d337620f05708fe3b75a716aa31f4d0986475dcf668b416e",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526512057000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825252989000
     },
     {
       "path": "src/artcb/authz/engine.py",
       "sha256": "1067a43288ef80ecc3e0943c67ca1044fb16c0028ab6dd5ade434442319d1cbf",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526512812000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825253707000
     },
     {
       "path": "src/artcb/authz/node_roles.py",
       "sha256": "2d54a9f1b352d372aa6bb430af29ffff83a8507d33816e054769033dfa507ff7",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526513432000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825254362000
     },
     {
       "path": "src/artcb/authz/gate.py",
       "sha256": "773894e1d0a698e1fb5a049243834a39d5ba731083b0b6277f0c9882d9201803",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526514041000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825255095000
     },
     {
       "path": "src/artcb/authz/body_replication.py",
       "sha256": "910517ad0b72026a6a9741c6ab26990dee8820c544cd2cdce79f356f607e8464",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526514772000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825256033000
     },
     {
       "path": "src/artcb/authz/identity.py",
       "sha256": "ce5c16be3c4bb5da3cb7d0f5511de76875b2fe90b8e074fcf72a17f8850263a9",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526515400000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825256763000
     },
     {
       "path": "src/artcb/authz/governance.py",
       "sha256": "8ac303a4e4516c85573dc0ee0b38d2bc6b075abdae7f377c46c946db6561d724",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526516153000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825257554000
     },
     {
       "path": "src/artcb/authz/genesis.py",
       "sha256": "5c6de01c462045374a978bcdcfa010706c677e1ef8cfb7a6586c1c6636b15041",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526516937000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825258290000
     },
     {
       "path": "src/artcb/pool/service.py",
       "sha256": "06b1320eba90572a66de4fbe6868fd37b86a06f6237b2f2fbf6cd5076df5b476",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526518267000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825259310000
     },
     {
       "path": "src/artcb/pool/discovery.py",
       "sha256": "bc79eb2a48b70b18ed04f34e1f863cc6a6578a85a4cb6266c7a5b676df250cdb",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526518874000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825259901000
     },
     {
       "path": "src/artcb/pool/policy.py",
       "sha256": "de65462f50f149bd10c735d9371e1c0fac9af6d46e6a9b8c8e3eefd51731740b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526519445000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825260424000
     },
     {
       "path": "src/artcb/pool/preferences.py",
       "sha256": "675a3cf1d46db6efb4af435dc907f931bf63d01ed36fde31104c20da4922eede",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526520036000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825261032000
     },
     {
       "path": "src/artcb/pool/__init__.py",
       "sha256": "b1a9d78d79202fcdca2aa001c152fc423d2a6f4a1cf50fe7e61185eb6fb79e33",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526520622000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825261654000
     },
     {
       "path": "src/artcb/pool/e2e.py",
       "sha256": "4b8b01c8e45ceff2eb4e95e7ade22302a88444d71179e9a87f3bb6ac597fde17",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526521189000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825262212000
     },
     {
       "path": "src/artcb/pool/orchestrator.py",
       "sha256": "1f20a3ee5f527005d8d73c23a01c2a157f439797d7087a31eaf790da69035700",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526522082000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825266798000
     },
     {
       "path": "src/artcb/notifications/__init__.py",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526522707000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825268187000
     },
     {
       "path": "src/artcb/notifications/manager.py",
       "sha256": "c01a115b959a7f9ec3d33b8206def051d0683448686ef24cb2887885f6a8fbb3",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526527355000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825269081000
     },
     {
       "path": "src/artcb/reflex/__init__.py",
       "sha256": "758f088626d09302a9aff4b80fa020089d10a0c6ec93600d129e43cfe2d3cd67",
       "has_module_version": false,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526528518000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825270874000
     },
     {
       "path": "src/artcb/reflex/core.py",
       "sha256": "133b57a78656564285c4d1259c5ecbe0e1dffad25bf8603ef179c16a98e44924",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526529348000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825271907000
     },
     {
       "path": "src/artcb/reflex/preflight.py",
       "sha256": "ab5a5059bca7e869e5765226c09e51d7fa6184a3b6fd652f7156bd3f61e9cb3d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526530687000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825273356000
     },
     {
       "path": "src/api/ops_routes.py",
       "sha256": "7b75be9970aadafed28896144a49bd6957c6d74b3fd4ca51843dff9940bbc3f0",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526531922000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825274642000
     },
     {
       "path": "src/api/security_routes.py",
       "sha256": "fb7f70bc113f500c0e4d0adca5a59f3239810c3873cfb7e6d321f4599aefed7b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526532659000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825275479000
     },
     {
       "path": "src/api/dashboard_routes.py",
       "sha256": "8f2c346676861ca9e16cf15fe3306a10d031606005e0b026d684924219146728",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526533312000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825276248000
     },
     {
       "path": "src/api/setup_routes.py",
       "sha256": "b8ae46fee3632cebc46c996c76958f8ffa5dbaec16362e85849929efc067045b",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526533983000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825276933000
     },
     {
       "path": "src/api/economics_routes.py",
       "sha256": "b2465c239ecda7470fd3023b3f9a1a93f63a3cafd344ee470d4e3bcda98722fd",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526534821000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825277667000
     },
     {
       "path": "src/api/devnet_routes.py",
       "sha256": "c30f470fca8d877518f4a06a8ce83402f3a20da9865805c43e78759db260bfe9",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526535484000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825278248000
     },
     {
       "path": "src/api/agent_protocol_routes.py",
       "sha256": "3e91568b85755c7614194105ac1831675e9e626a53e2eb977dc8629212426969",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526536233000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825278999000
     },
     {
       "path": "src/api/deps.py",
       "sha256": "3ad8a41f83bcbf718d66a36c446c10e19c9c4f3f0d0975716d6a1db36fba4d4c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526537047000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825285506000
     },
     {
       "path": "src/api/privacy_routes.py",
       "sha256": "f08bc540ddd1c37d813fab1559334ad9401d3a0ac2483370a7ed2ab4e4f0d9ab",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526537766000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825286388000
     },
     {
       "path": "src/api/api_keys_routes.py",
       "sha256": "d55f4604f75298747398bf2805ac9de8dd30456056eb8ab2df6c8cae836f436f",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526538646000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825287223000
     },
     {
       "path": "src/api/connectors_routes.py",
       "sha256": "19a2f09cabd1314afb550c1271ff24288dee21738a0eca736e2c4f34e9a2fe9e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526539369000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825288066000
     },
     {
       "path": "src/api/authz_routes.py",
       "sha256": "e52664ebf7d80fc2437882b057acd54b6b6ec984d4f710f40cbcc20cb379af65",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526544576000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825289460000
     },
     {
       "path": "src/api/symbols_routes.py",
       "sha256": "8a4679811f07a4a97b96bc3e50b7356c6710f359462415e9b19a82685036c692",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526545254000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825290114000
     },
     {
       "path": "src/api/governance_routes.py",
       "sha256": "9af581ccbe7f7266c52f42c6684032e3a9dc3d0cf94e327228da1f40dfa04008",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526545930000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825290849000
     },
     {
       "path": "src/api/network_routes.py",
       "sha256": "a0ed606cd5005a8cbf93638855920617c8ce27847ce6cc26637461a96262a7fe",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526546635000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825291523000
     },
     {
       "path": "src/api/ai_routes.py",
       "sha256": "2790ea2dddd12905b67c23c75fa4f1295c6d1f777f0f83e2ebb77093ed965d25",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526548461000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825293177000
     },
     {
       "path": "src/api/concept_routes.py",
       "sha256": "549fc0046a1f13c4269aa438367dd664455699473578cfc0a082491adcd96571",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526549372000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825294080000
     },
     {
       "path": "src/api/pol_phase11_routes.py",
       "sha256": "523b4081b7e79e5caa098b12277f14e69ba495bb0cab84015d22bd914cf3d924",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526550255000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825294949000
     },
     {
       "path": "src/api/libp2p_routes.py",
       "sha256": "04d8b2d7ea6eed547d7bc566f33a84dd65461c5c45284205ac341a8b0b24b9c3",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526551019000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825295791000
     },
     {
       "path": "src/api/user_wallet_routes.py",
       "sha256": "c177fab2b1ed16b4b4a1e53f41147849f0e3e9d31de501adbc6ba944d6d5807a",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526551691000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825301676000
     },
     {
       "path": "src/api/reasoning_routes.py",
       "sha256": "94ca9294a5fc047880038e7c3969f40581bd9297f04b8783a3423a4c6fc11a44",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526552601000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825302746000
     },
     {
       "path": "src/api/identity_device_routes.py",
       "sha256": "a88da25cadfc75d95e7a3994c48e597fdb55b58a10a6e43fa9808463ac153e50",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526553868000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825304039000
     },
     {
       "path": "src/api/p2p_routes.py",
       "sha256": "91ec1e22c32d6c79aed662785b46313ef38c70c8690149e54f92135925c81809",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526555044000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825305173000
     },
     {
       "path": "src/api/auth_routes.py",
       "sha256": "91ef88ce15ee238b86e98480531cdb4cbacd46bd2c1d8aa7caf7a7cb9e6b435c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526556563000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825306252000
     },
     {
       "path": "src/api/pool_routes.py",
       "sha256": "12bc53bccc4efb063a0cd2868e948bffca0e87b51e33f1d2a003cddfb1a4c057",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526561852000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825307086000
     },
     {
       "path": "src/api/consensus_routes.py",
       "sha256": "527bfde4ed015763ae291c5329d13c5dcdfb58e16f826ed2126655cc428d8381",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526562850000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825307984000
     },
     {
       "path": "src/api/groups_routes.py",
       "sha256": "05ce7a39f096a99e2ba33217c7a3dd30998fd77209e1d8c0820f98fff6949706",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526563646000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825308776000
     },
     {
       "path": "src/api/reflex_routes.py",
       "sha256": "7bb419d65528fd3fc361d3c0eb7a20299743e287ec102252bdf1f495448ec738",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526564348000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825309511000
     },
     {
       "path": "src/api/bridges_routes.py",
       "sha256": "f521beea2f9a49b44836f5d2d2438621dfb850af46952b1f1e904e1713112e8d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526565042000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825310220000
     },
     {
       "path": "src/api/mining_routes.py",
       "sha256": "a25596c85a226421db5d77812e537f1db95d08f27bb5c7d53501da197b99c9d4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526565841000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825310967000
     },
     {
       "path": "src/api/anon_wallet_routes.py",
       "sha256": "e8632bd260ec20bd1fbc144c7826d6befc089a0a4bb1cf32fb8f51d6d091a76e",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526566636000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825311713000
     },
     {
       "path": "src/api/user_node_routes.py",
       "sha256": "ce8b0e1e2810f27599b2739b2cb17ef9772f7f6dd16d4cd8835647fefe98fe06",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526567309000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825312444000
     },
     {
       "path": "src/api/session_store.py",
       "sha256": "0ff5a48ec0df0f375a7165289c3ba92bdd83d738bb0eb093f8f62962390ae39c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526567884000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825316837000
     },
     {
       "path": "src/api/main.py",
       "sha256": "1687c0a08766f6fe450792e80c3e60600eb7b06fdcfb6afff194fa7e2e2355e4",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526568783000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825318410000
     },
     {
       "path": "src/api/admin_device_binding_routes.py",
-      "sha256": "50c1efbf701816760bc1b31ac2c8243ded4fc444e76ac41a02c8f357fcf0dd3f",
+      "sha256": "e47d72076294eb0acfca036d8ee631abb39f0c10f01169c5ed08a85bc449b496",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526569540000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825320404000
     },
     {
       "path": "src/api/biometric_identity_routes.py",
       "sha256": "8c0590d045eb419d8ded90d50562c74b3be109ff669bbcb9c809b5499d6ed878",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526569893000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825321378000
     },
     {
       "path": "src/api/notifications_routes.py",
       "sha256": "ad35e044b09ab52f75249704dc72b05d7b4a666a71a0c557ff3ba93394f3c694",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526570494000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825322283000
     },
     {
       "path": "src/api/kcg_routes.py",
       "sha256": "53838b77a90da0ee3326baa8c0966deb68bb9fd0a233d5203746ba64b6d0b734",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526571153000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825323361000
     },
     {
       "path": "src/api/webauthn_routes.py",
       "sha256": "17d9fc64325a38667065cb206b640b8ec738e69c63b1b9fd4e22a9446e03b39c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526572417000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825324704000
     },
     {
       "path": "src/api/websocket.py",
       "sha256": "aa9bcec72aa78ffca5c1e3b2a1e8d71491fe6bea7a27488fc1f0886765e88880",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526573565000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825325847000
     },
     {
       "path": "src/api/routes.py",
       "sha256": "526ba249b2412f51298264bad74d86597840ec3155dc6f267d3a17b4c4b51f1d",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526578973000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825328853000
     },
     {
       "path": "src/api/trace_routes.py",
       "sha256": "747c2c4c7ea9478e6f7a7d0121174738235c1edd5f5e0ba4f5e8d7330f8d5f3c",
       "has_module_version": true,
-      "git_sha": "16ec819",
-      "ts_ns": 1790152526579563000
+      "git_sha": "00c0a51",
+      "ts_ns": 1790155825334691000
     }
   ]
 }
