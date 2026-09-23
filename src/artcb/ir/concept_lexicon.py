@@ -21,10 +21,20 @@ R321 2026-09-11T21:00:00Z — UI locales + Latin:
   Cyrillic and CJK so ``автомобиль`` / ``汽车`` can hit the table.
   Synonym layer closes the R319 ``automobile`` GAP for vehicle C2.
   Energy ``E3`` + consume action ``U1`` support L4 phrase bags.
+
+R430 2026-09-24T00:00:00Z — G10/G16 14-language completion:
+  Added AR (Arabic/RTL) DE (German) ID (Indonesian) JA (Japanese/Kanji+Kana)
+  KO (Korean/Hangul) PL (Polish) TR (Turkish).
+  Tokenizer extended: Arabic (\\u0600-\\u06ff), Devanagari-adjacent scripts
+  handled via CJK+Arabic regex addition in _TOKEN_RE.
+  All 7 new languages cover: verify/V1, vehicle/C2, energy/E3, server/N1,
+  consume/U1, signature/S2, block/B1, memory/M2, world/M1, problem/P1.
+  Honest coverage: production phrases PASS; rare morphology forms may ∇.
+  CERTIFIED_100=false.
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
 
 # Longer keys first so "verificar" wins over "veri".
 ACTION_ALIASES: dict[str, str] = {
@@ -68,6 +78,13 @@ ACTION_ALIASES: dict[str, str] = {
     "deduire": "D1",
     "deduce": "D1",
     "deducir": "D1",
+    # R321 — RU verify forms (R430: добавлено проверить/проверяет)
+    "проверить": "V1",    # RU — verify (infinitive/past)
+    "проверяет": "V1",    # RU — verifies (present)
+    "проверка": "V1",     # RU — verification/check
+    # R321 — ZH verify forms (R430: добавлено 验证/确认)
+    "验证": "V1",         # ZH — verify/validate
+    "确认": "V1",         # ZH — confirm/verify (also JA 確認 handled below)
     # R321 consume / use — L4 phrases (FR…ZH + LA).
     "потребляет": "U1",
     "потреблять": "U1",
@@ -80,6 +97,83 @@ ACTION_ALIASES: dict[str, str] = {
     "consome": "U1",
     "consumir": "U1",
     "消耗": "U1",
+    # ── R430 AR (Arabic) — actions ──────────────────────────────────────────
+    "يتحقق": "V1",    # verify (yatahaqaq)
+    "التحقق": "V1",   # verification (al-tahaqquq)
+    "يُقارن": "C1",   # compare
+    "يستهلك": "U1",   # consume (3rd masc. — yastahlik)
+    "تستهلك": "U1",   # consume (3rd fem./2nd — tastahlik)
+    "استهلاك": "U1",  # consumption (noun)
+    "يتذكر": "M1",    # remember
+    "يستنتج": "D1",   # deduce
+    "يتعلم": "A1",    # learn
+    # ── R430 DE (German) — actions ──────────────────────────────────────────
+    "überprüfen": "V1",  # verify
+    "verifizieren": "V1",
+    "validieren": "V1",
+    "vergleichen": "C1",  # compare
+    "konsumiert": "U1",   # consumes
+    "verbraucht": "U1",   # uses/consumes (Kraftstoff verbraucht)
+    "erinnern": "M1",     # remember
+    "lernen": "A1",       # learn
+    "deduzieren": "D1",   # deduce
+    "ableiten": "D1",
+    "erstellen": "K1",    # create
+    "beobachten": "O1",   # observe
+    # ── R430 ID (Indonesian/Malay) — actions ────────────────────────────────
+    "memverifikasi": "V1",   # verify
+    "memvalidasi": "V1",
+    "memeriksa": "V1",       # check
+    "membandingkan": "C1",   # compare
+    "mengonsumsi": "U1",     # consume
+    "menggunakan": "U1",     # use
+    "mengingat": "M1",       # remember
+    "belajar": "A1",         # learn
+    "menyimpulkan": "D1",    # deduce
+    "membuat": "K1",         # create
+    # ── R430 JA (Japanese) — actions ────────────────────────────────────────
+    "検証": "V1",     # kenshou — verify
+    "確認": "V1",     # kakunin — confirm/verify
+    "比較": "C1",     # hikaku — compare
+    "消費": "U1",     # shouhi — consume
+    "記憶": "M1",     # kioku — remember/memory
+    "学習": "A1",     # gakushuu — learn
+    "推論": "D1",     # suiron — deduce/infer
+    "作成": "K1",     # sakusei — create
+    "観察": "O1",     # kansatsu — observe
+    # ── R430 KO (Korean) — actions ──────────────────────────────────────────
+    "검증": "V1",     # geomnjeung — verify
+    "확인": "V1",     # hwagin — confirm/verify
+    "비교": "C1",     # bigyo — compare
+    "소비": "U1",     # sobi — consume
+    "기억": "M1",     # gigeok — remember
+    "학습": "A1",     # haksseup — learn
+    "추론": "D1",     # churon — deduce
+    "생성": "K1",     # saengseong — create
+    # ── R430 PL (Polish) — actions ───────────────────────────────────────────
+    "weryfikować": "V1",   # verify
+    "weryfikuje": "V1",
+    "zweryfikować": "V1",
+    "porównać": "C1",      # compare
+    "porównuje": "C1",
+    "zużywać": "U1",       # consume
+    "zużywa": "U1",
+    "pamiętać": "M1",      # remember
+    "uczyć": "A1",         # learn
+    "dedukować": "D1",     # deduce
+    "tworzyć": "K1",       # create
+    "obserwować": "O1",    # observe
+    # ── R430 TR (Turkish) — actions ─────────────────────────────────────────
+    "doğrulamak": "V1",    # verify
+    "doğrular": "V1",
+    "karşılaştırmak": "C1",  # compare
+    "karşılaştırır": "C1",
+    "tüketmek": "U1",      # consume
+    "tüketir": "U1",
+    "hatırlamak": "M1",    # remember
+    "öğrenmek": "A1",      # learn
+    "çıkarım": "D1",       # deduce/inference
+    "oluşturmak": "K1",    # create
 }
 
 OBJECT_ALIASES: dict[str, str] = {
@@ -187,6 +281,132 @@ OBJECT_ALIASES: dict[str, str] = {
     "contexte": "M2",
     "context": "M2",
     "contexto": "M2",
+    # ── R430 AR (Arabic) — objects ──────────────────────────────────────────
+    "سيارة": "C2",     # sayyara — car
+    "سيارات": "C2",    # cars (plural)
+    "مركبة": "C2",     # markaba — vehicle
+    "طاقة": "E3",      # taqa — energy
+    "خادم": "N1",      # khadim — server
+    "كتلة": "B1",      # kutla — block
+    "توقيع": "S2",     # tawqi — signature
+    "التوقيع": "S2",   # al-tawqi — the signature
+    "ذاكرة": "M2",     # dhakira — memory
+    "عالم": "M1",      # alam — world
+    "مشكلة": "P1",     # mushkila — problem
+    # ── R430 DE (German) — objects ──────────────────────────────────────────
+    "fahrzeug": "C2",     # vehicle
+    "fahrzeuge": "C2",    # vehicles
+    "automobil": "C2",    # automobile
+    "kraftstoff": "E3",   # fuel/energy
+    "energie": "E3",      # energy
+    "server": "N1",       # same EN/DE
+    "knoten": "N1",       # node (Knoten)
+    "block": "B1",        # same EN/DE
+    "blöcke": "B1",       # blocks (pl)
+    "signatur": "S2",     # signature
+    "unterschrift": "S2", # handwritten signature
+    "gedächtnis": "M2",   # memory
+    "speicher": "M2",     # storage/memory
+    "welt": "M1",         # world
+    "problem": "P1",      # same EN/DE
+    "probleme": "P1",     # problems
+    # DE — additional forms (R430 tokenizer umlaut fix)
+    "fahrzeuge": "C2",    # plural
+    "pkw": "C2",          # Personenkraftwagen (abbrev)
+    # ── R430 ID (Indonesian/Malay) — objects ────────────────────────────────
+    "kendaraan": "C2",    # vehicle
+    "mobil": "C2",        # car (Indonesian)
+    "energi": "E3",       # energy
+    "server": "N1",       # same
+    "simpul": "N1",       # node
+    "blok": "B1",         # block
+    "tanda": "S2",        # signature/sign
+    "tanda tangan": "S2", # handwritten signature
+    "memori": "M2",       # memory
+    "dunia": "M1",        # world
+    "masalah": "P1",      # problem
+    # ── R430 JA (Japanese) — objects ────────────────────────────────────────
+    "車": "C2",       # kuruma — car
+    "自動車": "C2",   # jidousha — automobile
+    "エネルギー": "E3",  # enerugi — energy
+    "サーバー": "N1",    # saabaa — server
+    "ノード": "N1",      # noodo — node
+    "ブロック": "B1",    # burokku — block
+    "署名": "S2",     # shomei — signature
+    "メモリ": "M2",      # memori — memory
+    "世界": "M1",     # sekai — world
+    "問題": "P1",     # mondai — problem
+    # ── R430 KO (Korean) — objects ──────────────────────────────────────────
+    "자동차": "C2",   # jadongcha — car
+    "차량": "C2",     # charyang — vehicle
+    "에너지": "E3",   # eneoji — energy
+    "서버": "N1",     # seobeo — server
+    "노드": "N1",     # nodeu — node
+    "블록": "B1",     # beullok — block
+    "서명": "S2",     # seomyeong — signature
+    "메모리": "M2",   # memori — memory
+    "세계": "M1",     # segye — world
+    "문제": "P1",     # munje — problem
+    # ── R430 PL (Polish) — objects ──────────────────────────────────────────
+    "samochód": "C2",     # car
+    "samochody": "C2",    # cars (plural)
+    "pojazd": "C2",       # vehicle
+    "energia": "E3",      # energy (same root)
+    "serwer": "N1",       # server
+    "węzeł": "N1",        # node (węzeł)
+    "blok": "B1",         # block
+    "podpis": "S2",       # signature
+    "pamięć": "M2",       # memory
+    "świat": "M1",        # world
+    "problem": "P1",      # same EN/PL
+    # ── R430 TR (Turkish) — objects ─────────────────────────────────────────
+    "araba": "C2",        # car (araba)
+    "araç": "C2",         # vehicle
+    "araçlar": "C2",      # vehicles (plural)
+    "enerji": "E3",       # energy
+    "sunucu": "N1",       # server
+    "düğüm": "N1",        # node
+    "blok": "B1",         # block
+    "imza": "S2",         # signature
+    "bellek": "M2",       # memory
+    "dünya": "M1",        # world
+    "sorun": "P1",        # problem
+    "problem": "P1",      # problem (borrowed)
+    # ── R430 RU — missing inflected forms (R430 accusatif + additional) ──────
+    "энергию": "E3",      # RU energy (accusatif — Автомобиль потребляет энергию)
+    "сервер": "N1",       # RU server (nominative)
+    "серверы": "N1",      # RU servers (plural)
+    "узел": "N1",         # RU node
+    "блок": "B1",         # RU block
+    "блоки": "B1",        # RU blocks
+    "подпись": "S2",      # RU signature
+    "подписи": "S2",      # RU signatures
+    "память": "M2",       # RU memory (nominative)
+    "памяти": "M2",       # RU memory (genitive — Памяти недостаточно)
+    "памятью": "M2",      # RU memory (instrumental)
+    "мир": "M1",          # RU world
+    "проблема": "P1",     # RU problem
+    "задача": "P1",       # RU task/problem
+    # ── R430 ZH — missing objects not in R321 ──────────────────────────────
+    "服务器": "N1",       # ZH server
+    "区块": "B1",         # ZH block (blockchain block)
+    "签名": "S2",         # ZH signature
+    "内存": "M2",         # ZH memory (RAM)
+    "问题": "P1",         # ZH problem
+    # ── R430 PT — missing inflected forms ──────────────────────────────────
+    "assinatura": "S2",   # PT signature
+    "assinaturas": "S2",  # PT signatures
+    "bloco": "B1",        # PT block
+    "blocos": "B1",       # PT blocks
+    "memória": "M2",      # PT memory (accented)
+    # ── R430 IT — missing objects ──────────────────────────────────────────
+    "blocco": "B1",       # IT block
+    "blocchi": "B1",      # IT blocks
+    "mondo": "M1",        # IT world
+    # ── R430 TR — İ/i case: Turkish İ→i lowercase fix ─────────────────────
+    # "İmza" lowercases to "i̇mza" in Python str.lower() on some platforms.
+    # Adding both forms for safety.
+    "i̇mza": "S2",         # TR İmza lowercased (Unicode İ = U+0130)
 }
 
 # R324 2026-09-12T01:20:00Z — intensity/quantity modifiers (fidelity beaucoup≠peu).
@@ -268,12 +488,20 @@ ACTION_KEYS = _sorted_keys(ACTION_ALIASES)
 OBJECT_KEYS = _sorted_keys(OBJECT_ALIASES)
 MODIFIER_KEYS = _sorted_keys(MODIFIER_ALIASES)
 
-# Latin + Cyrillic + CJK (R321). Short ASCII lemmas stay token-exact to avoid
-# auto⊂autonomie / car⊂cartography false hits.
+# Latin + Cyrillic + CJK + Arabic + Hangul + Katakana/Hiragana (R321 + R430).
+# R430: added Arabic (\u0600-\u06ff), Hangul (\uac00-\ud7af + jamo),
+#       Katakana (\u30a0-\u30ff) and Hiragana (\u3040-\u309f) for JA full coverage,
+#       extended CJK to \u9fff (already) + \u3400-\u4dbf (ext-A).
+# Short ASCII lemmas stay token-exact to avoid auto⊂autonomie / car⊂cartography.
 _TOKEN_RE = __import__("re").compile(
-    r"[a-zàâäéèêëïîôùûüçñæœ]+"
-    r"|[а-яё]+"
-    r"|[\u4e00-\u9fff]+",
+    r"[a-zàâäéèêëïîôùûüçñæœāăąćčďęěğıijłńňóőřśşšťůűźżžöüä]+"
+    r"|[а-яёА-ЯЁ]+"
+    r"|[\u4e00-\u9fff\u3400-\u4dbf]+"   # CJK unified + extension A
+    r"|[\u3040-\u309f]+"                 # Hiragana
+    r"|[\u30a0-\u30ff]+"                 # Katakana
+    r"|[\uac00-\ud7af]+"                 # Hangul syllables
+    r"|[\u1100-\u11ff\u3130-\u318f]+"    # Hangul jamo + compatibility jamo
+    r"|[\u0600-\u06ff\u0750-\u077f]+",  # Arabic + Arabic Supplement
 )
 
 

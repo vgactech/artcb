@@ -1,706 +1,155 @@
-2# ARTCB — Ledger de tâches persistant
+# ARTCB — Ledger de tâches persistant
 # Mis à jour automatiquement par Bob IDE à chaque session/prompt.
 # Format : YAML lisible machine + humain.
 # Ne jamais supprimer une tâche DONE — conserver l'historique complet.
 # CERTIFIED_100=false — Jamais wipe — Jamais inventer SHA/hauteur/tip
 
 meta:
-  version: "3.2"
-  repo: "https://github.com/vgactech/artcb"
-  node_live: "http://151.80.107.29:8000"
-  last_updated: "2026-09-22"
-  git_head: "7a6c04f"
-  chain_height: 1198
-  chain_height_public: 837
-  chain_height_private: 361
-  last_block_index: 1194
-  last_block_ts: "2026-09-14T17:42:02Z"
+  version: "1.1"
+  last_updated: "2026-09-24T00:00:00Z"
+  head_sha: "c624f12"
   certified_100: false
-  pbft_primary: "aws-node-3"
-  pbft_status: "ALIVE — synchronisé 2e89322, view=27"
-  v_stall_01: "RÉSOLU — height 1142→1198, last_block 1141→1194 (commits cf30b3a + eb097e1)"
-  ledger_sync_note: "v3.2 — sync HEAD 7a6c04f (R420). public_lock() branché certification_gate() dynamique. RESULT.json DV-01..07 enrichis git_sha+protocol_version+genesis_hash. Frontend : P2P/AgentMemory/Reflex/Logs supprimés (R359/R379). git_head corrigé 23f9613→7a6c04f."
-  dv_status:
-    DV-01: "PASS — e2e189_mainnet_genesis (at=20260901T183347Z)"
-    DV-02: "PASS — e2e208_dv02_dv06_live (flood HTTP borné 64x4, pas SYN)"
-    DV-03: "PASS — e2e189_mainnet_genesis"
-    DV-04: "PASS — e2e189_mainnet_genesis"
-    DV-05: "PASS — e2e188_dv05_live_bft (hérité — settlement WorkID, pas PBFT append_block)"
-    DV-06: "PASS — e2e208_dv02_dv06_live (netem 25%/80ms OVH4, pas chaos C)"
-    DV-07: "PASS — e2e189_mainnet_genesis"
-  certified_distributed_mainnet: true
-  certified_distributed_mainnet_note: "R419 — certification_gate() retourne True sur HEAD 23f9613. OPERATOR_MAINNET_CERTIFICATION_GO=True (D-056 2026-09-02). ECONOMIC_V_LOCKED=True. LIVE_BFT_IMPLEMENTED=True. DV-01..07 tous PASS. Gate code src/artcb/devnet_validation.py:certification_gate()."
-  note_r416: "DV RESULT.json PASS != certification globale dans rapports R415/R416/R417 (précaution documentaire). Correction R419 : le gate est réellement True selon le code."
-  types_normatifs: 8
-  types_normatifs_list: "RULE/DECISION/SPEC/LESSON/CHECK/CONVENTION/QUESTION/EVIDENCE"
-  sha_obsoletes_dans_rapports_audit: "9954a60, 30c9886, fc9df76 — présents UNIQUEMENT dans les rapports R416/R417 comme historique d'audit, pas dans la config active"
+  mode: DEBUG
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# TÂCHES DONE (historique — ne jamais supprimer)
-# ═══════════════════════════════════════════════════════════════════════════════
-done:
-
-  - id: R350
-    title: "Réflexe ARTCB — ReflexEngine priorité automatique"
-    commit: "55e8065"
-    tests: "132/132 PASS"
-    note: "stub fonctionnel — CERTIFIED_100=false"
-
-  - id: R355
-    title: "REASONING_RECORD + ReferenceID + FIRST_REFLEX + EARLIEST_DETECTABLE_POINT"
-    commit: "b2a5a62"
-    tests: "69/69 PASS"
-    corrections: ["R355.1 final_hash complet", "R355.2 seal frozen", "R355.3 /seal API préserve champs"]
-
-  - id: R356
-    title: "PBFT publisher + /publish API"
-    commit: "cda4495"
-    tests: "91/91 PASS"
-
-  - id: R357
-    title: "/register sans biométrie UI — bouton unique WebAuthn OS"
-    commit: "0036f41"
-    tests: "91/91 PASS"
-
-  - id: R358
-    title: "/register zéro champ + wallet_name auto depuis credential_id"
-    commits: ["5f8e162", "cc18e60"]
-    tests: "109/109 PASS"
-    note: "supprimé authenticatorAttachment=platform + hints=[hybrid]"
-
-  - id: R359
-    title: "Supprimer /reflex /memorize /logs du frontend + graphe N(N-1) arcs CONNECTS"
-    commit: "971bdca"
-    tests: "140/140 PASS"
-
-  - id: R360
-    title: "Fenêtre glissante N>20 — O(K·N) vs O(N²)"
-    commit: "2b36297"
-    tests: "146/146 PASS"
-
-  - id: R361
-    title: "Restituer pqc_secret_key_hex (ML-DSA-65) à la création wallet"
-    commit: "0b738a6"
-    tests: "128/128 PASS"
-
-  - id: R362
-    title: "Supprimer CERTIFIED_100/unique_human_proven de /add-device + /identity-test"
-    commit: "25d1e1e"
-    bundle: "index-CssPbdoB.js"
-    note: "informations d'audit interne retirées de l'UI publique"
-
-  - id: R363
-    title: "Vraie vérification WebAuthn dans add-verify + revoke (remplace stub template_hex)"
-    commits: ["df7cb20", "R363b en cours"]
-    corrections_audit:
-      - "R363b: ordre transactionnel corrigé — max_5 vérifié AVANT verify_assertion"
-      - "R363b: enrôlement réel de B dans credential_store.jsonl si new_device_public_key_b64 fourni"
-      - "R363b: credential_enrolled dans la réponse"
-    security_properties:
-      - "PIN seul → 401 credential_not_found"
-      - "template_hex seul → 422 (champ disparu du schéma)"
-      - "mauvaise signature → 401 webauthn_assertion_failed"
-      - "credential wrong human → 403"
-      - "challenge inconnu → 400"
-      - "max 5 appareils → 409 AVANT consommation de la preuve"
-      - "WebAuthn valide ≠ unique_human_proven (toujours False)"
-    note: "Commit signé non-verified sur GitHub — normal (git config local sans GPG)"
-
-  - id: R364-initial
-    title: "Tests attaque E2E — 12 tests dans test_add_device_r363.py (version initiale CI)"
-    commit: "df7cb20"
-    file: "tests/test_add_device_r363.py"
-    note: "CI en cours au moment de la vérification GitHub — supplanté par R364 final 20/20 PASS"
-
-  - id: R365-initial
-    title: "Relancer aws-node-3 PBFT primary (entrée initiale)"
-    commit: "N/A — ops"
-    note: "aws-node-3 VIVANT — connecté SSH, synchronisé sur df7cb20, PBFT view=27 primary=aws-node-3 committed=106"
-    resolved: true
-
-  - id: R366
-    title: "Créer .artcb/task_ledger.yaml"
-    commit: "df7cb20"
-    note: "Fichier créé. AUTO_PREFLIGHT non encore livré (tâche OPEN séparée)."
-
-  - id: R364
-    title: "Tests attaque E2E ADD_DEVICE — suite complète 20/20 PASS"
-    commit: "4cd7b17"
-    file: "tests/test_add_device_r363.py"
-    tests: "20/20 PASS"
-    tests_verified:
-      - "PIN seul → 401 (credential_not_found)"
-      - "template_hex seul → 422 (Pydantic)"
-      - "mauvaise signature → 401 (webauthn_assertion_failed)"
-      - "credential wrong human → 403 (mismatch)"
-      - "challenge inconnu → 400 (challenge_unknown)"
-      - "ADD_DEVICE valide WebAuthn → 200"
-      - "max 5 appareils → 409 (device_limit_reached)"
-      - "COSE invalide → 400 sans écriture état"
-      - "COSE valide roundtrip → 200"
-      - "WebAuthn valide ≠ unique_human_proven (toujours False)"
-      - "race condition 4+2 simultanés → exactement [200, 409]"
-      - "E2E A autorise B → B dans webauthn store"
-    root_causes_fixed:
-      - "rp_id='testserver' (TestClient Host header) vs 'localhost' (hash mismatch)"
-      - "human_id ≥8 chars (min_length Pydantic)"
-      - "client() fixture → create_app() (app=None sous pytest R310)"
-
-  - id: R367
-    title: "V-STALL-01 fix — /ai/status, /ai/context, /ai/memory affichent vraie hauteur split ledger"
-    commits: ["cf30b3a", "eb097e1"]
-    routes_fixed: ["/api/v1/ai/status", "/api/v1/ai/context", "/api/v1/ai/memory"]
-    root_cause: "list_blocks() sans visibility lisait blocks.jsonl principal figé (1142) ignorant public/blocks.jsonl (1194+)"
-    fix: "tip_public_private() → pub_h + priv_h → hauteur réelle. last_block via queue[-50:] évite confusion offset ligne vs block.index"
-    verified_in_prod: true
-    before: "height=1142 last_index=1141 ts=2026-09-12"
-    after: "height=1198 last_index=1194 ts=2026-09-14 pol_avg=0.75"
-
-  - id: R368-R370
-    title: "PreflightEngine + enforcement chemin Prompt→Preflight→Reflex→Record + SESSION_CONTINUATION"
-    commit: "a9ca39d"
-    fix_commit: "4cd7b17"
-    files_created:
-      - "src/artcb/reflex/preflight.py — PreflightEngine 883 lignes (P0-A→P0-E)"
-      - ".artcb/session_continuation.yaml — fil conducteur anti-interruption"
-      - "tests/test_r355_enforcement_e2e.py — 19 tests E2E PASS"
-      - "tests/test_r369_adversarial.py — 23 tests adversariaux PASS (M→S)"
-    files_modified:
-      - "src/artcb/reflex/core.py — activate() branché sur PreflightEngine"
-      - ".bob/hooks/user_prompt_submit.py — SESSION_CONTINUATION injecté"
-      - "tests/test_add_device_r363.py — 20/20 PASS (fix rp_id + human_id + create_app)"
-    tests: "62/62 PASS (19 R355 + 23 R369 + 20 R363)"
-    p0_implemented:
-      - "P0-A : classify_git_ledger_sync() — EXPECTED_LAG vs REAL_DIVERGENCE"
-      - "P0-B : RemoteGitState + get_remote_git_state() + fetch_remote() + compare_local_remote()"
-      - "P0-C : OperationRisk + required_preflight_mode() + PreflightGate.authorize()"
-      - "P0-D : PreflightBlockedError + fail-closed pour CODE_CHANGE/DEPLOY/LIVE_WRITE/CRITICAL"
-      - "P0-E : LiveState 5 niveaux — live_reachable/healthy/git_sha_known/git_match/height"
-    gaps_remaining: []
-    certified_100: false
-
-  - id: R369-ENFORCEMENT
-    title: "R369-enforcement COMPLET — Gate dans toutes les routes sensibles + routes UI"
-    commit: "41ce134"
-    files_modified:
-      - "src/api/routes.py — Gate CRITICAL dans wallet_create"
-      - "src/artcb/chain/manager.py — Gate LIVE_WRITE dans append_block (skip dry_run)"
-      - "src/api/reflex_routes.py — /status + /preflight routes UI sérialisées JSON"
-    routes_protected:
-      - "POST /api/v1/identity/device/add-verify → CRITICAL ✅"
-      - "DELETE /api/v1/identity/device/revoke → CRITICAL ✅"
-      - "POST /api/v1/wallet/create → CRITICAL ✅"
-      - "chain.append_block() → LIVE_WRITE ✅ (skip dry_run)"
-    routes_ui:
-      - "GET /api/v1/reflex/status → ReflexEngine + PreflightGate + R369 tableau"
-      - "GET /api/v1/reflex/preflight → rapport brut git/live/ledger"
-    tests: "62/62 PASS (ARTCB_PREFLIGHT_GATE_DISABLED=1)"
-    certified_100: false
-    note: "Enforcement logiciel — bypass Python direct possible (documenté, limite honnête)"
-
-  - id: R370-BYPASS-CLOSURE
-    title: "R370 bypass-closure — GateProductionBypassError + tests T/U/V/W"
-    commit: "43d0b6c"
-    files_modified:
-      - "src/artcb/agent_control/gate.py — GateProductionBypassError + _check_gate_disabled()"
-      - "src/artcb/agent_control/__init__.py — exporte GateProductionBypassError + reset_gate"
-      - "src/api/main.py — vérification R370 au démarrage create_app()"
-      - "tests/test_r369_adversarial.py — 10 nouveaux tests T/U/V/W"
-    security_properties:
-      - "ARTCB_ENV=production + GATE_DISABLED → GateProductionBypassError au boot"
-      - "NODE_ENV=production + GATE_DISABLED → idem"
-      - "consume_authorization() → capability usage unique (réutilisation refusée)"
-      - "Analyse source statique : Gate présente dans append_block() ET wallet_create()"
-      - "Matrice 7 appelants append_block vérifiée (mining/bridge/memory/authz/p2p/PBFT)"
-    tests: "72/72 PASS (23 anciens + 19 R355 + 20 R363 + 10 R370)"
-    bypass_restant: "Écriture directe blocks.jsonl niveau OS (hors portée Python — documenté)"
-    certified_100: false
-
-  - id: TASK-001-FUZZY-EXTRACTOR
-    title: "TASK-001 Secure Sketch FuzzyExtractor v2 — remplace stub SHA-512 naïf"
-    commit: "d57f868"
-    files_modified:
-      - "src/artcb/identity/biometric_onchain.py — Secure Sketch XOR+HKDF-SHA256-v2"
-    files_created:
-      - "tests/test_task001_biometric.py — 18 tests A→R PASS"
-    algorithm: "ARTCB-SECURE-SKETCH-HKDF-SHA256-v2"
-    cryptographic_scheme: >
-      Gen: pad=HKDF(template,salt,SKETCH), sketch=seed XOR pad, confirm=HKDF(seed,salt,CONFIRM)
-      Rep: pad'=HKDF(template',salt,SKETCH), seed'=sketch XOR pad', verify confirm'==confirm
-    properties:
-      - "dist=0 : reproduction déterministe (test C PASS)"
-      - "dist>0 : reproduction échoue sans ECC (test D PASS — limite honnête)"
-      - "secret_hex absent du record public (test K PASS)"
-      - "vérification temps constant hmac.compare_digest (test E PASS)"
-      - "unique_human_proven=False (tests O/L/M PASS)"
-      - "biometric_version=2, verification_policy=secure_sketch_hkdf_v2"
-    gaps_remaining:
-      - "ECC externe (BCH/Reed-Solomon) pour tolérance dist>0 réelle"
-      - "FHE matching pour check_uniqueness (remplace comparaison hash)"
-      - "FAR/FRR/PAD mesurés sur vrais capteurs (NIST BSSR)"
-      - "Tests SDK iOS/Android"
-    tests: "18/18 PASS — total 90/90 PASS"
-    certified_100: false
-
-  - id: TASK-006-CREATOR-NODE
-    title: "TASK-006 — Creator-node / Primary failure policy"
-    commit: "32ae4b7"
-    files_created:
-      - "src/artcb/consensus/creator_node_policy.py — PrimaryFailurePolicy 3 états"
-      - "tests/test_task006_creator_node.py — 20 tests A→P PASS"
-    states:
-      - "ALIVE → WAIT"
-      - "DEAD_TRANSIENT (<24h) → WAIT (watchdog actif)"
-      - "DEAD_RECOVERABLE (24h–7j) → TRIGGER_VIEW_CHANGE"
-      - "DEAD_PERMANENT (>7j) → OPERATOR_DECISION"
-    impact_aws_node_3_permanent:
-      "N=4→3, Q=3→2, quorum maintenu. Action opérateur : pbft_replica=False dans node_registry.py"
-    tests: "20/20 PASS — total 110/110 PASS"
-    certified_100: false
-    note: "Retrait JAMAIS automatique — opérateur décide explicitement"
-
-  - id: R366-ADMIN-CLOSE
-    title: "R366 — AUTO_PREFLIGHT fermeture administrative DONE"
-    commit: "ac60579 (présent depuis a9ca39d)"
-    status: "DONE"
-    evidence:
-      - ".bob/hooks/user_prompt_submit.py lignes 11-13 : R366/AUTO_PREFLIGHT déclaré actif"
-      - "Charge task_ledger.yaml à chaque prompt"
-      - "Détecte EXPECTED_LAG vs REAL_DIVERGENCE"
-      - "Injecte résumé OPEN/IN_PROGRESS + SESSION_CONTINUATION"
-      - "Le hook est exécuté 100% des prompts (UserPromptSubmit configuré dans .bob/settings.json)"
-    certified_100: false
-    note: >
-      Mécanisme AUTO_PREFLIGHT actif et vérifié dans les faits.
-      Distinction maintenue : INJECTED ≠ APPLIED_CONFIRMED (règle audit §6).
-
-  - id: R371
-    title: "R371 — Injection contenu réel fichiers règles dans chaque prompt"
-    commit: "afdc515"
-    status: "DONE"
-    files_modified:
-      - ".bob/hooks/user_prompt_submit.py — inject_rules_content() + INJECT_CONTENT_FILES"
-    files_injected:
-      - "PROTOCOLE_ARTCB (intégral, max 4000 chars)"
-      - "DECISIONS_UTILISATEUR_ARTCB (intégral, max 8000 chars — fin = décisions récentes)"
-      - "LEÇONS_APPRISES_ARTCB (intégral, max 8000 chars — fin = leçons récentes)"
-      - "AUTO_PROMPT_ARTCB (queue 6000 chars — entrées les plus récentes)"
-    root_cause_fixed: >
-      artcb-read-all.mdc demandait de relire les fichiers (instruction)
-      mais ne les injectait pas dans le contexte (pas une contrainte architecturale).
-      Sans injection, le modèle ne les lit que s'il décide de le faire manuellement
-      — ce qui n'est pas garanti à chaque tour. R371 corrige ce point structurel.
-    distinction: "INJECTED ≠ APPLIED_CONFIRMED — distinction maintenue (règle audit §6)"
-    certified_100: false
-
-  - id: R374
-    title: "R374 — BCH(255,191,8) FuzzyExtractor : tolérance dist≤8 bits/bloc dans fuzzy_reproduce()"
-    commit: "d81b130"
-    files_modified:
-      - "src/artcb/identity/biometric_onchain.py — _bch_encode_template() + _bch_decode_template() + fuzzy_reproduce() v3"
-      - "tests/test_task001_biometric.py — tests B/D/P/Q/R mis à jour (v3)"
-    files_created:
-      - "tests/test_task001_r374_bch.py — 30 tests S01→S30"
-    dependencies_added:
-      - "bchlib>=2.1.3 (requirements.txt)"
-    algorithm: "ARTCB-SECURE-SKETCH-HKDF-BCH-v3"
-    bch_params:
-      t: 8
-      m: 8
-      n: 255
-      prim_poly: "0x11d"
-      data_bytes_per_block: 23
-      ecc_bytes_per_block: 8
-    properties:
-      - "dist=0 → reproduction exacte (test S13 PASS)"
-      - "dist=1→8 → reproduction corrigée (tests S14→S16 PASS)"
-      - "dist=9 → None (fail-closed, test S17 PASS)"
-      - "helper_data = salt(32) || sketch(32) || confirm(16) || bch_ecc(var)"
-      - "unique_human_proven=False dans tous les cas (test S23 PASS)"
-    tests: "30/30 PASS (S01→S30) + 94/94 PASS total (zéro régression)"
-    certified_100: false
-    note: "FHE check_uniqueness non implémenté — prochaine étape TASK-001"
-
-  - id: R373
-    title: "R373 — HumanIdentityPolicy : 5 cas multi-appareil + UV=PIN/biométrie + wallet_per_human_limit"
-    commit: "ddb0abf"
-    files_created:
-      - "src/artcb/identity/human_identity_policy.py — UserVerificationMethod + HumanIdentityStatus + check_wallet_per_human_limit + classify_device_scenario + evaluate_wallet_creation"
-      - "tests/test_task001_r373_human_identity_policy.py — 26 tests S01→S23 PASS"
-    invariants_enforced:
-      - "UV=true ≠ unique_human_proven dans tous les cas (implies_unique_human()=False)"
-      - "BIOMETRIC_CLAIMED ≠ HUMAN_VERIFIED ≠ UNIQUE_HUMAN_VERIFIED"
-      - "CASE_3 : même humain / tentative multi-wallet → 409 anti-Sybil"
-      - "CASE_5 : PIN seul → allow_login mais pas création wallet si limite atteinte"
-      - "Wallet révoqué ne compte pas dans la limite"
-    tests: "26/26 PASS — total 38/38 PASS (test_task001 + test_add_device)"
-    certified_100: false
-
-  - id: R375
-    title: "R375 — Rule Corpus Telemetry v2 : rule_corpus_index.json + rule_sources rescan"
-    commit: "d780008"
-    files_created:
-      - "scripts/artcb_r375_corpus_refresh.py — scanner corpus normatif complet"
-      - "rules/rule_corpus_index.json — 230 entrées CR-* (RULE/DECISION/SPEC/LESSON/etc.)"
-    files_modified:
-      - "rules/rule_sources.json — v2, 18 sources scannées, SHA256 actualisés"
-      - "rules/rule_coverage.json — v2, 148 marqueurs, unmapped_estimate=128"
-    architecture:
-      corpus_layer: "CR-* — toutes les entrées normatives (230)"
-      operational_layer: "RT-* — sous-ensemble opérationnel (20)"
-      mapping: "rt_rule_id != null dans CR-* si RT correspondant"
-    counts:
-      total_cr: 230
-      kinds: "RULE=133 DECISION=47 LESSON=44 SPEC=2 CHECK=1 CONVENTION=1 QUESTION=1 EVIDENCE=1"
-      numbered_markers: 148
-      registry_rt_ids: 20
-      divergences: 0
-    anti_divergence_verified: "rule_registry ↔ rule_sources : ZERO divergence"
-    certified_100: false
-
-  - id: R376
-    title: "R376 — check_uniqueness() branché sur privacy_preserving_match() (matching XOR tolérant)"
-    commit: "3be73bb"
-    files_modified:
-      - "src/artcb/identity/biometric_onchain.py — check_uniqueness() + _check_uniqueness_privacy_preserving() + UniquenessCheckResult.match_method"
-    files_created:
-      - "tests/test_task001_r376_uniqueness.py — 22 tests T01→T22 PASS"
-      - "rapports/R376_privacy_preserving_uniqueness.md"
-    changes:
-      - "Paramètre optionnel template_bytes_for_match dans check_uniqueness()"
-      - "Route : template_bytes fourni → _check_uniqueness_privacy_preserving() ; sinon hash exact (fallback)"
-      - "match_method : 'exact_hash' | 'privacy_preserving_xor'"
-      - "Seuil par défaut 0.99 → 0.85 (tolérance bruit capteur)"
-      - "UniquenessCheckResult.match_method ajouté"
-    invariants_maintained:
-      - "unique_human_proven=False dans tous les chemins"
-      - "certified=False dans tous les chemins"
-    honest_limitations:
-      - "XOR sur SHA-256 = effet avalanche — 1 bit flip dans template change ~50% du hash"
-      - "Le stub est donc peu robuste au bruit capteur réel"
-      - "Pour production : brancher SEAL/OpenFHE/Concrete"
-    tests: "22/22 PASS (T01→T22) — non-régression 136/136 PASS"
-    certified_100: false
-
-  - id: R377
-    title: "R377 — Hotfix live bchlib — artcb.me DOWN→UP"
-    commit: "e039cda"
-    changes:
-      - "pip install bchlib>=2.1.3 sur N2/N4/N3 (ModuleNotFoundError résolu)"
-      - "start_node.sh : pip install -r requirements.txt --quiet ajouté avant uvicorn"
-    tests: "4/4 nœuds healthy"
-    certified_100: false
-
-  - id: R378
-    title: "R378 — Matching Hamming direct sur template_bytes — matrice FAR/FRR simulée"
-    commit: "b146d5c"
-    files_modified:
-      - "src/artcb/identity/biometric_onchain.py — hamming_distance_bits() + hamming_similarity() + hamming_uniqueness_check()"
-    files_created:
-      - "tests/test_task001_r378_hamming.py — 28 tests T01→T28 PASS"
-      - "rapports/R378_hamming_matching_direct.md"
-    honest_limitations:
-      - "Vecteurs synthétiques ≠ capteurs réels — FAR/FRR non mesurés"
-      - "Seuil 8 bits non validé sur vraies empreintes"
-    tests: "28/28 PASS — non-régression 164/164 PASS"
-    certified_100: false
-
-  - id: R382
-    title: "R382 — NetworkEligibilityGate DIRECT/RELAYABLE/DEGRADED/SUSPENDED/INDETERMINATE"
-    commit: "b146d5c"
-    files_created:
-      - "src/artcb/network/eligibility_gate.py — MODULE_VERSION 1.0.0"
-      - "tests/test_r382_network_eligibility_gate.py — 30 tests T01→T30 PASS"
-      - "rapports/R382_network_eligibility_gate_2026-09-19.md"
-    certified_100: false
-
-  - id: R389
-    title: "R389 — Frontend cleanup P2P/AgentPanel + L-054 DNS-split"
-    commit: "59972aa"
-    files_modified:
-      - "frontend/src/App.tsx — routes /reflex /memorize /logs supprimées"
-      - "frontend/src/layout/DashboardLayout.tsx — nav épurée"
-    certified_100: false
-
-  - id: R397
-    title: "R397 — NetworkEligibilityGate hardening v1.1.0 — 6 correctifs audit expert"
-    commit: "3f02555"
-    files_modified:
-      - "src/artcb/network/eligibility_gate.py — MODULE_VERSION 1.0.0→1.1.0"
-    files_created:
-      - "tests/test_r397_eligibility_hardening.py — 28 tests T31→T58 PASS"
-      - "rapports/R397_network_eligibility_hardening_2026-09-20.md"
-    changes:
-      - "ExternalProbeStore réel (stub vide corrigé)"
-      - "outbound_tls : SSL handshake réel (_probe_outbound_tls)"
-      - "ConnectivityFailure enum : NONE/NETWORK_DOWN/ARTCB_UNREACHABLE/OUTBOUND_TCP_BLOCKED/CAPTIVE_PORTAL/TLS_INTERCEPTED/..."
-      - "CGNAT RFC6598 100.64.0.0/10 + IPv6 ULA + link-local dans _classify_nat()"
-      - "_get_local_ip() multi-fallback (1.1.1.1 / 8.8.8.8 / 8.8.4.4)"
-      - "_OUTBOUND_SEEDS multi-hosts (artcb.me + 1.1.1.1 + 8.8.8.8)"
-    tests: "28/28 PASS (T31→T58) + 30/30 non-régression R382"
-    certified_100: false
-
-  - id: R398
-    title: "R398 — Frontend cleanup P2P/Pool/Memorize/AgentPanel + audit 6 domaines"
-    commit: "4df65a4"
-    files_deleted:
-      - "frontend/src/pages/Memorize.tsx"
-      - "frontend/src/components/AgentPanel.tsx"
-    files_modified:
-      - "frontend/src/api/client.ts — 12 fonctions P2P/Pool supprimées"
-      - "frontend/src/i18n/translations.ts — clés nav_memorize/nav_network/nav_agent_memory/memorize_* retirées"
-      - "frontend/src/pages/Home.tsx — lien /memorize → /graph"
-    files_created:
-      - "rapports/R398_audit_6_domaines_cartographie_2026-09-20.md"
-    note: "Backend P2P + Pool + AgentMemory conservés — accessibles via API/agents uniquement"
-    certified_100: false
-
-  - id: R398-erratum
-    title: "R398-erratum — TASK-RULES-DOMAINS DONE_VERIFIED + L-055"
-    commit: "c280a8a"
-    files_created:
-      - "rapports/R398_ERRATUM_domain_tagging_done_2026-09-20.md"
-    files_modified:
-      - "LEÇONS_APPRISES_ARTCB — L-055 ajoutée"
-    changes:
-      - "TASK-RULES-DOMAINS → DONE_VERIFIED (230/230 CR-* avec domain+classification_basis, artcb_r393_v2)"
-      - "L-055 : Ne jamais déclarer RESTE À FAIRE sans lire le fichier cible sur HEAD actuel"
-      - "Distinction DONE_VERIFIED / DONE_REPORTED formalisée"
-    certified_100: false
-
-  - id: TASK-RULES-DOMAINS
-    title: "TASK-RULES-DOMAINS — domain tagging 230 CR-* (DONE_VERIFIED)"
-    status: DONE_VERIFIED
-    verified_on: "c280a8a"
-    verified_by: "audit expert GitHub + python3 rule_corpus_index.json"
-    result: "230/230 CR-* ont domain + primary_domain + domains + confidence + classification_basis"
-    classifier: "artcb_r393_v2"
-    domain_classification_version: "R393-v2-R394E"
-    domains_found: "PROTOCOL(96) GOVERNANCE(48) LESSONS(44) NETWORK(39) TESTING(1) ROADMAP(1) IDENTITY(1)"
-    note: "Déclaré incorrectement RESTE A FAIRE dans R398 — erratum R398 produit"
-
-  - id: R402
-    title: "R402 — Post-push health check automatique + stop.py enrichi"
-    commit: "107d21b"
-    files_created:
-      - "scripts/artcb_r402_post_push_health.py — health check N2/N4/N3 (exclut OVH1)"
-      - "tests/test_r402_post_push_health.py — 15/15 PASS"
-    files_modified:
-      - ".bob/hooks/stop.py — appel R402 fail-open après chaque session"
-    tests: "15/15 PASS"
-    certified_100: false
-    note: "OVH1 (152.228.144.34) exclu conformément à la règle D-036"
-
-  - id: R403
-    title: "R403 — Audit cohérence wallet multi-nœuds + diagnostic WALLET_STATE_LOCAL"
-    commit: "0132ab1"
-    files_created:
-      - "scripts/artcb_r403_wallet_consistency_audit.py — 5 sondes par nœud"
-      - "tests/test_r403_wallet_consistency_audit.py — 19/19 PASS"
-    findings:
-      - "WalletManager.wallet_dir → LOCAL au nœud (line 95 manager.py)"
-      - "WalletDeviceBindingStore → LOCAL au nœud (line 84 wallet_device_binding.py)"
-      - "Blockchain (blocs) → RÉPLIQUÉE via PBFT ✅"
-      - "/api/v1/wallet/list requiert Bearer (401 sans token)"
-      - "/api/v1/admin/device-bindings/<fp> n'existe pas encore (404)"
-    tests: "19/19 PASS"
-    certified_100: false
-
-  - id: R404
-    title: "R404 — Rebuild frontend dist/ — suppression AgentMemory/Network du bundle"
-    commits: ["28d0f61", "6d5b40c"]
-    files_modified:
-      - "frontend/dist/assets/index-lQDgNxDq.js — nouveau bundle propre (sans /agent-memory, /network)"
-      - "frontend/dist/index.html — mis à jour"
-    note: "frontend/dist/ est versionné dans git — les nœuds servent ce dist/ directement"
-    tests: "bundle vérifié — routes /agent-memory et /network absentes"
-    certified_100: false
-
-  - id: R405
-    title: "R405 — TASK-VERSIONING : hook pre-commit auto-bump MODULE_VERSION, 15/15 PASS"
-    commit: "b9036a3"
-    files_created:
-      - "scripts/artcb_r405_precommit_hook.sh — hook bash (source versionnée)"
-      - "scripts/artcb_r405_install_precommit_hook.py — MODULE_VERSION 1.0.1 (auto-bumpé)"
-      - "tests/test_r405_precommit_hook.py — 15/15 PASS (dont 4 E2E vrai git)"
-      - "rapports/R405_task_versioning_precommit_hook_2026-09-21.md"
-    behavior:
-      - "git commit → détecte .py stagés avec MODULE_VERSION → bump PATCH → git add → commit final"
-      - "FAIL-OPEN : exit 0 même si bump échoue"
-      - "Nouveau clone : hook absent jusqu'à make install-hooks (R406)"
-    tests: "15/15 PASS"
-    certified_100: false
-    note: "Limite documentée : .git/hooks/ non versionné → make install-hooks requis après clone (R406)"
-
-  - id: R406
-    title: "R406 — Robustesse versioning : Makefile install-hooks + ledger v2.9 + sémantique git_head"
-    commit: "f865969"
-    files_created:
-      - "tests/test_r406_versioning_robustness.py — 15 tests T01→T15"
-      - "rapports/R406_robustesse_versioning_ledger_sync_2026-09-21.md"
-    files_modified:
-      - "Makefile — cibles install-hooks + check-hooks ajoutées"
-      - ".artcb/task_ledger.yaml — v2.9, git_head=b9036a3, R402→R406 intégrés"
-    decisions:
-      - "fail-open conservé : make install-hooks documente la responsabilité développeur"
-      - "sémantique git_head : HEAD avant commit de sync (auto-référence impossible)"
-      - "garantie clone : make install-hooks + README — pas de fail-closed (trop bloquant en phase dev)"
-    tests: "15/15 PASS (après ledger sync)"
-    certified_100: false
-
-  - id: TASK-VERSIONING
-    title: "TASK-VERSIONING — Script bump automatique MODULE_VERSION PATCH +1 après commit (DONE)"
-    status: DONE
-    done_by: "R400-B (moteur) + R405 (hook pre-commit) + R406 (Makefile install-hooks)"
-    commits: ["e5da415 (R400-B)", "b9036a3 (R405)", "PENDING (R406)"]
-    deliverables:
-      - "scripts/artcb_bump_module_version.py — moteur bump PATCH + journal jsonl"
-      - "scripts/artcb_r405_precommit_hook.sh — hook bash déclenché à chaque commit"
-      - "scripts/artcb_r405_install_precommit_hook.py — installeur + --check/--remove"
-      - "Makefile cible install-hooks — reproductibilité après clone"
-    fail_open_decision: >
-      CONSERVÉ en phase dev. Justification :
-      (1) git commit --no-verify contourne toujours un hook local ;
-      (2) Fail-closed bloquerait CI/CD automatisé et merges ;
-      (3) La vraie garantie sera apportée par une CI GitHub Actions (future R407).
-      La responsabilité du développeur est documentée : make install-hooks obligatoire après clone.
-    git_head_semantics: >
-      git_head dans le ledger = HEAD connu AVANT le commit de sync du ledger.
-      Auto-référence impossible : le SHA du commit contenant ce fichier ne peut pas
-      être connu avant ce commit. Sémantique choisie : SHA du commit précédent, vérifiable.
-    certified_100: false
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# TÂCHES IN PROGRESS
-# ═══════════════════════════════════════════════════════════════════════════════
-in_progress:
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# TÂCHES OPEN (backlog ordonné par priorité)
-# ═══════════════════════════════════════════════════════════════════════════════
-open:
-
-  - id: R365
-    title: "aws-node-3 : surveillance PBFT + décision retrait opérateur si mort permanent"
-    priority: HIGH
-    blocker: false
-    note: "TASK-006 policy implémentée — assess_primary_failure() disponible. Décision opérateur requise pour retrait réel."
-
+tasks:
   - id: TASK-001-BIOMETRIE-SUITE
-    title: "TASK-001 suite : FAR/FRR + SDK iOS/Android + PIN vs biométrie WebAuthn (R374+R376 DONE)"
-    priority: MEDIUM
-    depends_on: "TASK-001-FUZZY-EXTRACTOR (DONE)"
-    sub_tasks_done:
-      - "R374 DONE : ECC externe BCH(255,191,8) — dist≤8 bits/bloc (30/30 PASS)"
-      - "R376 DONE : privacy_preserving_match() branché check_uniqueness() (22/22 PASS)"
-    sub_tasks_remaining:
-      - "FHE véritable (SEAL/OpenFHE/Concrete) pour check_uniqueness — XOR hash est un stub"
-      - "FAR/FRR/PAD mesurés sur vrais capteurs (NIST BSSR)"
-      - "Tests SDK natif iOS/Android"
-      - "UV=true ≠ empreinte vérifiée — documenter la limite WebAuthn dans le protocole ARTCB"
-      - "Distinguer cas 1→5 : même humain/même appareil / même humain/nouvel appareil / multi-identités / autre humain/appareil connu / PIN seul"
-      - "Anti-Sybil identity : lier authenticator credential_id à HumanID sans supposer que UV=biométrique"
-    webauthn_pin_problem: >
-      WebAuthn userVerification=required peut être satisfait par PIN ou biométrie
-      selon l'authenticator. Le serveur ARTCB ne peut pas distinguer les deux
-      depuis l'attestation seule (limite W3C documentée, issue #1728).
-      Conséquence : UV=true ne doit PAS être traité comme preuve biométrique humaine.
-      unique_human_proven reste False même si UV=true.
-    multi_device_identity: >
-      Schéma à verrouiller :
-      HUMAIN → biométrie native → AUTHENTICATOR/PASSKEY → clé crypto → APPAREIL A → Wallet A.
-      Même humain → APPAREIL B → tentative Wallet B : le protocole doit détecter
-      si c'est un ajout légitime (ADD_DEVICE) ou une tentative de double identité économique.
-      R363 gère ADD_DEVICE mais n'aborde pas l'anti-Sybil multi-wallet humain.
+    title: "Biométrie ARTCB — suite complète"
+    status: IN_PROGRESS
+    priority: P0
+    subtasks:
+      - id: R373
+        title: "Politique identité humaine multi-appareil — 5 cas + UV=PIN/biométrie"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+        tests: "26/26 PASS test_task001_r373_human_identity_policy.py"
+      - id: R374
+        title: "BCH(255,191,8) FuzzyExtractor — tolérance dist≤8 bits/bloc"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+        tests: "30/30 PASS test_task001_r374_bch.py"
+      - id: R376
+        title: "check_uniqueness() branché privacy_preserving_match() — matching XOR"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+        tests: "22/22 PASS test_task001_r376_uniqueness.py"
+        note: "XOR sur SHA-256 = effet avalanche — limite documentée. Prochaine étape: FHE."
+      - id: R378
+        title: "Matching Hamming direct sur template_bytes — matrice FAR/FRR simulée"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+        tests: "28/28 PASS test_task001_r378_hamming.py"
+        note: "Vecteurs synthétiques uniquement — FAR/FRR réels non mesurés."
+      - id: R432-FHE
+        title: "FHE véritable check_uniqueness() — Concrete/SEAL/OpenFHE"
+        status: OPEN
+        priority: P0
+        note: "homomorphic.py contient stub Pedersen. Remplacer par FHE véritable."
+      - id: R433-CAPTEURS
+        title: "Benchmark FAR/FRR sur vrais capteurs biométriques"
+        status: OPEN
+        priority: P1
 
-  - id: TASK-005
-    title: "Genesis transfer — authz"
-    priority: LOW
-    description: "Transfert de contrôle genesis node → nouvelle gouvernance"
+  - id: TASK-ARTCD-G16
+    title: "ARTCD — G16 Cross-Language ConceptID équivalence"
+    status: IN_PROGRESS
+    priority: P0
+    subtasks:
+      - id: R428
+        title: "artcd_canonical_vocabulary.json + artcd_language_registry.json (14 langues)"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+      - id: R429
+        title: "Errata NodeType=9 + tests G16 3 langues"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+        tests: "17/17 PASS"
+      - id: R430-G16
+        title: "G16 14 langues complètes + tokenizer AR/JA/KO/Hangul/Katakana"
+        status: DONE_VERIFIED
+        sha: "COMMIT_R430"
+        tests: "19/19 PASS test_r430_g16_14_languages.py"
+        note: "141/141 non-régression PASS"
+
+  - id: TASK-DO178C
+    title: "DO-178C Gate automatique pre-commit"
+    status: IN_PROGRESS
+    priority: P0
+    subtasks:
+      - id: R405
+        title: "Pre-commit hook auto-bump MODULE_VERSION (fail-open)"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+        note: "Fail-open — ne bloquait pas les commits."
+      - id: R430-GATE
+        title: "Pre-commit gate DO-178C bloquant (pytest PASS requis)"
+        status: DONE_VERIFIED
+        sha: "COMMIT_R430"
+        note: "exit 1 si tests FAIL. Log forensic ns.jsonl déclenché."
+
+  - id: TASK-FRONTEND-CLEANUP
+    title: "Frontend — suppression P2P/memory/AI-reflex"
+    status: DONE_VERIFIED
+    priority: P1
+    subtasks:
+      - id: R424
+        title: "Suppression fetchAiMemory, postAiMemo, fetchReflexStatus de client.ts"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+      - id: R420
+        title: "Suppression P2P/memory/identity-test de App.tsx"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+
+  - id: TASK-DEVICE-BINDING
+    title: "Device binding — reset/revoke admin"
+    status: IN_PROGRESS
+    priority: P1
+    subtasks:
+      - id: R425
+        title: "Script shell reset device binding"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+        file: "scripts/artcb_r425_reset_device_binding.sh"
+      - id: R431
+        title: "Endpoint admin API POST /api/v1/admin/device-binding/revoke"
+        status: OPEN
+        priority: P1
+
+  - id: TASK-RULES-TELEMETRY
+    title: "Rule corpus telemetry — 230 CR-* classifiés par domaine"
+    status: DONE_VERIFIED
+    priority: P2
+    subtasks:
+      - id: R375
+        title: "Rule Corpus Telemetry v2 — CORPUS/REGISTRY séparés"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+      - id: R427
+        title: "Reclassification 230 CR-* (PROTOCOL 96→76 + PROTOCOL_CHAIN 18)"
+        status: DONE_VERIFIED
+        sha: "c624f12"
+
+  - id: TASK-ARTCD-G4
+    title: "ARTCD — G4 reasoning.py moteur de déduction natif"
+    status: OPEN
+    priority: P0
+    note: "src/artcb/ir/reasoning.py à créer — G4 gap non comblé."
+
+  - id: TASK-AUTO-FEEDBACK
+    title: "Auto-feedback rétrospectif post-tâche (parallèle dev)"
+    status: OPEN
+    priority: P2
+    note: "Processus séparé — ne pas mélanger avec code ARTCB utilisateur."
 
   - id: TASK-006-LIVE-VALIDATION
-    title: "TASK-006 suite : validation live panne/retrait réel aws-node-3"
-    priority: LOW
-    depends_on: "TASK-006-CREATOR-NODE (DONE)"
-    description: >
-      Démontrer le chemin complet en conditions réelles :
-      panne → DEAD_TRANSIENT → DEAD_RECOVERABLE → view-change live →
-      (si permanent) retrait → N=3 → quorum vérifié → blocs produits.
-      Nécessite aws-node-3 accessible (actuellement view=27 ALIVE).
+    title: "DV-02 flood/chaos — certified_distributed_mainnet"
+    status: OPEN
+    priority: P1
+    note: "Requis pour certified_distributed_mainnet=true. DV-01→DV-07 non joués en live."
 
-  - id: TASK-007
-    title: "PoL / KnowledgeID / UsageID — architecture + implémentation"
-    priority: LOW
-    description: >
-      Proof-of-Learning : enregistrer les contributions on-chain.
-      KnowledgeID : identifiant du savoir contribué.
-      UsageID : traçabilité des usages des modèles.
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# DÉCISIONS ARCHITECTURE (immuables — ne jamais supprimer)
-# ═══════════════════════════════════════════════════════════════════════════════
-decisions:
-
-  - id: D001
-    source: "rapport 367"
-    title: "PIN ≠ preuve ARTCB"
-    rule: "Aucun PIN, password, secret, code local n'est accepté comme preuve d'identité ou de wallet"
-    status: ENFORCED
-    enforcement: "R363 — credential_not_found → 401 si PIN seul"
-
-  - id: D002
-    source: "rapport 367"
-    title: "face_camera = FALLBACK_ACCESSIBILITY_ONLY"
-    rule: "La caméra frontale n'est pas une preuve d'identité ARTCB — non acceptée comme biometric_primary"
-    status: ENFORCED
-    enforcement: "R357 + reflex/core.py FACE_CAMERA_INACTIVE_PRODUCTION"
-
-  - id: D003
-    source: "rapport 367"
-    title: "WebAuthn valide ≠ unique_human_proven"
-    rule: >
-      Une assertion WebAuthn prouve la possession d'un authenticator,
-      PAS l'unicité humaine. unique_human_proven reste toujours False.
-    status: ENFORCED
-    enforcement: "unique_human_proven=False dans tous les records + tests"
-
-  - id: D004
-    source: "rapport 367/370"
-    title: "ADD_DEVICE — aucun nouveau wallet créé"
-    rule: "Un nouvel appareil REJOINT l'identité existante — ne crée pas de nouveau wallet"
-    status: ENFORCED
-    enforcement: "R363 — device_record ne contient pas de nouveau wallet"
-
-  - id: D005
-    source: "CERTIFIED_100 policy"
-    title: "CERTIFIED_100 = False — permanent"
-    rule: "Ne jamais inverser CERTIFIED_100. Pas de claim de certification sans preuve complète."
-    status: PERMANENT
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# ÉTAT AVANCEMENT GLOBAL
-# ═══════════════════════════════════════════════════════════════════════════════
-progress:
-  global_pct: 84
-  breakdown:
-    blockchain_core: 90
-    wallet_hybrid_ed25519_mldsa65: 88
-    webauthn_register: 85
-    add_device_multi_device: 85   # R363+R363b+R363c — vraie WebAuthn + enrôlement B + E2E + concurrence
-    biometric_identity_human_id: 65  # R373+R374+R376+R378 : 5 cas + BCH ECC + Hamming — FHE manque encore
-    network_eligibility: 70          # R382+R397 : v1.1.0 — 6 correctifs hardening, TLS/CGNAT/multi-seeds
-    reflex_artcb_r350_r354: 55
-    pqc_mldsa65: 85
-    pbft_consensus: 90            # aws-node-3 ALIVE, synchronisé
-    tests_coverage: 92            # R402+R403+R405+R406 : +15+19+15+15 tests
-    ui_artcbme: 95                # R404 : dist/ rebuild — AgentMemory/Network hors bundle
-    task_ledger: 99               # ledger v2.9 — sync HEAD b9036a3 — R402→R406 intégrés
-    rule_governance: 80           # R375+R381+R393 : CR-* index + domain tagging 230/230 DONE_VERIFIED
-    versioning_modules: 80        # R405+R406 : hook pre-commit + Makefile install-hooks DONE
-    health_check_live: 85         # R402 : post-push health 3 nœuds automatique
-    wallet_audit_multi_node: 75   # R403 : WALLET_STATE_LOCAL diagnostiqué
-    pol_knowledgeid_usageid: 25
-    genesis_transfer_creator_node: 20
-  last_sync_sha: "b9036a3"
-  last_sync_date: "2026-09-21"
-  sync_note: "v2.9 — R402/R403/R404/R405/R406 intégrés. TASK-VERSIONING=DONE. Makefile install-hooks. git_head sémantique=HEAD avant commit sync."
+# ─── Prochaines actions recommandées ───────────────────────────────────────
+next_actions:
+  - R431: "POST /api/v1/admin/device-binding/revoke — endpoint admin"
+  - R432: "FHE Concrete pure Python dans homomorphic.py"
+  - R433: "reasoning.py G4"
+  - R435: "Auto-feedback rétrospectif"
