@@ -39,7 +39,7 @@ Référence : rapport 114 — 2026-08-07 ; R345 client-scope ; R357 TEST namespa
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.3.1'  # R433 — verrou transactionnel + élimination DELETE legacy + forensic enchaîné
+MODULE_VERSION = '1.3.4'  # R452 — forensic branché check_and_bind + revoke_with_history
 
 import contextlib
 import fcntl
@@ -52,6 +52,34 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 logger = logging.getLogger("artcb.security.wallet_device_binding")
+
+# Import forensic fail-open (jamais bloquant — si le module est absent on continue)
+try:
+    from src.artcb.trace.forensic import (
+        AttemptOutcome as _AO,
+        EvaluationContext as _EC,
+        ForensicEventType as _FET,
+        emit_forensic as _emit_forensic,
+    )
+    _FORENSIC_AVAILABLE = True
+except Exception:  # noqa: BLE001
+    _FORENSIC_AVAILABLE = False
+
+def _emit(event_type_name: str, outcome_name: str, ctx_name: str, **kwargs) -> None:
+    """Wrapper forensic fail-open pour wallet_device_binding."""
+    if not _FORENSIC_AVAILABLE:
+        return
+    try:
+        _emit_forensic(
+            None,
+            event_type=_FET(event_type_name),
+            outcome=_AO(outcome_name),
+            evaluation_context=_EC(ctx_name),
+            layer="wallet-binding",
+            **kwargs,
+        )
+    except Exception:  # noqa: BLE001
+        pass  # never block binding operations
 
 
 # ── R431 — État d'un binding ──────────────────────────────────────────────────
@@ -251,7 +279,23 @@ class WalletDeviceBindingStore:
                         "wallet_device_binding: already bound wallet=%s fingerprint=%s... (idempotent)",
                         wallet_name, device_fingerprint[:16],
                     )
+                    _emit(
+                        "BINDING_CHECK_OK", "SUCCESS", "WALLET_CREATION",
+                        actor_ref=wallet_name,
+                        subject_ref=existing.get("binding_id", "")[:24],
+                        state_after={"idempotent": True, "state": BindingState.ACTIVE},
+                    )
                     return
+                # R452 — forensic : device déjà lié → REJECTED
+                _emit(
+                    "BINDING_CHECK_BLOCKED", "REJECTED", "WALLET_CREATION",
+                    actor_ref=wallet_name,
+                    failure_reason_code="DEVICE_ALREADY_BOUND",
+                    state_after={
+                        "existing_wallet": existing.get("wallet_name", "")[:24],
+                        "binding_id": existing.get("binding_id", "")[:24],
+                    },
+                )
                 raise WalletDeviceBindingError(
                     f"Un wallet '{existing['wallet_name']}' a déjà été créé sur cet appareil "
                     f"(fingerprint: {device_fingerprint[:16]}…). "
@@ -259,8 +303,9 @@ class WalletDeviceBindingStore:
                     "Si vous avez perdu votre accès, utilisez votre seed_hex pour le récupérer."
                 )
 
+            new_bid = str(uuid.uuid4())
             records.append({
-                "binding_id": str(uuid.uuid4()),
+                "binding_id": new_bid,
                 "wallet_name": wallet_name,
                 "device_fingerprint": device_fingerprint,
                 "env_type": env_type,
@@ -277,6 +322,17 @@ class WalletDeviceBindingStore:
         logger.info(
             "wallet_device_binding: bound wallet=%s fingerprint=%s... env=%s",
             wallet_name, device_fingerprint[:16], env_type,
+        )
+        # R452 — forensic : nouveau binding créé (chemin nominal)
+        _emit(
+            "BINDING_CHECK_OK", "SUCCESS", "WALLET_CREATION",
+            actor_ref=wallet_name,
+            subject_ref=new_bid[:24],
+            state_after={
+                "binding_id": new_bid[:24],
+                "state": BindingState.ACTIVE,
+                "namespace": "PRODUCTION",
+            },
         )
 
     def _check_and_bind_test(
@@ -436,6 +492,12 @@ class WalletDeviceBindingStore:
         Retourne : snapshot avant, enregistrement final, version, revoked_at, binding_id.
         """
         if not any([wallet_name, device_fingerprint, binding_id]):
+            # R452 — forensic : critère manquant → REJECTED avant toute lecture
+            _emit(
+                "WALLET_REVOKE_FAIL", "REJECTED", "ADMIN",
+                failure_reason_code="MISSING_CRITERIA",
+                state_after={"wallet_name": wallet_name, "namespace": namespace},
+            )
             raise BindingRevocationError(
                 "Au moins un critère est requis : binding_id, wallet_name ou device_fingerprint."
             )
@@ -467,6 +529,13 @@ class WalletDeviceBindingStore:
                     break
 
             if target_idx is None:
+                # R452 — forensic : binding introuvable
+                _emit(
+                    "WALLET_REVOKE_FAIL", "REJECTED", "ADMIN",
+                    failure_reason_code="BINDING_NOT_FOUND",
+                    actor_ref=authenticated_actor,
+                    state_after={"namespace": namespace, "wallet_name": (wallet_name or "")[:24]},
+                )
                 raise BindingRevocationError(
                     f"Binding introuvable (namespace={namespace}, "
                     f"wallet={wallet_name}, fp={device_fingerprint}, id={binding_id})."
@@ -476,6 +545,18 @@ class WalletDeviceBindingStore:
             current_state = target.get("state", BindingState.ACTIVE)
 
             if current_state == BindingState.REVOKED:
+                # R452 — forensic : double révocation détectée
+                _emit(
+                    "WALLET_REVOKE_FAIL", "REJECTED", "ADMIN",
+                    failure_reason_code="ALREADY_REVOKED",
+                    actor_ref=authenticated_actor,
+                    subject_ref=(target.get("binding_id") or "")[:24],
+                    state_after={
+                        "state": BindingState.REVOKED,
+                        "revoked_at": target.get("revoked_at"),
+                        "wallet_name": (target.get("wallet_name") or "")[:24],
+                    },
+                )
                 raise BindingRevocationError(
                     f"Binding déjà révoqué (binding_id={target.get('binding_id')}, "
                     f"wallet={target.get('wallet_name')}, revoked_at={target.get('revoked_at')})."
@@ -484,6 +565,18 @@ class WalletDeviceBindingStore:
             # R432/R433 — Compare-And-Swap sur version
             current_version = target.get("version", 1)
             if expected_version is not None and expected_version != current_version:
+                # R452 — forensic : CAS conflict détecté
+                _emit(
+                    "WALLET_REVOKE_FAIL", "REJECTED", "ADMIN",
+                    failure_reason_code="CAS_VERSION_CONFLICT",
+                    actor_ref=authenticated_actor,
+                    subject_ref=(target.get("binding_id") or "")[:24],
+                    state_after={
+                        "expected_version": expected_version,
+                        "actual_version": current_version,
+                        "wallet_name": (target.get("wallet_name") or "")[:24],
+                    },
+                )
                 raise BindingRevocationError(
                     f"Conflit de version (CAS) : attendu v{expected_version}, "
                     f"actuel v{current_version} pour binding_id={target.get('binding_id')}."
@@ -525,6 +618,21 @@ class WalletDeviceBindingStore:
             reason or "<none>",
             current_version,
             current_version + 1,
+        )
+        # R452 — forensic : révocation réussie (chemin nominal — hors verrou)
+        _emit(
+            "WALLET_REVOKE_OK", "SUCCESS", "ADMIN",
+            actor_ref=authenticated_actor,
+            subject_ref=(resolved_binding_id or "")[:24],
+            state_after={
+                "state": BindingState.REVOKED,
+                "namespace": namespace,
+                "wallet_name": previous_snapshot.get("wallet_name", "")[:24],
+                "version_before": current_version,
+                "version_after": current_version + 1,
+                "revoked_at": now_str,
+                "revocation_reason": reason or None,
+            },
         )
 
         return {

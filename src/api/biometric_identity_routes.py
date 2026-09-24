@@ -19,7 +19,7 @@ HONNÊTETÉ (CERTIFIED_100=false) :
     - L'image brute est rejetée (HTTP 400) à chaque endpoint.
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.4'  # R447 — fail-closed store inaccessible → HTTP 503
+MODULE_VERSION = '1.0.7'  # R452 — forensic branché sur tous les chemins critiques API
 
 import json
 import logging
@@ -40,6 +40,12 @@ from src.artcb.identity.biometric_onchain import (
     fuzzy_reproduce,
 )
 from src.artcb.identity.human_identity_policy import load_wallet_human_links
+from src.artcb.trace.forensic import (
+    AttemptOutcome,
+    EvaluationContext,
+    ForensicEventType,
+    emit_forensic,
+)
 
 logger = logging.getLogger("artcb.api.identity.biometric")
 router = APIRouter(prefix="/api/v1/identity/biometric", tags=["identity-biometric"])
@@ -180,6 +186,17 @@ def enroll(body: EnrollRequest, request: Request) -> dict[str, Any]:
             "P0-C enroll: unicité refusée — human_id=%s déjà enregistré",
             uniqueness.existing_human_id,
         )
+        # R452 — forensic : identité déjà présente → REJECTED
+        emit_forensic(
+            None,
+            event_type=ForensicEventType.BIO_ENROLL_FAIL,
+            outcome=AttemptOutcome.REJECTED,
+            evaluation_context=EvaluationContext.ENROLLMENT,
+            layer="biometric-api",
+            subject_ref=(uniqueness.existing_human_id or "")[:24],
+            failure_reason_code="HUMAN_IDENTITY_ALREADY_REGISTERED",
+            state_after={"match_method": uniqueness.match_method, "unique_human_proven": False},
+        )
         raise HTTPException(
             status_code=409,
             detail={
@@ -209,6 +226,17 @@ def enroll(body: EnrollRequest, request: Request) -> dict[str, Any]:
             "enroll: FAIL-CLOSED — store wallet_human_links inaccessible, "
             "enrôlement refusé (R447 anti-Sybil P0): %s",
             exc,
+        )
+        # R452 — forensic : store inaccessible → STORE_UNAVAILABLE (distinct de STORE_EMPTY)
+        emit_forensic(
+            None,
+            event_type=ForensicEventType.SYBIL_STORE_UNAVAILABLE,
+            outcome=AttemptOutcome.STORE_UNAVAILABLE,
+            evaluation_context=EvaluationContext.SYBIL_CHECK,
+            layer="biometric-api",
+            failure_reason_code="SYBIL_STORE_UNAVAILABLE",
+            state_after={"http_status": 503, "unique_human_proven": False},
+            extra={"error": str(exc)[:200]},
         )
         raise HTTPException(
             status_code=503,
@@ -240,6 +268,22 @@ def enroll(body: EnrollRequest, request: Request) -> dict[str, Any]:
             result.human_id,
             (result.existing_wallet or "")[:16],
         )
+        # R452 — forensic : SYBIL_BLOCKED — critique (Critical Evidence Policy : PROOF obligatoire)
+        emit_forensic(
+            None,
+            event_type=ForensicEventType.SYBIL_CHECK_BLOCKED,
+            outcome=AttemptOutcome.SYBIL_BLOCKED,
+            evaluation_context=EvaluationContext.SYBIL_CHECK,
+            layer="biometric-api",
+            subject_ref=result.human_id[:24],
+            failure_reason_code=result.sybil_reason or "CASE_3",
+            state_after={
+                "sybil_blocked": True,
+                "existing_wallet": (result.existing_wallet or "")[:24],
+                "unique_human_proven": False,
+                "certified_100": False,
+            },
+        )
         raise HTTPException(
             status_code=409,
             detail={
@@ -262,6 +306,23 @@ def enroll(body: EnrollRequest, request: Request) -> dict[str, Any]:
         "P0-C enroll_ok: human_id=%s wallet=%s unique_human_proven=False",
         result.human_id,
         body.wallet_address,
+    )
+    # R452 — forensic : enrôlement réussi (chemin nominal)
+    emit_forensic(
+        None,
+        event_type=ForensicEventType.BIO_ENROLL_OK,
+        outcome=AttemptOutcome.SUCCESS,
+        evaluation_context=EvaluationContext.ENROLLMENT,
+        layer="biometric-api",
+        subject_ref=result.human_id[:24],
+        algorithm_version=MODULE_VERSION,
+        state_after={
+            "human_id": result.human_id[:24],
+            "wallet_address": (body.wallet_address or "")[:24],
+            "status": result.status,
+            "unique_human_proven": False,
+            "certified_100": False,
+        },
     )
 
     return {

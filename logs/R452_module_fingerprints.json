@@ -1,0 +1,32 @@
+{
+  "r_task": "R452",
+  "generated_at": "2026-09-24T15:45:06.477302+00:00",
+  "git_sha": "3e871cab77f2ec54685e4c728c8a97ad884228a7",
+  "modules": [
+    {
+      "path": "src/artcb/security/wallet_device_binding.py",
+      "sha256": "f1afdfad8546cd4bc021cc458757f17dca28efbf36bcf8d91a56a9dc31a08777",
+      "module_version": "1.3.4'  # R452 — forensic branché check_and_bind + revoke_with_history"
+    },
+    {
+      "path": "src/api/biometric_identity_routes.py",
+      "sha256": "dfb80afb43fd6a2badf150fe10a54cb10c765cdc6a2a626ac73efd058f43e058",
+      "module_version": "1.0.7'  # R452 — forensic branché sur tous les chemins critiques API"
+    },
+    {
+      "path": "tests/test_r452_forensic_coverage_api_binding.py",
+      "sha256": "4999dd38d096098f49fbaddd4dfcb700605baf48249ba1d50000e0898c953640",
+      "module_version": "= \"1.0.5\", ("
+    },
+    {
+      "path": "src/artcb/trace/forensic.py",
+      "sha256": "9c71f0dd4c5cbd2250b2ef43f341b0516e0946ebb648f7afe44ed8d4fd9ded2e",
+      "module_version": "1.0.1'  # R451 — FORENSIC-01 Forensic Event Ledger"
+    },
+    {
+      "path": "src/artcb/identity/biometric_onchain.py",
+      "sha256": "e5d01fa52671e6f50dd12fc94f823bf9d5aaa0010bfe8ad0f6871ed001a40f8b",
+      "module_version": "1.0.4'  # R435 — anti-Sybil enroll"
+    }
+  ]
+}
