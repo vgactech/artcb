@@ -33,7 +33,7 @@ Séparations fondamentales (non implémentées ici) :
 PROTOCOLE ARTCB — mode DEBUG actif — CERTIFIED_100=false.
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.1'  # R450 — ARTCD G4 reasoning pipeline
+MODULE_VERSION = '1.0.2'  # R450 — ARTCD G4 reasoning pipeline
 
 import logging
 import uuid
@@ -53,6 +53,13 @@ from src.artcb.knowledge.knowledge import (
 from src.artcb.knowledge.usage import UsagePurpose, UsageRecord, record_usage
 from src.artcb.pol.scorer import PolMetrics, PolScorer
 from src.artcb.reasoning.canonical import CanonicalReasoning, canonicalize_text
+from src.artcb.trace.forensic import (
+    AttemptOutcome,
+    EvaluationContext,
+    ForensicEventType,
+    ForensicLedger,
+    emit_forensic,
+)
 
 logger = logging.getLogger("artcb.reasoning.pipeline")
 
@@ -148,9 +155,11 @@ class ReasoningPipeline:
         *,
         encoder: IREncoder | None = None,
         pol_scorer: PolScorer | None = None,
+        forensic_ledger: ForensicLedger | None = None,
     ) -> None:
         self._encoder = encoder or IREncoder()
         self._pol = pol_scorer or PolScorer()
+        self._forensic = forensic_ledger  # None = pas de persistence (tests)
 
     def run(
         self,
@@ -162,17 +171,21 @@ class ReasoningPipeline:
         session_id: str | None = None,
         created_at: str | None = None,
         metadata: dict[str, Any] | None = None,
+        correlation_id: str = "",
+        trace_id: str = "",
     ) -> PipelineResult:
         """Exécute le pipeline complet G4 pour un texte entrant.
 
         Args:
-            text         : texte source (toute langue reconnue par IREncoder)
-            producer_id  : identifiant agent ou wallet producteur (obligatoire, non vide)
-            work_id      : identifiant de travail économique (généré si absent)
-            language_hint: code langue ISO 639-1 ('fr', 'en', 'ar', …) — indicatif
-            session_id   : identifiant session (généré si absent)
-            created_at   : timestamp ISO UTC (généré si absent)
-            metadata     : champs libres additionnels
+            text           : texte source (toute langue reconnue par IREncoder)
+            producer_id    : identifiant agent ou wallet producteur (obligatoire, non vide)
+            work_id        : identifiant de travail économique (généré si absent)
+            language_hint  : code langue ISO 639-1 ('fr', 'en', 'ar', …) — indicatif
+            session_id     : identifiant session (généré si absent)
+            created_at     : timestamp ISO UTC (généré si absent)
+            metadata       : champs libres additionnels
+            correlation_id : identifiant de corrélation forensic (généré si absent)
+            trace_id       : identifiant de trace forensic (optionnel)
 
         Returns:
             PipelineResult frozen avec tous les maillons de la chaîne.
@@ -203,6 +216,7 @@ class ReasoningPipeline:
         ts = created_at or datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
         sid = session_id or f"g4-{uuid.uuid4().hex[:12]}"
         wid = work_id or f"work-{uuid.uuid4().hex[:16]}"
+        corr_id = correlation_id or f"corr-{uuid.uuid4().hex[:16]}"
         meta = dict(metadata or {})
         meta.setdefault("language_hint", language_hint)
 
@@ -210,15 +224,57 @@ class ReasoningPipeline:
         try:
             ir_graph: IRGraph = self._encoder.encode(text_stripped, session_id=sid)
         except Exception as exc:  # noqa: BLE001
+            emit_forensic(
+                self._forensic,
+                event_type=ForensicEventType.IR_ENCODE_FAIL,
+                outcome=AttemptOutcome.INTERNAL_ERROR,
+                evaluation_context=EvaluationContext.REASONING_PIPELINE,
+                correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+                layer="reasoning", actor_ref=producer_id,
+                algorithm_version=MODULE_VERSION,
+                failure_reason_code="IR_ENCODE_ERROR",
+                extra={"error": str(exc)[:200], "language_hint": language_hint},
+            )
             raise PipelineStageError(f"[G4-E1-IREncoder] {exc}") from exc
+
+        emit_forensic(
+            self._forensic,
+            event_type=ForensicEventType.IR_ENCODE_OK,
+            outcome=AttemptOutcome.SUCCESS,
+            evaluation_context=EvaluationContext.REASONING_PIPELINE,
+            correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+            layer="reasoning", actor_ref=producer_id,
+            algorithm_version=MODULE_VERSION,
+            state_after={"ir_node_count": len(ir_graph.nodes), "language_hint": language_hint},
+        )
 
         # ── Étape 2 : CanonicalReasoning ─────────────────────────────────────
         try:
             canonical: CanonicalReasoning = canonicalize_text(text_stripped)
         except Exception as exc:  # noqa: BLE001
+            emit_forensic(
+                self._forensic,
+                event_type=ForensicEventType.CANONICAL_FAIL,
+                outcome=AttemptOutcome.INTERNAL_ERROR,
+                evaluation_context=EvaluationContext.REASONING_PIPELINE,
+                correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+                layer="reasoning", actor_ref=producer_id,
+                failure_reason_code="CANONICAL_ERROR",
+                extra={"error": str(exc)[:200]},
+            )
             raise PipelineStageError(f"[G4-E2-Canonical] {exc}") from exc
 
         reasoning_id: str = canonical.reasoning_id()
+        emit_forensic(
+            self._forensic,
+            event_type=ForensicEventType.CANONICAL_OK,
+            outcome=AttemptOutcome.SUCCESS,
+            evaluation_context=EvaluationContext.REASONING_PIPELINE,
+            correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+            layer="reasoning", actor_ref=producer_id, subject_ref=reasoning_id,
+            algorithm_version=MODULE_VERSION,
+            state_after={"reasoning_id": reasoning_id},
+        )
 
         # ── Étape 3 : KnowledgeRecord ─────────────────────────────────────────
         try:
@@ -232,11 +288,33 @@ class ReasoningPipeline:
                     "language_hint": language_hint,
                     "session_id": sid,
                 },
-                metadata={**meta, "pipeline": "G4-R450"},
+                metadata={**meta, "pipeline": "G4-R451"},
                 created_at=ts,
             )
         except Exception as exc:  # noqa: BLE001
+            emit_forensic(
+                self._forensic,
+                event_type=ForensicEventType.KNOWLEDGE_CREATE_FAIL,
+                outcome=AttemptOutcome.INTERNAL_ERROR,
+                evaluation_context=EvaluationContext.REASONING_PIPELINE,
+                correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+                layer="reasoning", actor_ref=producer_id, subject_ref=reasoning_id,
+                failure_reason_code="KNOWLEDGE_ERROR",
+                extra={"error": str(exc)[:200]},
+            )
             raise PipelineStageError(f"[G4-E3-Knowledge] {exc}") from exc
+
+        emit_forensic(
+            self._forensic,
+            event_type=ForensicEventType.KNOWLEDGE_CREATE_OK,
+            outcome=AttemptOutcome.SUCCESS,
+            evaluation_context=EvaluationContext.REASONING_PIPELINE,
+            correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+            layer="reasoning", actor_ref=producer_id,
+            subject_ref=knowledge.knowledge_id,
+            algorithm_version=MODULE_VERSION,
+            state_after={"knowledge_id": knowledge.knowledge_id, "status": knowledge.status.value},
+        )
 
         # ── Étape 4 : UsageRecord ─────────────────────────────────────────────
         try:
@@ -244,12 +322,35 @@ class ReasoningPipeline:
                 knowledge_id=knowledge.knowledge_id,
                 consumer_id=producer_id,
                 purpose=UsagePurpose.POL_CLAIM,
-                metadata={**meta, "work_id": wid, "pipeline": "G4-R450"},
+                metadata={**meta, "work_id": wid, "pipeline": "G4-R451"},
                 used_at=ts,
                 knowledge_status=knowledge.status.value,
             )
         except Exception as exc:  # noqa: BLE001
+            emit_forensic(
+                self._forensic,
+                event_type=ForensicEventType.USAGE_RECORD_FAIL,
+                outcome=AttemptOutcome.INTERNAL_ERROR,
+                evaluation_context=EvaluationContext.REASONING_PIPELINE,
+                correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+                layer="reasoning", actor_ref=producer_id,
+                subject_ref=knowledge.knowledge_id,
+                failure_reason_code="USAGE_ERROR",
+                extra={"error": str(exc)[:200]},
+            )
             raise PipelineStageError(f"[G4-E4-Usage] {exc}") from exc
+
+        emit_forensic(
+            self._forensic,
+            event_type=ForensicEventType.USAGE_RECORD_OK,
+            outcome=AttemptOutcome.SUCCESS,
+            evaluation_context=EvaluationContext.REASONING_PIPELINE,
+            correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+            layer="reasoning", actor_ref=producer_id,
+            subject_ref=usage.usage_id,
+            algorithm_version=MODULE_VERSION,
+            state_after={"usage_id": usage.usage_id, "pol_eligible": usage.pol_eligible},
+        )
 
         # ── Étape 5 : PolMetrics ──────────────────────────────────────────────
         try:
@@ -259,7 +360,33 @@ class ReasoningPipeline:
                 usage_id=usage.usage_id,
             )
         except Exception as exc:  # noqa: BLE001
+            emit_forensic(
+                self._forensic,
+                event_type=ForensicEventType.POL_SCORE_FAIL,
+                outcome=AttemptOutcome.INTERNAL_ERROR,
+                evaluation_context=EvaluationContext.REASONING_PIPELINE,
+                correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+                layer="reasoning", actor_ref=producer_id,
+                subject_ref=knowledge.knowledge_id,
+                failure_reason_code="POL_ERROR",
+                extra={"error": str(exc)[:200]},
+            )
             raise PipelineStageError(f"[G4-E5-PoL] {exc}") from exc
+
+        emit_forensic(
+            self._forensic,
+            event_type=ForensicEventType.POL_SCORE_OK,
+            outcome=AttemptOutcome.SUCCESS,
+            evaluation_context=EvaluationContext.REASONING_PIPELINE,
+            correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+            layer="reasoning", actor_ref=producer_id,
+            subject_ref=knowledge.knowledge_id,
+            algorithm_version=MODULE_VERSION,
+            state_after={
+                "pol_score": pol_metrics.pol_score,
+                "block_accepted": pol_metrics.block_accepted,
+            },
+        )
 
         # ── Étape 6 : KnowledgeWorkRecord ─────────────────────────────────────
         try:
@@ -270,11 +397,45 @@ class ReasoningPipeline:
                 block_accepted=pol_metrics.block_accepted,
                 usage_id=usage.usage_id,
                 producer_id=producer_id,
-                metadata={**meta, "session_id": sid, "pipeline": "G4-R450"},
+                metadata={**meta, "session_id": sid, "pipeline": "G4-R451"},
                 created_at=ts,
             )
         except Exception as exc:  # noqa: BLE001
+            emit_forensic(
+                self._forensic,
+                event_type=ForensicEventType.KNOWLEDGE_WORK_FAIL,
+                outcome=AttemptOutcome.INTERNAL_ERROR,
+                evaluation_context=EvaluationContext.REASONING_PIPELINE,
+                correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+                layer="reasoning", actor_ref=producer_id,
+                subject_ref=knowledge.knowledge_id,
+                failure_reason_code="WORK_RECORD_ERROR",
+                extra={"error": str(exc)[:200]},
+            )
             raise PipelineStageError(f"[G4-E6-WorkRecord] {exc}") from exc
+
+        # ── Événement forensic final : pipeline complet ───────────────────────
+        emit_forensic(
+            self._forensic,
+            event_type=ForensicEventType.REASONING_PIPELINE_OK,
+            outcome=AttemptOutcome.SUCCESS,
+            evaluation_context=EvaluationContext.REASONING_PIPELINE,
+            correlation_id=corr_id, trace_id=trace_id, session_id=sid,
+            layer="reasoning", actor_ref=producer_id,
+            subject_ref=work_record.work_record_id,
+            algorithm_version=MODULE_VERSION,
+            state_after={
+                "knowledge_id": knowledge.knowledge_id,
+                "usage_id": usage.usage_id,
+                "work_record_id": work_record.work_record_id,
+                "pol_score": pol_metrics.pol_score,
+                "block_accepted": pol_metrics.block_accepted,
+                "language_hint": language_hint,
+                "unique_human_proven": False,
+                "certified_100": False,
+            },
+            extra={"ir_node_count": len(ir_graph.nodes), "reasoning_id": reasoning_id},
+        )
 
         logger.debug(
             "[G4-pipeline] DONE producer=%s lang=%s knowledge_id=%s pol=%.4f accepted=%s",

@@ -82,7 +82,7 @@ PRODUCTION :
     - Quantification du vecteur biométrique côté client recommandée
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.3'  # R435 — anti-Sybil enroll
+MODULE_VERSION = '1.0.4'  # R435 — anti-Sybil enroll
 
 import hashlib
 import hmac
@@ -635,18 +635,29 @@ def enroll_biometric(
         human_id, fe.algorithm, sybil_blocked,
     )
 
-    # R386 — trace nanoseconde des opérations biométriques (non-HTTP, non couvertes par middleware)
+    # R451 — forensic event biometric_enroll (remplace trace R386 kind-only)
     try:
-        from src.artcb.trace.ns import emit as _emit
-        _emit(None, {
-            "kind": "biometric_enroll",
-            "human_id": human_id,
-            "algorithm": fe.algorithm,
-            "noise_tolerance_bits": fe.noise_tolerance_bits,
-            "sybil_blocked": sybil_blocked,
-            "unique_human_proven": False,
-            "ok": True,
-        })
+        from src.artcb.trace.forensic import (  # noqa: PLC0415
+            AttemptOutcome, EvaluationContext, ForensicEventType, emit_forensic,
+        )
+        _outcome = AttemptOutcome.SYBIL_BLOCKED if sybil_blocked else AttemptOutcome.SUCCESS
+        _event_type = ForensicEventType.BIO_ENROLL_BLOCKED if sybil_blocked else ForensicEventType.BIO_ENROLL_OK
+        emit_forensic(
+            None,  # pas de persistence ici (data_dir non fourni en couche bas-niveau)
+            event_type=_event_type,
+            outcome=_outcome,
+            evaluation_context=EvaluationContext.ENROLLMENT,
+            layer="biometric",
+            subject_ref=human_id[:24],          # jamais template brut
+            algorithm_version=fe.algorithm,
+            state_after={
+                "noise_tolerance_bits": fe.noise_tolerance_bits,
+                "sybil_blocked": sybil_blocked,
+                "unique_human_proven": False,
+                "certified_100": False,
+            },
+            failure_reason_code=sybil_reason or "",
+        )
     except Exception:  # noqa: BLE001
         pass  # trace facultative — ne jamais bloquer l'enrôlement
 
@@ -797,17 +808,33 @@ def check_uniqueness(
                 )
                 break
 
-    # R386 — trace nanoseconde check_uniqueness (non-HTTP)
+    # R451 — forensic event check_uniqueness (remplace trace R386 kind-only)
     try:
-        from src.artcb.trace.ns import emit as _emit
-        _emit(None, {
-            "kind": "biometric_check_uniqueness",
-            "match_found": result.match_found,
-            "match_method": result.match_method,
-            "existing_human_id": result.existing_human_id,
-            "unique_human_proven": False,
-            "ok": True,
-        })
+        from src.artcb.trace.forensic import (  # noqa: PLC0415
+            AttemptOutcome, EvaluationContext, ForensicEventType, emit_forensic,
+        )
+        _uq_outcome = AttemptOutcome.REJECTED if result.match_found else AttemptOutcome.SUCCESS
+        _uq_type = (
+            ForensicEventType.BIO_UNIQUENESS_FAIL if result.match_found
+            else ForensicEventType.BIO_UNIQUENESS_OK
+        )
+        emit_forensic(
+            None,
+            event_type=_uq_type,
+            outcome=_uq_outcome,
+            evaluation_context=EvaluationContext.UNIQUENESS_CHECK,
+            layer="biometric",
+            subject_ref=(result.existing_human_id or "")[:24],
+            algorithm_version=result.match_method or "",
+            state_after={
+                "match_found": result.match_found,
+                "match_method": result.match_method,
+                "match_score": result.match_score,
+                "unique_human_proven": False,
+                "certified_100": False,
+            },
+            failure_reason_code="DUPLICATE_FOUND" if result.match_found else "",
+        )
     except Exception:  # noqa: BLE001
         pass  # trace facultative — ne jamais bloquer le check
 
