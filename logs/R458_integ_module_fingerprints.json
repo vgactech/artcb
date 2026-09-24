@@ -1,0 +1,21 @@
+{
+  "r_task": "R458-integ",
+  "generated_at": "2026-09-24T19:12:22.836146Z",
+  "git_sha": "82965e436c06344141ef46907162c9fddc0a04ae",
+  "modules": [
+    {
+      "path": "src/artcb/authz/capability_token_middleware.py",
+      "sha256": "75d296808f6b967326a73f28af2bb79af933e0b15b34998c892eb6402176fbf6",
+      "module_version": "1.0.0"
+    },
+    {
+      "path": "tests/test_r458_capability_token_middleware.py",
+      "sha256": "4c02fb0f43c10cb9ae80502fc6c6fe4bb90ab3f78faf0813fba25a25897df839",
+      "module_version": "N/A"
+    }
+  ],
+  "test_results": {
+    "test_m_series": "15/15 PASS",
+    "gate_do178c": "124/124 PASS"
+  }
+}
