@@ -1,0 +1,22 @@
+{
+  "r_task": "R432",
+  "generated_at": "2026-09-24T16:00:53.237091+00:00",
+  "git_sha": "1951e471d7b7db353b3e1a5e29281424b75ccce8",
+  "modules": [
+    {
+      "path": "src/artcb/crypto/homomorphic.py",
+      "sha256": "c238fb6306eb71ef265be7a70fc80faf60a36ba9444ea82e3d61258082c2a2dd",
+      "module_version": "1.1.1'  # R432 \u2014 FheHammingCircuit TFHE simul\u00e9"
+    },
+    {
+      "path": "src/artcb/identity/biometric_onchain.py",
+      "sha256": "dad3d1275b7467280b24db6f4f0dd8c926e5968c9cdad594832ceebc07cf583d",
+      "module_version": "1.0.5'  # R435 \u2014 anti-Sybil enroll"
+    },
+    {
+      "path": "tests/test_r432_fhe_hamming_circuit.py",
+      "sha256": "86870d3b0485c5a0f9527105f0085fdce475008dc3e80ab604bea3fd98e4892a",
+      "module_version": "= \"1.1.0\", ("
+    }
+  ]
+}

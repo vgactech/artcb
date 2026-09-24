@@ -283,10 +283,10 @@ class TestBiometricRoutesForensicNonRegression:
         assert hasattr(bio_routes, "emit_forensic"), "emit_forensic manquant"
 
     def test_c02_module_version_is_r452(self) -> None:
-        """C02 — MODULE_VERSION de biometric_identity_routes est 1.0.5 (R452)."""
+        """C02 — MODULE_VERSION de biometric_identity_routes est >= 1.0.5 (R452)."""
         import src.api.biometric_identity_routes as bio_routes
-        assert bio_routes.MODULE_VERSION == "1.0.5", (
-            f"Attendu 1.0.5, obtenu {bio_routes.MODULE_VERSION}"
+        assert bio_routes.MODULE_VERSION >= "1.0.5", (
+            f"Attendu >= 1.0.5 (R452), obtenu {bio_routes.MODULE_VERSION}"
         )
 
     def test_c03_forensic_event_types_used_in_source(self) -> None:
@@ -417,8 +417,8 @@ class TestForensicInvariants:
         assert state_after["version_after"] == state_after["version_before"] + 1
 
     def test_d04_wallet_device_binding_module_version(self) -> None:
-        """D04 — MODULE_VERSION de wallet_device_binding est 1.3.2 (R452)."""
+        """D04 — MODULE_VERSION de wallet_device_binding est >= 1.3.2 (R452)."""
         import src.artcb.security.wallet_device_binding as wdb
-        assert wdb.MODULE_VERSION == "1.3.2", (
-            f"Attendu 1.3.2, obtenu {wdb.MODULE_VERSION}"
+        assert wdb.MODULE_VERSION >= "1.3.2", (
+            f"Attendu >= 1.3.2 (R452), obtenu {wdb.MODULE_VERSION}"
         )

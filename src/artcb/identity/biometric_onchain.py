@@ -82,7 +82,7 @@ PRODUCTION :
     - Quantification du vecteur biométrique côté client recommandée
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.4'  # R435 — anti-Sybil enroll
+MODULE_VERSION = '1.0.5'  # R435 — anti-Sybil enroll
 
 import hashlib
 import hmac
@@ -100,6 +100,8 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 from src.artcb.crypto.homomorphic import (
     BiometricCommitment,
+    FheHammingCircuit,
+    FheUniquenessResult,
     commit_biometric_template,
 )
 
@@ -708,11 +710,114 @@ class UniquenessCheckResult:
     match_score: float = 0.0
     certified: bool = False
     unique_human_proven: bool = False
-    match_method: str = "exact_hash"   # "exact_hash" | "privacy_preserving_xor" | "hamming_direct"
+    match_method: str = "exact_hash"   # "exact_hash"|"privacy_preserving_xor"|"hamming_direct"|"fhe_hamming"
     note: str = (
-        "R434 : routing automatique hamming_direct > privacy_preserving_xor > exact_hash. "
+        "R432/R434 : routing automatique fhe_hamming > hamming_direct > privacy_preserving_xor > exact_hash. "
         "unique_human_proven=False — invariant absolu. CERTIFIED_100=false."
     )
+
+
+# ── R432 — Helper : extraction templates depuis records ──────────────────────
+
+def _extract_template_bytes_from_record(rec: dict[str, Any]) -> bytes | None:
+    """Extrait les bytes d'un template depuis un enregistrement on-chain.
+
+    Tente d'abord template_bytes_b64 (base64), puis template_bytes_hex.
+    Retourne None si aucun champ disponible.
+    """
+    import base64  # noqa: PLC0415
+    b64 = rec.get("template_bytes_b64")
+    if b64:
+        try:
+            return base64.b64decode(b64)
+        except Exception:
+            pass
+    hex_val = rec.get("template_bytes_hex")
+    if hex_val:
+        try:
+            return bytes.fromhex(hex_val)
+        except Exception:
+            pass
+    return None
+
+
+def _check_uniqueness_fhe(
+    circuit: "FheHammingCircuit",
+    new_template: bytes,
+    existing_records: list[dict[str, Any]],
+    *,
+    threshold_bits: int | None,
+    threshold: float,
+) -> "FheUniquenessResult":
+    """Routing R432 : vérification FHE Hamming contre les records existants.
+
+    Construit la liste (human_id, template_bytes) depuis existing_records,
+    puis appelle circuit.fhe_uniqueness_check().
+
+    Si threshold_bits est None, le calcule à partir de threshold et la longueur
+    du template (threshold_bits = round((1 - threshold) * bits_len)).
+
+    Retourne FheUniquenessResult — fail-closed si error=True.
+    """
+    from src.artcb.crypto.homomorphic import FheUniquenessResult  # noqa: PLC0415
+
+    existing_templates: list[tuple[str, bytes]] = []
+    for rec in existing_records:
+        tb = _extract_template_bytes_from_record(rec)
+        if tb:
+            existing_templates.append((rec.get("human_id", "unknown"), tb))
+
+    if not existing_templates:
+        # Aucun record avec template_bytes → pas de comparaison possible → pas de match
+        return FheUniquenessResult(
+            match_found=False,
+            error=False,
+            note="FHE — aucun enregistrement avec template_bytes — nouvelle identité autorisée.",
+        )
+
+    # Calcul du seuil en bits si non fourni
+    effective_threshold_bits = threshold_bits
+    if effective_threshold_bits is None:
+        bits_len = len(new_template) * 8
+        effective_threshold_bits = round((1.0 - threshold) * bits_len)
+
+    return circuit.fhe_uniqueness_check(
+        new_template,
+        existing_templates,
+        threshold_bits=effective_threshold_bits,
+    )
+
+
+def _emit_uniqueness_forensic(result: "UniquenessCheckResult") -> None:
+    """Émet l'événement forensic pour check_uniqueness() — fail-open."""
+    try:
+        from src.artcb.trace.forensic import (  # noqa: PLC0415
+            AttemptOutcome, EvaluationContext, ForensicEventType, emit_forensic,
+        )
+        _uq_outcome = AttemptOutcome.REJECTED if result.match_found else AttemptOutcome.SUCCESS
+        _uq_type = (
+            ForensicEventType.BIO_UNIQUENESS_FAIL if result.match_found
+            else ForensicEventType.BIO_UNIQUENESS_OK
+        )
+        emit_forensic(
+            None,
+            event_type=_uq_type,
+            outcome=_uq_outcome,
+            evaluation_context=EvaluationContext.UNIQUENESS_CHECK,
+            layer="biometric",
+            subject_ref=(result.existing_human_id or "")[:24],
+            algorithm_version=result.match_method or "",
+            state_after={
+                "match_found": result.match_found,
+                "match_method": result.match_method,
+                "match_score": result.match_score,
+                "unique_human_proven": False,
+                "certified_100": False,
+            },
+            failure_reason_code="DUPLICATE_FOUND" if result.match_found else "",
+        )
+    except Exception:  # noqa: BLE001
+        pass  # forensic toujours fail-open
 
 
 def check_uniqueness(
@@ -722,12 +827,20 @@ def check_uniqueness(
     threshold: float = 0.85,
     template_bytes_for_match: bytes | None = None,
     threshold_bits: int | None = None,
+    fhe_circuit: FheHammingCircuit | None = None,
 ) -> UniquenessCheckResult:
     """Vérifie si un nouveau template correspond à une identité déjà enregistrée.
 
-    R434 — Routing automatique en trois niveaux (priorité décroissante) :
+    R432 — Routing automatique en quatre niveaux (priorité décroissante) :
 
-    1. hamming_direct (R434 — PRIORITAIRE) :
+    0. fhe_hamming (R432 — PRIORITÉ 0) :
+       Si `fhe_circuit` est fourni ET `template_bytes_for_match` est fourni ET les
+       records contiennent `template_bytes_b64` ou `template_bytes_hex`, utilise
+       FheHammingCircuit.fhe_uniqueness_check() — calcul sur ciphertexts (TFHE simulé).
+       Propriété : le template brut n'est jamais exposé côté serveur dans le protocole cible.
+       Fail-closed : si error=True → fallback vers hamming_direct (pas vers les stubs).
+
+    1. hamming_direct (R434 — priorité 1 si pas de fhe_circuit) :
        Si `template_bytes_for_match` est fourni ET que les records contiennent
        `template_bytes_b64` ou `template_bytes_hex`, utilise `hamming_uniqueness_check()`.
        Avantage : opère sur les bytes bruts — pas de SHA-256 — pas d'effet avalanche.
@@ -750,10 +863,42 @@ def check_uniqueness(
         threshold: seuil de correspondance [0,1] pour hamming_direct et XOR (défaut 0.85).
         template_bytes_for_match: template brut du nouveau candidat.
         threshold_bits: seuil absolu Hamming en bits (prime sur threshold si fourni).
+        fhe_circuit: instance FheHammingCircuit (R432). Si fourni, active le chemin FHE.
 
     Returns:
         UniquenessCheckResult avec match_method indiquant la méthode utilisée.
     """
+    # ── Chemin R432 — FHE Hamming (priorité 0) ──────────────────────────────────
+    if fhe_circuit is not None and template_bytes_for_match:
+        has_bytes_records = any(
+            rec.get("template_bytes_b64") or rec.get("template_bytes_hex")
+            for rec in existing_records
+        )
+        if has_bytes_records:
+            fhe_result = _check_uniqueness_fhe(
+                fhe_circuit,
+                template_bytes_for_match,
+                existing_records,
+                threshold_bits=threshold_bits,
+                threshold=threshold,
+            )
+            # Si pas d'erreur FHE → retourner directement
+            if not fhe_result.error:
+                result = UniquenessCheckResult(
+                    match_found=fhe_result.match_found,
+                    existing_human_id=fhe_result.existing_human_id,
+                    match_score=1.0 if fhe_result.match_found else 0.0,
+                    match_method="fhe_hamming",
+                    note=fhe_result.note,
+                )
+                _emit_uniqueness_forensic(result)
+                return result
+            # Erreur FHE → fail-closed → logger + fallback hamming_direct (pas stub XOR)
+            logger.warning(
+                "check_uniqueness[fhe]: erreur circuit FHE — fallback hamming_direct "
+                "(fail-closed : pas de fallback vers stubs XOR/hash)",
+            )
+
     # ── Chemin R434 : Hamming direct si template_bytes fourni ET records ont bytes ─
     if template_bytes_for_match:
         has_bytes_records = any(
@@ -808,36 +953,8 @@ def check_uniqueness(
                 )
                 break
 
-    # R451 — forensic event check_uniqueness (remplace trace R386 kind-only)
-    try:
-        from src.artcb.trace.forensic import (  # noqa: PLC0415
-            AttemptOutcome, EvaluationContext, ForensicEventType, emit_forensic,
-        )
-        _uq_outcome = AttemptOutcome.REJECTED if result.match_found else AttemptOutcome.SUCCESS
-        _uq_type = (
-            ForensicEventType.BIO_UNIQUENESS_FAIL if result.match_found
-            else ForensicEventType.BIO_UNIQUENESS_OK
-        )
-        emit_forensic(
-            None,
-            event_type=_uq_type,
-            outcome=_uq_outcome,
-            evaluation_context=EvaluationContext.UNIQUENESS_CHECK,
-            layer="biometric",
-            subject_ref=(result.existing_human_id or "")[:24],
-            algorithm_version=result.match_method or "",
-            state_after={
-                "match_found": result.match_found,
-                "match_method": result.match_method,
-                "match_score": result.match_score,
-                "unique_human_proven": False,
-                "certified_100": False,
-            },
-            failure_reason_code="DUPLICATE_FOUND" if result.match_found else "",
-        )
-    except Exception:  # noqa: BLE001
-        pass  # trace facultative — ne jamais bloquer le check
-
+    # R451/R432 — forensic event check_uniqueness (mutualisé via _emit_uniqueness_forensic)
+    _emit_uniqueness_forensic(result)
     return result
 
 
