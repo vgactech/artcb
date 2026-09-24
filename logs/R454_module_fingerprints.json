@@ -1,0 +1,30 @@
+{
+  "r_task": "R454",
+  "generated_at": "2026-09-24T16:52:41.300308+00:00",
+  "git_sha": "6811ed90a14c4e10df45edbf0b0174c7c7a79cb7",
+  "modules": [
+    {
+      "path": "src/artcb/security/webauthn_failclosed.py",
+      "sha256": "0fda40e36f4090f1b8c41f62f7e6d0fc8c78102423609e6cbca0d7d22e271ea6",
+      "module_version": "1.0.1'  # R454 \u2014 WebAuthn FAIL-CLOSED gate"
+    },
+    {
+      "path": "tests/test_r454_webauthn_failclosed.py",
+      "sha256": "5540dce9957ce9b5aaf4bcee55d6a2fd43dc70412a9edb2a58a200002f28fb11",
+      "module_version": ""
+    },
+    {
+      "path": "src/artcb/identity/human_identity_policy.py",
+      "sha256": "9568a4a0ec8604cbe99ba45c86866807d75b7e8b4ea3ea842fce96ed529aa6ce",
+      "module_version": "1.0.0'  # R390 \u2014 auto-versioning"
+    },
+    {
+      "path": "src/api/webauthn_routes.py",
+      "sha256": "17d9fc64325a38667065cb206b640b8ec738e69c63b1b9fd4e22a9446e03b39c",
+      "module_version": "1.0.0'  # R390 \u2014 auto-versioning"
+    }
+  ],
+  "test_count": 25,
+  "test_result": "PASS",
+  "gate_do178c": "124/124 PASS"
+}
