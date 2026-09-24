@@ -1,0 +1,22 @@
+{
+  "r_task": "R459",
+  "generated_at": "2026-09-24T19:22:36.783089Z",
+  "git_sha": "60e8dbbc20d8c279d7abfc2831a0a89360a5512b",
+  "modules": [
+    {
+      "path": "src/api/capability_token_routes.py",
+      "sha256": "64a34387a23a281ac22964c939a7b6ead500ccba6b59fdbc0bc33f6a089cb0f8",
+      "module_version": "1.0.0"
+    },
+    {
+      "path": "tests/test_r459_s09_capability_enforcement_api.py",
+      "sha256": "44e7576e5d50f7a5164271340cb58fc0f8d3b2309cab298a2d48c15907162c60",
+      "module_version": "N/A"
+    }
+  ],
+  "test_results": {
+    "test_e_series": "18/18 PASS",
+    "gate_do178c": "124/124 PASS",
+    "parallel_e15": "20 threads \u2192 1 winner"
+  }
+}

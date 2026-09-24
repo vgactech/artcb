@@ -37,6 +37,7 @@ from src.api.groups_routes import router as groups_router
 from src.api.mining_routes import router as mining_router
 from src.api.notifications_routes import router as notifications_router
 from src.api.p2p_routes import router as p2p_router
+from src.api.capability_token_routes import router as cap_token_router
 from src.api.consensus_routes import router as consensus_router
 from src.api.libp2p_routes import router as libp2p_router
 from src.api.pool_routes import router as pool_router
@@ -424,6 +425,7 @@ def create_app() -> FastAPI:
     app.include_router(mining_router)
     app.include_router(governance_router)
     app.include_router(p2p_router)
+    app.include_router(cap_token_router)
     app.include_router(consensus_router)
     app.include_router(pool_router)
     app.include_router(notifications_router)
