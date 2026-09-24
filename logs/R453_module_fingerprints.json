@@ -1,0 +1,40 @@
+{
+  "r_task": "R453",
+  "generated_at": "2026-09-24T16:37:58.038733+00:00",
+  "git_sha": "769f8df296d843decf16df4e804d58706da0be5c",
+  "modules": [
+    {
+      "path": "tests/test_r453_pbft_view_change_node_failure.py",
+      "sha256": "6e071408853896e05194959f41c18dc3d6898082298dda3c5c21c9136dd500ed",
+      "module_version": ""
+    },
+    {
+      "path": "tests/test_r432_fhe_hamming_circuit.py",
+      "sha256": "1456772f658329c079609e995ef58d99fcd89ae5f6b83b0554f660da06d7a71f",
+      "module_version": "= \"1.1.1\", ("
+    },
+    {
+      "path": "src/artcb/consensus/pbft_view.py",
+      "sha256": "1d102255480c42d3b2833fab6dd670a69630e870930921a169a5f6b95ad541d4",
+      "module_version": "1.0.0'  # R390 \u2014 auto-versioning"
+    },
+    {
+      "path": "src/artcb/consensus/liveness.py",
+      "sha256": "d402b0c43b6123b09d552ec186a4f0a4383c5ecb3e984431a2b621080127bd0f",
+      "module_version": "1.0.0'  # R390 \u2014 auto-versioning"
+    },
+    {
+      "path": "src/artcb/consensus/replica_identity.py",
+      "sha256": "4cc8d2c4d595a65b1530138b5e160003dd2b7c71cc69193e8ab0ad1f4f2c1872",
+      "module_version": "1.0.0'  # R390 \u2014 auto-versioning"
+    },
+    {
+      "path": "src/artcb/chain/split_ledger.py",
+      "sha256": "4d6dff9d65eb99bcb7616c3da04257024cc8d1dbc13c91aff45396daf38c83de",
+      "module_version": "1.0.0'  # R390 \u2014 auto-versioning"
+    }
+  ],
+  "test_count": 25,
+  "test_result": "PASS",
+  "gate_do178c": "124/124 PASS"
+}
