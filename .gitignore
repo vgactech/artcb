@@ -73,3 +73,6 @@ logs/*_artcb_api.json
 **/.ssh/artcb_aws_node_3
 **/artcb_ovh_node_2
 **/.ssh/artcb_ovh_node_2
+
+# R465 — Lexicons locaux (fichiers >100 MB — hors limites GitHub, utiliser Git LFS si nécessaire)
+data/lexicons/
