@@ -19,7 +19,7 @@ HONNÊTETÉ (CERTIFIED_100=false) :
     - L'image brute est rejetée (HTTP 400) à chaque endpoint.
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.2'  # R437 — anti-Sybil gate fail-closed
+MODULE_VERSION = '1.0.4'  # R447 — fail-closed store inaccessible → HTTP 503
 
 import json
 import logging
@@ -191,15 +191,38 @@ def enroll(body: EnrollRequest, request: Request) -> dict[str, Any]:
             },
         )
 
-    # ── R437-A : Gate anti-Sybil CASE_3 fail-closed ────────────────────────────
+    # ── R447 : Gate anti-Sybil CASE_3 — FAIL-CLOSED ────────────────────────────
     # Charger les liens wallet↔human existants avant l'enrôlement.
     # existing_wallet_links est toujours fourni (jamais None sur ce chemin).
-    # Si le store est vide ou inaccessible → liste vide → gate autorise (nouveau humain).
+    #
+    # FAIL-CLOSED (R447 / L-049-R1) :
+    #   Si le store est INACCESSIBLE (exception lecture) → refuser l'enrôlement (HTTP 503).
+    #   Raison : une liste vide signifierait "aucun wallet connu" → CASE_3 désactivé → faux.
+    #   Un store inaccessible = état UNKNOWN ≠ "aucun wallet existant".
+    #
+    #   Exception : fichier absent (p.exists() == False dans load_wallet_human_links)
+    #   → liste vide retournée sans exception = légal (nouveau déploiement, aucun wallet connu).
     try:
         existing_wallet_links = load_wallet_human_links()
     except Exception as exc:
-        logger.warning("enroll: impossible de charger wallet_human_links — gate Sybil actif avec liste vide: %s", exc)
-        existing_wallet_links = []
+        logger.error(
+            "enroll: FAIL-CLOSED — store wallet_human_links inaccessible, "
+            "enrôlement refusé (R447 anti-Sybil P0): %s",
+            exc,
+        )
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "code": "sybil_store_unavailable",
+                "message": (
+                    "Le store d'identité est temporairement inaccessible. "
+                    "L'enrôlement est refusé par sécurité (anti-Sybil fail-closed R447). "
+                    "Réessayez dans quelques instants."
+                ),
+                "unique_human_proven": False,
+                "certified": False,
+            },
+        ) from exc
     # ───────────────────────────────────────────────────────────────────────────
 
     # Inscription
