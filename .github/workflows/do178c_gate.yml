@@ -1,0 +1,159 @@
+name: ARTCB — Gate DO-178C (R458)
+# R458 — Gate bloquant sur TOUS les push vers main et TOUTES les PR.
+#
+# AUTORITÉ FINALE : ce workflow est l'autorité finale pour le gate DO-178C.
+# Contrairement au hook pre-commit local (contournable avec --no-verify),
+# ce CI s'exécute côté GitHub et NE PEUT PAS être contourné par push direct
+# dès lors que la branch protection rule l'impose.
+#
+# Configuration requise (Settings → Branches → main → Branch protection rules) :
+#   ✅ Require status checks to pass before merging
+#   ✅ Status check obligatoire : "DO-178C Gate — Tests critiques ARTCB"
+#   ✅ Require branches to be up to date before merging
+#
+# Périmètre : tests critiques uniquement (biométrie, IR, telemetry, security)
+# Durée cible : < 60s (L-052)
+# CERTIFIED_100=false — ne jamais modifier ce flag ici.
+#
+# Couverture audit AUDIT-SEC-TOTAL couche 15 (CI DO-178C autorité finale).
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "rapports/**"
+      - "logs/**"
+      - "*.md"
+      - "frontend/**"
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "rapports/**"
+      - "logs/**"
+      - "*.md"
+      - "frontend/**"
+
+concurrency:
+  group: do178c-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ARTCB_DEBUG: "true"
+  ARTCB_ENCODE_MODE: "rule-based"
+  ARTCB_LLM_ENABLED: "false"
+  ARTCB_DATA_DIR: "/tmp/artcb_test_data"
+  ARTCB_LOG_DIR: "/tmp/artcb_test_logs"
+  ARTCB_ALLOW_MULTI_WALLET: "true"
+  ARTCB_BOOTSTRAP_NODE: "true"
+  PYTHONPATH: src
+
+jobs:
+  do178c-gate:
+    name: "DO-178C Gate — Tests critiques ARTCB"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Installer dépendances Python
+        run: pip install -r requirements.txt
+
+      - name: Créer .env CI (pas de secret requis pour les tests critiques)
+        env:
+          ARTCB_WALLET_PASSPHRASE: ${{ secrets.ARTCB_WALLET_PASSPHRASE }}
+        run: |
+          cat > .env << EOF
+          ARTCB_DEBUG=true
+          ARTCB_ENCODE_MODE=rule-based
+          ARTCB_LLM_ENABLED=false
+          ARTCB_DATA_DIR=/tmp/artcb_test_data
+          ARTCB_LOG_DIR=/tmp/artcb_test_logs
+          ARTCB_ALLOW_MULTI_WALLET=true
+          ARTCB_BOOTSTRAP_NODE=true
+          ARTCB_WALLET_PASSPHRASE=${ARTCB_WALLET_PASSPHRASE:-artcb_ci_gate_devonly}
+          EOF
+
+      - name: "[DO-178C] Gate — Tests critiques biométrie + sécurité"
+        id: gate
+        run: |
+          echo "=== ARTCB DO-178C Gate — SHA: $GITHUB_SHA ==="
+          echo "=== Ref: $GITHUB_REF | Actor: $GITHUB_ACTOR ==="
+          python3 -m pytest \
+            tests/test_task001_r378_hamming.py \
+            tests/test_task001_r376_uniqueness.py \
+            tests/test_task001_r374_bch.py \
+            tests/test_task001_r373_human_identity_policy.py \
+            tests/test_task001_biometric.py \
+            -v --timeout=30 --tb=short --no-header
+
+      - name: "[DO-178C] Gate — Tests sécurité WebAuthn + D-046"
+        run: |
+          python3 -m pytest \
+            tests/test_r454_webauthn_failclosed.py \
+            tests/test_r455_d046_face_camera_unsupported.py \
+            -v --timeout=30 --tb=short --no-header
+
+      - name: "[DO-178C] Gate — Tests capability tokens + NodeID binding"
+        run: |
+          python3 -m pytest \
+            tests/test_r456_capability_token_single_use.py \
+            tests/test_r457_nodeid_key_binding_adversarial.py \
+            -v --timeout=30 --tb=short --no-header
+
+      - name: "[DO-178C] Résumé gate"
+        if: always()
+        run: |
+          echo "## DO-178C Gate R458" >> $GITHUB_STEP_SUMMARY
+          echo "- SHA : $GITHUB_SHA" >> $GITHUB_STEP_SUMMARY
+          echo "- Ref : $GITHUB_REF" >> $GITHUB_STEP_SUMMARY
+          echo "- Actor : $GITHUB_ACTOR" >> $GITHUB_STEP_SUMMARY
+          echo "- Run ID : $GITHUB_RUN_ID" >> $GITHUB_STEP_SUMMARY
+          echo "- Gate outcome : ${{ steps.gate.outcome }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ CERTIFIED_100=false — Ce gate ne certifie pas le déploiement live." >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ Tests locaux uniquement — TPM physique, multi-nœuds live non couverts." >> $GITHUB_STEP_SUMMARY
+
+  # ── Rapport de statut — détaille ce que ce gate NE couvre PAS ────────────
+  gate-scope:
+    name: "DO-178C Gate — Périmètre et limites (AUDIT-SEC-TOTAL)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    needs: [do178c-gate]
+    if: always()
+
+    steps:
+      - name: Rapport de couverture du gate
+        run: |
+          echo "=== ARTCB AUDIT-SEC-TOTAL — État des couches ==="
+          echo ""
+          echo "COUVERT par ce CI gate (couche 15) :"
+          echo "  ✅ Biométrie locale — BCH/Hamming/XOR/privacy-preserving"
+          echo "  ✅ Sécurité WebAuthn FAIL-CLOSED (D-046 face_camera)"
+          echo "  ✅ Capability tokens usage unique (Issue #90)"
+          echo "  ✅ NodeID ↔ clé binding adversarial (Issue #77)"
+          echo ""
+          echo "NON COUVERT par ce gate (niveau LOCAL/UNIT uniquement) :"
+          echo "  ❌ S01 — TPM physique réel (machines OVH/AWS)"
+          echo "  ❌ S03 — Réseau P2P live multi-nœuds"
+          echo "  ❌ S06 — Wallet isolation réelle entre utilisateurs"
+          echo "  ❌ S09 — capability_token.py branché sur routes API P2P"
+          echo "  ❌ S11 — Consensus PBFT sur infrastructure réelle"
+          echo "  ❌ S12 — Blockchain live — transactions réelles"
+          echo "  ❌ S26 — LIVE 1 nœud vérifié"
+          echo "  ❌ S27 — LIVE multi-nœuds vérifié"
+          echo ""
+          echo "PROCHAINE ÉTAPE vers CERTIFIED_100=true :"
+          echo "  1. Activer branch protection rule sur main (Settings → Branches)"
+          echo "     → 'Require status checks: DO-178C Gate — Tests critiques ARTCB'"
+          echo "  2. R456-integ : brancher capability_token sur routes API P2P"
+          echo "  3. Conduire audit live S26/S27 sur N2/N4/N3"
+          echo ""
+          echo "CERTIFIED_100=false — 2026-09-25"

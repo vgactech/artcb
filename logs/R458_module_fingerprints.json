@@ -1,0 +1,21 @@
+{
+  "r_task": "R458",
+  "generated_at": "2026-09-24T19:04:22.940940Z",
+  "git_sha": "8e97ab59b9d9435100698a233acc3461ffd2f8bc",
+  "modules": [
+    {
+      "path": ".github/workflows/do178c_gate.yml",
+      "sha256": "604ff2c9fd77d471bb2ae5ba5bd13ef1ddcc6ab7141edc21d663f59ebf188c0a",
+      "module_version": "R458"
+    },
+    {
+      "path": "rapports/R458_ci_do178c_gate_audit_sec_total_2026-09-25.md",
+      "sha256": "f61f418b12ec9e7785421e5cb93fad49e41b6f63acb392ac0206d67d84c9fcdd",
+      "module_version": "N/A"
+    }
+  ],
+  "test_results": {
+    "gate_do178c_local": "124/124 PASS",
+    "ci_trigger": "push+PR on main"
+  }
+}
