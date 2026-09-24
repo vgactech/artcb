@@ -1,0 +1,29 @@
+{
+  "git_sha": "94c54287f0c2535a83bb7134a6e22155d3a5db8f",
+  "modules": {
+    "src/artcb/language/__init__.py": {
+      "sha256": "085486d1aead615108712f344ccf67ce7a017accfa6d4be63a315dc429f8ece0",
+      "size": 426
+    },
+    "src/artcb/language/registry.py": {
+      "sha256": "db6094102f3b6d583fa590060e90ead7ce7b843dd4f18b4d8895755933b602e8",
+      "size": 11695
+    },
+    "src/artcb/reasoning/pipeline.py": {
+      "sha256": "38ac57eb37642c4738e2aba42d3eaf1734b3cd10964eea4130614c1f499eaf7d",
+      "size": 13068
+    },
+    "tests/test_r448_language_modules.py": {
+      "sha256": "a797fbe5ddc02d06527c8e4352a9e699164b33234d5f551112e565a6d393beed",
+      "size": 9613
+    },
+    "tests/test_r450_reasoning_pipeline_g4.py": {
+      "sha256": "213d611e53fc13877b5a7c5820a8b99778fb7e57f1bf79519e39476d454c9fa0",
+      "size": 22036
+    },
+    "rules/ARTCB_14_LANGUAGES.json": {
+      "sha256": "c4f1febdc001f681100b36469ac6edd2bf9a04daff657bb5c02342a741e677bf",
+      "size": 12850
+    }
+  }
+}
