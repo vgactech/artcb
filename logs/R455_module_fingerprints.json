@@ -1,0 +1,43 @@
+{
+  "r_task": "R455",
+  "generated_at": "2026-09-24T18:19:03.835216Z",
+  "git_sha": "251cf8e00edc447c7150f5580459c86ec301ef5e",
+  "modules": [
+    {
+      "path": "src/artcb/security/webauthn_failclosed.py",
+      "sha256": "c301de25b83eb4320f9caafa96d970ebf2ad32ceda16ba41ee5b15f27bf28ee6",
+      "module_version": "1.1.0'  # R455 \u2014 D-046 face_camera UNSUPPORTED toutes op\u00e9rations"
+    },
+    {
+      "path": "src/artcb/security/webauthn_store.py",
+      "sha256": "daef6fbd95e7cd67481da83fda42258bb446aacdd1500d2f73dc4b990de751c7",
+      "module_version": "1.1.0'  # R455 \u2014 D-046 MODALITY_FACE retir\u00e9 d'ALLOWED_MODALITIES"
+    },
+    {
+      "path": "src/api/webauthn_routes.py",
+      "sha256": "85391ec36d694dbcfa9645195da9098d6a15debb024f742d8755ee08fe7f7245",
+      "module_version": "1.0.0'  # R390 \u2014 auto-versioning"
+    },
+    {
+      "path": "tests/test_r454_webauthn_failclosed.py",
+      "sha256": "7683b62496525d74afdd32b6b154259fb3f1cc96102652929128b11167f799ec",
+      "module_version": "N/A"
+    },
+    {
+      "path": "tests/test_r455_d046_face_camera_unsupported.py",
+      "sha256": "992a11e2592f54d3189e019d58a3f404edf3b6e6cc1e807b21fb2e5bfc7fe912",
+      "module_version": "N/A"
+    }
+  ],
+  "invariant_checks": [
+    "unique_human_proven=False",
+    "FACE_CAMERA_POLICY=UNSUPPORTED_D046",
+    "ALLOWED_MODALITIES=fingerprint_only",
+    "/face/*=410"
+  ],
+  "test_results": {
+    "test_r455_d046": "20/20 PASS",
+    "test_r454_webauthn_failclosed": "25/25 PASS",
+    "gate_do178c": "124/124 PASS"
+  }
+}

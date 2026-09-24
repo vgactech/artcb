@@ -1,20 +1,25 @@
-"""R454 — Politique WebAuthn FAIL-CLOSED : PIN seul / face_camera → rejeté (Issue #89).
+"""R454/R455 — Politique WebAuthn FAIL-CLOSED : PIN / face_camera → rejeté (Issues #89 / D-046).
 
-Principe fondamental ARTCB (R372 / R373) :
+Principe fondamental ARTCB (R372 / R373 / D-046) :
 
     PIN seul    ≠   preuve biométrique
     face_camera ≠   authenticateur natif WebAuthn
+    face_camera ≡   INTERDIT dans ARTCB jusqu'à nouvel ordre (D-046)
     cross-platform authenticator ≠ authenticateur de plateforme
 
-Ce module implémente un gate FAIL-CLOSED appliqué AVANT toute opération
-sensible (création de wallet, enrôlement, opération économique).
+## D-046 — Décision utilisateur (2026-09-25) : face_camera UNSUPPORTED
 
-Il NE décide PAS de l'authentification réseau — il décide si la méthode
-d'authentification présentée est SUFFISANTE pour une opération donnée.
+    Aucune fonctionnalité ARTCB ne doit accepter face_camera à quelque niveau
+    que ce soit — y compris LOGIN. La seule voie biométrique autorisée passe
+    par un authenticateur WebAuthn/FIDO natif de la plateforme (Touch ID,
+    Face ID OS, Windows Hello) qui expose une preuve cryptographique.
+    ARTCB ne reçoit jamais d'image, n'effectue jamais de reconnaissance faciale.
+
+Ce module implémente un gate FAIL-CLOSED appliqué AVANT toute opération.
 
 ## Hiérarchie des opérations
 
-    OPERATION_LOGIN           → tolérant (face_camera, PIN autorisés)
+    OPERATION_LOGIN           → tolérant (PIN autorisé), FACE_CAMERA INTERDIT
     OPERATION_WALLET_CREATE   → strict (WebAuthn platform + UV requis)
     OPERATION_ENROLL_DEVICE   → strict (WebAuthn platform + UV requis)
     OPERATION_ECONOMIC        → strict (WebAuthn platform + UV requis)
@@ -28,9 +33,9 @@ d'authentification présentée est SUFFISANTE pour une opération donnée.
 
 ## Invariants inviolables
 
-    1. face_camera n'autorise JAMAIS OPERATION_WALLET_CREATE
-    2. PIN (UV=true, méthode=PIN ou UNKNOWN) n'autorise JAMAIS OPERATION_ECONOMIC
-    3. cross-platform authenticator → même restriction que PIN
+    1. face_camera est UNSUPPORTED pour TOUTES les opérations (D-046)
+    2. PIN n'autorise JAMAIS OPERATION_ECONOMIC / WALLET_CREATE / ADMIN
+    3. cross-platform sans platform_bound → refus WALLET_CREATE / ADMIN
     4. unique_human_proven reste toujours False — ce module ne le modifie pas
     5. FAIL-CLOSED : doute → refus (jamais d'autorisation par défaut)
 
@@ -39,7 +44,10 @@ CERTIFIED_100 = False.
 
 from __future__ import annotations
 
-MODULE_VERSION = '1.0.1'  # R454 — WebAuthn FAIL-CLOSED gate
+MODULE_VERSION = '1.1.0'  # R455 — D-046 face_camera UNSUPPORTED toutes opérations
+
+# D-046 : reconnaissance faciale applicative INTERDITE dans ARTCB jusqu'à nouvel ordre
+FACE_CAMERA_POLICY = "UNSUPPORTED_D046"
 
 import enum
 import logging
@@ -66,10 +74,14 @@ class AuthModality(str, enum.Enum):
     """Modalité déclarée lors de l'authentification.
 
     Provient de la session / de la réponse d'assertion WebAuthn.
+
+    D-046 : FACE_CAMERA est UNSUPPORTED — rejeté pour toutes les opérations ARTCB.
+    La seule biométrie acceptée passe par WebAuthn natif (Touch ID, Face ID OS,
+    Windows Hello) — ARTCB ne reçoit jamais d'image faciale.
     """
     WEBAUTHN_PLATFORM  = "webauthn_platform"  # authentificateur natif (Touch ID, Face ID, Windows Hello)
     WEBAUTHN_ROAMING   = "webauthn_roaming"   # clé de sécurité physique cross-platform
-    FACE_CAMERA        = "face_camera"        # caméra seule — FALLBACK ACCESSIBILITÉ uniquement
+    FACE_CAMERA        = "face_camera"        # D-046 : INTERDIT — rejeté pour toutes opérations
     PIN_ONLY           = "pin_only"           # PIN présenté directement au serveur (sans WebAuthn)
     UNKNOWN            = "unknown"            # modalité non déterminée
 
@@ -78,6 +90,7 @@ class AuthModality(str, enum.Enum):
         """Extrait la modalité depuis une session ARTCB.
 
         Politique conservatrice : en cas de doute → UNKNOWN.
+        D-046 : face_camera détecté → FACE_CAMERA (sera rejeté par evaluate_gate).
         """
         raw = str(session.get("modality") or "").lower().strip()
         if raw in {"webauthn_fingerprint", "webauthn_face", "platform"}:
@@ -85,7 +98,7 @@ class AuthModality(str, enum.Enum):
         if raw in {"webauthn_roaming", "cross-platform", "roaming"}:
             return cls.WEBAUTHN_ROAMING
         if raw == "face_camera":
-            return cls.FACE_CAMERA
+            return cls.FACE_CAMERA  # détecté et classifié pour rejet immédiat
         if raw in {"pin", "pin_only", "password"}:
             return cls.PIN_ONLY
         return cls.UNKNOWN
@@ -95,14 +108,14 @@ class AuthModality(str, enum.Enum):
         return self in {AuthModality.WEBAUTHN_PLATFORM, AuthModality.WEBAUTHN_ROAMING}
 
     def is_face_camera(self) -> bool:
+        """D-046 : True si face_camera détecté (sera rejeté pour toutes opérations)."""
         return self == AuthModality.FACE_CAMERA
 
     def is_pin_equivalent(self) -> bool:
-        """PIN seul, inconnu ou caméra → équivalent PIN pour la politique."""
+        """PIN seul ou inconnu → équivalent PIN pour la politique d'unicité."""
         return self in {
             AuthModality.PIN_ONLY,
             AuthModality.UNKNOWN,
-            AuthModality.FACE_CAMERA,
         }
 
 
@@ -190,6 +203,15 @@ class WebAuthnGateResult:
 
 # ─── Gate FAIL-CLOSED ─────────────────────────────────────────────────────────
 
+# D-046 : toutes les opérations sont bloquées pour FACE_CAMERA (ensemble universel)
+_ALL_OPERATIONS = frozenset({
+    ArtcbOperation.LOGIN,
+    ArtcbOperation.WALLET_CREATE,
+    ArtcbOperation.ENROLL_DEVICE,
+    ArtcbOperation.ECONOMIC,
+    ArtcbOperation.ADMIN,
+})
+
 # Opérations qui exigent un authentificateur WebAuthn natif (platform ou roaming)
 _STRICT_OPERATIONS = frozenset({
     ArtcbOperation.WALLET_CREATE,
@@ -205,7 +227,7 @@ _PLATFORM_REQUIRED_OPERATIONS = frozenset({
     ArtcbOperation.ADMIN,
 })
 
-# Opérations qui refusent PIN/UNKNOWN/face_camera quelle que soit l'assertion
+# Opérations qui refusent PIN/UNKNOWN quelle que soit l'assertion
 _PIN_BLOCKED_OPERATIONS = frozenset({
     ArtcbOperation.WALLET_CREATE,
     ArtcbOperation.ECONOMIC,
@@ -221,15 +243,16 @@ def evaluate_gate(ctx: WebAuthnContext, operation: ArtcbOperation) -> WebAuthnGa
     """
     _log_entry(ctx, operation)
 
-    # ── Vérification 0 : signature WebAuthn valide ──────────────────────────
+    # ── Vérification 0 (D-046) : face_camera INTERDIT pour TOUTES les opérations
+    if ctx.modality.is_face_camera():
+        return _deny(ctx, operation, "face_camera_unsupported_d046",
+                     "face_camera INTERDIT (D-046) — aucune opération ARTCB ne doit accepter "
+                     "la reconnaissance faciale applicative. Utiliser WebAuthn/FIDO natif.")
+
+    # ── Vérification 1 : signature WebAuthn valide ──────────────────────────
     if operation in _STRICT_OPERATIONS and not ctx.assertion_valid:
         return _deny(ctx, operation, "assertion_not_valid",
                      "Signature WebAuthn non vérifiée — opération refusée")
-
-    # ── Vérification 1 : face_camera → bloqué pour toute opération stricte ──
-    if ctx.modality.is_face_camera() and operation in _STRICT_OPERATIONS:
-        return _deny(ctx, operation, "face_camera_not_sufficient",
-                     "face_camera = FALLBACK ACCESSIBILITÉ uniquement — ne prouve pas l'identité WebAuthn")
 
     # ── Vérification 2 : modalité non-WebAuthn pour opérations strictes ──────
     if operation in _STRICT_OPERATIONS and not ctx.modality.is_native_webauthn():

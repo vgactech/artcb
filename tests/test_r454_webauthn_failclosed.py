@@ -116,11 +116,11 @@ def test_w02_unknown_uv_wallet_create_denied():
 
 
 def test_w03_face_camera_wallet_create_denied():
-    """W03 — face_camera + WALLET_CREATE → refusé (face_camera_not_sufficient)."""
+    """W03 — face_camera + WALLET_CREATE → refusé (D-046 : face_camera_unsupported_d046)."""
     ctx = _face_camera_ctx()
     result = evaluate_gate(ctx, ArtcbOperation.WALLET_CREATE)
     assert not result.allowed
-    assert result.reason == "face_camera_not_sufficient"
+    assert result.reason == "face_camera_unsupported_d046"
     assert result.unique_human_proven is False
 
 
@@ -231,11 +231,16 @@ def test_w15_platform_biometric_admin_allowed():
     assert result.allowed
 
 
-def test_w16_face_camera_login_allowed():
-    """W16 — face_camera + LOGIN → autorisé (login est tolérant)."""
+def test_w16_face_camera_login_denied_d046():
+    """W16 — D-046 : face_camera + LOGIN → refusé (face_camera_unsupported_d046).
+
+    Avant D-046 : face_camera était toléré pour LOGIN.
+    Après D-046 : face_camera interdit pour TOUTES les opérations.
+    """
     ctx = _face_camera_ctx()
     result = evaluate_gate(ctx, ArtcbOperation.LOGIN)
-    assert result.allowed, f"Login face_camera doit être autorisé: {result.reason}"
+    assert not result.allowed, "D-046 : face_camera doit être refusé même pour LOGIN"
+    assert result.reason == "face_camera_unsupported_d046"
 
 
 def test_w17_pin_login_allowed():
@@ -264,10 +269,10 @@ def test_w19_unique_human_proven_always_false():
     """W19 — unique_human_proven=False dans tous les cas (autorisé ET refusé)."""
     cases = [
         (_platform_ctx(), ArtcbOperation.WALLET_CREATE),   # autorisé
-        (_face_camera_ctx(), ArtcbOperation.WALLET_CREATE), # refusé
+        (_face_camera_ctx(), ArtcbOperation.WALLET_CREATE), # refusé D-046
         (_pin_ctx(), ArtcbOperation.ECONOMIC),              # refusé
         (_platform_ctx(), ArtcbOperation.LOGIN),            # autorisé
-        (_face_camera_ctx(), ArtcbOperation.LOGIN),         # autorisé
+        (_face_camera_ctx(), ArtcbOperation.LOGIN),         # refusé D-046
     ]
     for ctx, op in cases:
         result = evaluate_gate(ctx, op)
@@ -342,23 +347,27 @@ def test_w24_from_session_platform():
 # ─── Groupe D — Helpers de haut niveau ───────────────────────────────────────
 
 def test_w25_high_level_helpers_consistent():
-    """W25 — Helpers check_wallet_creation / check_economic / check_device_enrollment cohérents."""
+    """W25 — Helpers check_wallet_creation / check_economic / check_device_enrollment cohérents.
+
+    D-046 : face_camera refusé pour TOUTES les opérations y compris LOGIN.
+    """
     valid_ctx = _platform_ctx()
     invalid_ctx = _face_camera_ctx()
 
-    # Valides
+    # Valides (WebAuthn platform + BIOMETRIC)
     assert check_wallet_creation(valid_ctx).allowed
     assert check_economic_operation(valid_ctx).allowed
     assert check_device_enrollment(valid_ctx).allowed
     assert check_login(valid_ctx).allowed
 
-    # Invalides
+    # Invalides (face_camera)
     assert not check_wallet_creation(invalid_ctx).allowed
     assert not check_economic_operation(invalid_ctx).allowed
     assert not check_device_enrollment(invalid_ctx).allowed
 
-    # Login toujours OK même avec face_camera
-    assert check_login(invalid_ctx).allowed
+    # D-046 : face_camera refusé aussi pour LOGIN
+    assert not check_login(invalid_ctx).allowed
+    assert check_login(invalid_ctx).reason == "face_camera_unsupported_d046"
 
     # PIN : wallet refusé, login OK
     pin_ctx = _pin_ctx()

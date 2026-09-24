@@ -1,14 +1,18 @@
-"""Persist WebAuthn public credentials and face-unlock device hashes.
+"""Persist WebAuthn public credentials.
 R387 (TASK-006 2026-09-19) : broadcast_credential() — fanout HTTP fire-and-forget
     vers les nœuds officiels seed_http_map() après save_credential().
     Les credentials WebAuthn sont des données PUBLIQUES (credential_id + public_key).
     La clé privée ne quitte jamais l'appareil de l'utilisateur.
 
 Never stores raw fingerprint/face images. Files live under ARTCB_DATA_DIR.
+
+D-046 (2026-09-25) : face_camera / MODALITY_FACE retiré d'ALLOWED_MODALITIES.
+    Aucune fonctionnalité ARTCB n'accepte la reconnaissance faciale applicative.
+    La biométrie passe uniquement par WebAuthn/FIDO natif de la plateforme.
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.1.0'  # R455 — D-046 MODALITY_FACE retiré d'ALLOWED_MODALITIES
 
 import json
 import logging
@@ -21,9 +25,11 @@ _lock = threading.Lock()
 _log = logging.getLogger("artcb.security.webauthn_store")
 
 MODALITY_FINGERPRINT = "fingerprint"
-MODALITY_FACE = "face"
+MODALITY_FACE = "face"          # D-046 : conservé pour retrocompatibilité lecture archive
 MODALITY_BOTH = "both"
-ALLOWED_MODALITIES = frozenset({MODALITY_FINGERPRINT, MODALITY_FACE, MODALITY_BOTH})
+# D-046 : MODALITY_FACE retiré — le store refuse l'enrôlement face_camera
+ALLOWED_MODALITIES = frozenset({MODALITY_FINGERPRINT})
+FACE_CAMERA_UNSUPPORTED = True  # sentinel D-046 — vérifié par tests R455
 
 
 def _data_dir() -> Path:

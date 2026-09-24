@@ -93,11 +93,13 @@ ASSURANCE_LEVELS: dict[str, dict[str, Any]] = {
     },
 }
 
-# R350 (2026-09-17) — face_camera est une voie de FALLBACK ACCESSIBILITÉ uniquement.
-# Elle ne constitue pas une preuve d'identité humaine ARTCB.
-# Toujours privilégier WebAuthn natif (Touch ID / Face ID / biométrie OS).
-FACE_CAMERA_INACTIVE_PRODUCTION = False  # True = désactiver complètement en prod
-FACE_CAMERA_LABEL = "Vérification de présence faciale locale (fallback accessibilité)"
+# D-046 (2026-09-25) — face_camera INTERDIT dans ARTCB jusqu'à nouvel ordre.
+# Aucune fonctionnalité face_camera ne doit être active ou accessible.
+# Les endpoints /face/* retournent 410 Gone.
+# La seule voie biométrique autorisée est WebAuthn/FIDO natif (Touch ID, Face ID OS,
+# Windows Hello) — ARTCB ne reçoit jamais d'image faciale.
+FACE_CAMERA_INACTIVE_PRODUCTION = True   # D-046 : forcé True
+FACE_CAMERA_LABEL = "[D-046 DÉSACTIVÉ] face_camera interdit"
 
 
 def _audit(event: str, *, wallet: str, request: Request | None = None, **fields: Any) -> None:
@@ -455,128 +457,59 @@ def webauthn_login_verify(body: LoginFinishBody, request: Request) -> dict[str, 
 
 
 @router.post("/face/enroll/options")
-def face_enroll_options(body: FaceBeginBody) -> dict[str, Any]:
-    nonce = secrets.token_hex(32)
-    _face_challenges[nonce] = {
-        "wallet_name": body.name,
-        "kind": "enroll",
-        "expires_at": time.time() + _FACE_TTL,
-        "create_wallet": body.create_wallet,
-    }
-    return {
-        "nonce": nonce,
-        "liveness_required": True,
-        "camera_facing_mode": "user",
-        "raw_biometric_never_stored": True,
-        "assurance": ASSURANCE_LEVELS["face_camera"],
-        "label": FACE_CAMERA_LABEL,
-        "instructions": (
-            "Placez votre visage dans le cadre. Aucune photo n'est envoyée au serveur. "
-            "Vérification de présence faciale locale, puis un secret d'appareil est lié au wallet. "
-            "Ceci ne prouve pas une identité humaine unique."
-        ),
-    }
+def face_enroll_options(body: FaceBeginBody) -> dict[str, Any]:  # noqa: ARG001
+    # D-046 : face_camera désactivé — aucune opération faciale acceptée
+    raise HTTPException(
+        status_code=410,
+        detail={
+            "error": "face_camera_unsupported_d046",
+            "message": "face_camera est interdit dans ARTCB (D-046). "
+                       "Utiliser WebAuthn/FIDO natif (Touch ID, Face ID OS, Windows Hello).",
+            "policy": "UNSUPPORTED_D046",
+        },
+    )
 
 
 @router.post("/face/enroll/verify")
-def face_enroll_verify(body: FaceFinishBody, request: Request) -> dict[str, Any]:
-    _reject_raw_image(body)
-    rec = _face_challenges.pop(body.nonce, None)
-    if not rec or rec.get("wallet_name") != body.name or rec.get("kind") != "enroll":
-        _audit("face_enroll_failed", wallet=body.name, request=request, reason="face_challenge_invalid")
-        raise HTTPException(status_code=400, detail="face_challenge_invalid")
-    if time.time() > rec["expires_at"]:
-        _audit("face_enroll_failed", wallet=body.name, request=request, reason="face_challenge_expired")
-        raise HTTPException(status_code=400, detail="face_challenge_expired")
-    if not body.liveness_ok:
-        _audit("face_enroll_failed", wallet=body.name, request=request, reason="face_liveness_required")
-        raise HTTPException(status_code=400, detail="face_liveness_required")
-    wallet = _create_wallet_if_needed(body.name, create=body.create_wallet, request=request)
-    secret_hash = hashlib.sha256(body.device_secret.encode("utf-8")).hexdigest()
-    save_face(
-        {
-            "wallet_name": body.name,
-            "address": wallet["address"],
-            "secret_hash": secret_hash,
-            "liveness": True,
-        }
+def face_enroll_verify(body: FaceFinishBody, request: Request) -> dict[str, Any]:  # noqa: ARG001
+    # D-046 : face_camera désactivé — aucune opération faciale acceptée
+    raise HTTPException(
+        status_code=410,
+        detail={
+            "error": "face_camera_unsupported_d046",
+            "message": "face_camera est interdit dans ARTCB (D-046). "
+                       "Utiliser WebAuthn/FIDO natif (Touch ID, Face ID OS, Windows Hello).",
+            "policy": "UNSUPPORTED_D046",
+        },
     )
-    _mark_auth_methods(body.name, "face_camera")
-    _audit(
-        "face_enroll_ok",
-        wallet=body.name,
-        request=request,
-        wallet_created=wallet["created"],
-        level=ASSURANCE_LEVELS["face_camera"]["level"],
-        unique_human_proven=False,
-    )
-    session = issue_session(wallet_name=body.name, address=str(wallet["address"]))
-    out: dict[str, Any] = {
-        "ok": True,
-        "enrolled": "face_camera",
-        "label": FACE_CAMERA_LABEL,
-        "assurance": ASSURANCE_LEVELS["face_camera"],
-        "unique_human_proven": False,
-        "raw_biometric_stored": False,
-        **session,
-        "wallet_created": wallet["created"],
-        "address": wallet["address"],
-        "name": body.name,
-    }
-    if wallet.get("seed_hex"):
-        out["seed_hex"] = wallet["seed_hex"]
-        out["WARNING"] = wallet.get("WARNING")
-    return out
 
 
 @router.post("/face/login")
-def face_login(body: FaceFinishBody, request: Request) -> dict[str, Any]:
-    _reject_raw_image(body)
-    rec = _face_challenges.pop(body.nonce, None)
-    if not rec or rec.get("wallet_name") != body.name:
-        _audit("face_login_failed", wallet=body.name, request=request, reason="face_challenge_invalid")
-        raise HTTPException(status_code=400, detail="face_challenge_invalid")
-    if time.time() > rec["expires_at"]:
-        _audit("face_login_failed", wallet=body.name, request=request, reason="face_challenge_expired")
-        raise HTTPException(status_code=400, detail="face_challenge_expired")
-    if not body.liveness_ok:
-        _audit("face_login_failed", wallet=body.name, request=request, reason="face_liveness_required")
-        raise HTTPException(status_code=401, detail="face_liveness_required")
-    stored = find_face(body.name)
-    if not stored:
-        _audit("face_login_failed", wallet=body.name, request=request, reason="face_not_enrolled")
-        raise HTTPException(status_code=404, detail="face_not_enrolled")
-    digest = hashlib.sha256(body.device_secret.encode("utf-8")).hexdigest()
-    if digest != stored.get("secret_hash"):
-        _audit("face_login_failed", wallet=body.name, request=request, reason="face_unlock_invalid")
-        raise HTTPException(status_code=401, detail="face_unlock_invalid")
-    _audit("face_login_ok", wallet=body.name, request=request, level=ASSURANCE_LEVELS["face_camera"]["level"])
-    session = issue_session(wallet_name=body.name, address=str(stored.get("address") or ""))
-    session["ok"] = True
-    session["modality"] = "face_camera"
-    session["label"] = FACE_CAMERA_LABEL
-    session["assurance"] = ASSURANCE_LEVELS["face_camera"]
-    session["unique_human_proven"] = False
-    session["raw_biometric_stored"] = False
-    return session
+def face_login(body: FaceFinishBody, request: Request) -> dict[str, Any]:  # noqa: ARG001
+    # D-046 : face_camera désactivé — y compris le login
+    raise HTTPException(
+        status_code=410,
+        detail={
+            "error": "face_camera_unsupported_d046",
+            "message": "face_camera est interdit dans ARTCB (D-046). "
+                       "Utiliser WebAuthn/FIDO natif (Touch ID, Face ID OS, Windows Hello).",
+            "policy": "UNSUPPORTED_D046",
+        },
+    )
 
 
 @router.post("/face/login/options")
-def face_login_options(body: FaceBeginBody) -> dict[str, Any]:
-    if not find_face(body.name):
-        raise HTTPException(status_code=404, detail="face_not_enrolled")
-    nonce = secrets.token_hex(32)
-    _face_challenges[nonce] = {
-        "wallet_name": body.name,
-        "kind": "login",
-        "expires_at": time.time() + _FACE_TTL,
-    }
-    return {
-        "nonce": nonce,
-        "liveness_required": True,
-        "camera_facing_mode": "user",
-        "raw_biometric_never_stored": True,
-    }
+def face_login_options(body: FaceBeginBody) -> dict[str, Any]:  # noqa: ARG001
+    # D-046 : face_camera désactivé — y compris les options de login
+    raise HTTPException(
+        status_code=410,
+        detail={
+            "error": "face_camera_unsupported_d046",
+            "message": "face_camera est interdit dans ARTCB (D-046). "
+                       "Utiliser WebAuthn/FIDO natif (Touch ID, Face ID OS, Windows Hello).",
+            "policy": "UNSUPPORTED_D046",
+        },
+    )
 
 
 # ─── R387 — TASK-006 : Endpoint de réception des credentials WebAuthn répliqués ───
