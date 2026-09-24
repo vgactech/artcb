@@ -1,0 +1,16 @@
+{
+  "r_task": "R457",
+  "generated_at": "2026-09-24T18:35:33.936557Z",
+  "git_sha": "4c744ba9d210c46bbaf49bb0f90d01e802b98bd5",
+  "modules": [
+    {
+      "path": "tests/test_r457_nodeid_key_binding_adversarial.py",
+      "sha256": "bb7095f2ffb7250905a5905a572962374d7fbd2537ee6a38a04b316502838480",
+      "module_version": "N/A"
+    }
+  ],
+  "test_results": {
+    "test_r457": "16/16 PASS",
+    "gate_do178c": "124/124 PASS"
+  }
+}
