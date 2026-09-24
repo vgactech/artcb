@@ -1,7 +1,7 @@
 """FastAPI application — ARTCB MVP Phase 2+3."""
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
 
 import logging
 import os
@@ -57,6 +57,7 @@ from src.api.reflex_routes import router as reflex_router
 from src.api.reasoning_routes import router as reasoning_router
 from src.api.anon_wallet_routes import router as anon_wallet_router
 from src.api.admin_device_binding_routes import router as admin_device_binding_router
+from src.api.node_tpm_binding_routes import router as node_tpm_binding_router
 
 # Any Replit account — never a named Autoscale hostname in git.
 REPLIT_CORS_ORIGIN_REGEX = r"https://.*\.(replit\.app|repl\.co|replit\.dev)"
@@ -453,6 +454,8 @@ def create_app() -> FastAPI:
     app.include_router(ops_router)
     # R379 — Admin device binding reset (opérateur uniquement)
     app.include_router(admin_device_binding_router)
+    # R461 — Diffusion P2P du NodeTpmBinding (TPM EK → NodeID)
+    app.include_router(node_tpm_binding_router)
     logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
 
     @app.get("/live")

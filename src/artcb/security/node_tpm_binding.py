@@ -37,7 +37,7 @@ Référence : rapport R460 — 2026-09-25
 
 from __future__ import annotations
 
-MODULE_VERSION = "1.0.1"  # R460 — liaison TPM EK → NodeID
+MODULE_VERSION = "1.0.2"  # R460 — liaison TPM EK → NodeID
 
 import hashlib
 import json
@@ -67,6 +67,7 @@ except Exception:  # pragma: no cover
 # ── Constantes ───────────────────────────────────────────────────────────────
 
 BINDING_PROTOCOL = "ARTCB-NODE-TPM-BINDING-v1"
+BINDING_PROTOCOL_V2 = "ARTCB-NODE-TPM-BINDING-v2"  # R462 — avec PCR quote
 TPM_PROVEN_LEVELS = {"A", "B"}           # niveaux qui autorisent tpm_proven=True
 DEBUG_MODE = True                         # R460 — mode DEBUG toujours actif
 
@@ -85,13 +86,17 @@ def _make_payload(
     env_type: str,
     nonce: str,
     timestamp: str,
+    # R462 — champs PCR (optionnels, inclus dans la signature si présents)
+    tpm_pcr0_sha256: str | None = None,
+    tpm_quote_nonce: str | None = None,
 ) -> dict[str, Any]:
     """Construit le payload JSON canonique qui sera signé.
 
     Tous les champs sont inclus dans la signature — toute altération invalide la vérif.
+    R462 : tpm_pcr0_sha256 et tpm_quote_nonce inclus dans la signature si présents.
     """
-    return {
-        "protocol": BINDING_PROTOCOL,
+    payload: dict[str, Any] = {
+        "protocol": BINDING_PROTOCOL_V2 if (tpm_pcr0_sha256 or tpm_quote_nonce) else BINDING_PROTOCOL,
         "node_id": node_id,
         "device_fingerprint": device_fingerprint,
         "hardware_assurance_level": hardware_assurance_level,
@@ -104,6 +109,13 @@ def _make_payload(
         "nonce": nonce,
         "timestamp": timestamp,
     }
+    # R462 — PCR0 et nonce quote inclus dans le payload signé si fournis
+    # Fail-honest : None signifie "non mesuré", jamais inventé
+    if tpm_pcr0_sha256 is not None:
+        payload["tpm_pcr0_sha256"] = tpm_pcr0_sha256
+    if tpm_quote_nonce is not None:
+        payload["tpm_quote_nonce"] = tpm_quote_nonce
+    return payload
 
 
 def _canonical_bytes(payload: dict[str, Any]) -> bytes:
@@ -139,13 +151,17 @@ class NodeTpmBinding:
     mldsa65_public_key_hex: str | None       # clé publique ML-DSA-65 (si liboqs)
     mldsa65_signature_hex: str | None        # signature ML-DSA-65 (si liboqs)
     hybrid_and: bool                         # True si les deux signatures présentes
+    # R462 — PCR0 et nonce quote (optionnels — None si non mesuré, jamais inventés)
+    tpm_pcr0_sha256: str | None = None       # PCR0 SHA-256 lu par tpm2_pcrread (D-045)
+    tpm_quote_nonce: str | None = None       # nonce anti-rejeu pour la quote PCR
+    tpm_pcr_proven: bool = False             # True ssi pcr0_sha256 présent + niveau A/B
     certified: bool = False                  # invariant absolu
     unique_human_proven: bool = False        # invariant absolu
     note: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "protocol": BINDING_PROTOCOL,
+        d = {
+            "protocol": BINDING_PROTOCOL_V2 if self.tpm_pcr0_sha256 else BINDING_PROTOCOL,
             "node_id": self.node_id,
             "device_fingerprint": self.device_fingerprint,
             "hardware_assurance_level": self.hardware_assurance_level,
@@ -162,10 +178,15 @@ class NodeTpmBinding:
             "mldsa65_public_key_hex": self.mldsa65_public_key_hex,
             "mldsa65_signature_hex": self.mldsa65_signature_hex,
             "hybrid_and": self.hybrid_and,
+            # R462
+            "tpm_pcr0_sha256": self.tpm_pcr0_sha256,
+            "tpm_quote_nonce": self.tpm_quote_nonce,
+            "tpm_pcr_proven": self.tpm_pcr_proven,
             "certified": self.certified,
             "unique_human_proven": self.unique_human_proven,
             "note": self.note,
         }
+        return d
 
 
 @dataclass
@@ -222,6 +243,9 @@ def create_node_tpm_binding(
     env_type: str = "unknown",
     mldsa65_secret_key_bytes: bytes | None = None,
     mldsa65_public_key_bytes: bytes | None = None,
+    # R462 — PCR0 et nonce quote (None si non mesuré, jamais inventés)
+    tpm_pcr0_sha256: str | None = None,
+    tpm_quote_nonce: str | None = None,
 ) -> NodeTpmBinding:
     """Crée un binding NodeID ↔ empreinte matérielle signé par la clé Ed25519 du node.
 
@@ -265,7 +289,13 @@ def create_node_tpm_binding(
     nonce = secrets.token_hex(32)
     timestamp = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    # ── Payload canonique ─────────────────────────────────────────────────────
+    # ── R462 — tpm_pcr_proven : PCR0 présent + niveau A/B ────────────────────
+    tpm_pcr_proven = (
+        hardware_assurance_level in TPM_PROVEN_LEVELS
+        and bool(tpm_pcr0_sha256)
+    )
+
+    # ── Payload canonique (v2 si PCR présent) ────────────────────────────────
     payload = _make_payload(
         node_id=node_id,
         device_fingerprint=device_fingerprint,
@@ -277,6 +307,8 @@ def create_node_tpm_binding(
         env_type=env_type,
         nonce=nonce,
         timestamp=timestamp,
+        tpm_pcr0_sha256=tpm_pcr0_sha256,
+        tpm_quote_nonce=tpm_quote_nonce,
     )
     message = _canonical_bytes(payload)
 
@@ -315,11 +347,14 @@ def create_node_tpm_binding(
 
     if DEBUG_MODE:
         logger.debug(
-            "[R460][DEBUG] create_node_tpm_binding node_id=%s level=%s tpm_proven=%s hybrid=%s",
+            "[R461/R462][DEBUG] create_node_tpm_binding node_id=%s level=%s "
+            "tpm_proven=%s pcr_proven=%s hybrid=%s pcr0=%s",
             node_id,
             hardware_assurance_level,
             tpm_proven,
+            tpm_pcr_proven,
             hybrid_and,
+            tpm_pcr0_sha256[:16] + "..." if tpm_pcr0_sha256 else None,
         )
 
     return NodeTpmBinding(
@@ -339,6 +374,9 @@ def create_node_tpm_binding(
         mldsa65_public_key_hex=mldsa_pub_hex,
         mldsa65_signature_hex=mldsa_sig_hex,
         hybrid_and=hybrid_and,
+        tpm_pcr0_sha256=tpm_pcr0_sha256,
+        tpm_quote_nonce=tpm_quote_nonce,
+        tpm_pcr_proven=tpm_pcr_proven,
         certified=False,
         unique_human_proven=False,
         note=". ".join(note_parts),
@@ -401,7 +439,7 @@ def verify_node_tpm_binding(
             certified=False,
         )
 
-    # ── 2. Reconstruire le payload canonique ──────────────────────────────────
+    # ── 2. Reconstruire le payload canonique (v1 ou v2 selon PCR) ────────────
     payload = _make_payload(
         node_id=binding.node_id,
         device_fingerprint=binding.device_fingerprint,
@@ -413,6 +451,9 @@ def verify_node_tpm_binding(
         env_type=binding.env_type,
         nonce=binding.nonce,
         timestamp=binding.timestamp,
+        # R462 — inclure PCR dans le payload si présents (même traitement que à la création)
+        tpm_pcr0_sha256=binding.tpm_pcr0_sha256,
+        tpm_quote_nonce=binding.tpm_quote_nonce,
     )
     message = _canonical_bytes(payload)
 
