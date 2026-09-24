@@ -487,10 +487,10 @@ class TestFheInvariants:
         assert result.match_method == "fhe_hamming"
 
     def test_g04_module_version_is_r432(self) -> None:
-        """G04 — MODULE_VERSION de homomorphic.py est 1.1.0 (R432)."""
+        """G04 — MODULE_VERSION de homomorphic.py est 1.1.1 (R432 auto-versioning)."""
         import src.artcb.crypto.homomorphic as hom
-        assert hom.MODULE_VERSION == "1.1.0", (
-            f"Attendu 1.1.0, obtenu {hom.MODULE_VERSION}"
+        assert hom.MODULE_VERSION == "1.1.1", (
+            f"Attendu 1.1.1, obtenu {hom.MODULE_VERSION}"
         )
 
     def test_g05_protocol_constant(self) -> None:
