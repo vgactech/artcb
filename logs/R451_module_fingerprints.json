@@ -1,0 +1,21 @@
+{
+  "git_sha": "8ed880b5e6d549bb8aecc4265a13fe763908f244",
+  "modules": {
+    "src/artcb/trace/forensic.py": {
+      "sha256": "9c71f0dd4c5cbd2250b2ef43f341b0516e0946ebb648f7afe44ed8d4fd9ded2e",
+      "size": 34584
+    },
+    "src/artcb/reasoning/pipeline.py": {
+      "sha256": "1c7da8b87c1400668973394b1d6607917b2e85a14a2dd61d249a1ae0a76e0395",
+      "size": 20722
+    },
+    "src/artcb/identity/biometric_onchain.py": {
+      "sha256": "e5d01fa52671e6f50dd12fc94f823bf9d5aaa0010bfe8ad0f6871ed001a40f8b",
+      "size": 46866
+    },
+    "tests/test_r451_forensic_event_ledger.py": {
+      "sha256": "668883e93394a5cab4fa19daf87854098f1126058c286d7948dfd9359efb3e32",
+      "size": 24952
+    }
+  }
+}
