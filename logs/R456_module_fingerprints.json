@@ -1,0 +1,21 @@
+{
+  "r_task": "R456",
+  "generated_at": "2026-09-24T18:30:33.075334Z",
+  "git_sha": "be6e9520626c8835adf8c9ee4d1279a1a3e40a03",
+  "modules": [
+    {
+      "path": "src/artcb/authz/capability_token.py",
+      "sha256": "336241b57d2e8f366a8a2c3157c336045f61e00b7a265359c1c6b8f77da6ac7d",
+      "module_version": "1.0.0'  # R456 \u2014 capability token single-use"
+    },
+    {
+      "path": "tests/test_r456_capability_token_single_use.py",
+      "sha256": "bd76bfdc0a32c8fd36022876290c2bcf0c1a0e92bab73374a886cb54fefe1b27",
+      "module_version": "N/A"
+    }
+  ],
+  "test_results": {
+    "test_r456": "25/25 PASS",
+    "gate_do178c": "124/124 PASS"
+  }
+}
