@@ -1,10 +1,10 @@
 # R465 — Bibliothèque Lexicale IA ARTCB 14 langues
 
-**Date :** 2026-09-25T00:30:00Z  
-**SHA commit :** `13f21586a9981a74a2c132d8e53b5a976bd55c37`  
-**Tâche :** TASK-001-BIOMETRIE-SUITE → R465 (Lexicon Builder)  
-**CERTIFIED_100 :** false  
-**État rapport :** INTERMÉDIAIRE (build en cours — it/ru/zh/ar/de/id/ja/ko/pl/tr en attente)
+**Date :** 2026-09-25T17:05:00Z
+**SHA commit :** `16f878e` (code) + rapport mis à jour
+**Tâche :** TASK-001-BIOMETRIE-SUITE → R465 (Lexicon Builder)
+**CERTIFIED_100 :** false
+**État rapport :** FINAL (13/14 langues — ja en retry PID 11945)
 
 ---
 
@@ -33,18 +33,19 @@ Le `LanguageRegistry` (R448) était complet côté architecture (14 modules enre
 | Anglais (`en`) | 1 492 836 | 2 360 112 | 293 MB | `dff3588b` | ✅ DONE |
 | Espagnol (`es`) | 811 049 | 1 992 273 | 247 MB | `ec3f0c53` | ✅ DONE |
 | Portugais (`pt`) | 446 043 | 909 945 | 112 MB | `8752d313` | ✅ DONE |
-| Italien (`it`) | ~600k (en cours) | — | — | — | 🔄 EN COURS |
-| Russe (`ru`) | — | — | — | — | ⏳ EN ATTENTE |
-| Chinois (`zh`) | — | — | — | — | ⏳ EN ATTENTE |
-| Arabe (`ar`) | — | — | — | — | ⏳ EN ATTENTE |
-| Allemand (`de`) | — | — | — | — | ⏳ EN ATTENTE |
-| Indonésien (`id`) | — | — | — | — | ⏳ EN ATTENTE |
-| Japonais (`ja`) | — | — | — | — | ⏳ EN ATTENTE |
-| Coréen (`ko`) | — | — | — | — | ⏳ EN ATTENTE |
-| Polonais (`pl`) | — | — | — | — | ⏳ EN ATTENTE |
-| Turc (`tr`) | — | — | — | — | ⏳ EN ATTENTE |
+| Italien (`it`) | 623 702 | 1 363 559 | 170 MB | `f79d96d1` | ✅ DONE |
+| Russe (`ru`) | 442 594 | 1 935 993 | 272 MB | `2ba71422` | ✅ DONE |
+| Chinois (`zh`) | 327 297 | 472 921 | 57 MB | `f7f33f01` | ✅ DONE |
+| Arabe (`ar`) | 78 135 | 1 373 037 | 185 MB | `af6260d6` | ✅ DONE |
+| Allemand (`de`) | 371 261 | 1 733 696 | 224 MB | `0d55244d` | ✅ DONE |
+| Indonésien (`id`) | 40 098 | 79 949 | 10 MB | `96205c44` | ✅ DONE |
+| Japonais (`ja`) | — (timeout 16h) | — | — | — | 🔄 RETRY (PID 11945) |
+| Coréen (`ko`) | 63 773 | 463 834 | 58 MB | — | ✅ DONE |
+| Polonais (`pl`) | 199 289 | 1 885 859 | 237 MB | `fd676396` | ✅ DONE |
+| Turc (`tr`) | 45 949 | 2 891 601 | 374 MB | — | ✅ DONE |
 
-**Total provisoire (4/14) :** 6 046 349 entrées uniques | 749 MB
+**Total build_report.json :** 13/14 langues, **18 246 798 entrées uniques**, ~2,1 GB total
+**Cause erreur ja :** timeout réseau après ~16h (dump ~1-2 GB, réseau instable) — retry en cours
 
 ---
 
@@ -94,28 +95,39 @@ LanguageRegistry
 LanguageRegistry.get("fr").entry_count = 0   # tous les 14 modules vides
 ```
 
-### Après (R465) — état attendu après build complet
+### Après (R465) — état réel (13/14 terminées)
 ```
 LanguageRegistry.get("fr").entry_count = 784019
 LanguageRegistry.get("en").entry_count = 2360112
-...
+LanguageRegistry.get("es").entry_count = 1992273
+LanguageRegistry.get("pt").entry_count = 909945
+LanguageRegistry.get("it").entry_count = 1363559
+LanguageRegistry.get("ru").entry_count = 1935993
+LanguageRegistry.get("zh").entry_count = 472921
+LanguageRegistry.get("ar").entry_count = 1373037
+LanguageRegistry.get("de").entry_count = 1733696
+LanguageRegistry.get("id").entry_count = 79949
+LanguageRegistry.get("ja").entry_count = 0   # en retry
+LanguageRegistry.get("ko").entry_count = 463834
+LanguageRegistry.get("pl").entry_count = 1885859
+LanguageRegistry.get("tr").entry_count = 2891601
 ```
 
 ### Tests automatisés
 
 ```
-tests/test_r465_lexicon_loader.py — 25/25 PASS (14.77s)
+tests/test_r465_lexicon_loader.py — 25/25 PASS (10.79s) sur SHA 16f878e
 
-T01 skip (fr_lexicon.json présent → PASS si lancé avec LEXICON_DIR réel)
-T02 skip (idem)
-T03–T15 : pipeline complet sur mini-lexicon compact (10 entrées fr)
+T01 PASS (fr_lexicon.json présent 97 MB → format validé)
+T02 PASS (idem — entries > 0, certified_100=False)
+T03–T15 : pipeline sur mini-lexicon compact (rapide <1s par test)
 T16–T19 : tests négatifs (langue absente, JSON corrompu, entrées vides)
 T20–T25 : load_all, coverage_report, lookup, bounds confidence
 
 Gate DO-178C : 124/124 PASS avant commit
 ```
 
-**Correction apportée :** Remplacement fixture `loader` (pointait `data/lexicons/` = 97 MB → timeout 307s) par `loader_small` (mini-lexicon compact JSON temporaire → 14.77s). T01/T02 décorés `@pytest.mark.skipif` si fichier absent.
+**Correction timeout :** Fixture `loader` (97 MB → 307s FAIL) → `loader_small` (mini-lexicon tmp → 10.79s PASS). T01/T02 décorés `@pytest.mark.skipif` si fichier absent.
 
 ---
 
@@ -145,15 +157,24 @@ Gate DO-178C : 124/124 PASS avant commit
 | Tests 25/25 PASS | ✅ DONE |
 | `.gitignore` data/lexicons | ✅ DONE |
 | Commit + push `13f2158` | ✅ DONE |
+| Rapport intermédiaire + push `16f878e` | ✅ DONE |
 | **Build fr** (784k entrées, 97 MB) | ✅ DONE |
 | **Build en** (2.36M entrées, 293 MB) | ✅ DONE |
 | **Build es** (1.99M entrées, 247 MB) | ✅ DONE |
 | **Build pt** (910k entrées, 112 MB) | ✅ DONE |
-| **Build it** (~600k en cours) | 🔄 EN COURS |
-| Build ru/zh/ar/de/id/ja/ko/pl/tr | ⏳ EN ATTENTE |
-| Rapport final (après build 14/14) | ⏳ À PRODUIRE |
+| **Build it** (1.36M entrées, 170 MB) | ✅ DONE |
+| **Build ru** (1.93M entrées, 272 MB) | ✅ DONE |
+| **Build zh** (473k entrées, 57 MB) | ✅ DONE |
+| **Build ar** (1.37M entrées, 185 MB) | ✅ DONE |
+| **Build de** (1.73M entrées, 224 MB) | ✅ DONE |
+| **Build id** (80k entrées, 10 MB) | ✅ DONE |
+| **Build ja** (timeout réseau 16h) | 🔄 RETRY PID 11945 |
+| **Build ko** (464k entrées, 58 MB) | ✅ DONE |
+| **Build pl** (1.89M entrées, 237 MB) | ✅ DONE |
+| **Build tr** (2.89M entrées, 374 MB) | ✅ DONE |
+| Rapport final mis à jour | ✅ CE DOCUMENT |
 
-**Avancement global R465 : ~57%** (4/14 langues + code 100%)
+**Avancement global R465 : 13/14 langues (93%)** — total 18 246 798 entrées | ~2.1 GB
 
 ---
 
@@ -168,15 +189,22 @@ Gate DO-178C : 124/124 PASS avant commit
 
 ---
 
-## 8. Prochaine étape
+## 8. Erreur ja — analyse et retry
 
-Une fois le build 14/14 terminé :
-1. Lire `data/lexicons/build_report.json` (rapport final PID 6231)
-2. Vérifier les SHA256 des 14 fichiers
-3. Mettre à jour ce rapport avec les chiffres finaux
-4. Lancer `pytest tests/test_r465_lexicon_loader.py -q` (vérifier T01/T02 PASS avec fichiers réels)
+**Cause :** Le dump japonais kaikki.org (~1.2 GB) a déclenché un timeout TCP après ~15.9h de téléchargement continu (la connexion réseau a été interrompue entre 00:53 et 16:51 UTC — absence de reconnexion automatique dans le script).
+
+**Correction à terme (R465-bis) :** Ajouter `stream=True` + retry sur TimeoutError dans `_download_lang()` avec reprise partielle.
+
+**Retry en cours :** PID 11945 — `python3 scripts/artcb_r465_lexicon_build.py --lang ja --force`
+
+## 9. Prochaine étape
+
+1. Attendre fin retry ja (PID 11945) — log `data/lexicons/build_ja_retry.log`
+2. Vérifier `ja_lexicon.json` présent + `build_report.json` updated
+3. Commit rapport final mis à jour (après ja DONE)
+4. Chantier suivant : **R466 — IREncoder mapping artcb_code** (résoudre les UNK)
 
 ---
 
-*Rapport généré automatiquement — session 2026-09-25 | SHA `13f21586`*  
+*Rapport mis à jour — session 2026-09-25T17:05:00Z | SHA `16f878e` (code)*
 *CERTIFIED_100=false | Mode DEBUG actif*
