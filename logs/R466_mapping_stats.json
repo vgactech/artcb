@@ -1,0 +1,54 @@
+{
+  "r466_version": "1.0.0",
+  "langs_processed": [
+    "fr"
+  ],
+  "total_entries": 784019,
+  "total_resolved": 9914,
+  "total_unresolved": 774105,
+  "global_resolution_rate_pct": 1.2645,
+  "elapsed_seconds": 372.372,
+  "dry_run": true,
+  "per_lang": [
+    {
+      "lang_id": "fr",
+      "status": "OK",
+      "total": 784019,
+      "resolved": 9914,
+      "unresolved": 774105,
+      "resolution_rate_pct": 1.2645,
+      "elapsed_seconds": 369.965,
+      "by_code": {
+        "C2": 6223,
+        "MOD": 1829,
+        "C1": 304,
+        "U1": 115,
+        "R1": 98,
+        "O1": 154,
+        "N1": 38,
+        "M1": 175,
+        "QL": 175,
+        "QH": 159,
+        "S1": 97,
+        "B1": 104,
+        "S2": 8,
+        "M2": 121,
+        "P1": 3,
+        "K1": 47,
+        "A1": 49,
+        "M3": 5,
+        "V1": 151,
+        "P2": 8,
+        "E3": 14,
+        "D1": 37
+      },
+      "by_method": {
+        "prefix_lemma": 9466,
+        "exact_surface": 105,
+        "exact_lemma": 343
+      },
+      "src_path": "/Users/deyi/.bob/playground/data/lexicons/fr_lexicon.json",
+      "dst_path": null
+    }
+  ]
+}
