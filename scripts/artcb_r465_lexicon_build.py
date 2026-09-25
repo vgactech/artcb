@@ -170,11 +170,12 @@ LANG_CONFIG = {
         "kaikki_name": None,  # pas de dump kaikki.org pt-BR — source alternative
         "omw_code": "por",
         "alt_source": "github_fserb_ptbr",
-        "alt_source_url": "https://raw.githubusercontent.com/fserb/pt-br/master/wordlist.txt",
+        "alt_source_url": "https://raw.githubusercontent.com/fserb/pt-br/master/lexico",
         "alt_source_note": (
-            "fserb/pt-br — wordlist plain text 145 744 mots lemmatisés. "
+            "fserb/pt-br — fichier 'lexico' (plain text, un mot par ligne, ~145k mots lemmatisés). "
             "Licence : MIT. Pas de POS ni de formes fléchies dans ce corpus. "
-            "artcb_code=UNK, pos=unknown pour toutes les entrées."
+            "artcb_code=UNK, pos=unknown pour toutes les entrées. "
+            "URL corrigée: github.com/fserb/pt-br blob master/lexico (wordlist.txt inexistant — L-056)."
         ),
     },
 }
@@ -189,7 +190,8 @@ KAIKKI_BASE = "https://kaikki.org/dictionary/{name}/kaikki.org-dictionary-{name}
 OUTPUT_DIR = Path("data/lexicons")
 
 # ── Source alternative pt-BR ───────────────────────────────────────────────────
-PTBR_WORDLIST_URL = "https://raw.githubusercontent.com/fserb/pt-br/master/wordlist.txt"
+# URL corrigée après audit 404 — le fichier s'appelle 'lexico' (sans extension)
+PTBR_WORDLIST_URL = "https://raw.githubusercontent.com/fserb/pt-br/master/lexico"
 
 # ── Téléchargement streaming ───────────────────────────────────────────────────
 
