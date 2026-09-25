@@ -269,13 +269,17 @@ def test_T21_load_all_total_positive(loader_small, fresh_registry):
     assert total > 0
 
 
-# T22 — coverage_report contient les 14 langues officielles
-def test_T22_coverage_report_14_langs(loader_small, fresh_registry):
+# T22 — coverage_report contient les 16 profils (14 + la + pt-BR)
+def test_T22_coverage_report_16_langs(loader_small, fresh_registry):
     loader_small.load_all(fresh_registry)
     report = loader_small.coverage_report(fresh_registry)
     lang_ids = [r["lang_id"] for r in report]
+    # Les 14 initiales doivent être présentes
     for expected in LanguageRegistry.INITIAL_14_LANG_IDS:
-        assert expected in lang_ids, f"{expected} absent du rapport de couverture"
+        assert expected in lang_ids, f"{expected} absent du rapport de couverture (14 initiales)"
+    # Les 2 profils étendus doivent aussi être présents
+    for expected in LanguageRegistry.EXTENDED_2_LANG_IDS:
+        assert expected in lang_ids, f"{expected} absent du rapport de couverture (R465-ext)"
 
 
 # T23 — certified_100 = False dans tous les rapports de couverture
@@ -306,3 +310,68 @@ def test_T25_confidence_bounds(loader_small, fresh_registry):
         assert 0.0 <= entry.confidence <= 1.0, (
             f"confidence hors bornes pour {entry.surface_form}: {entry.confidence}"
         )
+
+
+# ── Tests R465-ext — Profils étendus (la + pt-BR) ─────────────────────────────
+
+# T26 — LanguageRegistry contient 16 profils (14 + la + pt-BR)
+def test_T26_registry_has_16_profiles():
+    reg = LanguageRegistry()
+    all_ids = reg.all_lang_ids()
+    assert "la" in all_ids, "Latin (la) absent du registry — R465-ext non appliqué"
+    assert "pt-BR" in all_ids, "Português Brasileiro (pt-BR) absent du registry — R465-ext non appliqué"
+    assert len(all_ids) == 16, f"Registry doit avoir 16 profils, trouvé {len(all_ids)}: {all_ids}"
+
+
+# T27 — Profil Latin (la) est enregistré avec les bons attributs
+def test_T27_latin_profile_registered():
+    reg = LanguageRegistry()
+    mod = reg.get("la")
+    assert mod is not None, "Module Latin (la) absent"
+    assert mod.lang_id == "la"
+    assert mod.lang_name_en == "Latin"
+    assert mod.script == "Latin"
+    # Latin ≠ Italian — profils distincts
+    it_mod = reg.get("it")
+    assert it_mod is not None
+    assert mod.lang_id != it_mod.lang_id, "Latin et Italian partagent le même lang_id — ERREUR"
+
+
+# T28 — Profil pt-BR est enregistré distinctement de pt
+def test_T28_ptbr_profile_distinct_from_pt():
+    reg = LanguageRegistry()
+    mod_pt = reg.get("pt")
+    mod_ptbr = reg.get("pt-BR")
+    assert mod_pt is not None, "Profil pt absent"
+    assert mod_ptbr is not None, "Profil pt-BR absent — R465-ext non appliqué"
+    assert mod_pt.lang_id != mod_ptbr.lang_id, "pt et pt-BR partagent le même lang_id — ERREUR"
+    assert mod_ptbr.lang_name_en == "Portuguese (Brazil)"
+
+
+# T29 — ALL_16_LANG_IDS contient exactement la et pt-BR en plus des 14
+def test_T29_all_16_lang_ids_composition():
+    all_16 = LanguageRegistry.ALL_16_LANG_IDS
+    initial_14 = LanguageRegistry.INITIAL_14_LANG_IDS
+    extended_2 = LanguageRegistry.EXTENDED_2_LANG_IDS
+    assert len(all_16) == 16, f"ALL_16_LANG_IDS doit avoir 16 éléments, trouvé {len(all_16)}"
+    assert len(initial_14) == 14, f"INITIAL_14_LANG_IDS doit avoir 14 éléments"
+    assert len(extended_2) == 2, f"EXTENDED_2_LANG_IDS doit avoir 2 éléments"
+    assert "la" in all_16, "la absent de ALL_16_LANG_IDS"
+    assert "pt-BR" in all_16, "pt-BR absent de ALL_16_LANG_IDS"
+    # Pas de doublon
+    assert len(set(all_16)) == 16, "Doublons détectés dans ALL_16_LANG_IDS"
+
+
+# T30 — Invariant : la et pt-BR ont coverage_state = ABSENT avant build
+def test_T30_extended_profiles_absent_before_build(loader_from_tmp, fresh_registry):
+    """Avant build des lexiques la/pt-BR, leur coverage_state = ABSENT."""
+    # loader_from_tmp pointe sur tmp_path vide → pas de la_lexicon.json ni pt-BR_lexicon.json
+    loader_from_tmp.load(fresh_registry, "la")
+    loader_from_tmp.load(fresh_registry, "pt-BR")
+    mod_la = fresh_registry.get("la")
+    mod_ptbr = fresh_registry.get("pt-BR")
+    # Les modules existent mais pas de données chargées → ABSENT ou inchangé
+    if mod_la:
+        assert mod_la.entry_count == 0, "Latin ne doit pas avoir d'entrées sans build"
+    if mod_ptbr:
+        assert mod_ptbr.entry_count == 0, "pt-BR ne doit pas avoir d'entrées sans build"

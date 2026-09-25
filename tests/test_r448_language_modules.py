@@ -106,7 +106,12 @@ class TestLanguageRegistry:
         return LanguageRegistry()
 
     def test_t13_14_languages_registered(self, reg: LanguageRegistry) -> None:
-        assert len(reg.all_lang_ids()) == 14
+        # R465-ext : le registry est passé de 14 à 16 profils (+ la + pt-BR)
+        all_ids = reg.all_lang_ids()
+        assert len(all_ids) == 16, f"Registry doit avoir 16 profils (14 + la + pt-BR), trouvé {len(all_ids)}"
+        # Les 14 initiaux doivent toujours être présents
+        for lid in LanguageRegistry.INITIAL_14_LANG_IDS:
+            assert lid in all_ids, f"{lid} absent du registry"
 
     def test_t14_all_initial_14_present(self, reg: LanguageRegistry) -> None:
         missing = reg.missing_from_initial_14()
@@ -136,8 +141,11 @@ class TestLanguageRegistry:
         assert results == {}
 
     def test_t19_coverage_report_has_14_entries(self, reg: LanguageRegistry) -> None:
+        # R465-ext : reg.coverage_report() retourne maintenant 16 profils (14 + la + pt-BR)
         report = reg.coverage_report()
-        assert len(report) == 14
+        assert len(report) == 16, (
+            f"coverage_report doit retourner 16 profils (14 + la + pt-BR), trouvé {len(report)}"
+        )
 
     def test_t20_rtl_languages_known(self, reg: LanguageRegistry) -> None:
         """AR est RTL — vérifier que le script est bien enregistré."""

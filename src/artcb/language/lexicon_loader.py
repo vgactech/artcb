@@ -19,7 +19,7 @@ CERTIFIED_100=false — couverture = couverture Wiktionary de la langue.
 """
 from __future__ import annotations
 
-MODULE_VERSION = "1.0.1"  # R465 — lexicon loader
+MODULE_VERSION = "1.0.2"  # R465 — lexicon loader
 
 import json
 import logging
@@ -213,9 +213,12 @@ class LexiconLoader:
         return results
 
     def coverage_report(self, registry: LanguageRegistry) -> list[dict]:
-        """Rapport de couverture détaillé après chargement."""
+        """Rapport de couverture détaillé après chargement — 16 profils (14 + la + pt-BR).
+
+        Itère sur ALL_16_LANG_IDS pour inclure les 2 profils étendus R465-ext.
+        """
         report = []
-        for lang_id in LanguageRegistry.INITIAL_14_LANG_IDS:
+        for lang_id in LanguageRegistry.ALL_16_LANG_IDS:
             mod = registry.get(lang_id)
             available = self.is_available(lang_id)
             if mod:

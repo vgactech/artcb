@@ -28,7 +28,7 @@ Coverage states (R444 §44) :
 CERTIFIED_100=false
 """
 from __future__ import annotations
-MODULE_VERSION = '1.0.1'  # R448 — language registry
+MODULE_VERSION = '1.0.2'  # R448 — language registry
 
 import logging
 from dataclasses import dataclass, field
@@ -172,12 +172,20 @@ class LanguageRegistry:
       et que les tests d'intégration ne sont pas PASS.
     """
 
-    # Les 14 langues officielles initiales (ordre alphabétique ISO)
+    # Les 14 langues initiales (R465) — ordre alphabétique ISO
     INITIAL_14_LANG_IDS = ("ar", "de", "en", "es", "fr", "id", "it", "ja", "ko", "pl", "pt", "ru", "tr", "zh")
+
+    # Extension R465-ext : +2 profils (Latin + Português Brasileiro)
+    # Latin = profil indépendant (≠ italien), pt-BR = variante régionale distincte de pt
+    EXTENDED_2_LANG_IDS = ("la", "pt-BR")
+
+    # Référentiel complet 16 profils
+    ALL_16_LANG_IDS = INITIAL_14_LANG_IDS + EXTENDED_2_LANG_IDS
 
     def __init__(self) -> None:
         self._modules: dict[str, LanguageModule] = {}
         self._register_initial_14()
+        self._register_extended_2()
 
     def _register_initial_14(self) -> None:
         """Enregistre les 14 modules linguistiques initiaux avec état honnête."""
@@ -190,7 +198,7 @@ class LanguageRegistry:
             ("es", "Spanish",    "Latin",   CoverageState.PARTIALLY_IMPLEMENTED,
              "R321/R430: ES couverte partiellement"),
             ("pt", "Portuguese", "Latin",   CoverageState.PARTIALLY_IMPLEMENTED,
-             "R321: PT minimal — carro/servidor/assinatura présents"),
+             "R321: PT minimal — carro/servidor/assinatura présents. NOTE: pt = portugais neutre commun"),
             ("it", "Italian",    "Latin",   CoverageState.PARTIALLY_IMPLEMENTED,
              "R321: IT minimal — auto/blocco présents"),
             ("ru", "Russian",    "Cyrillic",CoverageState.PARTIALLY_IMPLEMENTED,
@@ -223,7 +231,35 @@ class LanguageRegistry:
                 notes=notes,
             )
             self._modules[lang_id] = mod
-        logger.debug("LanguageRegistry: %d modules enregistrés", len(self._modules))
+        logger.debug("LanguageRegistry: %d modules initiaux enregistrés", len(self._modules))
+
+    def _register_extended_2(self) -> None:
+        """Enregistre les 2 profils étendus R465-ext : Latin (la) + Português Brasileiro (pt-BR)."""
+        extended = [
+            # Latin : profil indépendant (≠ it) — kaikki.org Latin 1.2 GB (DEPRECATED mais accessible)
+            ("la", "Latin",                "Latin",  CoverageState.ABSENT,
+             "R465-ext: Latin — profil distinct de IT. Source: kaikki.org/Latin (DEPRECATED). "
+             "Pipeline: la_lexicon.json via artcb_r465_lexicon_build.py --lang la"),
+            # Português Brasileiro : variante régionale distincte de pt
+            # kaikki.org n'a pas de dump pt-BR séparé → source alternative requise
+            # Source retenue : corpus open-source (voir LANG_CONFIG dans le script de build)
+            ("pt-BR", "Portuguese (Brazil)", "Latin", CoverageState.ABSENT,
+             "R465-ext: PT-BR — variante brésilienne distincte de pt (portugais européen neutre). "
+             "Source: corpus open-source pt-BR (kaikki.org n'a pas de dump pt-BR séparé). "
+             "Pipeline: pt-BR_lexicon.json via artcb_r465_lexicon_build.py --lang pt-BR"),
+        ]
+        for lang_id, name_en, script, state, notes in extended:
+            mod = LanguageModule(
+                lang_id=lang_id,
+                lang_name_en=name_en,
+                script=script,
+                module_version="0.1.0",
+                source_ref="r465_ext",
+                coverage_state=state,
+                notes=notes,
+            )
+            self._modules[lang_id] = mod
+        logger.debug("LanguageRegistry: +2 profils étendus enregistrés (la, pt-BR)")
 
     def get(self, lang_id: str) -> Optional[LanguageModule]:
         return self._modules.get(lang_id)
@@ -236,8 +272,12 @@ class LanguageRegistry:
         return [mod.summary() for mod in self._modules.values()]
 
     def missing_from_initial_14(self) -> list[str]:
-        """Langues de la liste officielle non encore enregistrées."""
+        """Langues de la liste 14 initiale non encore enregistrées."""
         return [lid for lid in self.INITIAL_14_LANG_IDS if lid not in self._modules]
+
+    def missing_from_all_16(self) -> list[str]:
+        """Profils de la liste 16 (14 + la + pt-BR) non encore enregistrés."""
+        return [lid for lid in self.ALL_16_LANG_IDS if lid not in self._modules]
 
     def global_coverage_pct(self) -> float:
         """Moyenne des couvertures des langues ayant une référence définie."""
