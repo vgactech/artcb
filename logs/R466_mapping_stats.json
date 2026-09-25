@@ -1,54 +1,82 @@
 {
-  "r466_version": "1.0.0",
-  "langs_processed": [
-    "fr"
+  "r466_version": "1.0.1",
+  "git_sha": "95ebb9666572fc2b868761b236b75c92903819a4",
+  "run_date": "2026-09-25",
+  "run_note": "P0-correction — log régénéré sur SHA 95ebb96. Ancien log (9914 matchs, préfixes) remplacé par run exact O(1). fr = re-run complet. en = bench manuel même session (by_code non capturé, total/resolved/by_method confirmés).",
+  "algorithm": "resolve_batch(): exact_surface O(1) | exact_lemma O(1) | UNK — sans préfixe",
+  "previous_incorrect_entry": {
+    "resolved": 9914,
+    "by_method": {
+      "prefix_lemma": 9466,
+      "exact_surface": 105,
+      "exact_lemma": 343
+    },
+    "elapsed_seconds": 372.372,
+    "note": "Cet enregistrement correspondait à un algorithme avec préfixe, corrigé avant commit 95ebb96"
+  },
+  "langs_benchmarked": [
+    "fr",
+    "en"
   ],
-  "total_entries": 784019,
-  "total_resolved": 9914,
-  "total_unresolved": 774105,
-  "global_resolution_rate_pct": 1.2645,
-  "elapsed_seconds": 372.372,
+  "total_entries_benchmarked": 3144131,
+  "total_resolved": 1063,
+  "total_unresolved": 3143068,
+  "global_resolution_rate_pct": 0.033809,
   "dry_run": true,
   "per_lang": [
     {
       "lang_id": "fr",
-      "status": "OK",
       "total": 784019,
-      "resolved": 9914,
-      "unresolved": 774105,
-      "resolution_rate_pct": 1.2645,
-      "elapsed_seconds": 369.965,
+      "resolved": 448,
+      "unresolved": 783571,
+      "resolution_rate_pct": 0.057141,
+      "elapsed_seconds": 1.4376,
       "by_code": {
-        "C2": 6223,
-        "MOD": 1829,
-        "C1": 304,
-        "U1": 115,
-        "R1": 98,
-        "O1": 154,
-        "N1": 38,
-        "M1": 175,
-        "QL": 175,
-        "QH": 159,
-        "S1": 97,
-        "B1": 104,
-        "S2": 8,
-        "M2": 121,
-        "P1": 3,
-        "K1": 47,
-        "A1": 49,
-        "M3": 5,
-        "V1": 151,
-        "P2": 8,
-        "E3": 14,
-        "D1": 37
+        "V1": 72,
+        "MOD": 58,
+        "U1": 43,
+        "O1": 39,
+        "R1": 38,
+        "C1": 37,
+        "K1": 36,
+        "D1": 36,
+        "C2": 32,
+        "N1": 9,
+        "B1": 9,
+        "M1": 6,
+        "QH": 6,
+        "QL": 4,
+        "M2": 4,
+        "M3": 4,
+        "S1": 3,
+        "S2": 3,
+        "E3": 3,
+        "P1": 2,
+        "A1": 2,
+        "P2": 2
       },
       "by_method": {
-        "prefix_lemma": 9466,
         "exact_surface": 105,
         "exact_lemma": 343
       },
-      "src_path": "/Users/deyi/.bob/playground/data/lexicons/fr_lexicon.json",
-      "dst_path": null
+      "status": "OK",
+      "src_path": "data/lexicons/fr_lexicon.json"
+    },
+    {
+      "lang_id": "en",
+      "status": "OK_FROM_BENCH",
+      "bench_note": "Résultat bench manuel session SHA 95ebb96 — chargement JSON 293MB dépasse timeout script inline",
+      "total": 2360112,
+      "resolved": 615,
+      "unresolved": 2359497,
+      "resolution_rate_pct": 0.026065,
+      "elapsed_seconds": 4.32,
+      "by_code": {},
+      "by_method": {
+        "exact_surface": 216,
+        "exact_lemma": 399
+      },
+      "src_path": "data/lexicons/en_lexicon.json"
     }
   ]
 }
