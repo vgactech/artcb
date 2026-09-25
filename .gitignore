@@ -76,3 +76,4 @@ logs/*_artcb_api.json
 
 # R465 — Lexicons locaux (fichiers >100 MB — hors limites GitHub, utiliser Git LFS si nécessaire)
 data/lexicons/
+data/lexicons_mapped/
