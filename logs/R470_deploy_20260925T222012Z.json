@@ -1,0 +1,23 @@
+{
+  "r": "R470",
+  "target_sha": "85561c5",
+  "timestamp": "20260925T222012Z",
+  "results": [
+    {
+      "node": "N2-OVH2",
+      "status": "WARN",
+      "sha_ok": false
+    },
+    {
+      "node": "N4-OVH4",
+      "status": "WARN",
+      "sha_ok": false
+    },
+    {
+      "node": "N3-AWS3",
+      "status": "Success",
+      "sha_ok": false
+    }
+  ],
+  "ok_count": 0
+}
