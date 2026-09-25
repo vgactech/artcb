@@ -336,3 +336,138 @@ def test_T25_by_code_stats(mapper):
     # V1 doit avoir au moins 1 (vérifier ou verify)
     assert "V1" in stats.by_code
     assert stats.by_code.get("V1", 0) >= 1
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# R467 — Tests additionnels T26–T36 (CORR-01 POS, CORR-02 collision, A-03 fix)
+# ══════════════════════════════════════════════════════════════════════════════
+
+# ── T26 : CORR-01 — car pos=conj → UNK (bug A-01 résolu) ──────────────────────
+
+def test_T26_pos_filter_car_conj(mapper):
+    """T26 — 'car' pos='conj' (conjonction FR) → UNK via pos_filtered. Résout A-01."""
+    result = mapper.resolve("car", "car", "conj")
+    assert result.artcb_code == UNRESOLVED_CODE
+    assert result.resolved is False
+    assert result.match_method == "pos_filtered"
+    assert result.pos_filtered is True
+
+
+# ── T27 : CORR-01 — car pos=noun → C2 (véhicule, inchangé) ────────────────────
+
+def test_T27_pos_noun_car_still_c2(mapper):
+    """T27 — 'car' pos='noun' (véhicule EN) → C2 toujours résolu."""
+    result = mapper.resolve("car", "car", "noun")
+    assert result.artcb_code == "C2"
+    assert result.resolved is True
+    assert result.pos_filtered is False
+
+
+# ── T28 : CORR-01 — can pos=aux → UNK (modal EN) ───────────────────────────────
+
+def test_T28_pos_filter_can_aux(mapper):
+    """T28 — 'can' pos='aux' (auxiliaire EN) → UNK via pos_filtered."""
+    result = mapper.resolve("can", "can", "aux")
+    assert result.artcb_code == UNRESOLVED_CODE
+    assert result.match_method == "pos_filtered"
+    assert result.pos_filtered is True
+
+
+# ── T29 : CORR-01 — 'can' pos=noun → MOD (boîte de conserve/peut) ─────────────
+
+def test_T29_pos_noun_can_resolves(mapper):
+    """T29 — 'can' pos='noun' ou non-grammatical → résolution normale depuis MODIFIER."""
+    result = mapper.resolve("can", "can", "noun")
+    # 'can' est dans MODIFIER_ALIASES → MOD, sauf si pos_filtered
+    # pos='noun' n'est pas dans GRAMMATICAL_POS → la résolution doit aboutir
+    assert result.resolved is True
+    assert result.pos_filtered is False
+
+
+# ── T30 : CORR-01 batch — car pos=conj → UNK (non C2) ─────────────────────────
+
+def test_T30_batch_pos_filter_car_conj(mapper):
+    """T30 — resolve_batch filtre pos=conj : car/conj → UNK, car/noun → C2."""
+    entries = [
+        {"surface_form": "car", "lemma": "car", "pos": "conj", "artcb_code": ""},
+        {"surface_form": "car", "lemma": "car", "pos": "noun", "artcb_code": ""},
+    ]
+    updated, stats = mapper.resolve_batch(entries)
+    assert updated[0]["artcb_code"] == "UNK"   # conj → filtré
+    assert updated[1]["artcb_code"] == "C2"    # noun → résolu
+    assert stats.pos_filtered_count == 1
+    assert stats.resolved == 1
+    assert stats.unresolved == 1
+
+
+# ── T31 : CORR-02 — voitures → C2 avec method=collision_object_over_modifier ───
+
+def test_T31_collision_voitures(mapper):
+    """T31 — 'voitures' est dans OBJECT (C2) et MODIFIER (PL) : collision tracée."""
+    result = mapper.resolve("voitures", "voitures", "noun")
+    assert result.artcb_code == "C2"    # OBJECT gagne
+    assert result.resolved is True
+    assert result.collision is True
+    assert result.match_method == "collision_object_over_modifier"
+
+
+# ── T32 : CORR-02 batch — cars → C2 avec collision tracée ─────────────────────
+
+def test_T32_batch_collision_cars(mapper):
+    """T32 — 'cars' en batch : collision tracée, C2 assigné, compteur collision."""
+    entries = [
+        {"surface_form": "cars", "lemma": "car", "pos": "noun", "artcb_code": ""},
+    ]
+    updated, stats = mapper.resolve_batch(entries)
+    assert updated[0]["artcb_code"] == "C2"
+    assert stats.by_method.get("collision_object_over_modifier", 0) >= 1
+    assert stats.summary()["collision_count"] >= 1
+
+
+# ── T33 : A-03 fix — resolve_batch sans préfixe par défaut ────────────────────
+
+def test_T33_batch_no_prefix_by_default(mapper):
+    """T33 — resolve_batch() : 'vérification' → UNK (pas de préfixe par défaut). A-03."""
+    entries = [
+        {"surface_form": "vérification", "lemma": "vérification", "pos": "noun", "artcb_code": ""},
+    ]
+    updated, stats = mapper.resolve_batch(entries)
+    assert updated[0]["artcb_code"] == "UNK"   # pas de préfixe en batch (défaut)
+
+
+# ── T34 : A-03 fix — resolve_batch avec allow_prefix_in_batch=True ─────────────
+
+def test_T34_batch_prefix_enabled(mapper):
+    """T34 — resolve_batch(allow_prefix_in_batch=True) : 'vérification' → V1 via préfixe."""
+    entries = [
+        {"surface_form": "vérification", "lemma": "vérification", "pos": "noun", "artcb_code": ""},
+    ]
+    updated, stats = mapper.resolve_batch(entries, allow_prefix_in_batch=True)
+    assert updated[0]["artcb_code"] == "V1"    # préfixe activé → V1
+    assert "prefix_lemma" in stats.by_method
+
+
+# ── T35 : CORR-01 batch — by_method_unresolved contient pos_filtered ──────────
+
+def test_T35_stats_pos_filtered_unresolved(mapper):
+    """T35 — MapperStats.by_method_unresolved tracke pos_filtered séparément."""
+    entries = [
+        {"surface_form": "car",  "lemma": "car",  "pos": "conj",  "artcb_code": ""},
+        {"surface_form": "prep", "lemma": "prep", "pos": "prep",  "artcb_code": ""},
+        {"surface_form": "xyz",  "lemma": "xyz",  "pos": "noun",  "artcb_code": ""},
+    ]
+    _, stats = mapper.resolve_batch(entries)
+    assert stats.by_method_unresolved.get("pos_filtered", 0) == 2
+    assert stats.by_method_unresolved.get("unresolved", 0) == 1
+    assert stats.pos_filtered_count == 2
+    assert stats.unresolved == 3
+    assert stats.resolved == 0
+
+
+# ── T36 : GRAMMATICAL_POS exporté depuis le module ────────────────────────────
+
+def test_T36_grammatical_pos_exported():
+    """T36 — GRAMMATICAL_POS est accessible depuis lexicon_mapper et contient les POS requis."""
+    from src.artcb.language.lexicon_mapper import GRAMMATICAL_POS
+    required = {"conj", "prep", "art", "pron", "aux", "det", "sconj", "cconj"}
+    assert required.issubset(GRAMMATICAL_POS), f"POS manquants: {required - GRAMMATICAL_POS}"
