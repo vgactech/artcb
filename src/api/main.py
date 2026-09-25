@@ -1,7 +1,7 @@
 """FastAPI application — ARTCB MVP Phase 2+3."""
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.1'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.2'  # R390 — auto-versioning
 
 import logging
 import os
@@ -48,6 +48,7 @@ from src.api.privacy_routes import router as privacy_router
 from src.api.authz_routes import router as authz_router
 from src.api.setup_routes import router as setup_router
 from src.api.network_routes import router as network_router
+from src.api.contact_routes import router as contact_router
 from src.api.kcg_routes import router as kcg_router
 from src.api.agent_protocol_routes import router as agent_protocol_router
 from src.api.ops_routes import router as ops_router
@@ -456,6 +457,8 @@ def create_app() -> FastAPI:
     app.include_router(admin_device_binding_router)
     # R461 — Diffusion P2P du NodeTpmBinding (TPM EK → NodeID)
     app.include_router(node_tpm_binding_router)
+    # R469 — Tunnels de contact qualifié Pro / Développeur / Organisation
+    app.include_router(contact_router)
     logger.debug("ARTCB API started debug=%s bootstrap_mode=False", state.settings.debug)
 
     @app.get("/live")

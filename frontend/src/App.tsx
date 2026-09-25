@@ -3,6 +3,7 @@
 // R379 — Supprimé du frontend : /agent-memory (P2P IA), /network (P2P pairs + pool ML-KEM)
 // R420 — Supprimé du frontend : /identity-test (BiometricIdentityTest — debug backend-only)
 // Backend AgentMemory, P2P, Network, ReflexStatus, Logs, BiometricIdentityTest : API/agents uniquement
+// R469 — Ajout tunnels de contact Pro / Developer / Organization
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { DashboardProvider } from "./context/DashboardContext";
 import { DashboardLayout } from "./layout/DashboardLayout";
@@ -20,6 +21,9 @@ import { SystemPage } from "./pages/SystemPage";
 import { Wallets } from "./pages/Wallets";
 import { RegisterBiometric } from "./pages/RegisterBiometric";
 import { AddDevice } from "./pages/AddDevice";
+import { ContactPro } from "./pages/ContactPro";
+import { ContactDeveloper } from "./pages/ContactDeveloper";
+import { ContactOrganization } from "./pages/ContactOrganization";
 
 export default function App() {
   return (
@@ -42,6 +46,9 @@ export default function App() {
             <Route path="integrations" element={<Integrations />} />
             <Route path="governance" element={<Governance />} />
             <Route path="api-keys" element={<ApiKeys />} />
+            <Route path="contact/pro" element={<ContactPro />} />
+            <Route path="contact/developer" element={<ContactDeveloper />} />
+            <Route path="contact/organization" element={<ContactOrganization />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>
