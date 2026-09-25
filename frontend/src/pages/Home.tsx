@@ -8,6 +8,7 @@ import {
   fetchWallets,
 } from "../api/client";
 // B7 FIX: fetchDemoLiveLog supprimé de Home.tsx — la page Logs gère déjà cet affichage
+// R470 — Bandeau 3 tunnels de contact Pro / Developer / Organization
 import { McBlockRow } from "../components/McBlockRow";
 import { McKpiSlot } from "../components/McKpiSlot";
 import { useDashboard } from "../context/DashboardContext";
@@ -64,6 +65,41 @@ export function Home() {
   return (
     <div className="mc-page">
       <h1 className="dashboard-title">{t('home_title')}</h1>
+
+      {/* R470 — Bandeau de contact 3 tunnels : Pro / Developer / Organization */}
+      <div className="panel mc-contact-banner" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem", borderColor: "var(--mc-accent, #3b82d4)", background: "rgba(59,130,212,0.05)" }}>
+        <div>
+          <p style={{ margin: 0, fontWeight: 700, color: "var(--mc-accent, #3b82d4)" }}>
+            Connect with ARTCB
+          </p>
+          <p style={{ margin: "3px 0 0", fontSize: 12, color: "var(--muted)" }}>
+            Choose your profile to get in touch with the team
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <Link
+            to="/contact/pro"
+            style={{ padding: "0.5rem 1.1rem", borderRadius: 4, textDecoration: "none", background: "var(--mc-accent, #3b82d4)", color: "#fff", fontWeight: 600, fontSize: 13 }}
+            title="Professional — discover ARTCB for your activity"
+          >
+            👤 PRO
+          </Link>
+          <Link
+            to="/contact/developer"
+            style={{ padding: "0.5rem 1.1rem", borderRadius: 4, textDecoration: "none", background: "#6366f1", color: "#fff", fontWeight: 600, fontSize: 13 }}
+            title="Developer — integrate, run a node, build an agent"
+          >
+            💻 DEV
+          </Link>
+          <Link
+            to="/contact/organization"
+            style={{ padding: "0.5rem 1.1rem", borderRadius: 4, textDecoration: "none", background: "#0f766e", color: "#fff", fontWeight: 600, fontSize: 13 }}
+            title="Organisation — integrate ARTCB into your processes"
+          >
+            🏢 ORG
+          </Link>
+        </div>
+      </div>
 
       {/* UX-2 FIX: Bandeau onboarding pour les nouveaux utilisateurs sans wallet */}
       {walletCount === 0 && !actorAddress && (

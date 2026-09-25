@@ -38,6 +38,11 @@ export function DashboardLayout() {
       { to: "/groups", label: t('nav_groups'), icon: "[G]" },
       { to: "/api-keys", label: t('nav_api_keys'), icon: "K" },
     ]},
+    { section: "CONTACT", items: [
+      { to: "/contact/pro", label: "PRO", icon: "👤" },
+      { to: "/contact/developer", label: "DEV", icon: "💻" },
+      { to: "/contact/organization", label: "ORG", icon: "🏢" },
+    ]},
   ];
 
   useEffect(() => {
