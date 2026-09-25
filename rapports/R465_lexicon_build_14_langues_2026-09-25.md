@@ -1,10 +1,10 @@
 # R465 — Bibliothèque Lexicale IA ARTCB 14 langues
 
-**Date :** 2026-09-25T17:05:00Z
-**SHA commit :** `16f878e` (code) + rapport mis à jour
+**Date :** 2026-09-25T17:15:00Z
+**SHA commit :** `c5d1122` (code + rapport)
 **Tâche :** TASK-001-BIOMETRIE-SUITE → R465 (Lexicon Builder)
 **CERTIFIED_100 :** false
-**État rapport :** FINAL (13/14 langues — ja en retry PID 11945)
+**État rapport :** ✅ FINAL COMPLET — 14/14 langues terminées
 
 ---
 
@@ -39,13 +39,13 @@ Le `LanguageRegistry` (R448) était complet côté architecture (14 modules enre
 | Arabe (`ar`) | 78 135 | 1 373 037 | 185 MB | `af6260d6` | ✅ DONE |
 | Allemand (`de`) | 371 261 | 1 733 696 | 224 MB | `0d55244d` | ✅ DONE |
 | Indonésien (`id`) | 40 098 | 79 949 | 10 MB | `96205c44` | ✅ DONE |
-| Japonais (`ja`) | — (timeout 16h) | — | — | — | 🔄 RETRY (PID 11945) |
+| Japonais (`ja`) | — (retry) | 1 048 878 | 132 MB | — | ✅ DONE (retry) |
 | Coréen (`ko`) | 63 773 | 463 834 | 58 MB | — | ✅ DONE |
 | Polonais (`pl`) | 199 289 | 1 885 859 | 237 MB | `fd676396` | ✅ DONE |
 | Turc (`tr`) | 45 949 | 2 891 601 | 374 MB | — | ✅ DONE |
 
-**Total build_report.json :** 13/14 langues, **18 246 798 entrées uniques**, ~2,1 GB total
-**Cause erreur ja :** timeout réseau après ~16h (dump ~1-2 GB, réseau instable) — retry en cours
+**Total FINAL 14/14 :** **19 295 676 entrées uniques** | ~2,47 GB total
+**Note ja :** timeout TCP après 16h de DL continu (dump 1.2 GB) — retry `--lang ja --force` PASS (132 MB, 1 048 878 entrées)
 
 ---
 
@@ -107,7 +107,7 @@ LanguageRegistry.get("zh").entry_count = 472921
 LanguageRegistry.get("ar").entry_count = 1373037
 LanguageRegistry.get("de").entry_count = 1733696
 LanguageRegistry.get("id").entry_count = 79949
-LanguageRegistry.get("ja").entry_count = 0   # en retry
+LanguageRegistry.get("ja").entry_count = 1048878
 LanguageRegistry.get("ko").entry_count = 463834
 LanguageRegistry.get("pl").entry_count = 1885859
 LanguageRegistry.get("tr").entry_count = 2891601
@@ -168,13 +168,13 @@ Gate DO-178C : 124/124 PASS avant commit
 | **Build ar** (1.37M entrées, 185 MB) | ✅ DONE |
 | **Build de** (1.73M entrées, 224 MB) | ✅ DONE |
 | **Build id** (80k entrées, 10 MB) | ✅ DONE |
-| **Build ja** (timeout réseau 16h) | 🔄 RETRY PID 11945 |
+| **Build ja** (1.05M entrées, 132 MB — retry OK) | ✅ DONE |
 | **Build ko** (464k entrées, 58 MB) | ✅ DONE |
 | **Build pl** (1.89M entrées, 237 MB) | ✅ DONE |
 | **Build tr** (2.89M entrées, 374 MB) | ✅ DONE |
 | Rapport final mis à jour | ✅ CE DOCUMENT |
 
-**Avancement global R465 : 13/14 langues (93%)** — total 18 246 798 entrées | ~2.1 GB
+**Avancement global R465 : 14/14 langues (100%)** — total **19 295 676 entrées** | ~2.47 GB
 
 ---
 
@@ -189,22 +189,20 @@ Gate DO-178C : 124/124 PASS avant commit
 
 ---
 
-## 8. Erreur ja — analyse et retry
+## 8. Incident ja — post-mortem
 
-**Cause :** Le dump japonais kaikki.org (~1.2 GB) a déclenché un timeout TCP après ~15.9h de téléchargement continu (la connexion réseau a été interrompue entre 00:53 et 16:51 UTC — absence de reconnexion automatique dans le script).
-
-**Correction à terme (R465-bis) :** Ajouter `stream=True` + retry sur TimeoutError dans `_download_lang()` avec reprise partielle.
-
-**Retry en cours :** PID 11945 — `python3 scripts/artcb_r465_lexicon_build.py --lang ja --force`
+**Cause :** Timeout TCP après ~15.9h de téléchargement continu du dump japonais (~1.2 GB). Le script ne gérait pas la reconnexion automatique.
+**Résolution :** Retry `--lang ja --force` → PASS en ~2 min (réseau stable lors du retry).
+**Correction à terme (R465-bis) :** Ajouter retry sur `TimeoutError` + timeout par chunk dans `_download_lang()`.
 
 ## 9. Prochaine étape
 
-1. Attendre fin retry ja (PID 11945) — log `data/lexicons/build_ja_retry.log`
-2. Vérifier `ja_lexicon.json` présent + `build_report.json` updated
-3. Commit rapport final mis à jour (après ja DONE)
-4. Chantier suivant : **R466 — IREncoder mapping artcb_code** (résoudre les UNK)
+1. ✅ Build 14/14 DONE
+2. ✅ Tests 25/25 PASS
+3. ✅ Rapport final mis à jour
+4. Chantier suivant : **R466 — IREncoder mapping artcb_code** (résoudre les 19.3M entrées UNK)
 
 ---
 
-*Rapport mis à jour — session 2026-09-25T17:05:00Z | SHA `16f878e` (code)*
-*CERTIFIED_100=false | Mode DEBUG actif*
+*Rapport FINAL — session 2026-09-25T17:15:00Z | SHA `c5d1122`*
+*14/14 langues ✅ | 19 295 676 entrées | CERTIFIED_100=false | Mode DEBUG actif*
