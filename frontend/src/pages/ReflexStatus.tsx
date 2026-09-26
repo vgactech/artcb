@@ -11,11 +11,30 @@
  * CERTIFIED_100=false — stub fonctionnel.
  */
 import { useCallback, useEffect, useState } from "react";
-import {
-  fetchReflexStatus,
-  type ReflexStatusResponse,
-} from "../api/client";
 import axios from "axios";
+
+// R424 — fetchReflexStatus/ReflexStatusResponse supprimés de client.ts (backend-only).
+// Définis localement ici pour éviter la dépendance client.ts.
+interface ReflexStatusResponse {
+  certified: boolean;
+  unique_human_proven: boolean;
+  current_priority: string;
+  current_priority_name: string;
+  triggers_detected: number;
+  priorities: Record<string, number>;
+  active_since: number | null;
+  note: string;
+  // Champs optionnels exposés par le backend (peuvent être absents selon la version)
+  engine?: string;
+  rules?: number;
+  total_triggers?: number;
+  activated_at?: number | null;
+}
+
+async function fetchReflexStatus(): Promise<ReflexStatusResponse> {
+  const { data } = await axios.get<ReflexStatusResponse>("/api/v1/reflex/status");
+  return data;
+}
 
 interface ReflexCheckResult {
   reflex_activated: boolean;
@@ -170,7 +189,7 @@ export function ReflexStatus() {
                 borderLeft: `3px solid ${PRIORITY_COLORS[name] || "#555"}`,
               }}>
                 <span style={{ fontSize: 20, fontWeight: 900, minWidth: 28, color: PRIORITY_COLORS[name] }}>
-                  {value}
+                  {String(value)}
                 </span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: PRIORITY_COLORS[name] }}>
                   {PRIORITY_LABELS[name] || name}

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useTranslation } from "../i18n/useTranslation";
 
 // R468 — Tunnel de contact pour les professionnels
 // Formulaire conversationnel progressif : question → réponse → question suivante
@@ -43,7 +42,6 @@ const KNOWLEDGE_LEVELS = [
 const TOTAL_STEPS = 4; // 3 questions + coordonnées
 
 export function ContactPro() {
-  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<ProFormData>({
     goal: "",
