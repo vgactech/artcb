@@ -393,6 +393,26 @@ def main() -> int:
     except Exception:
         pass
 
+    # R483 — UAP automatique : résumé compact en fin de contexte
+    try:
+        # Ajouter ROOT au sys.path pour que l'import fonctionne depuis le hook
+        import sys as _sys  # noqa: PLC0415
+        if str(ROOT) not in _sys.path:
+            _sys.path.insert(0, str(ROOT))
+        from src.artcb.audit.uap import run_uap  # noqa: PLC0415
+        _uap = run_uap(ROOT)
+        _uap_status = "✅ PASS" if _uap.preflight_ok else f"⚠ {_uap.critical_count} CRITICAL"
+        _uap_warns = f" | {_uap.warning_count} WARNING(S)" if _uap.warning_count else ""
+        lines.append("")
+        lines.append(f"## UAP R483 — preflight_ok={_uap.preflight_ok} {_uap_status}{_uap_warns}")
+        lines.append(f"   git={_uap.git_sha} | certified_100=false | unique_human_proven=false")
+        # Afficher les findings CRITICAL en priorité
+        for f in _uap.all_findings:
+            if f.severity == "CRITICAL":
+                lines.append(f"   🔴 CRITICAL [{f.category}] {f.message}")
+    except Exception as _uap_exc:
+        lines.append(f"## UAP R483 — fail-open (erreur: {type(_uap_exc).__name__})")
+
     print("\n".join(lines))
     return 0
 
