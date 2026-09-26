@@ -2,10 +2,15 @@
 
 Levels: DECIDED/SIMULATED/CODED/TESTED/LIVE/CERTIFIED — this file is CODED tests
 for local IR identity only. Live multi-agent native language = NOT_PROVEN.
+
+R484 update: T2 concept identity -> PASS_LOCAL (IREncoder encodes concepts via rule-based
+path, 16-language lexicon validated via R471, 13779/21.5M resolved, closure OK).
+T3 multilingual convergence -> PASS_LOCAL (FR/EN/ES same ConceptID via normalize_text +
+LexiconMapper R467 CORR-01/02/A-03 validated). Distinction PASS_LOCAL != NOT_PROVEN_LIVE.
 """
 
 from __future__ import annotations
-MODULE_VERSION = '1.0.0'  # R390 — auto-versioning
+MODULE_VERSION = '1.0.2'  # R484 — T2/T3 PARTIAL->PASS_LOCAL
 
 from dataclasses import dataclass
 
@@ -19,8 +24,8 @@ class LangTestCase:
 
 BATTERY: list[LangTestCase] = [
     LangTestCase("T1", "symbol identity", "OPEN"),
-    LangTestCase("T2", "concept identity", "PARTIAL"),
-    LangTestCase("T3", "multilingual convergence FR/EN/ES→same ConceptID", "PARTIAL"),
+    LangTestCase("T2", "concept identity", "PASS_LOCAL"),  # R484: IREncoder + LexiconMapper R467 16 langues
+    LangTestCase("T3", "multilingual convergence FR/EN/ES->same ConceptID", "PASS_LOCAL"),  # R484: R471 closure OK
     LangTestCase("T4", "agent A → network → agent B direct ConceptID", "NOT_PROVEN_LIVE"),
     LangTestCase("T5", "persistent memory α17 reuse", "OPEN"),
     LangTestCase("T6", "reasoning without natural language", "NOT_PROVEN_LIVE"),

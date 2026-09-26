@@ -6,8 +6,8 @@
 
 meta:
   version: "1.1"
-  last_updated: "2026-09-24T00:00:00Z"
-  head_sha: "c624f12"
+  last_updated: "2026-09-26T00:00:00Z"
+  head_sha: "aef18b4"  # R484 — mis à jour (R482=ef6cfd6, R483=aef18b4)
   certified_100: false
   mode: DEBUG
 
@@ -115,6 +115,27 @@ tasks:
         status: OPEN
         priority: P1
 
+  - id: TASK-AUDIT-INFRA
+    title: "Infrastructure d'audit ARTCB — UAP / call_graph / UPF / AnomalyRegistry"
+    status: IN_PROGRESS
+    priority: P0
+    subtasks:
+      - id: R482
+        title: "UAP + injection STANDARD_NAMES_ARTCB — 20 tests PASS"
+        status: DONE_VERIFIED
+        sha: "ef6cfd6"
+        tests: "20/20 PASS test_r482_uap.py"
+      - id: R483
+        title: "call_graph AST récursif — 21 tests PASS"
+        status: DONE_VERIFIED
+        sha: "aef18b4"
+        tests: "21/21 PASS test_r483_call_graph.py"
+      - id: R484
+        title: "UPF + AnomalyRegistry — 41 tests PASS"
+        status: IN_PROGRESS
+        tests: "41/41 PASS test_r484_upf.py + test_r484_anomaly_registry.py"
+        note: "Commit + push en cours"
+
   - id: TASK-RULES-TELEMETRY
     title: "Rule corpus telemetry — 230 CR-* classifiés par domaine"
     status: DONE_VERIFIED
@@ -149,7 +170,8 @@ tasks:
 
 # ─── Prochaines actions recommandées ───────────────────────────────────────
 next_actions:
+  - R484-push: "Commit + push R484 (UPF + AnomalyRegistry + langage_battery T2/T3)"
   - R431: "POST /api/v1/admin/device-binding/revoke — endpoint admin"
   - R432: "FHE Concrete pure Python dans homomorphic.py"
   - R433: "reasoning.py G4"
-  - R435: "Auto-feedback rétrospectif"
+  - R485: "UPF branché dans stop.py hook — postflight automatique fin de session"
