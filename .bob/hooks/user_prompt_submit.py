@@ -51,9 +51,11 @@ RULE_REMINDERS = [
 # R371 — Fichiers dont le CONTENU est injecté (pas juste le nom)
 # Format : (chemin_relatif, max_chars, description_courte)
 INJECT_CONTENT_FILES = [
-    ("PROTOCOLE_ARTCB",           4000,  "PROTOCOLE ARTCB"),
-    ("DECISIONS_UTILISATEUR_ARTCB", 8000, "DÉCISIONS UTILISATEUR"),
-    ("LEÇONS_APPRISES_ARTCB",     8000,  "LEÇONS APPRISES"),
+    ("PROTOCOLE_ARTCB",             4000,  "PROTOCOLE ARTCB"),
+    ("DECISIONS_UTILISATEUR_ARTCB", 8000,  "DÉCISIONS UTILISATEUR"),
+    ("LEÇONS_APPRISES_ARTCB",       8000,  "LEÇONS APPRISES"),
+    # R482 — ORDRE 1 : vocabulaire canonique ARTCB injecté à chaque prompt
+    ("STANDARD_NAMES_ARTCB",        3000,  "STANDARD NAMES ARTCB"),
 ]
 
 # Nombre de caractères des entrées récentes AUTO_PROMPT_ARTCB à injecter
