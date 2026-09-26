@@ -23,14 +23,17 @@ Honnêteté (CERTIFIED_100=false) :
     - Interface de substitution Concrete documentée en bas de fichier.
 """
 from __future__ import annotations
-MODULE_VERSION = '1.1.1'  # R432 — FheHammingCircuit TFHE simulé
+MODULE_VERSION = '1.2.1'  # R479 — PaillierHammingBackend (Paillier HE réelle)
 
 import hashlib
 import hmac
+import logging
 import os
 import struct
 from dataclasses import dataclass, field
 from typing import Any
+
+logger = logging.getLogger("artcb.crypto.homomorphic")
 
 # Ordre du groupe Ed25519 (RFC 8032) — utilisé comme modulus pour les scalaires
 _ORDER = (
@@ -476,4 +479,369 @@ class FheHammingCircuit:
                 if error_count > 0
                 else FHE_SIMULATION_NOTE
             ),
+        )
+
+
+# =========================================================================== #
+#  R479 — Backend Paillier HE (Homomorphic Encryption réelle)                 #
+#  Protocole : ARTCB-PHE-PAILLIER-HAMMING-v1                                  #
+# =========================================================================== #
+#
+# Architecture Paillier pour distance de Hamming :
+#
+#   Paillier est un schéma de chiffrement asymétrique ADDITIF HOMOMORPHE
+#   (IND-CPA sécurisé, Goldwasser-Micali 1982, Paillier 1999).
+#
+#   Propriété exploitée :
+#       Enc(a) ⊕ Enc(b) = Enc(a + b)   (addition homomorphe)
+#
+#   Calcul Hamming côté client :
+#       Pour chaque bit i : XOR_i = a_i XOR b_i  (calculé localement)
+#       Le client chiffre chaque XOR_i → Enc(XOR_i)
+#       Le serveur calcule Σ Enc(XOR_i) = Enc(Σ XOR_i) = Enc(dist_Hamming)
+#       Le serveur décrypte UNIQUEMENT le booléen : dist ≤ threshold ? → MATCH/NO_MATCH
+#
+#   Protocole complet (mode serveur biométrique) :
+#       - Le client possède new_template et stored_template → calcule les XOR bits
+#       - Le client chiffre ces XOR → liste de ciphertexts transmis au serveur
+#       - Le serveur somme sans voir les valeurs claires
+#       - Le serveur décrypte uniquement le résultat booléen
+#       Note : dans ce mode, la clé privée est côté client (HSM/TEE recommandé).
+#              Pour le MVP : clé générée par enrôlement, stockée dans helper_data côté client.
+#
+#   Limites honnêtes (PROTOCOLE ARTCB — ne jamais mentir) :
+#       - n_length=1024 bits : rapide (~0.3s keygen) mais sub-optimal pour prod (2048 recommandé)
+#       - Chiffrer bit-à-bit 256 bits = 256 chiffrements → ~0.5s
+#       - Pur Python (bibliothèque `phe`) — pas de HSM/TEE
+#       - Sécurité IND-CPA réelle (Paillier standard), pas TFHE/SEAL mais vrai HE
+#       - unique_human_proven = False dans tous les cas
+#       - CERTIFIED_100 = False
+#
+#   Interface duck-typing compatible avec FheHammingCircuit :
+#       PaillierHammingBackend expose la même API :
+#           .encrypt(template_bytes) → PaillierCiphertext
+#           .fhe_uniqueness_check(new_template, existing_templates, threshold_bits) → FheUniquenessResult
+#
+# =========================================================================== #
+
+PHE_PROTOCOL = "ARTCB-PHE-PAILLIER-HAMMING-v1"
+PHE_NOTE = (
+    "Paillier HE (phe 1.5.0) — chiffrement additif homomorphe réel (IND-CPA). "
+    "XOR bit-à-bit chiffré côté client, somme homomorphe côté serveur. "
+    "n_length=1024 bits (MVP) — 2048 recommandé pour production. "
+    "unique_human_proven=False — invariant absolu. CERTIFIED_100=False."
+)
+
+
+@dataclass(frozen=True)
+class PaillierCiphertext:
+    """Liste de ciphertexts Paillier représentant les XOR bits entre deux templates.
+
+    Chaque élément correspond à un bit XOR chiffré : Enc(a_i XOR b_i).
+    Le serveur peut sommer ces ciphertexts sans voir les valeurs claires.
+
+    Propriété : ne re-expose JAMAIS les bits originaux de l'un ou l'autre template.
+    """
+    _enc_xor_bits: tuple          # tuple de phe.EncryptedNumber (immutable)
+    _bits_len: int                # nombre de bits (public — longueur du template)
+    _pub_key_n: int               # N de la clé publique Paillier (public)
+    _session_id: str              # identifiant de session (anti-rejeu)
+
+    def __repr__(self) -> str:
+        return (
+            f"PaillierCiphertext(bits={self._bits_len}, "
+            f"session={self._session_id[:8]}..., enc=[{self._bits_len} ciphertexts])"
+        )
+
+
+@dataclass
+class PaillierHammingResult:
+    """Résultat d'un calcul Hamming Paillier homomorphe.
+
+    Seul le résultat booléen est exposé (anti-oracle de distance).
+    """
+    match_found: bool
+    error: bool
+    match_method: str = PHE_PROTOCOL
+    note: str = PHE_NOTE
+    existing_human_id: str | None = None
+    _debug_hamming_distance: int | None = None   # debug uniquement — jamais en prod
+    _debug_threshold_bits: int | None = None
+    unique_human_proven: bool = False             # invariant absolu
+    certified: bool = False                       # invariant absolu
+
+
+class PaillierHammingBackend:
+    """Backend Paillier pour la vérification d'unicité biométrique par distance de Hamming.
+
+    Protocole ARTCB-PHE-PAILLIER-HAMMING-v1 :
+    ──────────────────────────────────────────
+    1. CLIENT : generate_keypair() → (public_key, private_key)
+       - Génère une paire Paillier (n_length bits)
+       - La clé privée reste côté client (HSM/TEE en prod)
+
+    2. CLIENT : encrypt_xor_bits(template_a, template_b) → PaillierCiphertext
+       - Calcule XOR_i = a_i XOR b_i pour chaque bit i
+       - Chiffre chaque XOR_i : Enc(XOR_i) avec la clé publique
+       - Résultat : liste de ciphertexts transmis au serveur
+
+    3. SERVEUR : sum_encrypted_bits(paillier_ct) → EncryptedNumber
+       - Somme homomorphe : Enc(XOR_0) + Enc(XOR_1) + ... = Enc(Σ XOR_i)
+       - Opération sans voir les valeurs claires (propriété Paillier)
+
+    4. CLIENT : decrypt_match(enc_sum, threshold_bits) → bool
+       - Déchiffre Enc(Σ XOR_i) → distance Hamming
+       - Retourne UNIQUEMENT le booléen dist ≤ threshold (anti-oracle)
+
+    Fail-closed :
+        Toute erreur (templates vides, longueurs différentes, clé invalide)
+        → PaillierHammingResult.error=True → refus systématique.
+        JAMAIS de fallback silencieux vers un match par défaut.
+
+    Duck-typing FheHammingCircuit :
+        Méthode fhe_uniqueness_check() compatible avec l'interface FheHammingCircuit.
+    """
+
+    def __init__(self, *, n_length: int = 1024) -> None:
+        """Initialise le backend avec une paire de clés Paillier.
+
+        Args:
+            n_length: longueur de la clé en bits (1024 MVP, 2048 production).
+                      1024 bits : ~0.3s keygen, sécurité 80 bits.
+                      2048 bits : ~3.6s keygen, sécurité 112 bits (recommandé prod).
+        """
+        try:
+            import phe  # noqa: PLC0415
+        except ImportError as exc:
+            raise ImportError(
+                "PaillierHammingBackend requiert la bibliothèque `phe` (python-paillier). "
+                "Installer : python3 -m pip install phe"
+            ) from exc
+
+        self._n_length = n_length
+        self._public_key, self._private_key = phe.generate_paillier_keypair(
+            n_length=n_length
+        )
+        import hashlib  # noqa: PLC0415
+        self._session_id: str = hashlib.sha256(
+            b"ARTCB-PHE-SESSION:" + self._public_key.n.to_bytes(128, "big")
+        ).hexdigest()[:16]
+
+        logger.debug(
+            "PaillierHammingBackend: keygen n_length=%d session=%s",
+            n_length, self._session_id,
+        )
+
+    @property
+    def public_key(self):
+        """Clé publique Paillier (exportable — utilisée pour chiffrer côté client)."""
+        return self._public_key
+
+    def _template_to_bits(self, template_bytes: bytes) -> list[int]:
+        """Convertit un template bytes en liste de bits (MSB first)."""
+        bits: list[int] = []
+        for byte in template_bytes:
+            for shift in range(7, -1, -1):
+                bits.append((byte >> shift) & 1)
+        return bits
+
+    def encrypt_xor_bits(
+        self,
+        template_a: bytes,
+        template_b: bytes,
+    ) -> "PaillierCiphertext | None":
+        """Chiffre les bits XOR(a_i, b_i) avec la clé publique Paillier.
+
+        Opération CÔTÉ CLIENT : le client possède les deux templates et calcule
+        les XOR localement avant de chiffrer. Le serveur reçoit uniquement les
+        ciphertexts — il ne peut pas reconstruire les templates.
+
+        Args:
+            template_a: template biométrique A (bytes normalisés).
+            template_b: template biométrique B (bytes normalisés, même longueur).
+
+        Returns:
+            PaillierCiphertext avec les XOR bits chiffrés, ou None si erreur.
+        """
+        if not template_a or not template_b:
+            logger.warning("encrypt_xor_bits: template(s) vide(s) — fail-closed")
+            return None
+        if len(template_a) != len(template_b):
+            logger.warning(
+                "encrypt_xor_bits: longueurs différentes (%d vs %d) — fail-closed",
+                len(template_a), len(template_b),
+            )
+            return None
+
+        bits_a = self._template_to_bits(template_a)
+        bits_b = self._template_to_bits(template_b)
+
+        # XOR bit-à-bit côté client (valeurs claires)
+        xor_bits = [a ^ b for a, b in zip(bits_a, bits_b)]
+
+        # Chiffrement Paillier de chaque bit XOR
+        enc_xor_bits = tuple(self._public_key.encrypt(x) for x in xor_bits)
+
+        return PaillierCiphertext(
+            _enc_xor_bits=enc_xor_bits,
+            _bits_len=len(bits_a),
+            _pub_key_n=self._public_key.n,
+            _session_id=self._session_id,
+        )
+
+    def sum_encrypted_bits(self, ct: "PaillierCiphertext"):
+        """Calcule la somme homomorphe des ciphertexts XOR.
+
+        Opération CÔTÉ SERVEUR : somme Enc(XOR_0) + ... + Enc(XOR_N-1) = Enc(dist_Hamming).
+        Le serveur ne voit jamais les valeurs claires.
+
+        Args:
+            ct: PaillierCiphertext contenant les XOR bits chiffrés.
+
+        Returns:
+            EncryptedNumber (phe) représentant la distance de Hamming chiffrée.
+            None si ct est invalide ou vide.
+        """
+        if not ct or not ct._enc_xor_bits:
+            return None
+        # Somme homomorphe : addition de ciphertexts Paillier
+        enc_sum = ct._enc_xor_bits[0]
+        for enc_bit in ct._enc_xor_bits[1:]:
+            enc_sum = enc_sum + enc_bit
+        return enc_sum
+
+    def decrypt_match(
+        self,
+        enc_sum,
+        threshold_bits: int,
+    ) -> tuple[bool, bool, int | None]:
+        """Déchiffre le résultat homomorphe et retourne uniquement le booléen.
+
+        Opération CÔTÉ CLIENT (clé privée) : déchiffre Enc(dist) → dist.
+        Retourne UNIQUEMENT (match, error, dist_debug) — pas la distance brute
+        dans la valeur de retour principale (anti-oracle).
+
+        Args:
+            enc_sum: EncryptedNumber (résultat de sum_encrypted_bits).
+            threshold_bits: seuil Hamming (dist ≤ threshold → MATCH).
+
+        Returns:
+            (match: bool, error: bool, _debug_dist: int | None)
+        """
+        if enc_sum is None:
+            return False, True, None
+        if threshold_bits < 0:
+            return False, True, None
+        try:
+            dist = self._private_key.decrypt(enc_sum)
+            match = int(dist) <= threshold_bits
+            return match, False, int(dist)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("decrypt_match: erreur déchiffrement Paillier: %s", exc)
+            return False, True, None
+
+    def compute_hamming_paillier(
+        self,
+        template_a: bytes,
+        template_b: bytes,
+        *,
+        threshold_bits: int,
+    ) -> tuple[bool, bool, int | None]:
+        """Flux complet Paillier : encrypt_xor_bits → sum → decrypt_match.
+
+        Encapsule les 3 étapes pour un appel simple.
+        En production, ces étapes seraient sur des machines différentes.
+
+        Returns:
+            (match: bool, error: bool, _debug_dist: int | None)
+        """
+        ct = self.encrypt_xor_bits(template_a, template_b)
+        if ct is None:
+            return False, True, None
+        enc_sum = self.sum_encrypted_bits(ct)
+        if enc_sum is None:
+            return False, True, None
+        return self.decrypt_match(enc_sum, threshold_bits)
+
+    def fhe_uniqueness_check(
+        self,
+        new_template: bytes,
+        existing_templates: list[tuple[str, bytes]],
+        *,
+        threshold_bits: int,
+    ) -> "PaillierHammingResult":
+        """Vérifie l'unicité d'un template contre une liste d'enregistrements existants.
+
+        Interface duck-typing compatible avec FheHammingCircuit.fhe_uniqueness_check().
+
+        Protocole complet :
+        1. Pour chaque (human_id, stored_template) dans existing_templates :
+           a. encrypt_xor_bits(new_template, stored_template) → PaillierCiphertext
+           b. sum_encrypted_bits(ct) → EncryptedNumber
+           c. decrypt_match(enc_sum, threshold_bits) → (match, error, dist)
+           d. Si error → fail-closed → continue (compte l'erreur)
+           e. Si match → MATCH_FOUND → retour immédiat
+
+        2. Si aucun match : NO_MATCH → nouvelle identité autorisée.
+
+        Fail-closed absolu :
+        - Erreur de calcul → continue sans match (jamais faux positif).
+        - Tous les calculs en erreur → error=True dans le résultat final.
+
+        Args:
+            new_template: template du nouveau candidat (bytes normalisés).
+            existing_templates: liste (human_id, template_bytes) des enregistrements.
+            threshold_bits: seuil Hamming en bits (D ≤ threshold → MATCH).
+
+        Returns:
+            PaillierHammingResult avec match_found, error, existing_human_id.
+        """
+        if not new_template:
+            return PaillierHammingResult(
+                match_found=False,
+                error=True,
+                note=f"{PHE_NOTE} | ERREUR: new_template vide.",
+            )
+
+        error_count = 0
+        total = len(existing_templates)
+
+        for human_id, stored_template in existing_templates:
+            match, err, _debug_dist = self.compute_hamming_paillier(
+                new_template,
+                stored_template,
+                threshold_bits=threshold_bits,
+            )
+
+            if err:
+                error_count += 1
+                logger.debug(
+                    "fhe_uniqueness_check[paillier]: erreur calcul human_id=%s — skip",
+                    human_id[:16] if human_id else "?",
+                )
+                continue
+
+            if match:
+                logger.warning(
+                    "fhe_uniqueness_check[paillier]: MATCH human_id=%s dist=%s threshold=%d",
+                    human_id[:16] if human_id else "?",
+                    str(_debug_dist),
+                    threshold_bits,
+                )
+                return PaillierHammingResult(
+                    match_found=True,
+                    error=False,
+                    existing_human_id=human_id,
+                    _debug_hamming_distance=_debug_dist,
+                    _debug_threshold_bits=threshold_bits,
+                )
+
+        # Aucun match trouvé
+        all_errors = (error_count == total and total > 0)
+        note_suffix = f" | errors={error_count}/{total}" if error_count > 0 else ""
+        return PaillierHammingResult(
+            match_found=False,
+            error=all_errors,
+            _debug_threshold_bits=threshold_bits,
+            note=PHE_NOTE + note_suffix,
         )

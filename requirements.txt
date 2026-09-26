@@ -20,6 +20,9 @@ cryptography>=50.0.1
 # bchlib : BCH error-correcting code pour FuzzyExtractor biométrique (ARTCB R374)
 # BCH(255, t=8, m=8) — tolérance dist≤8 bits par bloc de 23 octets dans fuzzy_reproduce()
 bchlib>=2.1.3
+# phe : Paillier Homomorphic Encryption réelle (IND-CPA) pour check_uniqueness() biométrique
+# Protocole ARTCB-PHE-PAILLIER-HAMMING-v1 (R479) — pur Python, zéro compilation
+phe>=1.5.0
 # liboqs-python : ML-DSA-65 + ML-KEM-768 (NIST PQC 2024)
 # ATTENTION : ce paquet PyPI COMPILE liboqs depuis les sources — cmake + gcc requis.
 # Si absent → fallback automatique Ed25519/X25519 (mode dégradé, non post-quantique).
