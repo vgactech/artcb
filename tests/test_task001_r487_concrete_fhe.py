@@ -318,6 +318,9 @@ def test_T19_result_note_contains_concrete_note(backend):
 # ─── T20 : version MODULE_VERSION ────────────────────────────────────────────
 
 def test_T20_module_version():
-    """T20 — MODULE_VERSION de homomorphic.py est 1.3.0 (R487)."""
+    """T20 — MODULE_VERSION de homomorphic.py est >= 1.3.x (R487 — bump auto-incrémenté par hook)."""
     from src.artcb.crypto.homomorphic import MODULE_VERSION
-    assert MODULE_VERSION == "1.3.0", f"Attendu '1.3.0', obtenu '{MODULE_VERSION}'"
+    major, minor, _patch = (int(x) for x in MODULE_VERSION.split("."))
+    assert (major, minor) >= (1, 3), (
+        f"MODULE_VERSION doit être >= 1.3.x (R487), obtenu '{MODULE_VERSION}'"
+    )
